@@ -3,7 +3,7 @@
 
 
 type Theme
-
+    point_size = 
 end
 
 const DefaultTheme = Theme()
@@ -14,4 +14,7 @@ function json(theme::Theme)
 end
 
 
+const default_theme = let
+    t = 
 
+end

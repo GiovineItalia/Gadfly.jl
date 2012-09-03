@@ -1,11 +1,22 @@
 
-require("data.jl")
+require("aesthetics.jl")
 
 # The Data type represents bindings of data to aesthetics.
+
+#@eval begin
+    #type Data
+        #$()
+    #end
+#end
+
+# TODO: generate this with a macro
 
 type Data
     x::Union(Nothing, AbstractArray)
     y::Union(Nothing, AbstractArray)
+    y::Union(Nothing, AbstractArray)
+    y::Union(Nothing, AbstractArray)
+
 
     function Data()
         new(nothing, nothing)
