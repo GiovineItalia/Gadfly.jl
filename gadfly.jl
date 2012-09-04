@@ -7,6 +7,7 @@ require("coord.jl")
 require("data.jl")
 require("aesthetics.jl")
 require("geometry.jl")
+require("theme.jl")
 
 
 type Layer
@@ -26,9 +27,11 @@ type Plot
     layers::Layers
     data::Data
     scales::Scales
+    guides::Guides
+    theme::Theme
 
     function Plot()
-        new(Layer[], Data(), Scale[])
+        new(Layer[], Data(), Scale[], default_theme)
     end
 end
 
@@ -43,7 +46,7 @@ end
 
 
 function render(plot::Plot)
-    # WRONG! We need to train on the layer's data also!
+    # I. Scales
     train_scales(plot.scales, plot.data)
     for layer in plot.layers
         train_scales(plot.scales, layer.data)
@@ -51,11 +54,30 @@ function render(plot::Plot)
 
     scaled_data = apply_scales(plot.scales, plot.data)
 
+    # II. Statistics
+    # TODO
+
+
+    # III. Coordinates
+    #train_coords(plot.scales,
+
+
     # TODO: apply coordinates here
     aes = scaled_data
 
-    # TODO: Draw background, etc.
-    compose!(Canvas(), {render(layer, plot, aes) for layer in plot.layers}...)
+    # IV. Guides
+    panel = Canvas()
+    if !is(plot.theme.panel_background, nothing)
+        compose!(panel, {Rectangle(), Fill(plot.theme.panel_background),
+                                      Stroke(nothing)})
+    end
+
+    for guide in plot.guides
+
+    end
+
+    # V. Geometries
+    compose!(panel, {render(layer, plot, aes) for layer in plot.layers}...)
 end
 
 

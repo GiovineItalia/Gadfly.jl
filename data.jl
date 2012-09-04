@@ -14,9 +14,10 @@ require("aesthetics.jl")
 type Data
     x::Union(Nothing, AbstractArray)
     y::Union(Nothing, AbstractArray)
-    y::Union(Nothing, AbstractArray)
-    y::Union(Nothing, AbstractArray)
-
+    xticks::Union(Nothing, AbstractArray)
+    yticks::Union(Nothing, AbstractArray)
+    size::Union(Nothing, AbstractArray)
+    color::Union(Nothing, AbstractArray)
 
     function Data()
         new(nothing, nothing)

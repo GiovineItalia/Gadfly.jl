@@ -17,7 +17,7 @@ type PointGeometry <: Geometry
     function PointGeometry()
         g = Aesthetics()
         g.size  = Measure[0.5mm]
-        g.color = Color[color("steelblue")]
+        g.color = Color[color("indianred")]
         new(g)
     end
 end

@@ -3,18 +3,12 @@
 
 
 type Theme
-    point_size = 
-end
-
-const DefaultTheme = Theme()
-
-
-function json(theme::Theme)
-    # TODO
+    panel_background::ColorOrNothing
+    panel_padding::Measure
 end
 
 
-const default_theme = let
-    t = 
+const default_theme =
+    Theme(color("grey90"),
+          1mm)
 
-end
