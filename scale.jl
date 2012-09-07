@@ -4,62 +4,120 @@
 
 require("aesthetics.jl")
 require("data.jl")
+require("iterators.jl")
+
+import Iterators.*
+
 
 abstract Scale
 typealias Scales Vector{Scale}
 
-# Applying scales maps aesthetics
-function apply_scales(scales::Scales, data::Vector{Data})
-    aes = Aesthetics()
+abstract FittedScale
+typealias FittedScales Vector{FittedScale}
 
-    for scale in scales
-        ds = chain([getfield(d, a) for (a, d) in product(scale.aes, data)]...)
-        aes = apply_scale(scale, ds, aes)
+
+# Scales work like so:
+# A scale object is created which contains the information about how the scale
+# shall be applied. This scale is then fit.
+
+function fit_scales(scales::Scales, data::Data)
+    fittedscales = Array(FittedScale, length(scales))
+
+    for (scale, i) in enumerate(scales)
+        ds = [getfield(data, var) for var in scale.vars]
+        fittedscales[i] = fit_scale(scale, chain(filter(issomething, ds)...))
     end
+
+    fittedscales
 end
 
 
-# Catchall for unsupported types
-function apply_scale{T <: Scale, S}(scale::T, v::S)
-    error(@sprintf("Scale fo type %s is not applicable to data of type %s.",
-                   string(T), string(S)))
+function apply_scales(scales::FittedScales, data::Data)
+    aes = Aesthetics()
+    for scale in scales
+        for var in scale.spec.vars
+            vs = getfield(data, var)
+            if issomething(vs)
+                setfield(aes, var, apply_scale(scale, vs))
+            end
+        end
+    end
+
+    aes
 end
 
 
 type ContinuousScale <: Scale
-    aes::Vector{Symbol}
-    transform::Function
-    min::Float64
-    max::Float64
-    ticks::Vector{Float64}
+    vars::Vector{Symbol}
+    trans::Function
+end
 
-    function ContinuousScale(aes::Vector{Symbol}, transform::Function)
-        new(aes, transform, 0.0, 0.0, Float64[])
+
+# constructors for common scales
+const scale_x_continuous = ContinuousScale([:x], identity)
+const scale_y_continuous = ContinuousScale([:y], identity)
+
+asinh(x::Float64) = real(asinh(x + 0im))
+
+for (fun, coord) in product([log10, sqrt, asinh], ["x", "y"])
+    scale_name = symbol(@sprintf("scale_%s_%s", coord, string(fun)))
+    @eval begin
+        const ($scale_name) = ContinuousScale([symbol(($coord))], ($fun))
     end
 end
 
 
-scale_x_continuous() = ContinuousScale([:x], identity)
-scale_y_continuous() = ContinuousScale([:y], identity)
-scale_x_log10()      = ContinuousScale([:x], log10)
-scale_x_sqrt()       = ContinuousScale([:x], sqrt)
-scale_x_asinh()      = ContinuousScale([:x], x::Float64 -> real(asinh(x + 0im)))
+type FittedContinuousScale <: FittedScale
+    spec::ContinuousScale
+    min::Float64
+    max::Float64
+    ticks::Vector{Float64}
 
-
-function train_scale(scale::ContinuousScale, v::Number)
-    u = scale.transform(convert(Float64, v))
-    if u < scale.min; scale.min = u; end
-    if u > scale.max; scale.max = u; end
+    function FittedContinuousScale(spec::ContinuousScale)
+        new(spec, Inf, -Inf, Float64[])
+    end
 end
 
 
-# Choose appealing places for tick marks from the min and max values.
-function train_ticks(scale::ContinuousScale)
+# Mabye this should set xlim/ylim in aes as well?
+function fit_scale(scale::ContinuousScale, vs::Any)
+    fittedscale = FittedContinuousScale(scale)
+    for v in vs
+        u = scale.trans(convert(Float64, v))
+        if isfinite(u)
+            if u < fittedscale.min
+                fittedscale.min = u
+            end
 
+            if u > fittedscale.max
+                fittedscale.max = u
+            end
+        end
+    end
+
+    if !isfinite(fittedscale.min)
+        fittedscale.min = 0.0
+    end
+
+    if !isfinite(fittedscale.max)
+        fittedscale.max = 1.0
+    end
+
+    # TODO: set ticks somehow
+
+    fittedscale
 end
 
 
-function apply_scale(scale::ContinuousScale, v::Number)
-    # TODO: Handle INF and NA.
-    scale.transform(convert(Float64, v))
+function apply_scale(fittedscale::FittedContinuousScale, vs::Any)
+    n = length(vs)
+    us = Array(Float64, n)
+    for (v, i) in enumerate(vs)
+        us[i] = fittedscale.spec.trans(convert(Float64, v))
+    end
+    us
 end
+
+
+
+

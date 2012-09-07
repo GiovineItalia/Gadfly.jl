@@ -1,5 +1,8 @@
 
 require("aesthetics.jl")
+require("iterators.jl")
+
+import Iterators.*
 
 # The Data type represents bindings of data to aesthetics.
 
@@ -12,15 +15,15 @@ require("aesthetics.jl")
 # TODO: generate this with a macro
 
 type Data
-    x::Union(Nothing, AbstractArray)
-    y::Union(Nothing, AbstractArray)
-    xticks::Union(Nothing, AbstractArray)
-    yticks::Union(Nothing, AbstractArray)
-    size::Union(Nothing, AbstractArray)
-    color::Union(Nothing, AbstractArray)
+    x
+    y
+    xticks
+    yticks
+    size
+    color
 
     function Data()
-        new(nothing, nothing)
+        new(nothing, nothing, nothing, nothing, nothing, nothing)
     end
 
     # shallow copy constructor
@@ -29,6 +32,21 @@ type Data
     end
 end
 
-
 copy(a::Data) = Data(a)
+
+
+function chain(ds::Data...)
+    chained_data = Data()
+    for name in Data.names
+        vs = {getfield(d, name) for d in ds}
+        vs = {v for v in filter(issomething, vs)}
+        if isempty(vs)
+            setfield(chained_data, name, nothing)
+        else
+            setfield(chained_data, name, chain(vs...))
+        end
+    end
+
+    chained_data
+end
 

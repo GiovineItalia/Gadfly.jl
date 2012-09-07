@@ -27,11 +27,12 @@ type Plot
     layers::Layers
     data::Data
     scales::Scales
-    guides::Guides
+    coords::Coordinates
+    #guides::Guides
     theme::Theme
 
     function Plot()
-        new(Layer[], Data(), Scale[], default_theme)
+        new(Layer[], Data(), Scale[], Coordinates[], default_theme)
     end
 end
 
@@ -47,37 +48,42 @@ end
 
 function render(plot::Plot)
     # I. Scales
-    train_scales(plot.scales, plot.data)
-    for layer in plot.layers
-        train_scales(plot.scales, layer.data)
-    end
+    alldata = chain(plot.data, [layer.data for layer in plot.layers]...)
+    fitted_scales = fit_scales(plot.scales, alldata)
 
-    scaled_data = apply_scales(plot.scales, plot.data)
+    plot_aes  = apply_scales(fitted_scales, plot.data)
+
+    layer_aes = [apply_scales(fitted_scales, layer.data)
+                 for layer in plot.layers]
+    layer_aes = [inherit(aes, plot_aes) for aes in layer_aes]
 
     # II. Statistics
     # TODO
 
-
     # III. Coordinates
-    #train_coords(plot.scales,
+    fitted_coords = fit_coords(plot.coords, plot_aes, layer_aes...)
+    #layer_aes = [apply[
 
 
     # TODO: apply coordinates here
-    aes = scaled_data
+    #aes = scaled_data
 
     # IV. Guides
-    panel = Canvas()
-    if !is(plot.theme.panel_background, nothing)
-        compose!(panel, {Rectangle(), Fill(plot.theme.panel_background),
-                                      Stroke(nothing)})
-    end
+    #panel = Canvas()
+    #if !is(plot.theme.panel_background, nothing)
+        #compose!(panel, {Rectangle(), Fill(plot.theme.panel_background),
+                                      #Stroke(nothing)})
+    #end
 
-    for guide in plot.guides
+    #for guide in plot.guides
 
-    end
+    #end
 
     # V. Geometries
-    compose!(panel, {render(layer, plot, aes) for layer in plot.layers}...)
+    #compose!(panel, {render(layer, plot, aes) for layer in plot.layers}...)
 end
+
+
+
 
 

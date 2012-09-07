@@ -13,7 +13,8 @@ type Aesthetics
     color::Union(Nothing, Vector{Color})
 
     function Aesthetics()
-        new([nothing for _ in 1:length(Aesthetics.names)]...)
+        new(nothing, nothing, nothing, nothing, nothing, nothing)
+        #new([nothing for _ in 1:length(Aesthetics.names)]...)
     end
 
     # shallow copy constructor
@@ -29,3 +30,4 @@ copy(a::Aesthetics) = Aesthetics(a)
 function json(a::Aesthetics)
     join([strcat(a, ":", json(getfield(a, var))) for var in aes_vars], ",\n")
 end
+
