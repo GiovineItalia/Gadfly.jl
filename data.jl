@@ -17,18 +17,29 @@ import Iterators.*
 type Data
     x
     y
+    xmin
+    xmax
+    ymin
+    ymax
     xticks
     yticks
     size
     color
 
     function Data()
-        new(nothing, nothing, nothing, nothing, nothing, nothing)
+        new(nothing, nothing, nothing,
+            nothing, nothing, nothing,
+            nothing, nothing, nothing,
+            nothing)
     end
 
     # shallow copy constructor
     function Data(a::Data)
-        new(a.x, a.y)
+        b = new()
+        for name in Data.names
+            setfield(b, name, getfield(a, name))
+        end
+        b
     end
 end
 

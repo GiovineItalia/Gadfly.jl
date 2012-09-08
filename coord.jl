@@ -23,7 +23,7 @@ function fit_coords(coords::Coordinates, aess::Aesthetics...)
 end
 
 
-function apply_coords(coords::Coordinates, parent_aes::Aesthetics)
+function apply_coords(coords::FittedCoordinates, parent_aes::Aesthetics)
     aes = parent_aes
     for coord in coords
         aes = apply_coord(coord, aes)
@@ -117,7 +117,7 @@ function fit_coord(coord::CartesianCoordinate, aess::Aesthetics...)
                 end
 
                 if y > fittedcoord.ymax
-                    fittedcoord.xmax = y
+                    fittedcoord.ymax = y
                 end
             end
         end
@@ -162,7 +162,11 @@ function apply_coord(coord::FittedCartesianCoordinate, parent_aes::Aesthetics)
             continue
         end
 
-        setfield(aes, var, [(aes.xmin + x) / xspan for x in getfield(aes, var)])
+        xs = Array(Float64, length(getfield(aes, var)))
+        for (x, i) in enumerate(getfield(aes, var))
+            xs[i] = (aes.xmin + x) / xspan
+        end
+        setfield(aes, var, xs)
     end
 
     yspan = aes.ymax - aes.ymin
@@ -172,7 +176,11 @@ function apply_coord(coord::FittedCartesianCoordinate, parent_aes::Aesthetics)
             continue
         end
 
-        setfield(aes, var, [(aes.ymin + y) / yspan for x in getfield(aes, var)])
+        ys = Array(Float64, length(getfield(aes, var)))
+        for (y, i) in enumerate(getfield(aes, var))
+            ys[i] = (aes.ymin + y) / yspan
+        end
+        setfield(aes, var, ys)
     end
 
     aes

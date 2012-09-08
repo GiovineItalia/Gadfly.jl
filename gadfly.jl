@@ -39,9 +39,8 @@ end
 
 function render(layer::Layer, parent::Plot, aes::Aesthetics)
     println("render layer")
-    scaled_data = apply_scales(parent.scales, layer.data)
-    layer_aes = scaled_data # TODO: coordinates
-    aes = inherit(layer_aes, aes)
+    println(aes.x)
+    println(aes.y)
     render(layer.geom, aes)
 end
 
@@ -62,14 +61,12 @@ function render(plot::Plot)
 
     # III. Coordinates
     fitted_coords = fit_coords(plot.coords, plot_aes, layer_aes...)
-    #layer_aes = [apply[
+    layer_aes = [apply_coords(fitted_coords, aes) for aes in layer_aes]
 
-
-    # TODO: apply coordinates here
-    #aes = scaled_data
 
     # IV. Guides
-    #panel = Canvas()
+    # TODO
+
     #if !is(plot.theme.panel_background, nothing)
         #compose!(panel, {Rectangle(), Fill(plot.theme.panel_background),
                                       #Stroke(nothing)})
@@ -80,7 +77,8 @@ function render(plot::Plot)
     #end
 
     # V. Geometries
-    #compose!(panel, {render(layer, plot, aes) for layer in plot.layers}...)
+    compose!(Canvas(), {render(layer, plot, aes)
+                        for (aes, layer) in zip(layer_aes, plot.layers)}...)
 end
 
 
