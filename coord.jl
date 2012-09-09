@@ -1,4 +1,6 @@
 
+require("compose.jl")
+
 abstract Coordinate
 typealias Coordinates Vector{Coordinate}
 
@@ -58,8 +60,8 @@ type CartesianCoordinate <: Coordinate
     yvars::Vector{Symbol}
 end
 
-const coord_cartesian = CartesianCoordinate([:x, :xticks],
-                                            [:y, :yticks])
+const coord_cartesian = CartesianCoordinate([:x],
+                                            [:y])
 
 
 type FittedCartesianCoordinate <: FittedCoordinate
@@ -135,56 +137,10 @@ function fit_coord(coord::CartesianCoordinate, aess::Aesthetics...)
 end
 
 
-function apply_coord(coord::FittedCartesianCoordinate, parent_aes::Aesthetics)
-    aes = copy(parent_aes)
-
-    # Set xmin, xmax, ymin, ymax if not set.
-    if is(aes.xmin, nothing)
-        aes.xmin = coord.xmin
-    end
-
-    if is(aes.xmax, nothing)
-        aes.xmax = coord.xmax
-    end
-
-    if is(aes.ymin, nothing)
-        aes.ymin = coord.ymin
-    end
-
-    if is(aes.ymax, nothing)
-        aes.ymax = coord.ymax
-    end
-
-    xspan = aes.xmax - aes.xmin
-
-    for var in coord.spec.xvars
-        if is(getfield(aes, var), nothing)
-            continue
-        end
-
-        xs = Array(Float64, length(getfield(aes, var)))
-        for (x, i) in enumerate(getfield(aes, var))
-            xs[i] = (aes.xmin + x) / xspan
-        end
-        setfield(aes, var, xs)
-    end
-
-    yspan = aes.ymax - aes.ymin
-
-    for var in coord.spec.yvars
-        if is(getfield(aes, var), nothing)
-            continue
-        end
-
-        ys = Array(Float64, length(getfield(aes, var)))
-        for (y, i) in enumerate(getfield(aes, var))
-            ys[i] = (aes.ymin + y) / yspan
-        end
-        setfield(aes, var, ys)
-    end
-
-    aes
+function apply_coord(coord::FittedCartesianCoordinate)
+    Canvas(Units(coord.xmin, coord.ymin,
+                 coord.xmax - coord.xmin,
+                 coord.ymax - coord.ymin))
 end
-
 
 

@@ -22,10 +22,10 @@ type PointGeometry <: Geometry
     end
 end
 
+const geom_point = PointGeometry()
 
-function render(geom::PointGeometry, aes::Aesthetics)
-    println("render point geom")
 
+function check_xy(aes::Aesthetics)
     if typeof(aes.x) == Nothing || typeof(aes.y) == Nothing
         error("Both `x` and `y` must be defined for point geometry.")
     end
@@ -43,6 +43,13 @@ function render(geom::PointGeometry, aes::Aesthetics)
     if !is(aes.size, nothing) && length(ael.size) != n
         error("`size` must be the same length as `x` and `y`.")
     end
+end
+
+
+function render(geom::PointGeometry, aes::Aesthetics)
+    println("render point geom")
+
+    check_xy(aes)
 
     aes = inherit(aes, geom.default_aes)
 
@@ -60,6 +67,38 @@ function render(geom::PointGeometry, aes::Aesthetics)
     end
 
     compose!(Canvas(), Stroke(nothing), forms)
+end
+
+
+type LineGeometry <: Geometry
+    default_aes::Aesthetics
+
+    function LineGeometry()
+        g = Aesthetics()
+        g.size  = Measure[0.5mm]
+        g.color = Color[color("indianred")]
+        new(g)
+    end
+end
+
+const geom_line = LineGeometry()
+
+
+function render(geom::LineGeometry, aes::Aesthetics)
+    println("render line geom")
+
+    check_xy(aes)
+
+    aes = inherit(aes, geom.default_aes)
+
+    if length(aes.color) == 1
+        compose!(Lines({(x, y) for (x, y) in zip(aes.x, aes.y)}...),
+                 Stroke(aes.color[1]), Fill(nothing))
+    else
+        # TODO: How does this work?
+        # Which line gets the point? Do we do a gradient
+        # between the two?
+    end
 end
 
 

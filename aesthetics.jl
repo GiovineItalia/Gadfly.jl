@@ -7,20 +7,13 @@ require("compose.jl")
 type Aesthetics
     x::Union(Nothing, Vector{Float64})
     y::Union(Nothing, Vector{Float64})
-    xmin::Union(Nothing, Float64)
-    xmax::Union(Nothing, Float64)
-    ymin::Union(Nothing, Float64)
-    ymax::Union(Nothing, Float64)
-    xticks::Union(Nothing, Vector{Float64})
-    yticks::Union(Nothing, Vector{Float64})
+    xticks::Union(Nothing, Dict{Float64, String})
+    yticks::Union(Nothing, Dict{Float64, String})
     size::Union(Nothing, Vector{Measure})
     color::Union(Nothing, Vector{Color})
 
     function Aesthetics()
-        new(nothing, nothing, nothing,
-            nothing, nothing, nothing,
-            nothing, nothing, nothing,
-            nothing)
+        new(nothing, nothing, nothing, nothing, nothing, nothing)
         #new([nothing for _ in 1:length(Aesthetics.names)]...)
     end
 
@@ -36,6 +29,15 @@ end
 
 
 copy(a::Aesthetics) = Aesthetics(a)
+
+
+function update!(a::Aesthetics, b::Aesthetics)
+    for name in Aesthetics.names
+        if issomething(getfield(b, name))
+            setfield(a, name, getfield(b, name))
+        end
+    end
+end
 
 
 function json(a::Aesthetics)

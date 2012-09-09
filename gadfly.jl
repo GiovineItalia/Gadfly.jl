@@ -8,6 +8,7 @@ require("data.jl")
 require("aesthetics.jl")
 require("geometry.jl")
 require("theme.jl")
+require("guide.jl")
 
 
 type Layer
@@ -27,20 +28,18 @@ type Plot
     layers::Layers
     data::Data
     scales::Scales
-    coords::Coordinates
-    #guides::Guides
+    coord::Coordinate
+    guides::Guides
     theme::Theme
 
     function Plot()
-        new(Layer[], Data(), Scale[], Coordinates[], default_theme)
+        new(Layer[], Data(), Scale[], coord_cartesian, Guide[], default_theme)
     end
 end
 
 
-function render(layer::Layer, parent::Plot, aes::Aesthetics)
+function render(layer::Layer, aes::Aesthetics)
     println("render layer")
-    println(aes.x)
-    println(aes.y)
     render(layer.geom, aes)
 end
 
@@ -60,24 +59,15 @@ function render(plot::Plot)
     # TODO
 
     # III. Coordinates
-    fitted_coords = fit_coords(plot.coords, plot_aes, layer_aes...)
-    layer_aes = [apply_coords(fitted_coords, aes) for aes in layer_aes]
-
+    fitted_coord = fit_coord(plot.coord, plot_aes, layer_aes...)
+    canvas = apply_coord(fitted_coord)
 
     # IV. Guides
-    # TODO
-
-    #if !is(plot.theme.panel_background, nothing)
-        #compose!(panel, {Rectangle(), Fill(plot.theme.panel_background),
-                                      #Stroke(nothing)})
-    #end
-
-    #for guide in plot.guides
-
-    #end
+    compose!(canvas, [render(guide, plot.theme, layer_aes)
+                      for guide in plot.guides])
 
     # V. Geometries
-    compose!(Canvas(), {render(layer, plot, aes)
+    compose!(canvas, {render(layer, aes)
                         for (aes, layer) in zip(layer_aes, plot.layers)}...)
 end
 
