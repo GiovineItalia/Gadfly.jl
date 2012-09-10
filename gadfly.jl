@@ -60,18 +60,21 @@ function render(plot::Plot)
 
     # III. Coordinates
     fitted_coord = fit_coord(plot.coord, plot_aes, layer_aes...)
-    canvas = apply_coord(fitted_coord)
+    plot_canvas = apply_coord(fitted_coord)
 
     # IV. Guides
-    compose!(canvas, [render(guide, plot.theme, layer_aes)
-                      for guide in plot.guides])
+    guide_canvases = Canvas[]
+    for guide in plot.guides
+        push(guide_canvases,
+             render(guide, plot.theme, layer_aes)...)
+    end
+
+    canvas = layout_guides(plot_canvas, guide_canvases...)
 
     # V. Geometries
-    compose!(canvas, {render(layer, aes)
-                        for (aes, layer) in zip(layer_aes, plot.layers)}...)
+    compose!(plot_canvas, {render(layer, aes)
+                           for (aes, layer) in zip(layer_aes, plot.layers)}...)
+
+    canvas
 end
-
-
-
-
 

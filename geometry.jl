@@ -17,7 +17,7 @@ type PointGeometry <: Geometry
     function PointGeometry()
         g = Aesthetics()
         g.size  = Measure[0.5mm]
-        g.color = Color[color("indianred")]
+        g.color = Color[color("steelblue")]
         new(g)
     end
 end
@@ -59,14 +59,15 @@ function render(geom::PointGeometry, aes::Aesthetics)
     end
 
     if length(aes.color) == 1
-        forms = compose!(Canvas(), Fill(aes.color[1]), forms...)
+        form = compose!(forms..., Fill(aes.color[1]))
     else
         for (f, c) in zip(forms, aes.color)
             compose!(f, Fill(c))
         end
+        form = compose!(forms...)
     end
 
-    compose!(Canvas(), Stroke(nothing), forms)
+    compose!(form, Stroke(nothing))
 end
 
 
@@ -76,7 +77,7 @@ type LineGeometry <: Geometry
     function LineGeometry()
         g = Aesthetics()
         g.size  = Measure[0.5mm]
-        g.color = Color[color("indianred")]
+        g.color = Color[color("steelblue")]
         new(g)
     end
 end

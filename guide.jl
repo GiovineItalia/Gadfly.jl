@@ -17,41 +17,10 @@ const panel_background = PanelBackground()
 
 
 function render(guide::PanelBackground, theme::Theme, aess::Vector{Aesthetics})
-    compose!(Rectangle(), Stroke(nothing), Fill(theme.panel_background))
+    [compose!(Canvas(), Rectangle(),
+              Stroke(nothing),
+              Fill(theme.panel_background))]
 end
-
-
-# How can we accomplish ggplot's trick fo drawing the numbers on a log10 scale
-# with exponents? We would need knowledge of the scale.  Maybe, or we could have
-# tho scale implemente a backwards map as well. That could be pretty akward.
-
-# Maybe scale should compute ticks and labels.
-
-# What was the original objetion to that idea?
-
-# The alternative is to expose the actual scales and have some sort of backwards
-# map. Or a funtion to label points. That's not a terrible idea: we might want
-# such a thing in other places. For example, if we want to implement tooltips
-# that label points on hover, we need just such a thing.
-
-# Ok, so how can we implement this:
-# The ploblem is that we allow multiple scales, so which inverse map function
-# gets called exactly?
-
-# We need to call each in sequence. If scales are applied like:
-#   f(g(x)), we need to call g'(f'(x)). Do these functions live the Aessthetics?
-# I'm tempted to say yes, because that would allow the user te define their own
-# label function.
-
-# Ok, how about this:
-# What if a custom transformation is used that can not be inverted.
-# Or, simpler than that. What if the inverse isn't known by the plot.
-# We could insist an inverse is supplied.
-
-# Too complicated. Let's just have scales compute xticks, yticks, etc.
-# Then later on we can add other tick aesthetics.
-
-
 
 
 type XTicks <: Guide
@@ -72,9 +41,24 @@ function render(guide::XTicks, theme::Theme, aess::Vector{Aesthetics})
     for (tick, label) in ticks
         compose!(form, Lines((tick, 0h), (tick, 1h)))
     end
-    compose!(form, Stroke(theme.grid_color))
-end
+    grid_lines = compose!(Canvas(), form, Stroke(theme.grid_color))
 
+    (_, height) = text_extents(theme.tick_label_font,
+                               theme.tick_label_font_size,
+                               values(ticks)...)
+    padding = 1mm
+
+    tick_labels = compose!(Canvas(0cx, 1cy, 1h, height),
+                           Stroke(nothing), Fill(theme.tick_label_color),
+                           Font(theme.tick_label_font),
+                           FontSize(theme.tick_label_font_size))
+    for (tick, label) in ticks
+        compose!(tick_labels, Text(tick, 0cy,
+                                   label, hcenter, vtop))
+    end
+
+    [grid_lines, tick_labels]
+end
 
 
 type YTicks <: Guide
@@ -95,5 +79,63 @@ function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
     for (tick, label) in ticks
         compose!(form, Lines((0w, tick), (1w, tick)))
     end
-    compose!(form, Stroke(theme.grid_color))
+    grid_lines = compose!(Canvas(), form, Stroke(theme.grid_color))
+
+    (width, _) = text_extents(theme.tick_label_font,
+                              theme.tick_label_font_size,
+                              values(ticks)...)
+    padding = 1mm
+    width += 2padding
+
+    tick_labels = compose!(Canvas(0cx, 0cy, width, 1h),
+                           Stroke(nothing), Fill(theme.tick_label_color),
+                           Font(theme.tick_label_font),
+                           FontSize(theme.tick_label_font_size))
+    for (tick, label) in ticks
+        compose!(tick_labels, Text(width - padding, tick,
+                                   label, hright, vcenter))
+    end
+
+    [grid_lines, tick_labels]
 end
+
+
+# Try to arrange a bunch of rendered guides (as canvases) using some
+# simple rules:
+#   1. If the canvas has width 1w and height 1h (i.e., parents coordinates)
+#      embed it in the plot's canvas.
+#   2. Otherwise, we expect a side to be given by the canvases position to be
+#
+
+function layout_guides(plot_canvas::Canvas, guide_canvases::Canvas...)
+
+    # Make one pass to build up all the guides that are plotted over the
+    # the panel before composing with the plot canvas.
+    root_canvas = Canvas(0cx, 0cy, 1cx, 1cy,
+                         Units(plot_canvas.unit_box))
+    isfull = c -> c.box.width == 1w && c.box.height == 1h
+    for c in filter(isfull, guide_canvases)
+        c.unit_box = plot_canvas.unit_box
+        compose!(root_canvas, c)
+    end
+    compose!(root_canvas, plot_canvas)
+
+    for c in filter(negate(isfull), guide_canvases)
+        c.unit_box = plot_canvas.unit_box
+
+        # left-aligned
+        if c.box.x0 == 0cx && c.box.height == 1h
+            root_canvas.box.x0    = c.box.width
+            root_canvas.box.width -= c.box.width
+        # bottom
+        elseif c.box.y0 == 1cy && c.box.width == 1h
+            root_canvas.box.height -= c.box.height
+        end
+        # TODO: others
+
+        root_canvas = compose(Canvas(0cx, 0cy, 1cx, 1cy), root_canvas, c)
+    end
+
+    root_canvas
+end
+

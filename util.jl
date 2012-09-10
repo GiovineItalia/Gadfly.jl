@@ -17,3 +17,11 @@ end
 isnothing(u) = is(u, nothing)
 issomething(u) = !isnothing(u)
 
+negate(f) = x -> !f(x)
+
+function push{T}(xs::Vector{T}, ys::T...)
+    for y in ys
+        push(xs, y)
+    end
+end
+
