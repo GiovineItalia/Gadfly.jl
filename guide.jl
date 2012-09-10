@@ -46,15 +46,16 @@ function render(guide::XTicks, theme::Theme, aess::Vector{Aesthetics})
     (_, height) = text_extents(theme.tick_label_font,
                                theme.tick_label_font_size,
                                values(ticks)...)
+    println(height)
     padding = 1mm
 
-    tick_labels = compose!(Canvas(0cx, 1cy, 1h, height),
+    tick_labels = compose!(Canvas(0cx, 1cy, 1w, height + 2padding),
                            Stroke(nothing), Fill(theme.tick_label_color),
                            Font(theme.tick_label_font),
                            FontSize(theme.tick_label_font_size))
     for (tick, label) in ticks
-        compose!(tick_labels, Text(tick, 0cy,
-                                   label, hcenter, vtop))
+        compose!(tick_labels, Text(tick, 1h - padding,
+                                   label, hcenter, vbottom))
     end
 
     [grid_lines, tick_labels]
@@ -87,7 +88,7 @@ function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
     padding = 1mm
     width += 2padding
 
-    tick_labels = compose!(Canvas(0cx, 0cy, width, 1h),
+    tick_labels = compose!(Canvas(0cx, 0cy, width, 1cy),
                            Stroke(nothing), Fill(theme.tick_label_color),
                            Font(theme.tick_label_font),
                            FontSize(theme.tick_label_font_size))
@@ -119,17 +120,20 @@ function layout_guides(plot_canvas::Canvas, guide_canvases::Canvas...)
         compose!(root_canvas, c)
     end
     compose!(root_canvas, plot_canvas)
+    plot_canvas = root_canvas
 
     for c in filter(negate(isfull), guide_canvases)
         c.unit_box = plot_canvas.unit_box
 
         # left-aligned
-        if c.box.x0 == 0cx && c.box.height == 1h
+        if c.box.x0 == 0cx && c.box.height == 1cy
             root_canvas.box.x0    = c.box.width
             root_canvas.box.width -= c.box.width
+            c.box.height = plot_canvas.box.height
         # bottom
-        elseif c.box.y0 == 1cy && c.box.width == 1h
+        elseif c.box.y0 == 1cy && c.box.width == 1w
             root_canvas.box.height -= c.box.height
+            c.box.y0 -= c.box.height
         end
         # TODO: others
 

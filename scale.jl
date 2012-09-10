@@ -112,6 +112,63 @@ function fit_scale(scale::ContinuousScale, vs::Any)
 end
 
 
+# This is basically Wilkinson's ad-hoc scoring method that tries to balance
+# tight fit around the data, optimal number of ticks, and simple numbers.
+function optimize_ticks(x_min::Float64, x_max::Float64)
+    # TODO: these should perhaps be part of the theme
+    const Q = {(1,1), (5, 0.9), (2, 0.7), (25, 0.5), (3, 0.2)}
+    const n = length(Q)
+    const k_min   = 2
+    const k_max   = 10
+    const k_ideal = 5
+
+    xspan = x_max - x_min
+    z = ceil(log10(xspan))
+
+    high_score = -Inf
+    z_best = 0.0
+    k_best = 0.0
+    r_best = 0.0
+    q_best = 0.0
+
+    while k_max * 10^(z+1) > xspan
+        for k in k_min:k_max
+            for (q, qscore) in Q
+                span = (k - 1) * q * 10^z
+                if span < xspan
+                    continue
+                end
+
+                r = ceil((x_max - span) / (q*10^z))
+                while r*q*10^z < x_min
+                    has_zero = r <= 0 && abs(r) < k
+
+                    # simplicity
+                    s = has_zero ? 1.0 : 0.0
+
+                    # granularity
+                    g = 0 < k < 2k_ideal ? 1 - abs(k - k_ideal) / k_ideal : 0.0
+
+                    # coverage
+                    c = xspan/span
+
+                    score = (1/4)g + (1/6)s + (1/3)c + (1/4)qscore
+
+                    if score > high_score
+                        (q_best, r_best, k_best, z_best) = (q, r, k, z)
+                        high_score = score
+                    end
+                    r += 1
+                end
+            end
+        end
+        z -= 1
+    end
+
+    S = [(r_best + i) * q_best * 10^z_best for i in 0:(k_best - 1)]
+end
+
+
 function apply_scale(fittedscale::FittedContinuousScale, data::Data)
     aes = Aesthetics()
     tick_var = fittedscale.spec.tick_var
@@ -119,11 +176,12 @@ function apply_scale(fittedscale::FittedContinuousScale, data::Data)
     if issomething(getfield(data, tick_var))
         # TODO: handle custom ticks.
     else
-        # TODO: figure out how to compute reasonable tick marks.
+        S = optimize_ticks(fittedscale.min, fittedscale.max)
         ticks = Dict{Float64, String}()
-        ticks[fittedscale.min] = "min"
-        ticks[fittedscale.max] = "max"
-        ticks[fittedscale.min + (fittedscale.max - fittedscale.min)/2] = "mid"
+        for s in S
+            ticks[s] = fmt_float(s)
+        end
+
         setfield(aes, tick_var, ticks)
     end
 

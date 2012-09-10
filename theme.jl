@@ -13,7 +13,7 @@ end
 
 
 const default_theme =
-    Theme(color("grey93"),
+    Theme(color("grey95"),
           1mm,
           color("white"),
           "Questrial",

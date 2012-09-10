@@ -72,7 +72,7 @@ type FittedCartesianCoordinate <: FittedCoordinate
     ymax::Float64
 
     function FittedCartesianCoordinate(spec::CartesianCoordinate)
-        new(spec, Inf, -Inf, Inf, -Inf)
+        new(spec, Inf, 0.0, Inf, 0.0)
     end
 end
 
@@ -87,16 +87,17 @@ function fit_coord(coord::CartesianCoordinate, aess::Aesthetics...)
             end
 
             for x in getfield(aes, var)
-                if x < fittedcoord.xmin
-                    fittedcoord.xmin = x
-                end
-
-                if x > fittedcoord.xmax
-                    fittedcoord.xmax = x
-                end
+                fittedcoord.xmin = min(fittedcoord.xmin, x)
+                fittedcoord.xmax = max(fittedcoord.xmax, x)
             end
         end
+
+        for (x, _) in aes.xticks
+            fittedcoord.xmin = min(fittedcoord.xmin, x)
+            fittedcoord.xmax = max(fittedcoord.xmax, x)
+        end
     end
+
 
     if !isfinite(fittedcoord.xmin)
         fittedcoord.xmin = 0.0
@@ -114,14 +115,14 @@ function fit_coord(coord::CartesianCoordinate, aess::Aesthetics...)
             end
 
             for y in getfield(aes, var)
-                if y < fittedcoord.ymin
-                    fittedcoord.ymin = y
-                end
-
-                if y > fittedcoord.ymax
-                    fittedcoord.ymax = y
-                end
+                fittedcoord.ymin = min(fittedcoord.ymin, y)
+                fittedcoord.ymax = max(fittedcoord.ymax, y)
             end
+        end
+
+        for (y, _) in aes.yticks
+            fittedcoord.ymin = min(fittedcoord.ymin, y)
+            fittedcoord.ymax = max(fittedcoord.ymax, y)
         end
     end
 
