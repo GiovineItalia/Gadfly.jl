@@ -19,4 +19,3 @@ const default_theme =
           "Questrial",
           10pt,
           "grey30")
-

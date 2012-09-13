@@ -1,21 +1,20 @@
 # A scale is responsible for mapping data to attributes of a particular
 # aesthetic. For example, mapping numerical data to a colors.
 
-# Should we be setting ticks in coord?
-# Maybe we should compute ticks in the render function of Ticks.
-# This is tempting, but Guides are applied after coordinates, so x, y, etc will
-# have been transformed. Solutions?
-
-# What if coordinates just returned a canvas with the appropriate coordinate
-# system? We could build transformation function into compose.
-
-
-
 require("aesthetics.jl")
 require("data.jl")
 require("iterators.jl")
+require("transform.jl")
 
 import Iterators.*
+
+# A note on how scales work in gadfly;
+# Scales have a few functions: map data to a coordinate system, produce a
+# reasonable set of tick marks, and label values. So, for example a discrete
+# scale over values ["a", "b", "c"] must map these categorial values to real
+# values [1, 2, 3] which can actually be plotted. It must also properly
+# identify these points and label them "a", "b", "c", since the steps performed
+# after applying scales are ignorant of the orignal data.
 
 
 abstract Scale
@@ -25,10 +24,14 @@ abstract FittedScale
 typealias FittedScales Vector{FittedScale}
 
 
-# Scales work like so:
-# A scale object is created which contains the information about how the scale
-# shall be applied. This scale is then fit.
-
+# Fit a set of scales to data.
+#
+# Args:
+#   scales: Specifications of scales to fit.
+#
+# Returns:
+#   A vector of fitted scales.
+#
 function fit_scales(scales::Scales, data::Data)
     fittedscales = Array(FittedScale, length(scales))
 
@@ -41,6 +44,14 @@ function fit_scales(scales::Scales, data::Data)
 end
 
 
+# Apply scales to data.
+#
+# Args:
+#   fittedscales: Scales that have been previously fit to data.
+#
+# Returns:
+#   An instance of aesthetics containing mapped data.
+#
 function apply_scales(scales::FittedScales, data::Data)
     aes = Aesthetics()
     for scale in scales
@@ -50,29 +61,32 @@ function apply_scales(scales::FittedScales, data::Data)
 end
 
 
+# A continuous scale which maps continuous data to continuous data, with or
+# without some transform and heuristically produces some reasonable tick marks.
 type ContinuousScale <: Scale
     vars::Vector{Symbol}
     tick_var::Symbol
-    trans::Function
+    trans::Transform
 end
 
 
-# constructors for common scales
-const scale_x_continuous = ContinuousScale([:x], :xticks, identity)
-const scale_y_continuous = ContinuousScale([:y], :yticks, identity)
+# Prototypical scales.
+const scale_x_continuous = ContinuousScale([:x], :xticks, IdenityTransform)
+const scale_y_continuous = ContinuousScale([:y], :yticks, IdenityTransform)
 
-asinh(x::Float64) = real(asinh(x + 0im))
 
-for (fun, coord) in product([log10, sqrt, asinh], ["x", "y"])
+
+for ((name, t), coord) in product(preset_transforms, ["x", "y"])
     tick_var = @sprintf("%sticks", coord)
-    scale_name = symbol(@sprintf("scale_%s_%s", coord, string(fun)))
+    scale_name = symbol(@sprintf("scale_%s_%s", coord, name))
     @eval begin
         const $scale_name = ContinuousScale([symbol($coord)],
-                                            symbol($tick_var), $fun)
+                                            symbol($tick_var), $t)
     end
 end
 
 
+# A continuous scale that has been fit to the data.
 type FittedContinuousScale <: FittedScale
     spec::ContinuousScale
     min::Float64
@@ -84,11 +98,19 @@ type FittedContinuousScale <: FittedScale
 end
 
 
-# Mabye this should set xlim/ylim in aes as well?
+# Fit a continuous scale.
+#
+# Fitting in this case is just finding the minimum and maximum values.
+#
+# Args:
+#   scale: A continuous scale to fit.
+#   vs: Data to fit to in the form of an iterator producing something that may
+#       be converted to Float64
+#
 function fit_scale(scale::ContinuousScale, vs::Any)
     fittedscale = FittedContinuousScale(scale)
     for v in vs
-        u = scale.trans(convert(Float64, v))
+        u = scale.trans.f(convert(Float64, v))
         if isfinite(u)
             if u < fittedscale.min
                 fittedscale.min = u
@@ -112,8 +134,18 @@ function fit_scale(scale::ContinuousScale, vs::Any)
 end
 
 
+# Find some reasonable values for tick marks.
+#
 # This is basically Wilkinson's ad-hoc scoring method that tries to balance
 # tight fit around the data, optimal number of ticks, and simple numbers.
+#
+# Args:
+#   x_min: minimum value occuring in the data.
+#   x_max: maximum value occuring in the data.
+#
+# Returns:
+#   A Float64 vector containing tick marks.
+#
 function optimize_ticks(x_min::Float64, x_max::Float64)
     # TODO: these should perhaps be part of the theme
     const Q = {(1,1), (5, 0.9), (2, 0.7), (25, 0.5), (3, 0.2)}
@@ -169,6 +201,15 @@ function optimize_ticks(x_min::Float64, x_max::Float64)
 end
 
 
+# Apply a a fitted scale to data, producing aesthetics.
+#
+# Args:
+#   fittedscale: a fitted continuous scale
+#   data: data to apply the scale to
+#
+# Returns:
+#   An instance of Aesthetics with mapped data.
+#
 function apply_scale(fittedscale::FittedContinuousScale, data::Data)
     aes = Aesthetics()
     tick_var = fittedscale.spec.tick_var
@@ -179,12 +220,11 @@ function apply_scale(fittedscale::FittedContinuousScale, data::Data)
         S = optimize_ticks(fittedscale.min, fittedscale.max)
         ticks = Dict{Float64, String}()
         for s in S
-            ticks[s] = fmt_float(s)
+            ticks[s] = fittedscale.spec.trans.label(s)
         end
 
         setfield(aes, tick_var, ticks)
     end
-
 
     for var in fittedscale.spec.vars
         vs = getfield(data, var)
@@ -196,11 +236,20 @@ function apply_scale(fittedscale::FittedContinuousScale, data::Data)
 end
 
 
+# Apply a fitted continous scale to one particular piece of data.
+#
+# Args:
+#   fittedscale: a fitted continuous scale.
+#   vs: an iterator producing value that can be converted to Float64
+#
+# Returns:
+#   A Float64 vector.
+#
 function apply_scale(fittedscale::FittedContinuousScale, vs::Any)
     n = length(vs)
     us = Array(Float64, n)
     for (v, i) in enumerate(vs)
-        us[i] = fittedscale.spec.trans(convert(Float64, v))
+        us[i] = fittedscale.spec.trans.f(convert(Float64, v))
     end
     us
 end
