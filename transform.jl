@@ -13,13 +13,13 @@ const IdenityTransform = Transform(identity, identity, fmt_float)
 const Log10Transform =
     Transform(log10,
               x -> 10^x,
-              x -> @sprintf("10^%s", fmt_float(x)))
+              x -> @sprintf("10<sup>%s</sup>", fmt_float(x)))
 
 
 const LnTransform =
     Transform(log,
               x -> exp(x),
-              x -> @sprintf("e^%s", fmt_float(x)))
+              x -> @sprintf("e<sup>%s</sup>", fmt_float(x)))
 
 
 const AsinhTransform =

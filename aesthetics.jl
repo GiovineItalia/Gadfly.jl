@@ -1,5 +1,5 @@
 
-require("util.jl")
+require("misc.jl")
 require("compose.jl")
 
 # Aesthetics are parameterizations of the geometry of the plot
