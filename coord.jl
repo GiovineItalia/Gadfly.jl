@@ -35,8 +35,6 @@ function apply_coords(coords::FittedCoordinates, parent_aes::Aesthetics)
 end
 
 
-
-
 # How does this operate on other aesthetics on the x-axis. For example, how to
 # xmin/xmax it mapped?
 
@@ -78,6 +76,11 @@ end
 
 
 function fit_coord(coord::CartesianCoordinate, aess::Aesthetics...)
+    println("fit_coord")
+
+    println(aess[1].x)
+    println(aess[1].y)
+
     fittedcoord = FittedCartesianCoordinate(coord)
 
     for aes in aess

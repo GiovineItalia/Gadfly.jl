@@ -9,14 +9,16 @@ require("aesthetics.jl")
 require("geometry.jl")
 require("theme.jl")
 require("guide.jl")
+require("statistics.jl")
 
 
 type Layer
     data::Data
     geom::Geometry
+    stat::Statistic
 
     function Layer()
-        new(Data(), NilGeometry())
+        new(Data(), NilGeometry(), IdentityStatistic())
     end
 end
 
@@ -56,10 +58,11 @@ function render(plot::Plot)
     layer_aes = [inherit(aes, plot_aes) for aes in layer_aes]
 
     # II. Statistics
-    # TODO
+    layer_aes = [apply_statistic(layer.stat, aes)
+                 for (layer, aes) in zip(plot.layers, layer_aes)]
 
     # III. Coordinates
-    fitted_coord = fit_coord(plot.coord, plot_aes, layer_aes...)
+    fitted_coord = fit_coord(plot.coord, layer_aes...)
     plot_canvas = apply_coord(fitted_coord)
 
     # IV. Guides
