@@ -145,9 +145,11 @@ function apply_coord(coord::FittedCartesianCoordinate)
     yspan = coord.ymax - coord.ymin
     ypadding = 0.03 * yspan
 
-    Canvas(Units(coord.xmin - xpadding, coord.ymin - ypadding,
-                 coord.xmax - coord.xmin + 2xpadding,
-                 coord.ymax - coord.ymin + 2ypadding))
+    width  = coord.xmax - coord.xmin + 2xpadding
+    height = coord.ymax - coord.ymin + 2ypadding
+
+    Canvas(Units(coord.xmin - xpadding, height - ypadding,
+                 width, -height))
 end
 
 
