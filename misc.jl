@@ -25,3 +25,6 @@ function push{T}(xs::Vector{T}, ys::T...)
     end
 end
 
+
+Maybe(T) = Union(T, Nothing)
+

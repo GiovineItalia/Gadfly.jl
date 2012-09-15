@@ -9,7 +9,7 @@ abstract Geometry
 type NilGeometry <: Geometry
 end
 
-function render(geom::NilGeometry, aes::Aesthetics) end
+function render(geom::NilGeometry, theme::Theme, aes::Aesthetics) end
 
 type PointGeometry <: Geometry
     default_aes::Aesthetics
@@ -46,7 +46,7 @@ function check_xy(aes::Aesthetics)
 end
 
 
-function render(geom::PointGeometry, aes::Aesthetics)
+function render(geom::PointGeometry, theme::Theme, aes::Aesthetics)
     println("render point geom")
 
     check_xy(aes)
@@ -85,7 +85,7 @@ end
 const geom_line = LineGeometry()
 
 
-function render(geom::LineGeometry, aes::Aesthetics)
+function render(geom::LineGeometry, theme::Theme, aes::Aesthetics)
     println("render line geom")
 
     check_xy(aes)
@@ -101,5 +101,64 @@ function render(geom::LineGeometry, aes::Aesthetics)
         # between the two?
     end
 end
+
+
+type BarGeometry <: Geometry
+    default_aes::Aesthetics
+
+    function BarGeometry()
+        g = Aesthetics()
+        g.color = Color[color("steelblue")]
+        new(g)
+    end
+end
+
+const geom_bar = BarGeometry()
+
+
+# Render bar geometry.
+#
+# Args:
+#   geom: bar geometry
+#   theme: the plot's theme
+#   aes: some aesthetics
+#
+# Returns
+#   A compose form.
+#
+function render(geom::BarGeometry, theme::Theme, aes::Aesthetics)
+    check_xy(aes)
+    aes = inherit(aes, geom.default_aes)
+
+    # Set the bar width to be the minimum distance between to x values, to avoid
+    # ovelapping.
+    bar_width = Inf
+    sorted_x = sort(aes.x)
+    for i in 2:length(sorted_x)
+        bar_width = min(bar_width, sorted_x[i] - sorted_x[i - 1])
+    end
+
+    if !isfinite(bar_width)
+        bar_width = 1.0
+    end
+
+    bar_width *= theme.bar_width_scale
+
+    forms = {Rectangle(x - bar_width/2, 0.0, bar_width, y)
+             for (x, y) in zip(aes.x, aes.y)}
+
+
+    if length(aes.color) == 1
+        form = compose!(forms, Fill(aes.color[1]))
+    else
+        for (form, c) in zip(forms, cycle(aes.color))
+            compose!(form, Fill(c))
+        end
+        form = compose!(forms)
+    end
+
+    compose!(form, Stroke(nothing))
+end
+
 
 

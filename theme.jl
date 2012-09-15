@@ -1,6 +1,8 @@
 
 # Parameters controlling how a plot appears
 
+require("misc.jl")
+
 
 type Theme
     panel_background::ColorOrNothing
@@ -9,6 +11,7 @@ type Theme
     tick_label_font::String
     tick_label_font_size::Measure
     tick_label_color::ColorOrNothing
+    bar_width_scale::Maybe(Float64)
 end
 
 
@@ -18,4 +21,5 @@ const default_theme =
           color("white"),
           "Questrial",
           10pt,
-          "grey30")
+          "grey30",
+          0.9)

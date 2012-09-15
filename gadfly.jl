@@ -38,9 +38,9 @@ type Plot
 end
 
 
-function render(layer::Layer, aes::Aesthetics)
+function render(layer::Layer, theme::Theme, aes::Aesthetics)
     println("render layer")
-    render(layer.geom, aes)
+    render(layer.geom, theme::Theme, aes)
 end
 
 
@@ -72,7 +72,7 @@ function render(plot::Plot)
     canvas = layout_guides(plot_canvas, guide_canvases...)
 
     # V. Geometries
-    compose!(plot_canvas, {render(layer, aes)
+    compose!(plot_canvas, {render(layer, plot.theme, aes)
                            for (aes, layer) in zip(layer_aes, plot.layers)}...)
 
     canvas

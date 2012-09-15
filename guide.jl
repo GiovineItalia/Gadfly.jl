@@ -46,7 +46,6 @@ function render(guide::XTicks, theme::Theme, aess::Vector{Aesthetics})
     (_, height) = text_extents(theme.tick_label_font,
                                theme.tick_label_font_size,
                                values(ticks)...)
-    println(height)
     padding = 1mm
 
     tick_labels = compose!(Canvas(0cx, 1cy, 1w, height + 2padding),
