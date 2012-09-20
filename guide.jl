@@ -13,7 +13,7 @@ typealias Guides Vector{Guide}
 type PanelBackground <: Guide
 end
 
-const panel_background = PanelBackground()
+const guide_background = PanelBackground()
 
 
 function render(guide::PanelBackground, theme::Theme, aess::Vector{Aesthetics})
@@ -26,7 +26,7 @@ end
 type XTicks <: Guide
 end
 
-const x_ticks = XTicks()
+const guide_x_ticks = XTicks()
 
 
 function render(guide::XTicks, theme::Theme, aess::Vector{Aesthetics})
@@ -68,7 +68,7 @@ end
 type YTicks <: Guide
 end
 
-const y_ticks = YTicks()
+const guide_y_ticks = YTicks()
 
 function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
     println("render yticks")
