@@ -1,47 +1,47 @@
 
 
 type Transform
-    vars::Vector{Symbol} # variables to which the transform is applied
-    f::Function          # transform function
-    finv::Function       # f's inverse
-    label::Function      # produce a string given some value f(x)
+    var::Symbol     # variables to which the transform is applied
+    f::Function     # transform function
+    finv::Function  # f's inverse
+    label::Function # produce a string given some value f(x)
 end
 
 
 # Constructors
 
 
-function IdenityTransform(vars::Symbol...)
-    Transform(vars, identity, identity, fmt_float)
+function IdenityTransform(var::Symbol)
+    Transform(var, identity, identity, fmt_float)
 end
 
 
-function Log10Transform(vars::Symbol...)
-    Transform(vars,
+function Log10Transform(var::Symbol)
+    Transform(var,
               log10,
               x -> 10^x,
               x -> @sprintf("10<sup>%s</sup>", fmt_float(x)))
 end
 
 
-function LnTransform(vars::Symbol...)
-    Transform(vars,
+function LnTransform(var::Symbol)
+    Transform(var,
               log,
               exp,
               x -> @sprintf("e<sup>%s</sup>", fmt_float(x)))
 end
 
 
-function AsinhTransform(vars::Symbol...)
-    Transform(vars,
+function AsinhTransform(var::Symbol)
+    Transform(var,
               x -> real(asinh(x + 0im)),
               sinh,
               x -> fmt_float(sinh(x)))
 end
 
 
-function SqrtTransform(vars::Symbol...)
-    Transform(vars,
+function SqrtTransform(var::Symbol)
+    Transform(var,
               sqrt,
               x -> 2^x,
               x -> fmt_float(sqrt(x)))
@@ -63,13 +63,31 @@ const transform_x_sqrt     = SqrtTransform(:x)
 const transform_y_sqrt     = SqrtTransform(:y)
 
 
+# Application
 
 
-# Is this what we want? How are transforms used?  First, they are applied to
-# aesthetics, then statistics are applied. The xticks and yticks statistics
-# choose ticks based on the scaled data, then they have to "detransform"
-# to choose labels. So, the question is, how does detransforming work?
+# Apply a series of transforms.
+#
+# Args:
+#   trans: Transforms to be applied in order.
+#   aess: Aesthetics to be transformed.
+#
+# Returns:
+#   Nothing, but modifies aess.
+#
+function apply_transforms(trans::Vector{Transform}, aess::Vector{Aesthetics})
+    println("apply_transforms")
 
+    for tran in trans
+        for aes in aess
+            if getfield(aes, tran.var) === nothing
+                continue
+            end
 
+            setfield(aes, tran.var, map(tran.f, getfield(aes, tran.var)))
+        end
+    end
+    nothing
+end
 
 

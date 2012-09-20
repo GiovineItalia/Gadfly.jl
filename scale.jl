@@ -36,6 +36,7 @@ end
 function apply_scales(scales::Vector{Scale}, datas::Data...)
     aess = [Aesthetics() for _ in datas]
     apply_scales(scales, aess, datas...)
+    aess
 end
 
 

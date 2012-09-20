@@ -28,12 +28,16 @@ end
 
 const x_ticks = XTicks()
 
+
 function render(guide::XTicks, theme::Theme, aess::Vector{Aesthetics})
     println("render xticks")
+
     ticks = Dict{Float64, String}()
     for aes in aess
-        if issomething(aes.xticks)
-            merge!(ticks, aes.xticks)
+        if issomething(aes.xtick) && issomething(aes.xtick_labels)
+            for (val, label) in zip(aes.xtick, aes.xtick_labels)
+                ticks[val] = label
+            end
         end
     end
 
@@ -68,12 +72,17 @@ const y_ticks = YTicks()
 
 function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
     println("render yticks")
+
     ticks = Dict{Float64, String}()
     for aes in aess
-        if issomething(aes.yticks)
-            merge!(ticks, aes.yticks)
+        if issomething(aes.ytick) && issomething(aes.ytick_labels)
+            for (val, label) in zip(aes.ytick, aes.ytick_labels)
+                ticks[val] = label
+            end
         end
     end
+
+    println(ticks)
 
     form = Form()
     for (tick, label) in ticks
@@ -106,6 +115,8 @@ end
 #      embed it in the plot's canvas.
 #   2. Otherwise, we expect a side to be given by the canvases position to be
 #
+# TODO: This is an ugly hack and points to shortcommings in compose. Think of
+# how a more general layout mechanism can be added to compose.
 
 function layout_guides(plot_canvas::Canvas, guide_canvases::Canvas...)
 

@@ -16,7 +16,7 @@ require("statistics.jl")
 type Layer
     data::Data
     geom::Geometry
-    stat::Statistic
+    statistic::Statistic
 
     function Layer()
         new(Data(), NilGeometry(), IdentityStatistic())
@@ -28,19 +28,16 @@ type Plot
     layers::Vector{Layer}
     data::Data
     scales::Vector{Scale}
+    transforms::Vector{Transform}
+    statistics::Vector{Statistic}
     coord::Coordinate
     guides::Guides
     theme::Theme
 
     function Plot()
-        new(Layer[], Data(), Scale[], coord_cartesian, Guide[], default_theme)
+        new(Layer[], Data(), Scale[], Transform[], Statistic[],
+            coord_cartesian, Guide[], default_theme)
     end
-end
-
-
-function render(layer::Layer, theme::Theme, aes::Aesthetics)
-    println("render layer")
-    render(layer.geom, theme::Theme, aes)
 end
 
 
@@ -50,34 +47,44 @@ function render(plot::Plot)
                         [layer.data for layer in plot.layers]...)
 
     # II. Transformations
-    # No, this should still be part of the scale. But, we need to give
-    # statistics access to the scales transformation.
-    # Argh. This is the fundamental architecture problem. How to statistics
-    # learn about transformations?
+    apply_transforms(plot.transforms, aess)
 
-    # Currently we use aesthetics to share any information, but transformations
-    # are some number of (Symbol, Transform) tuples. That's a little odd to have
-    # as an aesthetic. Still, I like having transforms as a seperate thing:
-    # scale_x_continuous + transform_x_log10 seems nicer than
-    # scale_x_log10. The whole idea of "aesthetics" seems contrived.
-    # I'm tempted to dump it and go with UntypedBindings (or "Data") and
-    # Bindings. And everything is a binding.
+    # Organize transforms
+    trans_map = Dict{Symbol, Transform}()
+    for transform in plot.transforms
+        trans_map[transform.var] = transform
+    end
 
+    # IIIa. Layer-wise statistics
+    for (layer, aes) in zip(plot.layers, aess)
+        apply_statistics(Statistic[layer.statistic], aes, trans_map)
+    end
 
-    # III. Statistics
-    # 1. Apply the plot's statistics to every layers aes
-    # 2. Apply the each layers statistic do its awn aes
+    # IIIb. Plot-wise Statistics
+    plot_aes = cat(aess...)
+    apply_statistics(plot.statistics, plot_aes, trans_map)
 
     # IV. Coordinates
-    # Return a suitable canvas.
+    plot_canvas = apply_coordinate(plot.coord, plot_aes, aess...)
+
+    # Now that coordinates are set, layer aesthetics inherit plot aesthetics.
+    for aes in aess
+        inherit!(aes, plot_aes)
+    end
 
     # V. Guides
-    # Render shit!
+    guide_canvases = Canvas[]
+    for guide in plot.guides
+        push(guide_canvases, render(guide, plot.theme, aess)...)
+    end
+
+    canvas = layout_guides(plot_canvas, guide_canvases...)
 
     # VI. Geometries
-    # Render more shit!
+    compose!(plot_canvas, {render(layer.geom, plot.theme, aes)
+                           for (layer, aes) in zip(plot.layers, aess)}...)
 
-    nothing
+    canvas
 end
 
 

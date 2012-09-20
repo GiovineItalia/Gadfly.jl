@@ -17,13 +17,16 @@ import Iterators.*
 type Data
     x
     y
-    xticks
-    yticks
+    xtick
+    ytick
+    xtick_labels
+    ytick_labels
     size
     color
 
     function Data()
-        new(nothing, nothing, nothing, nothing, nothing, nothing)
+        new(nothing, nothing, nothing, nothing,
+            nothing, nothing, nothing, nothing)
     end
 
     # shallow copy constructor

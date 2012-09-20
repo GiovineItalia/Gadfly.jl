@@ -4,13 +4,19 @@
 # nothing) inherited from b.
 function inherit{T}(a::T, b::T)
     c = copy(a)
+    inherit!(c, b)
+    c
+end
+
+
+function inherit!{T}(a::T, b::T)
     for field in T.names
-        val = getfield(c, field)
-        if is(val, nothing)
-            setfield(c, field, getfield(b, field))
+        val = getfield(a, field)
+        if val === nothing
+            setfield(a, field, getfield(b, field))
         end
     end
-    c
+    nothing
 end
 
 
