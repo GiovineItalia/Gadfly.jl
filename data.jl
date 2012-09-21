@@ -4,16 +4,10 @@ require("iterators.jl")
 
 import Iterators.*
 
-# The Data type represents bindings of data to aesthetics.
 
-#@eval begin
-    #type Data
-        #$()
-    #end
-#end
 
-# TODO: generate this with a macro
-
+# Data binds untyped values to a aesthetic variables.
+# TODO: generate this from Aesthetics with a macro
 type Data
     x
     y
@@ -39,9 +33,28 @@ type Data
     end
 end
 
+# Make a shallow copy of a Data instance.
+#
+# Args:
+#   a: source
+#
+# Returns:
+#   A copy of a
+#
 copy(a::Data) = Data(a)
 
 
+# Produce a new Data instance chaining the values of one or more others.
+#
+# The bound values in the returned Data instance are chain iterators which will
+# iterate through the values contained in all the given Data instances.
+#
+# Args:
+#  ds: Some Data instances.
+#
+# Returns:
+#   A new Data instance.
+#
 function chain(ds::Data...)
     chained_data = Data()
     for name in Data.names

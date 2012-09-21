@@ -2,8 +2,8 @@
 require("misc.jl")
 require("compose.jl")
 
-# Aesthetics are parameterizations of the geometry of the plot
-
+# Aesthetics is a set of bindings of typed values to symbols (Wilkinson calls
+# this a Varset). Each variable controls how geometries are realized.
 type Aesthetics
     x::Union(Nothing, Vector{Float64})
     y::Union(Nothing, Vector{Float64})
@@ -17,7 +17,6 @@ type Aesthetics
     function Aesthetics()
         new(nothing, nothing, nothing, nothing,
             nothing,nothing, nothing, nothing)
-        #new([nothing for _ in 1:length(Aesthetics.names)]...)
     end
 
     # shallow copy constructor
@@ -31,24 +30,55 @@ type Aesthetics
 end
 
 
+# Create a shallow copy of an Aesthetics instance.
+#
+# Args:
+#   a: aesthetics to copy
+#
+# Returns:
+#   Copied aesthetics.
+#
 copy(a::Aesthetics) = Aesthetics(a)
 
 
+# Replace values in a with non-nothing values in b.
+#
+# Args:
+#   a: Destination.
+#   b: Source.
+#
+# Returns: nothing
+#
+# Modifies: a
+#
 function update!(a::Aesthetics, b::Aesthetics)
     for name in Aesthetics.names
         if issomething(getfield(b, name))
             setfield(a, name, getfield(b, name))
         end
     end
+
+    nothing
 end
 
 
+# Serialize aesthetics to JSON.
+#
+# Args:
+#  a: aesthetics to serialize.
+#
+# Returns:
+#   JSON data as a string.
+#
 function json(a::Aesthetics)
     join([strcat(a, ":", json(getfield(a, var))) for var in aes_vars], ",\n")
 end
 
 
 # Concatenate aesthetics.
+#
+# A new Aesthetics instance is produced with data vectors in each of the given
+# Aesthetics concatenated, nothing being treated as an empty vector.
 #
 # Args:
 #   aess: One or more aesthetics.

@@ -6,16 +6,19 @@ require("theme.jl")
 
 abstract Geometry
 
+# Geometry that does renders nothing.
 type NilGeometry <: Geometry
 end
 
 function render(geom::NilGeometry, theme::Theme, aes::Aesthetics) end
 
+# Geometry which displays points at given (x, y) positions.
 type PointGeometry <: Geometry
     default_aes::Aesthetics
 
     function PointGeometry()
         g = Aesthetics()
+        # TODO: these constants should be in Theme
         g.size  = Measure[0.5mm]
         g.color = Color[color("steelblue")]
         new(g)
@@ -25,6 +28,14 @@ end
 const geom_point = PointGeometry()
 
 
+# Check that the x and y aesthetics are properly specified.
+#
+# Args:
+#   aes: some aesthetics
+#
+# Returns:
+#   nothing, throws an error if the aesthetics are misspecified
+#
 function check_xy(aes::Aesthetics)
     if typeof(aes.x) == Nothing || typeof(aes.y) == Nothing
         error("Both `x` and `y` must be defined for point geometry.")
@@ -46,9 +57,17 @@ function check_xy(aes::Aesthetics)
 end
 
 
+# Generate a form for a point geometry.
+#
+# Args:
+#   geom: point geometry.
+#   theme: the plot's theme.
+#   aes: aesthetics.
+#
+# Returns:
+#   A compose Form.
+#
 function render(geom::PointGeometry, theme::Theme, aes::Aesthetics)
-    println("render point geom")
-
     check_xy(aes)
 
     aes = inherit(aes, geom.default_aes)
@@ -71,20 +90,33 @@ function render(geom::PointGeometry, theme::Theme, aes::Aesthetics)
 end
 
 
+# Line geometry connects (x, y) coordinates with lines.
 type LineGeometry <: Geometry
     default_aes::Aesthetics
 
     function LineGeometry()
         g = Aesthetics()
+        # TODO: these constants should be in Theme
         g.size  = Measure[0.5mm]
         g.color = Color[color("steelblue")]
         new(g)
     end
 end
 
+
 const geom_line = LineGeometry()
 
 
+# Render line geometry.
+#
+# Args:
+#   geom: line geometry.
+#   theme: the plot's theme.
+#   aes: aesthetics.
+#
+# Returns:
+#   A compose Form.
+#
 function render(geom::LineGeometry, theme::Theme, aes::Aesthetics)
     println("render line geom")
 
@@ -103,6 +135,7 @@ function render(geom::LineGeometry, theme::Theme, aes::Aesthetics)
 end
 
 
+# Bar geometry summarizes data as verticle bars.
 type BarGeometry <: Geometry
     default_aes::Aesthetics
 
@@ -112,6 +145,7 @@ type BarGeometry <: Geometry
         new(g)
     end
 end
+
 
 const geom_bar = BarGeometry()
 

@@ -4,6 +4,8 @@ require("compose.jl")
 abstract Coordinate
 
 
+# Cartesian coordinates with position given by the x and y (and similar)
+# aesthetics.
 type CartesianCoordinate <: Coordinate
     xvars::Vector{Symbol}
     yvars::Vector{Symbol}
@@ -13,6 +15,14 @@ end
 const coord_cartesian = CartesianCoordinate([:x, :xtick], [:y, :ytick])
 
 
+# Produce a canvas with suitable cartesian coordinates.
+#
+# Args:
+#   coord: cartesian coordinate instance.
+#
+# Returns:
+#   A compose Canvas.
+#
 function apply_coordinate(coord::CartesianCoordinate, aess::Aesthetics...)
     xmin = Inf
     xmax = -Inf

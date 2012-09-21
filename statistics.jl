@@ -81,7 +81,6 @@ function cross_val_risk(xs::Vector{Float64}, m::Int)
 end
 
 
-
 # Estimate the optimal number of bins for a histogram by minimizing cross
 # validation risk.
 #
@@ -236,7 +235,6 @@ function optimize_ticks(x_min::Float64, x_max::Float64)
 end
 
 
-
 # Apply a tick statistic.
 #
 # Args:
@@ -244,7 +242,10 @@ end
 #   aes: aesthetics.
 #
 # Returns:
-#   Nothing, modifies aes.
+#   nothing
+#
+# Modifies:
+#   aes
 #
 function apply_statistic(stat::TickStatistic, aes::Aesthetics,
                          trans_map::Dict{Symbol, Transform})

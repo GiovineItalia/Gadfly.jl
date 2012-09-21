@@ -1,4 +1,5 @@
 
+# This bit of ugliness will go away when Julia has proper packages.
 insert(LOAD_PATH, 1, real_path("../compose/"))
 require("compose.jl")
 
@@ -13,6 +14,8 @@ require("guide.jl")
 require("statistics.jl")
 
 
+# A plot has zero or more layers. Layers have a particular geometry and their
+# own data, which is inherited from the plot if not given.
 type Layer
     data::Data
     geom::Geometry
@@ -24,6 +27,7 @@ type Layer
 end
 
 
+# A full plot specification.
 type Plot
     layers::Vector{Layer}
     data::Data
@@ -41,6 +45,14 @@ type Plot
 end
 
 
+# Turn a graph specification into a graphic.
+#
+# Args:
+#   plot: a plot to render.
+#
+# Returns:
+#   A compose Canvas containing the graphic.
+#
 function render(plot::Plot)
     # I. Scales
     aess = apply_scales(plot.scales, plot.data,
