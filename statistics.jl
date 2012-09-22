@@ -98,12 +98,12 @@ function choose_bin_count(xs::Vector{Float64})
     r = cross_val_risk(xs, m)
 
     # Magnitude of proposal offsets
-    d = Poisson(3)
+    d = Uniform(0, 3)
 
     # Run a few rounds of stochastic hill-climbing to find a good number
     N = 500
     for _ in 1:N
-        off = rand(d)
+        off = int(rand(d))
         m_proposed = randbit() == 1 ? m + off : max(1, m - off)
         r_proposed = cross_val_risk(xs, m_proposed)
 
@@ -111,7 +111,6 @@ function choose_bin_count(xs::Vector{Float64})
         if r_proposed < r
             m = m_proposed
             r = r_proposed
-            println((m, r))
         end
     end
 
