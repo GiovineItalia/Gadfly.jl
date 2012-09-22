@@ -25,11 +25,9 @@ import Distributions.*
 
 n = 100000
 x = rand(Normal(), n)
-y = 200 * rand(n)
 
 p = Plot()
 p.data.x = x
-p.data.y = y
 
 # Scales
 push(p.scales, scale_x_continuous)
