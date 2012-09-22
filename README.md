@@ -13,6 +13,8 @@ Stay tuned. More to come.
 
 Here's an example of what works so far:
 
+![Histogram](http://dcjones.github.com/gadfly/histogram_example.svg)
+
 ```julia
 # Draw a simple histogram with Gadfly.
 
@@ -60,8 +62,6 @@ push(p.layers, layer)
 end
 
 ```
-
-![Histogram](http://dcjones.github.com/gadfly/histogram_example.svg)
 
 
 It's now terse, or pretty (that's still to come), but it works.

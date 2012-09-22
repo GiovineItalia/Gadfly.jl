@@ -19,7 +19,7 @@ const default_theme =
     Theme(color("grey95"),
           1mm,
           color("white"),
-          "Questrial",
+          "Helvetica",
           10pt,
           "grey30",
           0.9)
