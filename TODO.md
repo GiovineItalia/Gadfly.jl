@@ -1,5 +1,4 @@
 
-# Less horrifying layout_guides function.
 * Axis labels.
 * Discrete scale.
 * Document things.

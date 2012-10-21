@@ -89,15 +89,14 @@ function render(plot::Plot)
                                for (layer, aes) in zip(plot.layers, aess)}...)
 
     # VI. Guides
-    guide_canvases = Canvas[]
+    guide_canvases = {}
     for guide in plot.guides
         append!(guide_canvases, render(guide, plot.theme, aess))
     end
 
-    # TODO: layout_guides(...
-    #canvas = layout_guides(plot_canvas, guide_canvases...)
+    canvas = layout_guides(plot_canvas, guide_canvases...)
 
-    plot_canvas
+    canvas
 end
 
 

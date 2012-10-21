@@ -10,6 +10,21 @@ abstract Guide
 typealias Guides Vector{Guide}
 
 
+# Where the guide should be placed in relation to the plot.
+abstract GuidePosition
+type TopGuidePosition    <: GuidePosition end
+type RightGuidePosition  <: GuidePosition end
+type BottomGuidePosition <: GuidePosition end
+type LeftGuidePosition   <: GuidePosition end
+type UnderGuidePosition  <: GuidePosition end
+
+const top_guide_position    = TopGuidePosition()
+const right_guide_position  = RightGuidePosition()
+const bottom_guide_position = BottomGuidePosition()
+const left_guide_position   = LeftGuidePosition()
+const under_guide_position  = UnderGuidePosition()
+
+
 type PanelBackground <: Guide
 end
 
@@ -18,7 +33,8 @@ const guide_background = PanelBackground()
 
 function render(guide::PanelBackground, theme::Theme, aess::Vector{Aesthetics})
     p = stroke(nothing) | fill(theme.panel_background)
-    Canvas[canvas() << (rectangle() << p)]
+    c = canvas() << (rectangle() << p)
+    {(c, under_guide_position)}
 end
 
 
@@ -48,16 +64,16 @@ function render(guide::XTicks, theme::Theme, aess::Vector{Aesthetics})
                                values(ticks)...)
     padding = 1mm
 
-
     tick_labels = compose([text(tick, 1h - padding, label, hcenter, vbottom)
                            for (tick, label) in ticks]...)
     tick_labels <<= stroke(nothing) |
                     fill(theme.tick_label_color) |
                     font(theme.tick_label_font) |
                     fontsize(theme.tick_label_font_size)
-    tick_labels = canvas(0cx, 1cy, 1w, height + 2padding) << tick_labels
+    tick_labels = canvas(0, 0, 1w, height + 2padding) << tick_labels
 
-    Canvas[grid_lines, tick_labels]
+    {(grid_lines, under_guide_position),
+     (tick_labels, bottom_guide_position)}
 end
 
 
@@ -89,64 +105,76 @@ function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
     padding = 1mm
     width += 2padding
 
-
     tick_labels = compose([text(width - padding, tick, label, hright, vcenter)
                            for (tick, label) in ticks]...)
     tick_labels <<= stroke(nothing) |
                     fill(theme.tick_label_color) |
                     font(theme.tick_label_font) |
                     fontsize(theme.tick_label_font_size)
-    tick_labels = canvas(0cx, 0cy, width, 1cy) << tick_labels
+    tick_labels = canvas(0, 0, width, 1cy) << tick_labels
 
-    Canvas[grid_lines, tick_labels]
+    {(grid_lines, under_guide_position),
+     (tick_labels, left_guide_position)}
 end
 
 
-# Try to arrange a bunch of rendered guides (as canvases) using some
-# simple rules:
-#   1. If the canvas has width 1w and height 1h (i.e., parents coordinates)
-#      embed it in the plot's canvas.
-#   2. Otherwise, we expect a side to be given by the canvases position to be
+# Arrange a plot with its guides
 #
-# TODO: This is an ugly hack and points to shortcommings in compose. Think of
-# how a more general layout mechanism can be added to compose.
+# Args:
+#   plot_canvas: A canvas containing the plot graphics.
+#   guides: Tuples of guide canvases each with a GuidePosition giving
+#           where the guide should be placed relative to the plot.
+#
+# Returns:
+#   A new canvas containing the plot with guides layed out in the specified
+#   manner.
+function layout_guides(plot_canvas::Canvas,
+                       guides::(Canvas, GuidePosition)...)
 
-# Let's think through how this could be done more elegently, or at least in a
-# way that doesn't make me cringe.
+    # Every guide is updated to use the plot's unit box.
+    guides = [(set_unit_box(guide, plot_canvas.unit_box), pos)
+              for (guide, pos) in guides]
 
-
-function layout_guides(plot_canvas::Canvas, guide_canvases::Canvas...)
-
-    # Make one pass to build up all the guides that are plotted over the
-    # the panel before composing with the plot canvas.
-    root_canvas = Canvas(0cx, 0cy, 1cx, 1cy,
-                         Units(plot_canvas.unit_box))
-    isfull = c -> c.box.width == 1w && c.box.height == 1h
-    for c in filter(isfull, guide_canvases)
-        c.unit_box = plot_canvas.unit_box
-        compose!(root_canvas, c)
-    end
-    compose!(root_canvas, plot_canvas)
-    plot_canvas = root_canvas
-
-    for c in filter(negate(isfull), guide_canvases)
-        c.unit_box = plot_canvas.unit_box
-
-        # left-aligned
-        if c.box.x0 == 0cx && c.box.height == 1cy
-            root_canvas.box.x0    = c.box.width
-            root_canvas.box.width -= c.box.width
-            c.box.height = plot_canvas.box.height
-        # bottom
-        elseif c.box.y0 == 1cy && c.box.width == 1w
-            root_canvas.box.height -= c.box.height
-            c.box.y0 -= c.box.height
+    # Group by position
+    top_guides    = Canvas[]
+    right_guides  = Canvas[]
+    bottom_guides = Canvas[]
+    left_guides   = Canvas[]
+    under_guides  = Canvas[]
+    for (guide, pos) in guides
+        if pos === top_guide_position
+            push(top_guides, guide)
+        elseif pos === right_guide_position
+            push(right_guides, guide)
+        elseif pos === bottom_guide_position
+            push(bottom_guides, guide)
+        elseif pos === left_guide_position
+            push(left_guides, guide)
+        elseif pos === under_guide_position
+            push(under_guides, guide)
         end
-        # TODO: others
-
-        root_canvas = compose(Canvas(0cx, 0cy, 1cx, 1cy), root_canvas, c)
     end
 
-    root_canvas
+    # Stack the guides on edge edge of the plot
+    top_guides    = vstack(0, 0, 1, [(g, hcenter) for g in top_guides]...)
+    right_guides  = hstack(0, 0, 1, [(g, vcenter) for g in right_guides]...)
+    bottom_guides = vstack(0, 0, 1, [(g, hcenter) for g in bottom_guides]...)
+    left_guides   = hstack(0, 0, 1, [(g, vcenter) for g in left_guides]...)
+
+    # Reposition each guide stack, now that we know the extents
+    t = top_guides.box.height
+    r = right_guides.box.width
+    b = bottom_guides.box.height
+    l = left_guides.box.width
+    pw = 1cx - l - r # plot width
+    ph = 1cy - t - b # plot height
+
+    top_guides    = set_box(top_guides,    BoundingBox(l, 0, pw, t))
+    right_guides  = set_box(right_guides,  BoundingBox(l + pw, t, r, ph))
+    bottom_guides = set_box(bottom_guides, BoundingBox(l, t + ph, pw, b))
+    left_guides   = set_box(left_guides,   BoundingBox(0, t, l, ph))
+
+    plot_canvas = canvas(l, t, pw, ph) | compose(under_guides...) | plot_canvas
+    canvas() | plot_canvas | top_guides | right_guides | bottom_guides | left_guides
 end
 
