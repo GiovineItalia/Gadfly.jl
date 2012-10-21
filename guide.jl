@@ -94,8 +94,6 @@ function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
         end
     end
 
-    println(ticks)
-
     form = compose([lines((0w, tick), (1w, tick)) for (tick, label) in ticks]...)
     grid_lines = canvas() << (form << stroke(theme.grid_color))
 
@@ -115,6 +113,52 @@ function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
 
     {(grid_lines, under_guide_position),
      (tick_labels, left_guide_position)}
+end
+
+
+# X-axis label Guide
+type XLabel <: Guide
+    label::String
+end
+
+
+function render(guide::XLabel, theme::Theme, aess::Vector{Aesthetics})
+    (_, text_height) = text_extents(theme.axis_label_font,
+                                    theme.axis_label_font_size,
+                                    guide.label)
+
+    padding = 1mm
+    t = text(0.5w, 1h - padding, guide.label, hcenter, vbottom)
+    t <<= stroke(nothing) |
+          fill(theme.axis_label_color) |
+          font(theme.axis_label_font) |
+          fontsize(theme.axis_label_font_size)
+    c = canvas(0, 0, 1w, text_height + padding)
+
+    {(c << t, bottom_guide_position)}
+end
+
+
+# Y-axis label Guide
+type YLabel <: Guide
+    label::String
+end
+
+
+function render(guide::YLabel, theme::Theme, aess::Vector{Aesthetics})
+    (text_width, text_height) = text_extents(theme.axis_label_font,
+                                             theme.axis_label_font_size,
+                                             guide.label)
+    padding = 1mm
+    t = text(padding, 0.5h, guide.label, hleft, vcenter)
+    t <<= stroke(nothing) |
+          fill(theme.axis_label_color) |
+          font(theme.axis_label_font) |
+          fontsize(theme.axis_label_font_size)
+    c = canvas(0, 0, text_width + 2padding, 1cy)
+               #Rotation(0.3pi, 1cx, 0.5cy))
+
+    {(c << t, left_guide_position)}
 end
 
 
