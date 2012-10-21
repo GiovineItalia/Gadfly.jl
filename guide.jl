@@ -45,8 +45,6 @@ const guide_x_ticks = XTicks()
 
 
 function render(guide::XTicks, theme::Theme, aess::Vector{Aesthetics})
-    println("render xticks")
-
     ticks = Dict{Float64, String}()
     for aes in aess
         if issomething(aes.xtick) && issomething(aes.xtick_labels)
@@ -83,8 +81,6 @@ end
 const guide_y_ticks = YTicks()
 
 function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
-    println("render yticks")
-
     ticks = Dict{Float64, String}()
     for aes in aess
         if issomething(aes.ytick) && issomething(aes.ytick_labels)
@@ -127,7 +123,7 @@ function render(guide::XLabel, theme::Theme, aess::Vector{Aesthetics})
                                     theme.axis_label_font_size,
                                     guide.label)
 
-    padding = 1mm
+    padding = 2mm
     t = text(0.5w, 1h - padding, guide.label, hcenter, vbottom)
     t <<= stroke(nothing) |
           fill(theme.axis_label_color) |
@@ -149,14 +145,14 @@ function render(guide::YLabel, theme::Theme, aess::Vector{Aesthetics})
     (text_width, text_height) = text_extents(theme.axis_label_font,
                                              theme.axis_label_font_size,
                                              guide.label)
-    padding = 1mm
-    t = text(padding, 0.5h, guide.label, hleft, vcenter)
+    padding = 2mm
+    t = text(0.5w, 0.5h, guide.label, hcenter, vcenter)
     t <<= stroke(nothing) |
           fill(theme.axis_label_color) |
           font(theme.axis_label_font) |
           fontsize(theme.axis_label_font_size)
-    c = canvas(0, 0, text_width + 2padding, 1cy)
-               #Rotation(0.3pi, 1cx, 0.5cy))
+    c = canvas(0, 0, text_height + 2padding, 1cy,
+               Rotation(-0.5pi, 0.5w, 0.5h))
 
     {(c << t, left_guide_position)}
 end

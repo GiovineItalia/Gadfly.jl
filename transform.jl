@@ -76,8 +76,6 @@ const transform_y_sqrt     = SqrtTransform(:y)
 #   Nothing, but modifies aess.
 #
 function apply_transforms(trans::Vector{Transform}, aess::Vector{Aesthetics})
-    println("apply_transforms")
-
     for tran in trans
         for aes in aess
             if getfield(aes, tran.var) === nothing

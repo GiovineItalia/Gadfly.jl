@@ -115,8 +115,6 @@ const geom_line = LineGeometry()
 #   A compose Form.
 #
 function render(geom::LineGeometry, theme::Theme, aes::Aesthetics)
-    println("render line geom")
-
     check_xy(aes)
 
     aes = inherit(aes, geom.default_aes)

@@ -17,8 +17,6 @@ abstract Statistic
 #
 function apply_statistics(stats::Vector{Statistic}, aes::Aesthetics,
                           trans::Dict{Symbol, Transform})
-    println("apply_statistics")
-
     for stat in stats
         apply_statistic(stat, aes, trans)
     end
@@ -120,8 +118,6 @@ end
 
 function apply_statistic(stat::HistogramStatistic, aes::Aesthetics,
                          trans::Dict{Symbol, Transform})
-    println("apply_statistic (histogram)")
-
     sorted_x = sort(aes.x)
     n = length(sorted_x)
     m = choose_bin_count(sorted_x)
@@ -223,8 +219,6 @@ function optimize_ticks(x_min::Float64, x_max::Float64)
         z -= 1
     end
 
-    println((x_min, x_max))
-    println(k_best)
     S = Array(Float64, int(k_best))
     for i in 0:(k_best - 1)
         S[i+1] = (r_best + i) * q_best * 10^z_best
@@ -248,8 +242,6 @@ end
 #
 function apply_statistic(stat::TickStatistic, aes::Aesthetics,
                          trans_map::Dict{Symbol, Transform})
-    println("apply_statistc (tick)")
-
     in_values = [getfield(aes, var) for var in stat.in_vars]
     in_values = filter(val -> !(val === nothing), in_values)
     in_values = chain(in_values...)
