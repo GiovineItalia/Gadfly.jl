@@ -70,7 +70,7 @@ function apply_coordinate(coord::CartesianCoordinate, aess::Aesthetics...)
     width  = xmax - xmin + 2xpadding
     height = ymax - ymin + 2ypadding
 
-    Canvas(Units(xmin - xpadding, ymax + ypadding, width, -height))
+    canvas(Units(xmin - xpadding, ymax + ypadding, width, -height))
 end
 
 

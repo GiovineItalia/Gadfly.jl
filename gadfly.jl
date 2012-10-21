@@ -84,19 +84,20 @@ function render(plot::Plot)
         inherit!(aes, plot_aes)
     end
 
-    # V. Guides
+    # VI. Geometries
+    plot_canvas <<= compose({render(layer.geom, plot.theme, aes)
+                               for (layer, aes) in zip(plot.layers, aess)}...)
+
+    # VI. Guides
     guide_canvases = Canvas[]
     for guide in plot.guides
-        push(guide_canvases, render(guide, plot.theme, aess)...)
+        append!(guide_canvases, render(guide, plot.theme, aess))
     end
 
-    canvas = layout_guides(plot_canvas, guide_canvases...)
+    # TODO: layout_guides(...
+    #canvas = layout_guides(plot_canvas, guide_canvases...)
 
-    # VI. Geometries
-    compose!(plot_canvas, {render(layer.geom, plot.theme, aes)
-                           for (layer, aes) in zip(plot.layers, aess)}...)
-
-    canvas
+    plot_canvas
 end
 
 

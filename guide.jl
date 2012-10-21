@@ -17,9 +17,8 @@ const guide_background = PanelBackground()
 
 
 function render(guide::PanelBackground, theme::Theme, aess::Vector{Aesthetics})
-    [compose!(Canvas(), Rectangle(),
-              Stroke(nothing),
-              Fill(theme.panel_background))]
+    p = stroke(nothing) | fill(theme.panel_background)
+    Canvas[canvas() << (rectangle() << p)]
 end
 
 
@@ -41,27 +40,24 @@ function render(guide::XTicks, theme::Theme, aess::Vector{Aesthetics})
         end
     end
 
-    form = Form()
-    for (tick, label) in ticks
-        compose!(form, Lines((tick, 0h), (tick, 1h)))
-    end
-    grid_lines = compose!(Canvas(), form, Stroke(theme.grid_color))
+    form = compose([lines((tick, 0h), (tick, 1h)) for (tick, label) in ticks]...)
+    grid_lines = canvas() << (form << stroke(theme.grid_color))
 
     (_, height) = text_extents(theme.tick_label_font,
                                theme.tick_label_font_size,
                                values(ticks)...)
     padding = 1mm
 
-    tick_labels = compose!(Canvas(0cx, 1cy, 1w, height + 2padding),
-                           Stroke(nothing), Fill(theme.tick_label_color),
-                           Font(theme.tick_label_font),
-                           FontSize(theme.tick_label_font_size))
-    for (tick, label) in ticks
-        compose!(tick_labels, Text(tick, 1h - padding,
-                                   label, hcenter, vbottom))
-    end
 
-    [grid_lines, tick_labels]
+    tick_labels = compose([text(tick, 1h - padding, label, hcenter, vbottom)
+                           for (tick, label) in ticks]...)
+    tick_labels <<= stroke(nothing) |
+                    fill(theme.tick_label_color) |
+                    font(theme.tick_label_font) |
+                    fontsize(theme.tick_label_font_size)
+    tick_labels = canvas(0cx, 1cy, 1w, height + 2padding) << tick_labels
+
+    Canvas[grid_lines, tick_labels]
 end
 
 
@@ -84,11 +80,8 @@ function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
 
     println(ticks)
 
-    form = Form()
-    for (tick, label) in ticks
-        compose!(form, Lines((0w, tick), (1w, tick)))
-    end
-    grid_lines = compose!(Canvas(), form, Stroke(theme.grid_color))
+    form = compose([lines((0w, tick), (1w, tick)) for (tick, label) in ticks]...)
+    grid_lines = canvas() << (form << stroke(theme.grid_color))
 
     (width, _) = text_extents(theme.tick_label_font,
                               theme.tick_label_font_size,
@@ -96,16 +89,16 @@ function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
     padding = 1mm
     width += 2padding
 
-    tick_labels = compose!(Canvas(0cx, 0cy, width, 1cy),
-                           Stroke(nothing), Fill(theme.tick_label_color),
-                           Font(theme.tick_label_font),
-                           FontSize(theme.tick_label_font_size))
-    for (tick, label) in ticks
-        compose!(tick_labels, Text(width - padding, tick,
-                                   label, hright, vcenter))
-    end
 
-    [grid_lines, tick_labels]
+    tick_labels = compose([text(width - padding, tick, label, hright, vcenter)
+                           for (tick, label) in ticks]...)
+    tick_labels <<= stroke(nothing) |
+                    fill(theme.tick_label_color) |
+                    font(theme.tick_label_font) |
+                    fontsize(theme.tick_label_font_size)
+    tick_labels = canvas(0cx, 0cy, width, 1cy) << tick_labels
+
+    Canvas[grid_lines, tick_labels]
 end
 
 
@@ -117,6 +110,10 @@ end
 #
 # TODO: This is an ugly hack and points to shortcommings in compose. Think of
 # how a more general layout mechanism can be added to compose.
+
+# Let's think through how this could be done more elegently, or at least in a
+# way that doesn't make me cringe.
+
 
 function layout_guides(plot_canvas::Canvas, guide_canvases::Canvas...)
 

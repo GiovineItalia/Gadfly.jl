@@ -10,7 +10,8 @@ abstract Geometry
 type NilGeometry <: Geometry
 end
 
-function render(geom::NilGeometry, theme::Theme, aes::Aesthetics) end
+function render(geom::NilGeometry, theme::Theme, aes::Aesthetics)
+end
 
 # Geometry which displays points at given (x, y) positions.
 type PointGeometry <: Geometry
@@ -74,19 +75,15 @@ function render(geom::PointGeometry, theme::Theme, aes::Aesthetics)
 
     forms = Array(Any, n)
     for ((x, y, s), i) in enumerate(zip(aes.x, aes.y, cycle(aes.size)))
-        forms[i] = Circle(x, y, s)
+        forms[i] = circle(x, y, s)
     end
 
     if length(aes.color) == 1
-        form = compose!(forms..., Fill(aes.color[1]))
+        form = compose(forms...) << fill(aes.color[1])
     else
-        for (f, c) in zip(forms, aes.color)
-            compose!(f, Fill(c))
-        end
-        form = compose!(forms...)
+        form = compose([f << fill(c) for (f, c) in zip(forms, aes.color)]...)
+        form << stroke(nothing)
     end
-
-    compose!(form, Stroke(nothing))
 end
 
 
@@ -125,8 +122,8 @@ function render(geom::LineGeometry, theme::Theme, aes::Aesthetics)
     aes = inherit(aes, geom.default_aes)
 
     if length(aes.color) == 1
-        compose!(Lines({(x, y) for (x, y) in zip(aes.x, aes.y)}...),
-                 Stroke(aes.color[1]), Fill(nothing))
+        form = lines({(x, y) for (x, y) in zip(aes.x, aes.y)}...)
+        form << (stroke(aes.color[1]) | fill(nothing))
     else
         # TODO: How does this work?
         # Which line gets the point? Do we do a gradient
@@ -178,21 +175,17 @@ function render(geom::BarGeometry, theme::Theme, aes::Aesthetics)
 
     bar_width *= theme.bar_width_scale
 
-    forms = {Rectangle(x - bar_width/2, 0.0, bar_width, y)
+    forms = {rectangle(x - bar_width/2, 0.0, bar_width, y)
              for (x, y) in zip(aes.x, aes.y)}
 
 
     if length(aes.color) == 1
-        form = compose!(forms, Fill(aes.color[1]))
+        form = compose(forms...) << fill(aes.color[1])
     else
-        for (form, c) in zip(forms, cycle(aes.color))
-            compose!(form, Fill(c))
-        end
-        form = compose!(forms)
+        form = compose([form << fill(c) for (f, c) in zip(forms, cycle(aes.color))]...)
     end
 
-    compose!(form, Stroke(nothing))
+    form << stroke(nothing)
 end
-
 
 
