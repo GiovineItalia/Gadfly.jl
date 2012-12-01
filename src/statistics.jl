@@ -27,7 +27,12 @@ end
 type IdentityStatistic <: Statistic
 end
 
-apply_statistic(stat::IdentityStatistic, aes::Aesthetics) = aes
+function apply_statistic(stat::IdentityStatistic, aes::Aesthetics,
+                trans::Dict{Symbol, Transform})
+    nothing
+end
+
+const stat_identity = IdentityStatistic()
 
 
 type HistogramStatistic <: Statistic

@@ -1,5 +1,4 @@
 
-* Axis labels.
 * Discrete scale.
 * Document things.
 * A simpler, terser user-facing interface.

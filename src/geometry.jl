@@ -123,9 +123,21 @@ function render(geom::LineGeometry, theme::Theme, aes::Aesthetics)
         form = lines({(x, y) for (x, y) in zip(aes.x, aes.y)}...)
         form << (stroke(aes.color[1]) | fill(nothing))
     else
-        # TODO: How does this work?
-        # Which line gets the point? Do we do a gradient
-        # between the two?
+        points = Dict{Color, Array{(Float64, Float64)}}()
+        for (x, y, c) in zip(aes.x, aes.x, cycle(aes.color))
+            if !has(points, c)
+                points[c] = Array((Float64, Float64))
+            end
+            push(points[c], (x, y))
+        end
+
+        forms = {}
+        for (c, c_points) in points
+            form = lines({(x, y) for (x, y) in c_points}...)
+            form <<= stroke(c) | fill(nothing)
+            push(forms, form)
+        end
+        compose(forms...)
     end
 end
 
