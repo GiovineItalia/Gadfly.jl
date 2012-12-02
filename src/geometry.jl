@@ -1,26 +1,27 @@
 
+module Geom
+
+import Gadfly
+import Gadfly.render
+
 load("Compose.jl")
-import Compose
-
-load("Gadfly/src/aesthetics.jl")
-load("Gadfly/src/theme.jl")
-
-
-abstract Geometry
+using Compose
 
 # Geometry that does renders nothing.
-type NilGeometry <: Geometry
+type Nil <: Gadfly.GeometryElement
 end
 
-function render(geom::NilGeometry, theme::Theme, aes::Aesthetics)
+const nil = Nil()
+
+function render(geom::Nil, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
 
 # Geometry which displays points at given (x, y) positions.
-type PointGeometry <: Geometry
-    default_aes::Aesthetics
+type PointGeometry <: Gadfly.GeometryElement
+    default_aes::Gadfly.Aesthetics
 
     function PointGeometry()
-        g = Aesthetics()
+        g = Gadfly.Aesthetics()
         # TODO: these constants should be in Theme
         g.size  = Measure[0.5mm]
         g.color = Color[color("steelblue")]
@@ -28,7 +29,7 @@ type PointGeometry <: Geometry
     end
 end
 
-const geom_point = PointGeometry()
+const point = PointGeometry()
 
 
 # Check that the x and y aesthetics are properly specified.
@@ -39,7 +40,7 @@ const geom_point = PointGeometry()
 # Returns:
 #   nothing, throws an error if the aesthetics are misspecified
 #
-function check_xy(aes::Aesthetics)
+function check_xy(aes::Gadfly.Aesthetics)
     if typeof(aes.x) == Nothing || typeof(aes.y) == Nothing
         error("Both `x` and `y` must be defined for point geometry.")
     end
@@ -70,7 +71,7 @@ end
 # Returns:
 #   A compose Form.
 #
-function render(geom::PointGeometry, theme::Theme, aes::Aesthetics)
+function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     check_xy(aes)
 
     aes = inherit(aes, geom.default_aes)
@@ -90,11 +91,11 @@ end
 
 
 # Line geometry connects (x, y) coordinates with lines.
-type LineGeometry <: Geometry
-    default_aes::Aesthetics
+type LineGeometry <: Gadfly.GeometryElement
+    default_aes::Gadfly.Aesthetics
 
     function LineGeometry()
-        g = Aesthetics()
+        g = Gadfly.Aesthetics()
         # TODO: these constants should be in Theme
         g.size  = Measure[0.5mm]
         g.color = Color[color("steelblue")]
@@ -103,7 +104,7 @@ type LineGeometry <: Geometry
 end
 
 
-const geom_line = LineGeometry()
+const line = LineGeometry()
 
 
 # Render line geometry.
@@ -116,7 +117,7 @@ const geom_line = LineGeometry()
 # Returns:
 #   A compose Form.
 #
-function render(geom::LineGeometry, theme::Theme, aes::Aesthetics)
+function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     check_xy(aes)
 
     aes = inherit(aes, geom.default_aes)
@@ -145,18 +146,18 @@ end
 
 
 # Bar geometry summarizes data as verticle bars.
-type BarGeometry <: Geometry
-    default_aes::Aesthetics
+type BarGeometry <: Gadfly.GeometryElement
+    default_aes::Gadfly.Aesthetics
 
     function BarGeometry()
-        g = Aesthetics()
+        g = Gadfly.Aesthetics()
         g.color = Color[color("steelblue")]
         new(g)
     end
 end
 
 
-const geom_bar = BarGeometry()
+const bar = BarGeometry()
 
 
 # Render bar geometry.
@@ -169,9 +170,9 @@ const geom_bar = BarGeometry()
 # Returns
 #   A compose form.
 #
-function render(geom::BarGeometry, theme::Theme, aes::Aesthetics)
+function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     check_xy(aes)
-    aes = inherit(aes, geom.default_aes)
+    aes = Gadfly.inherit(aes, geom.default_aes)
 
     # Set the bar width to be the minimum distance between to x values, to avoid
     # ovelapping.
@@ -200,4 +201,5 @@ function render(geom::BarGeometry, theme::Theme, aes::Aesthetics)
     form << stroke(nothing)
 end
 
+end # module Geom
 

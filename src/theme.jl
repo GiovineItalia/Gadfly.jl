@@ -1,7 +1,8 @@
 
 # Parameters controlling how a plot appears
 
-load("Gadfly/src/misc.jl")
+load("Compose.jl")
+using Compose
 
 
 type Theme

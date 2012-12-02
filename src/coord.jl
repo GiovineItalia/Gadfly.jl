@@ -1,19 +1,22 @@
 
+module Coord
+
+export cartesian
+
+import Gadfly
+
 load("Compose.jl")
-import Compose
-
-abstract Coordinate
-
+using Compose
 
 # Cartesian coordinates with position given by the x and y (and similar)
 # aesthetics.
-type CartesianCoordinate <: Coordinate
+type CartesianCoordinate <: Gadfly.CoordinateElement
     xvars::Vector{Symbol}
     yvars::Vector{Symbol}
 end
 
 
-const coord_cartesian = CartesianCoordinate([:x, :xtick], [:y, :ytick])
+const cartesian = CartesianCoordinate([:x, :xtick], [:y, :ytick])
 
 
 # Produce a canvas with suitable cartesian coordinates.
@@ -24,7 +27,7 @@ const coord_cartesian = CartesianCoordinate([:x, :xtick], [:y, :ytick])
 # Returns:
 #   A compose Canvas.
 #
-function apply_coordinate(coord::CartesianCoordinate, aess::Aesthetics...)
+function apply_coordinate(coord::CartesianCoordinate, aess::Gadfly.Aesthetics...)
     xmin = Inf
     xmax = -Inf
     for var in coord.xvars
@@ -74,4 +77,5 @@ function apply_coordinate(coord::CartesianCoordinate, aess::Aesthetics...)
     canvas(Units(xmin - xpadding, ymax + ypadding, width, -height))
 end
 
+end # module Coord
 

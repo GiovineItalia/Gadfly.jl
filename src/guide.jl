@@ -1,13 +1,11 @@
 
+module Guide
+
+import Gadfly
+import Gadfly.render
+
 load("Compose.jl")
-import Compose
-
-load("Gadfly/src/theme.jl")
-load("Gadfly/src/aesthetics.jl")
-
-
-abstract Guide
-typealias Guides Vector{Guide}
+using Compose
 
 
 # Where the guide should be placed in relation to the plot.
@@ -25,29 +23,31 @@ const left_guide_position   = LeftGuidePosition()
 const under_guide_position  = UnderGuidePosition()
 
 
-type PanelBackground <: Guide
+type PanelBackground <: Gadfly.GuideElement
 end
 
-const guide_background = PanelBackground()
+const background = PanelBackground()
 
 
-function render(guide::PanelBackground, theme::Theme, aess::Vector{Aesthetics})
+function render(guide::PanelBackground, theme::Gadfly.Theme,
+                aess::Vector{Gadfly.Aesthetics})
     p = stroke(nothing) | fill(theme.panel_background)
     c = canvas() << (rectangle() << p)
     {(c, under_guide_position)}
 end
 
 
-type XTicks <: Guide
+type XTicks <: Gadfly.GuideElement
 end
 
-const guide_x_ticks = XTicks()
+const x_ticks = XTicks()
 
 
-function render(guide::XTicks, theme::Theme, aess::Vector{Aesthetics})
+function render(guide::XTicks, theme::Gadfly.Theme,
+                aess::Vector{Gadfly.Aesthetics})
     ticks = Dict{Float64, String}()
     for aes in aess
-        if issomething(aes.xtick) && issomething(aes.xtick_labels)
+        if Gadfly.issomething(aes.xtick) && Gadfly.issomething(aes.xtick_labels)
             for (val, label) in zip(aes.xtick, aes.xtick_labels)
                 ticks[val] = label
             end
@@ -75,15 +75,16 @@ function render(guide::XTicks, theme::Theme, aess::Vector{Aesthetics})
 end
 
 
-type YTicks <: Guide
+type YTicks <: Gadfly.GuideElement
 end
 
-const guide_y_ticks = YTicks()
+const y_ticks = YTicks()
 
-function render(guide::YTicks, theme::Theme, aess::Vector{Aesthetics})
+function render(guide::YTicks, theme::Gadfly.Theme,
+                aess::Vector{Gadfly.Aesthetics})
     ticks = Dict{Float64, String}()
     for aes in aess
-        if issomething(aes.ytick) && issomething(aes.ytick_labels)
+        if Gadfly.issomething(aes.ytick) && Gadfly.issomething(aes.ytick_labels)
             for (val, label) in zip(aes.ytick, aes.ytick_labels)
                 ticks[val] = label
             end
@@ -113,12 +114,13 @@ end
 
 
 # X-axis label Guide
-type XLabel <: Guide
+type XLabel <: Gadfly.GuideElement
     label::String
 end
 
 
-function render(guide::XLabel, theme::Theme, aess::Vector{Aesthetics})
+function render(guide::XLabel, theme::Gadfly.Theme,
+                aess::Vector{Gadfly.Aesthetics})
     (_, text_height) = text_extents(theme.axis_label_font,
                                     theme.axis_label_font_size,
                                     guide.label)
@@ -136,12 +138,12 @@ end
 
 
 # Y-axis label Guide
-type YLabel <: Guide
+type YLabel <: Gadfly.GuideElement
     label::String
 end
 
 
-function render(guide::YLabel, theme::Theme, aess::Vector{Aesthetics})
+function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aesthetics})
     (text_width, text_height) = text_extents(theme.axis_label_font,
                                              theme.axis_label_font_size,
                                              guide.label)
@@ -217,4 +219,6 @@ function layout_guides(plot_canvas::Canvas,
     plot_canvas = canvas(l, t, pw, ph) | compose(under_guides...) | plot_canvas
     canvas() | plot_canvas | top_guides | right_guides | bottom_guides | left_guides
 end
+
+end # module Guide
 

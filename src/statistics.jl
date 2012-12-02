@@ -1,8 +1,13 @@
 
-load("Gadfly/src/transform.jl")
+module Stat
 
-abstract Statistic
+require("Distributions.jl")
+import Distributions.Uniform
 
+require("Iterators.jl")
+import Iterators.chain
+
+import Gadfly
 
 # Apply a series of statistics.
 #
@@ -14,8 +19,8 @@ abstract Statistic
 # Returns:
 #   Nothing, modifies aes.
 #
-function apply_statistics(stats::Vector{Statistic}, aes::Aesthetics,
-                          trans::Dict{Symbol, Transform})
+function apply_statistics(stats::Vector{Gadfly.StatisticElement}, aes::Gadfly.Aesthetics,
+                          trans::Dict{Symbol, Gadfly.TransformElement})
     for stat in stats
         apply_statistic(stat, aes, trans)
     end
@@ -23,21 +28,21 @@ function apply_statistics(stats::Vector{Statistic}, aes::Aesthetics,
 end
 
 
-type IdentityStatistic <: Statistic
+type Identity <: Gadfly.StatisticElement
 end
 
-function apply_statistic(stat::IdentityStatistic, aes::Aesthetics,
-                trans::Dict{Symbol, Transform})
+function apply_statistic(stat::Identity, aes::Gadfly.Aesthetics,
+                trans::Dict{Symbol, Gadfly.TransformElement})
     nothing
 end
 
-const stat_identity = IdentityStatistic()
+const identity = Identity()
 
 
-type HistogramStatistic <: Statistic
+type HistogramStatistic <: Gadfly.StatisticElement
 end
 
-const stat_histogram = HistogramStatistic()
+const histogram = HistogramStatistic()
 
 
 # Compute the cross validation risk for a histogram.
@@ -120,8 +125,8 @@ function choose_bin_count(xs::Vector{Float64})
 end
 
 
-function apply_statistic(stat::HistogramStatistic, aes::Aesthetics,
-                         trans::Dict{Symbol, Transform})
+function apply_statistic(stat::HistogramStatistic, aes::Gadfly.Aesthetics,
+                         trans::Dict{Symbol, Gadfly.TransformElement})
     sorted_x = sort(aes.x)
     n = length(sorted_x)
     m = choose_bin_count(sorted_x)
@@ -150,14 +155,14 @@ end
 
 
 # Find reasonable places to put tick marks and grid lines.
-type TickStatistic <: Statistic
+type TickStatistic <: Gadfly.StatisticElement
     in_vars::Vector{Symbol}
     out_var::Symbol
 end
 
 
-const stat_x_ticks = TickStatistic([:x], :xtick)
-const stat_y_ticks = TickStatistic([:y], :ytick)
+const x_ticks = TickStatistic([:x], :xtick)
+const y_ticks = TickStatistic([:y], :ytick)
 
 
 # Find some reasonable values for tick marks.
@@ -244,8 +249,8 @@ end
 # Modifies:
 #   aes
 #
-function apply_statistic(stat::TickStatistic, aes::Aesthetics,
-                         trans_map::Dict{Symbol, Transform})
+function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics,
+                         trans_map::Dict{Symbol, Gadfly.TransformElement})
     in_values = [getfield(aes, var) for var in stat.in_vars]
     in_values = filter(val -> !(val === nothing), in_values)
     in_values = chain(in_values...)
@@ -283,7 +288,7 @@ function apply_statistic(stat::TickStatistic, aes::Aesthetics,
     tick_labels = Array(String, length(ticks))
 
     # Now, label these bitches.
-    for (val, i) in enumerate(ticks)
+    for (i, val) in enumerate(ticks)
         tick_labels[i] = trans.label(val)
     end
 
@@ -293,4 +298,5 @@ function apply_statistic(stat::TickStatistic, aes::Aesthetics,
     nothing
 end
 
+end # module Stat
 

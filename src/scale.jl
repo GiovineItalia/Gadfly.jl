@@ -1,8 +1,7 @@
 
-load("Gadfly/src/aesthetics.jl")
-load("Gadfly/src/data.jl")
+module Scale
 
-abstract Scale
+import Gadfly
 
 # Apply some scales to data in the given order.
 #
@@ -15,9 +14,9 @@ abstract Scale
 # Returns:
 #   nothing
 #
-function apply_scales(scales::Vector{Scale},
-                      aess::Vector{Aesthetics},
-                      datas::Data...)
+function apply_scales(scales::Vector{Gadfly.ScaleElement},
+                      aess::Vector{Gadfly.Aesthetics},
+                      datas::Gadfly.Data...)
     for scale in scales
         apply_scale(scale, aess, datas...)
     end
@@ -33,8 +32,8 @@ end
 # Returns:
 #   A vector of Aesthetics of the same length as datas containing scaled data.
 #
-function apply_scales(scales::Vector{Scale}, datas::Data...)
-    aess = [Aesthetics() for _ in datas]
+function apply_scales(scales::Vector{Gadfly.ScaleElement}, datas::Gadfly.Data...)
+    aess = [Gadfly.Aesthetics() for _ in datas]
     apply_scales(scales, aess, datas...)
     aess
 end
@@ -42,13 +41,13 @@ end
 
 # Continuous scale maps data on a continuous scale simple by calling
 # `convert(Float64, ...)`.
-type ContinuousScale <: Scale
+type ContinuousScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
 end
 
 
-const scale_x_continuous = ContinuousScale([:x])
-const scale_y_continuous = ContinuousScale([:y])
+const x_continuous = ContinuousScale([:x])
+const y_continuous = ContinuousScale([:y])
 
 
 # Apply a continuous scale.
@@ -62,7 +61,7 @@ const scale_y_continuous = ContinuousScale([:y])
 #   nothing
 #
 function apply_scale(scale::ContinuousScale,
-                     aess::Vector{Aesthetics}, datas::Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
             if getfield(data, var) === nothing
@@ -70,7 +69,7 @@ function apply_scale(scale::ContinuousScale,
             end
 
             ds = Array(Float64, length(getfield(data, var)))
-            for (d, i) in enumerate(getfield(data, var))
+            for (i, d) in enumerate(getfield(data, var))
                 ds[i] = convert(Float64, d)
             end
 
@@ -79,4 +78,5 @@ function apply_scale(scale::ContinuousScale,
     end
 end
 
+end # module Scale
 
