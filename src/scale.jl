@@ -1,6 +1,6 @@
 
-require("aesthetics.jl")
-require("data.jl")
+load("Gadfly/src/aesthetics.jl")
+load("Gadfly/src/data.jl")
 
 abstract Scale
 

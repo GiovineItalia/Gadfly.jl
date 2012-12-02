@@ -1,7 +1,7 @@
 
 # Parameters controlling how a plot appears
 
-require("misc.jl")
+load("Gadfly/src/misc.jl")
 
 
 type Theme

@@ -1,6 +1,5 @@
 
-require("distributions.jl")
-require("transform.jl")
+load("Gadfly/src/transform.jl")
 
 abstract Statistic
 

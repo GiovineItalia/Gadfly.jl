@@ -1,9 +1,9 @@
 
-insert(LOAD_PATH, 1, real_path("../compose/"))
-require("compose.jl")
+load("Compose.jl")
+import Compose
 
-require("theme.jl")
-require("aesthetics.jl")
+load("Gadfly/src/theme.jl")
+load("Gadfly/src/aesthetics.jl")
 
 
 abstract Guide

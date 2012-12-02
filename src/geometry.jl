@@ -1,7 +1,9 @@
 
-require("compose.jl")
-require("aesthetics.jl")
-require("theme.jl")
+load("Compose.jl")
+import Compose
+
+load("Gadfly/src/aesthetics.jl")
+load("Gadfly/src/theme.jl")
 
 
 abstract Geometry

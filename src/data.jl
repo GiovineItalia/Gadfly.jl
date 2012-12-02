@@ -1,8 +1,10 @@
 
-require("aesthetics.jl")
-require("iterators.jl")
+# TODO: we need the new iterators package
+load("Iterators.jl")
+import Iterators
 
-import Iterators.*
+load("Gadfly/src/aesthetics.jl")
+
 
 
 
@@ -63,7 +65,7 @@ function chain(ds::Data...)
         if isempty(vs)
             setfield(chained_data, name, nothing)
         else
-            setfield(chained_data, name, chain(vs...))
+            setfield(chained_data, name, Iterators.chain(vs...))
         end
     end
 

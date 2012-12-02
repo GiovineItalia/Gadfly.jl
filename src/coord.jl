@@ -1,5 +1,6 @@
 
-require("compose.jl")
+load("Compose.jl")
+import Compose
 
 abstract Coordinate
 

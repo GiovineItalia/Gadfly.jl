@@ -1,17 +1,18 @@
 
-# This bit of ugliness will go away when Julia has proper packages.
-insert(LOAD_PATH, 1, real_path("../compose/"))
-require("compose.jl")
+module Gadfly
 
-require("scale.jl")
-require("transform.jl")
-require("coord.jl")
-require("data.jl")
-require("aesthetics.jl")
-require("geometry.jl")
-require("theme.jl")
-require("guide.jl")
-require("statistics.jl")
+load("Compose.jl")
+import Compose
+
+load("Gadfly/src/scale.jl")
+load("Gadfly/src/transform.jl")
+load("Gadfly/src/coord.jl")
+load("Gadfly/src/data.jl")
+load("Gadfly/src/aesthetics.jl")
+load("Gadfly/src/geometry.jl")
+load("Gadfly/src/theme.jl")
+load("Gadfly/src/guide.jl")
+load("Gadfly/src/statistics.jl")
 
 
 # A plot has zero or more layers. Layers have a particular geometry and their
@@ -99,4 +100,4 @@ function render(plot::Plot)
     canvas
 end
 
-
+end # module Gadfly

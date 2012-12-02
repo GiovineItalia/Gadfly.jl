@@ -1,6 +1,8 @@
 
-require("misc.jl")
-require("compose.jl")
+load("Compose.jl")
+using Compose
+
+load("Gadfly/src/misc.jl")
 
 # Aesthetics is a set of bindings of typed values to symbols (Wilkinson calls
 # this a Varset). Each variable controls how geometries are realized.
