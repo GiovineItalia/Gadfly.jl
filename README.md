@@ -13,7 +13,7 @@ Stay tuned. More to come.
 
 Here's an example of what works so far:
 
-![Histogram](http://dcjones.github.com/gadfly/histogram_example.svg)
+![Histogram](http://dcjones.github.com/gadfly/some_plot.svg)
 
 ```julia
 # Plot some data with Gadfly!
@@ -46,6 +46,8 @@ finish(img)
 Gadfly uses a declarative vector graphics system called
 [Compose](https://github.com/dcjones/compose). This let's you manipulate plots
 in interesting ways once you define them.
+
+![Histogram](http://dcjones.github.com/gadfly/two_plots.svg)
 
 ```julia
 # Render two plots
