@@ -2,12 +2,15 @@
 module Geom
 
 import Gadfly
-import Gadfly.render
+import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit
 
 load("Compose.jl")
 using Compose
 
-# Geometry that does renders nothing.
+load("Iterators.jl")
+import Iterators
+
+# Geometry that renders nothing.
 type Nil <: Gadfly.GeometryElement
 end
 
@@ -16,6 +19,13 @@ const nil = Nil()
 function render(geom::Nil, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
 
+
+# Catchall
+function default_statistic(::Gadfly.GeometryElement)
+    Gadfly.Stat.identity
+end
+
+
 # Geometry which displays points at given (x, y) positions.
 type PointGeometry <: Gadfly.GeometryElement
     default_aes::Gadfly.Aesthetics
@@ -23,14 +33,19 @@ type PointGeometry <: Gadfly.GeometryElement
     function PointGeometry()
         g = Gadfly.Aesthetics()
         # TODO: these constants should be in Theme
-        g.size  = Measure[0.5mm]
+        g.size  = Measure[0.75mm]
         g.color = Color[color("steelblue")]
         new(g)
     end
 end
 
+
 const point = PointGeometry()
 
+
+function element_aesthetics(::PointGeometry)
+    [:x, :y, :size, :color]
+end
 
 # Check that the x and y aesthetics are properly specified.
 #
@@ -76,13 +91,13 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     aes = inherit(aes, geom.default_aes)
 
-    forms = Array(Any, n)
-    for ((x, y, s), i) in enumerate(zip(aes.x, aes.y, cycle(aes.size)))
+    forms = Array(Any, length(aes.x))
+    for (i, (x, y, s)) in enumerate(zip(aes.x, aes.y, Iterators.cycle(aes.size)))
         forms[i] = circle(x, y, s)
     end
 
     if length(aes.color) == 1
-        form = compose(forms...) << fill(aes.color[1])
+        form = compose(forms...) << (fill(aes.color[1]) | stroke(nothing))
     else
         form = compose([f << fill(c) for (f, c) in zip(forms, aes.color)]...)
         form << stroke(nothing)
@@ -107,6 +122,12 @@ end
 const line = LineGeometry()
 
 
+function element_aesthetics(::LineGeometry)
+    [:x, :y, :size, :color]
+end
+
+
+
 # Render line geometry.
 #
 # Args:
@@ -127,7 +148,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         form << (stroke(aes.color[1]) | fill(nothing))
     else
         points = Dict{Color, Array{(Float64, Float64)}}()
-        for (x, y, c) in zip(aes.x, aes.x, cycle(aes.color))
+        for (x, y, c) in zip(aes.x, aes.x, Iterators.cycle(aes.color))
             if !has(points, c)
                 points[c] = Array((Float64, Float64))
             end
@@ -160,6 +181,15 @@ end
 const bar = BarGeometry()
 
 
+function element_aesthetics(::BarGeometry)
+    [:x, :y, :color]
+end
+
+
+function default_statistic(::BarGeometry)
+    Gadfly.Stat.histogram
+end
+
 # Render bar geometry.
 #
 # Args:
@@ -171,7 +201,7 @@ const bar = BarGeometry()
 #   A compose form.
 #
 function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    check_xy(aes)
+    #check_xy(aes) # TODO: check_x
     aes = Gadfly.inherit(aes, geom.default_aes)
 
     # Set the bar width to be the minimum distance between to x values, to avoid
@@ -195,7 +225,8 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     if length(aes.color) == 1
         form = compose(forms...) << fill(aes.color[1])
     else
-        form = compose([form << fill(c) for (f, c) in zip(forms, cycle(aes.color))]...)
+        form = compose([form << fill(c)
+                        for (f, c) in zip(forms, Iterators.cycle(aes.color))]...)
     end
 
     form << stroke(nothing)

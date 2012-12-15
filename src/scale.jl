@@ -2,6 +2,7 @@
 module Scale
 
 import Gadfly
+import Gadfly.element_aesthetics
 
 # Apply some scales to data in the given order.
 #
@@ -48,6 +49,11 @@ end
 
 const x_continuous = ContinuousScale([:x])
 const y_continuous = ContinuousScale([:y])
+
+
+function element_aesthetics(scale::ContinuousScale)
+    return scale.vars
+end
 
 
 # Apply a continuous scale.

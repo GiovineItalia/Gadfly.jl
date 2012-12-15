@@ -16,52 +16,50 @@ Here's an example of what works so far:
 ![Histogram](http://dcjones.github.com/gadfly/histogram_example.svg)
 
 ```julia
-# Draw a simple histogram with Gadfly.
+# Plot some data with Gadfly!
 
-require("gadfly.jl")
-require("distributions.jl")
+# Grab some example datasets
+load("RDatasets.jl")
+using RDatasets
 
-import Distributions.*
+load("Gadfly.jl")
+using Gadfly
 
-n = 100000
-x = rand(Normal(), n)
+load("Compose.jl")
+using Compose
 
-p = Plot()
-p.data.x = x
+# Load some arbitrary data.
+iris = data("datasets", "iris")
 
-# Scales
-push(p.scales, scale_x_continuous)
-push(p.scales, scale_y_continuous)
+# Construct a plot definition.
+p = plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"}, Geom.point)
 
-# Transforms
-push(p.transforms, transform_x_identity)
-push(p.transforms, transform_y_identity)
+# Render that plot, producing a declarative definition of the graphic.
+g = render(p)
 
-# Statistics
-push(p.statistics, stat_x_ticks)
-push(p.statistics, stat_y_ticks)
-
-# Coordinates
-p.coord = coord_cartesian
-
-# Guides
-push(p.guides, guide_background)
-push(p.guides, guide_x_ticks)
-push(p.guides, guide_y_ticks)
-
-# Layers
-layer = Layer()
-layer.statistic = stat_histogram
-layer.geom = geom_bar
-push(p.layers, layer)
-
-@upon SVG("try.svg", 7inch, 4inch) begin
-    draw(pad!(render(p), 2mm))
-end
-
+# Draw the graphic as an SVG image.
+img = SVG("some_plot.svg", 7inch, 4inch)
+draw(img, g)
+finish(img)
 ```
 
+Gadfly uses a declarative vector graphics system called
+[Compose](https://github.com/dcjones/compose). This let's you manipulate plots
+in interesting ways once you define them.
 
-It's now terse, or pretty (that's still to come), but it works.
+```julia
+# Render two plots
+figa = render(plot(iris, {:x => "Sepal.Width"}, Geom.bar))
+figb = render(plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"}, Geom.point))
+
+# Now let's stick them together
+figab = hstack(figa, figb)
+
+# Draw the graphic as an SVG image.
+img = SVG("two_plots.svg", 7inch, 4inch)
+draw(img, figab)
+finish(img)
+```
+
 
 

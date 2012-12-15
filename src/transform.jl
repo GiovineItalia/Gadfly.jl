@@ -2,6 +2,7 @@
 module Trans
 
 import Gadfly
+import Gadfly.element_aesthetics
 
 type Transform <: Gadfly.TransformElement
     var::Symbol     # variables to which the transform is applied
@@ -11,10 +12,15 @@ type Transform <: Gadfly.TransformElement
 end
 
 
+function element_aesthetics(transform::Transform)
+    transform.var
+end
+
+
 # Constructors
 
 
-function IdenityTransform(var::Symbol)
+function IdentityTransform(var::Symbol)
     Transform(var, identity, identity, Gadfly.fmt_float)
 end
 
@@ -54,8 +60,8 @@ end
 # Presets
 
 
-const x_identity = IdenityTransform(:x)
-const y_identity = IdenityTransform(:y)
+const x_identity = IdentityTransform(:x)
+const y_identity = IdentityTransform(:y)
 const x_log10    = Log10Transform(:x)
 const y_log10    = Log10Transform(:y)
 const x_ln       = LnTransform(:x)

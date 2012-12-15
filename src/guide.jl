@@ -197,6 +197,8 @@ function layout_guides(plot_canvas::Canvas,
         end
     end
 
+    reverse!(left_guides)
+
     # Stack the guides on edge edge of the plot
     top_guides    = vstack(0, 0, 1, [(g, hcenter) for g in top_guides]...)
     right_guides  = hstack(0, 0, 1, [(g, vcenter) for g in right_guides]...)

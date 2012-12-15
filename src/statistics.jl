@@ -8,6 +8,7 @@ require("Iterators.jl")
 import Iterators.chain
 
 import Gadfly
+import Gadfly.Trans
 
 # Apply a series of statistics.
 #
@@ -27,6 +28,10 @@ function apply_statistics(stats::Vector{Gadfly.StatisticElement}, aes::Gadfly.Ae
     nothing
 end
 
+type Nil <: Gadfly.StatisticElement
+end
+
+const nil = Nil()
 
 type Identity <: Gadfly.StatisticElement
 end
@@ -99,7 +104,7 @@ end
 #
 function choose_bin_count(xs::Vector{Float64})
     # Number of bins
-    m = 50
+    m = 3
 
     # Cross validation risk, which we want to minimize.
     r = cross_val_risk(xs, m)
@@ -111,7 +116,7 @@ function choose_bin_count(xs::Vector{Float64})
     N = 500
     for _ in 1:N
         off = int(rand(d))
-        m_proposed = randbit() == 1 ? m + off : max(1, m - off)
+        m_proposed = randbool() ? m + off : max(1, m - off)
         r_proposed = cross_val_risk(xs, m_proposed)
 
         # accept/reject
@@ -282,7 +287,7 @@ function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics,
     end
 
     if trans === nothing
-        trans = IdenityTransform(stat.in_vars[1])
+        trans = Trans.IdentityTransform(stat.in_vars[1])
     end
 
     tick_labels = Array(String, length(ticks))

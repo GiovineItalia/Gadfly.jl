@@ -2,6 +2,8 @@
 load("Compose.jl")
 using Compose
 
+# TODO: These should probably be DataVec{Float64} not Vector{Float64}
+
 # Aesthetics is a set of bindings of typed values to symbols (Wilkinson calls
 # this a Varset). Each variable controls how geometries are realized.
 type Aesthetics

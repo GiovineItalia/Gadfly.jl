@@ -1,5 +1,4 @@
 
-# TODO: we need the new iterators package
 load("Iterators.jl")
 import Iterators
 
