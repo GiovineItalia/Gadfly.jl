@@ -8,7 +8,7 @@ require("Iterators.jl")
 import Iterators.chain
 
 import Gadfly
-import Gadfly.Trans
+import Gadfly.Scale
 
 # Apply a series of statistics.
 #
@@ -21,9 +21,9 @@ import Gadfly.Trans
 #   Nothing, modifies aes.
 #
 function apply_statistics(stats::Vector{Gadfly.StatisticElement}, aes::Gadfly.Aesthetics,
-                          trans::Dict{Symbol, Gadfly.TransformElement})
+                          scale_map::Dict{Symbol, Gadfly.ScaleElement})
     for stat in stats
-        apply_statistic(stat, aes, trans)
+        apply_statistic(stat, aes, scale_map)
     end
     nothing
 end
@@ -37,7 +37,7 @@ type Identity <: Gadfly.StatisticElement
 end
 
 function apply_statistic(stat::Identity, aes::Gadfly.Aesthetics,
-                trans::Dict{Symbol, Gadfly.TransformElement})
+                         scale_map::Dict{Symbol, Gadfly.ScaleElement})
     nothing
 end
 
@@ -131,7 +131,7 @@ end
 
 
 function apply_statistic(stat::HistogramStatistic, aes::Gadfly.Aesthetics,
-                         trans::Dict{Symbol, Gadfly.TransformElement})
+                         scale_map::Dict{Symbol, Gadfly.ScaleElement})
     sorted_x = sort(aes.x)
     n = length(sorted_x)
     m = choose_bin_count(sorted_x)
@@ -255,7 +255,7 @@ end
 #   aes
 #
 function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics,
-                         trans_map::Dict{Symbol, Gadfly.TransformElement})
+                         scale_map::Dict{Symbol, Gadfly.ScaleElement})
     in_values = [getfield(aes, var) for var in stat.in_vars]
     in_values = filter(val -> !(val === nothing), in_values)
     in_values = chain(in_values...)
@@ -279,22 +279,18 @@ function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics,
     # has been applied to one of the input variables. In the future we may want
     # to consider multiple labels for tick marks in cases where multiple
     # transforms are in effect.
-    trans = nothing
+    scale = nothing
     for var in stat.in_vars
-        if has(trans_map, var)
-            trans = trans_map[var]
+        if has(scale_map, var)
+            scale = scale_map[var]
         end
-    end
-
-    if trans === nothing
-        trans = Trans.IdentityTransform(stat.in_vars[1])
     end
 
     tick_labels = Array(String, length(ticks))
 
     # Now, label these bitches.
     for (i, val) in enumerate(ticks)
-        tick_labels[i] = trans.label(val)
+        tick_labels[i] = scale.trans.label(val)
     end
 
     setfield(aes, stat.out_var, ticks)

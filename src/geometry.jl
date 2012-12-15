@@ -112,7 +112,7 @@ type LineGeometry <: Gadfly.GeometryElement
     function LineGeometry()
         g = Gadfly.Aesthetics()
         # TODO: these constants should be in Theme
-        g.size  = Measure[0.5mm]
+        g.size  = Measure[0.3mm]
         g.color = Color[color("steelblue")]
         new(g)
     end

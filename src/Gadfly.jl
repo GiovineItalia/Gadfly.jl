@@ -9,19 +9,19 @@ using DataFrames
 
 import Base.copy, Base.push
 
-export Plot, Layer, Scale, Trans, Coord, Geom, Guide, Stat, render, plot
+export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot
 
 element_aesthetics(::Any) = error("Ahh!")
 
 abstract Element
 abstract ScaleElement       <: Element
-abstract TransformElement   <: Element
 abstract CoordinateElement  <: Element
 abstract GeometryElement    <: Element
 abstract GuideElement       <: Element
 abstract StatisticElement   <: Element
 
 load("Gadfly/src/misc.jl")
+load("Gadfly/src/color.jl")
 load("Gadfly/src/theme.jl")
 load("Gadfly/src/aesthetics.jl")
 load("Gadfly/src/data.jl")
@@ -46,7 +46,6 @@ type Plot
     layers::Vector{Layer}
     data::Data
     scales::Vector{ScaleElement}
-    transforms::Vector{TransformElement}
     statistics::Vector{StatisticElement}
     coord::CoordinateElement
     guides::Vector{GuideElement}
@@ -54,8 +53,8 @@ type Plot
     mapping::Dict
 
     function Plot()
-        new(Layer[], Data(), ScaleElement[], TransformElement[],
-            StatisticElement[], Coord.cartesian, GuideElement[], default_theme)
+        new(Layer[], Data(), ScaleElement[], StatisticElement[],
+            Coord.cartesian, GuideElement[], default_theme)
     end
 end
 
@@ -71,10 +70,6 @@ end
 
 function add_plot_element(p::Plot, data::DataFrame, arg::ScaleElement)
     push(p.scales, arg)
-end
-
-function add_plot_element(p::Plot, data::DataFrame, arg::TransformElement)
-    push(p.transforms, arg)
 end
 
 function add_plot_element(p::Plot, data::DataFrame, arg::StatisticElement)
@@ -140,7 +135,7 @@ end
 #   A compose Canvas containing the graphic.
 #
 function render(plot::Plot)
-    # 0. Insert default scales and transforms
+    # 0. Insert default scales
     used_aesthetics = Set{Symbol}()
     for layer in plot.layers
         add_each(used_aesthetics, element_aesthetics(layer.geom))
@@ -151,19 +146,10 @@ function render(plot::Plot)
         add_each(scaled_aesthetics, element_aesthetics(scale))
     end
 
-    transformed_aestetics = Set{Symbol}()
-    for transform in plot.transforms
-        add_each(transformed_aestetics, element_aesthetics(transform))
-    end
-
     scales = copy(plot.scales)
     for var in used_aesthetics - scaled_aesthetics
-        push(scales, Scale.ContinuousScale([var]))
-    end
-
-    transforms = copy(plot.transforms)
-    for var in used_aesthetics - transformed_aestetics
-        push(transforms, Trans.IdentityTransform(var))
+        # TODO: default scale should depend on the aesthetic in question
+        push(scales, Scale.ContinuousScale(var, Scale.identity_transform))
     end
 
     layer_stats = Array(StatisticElement, length(plot.layers))
@@ -193,25 +179,22 @@ function render(plot::Plot)
     aess = Scale.apply_scales(scales, plot.data,
                               [layer.data for layer in plot.layers]...)
 
-    # II. Transformations
-    Trans.apply_transforms(transforms, aess)
-
-    # Organize transforms
-    trans_map = Dict{Symbol, TransformElement}()
-    for transform in plot.transforms
-        trans_map[transform.var] = transform
+    # Organize scales: build map of variables to the scales that were applied.
+    scale_map = Dict{Symbol, ScaleElement}()
+    for scale in scales
+        scale_map[scale.var] = scale
     end
 
-    # IIIa. Layer-wise statistics
+    # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, aess)
-        Stat.apply_statistics(StatisticElement[layer_stat], aes, trans_map)
+        Stat.apply_statistics(StatisticElement[layer_stat], aes, scale_map)
     end
 
-    # IIIb. Plot-wise Statistics
+    # IIb. Plot-wise Statistics
     plot_aes = cat(aess...)
-    Stat.apply_statistics(statistics, plot_aes, trans_map)
+    Stat.apply_statistics(statistics, plot_aes, scale_map)
 
-    # IV. Coordinates
+    # III. Coordinates
     plot_canvas = Coord.apply_coordinate(plot.coord, plot_aes, aess...)
 
     # Now that coordinates are set, layer aesthetics inherit plot aesthetics.
@@ -219,11 +202,11 @@ function render(plot::Plot)
         inherit!(aes, plot_aes)
     end
 
-    # VI. Geometries
+    # IV. Geometries
     plot_canvas <<= compose({render(layer.geom, plot.theme, aes)
                                for (layer, aes) in zip(plot.layers, aess)}...)
 
-    # VI. Guides
+    # V. Guides
     guide_canvases = {}
     for guide in guides
         append!(guide_canvases, render(guide, plot.theme, aess))
@@ -236,13 +219,12 @@ end
 
 
 load("Gadfly/src/scale.jl")
-load("Gadfly/src/transform.jl")
 load("Gadfly/src/coord.jl")
 load("Gadfly/src/geometry.jl")
 load("Gadfly/src/guide.jl")
 load("Gadfly/src/statistics.jl")
 
-import Scale, Trans, Coord, Geom, Guide, Stat
+import Scale, Coord, Geom, Guide, Stat
 
 
 end # module Gadfly
