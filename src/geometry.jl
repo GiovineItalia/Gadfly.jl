@@ -4,6 +4,8 @@ module Geom
 import Gadfly
 import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit
 
+using DataFrames
+
 load("Compose.jl")
 using Compose
 
@@ -34,7 +36,7 @@ type PointGeometry <: Gadfly.GeometryElement
         g = Gadfly.Aesthetics()
         # TODO: these constants should be in Theme
         g.size  = Measure[0.75mm]
-        g.color = Color[color("steelblue")]
+        g.color = PooledDataVec(Color[color("steelblue")])
         new(g)
     end
 end
@@ -113,7 +115,7 @@ type LineGeometry <: Gadfly.GeometryElement
         g = Gadfly.Aesthetics()
         # TODO: these constants should be in Theme
         g.size  = Measure[0.3mm]
-        g.color = Color[color("steelblue")]
+        g.color = PooledDataVec(Color[color("steelblue")])
         new(g)
     end
 end
@@ -172,7 +174,7 @@ type BarGeometry <: Gadfly.GeometryElement
 
     function BarGeometry()
         g = Gadfly.Aesthetics()
-        g.color = Color[color("steelblue")]
+        g.color = PooledDataVec(Color[color("steelblue")])
         new(g)
     end
 end

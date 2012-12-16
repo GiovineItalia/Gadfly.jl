@@ -7,6 +7,7 @@ using Compose
 # Aesthetics is a set of bindings of typed values to symbols (Wilkinson calls
 # this a Varset). Each variable controls how geometries are realized.
 type Aesthetics
+    # TODO: x and y in particular should be DataVec to allow for missing data
     x::Union(Nothing, Vector{Float64})
     y::Union(Nothing, Vector{Float64})
     xtick::Union(Nothing, Vector{Float64})
@@ -14,7 +15,7 @@ type Aesthetics
     xtick_labels::Union(Nothing, Vector{String})
     ytick_labels::Union(Nothing, Vector{String})
     size::Union(Nothing, Vector{Measure})
-    color::Union(Nothing, Vector{Color})
+    color::Union(Nothing, PooledDataVec{Color})
 
     function Aesthetics()
         new(nothing, nothing, nothing, nothing,

@@ -21,7 +21,6 @@ abstract GuideElement       <: Element
 abstract StatisticElement   <: Element
 
 load("Gadfly/src/misc.jl")
-load("Gadfly/src/color.jl")
 load("Gadfly/src/theme.jl")
 load("Gadfly/src/aesthetics.jl")
 load("Gadfly/src/data.jl")
@@ -182,7 +181,7 @@ function render(plot::Plot)
     # Organize scales: build map of variables to the scales that were applied.
     scale_map = Dict{Symbol, ScaleElement}()
     for scale in scales
-        scale_map[scale.var] = scale
+        scale_map[element_aesthetics(scale)[1]] = scale
     end
 
     # IIa. Layer-wise statistics
