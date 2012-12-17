@@ -169,21 +169,28 @@ function element_aesthetics(scale::DiscreteColorScale)
 end
 
 
+function scale_label(scale::DiscreteColorScale, c)
+    # Ok, here we are. The decision I postponed until last. Here the scale
+    # somehow has to know the mapping of colors to values in the data.
+end
+
+
 # Common discrete color scales
 const color_hue = DiscreteColorScale(h -> lab_rainbow(70, 54, 0, h))
 
 
 function apply_scale(scale::DiscreteColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-
     for (aes, data) in zip(aess, datas)
         if data.color === nothing
             continue
         end
         ds = discretize(data.color)
         colors = scale.f(length(levels(ds)))
-        ds = PooledDataVec(Color[colors[i] for i in ds.refs], colors)
-        aes.color = ds
+        colored_ds = PooledDataVec(Color[colors[i] for i in ds.refs], colors)
+        aes.color = colored_ds
+        aes.color_key_colors = colors
+        aes.color_key_labels = String[string(d) for d in levels(ds)]
     end
 end
 

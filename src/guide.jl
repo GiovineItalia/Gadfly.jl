@@ -31,10 +31,85 @@ const background = PanelBackground()
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    p = stroke(nothing) | fill(theme.panel_background)
+    p = stroke(theme.panel_stroke) | fill(theme.panel_background)
     c = canvas() << (rectangle() << p)
     {(c, under_guide_position)}
 end
+
+
+type ColorKey <: Gadfly.GuideElement
+    title::String
+end
+
+
+function render(guide::ColorKey, theme::Gadfly.Theme,
+                aess::Vector{Gadfly.Aesthetics})
+    used_colors = Set{Color}()
+    colors = Array(Color, 0) # to preserve ordering
+    labels = Dict{Color, Set{String}}()
+
+    for aes in aess
+        if aes.color_key_colors === nothing
+            continue
+        end
+
+        for (color, label) in zip(aes.color_key_colors, aes.color_key_labels)
+            if !has(used_colors, color)
+                add(used_colors, color)
+                push(colors, color)
+                labels[color] = Set{String}(label)
+            else
+                add(labels[color], label)
+            end
+        end
+    end
+
+    pretty_labels = Dict{Color, String}()
+    for (color, label) in labels
+        pretty_labels[color] = join(labels[color], ", ")
+    end
+
+    # Key title
+    title_width, title_height = text_extents(theme.axis_label_font,
+                                             theme.axis_label_font_size,
+                                             guide.title)
+    title_form = text(0.5w, title_height, guide.title, hcenter, vbottom) <<
+                      (stroke(nothing) |
+                       font(theme.axis_label_font) |
+                       fontsize(theme.axis_label_font_size) |
+                       fill(theme.axis_label_color))
+    title_padding = 2mm
+    title_canvas = canvas(0w, 0h, 1w, title_height + title_padding) << title_form
+
+    # Key entries
+    n = length(colors)
+    te = text -> text_extents(theme.tick_label_font, theme.tick_label_font_size, text)
+    entry_height = max([te(label)[2] for label in values(pretty_labels)])
+    entry_width = entry_height + max([te(label)[1] for label in values(pretty_labels)])
+    entry_width = max(entry_width, title_width)
+
+    padding = 1mm
+    c = canvas(0w, 0h + title_canvas.box.height,
+               1w, n * (entry_height + padding),
+               Units(0, 0, 1, n))
+    for (i, color) in enumerate(colors)
+        c <<= rectangle(0, i - 1, 1cy - padding, 1cy - padding) <<
+                    (fill(color) |
+                     stroke(theme.stroke_color(color)) |
+                     linewidth(theme.highlight_width))
+
+        c <<= text(1cy, (i - 1)cy + entry_height/2, pretty_labels[color], hleft, vcenter) <<
+                (stroke(nothing) |
+                 font(theme.tick_label_font) |
+                 fontsize(theme.tick_label_font_size) |
+                 fill(theme.tick_label_color))
+    end
+    root = canvas(0, 0, entry_width + 3*padding, c.box.height + title_canvas.box.height)
+    root = root | pad(canvas() | c | title_canvas, 2mm)
+
+    {(root, right_guide_position)}
+end
+
 
 
 type XTicks <: Gadfly.GuideElement
@@ -210,6 +285,7 @@ function layout_guides(plot_canvas::Canvas,
     r = right_guides.box.width
     b = bottom_guides.box.height
     l = left_guides.box.width
+
     pw = 1cx - l - r # plot width
     ph = 1cy - t - b # plot height
 

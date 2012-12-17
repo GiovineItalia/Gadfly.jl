@@ -1,10 +1,5 @@
 
-Heres the plan:
-Merge the stuff in transform.jl into scale.jl. All scales need to give a f and
-finv function.
-
-
-
+* Guides for color scales.
 * Discrete scales.
 * More default guides.
 * A means by which statistics can modify guides. (For example, Stat.histogram

@@ -11,7 +11,7 @@ import Base.copy, Base.push
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot
 
-element_aesthetics(::Any) = error("Ahh!")
+element_aesthetics(::Any) = []
 
 abstract Element
 abstract ScaleElement       <: Element
@@ -24,8 +24,6 @@ load("Gadfly/src/misc.jl")
 load("Gadfly/src/theme.jl")
 load("Gadfly/src/aesthetics.jl")
 load("Gadfly/src/data.jl")
-
-
 
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
@@ -147,8 +145,9 @@ function render(plot::Plot)
 
     scales = copy(plot.scales)
     for var in used_aesthetics - scaled_aesthetics
-        # TODO: default scale should depend on the aesthetic in question
-        push(scales, Scale.ContinuousScale(var, Scale.identity_transform))
+        if has(default_scales, var)
+            push(scales, default_scales[var])
+        end
     end
 
     layer_stats = Array(StatisticElement, length(plot.layers))
@@ -162,6 +161,10 @@ function render(plot::Plot)
     push(guides, Guide.background)
     push(guides, Guide.x_ticks)
     push(guides, Guide.y_ticks)
+    if has(used_aesthetics, :color)
+        push(guides, Guide.ColorKey(string(plot.mapping[:color])))
+    end
+
     statistics = copy(plot.statistics)
     push(statistics, Stat.x_ticks)
     push(statistics, Stat.y_ticks)
@@ -226,4 +229,13 @@ load("Gadfly/src/statistics.jl")
 import Scale, Coord, Geom, Guide, Stat
 
 
+# All aesthetics must have a scale. If none is given these defaults are
+# applied.
+const default_scales = {
+        :x     => Scale.x_continuous,
+        :y     => Scale.y_continuous,
+        :color => Scale.color_hue}
+
+
 end # module Gadfly
+

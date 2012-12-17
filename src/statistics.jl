@@ -9,6 +9,7 @@ import Iterators.chain
 
 import Gadfly
 import Gadfly.Scale
+using DataFrames
 
 # Apply a series of statistics.
 #
@@ -298,6 +299,7 @@ function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics,
 
     nothing
 end
+
 
 end # module Stat
 

@@ -8,18 +8,24 @@ using Compose
 # this a Varset). Each variable controls how geometries are realized.
 type Aesthetics
     # TODO: x and y in particular should be DataVec to allow for missing data
-    x::Union(Nothing, Vector{Float64})
-    y::Union(Nothing, Vector{Float64})
-    xtick::Union(Nothing, Vector{Float64})
-    ytick::Union(Nothing, Vector{Float64})
-    xtick_labels::Union(Nothing, Vector{String})
-    ytick_labels::Union(Nothing, Vector{String})
-    size::Union(Nothing, Vector{Measure})
-    color::Union(Nothing, PooledDataVec{Color})
+    x::Maybe(Vector{Float64})
+    y::Maybe(Vector{Float64})
+    size::Maybe(Vector{Measure})
+    color::Maybe(PooledDataVec{Color})
+
+    # Aesthetics pertaining to guides
+    xtick::Maybe(Vector{Float64})
+    ytick::Maybe(Vector{Float64})
+    xtick_labels::Maybe(Vector{String})
+    ytick_labels::Maybe(Vector{String})
+
+    color_key_colors::Maybe(Vector{Color})
+    color_key_labels::Maybe(Vector{String})
 
     function Aesthetics()
         new(nothing, nothing, nothing, nothing,
-            nothing,nothing, nothing, nothing)
+            nothing, nothing, nothing, nothing,
+            nothing, nothing)
     end
 
     # shallow copy constructor

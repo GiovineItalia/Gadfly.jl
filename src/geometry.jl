@@ -101,7 +101,10 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     if length(aes.color) == 1
         form = compose(forms...) << (fill(aes.color[1]) | stroke(nothing))
     else
-        form = compose([f << fill(c) for (f, c) in zip(forms, aes.color)]...)
+        form = compose([f << (fill(c) |
+                              stroke(theme.stroke_color(c)) |
+                              linewidth(theme.highlight_width))
+                        for (f, c) in zip(forms, aes.color)]...)
         form << stroke(nothing)
     end
 end
@@ -149,10 +152,10 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         form = lines({(x, y) for (x, y) in zip(aes.x, aes.y)}...)
         form << (stroke(aes.color[1]) | fill(nothing))
     else
-        points = Dict{Color, Array{(Float64, Float64)}}()
-        for (x, y, c) in zip(aes.x, aes.x, Iterators.cycle(aes.color))
+        points = Dict{Color, Array{(Float64, Float64),1}}()
+        for (x, y, c) in zip(aes.x, aes.y, Iterators.cycle(aes.color))
             if !has(points, c)
-                points[c] = Array((Float64, Float64))
+                points[c] = Array((Float64, Float64),0)
             end
             push(points[c], (x, y))
         end
@@ -160,7 +163,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         forms = {}
         for (c, c_points) in points
             form = lines({(x, y) for (x, y) in c_points}...)
-            form <<= stroke(c) | fill(nothing)
+            form <<= stroke(c) | fill(nothing) | linewidth(0.3mm)
             push(forms, form)
         end
         compose(forms...)
