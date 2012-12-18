@@ -21,10 +21,10 @@ using DataFrames
 # Returns:
 #   Nothing, modifies aes.
 #
-function apply_statistics(stats::Vector{Gadfly.StatisticElement}, aes::Gadfly.Aesthetics,
-                          scale_map::Dict{Symbol, Gadfly.ScaleElement})
+function apply_statistics(stats::Vector{Gadfly.StatisticElement},
+                          aes::Gadfly.Aesthetics)
     for stat in stats
-        apply_statistic(stat, aes, scale_map)
+        apply_statistic(stat, aes)
     end
     nothing
 end
@@ -37,8 +37,7 @@ const nil = Nil()
 type Identity <: Gadfly.StatisticElement
 end
 
-function apply_statistic(stat::Identity, aes::Gadfly.Aesthetics,
-                         scale_map::Dict{Symbol, Gadfly.ScaleElement})
+function apply_statistic(stat::Identity, aes::Gadfly.Aesthetics)
     nothing
 end
 
@@ -131,8 +130,7 @@ function choose_bin_count(xs::Vector{Float64})
 end
 
 
-function apply_statistic(stat::HistogramStatistic, aes::Gadfly.Aesthetics,
-                         scale_map::Dict{Symbol, Gadfly.ScaleElement})
+function apply_statistic(stat::HistogramStatistic, aes::Gadfly.Aesthetics)
     sorted_x = sort(aes.x)
     n = length(sorted_x)
     m = choose_bin_count(sorted_x)
@@ -255,8 +253,7 @@ end
 # Modifies:
 #   aes
 #
-function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics,
-                         scale_map::Dict{Symbol, Gadfly.ScaleElement})
+function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics)
     in_values = [getfield(aes, var) for var in stat.in_vars]
     in_values = filter(val -> !(val === nothing), in_values)
     in_values = chain(in_values...)
@@ -276,26 +273,14 @@ function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics,
 
     ticks = optimize_ticks(minval, maxval)
 
-    # TODO: For now, we are just going to use the first transform we find that
-    # has been applied to one of the input variables. In the future we may want
-    # to consider multiple labels for tick marks in cases where multiple
-    # transforms are in effect.
-    scale = nothing
-    for var in stat.in_vars
-        if has(scale_map, var)
-            scale = scale_map[var]
-        end
-    end
+    # We use the first label function we find for any of the aesthetics. I'm not
+    # positive this is the right thing to do, or would would be.
+    labeler = getfield(aes, symbol(@sprintf("%s_label", stat.in_vars[1])))
 
-    tick_labels = Array(String, length(ticks))
-
-    # Now, label these bitches.
-    for (i, val) in enumerate(ticks)
-        tick_labels[i] = scale.trans.label(val)
-    end
+    print(labeler === Gadfly.fmt_float)
 
     setfield(aes, stat.out_var, ticks)
-    setfield(aes, symbol(@sprintf("%s_labels", stat.out_var)), tick_labels)
+    setfield(aes, symbol(@sprintf("%s_label", stat.out_var)), labeler)
 
     nothing
 end

@@ -16,16 +16,22 @@ type Aesthetics
     # Aesthetics pertaining to guides
     xtick::Maybe(Vector{Float64})
     ytick::Maybe(Vector{Float64})
-    xtick_labels::Maybe(Vector{String})
-    ytick_labels::Maybe(Vector{String})
 
     color_key_colors::Maybe(Vector{Color})
     color_key_labels::Maybe(Vector{String})
 
+    # Labels. These are not aesthetics per se, but functions that assign lables
+    # to values taken by aesthetics. Often this means simply inverting the
+    # application of a scale to arrive at the original value.
+    x_label::Function
+    y_label::Function
+    xtick_label::Function
+    ytick_label::Function
+
     function Aesthetics()
-        new(nothing, nothing, nothing, nothing,
+        new(nothing, nothing, nothing,nothing,
             nothing, nothing, nothing, nothing,
-            nothing, nothing)
+            string, string, string, string)
     end
 
     # shallow copy constructor
@@ -97,20 +103,22 @@ end
 #
 function cat(aess::Aesthetics...)
     cataes = Aesthetics()
-
     for aes in aess
         for var in Aesthetics.names
-            if getfield(aes, var) === nothing
-                continue
-            end
-
-            if getfield(cataes, var) === nothing
-                setfield(cataes, var, copy(getfield(aes, var)))
-            else
-                # This is a problem for not-Vector aesthetics
-                append!(getfield(cataes, var), getfield(aes, var))
-            end
+            setfield(cataes, var,
+                     cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
         end
     end
     cataes
 end
+
+cat_aes_var!(a::Nothing, b::Nothing) = a
+cat_aes_var!(a::Nothing, b) = b
+cat_aes_var!(a, b::Nothing) = a
+cat_aes_var!(a::Function, b::Function) = a === string ? b : a
+function cat_aes_var!(a, b)
+    append!(a, b)
+    a
+end
+
+

@@ -4,31 +4,51 @@
 load("Compose.jl")
 using Compose
 
-
 type Theme
-    panel_background::ColorOrNothing
+    # If the color aesthetic is not mapped to anything, this is the color that
+    # is used.
+    default_color::ColorOrNothing
+
+    # Default size when the size aesthetic is not mapped.
+    default_point_size::Measure
+
+    # Width of lines in the line geometry.
+    line_width::Measure
+
+    # Background color of the plot.
+    panel_fill::ColorOrNothing
+
+    # Border color of the plot panel.
     panel_stroke::ColorOrNothing
-    panel_padding::Measure
+
+    # Grid line color.
     grid_color::ColorOrNothing
-    tick_label_font::String
-    tick_label_font_size::Measure
-    tick_label_color::ColorOrNothing
-    axis_label_font::String
-    axis_label_font_size::Measure
-    axis_label_color::ColorOrNothing
+
+    # Font name, size, and color used for tick labels, entries in keys, etc.
+    minor_label_font::String
+    minor_label_font_size::Measure
+    minor_label_color::ColorOrNothing
+
+    # Font name, size and color used for axis labels, key title, etc.
+    major_label_font::String
+    major_label_font_size::Measure
+    major_label_color::ColorOrNothing
+
+    # When 1.0, the bars in bar plots are smushed together. Numbers less than
+    # one create some spacing between bars.
     bar_width_scale::Maybe(Float64)
 
     # Points, etc, are highlighted by stroking in slightly different color. This
     # is the stroke width.
     highlight_width::Maybe(Measure)
 
-    # A function mapping fill color to stoke color.
-    stroke_color::Maybe(Function)
+    # A function mapping fill color to stoke color for highlights.
+    highlight_color::Maybe(Function)
 end
 
 
-# Choose stroke color by darkening the fill color
-function default_stroke_color(fill_color::Color)
+# Choose highlight color by darkening the fill color
+function default_highlight_color(fill_color::Color)
     fill_color = convert(LCHab, fill_color)
     c = LCHab(fill_color.l, fill_color.c, fill_color.h)
     c.l -= 15
@@ -37,17 +57,18 @@ end
 
 
 const default_theme =
-    Theme(
-          color("#f5f5f5"),
-          color("#f5f5f5"),
-          1mm,
-          color("#fdfdff"),
-          "PT Sans Caption",
-          10pt,
-          color("#4c404b"),
-          "PT Sans",
-          12pt,
-          color("#362a35"),
-          0.9,
-          0.3mm,
-          default_stroke_color)
+    Theme(color("steel blue"),      # default_color
+          0.5mm,                    # default_point_size
+          0.3mm,                    # line_width
+          color("#f5f5f5"),         # panel_fill
+          color("#f5f5f5"),         # panel_stroke
+          color("#fdfdff"),         # grid_color
+          "PT Sans Caption",        # minor_label_font
+          9pt,                      # minor_label_font_size
+          color("#4c404b"),         # minor_label_color
+          "PT Sans",                # major_label_font
+          11pt,                     # major_label_font_size
+          color("#362a35"),         # major_label_color
+          0.9,                      # bar_width_scale
+          0.3mm,                    # highlight_width
+          default_highlight_color)  # highlight_color

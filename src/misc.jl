@@ -12,7 +12,7 @@ end
 function inherit!{T}(a::T, b::T)
     for field in T.names
         val = getfield(a, field)
-        if val === nothing
+        if val === nothing || val === string
             setfield(a, field, getfield(b, field))
         end
     end

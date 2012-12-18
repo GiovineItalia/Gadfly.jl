@@ -33,7 +33,7 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
     c = compose(canvas(), rectangle(),
                 stroke(theme.panel_stroke),
-                fill(theme.panel_background))
+                fill(theme.panel_fill))
     {(c, under_guide_position)}
 end
 
@@ -71,30 +71,30 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     end
 
     # Key title
-    title_width, title_height = text_extents(theme.axis_label_font,
-                                             theme.axis_label_font_size,
+    title_width, title_height = text_extents(theme.major_label_font,
+                                             theme.major_label_font_size,
                                              guide.title)
 
     title_padding = 2mm
     title_canvas = compose(canvas(0w, 0h, 1w, title_height + title_padding),
                            text(0.5w, title_height, guide.title, hcenter, vbottom),
                            stroke(nothing),
-                           font(theme.axis_label_font),
-                           fontsize(theme.axis_label_font_size),
-                           fill(theme.axis_label_color))
+                           font(theme.major_label_font),
+                           fontsize(theme.major_label_font_size),
+                           fill(theme.major_label_color))
 
     # Key entries
     n = length(colors)
 
-    entry_width, entry_height = text_extents(theme.tick_label_font,
-                                             theme.tick_label_font_size,
+    entry_width, entry_height = text_extents(theme.minor_label_font,
+                                             theme.minor_label_font_size,
                                              values(pretty_labels)...)
     entry_width += entry_height # make space for the color swatch
 
     swatch_padding = 1mm
     swatch_size = 1cy - swatch_padding
     swatches = combine([compose(rectangle(0, i - 1, swatch_size, swatch_size),
-                                fill(c), stroke(theme.stroke_color(c)))
+                                fill(c), stroke(theme.highlight_color(c)))
                         for (i, c) in enumerate(colors)]...)
     swatches <<= linewidth(theme.highlight_width)
 
@@ -102,9 +102,9 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
                                   pretty_labels[c], hleft, vcenter)
                               for (i, c) in enumerate(colors)]...)
     swatch_labels <<= combine(stroke(nothing),
-                              font(theme.tick_label_font),
-                              fontsize(theme.tick_label_font_size),
-                              fill(theme.tick_label_color))
+                              font(theme.minor_label_font),
+                              fontsize(theme.minor_label_font_size),
+                              fill(theme.minor_label_color))
 
     swatch_canvas = compose(canvas(0w, 0h + title_canvas.box.height,
                                    1w, n * (entry_height + swatch_padding),
@@ -128,11 +128,12 @@ const x_ticks = XTicks()
 
 function render(guide::XTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
+    println(aess)
     ticks = Dict{Float64, String}()
     for aes in aess
-        if Gadfly.issomething(aes.xtick) && Gadfly.issomething(aes.xtick_labels)
-            for (val, label) in zip(aes.xtick, aes.xtick_labels)
-                ticks[val] = label
+        if Gadfly.issomething(aes.xtick)
+            for val in aes.xtick
+                ticks[val] = aes.xtick_label(val)
             end
         end
     end
@@ -143,8 +144,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                          stroke(theme.grid_color))
 
     # tick labels
-    (_, height) = text_extents(theme.tick_label_font,
-                               theme.tick_label_font_size,
+    (_, height) = text_extents(theme.minor_label_font,
+                               theme.minor_label_font_size,
                                values(ticks)...)
     padding = 1mm
 
@@ -152,9 +153,9 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                           [text(tick, 1h - padding, label, hcenter, vbottom)
                            for (tick, label) in ticks]...,
                           stroke(nothing),
-                          fill(theme.tick_label_color),
-                          font(theme.tick_label_font),
-                          fontsize(theme.tick_label_font_size))
+                          fill(theme.minor_label_color),
+                          font(theme.minor_label_font),
+                          fontsize(theme.minor_label_font_size))
 
     {(grid_lines, under_guide_position),
      (tick_labels, bottom_guide_position)}
@@ -170,9 +171,9 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
     ticks = Dict{Float64, String}()
     for aes in aess
-        if Gadfly.issomething(aes.ytick) && Gadfly.issomething(aes.ytick_labels)
-            for (val, label) in zip(aes.ytick, aes.ytick_labels)
-                ticks[val] = label
+        if Gadfly.issomething(aes.ytick)
+            for val in aes.ytick
+                ticks[val] = aes.ytick_label(val)
             end
         end
     end
@@ -183,8 +184,8 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                          stroke(theme.grid_color))
 
     # tick labels
-    (width, _) = text_extents(theme.tick_label_font,
-                              theme.tick_label_font_size,
+    (width, _) = text_extents(theme.minor_label_font,
+                              theme.minor_label_font_size,
                               values(ticks)...)
     padding = 1mm
     width += 2padding
@@ -193,9 +194,9 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                           [text(width - padding, t, label, hright, vcenter)
                            for (t, label) in ticks]...,
                           stroke(nothing),
-                          fill(theme.tick_label_color),
-                          font(theme.tick_label_font),
-                          fontsize(theme.tick_label_font_size))
+                          fill(theme.minor_label_color),
+                          font(theme.minor_label_font),
+                          fontsize(theme.minor_label_font_size))
 
     {(grid_lines, under_guide_position),
      (tick_labels, left_guide_position)}
@@ -210,17 +211,17 @@ end
 
 function render(guide::XLabel, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    (_, text_height) = text_extents(theme.axis_label_font,
-                                    theme.axis_label_font_size,
+    (_, text_height) = text_extents(theme.major_label_font,
+                                    theme.major_label_font_size,
                                     guide.label)
 
     padding = 2mm
     c = compose(canvas(0, 0, 1w, text_height + padding),
                 text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
                 stroke(nothing),
-                fill(theme.axis_label_color),
-                font(theme.axis_label_font),
-                fontsize(theme.axis_label_font_size))
+                fill(theme.major_label_color),
+                font(theme.major_label_font),
+                fontsize(theme.major_label_font_size))
 
     {(c, bottom_guide_position)}
 end
@@ -233,17 +234,17 @@ end
 
 
 function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aesthetics})
-    (text_width, text_height) = text_extents(theme.axis_label_font,
-                                             theme.axis_label_font_size,
+    (text_width, text_height) = text_extents(theme.major_label_font,
+                                             theme.major_label_font_size,
                                              guide.label)
     padding = 2mm
     c = compose(canvas(0, 0, text_height + 2padding, 1cy,
                        Rotation(-0.5pi, 0.5w, 0.5h)),
                 text(0.5w, 0.5h, guide.label, hcenter, vcenter),
                 stroke(nothing),
-                fill(theme.axis_label_color),
-                font(theme.axis_label_font),
-                fontsize(theme.axis_label_font_size))
+                fill(theme.major_label_color),
+                font(theme.major_label_font),
+                fontsize(theme.major_label_font_size))
 
     {(c, left_guide_position)}
 end

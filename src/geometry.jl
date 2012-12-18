@@ -30,15 +30,6 @@ end
 
 # Geometry which displays points at given (x, y) positions.
 type PointGeometry <: Gadfly.GeometryElement
-    default_aes::Gadfly.Aesthetics
-
-    function PointGeometry()
-        g = Gadfly.Aesthetics()
-        # TODO: these constants should be in Theme
-        g.size  = Measure[0.75mm]
-        g.color = PooledDataVec(Color[color("steelblue")])
-        new(g)
-    end
 end
 
 
@@ -91,34 +82,32 @@ end
 function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     check_xy(aes)
 
-    aes = inherit(aes, geom.default_aes)
+    default_aes = Gadfly.Aesthetics()
+    default_aes.color = PooledDataVec(Color[theme.default_color])
+    default_aes.size = Measure[theme.default_point_size]
+    aes = inherit(aes, default_aes)
 
-    forms = Array(Any, length(aes.x))
-    for (i, (x, y, s)) in enumerate(zip(aes.x, aes.y, Iterators.cycle(aes.size)))
-        forms[i] = circle(x, y, s)
+    # organize by color
+    points = Dict{Color, Array{Tuple,1}}()
+    for (x, y, c, s) in zip(aes.x, aes.y,
+                            Iterators.cycle(aes.color),
+                            Iterators.cycle(aes.size))
+        if !has(points, c)
+            points[c] = Array(Tuple,0)
+        end
+        push(points[c], (x, y, s))
     end
 
-    if length(aes.color) == 1
-        form = combine(forms...) << fill(aes.color[1])
-    else
-        form = combine([f << fill(c) << stroke(theme.stroke_color(c))
-                        for (f, c) in zip(forms, aes.color)]...)
-    end
+    form = combine([combine([circle(x, y, s) for (x, y, s) in xys]...) <<
+                        fill(c) << stroke(theme.highlight_color(c))
+                    for (c, xys) in points]...)
+
     form << stroke(nothing) << linewidth(theme.highlight_width)
 end
 
 
 # Line geometry connects (x, y) coordinates with lines.
 type LineGeometry <: Gadfly.GeometryElement
-    default_aes::Gadfly.Aesthetics
-
-    function LineGeometry()
-        g = Gadfly.Aesthetics()
-        # TODO: these constants should be in Theme
-        g.size  = Measure[0.3mm]
-        g.color = PooledDataVec(Color[color("steelblue")])
-        new(g)
-    end
 end
 
 
@@ -126,7 +115,7 @@ const line = LineGeometry()
 
 
 function element_aesthetics(::LineGeometry)
-    [:x, :y, :size, :color]
+    [:x, :y, :color]
 end
 
 
@@ -144,7 +133,9 @@ end
 function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     check_xy(aes)
 
-    aes = inherit(aes, geom.default_aes)
+    default_aes = Gadfly.Aesthetics()
+    default_aes.color = PooledDataVec(Color[theme.default_color])
+    aes = inherit(aes, default_aes)
 
     if length(aes.color) == 1
         form = lines({(x, y) for (x, y) in zip(aes.x, aes.y)}...) <<
@@ -166,7 +157,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         form = combine(forms...)
     end
 
-    form << fill(nothing) << linewidth(0.3mm)
+    form << fill(nothing) << linewidth(theme.line_width)
 end
 
 

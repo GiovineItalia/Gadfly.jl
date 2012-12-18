@@ -125,15 +125,10 @@ function apply_scale(scale::ContinuousScale,
         end
 
         setfield(aes, scale.var, ds)
+        label_var = symbol(@sprintf("%s_label", string(scale.var)))
+        setfield(aes, label_var, scale.trans.label)
     end
 end
-
-
-
-
-# Ok. Here is where I am stuck.
-# If I make the color aesthetic an actual vector of colors, I need to hold on to
-# the original values somehow in order to label elements. If I don't
 
 
 discretize(values::Vector) = PooledDataVec(values)
@@ -145,15 +140,32 @@ type DiscreteScaleTransform
 end
 
 
-# Ok. So we'll have a transform that will convert discretized values to colors.
-#
-
-
-# A discrete scale maps data to sequential integers.
 type DiscreteScale <: Gadfly.ScaleElement
     var::Symbol
-    transform::DiscreteScaleTransform
 end
+
+
+const x_discrete = DiscreteScale(:x)
+const y_discrete = DiscreteScale(:y)
+
+
+function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
+                     datas::Gadfly.Data...)
+    # TODO:
+    # What happens here? We discretize the data and map it to integers.
+    # One problem: how do we assign labels? We sort of punted when handling this
+    # for colors. Maybe each aesthetic should have a labels (e.g, x_labels,
+    # y_lables) aesthetic accompanying it, which is a PooledDataVec giving
+    # labels, rather than the current system of having an inverse function. The
+    # inverse function is problamatic as we would have to store the inverse
+    # mapping in cases like this, which would kill referential transparency.
+end
+
+# TODO: apply_scale(scale::DiscreteScale, ...)
+
+
+# Ok. So we'll have a transform that will convert discretized values to colors.
+#
 
 # Ok, that's fine, but how do we assign colors for discrete color scales, or
 # that something totally different?

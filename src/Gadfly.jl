@@ -125,6 +125,23 @@ end
 
 # Turn a graph specification into a graphic.
 #
+# This is where magic happens (sausage is made). Processing all the parts of the
+# plot is actually pretty simple. It's made complicated by trying to handle
+# defaults. With that asside, plots are made in the following steps.
+#
+#    I. Apply scales to transform raw data to the form expected by the aesthetic.
+#   II. Apply statistics to the scaled data. Statistics are essentially functions
+#       that map one or more aesthetics to one or more aesthetics.
+#  III. Apply coordinates. Currently all this does is figure out the coordinate
+#       system used by the plot panel canvas.
+#   IV. Render geometries. This gives us one or more compose forms suitable to be
+#       composed with the plot's panel.
+#    V. Render guides. Guides are conceptually very similar to geometries but with
+#       the ability to be placed outside of the plot panel.
+#
+#  Finally there is a very important call to layout_guides which puts everything
+#  together.
+#
 # Args:
 #   plot: a plot to render.
 #
@@ -145,8 +162,10 @@ function render(plot::Plot)
 
     scales = copy(plot.scales)
     for var in used_aesthetics - scaled_aesthetics
-        if has(default_scales, var)
-            push(scales, default_scales[var])
+        t = has(plot.mapping, var) ?
+                classify_data(getfield(plot.data, var)) : :discrete
+        if has(default_scales[t], var)
+            push(scales, default_scales[t][var])
         end
     end
 
@@ -161,7 +180,7 @@ function render(plot::Plot)
     push(guides, Guide.background)
     push(guides, Guide.x_ticks)
     push(guides, Guide.y_ticks)
-    if has(used_aesthetics, :color)
+    if has(plot.mapping, :color) && has(used_aesthetics, :color)
         push(guides, Guide.ColorKey(string(plot.mapping[:color])))
     end
 
@@ -169,11 +188,11 @@ function render(plot::Plot)
     push(statistics, Stat.x_ticks)
     push(statistics, Stat.y_ticks)
 
-    if has(plot.mapping, :x)
+    if has(plot.mapping, :x) && has(used_aesthetics, :x)
         push(guides, Guide.XLabel(string(plot.mapping[:x])))
     end
 
-    if has(plot.mapping, :y)
+    if has(plot.mapping, :y) && has(used_aesthetics, :y)
         push(guides, Guide.YLabel(string(plot.mapping[:y])))
     end
 
@@ -181,20 +200,14 @@ function render(plot::Plot)
     aess = Scale.apply_scales(scales, plot.data,
                               [layer.data for layer in plot.layers]...)
 
-    # Organize scales: build map of variables to the scales that were applied.
-    scale_map = Dict{Symbol, ScaleElement}()
-    for scale in scales
-        scale_map[element_aesthetics(scale)[1]] = scale
-    end
-
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, aess)
-        Stat.apply_statistics(StatisticElement[layer_stat], aes, scale_map)
+        Stat.apply_statistics(StatisticElement[layer_stat], aes)
     end
 
     # IIb. Plot-wise Statistics
     plot_aes = cat(aess...)
-    Stat.apply_statistics(statistics, plot_aes, scale_map)
+    Stat.apply_statistics(statistics, plot_aes)
 
     # III. Coordinates
     plot_canvas = Coord.apply_coordinate(plot.coord, plot_aes, aess...)
@@ -228,13 +241,24 @@ load("Gadfly/src/statistics.jl")
 
 import Scale, Coord, Geom, Guide, Stat
 
+# TODO: these need to be decided by the type of the data.
+# So, how about the following scheme.
 
-# All aesthetics must have a scale. If none is given these defaults are
-# applied.
+# All aesthetics must have a scale. If none is given, we use a default.
+# The default depends on whether the input is discrete or continuous (i.e.,
+# PooledDataVec or DataVec, respectively).
 const default_scales = {
-        :x     => Scale.x_continuous,
-        :y     => Scale.y_continuous,
-        :color => Scale.color_hue}
+        :continuous => {:x     => Scale.x_continuous,
+                        :y     => Scale.y_continuous,
+                        :color => Scale.color_hue},
+        :discrete   => {:x     => Scale.x_discrete,
+                        :y     => Scale.y_discrete,
+                        :color => Scale.color_hue}}
+
+# Determine whether the input is discrete or continuous.
+classify_data{T <: Real}(data::DataVec{T}) = :continuous
+classify_data(data::DataVec) = :discrete
+classify_data(data::PooledDataVec) = :discrete
 
 
 end # module Gadfly
