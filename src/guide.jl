@@ -128,7 +128,6 @@ const x_ticks = XTicks()
 
 function render(guide::XTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    println(aess)
     ticks = Dict{Float64, String}()
     for aes in aess
         if Gadfly.issomething(aes.xtick)
@@ -141,7 +140,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     # grid lines
     grid_lines = compose(canvas(),
                          [lines((t, 0h), (t, 1h)) for (t, _) in ticks]...,
-                         stroke(theme.grid_color))
+                         stroke(theme.grid_color),
+                         linewidth(theme.grid_line_width))
 
     # tick labels
     (_, height) = text_extents(theme.minor_label_font,
@@ -181,7 +181,8 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     # grid lines
     grid_lines = compose(canvas(),
                          [lines((0w, t), (1w, t)) for (t, _) in ticks]...,
-                         stroke(theme.grid_color))
+                         stroke(theme.grid_color),
+                         linewidth(theme.grid_line_width))
 
     # tick labels
     (width, _) = text_extents(theme.minor_label_font,
@@ -216,7 +217,7 @@ function render(guide::XLabel, theme::Gadfly.Theme,
                                     guide.label)
 
     padding = 2mm
-    c = compose(canvas(0, 0, 1w, text_height + padding),
+    c = compose(canvas(0, 0, 1w, text_height + 2padding),
                 text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
                 stroke(nothing),
                 fill(theme.major_label_color),

@@ -24,6 +24,9 @@ type Theme
     # Grid line color.
     grid_color::ColorOrNothing
 
+    # Width of grid lines
+    grid_line_width::Measure
+
     # Font name, size, and color used for tick labels, entries in keys, etc.
     minor_label_font::String
     minor_label_font_size::Measure
@@ -59,10 +62,11 @@ end
 const default_theme =
     Theme(color("steel blue"),      # default_color
           0.5mm,                    # default_point_size
-          0.3mm,                    # line_width
+          0.4mm,                    # line_width
           color("#f5f5f5"),         # panel_fill
-          color("#f5f5f5"),         # panel_stroke
-          color("#fdfdff"),         # grid_color
+          color("#f2f2f2"),         # panel_stroke
+          color("white"),           # grid_color
+          0.3mm,                    # grid line width
           "PT Sans Caption",        # minor_label_font
           9pt,                      # minor_label_font_size
           color("#4c404b"),         # minor_label_color

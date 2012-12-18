@@ -175,11 +175,14 @@ function render(plot::Plot)
                             Geom.default_statistic(layer.geom) : layer.statistic
     end
 
-    # TODO: Reasonable handling of default guides.
+    # TODO: Reasonable handling of default guides. Currently x/y ticks are
+    # always on and there is no way to turn them off. Think of a good way to
+    # supress defaults.
     guides = copy(plot.guides)
     push(guides, Guide.background)
     push(guides, Guide.x_ticks)
     push(guides, Guide.y_ticks)
+
     if has(plot.mapping, :color) && has(used_aesthetics, :color)
         push(guides, Guide.ColorKey(string(plot.mapping[:color])))
     end
@@ -218,7 +221,7 @@ function render(plot::Plot)
     end
 
     # IV. Geometries
-    plot_canvas <<= compose({render(layer.geom, plot.theme, aes)
+    plot_canvas <<= combine({render(layer.geom, plot.theme, aes)
                              for (layer, aes) in zip(plot.layers, aess)}...)
 
     # V. Guides
@@ -240,9 +243,6 @@ load("Gadfly/src/guide.jl")
 load("Gadfly/src/statistics.jl")
 
 import Scale, Coord, Geom, Guide, Stat
-
-# TODO: these need to be decided by the type of the data.
-# So, how about the following scheme.
 
 # All aesthetics must have a scale. If none is given, we use a default.
 # The default depends on whether the input is discrete or continuous (i.e.,

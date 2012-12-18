@@ -260,6 +260,7 @@ function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics)
 
     minval = Inf
     maxval = -Inf
+    all_int = true
 
     for val in in_values
         if val < minval
@@ -269,15 +270,25 @@ function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics)
         if val > maxval
             maxval = val
         end
+
+        if int(val) != val
+            all_int = false
+        end
     end
 
-    ticks = optimize_ticks(minval, maxval)
+    # all the input values in order.
+    if all_int
+        ticks = Set{Float64}()
+        add_each(ticks, chain(in_values))
+        ticks = Float64[t for t in ticks]
+        sort!(ticks)
+    else
+        ticks = optimize_ticks(minval, maxval)
+    end
 
     # We use the first label function we find for any of the aesthetics. I'm not
     # positive this is the right thing to do, or would would be.
     labeler = getfield(aes, symbol(@sprintf("%s_label", stat.in_vars[1])))
-
-    print(labeler === Gadfly.fmt_float)
 
     setfield(aes, stat.out_var, ticks)
     setfield(aes, symbol(@sprintf("%s_label", stat.out_var)), labeler)
