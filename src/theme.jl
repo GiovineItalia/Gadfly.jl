@@ -38,7 +38,7 @@ end
 
 const default_theme =
     Theme(
-          color("#f7f7f7"),
+          color("#f5f5f5"),
           color("#f5f5f5"),
           1mm,
           color("#fdfdff"),

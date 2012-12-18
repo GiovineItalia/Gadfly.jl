@@ -31,8 +31,9 @@ const background = PanelBackground()
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    p = stroke(theme.panel_stroke) | fill(theme.panel_background)
-    c = canvas() << (rectangle() << p)
+    c = compose(canvas(), rectangle(),
+                stroke(theme.panel_stroke),
+                fill(theme.panel_background))
     {(c, under_guide_position)}
 end
 
@@ -73,41 +74,48 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     title_width, title_height = text_extents(theme.axis_label_font,
                                              theme.axis_label_font_size,
                                              guide.title)
-    title_form = text(0.5w, title_height, guide.title, hcenter, vbottom) <<
-                      (stroke(nothing) |
-                       font(theme.axis_label_font) |
-                       fontsize(theme.axis_label_font_size) |
-                       fill(theme.axis_label_color))
+
     title_padding = 2mm
-    title_canvas = canvas(0w, 0h, 1w, title_height + title_padding) << title_form
+    title_canvas = compose(canvas(0w, 0h, 1w, title_height + title_padding),
+                           text(0.5w, title_height, guide.title, hcenter, vbottom),
+                           stroke(nothing),
+                           font(theme.axis_label_font),
+                           fontsize(theme.axis_label_font_size),
+                           fill(theme.axis_label_color))
 
     # Key entries
     n = length(colors)
-    te = text -> text_extents(theme.tick_label_font, theme.tick_label_font_size, text)
-    entry_height = max([te(label)[2] for label in values(pretty_labels)])
-    entry_width = entry_height + max([te(label)[1] for label in values(pretty_labels)])
-    entry_width = max(entry_width, title_width)
 
-    padding = 1mm
-    c = canvas(0w, 0h + title_canvas.box.height,
-               1w, n * (entry_height + padding),
-               Units(0, 0, 1, n))
-    for (i, color) in enumerate(colors)
-        c <<= rectangle(0, i - 1, 1cy - padding, 1cy - padding) <<
-                    (fill(color) |
-                     stroke(theme.stroke_color(color)) |
-                     linewidth(theme.highlight_width))
+    entry_width, entry_height = text_extents(theme.tick_label_font,
+                                             theme.tick_label_font_size,
+                                             values(pretty_labels)...)
+    entry_width += entry_height # make space for the color swatch
 
-        c <<= text(1cy, (i - 1)cy + entry_height/2, pretty_labels[color], hleft, vcenter) <<
-                (stroke(nothing) |
-                 font(theme.tick_label_font) |
-                 fontsize(theme.tick_label_font_size) |
-                 fill(theme.tick_label_color))
-    end
-    root = canvas(0, 0, entry_width + 3*padding, c.box.height + title_canvas.box.height)
-    root = root | pad(canvas() | c | title_canvas, 2mm)
+    swatch_padding = 1mm
+    swatch_size = 1cy - swatch_padding
+    swatches = combine([compose(rectangle(0, i - 1, swatch_size, swatch_size),
+                                fill(c), stroke(theme.stroke_color(c)))
+                        for (i, c) in enumerate(colors)]...)
+    swatches <<= linewidth(theme.highlight_width)
 
-    {(root, right_guide_position)}
+    swatch_labels = combine([text(1cy, (i - 1)cy + entry_height/2,
+                                  pretty_labels[c], hleft, vcenter)
+                              for (i, c) in enumerate(colors)]...)
+    swatch_labels <<= combine(stroke(nothing),
+                              font(theme.tick_label_font),
+                              fontsize(theme.tick_label_font_size),
+                              fill(theme.tick_label_color))
+
+    swatch_canvas = compose(canvas(0w, 0h + title_canvas.box.height,
+                                   1w, n * (entry_height + swatch_padding),
+                                   Units(0, 0, 1, n)),
+                            swatches, swatch_labels)
+
+    c = canvas(0, 0, entry_width + 3swatch_padding,
+               swatch_canvas.box.height + title_canvas.box.height) <<
+        pad(canvas() << swatch_canvas << title_canvas, 2mm)
+
+    {(c, right_guide_position)}
 end
 
 
@@ -129,21 +137,24 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         end
     end
 
-    form = compose([lines((tick, 0h), (tick, 1h)) for (tick, label) in ticks]...)
-    grid_lines = canvas() << (form << stroke(theme.grid_color))
+    # grid lines
+    grid_lines = compose(canvas(),
+                         [lines((t, 0h), (t, 1h)) for (t, _) in ticks]...,
+                         stroke(theme.grid_color))
 
+    # tick labels
     (_, height) = text_extents(theme.tick_label_font,
                                theme.tick_label_font_size,
                                values(ticks)...)
     padding = 1mm
 
-    tick_labels = compose([text(tick, 1h - padding, label, hcenter, vbottom)
-                           for (tick, label) in ticks]...)
-    tick_labels <<= stroke(nothing) |
-                    fill(theme.tick_label_color) |
-                    font(theme.tick_label_font) |
-                    fontsize(theme.tick_label_font_size)
-    tick_labels = canvas(0, 0, 1w, height + 2padding) << tick_labels
+    tick_labels = compose(canvas(0, 0, 1w, height + 2padding),
+                          [text(tick, 1h - padding, label, hcenter, vbottom)
+                           for (tick, label) in ticks]...,
+                          stroke(nothing),
+                          fill(theme.tick_label_color),
+                          font(theme.tick_label_font),
+                          fontsize(theme.tick_label_font_size))
 
     {(grid_lines, under_guide_position),
      (tick_labels, bottom_guide_position)}
@@ -166,22 +177,25 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         end
     end
 
-    form = compose([lines((0w, tick), (1w, tick)) for (tick, label) in ticks]...)
-    grid_lines = canvas() << (form << stroke(theme.grid_color))
+    # grid lines
+    grid_lines = compose(canvas(),
+                         [lines((0w, t), (1w, t)) for (t, _) in ticks]...,
+                         stroke(theme.grid_color))
 
+    # tick labels
     (width, _) = text_extents(theme.tick_label_font,
                               theme.tick_label_font_size,
                               values(ticks)...)
     padding = 1mm
     width += 2padding
 
-    tick_labels = compose([text(width - padding, tick, label, hright, vcenter)
-                           for (tick, label) in ticks]...)
-    tick_labels <<= stroke(nothing) |
-                    fill(theme.tick_label_color) |
-                    font(theme.tick_label_font) |
-                    fontsize(theme.tick_label_font_size)
-    tick_labels = canvas(0, 0, width, 1cy) << tick_labels
+    tick_labels = compose(canvas(0, 0, width, 1cy),
+                          [text(width - padding, t, label, hright, vcenter)
+                           for (t, label) in ticks]...,
+                          stroke(nothing),
+                          fill(theme.tick_label_color),
+                          font(theme.tick_label_font),
+                          fontsize(theme.tick_label_font_size))
 
     {(grid_lines, under_guide_position),
      (tick_labels, left_guide_position)}
@@ -201,14 +215,14 @@ function render(guide::XLabel, theme::Gadfly.Theme,
                                     guide.label)
 
     padding = 2mm
-    t = text(0.5w, 1h - padding, guide.label, hcenter, vbottom)
-    t <<= stroke(nothing) |
-          fill(theme.axis_label_color) |
-          font(theme.axis_label_font) |
-          fontsize(theme.axis_label_font_size)
-    c = canvas(0, 0, 1w, text_height + padding)
+    c = compose(canvas(0, 0, 1w, text_height + padding),
+                text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
+                stroke(nothing),
+                fill(theme.axis_label_color),
+                font(theme.axis_label_font),
+                fontsize(theme.axis_label_font_size))
 
-    {(c << t, bottom_guide_position)}
+    {(c, bottom_guide_position)}
 end
 
 
@@ -223,15 +237,15 @@ function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aestheti
                                              theme.axis_label_font_size,
                                              guide.label)
     padding = 2mm
-    t = text(0.5w, 0.5h, guide.label, hcenter, vcenter)
-    t <<= stroke(nothing) |
-          fill(theme.axis_label_color) |
-          font(theme.axis_label_font) |
-          fontsize(theme.axis_label_font_size)
-    c = canvas(0, 0, text_height + 2padding, 1cy,
-               Rotation(-0.5pi, 0.5w, 0.5h))
+    c = compose(canvas(0, 0, text_height + 2padding, 1cy,
+                       Rotation(-0.5pi, 0.5w, 0.5h)),
+                text(0.5w, 0.5h, guide.label, hcenter, vcenter),
+                stroke(nothing),
+                fill(theme.axis_label_color),
+                font(theme.axis_label_font),
+                fontsize(theme.axis_label_font_size))
 
-    {(c << t, left_guide_position)}
+    {(c, left_guide_position)}
 end
 
 
@@ -294,8 +308,9 @@ function layout_guides(plot_canvas::Canvas,
     bottom_guides = set_box(bottom_guides, BoundingBox(l, t + ph, pw, b))
     left_guides   = set_box(left_guides,   BoundingBox(0, t, l, ph))
 
-    plot_canvas = canvas(l, t, pw, ph) | compose(under_guides...) | plot_canvas
-    canvas() | plot_canvas | top_guides | right_guides | bottom_guides | left_guides
+    compose(canvas(),
+            (canvas(l, t, pw, ph), under_guides, plot_canvas),
+            top_guides, right_guides, bottom_guides, left_guides)
 end
 
 end # module Guide

@@ -206,7 +206,7 @@ function render(plot::Plot)
 
     # IV. Geometries
     plot_canvas <<= compose({render(layer.geom, plot.theme, aes)
-                               for (layer, aes) in zip(plot.layers, aess)}...)
+                             for (layer, aes) in zip(plot.layers, aess)}...)
 
     # V. Guides
     guide_canvases = {}

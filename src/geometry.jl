@@ -99,14 +99,12 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     end
 
     if length(aes.color) == 1
-        form = compose(forms...) << (fill(aes.color[1]) | stroke(nothing))
+        form = combine(forms...) << fill(aes.color[1])
     else
-        form = compose([f << (fill(c) |
-                              stroke(theme.stroke_color(c)) |
-                              linewidth(theme.highlight_width))
+        form = combine([f << fill(c) << stroke(theme.stroke_color(c))
                         for (f, c) in zip(forms, aes.color)]...)
-        form << stroke(nothing)
     end
+    form << stroke(nothing) << linewidth(theme.highlight_width)
 end
 
 
@@ -149,9 +147,10 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     aes = inherit(aes, geom.default_aes)
 
     if length(aes.color) == 1
-        form = lines({(x, y) for (x, y) in zip(aes.x, aes.y)}...)
-        form << (stroke(aes.color[1]) | fill(nothing))
+        form = lines({(x, y) for (x, y) in zip(aes.x, aes.y)}...) <<
+               stroke(aes.color[1])
     else
+        # group points by color
         points = Dict{Color, Array{(Float64, Float64),1}}()
         for (x, y, c) in zip(aes.x, aes.y, Iterators.cycle(aes.color))
             if !has(points, c)
@@ -160,14 +159,14 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
             push(points[c], (x, y))
         end
 
-        forms = {}
-        for (c, c_points) in points
-            form = lines({(x, y) for (x, y) in c_points}...)
-            form <<= stroke(c) | fill(nothing) | linewidth(0.3mm)
-            push(forms, form)
+        forms = Array(Any, length(points))
+        for (i, (c, c_points)) in enumerate(points)
+            forms[i] = lines({(x, y) for (x, y) in c_points}...) << stroke(c)
         end
-        compose(forms...)
+        form = combine(forms...)
     end
+
+    form << fill(nothing) << linewidth(0.3mm)
 end
 
 
@@ -206,7 +205,10 @@ end
 #   A compose form.
 #
 function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    #check_xy(aes) # TODO: check_x
+    if typeof(aes.x) == Nothing
+        error("`x' must be defined for bar geometry.")
+    end
+
     aes = Gadfly.inherit(aes, geom.default_aes)
 
     # Set the bar width to be the minimum distance between to x values, to avoid
@@ -226,11 +228,10 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     forms = {rectangle(x - bar_width/2, 0.0, bar_width, y)
              for (x, y) in zip(aes.x, aes.y)}
 
-
     if length(aes.color) == 1
-        form = compose(forms...) << fill(aes.color[1])
+        form = combine(forms...) << fill(aes.color[1])
     else
-        form = compose([form << fill(c)
+        form = combine([form << fill(c)
                         for (f, c) in zip(forms, Iterators.cycle(aes.color))]...)
     end
 
