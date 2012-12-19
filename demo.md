@@ -181,8 +181,4 @@ the sort produced by d3, this sort of mild interactivity can improve a lot of
 standard plots. The fuel efficiency plot is made more clear by toggling off some
 of the countries, for example.
 
-### Future
-
-
-
 

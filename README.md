@@ -48,7 +48,7 @@ Gadfly uses a declarative vector graphics system called
 [Compose](https://github.com/dcjones/compose). This let's you manipulate plots
 in interesting ways once you define them.
 
-![Histogram](http://dcjones.github.com/gadfly/two_plots.svg)
+![Histogram](http://dcjones.github.com/gadfly/fig1.svg)
 
 ```julia
 fig1a = render(plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"},
