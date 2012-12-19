@@ -8,8 +8,8 @@ using Compose
 # this a Varset). Each variable controls how geometries are realized.
 type Aesthetics
     # TODO: x and y in particular should be DataVec to allow for missing data
-    x::Maybe(Vector{Float64})
-    y::Maybe(Vector{Float64})
+    x::Union(Nothing, Vector{Float64}, Vector{Int64})
+    y::Union(Nothing, Vector{Float64}, Vector{Int64})
     size::Maybe(Vector{Measure})
     color::Maybe(PooledDataVec{Color})
 
@@ -18,7 +18,6 @@ type Aesthetics
     ytick::Maybe(Vector{Float64})
 
     color_key_colors::Maybe(Vector{Color})
-    color_key_labels::Maybe(Vector{String})
 
     # Labels. These are not aesthetics per se, but functions that assign lables
     # to values taken by aesthetics. Often this means simply inverting the
@@ -27,11 +26,12 @@ type Aesthetics
     y_label::Function
     xtick_label::Function
     ytick_label::Function
+    color_label::Function
 
     function Aesthetics()
-        new(nothing, nothing, nothing,nothing,
-            nothing, nothing, nothing, nothing,
-            string, string, string, string)
+        new(nothing, nothing, nothing, nothing,
+            nothing, nothing, nothing, fmt_float,
+            fmt_float, string, string, string)
     end
 
     # shallow copy constructor
@@ -115,7 +115,7 @@ end
 cat_aes_var!(a::Nothing, b::Nothing) = a
 cat_aes_var!(a::Nothing, b) = b
 cat_aes_var!(a, b::Nothing) = a
-cat_aes_var!(a::Function, b::Function) = a === string ? b : a
+cat_aes_var!(a::Function, b::Function) = a === string || a === fmt_float ? b : a
 function cat_aes_var!(a, b)
     append!(a, b)
     a

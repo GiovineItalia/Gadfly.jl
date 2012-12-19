@@ -13,32 +13,33 @@ Stay tuned. More to come.
 
 Here's an example of what works so far:
 
-![Histogram](http://dcjones.github.com/gadfly/some_plot.svg)
+![Histogram](http://dcjones.github.com/gadfly/iris3.svg)
 
 ```julia
 # Plot some data with Gadfly!
 
 # Grab some example datasets
-load("RDatasets.jl")
+load("RDatasets")
 using RDatasets
 
-load("Gadfly.jl")
+load("Gadfly")
 using Gadfly
 
-load("Compose.jl")
+load("Compose")
 using Compose
 
 # Load some arbitrary data.
 iris = data("datasets", "iris")
 
 # Construct a plot definition.
-p = plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"}, Geom.point)
+p = plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width", :color => "Species"},
+         Geom.point)
 
-# Render that plot, producing a declarative definition of the graphic.
+# Render that plot, a definition definition of the graphic.
 g = render(p)
 
 # Draw the graphic as an SVG image.
-img = SVG("some_plot.svg", 7inch, 4inch)
+img = SVG("some_plot.svg", 6inch, 4inch)
 draw(img, g)
 finish(img)
 ```
@@ -50,18 +51,13 @@ in interesting ways once you define them.
 ![Histogram](http://dcjones.github.com/gadfly/two_plots.svg)
 
 ```julia
-# Render two plots
-figa = render(plot(iris, {:x => "Sepal.Width"}, Geom.bar))
-figb = render(plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"}, Geom.point))
+fig1a = render(plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"},
+                    Geom.point))
+fig1b = render(plot(iris, {:x => "Sepal.Width"}, Geom.bar))
+fig1 = hstack(fig1a, fig1b)
 
-# Now let's stick them together
-figab = hstack(figa, figb)
-
-# Draw the graphic as an SVG image.
-img = SVG("two_plots.svg", 7inch, 4inch)
-draw(img, figab)
+img = SVG("fig1.svg", 9inch, 4inch)
+draw(img, fig1)
 finish(img)
 ```
-
-
 

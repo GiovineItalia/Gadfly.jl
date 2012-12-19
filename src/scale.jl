@@ -13,8 +13,7 @@ load("Gadfly/src/color.jl")
 # Args:
 #   scales: Zero or more scales
 #   aess: Aesthetics (of the same length as datas) to update with scaled data.
-#   datas: Zero or more data objects. (Yes, I know "datas" is not a real word.
-#          Fuck English and it's stupid inconsistencies.)
+#   datas: Zero or more data objects. (Yes, I know "datas" is not a real word.)
 #
 # Returns:
 #   nothing
@@ -158,7 +157,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
         end
 
         disc_data = discretize(getfield(data, scale.var))
-        setfield(aes, scale.var, Float64[r for r in disc_data.refs])
+        setfield(aes, scale.var, Int64[r for r in disc_data.refs])
 
         # The labeler for discrete scales is a closure over the discretized data.
         function labeler(i)
@@ -204,8 +203,10 @@ function apply_scale(scale::DiscreteColorScale,
         colors = scale.f(length(levels(ds)))
         colored_ds = PooledDataVec(Color[colors[i] for i in ds.refs], colors)
         aes.color = colored_ds
+
+        color_map = {color => label for (label, color) in zip(levels(ds), colors)}
+        aes.color_label = c -> color_map[c]
         aes.color_key_colors = colors
-        aes.color_key_labels = String[string(d) for d in levels(ds)]
     end
 end
 

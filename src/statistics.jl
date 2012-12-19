@@ -271,7 +271,7 @@ function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics)
             maxval = val
         end
 
-        if int(val) != val
+        if !(typeof(val) <: Integer)
             all_int = false
         end
     end

@@ -1,10 +1,11 @@
 
 load("Compose.jl")
-import Compose
+using Compose
+
+load("DataFrames.jl")
 
 module Gadfly
 
-load("DataFrames.jl")
 using DataFrames
 
 import Base.copy, Base.push
@@ -162,6 +163,10 @@ function render(plot::Plot)
 
     scales = copy(plot.scales)
     for var in used_aesthetics - scaled_aesthetics
+        #println(var)
+        #println(typeof(getfield(plot.data, var)))
+        #println(classify_data(getfield(plot.data, var)))
+
         t = has(plot.mapping, var) ?
                 classify_data(getfield(plot.data, var)) : :discrete
         if has(default_scales[t], var)
@@ -232,7 +237,9 @@ function render(plot::Plot)
 
     canvas = Guide.layout_guides(plot_canvas, guide_canvases...)
 
-    canvas
+    # TODO: This is a kludge. Axis labels sometimes extend past the edge of the
+    # canvas.
+    pad(canvas, 5mm)
 end
 
 
@@ -256,7 +263,8 @@ const default_scales = {
                         :color => Scale.color_hue}}
 
 # Determine whether the input is discrete or continuous.
-classify_data{T <: Real}(data::DataVec{T}) = :continuous
+classify_data(data::DataVec{Float64}) = :continuous
+classify_data(data::DataVec{Float32}) = :continuous
 classify_data(data::DataVec) = :discrete
 classify_data(data::PooledDataVec) = :discrete
 

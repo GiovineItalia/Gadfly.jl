@@ -99,7 +99,9 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     end
 
     form = combine([combine([circle(x, y, s) for (x, y, s) in xys]...) <<
-                        fill(c) << stroke(theme.highlight_color(c))
+                        fill(c) <<
+                        stroke(theme.highlight_color(c)) <<
+                        svgclass(@sprintf("color_group_%s", aes.color_label(c)))
                     for (c, xys) in points]...)
 
     form << stroke(nothing) << linewidth(theme.highlight_width)
@@ -152,7 +154,9 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
         forms = Array(Any, length(points))
         for (i, (c, c_points)) in enumerate(points)
-            forms[i] = lines({(x, y) for (x, y) in c_points}...) << stroke(c)
+            forms[i] = lines({(x, y) for (x, y) in c_points}...) <<
+                            stroke(c) <<
+                            svgclass(@sprintf("color_group_%s", aes.color_label(c)))
         end
         form = combine(forms...)
     end

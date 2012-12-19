@@ -54,7 +54,8 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
             continue
         end
 
-        for (color, label) in zip(aes.color_key_colors, aes.color_key_labels)
+        for color in aes.color_key_colors
+            label = aes.color_label(color)
             if !has(used_colors, color)
                 add(used_colors, color)
                 push(colors, color)
@@ -91,25 +92,46 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
                                              values(pretty_labels)...)
     entry_width += entry_height # make space for the color swatch
 
+    # Rewrite to put toggleable things in a group.
     swatch_padding = 1mm
     swatch_size = 1cy - swatch_padding
-    swatches = combine([compose(rectangle(0, i - 1, swatch_size, swatch_size),
-                                fill(c), stroke(theme.highlight_color(c)))
-                        for (i, c) in enumerate(colors)]...)
-    swatches <<= linewidth(theme.highlight_width)
+    swatch_canvas = canvas(0w, 0h + title_canvas.box.height,
+                           1w, n * (entry_height + swatch_padding),
+                           Units(0, 0, 1, n))
+    for (i, c) in enumerate(colors)
+        swatch_square = compose(rectangle(0, i - 1, swatch_size, swatch_size),
+                                fill(c),
+                                stroke(theme.highlight_color(c)),
+                                linewidth(theme.highlight_width))
 
-    swatch_labels = combine([text(1cy, (i - 1)cy + entry_height/2,
-                                  pretty_labels[c], hleft, vcenter)
-                              for (i, c) in enumerate(colors)]...)
-    swatch_labels <<= combine(stroke(nothing),
-                              font(theme.minor_label_font),
-                              fontsize(theme.minor_label_font_size),
-                              fill(theme.minor_label_color))
+        label = pretty_labels[c]
+        swatch_label = compose(text(1cy, (i - 1)cy + entry_height/2,
+                                    label, hleft, vcenter),
+                               stroke(nothing),
+                               fill(theme.minor_label_color))
+        swatch = swatch_square | swatch_label
 
-    swatch_canvas = compose(canvas(0w, 0h + title_canvas.box.height,
-                                   1w, n * (entry_height + swatch_padding),
-                                   Units(0, 0, 1, n)),
-                            swatches, swatch_labels)
+        swatch <<= svgid(@sprintf("color_key_%s", label))
+        swatch <<= onclick(
+            @sprintf("geoms = document.getElementsByClassName('color_group_%s');
+                      entry = document.getElementById('color_key_%s');
+                      state = geoms[0].getAttribute('visibility');
+                      if (!state || state == 'visible') {
+                          for (i = 0; i < geoms.length; ++i) {
+                              geoms[i].setAttribute('visibility', 'hidden');
+                          }
+                          entry.setAttribute('opacity', 0.5);
+                      } else {
+                          for (i = 0; i < geoms.length; ++i) {
+                              geoms[i].setAttribute('visibility', 'visible');
+                          }
+                          entry.setAttribute('opacity', 1.0);
+                      }", label, label))
+        swatch <<= svglink("#")
+        swatch_canvas <<= swatch
+    end
+    swatch_canvas <<= font(theme.minor_label_font) |
+                      fontsize(theme.minor_label_font_size)
 
     c = canvas(0, 0, entry_width + 3swatch_padding,
                swatch_canvas.box.height + title_canvas.box.height) <<
