@@ -4,7 +4,7 @@ module Guide
 import Gadfly
 import Gadfly.render
 
-load("Compose.jl")
+require("Compose.jl")
 using Compose
 
 
