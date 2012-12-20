@@ -1,7 +1,7 @@
 
 # Parameters controlling how a plot appears
 
-load("Compose.jl")
+require("Compose.jl")
 using Compose
 
 type Theme
