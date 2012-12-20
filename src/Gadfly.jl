@@ -57,7 +57,7 @@ type Plot
 end
 
 
-function add_plot_element(p::Plot, data::DataFrame, arg::GeometryElement)
+function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement)
     layer = Layer()
     layer.geom = arg
     insert(p.layers, 1, layer)
@@ -66,31 +66,31 @@ function add_plot_element(p::Plot, data::DataFrame, arg::GeometryElement)
     #push(p.layers, layer)
 end
 
-function add_plot_element(p::Plot, data::DataFrame, arg::ScaleElement)
+function add_plot_element(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
     push(p.scales, arg)
 end
 
-function add_plot_element(p::Plot, data::DataFrame, arg::StatisticElement)
+function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElement)
     # XXX: We should consider making the statistic apply to the last geometry.
     push(p.statistics, arg)
 end
 
-function add_plot_element(p::Plot, data::DataFrame, arg::CoordinateElement)
+function add_plot_element(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
     push(p.coordinates, arg)
 end
 
-function add_plot_element(p::Plot, data::DataFrame, arg::GuideElement)
+function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GuideElement)
     push(p.guides, arg)
 end
 
-function add_plot_element(p::Plot, data::DataFrame, arg::Layer)
+function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Layer)
     push(p.layers, arg)
 end
 
 
-eval_plot_mapping(data::DataFrame, arg::Symbol) = data[string(arg)]
-eval_plot_mapping(data::DataFrame, arg::String) = data[arg]
-eval_plot_mapping(data::DataFrame, arg::Expr) = with(data, arg)
+eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[string(arg)]
+eval_plot_mapping(data::AbstractDataFrame, arg::String) = data[arg]
+eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
 
 # This is the primary function used to produce plots, which are then turned into
 # compose objects with `render` and drawn to an image with `draw`.
@@ -106,7 +106,7 @@ eval_plot_mapping(data::DataFrame, arg::Expr) = with(data, arg)
 #
 # To plot a histogram of some height measurements.
 #
-function plot(data::DataFrame, mapping::Dict, elements::Element...)
+function plot(data::AbstractDataFrame, mapping::Dict, elements::Element...)
     p = Plot()
     for element in elements
         add_plot_element(p, data, element)
