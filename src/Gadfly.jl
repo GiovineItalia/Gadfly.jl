@@ -1,8 +1,8 @@
 
-load("Compose.jl")
+require("Compose.jl")
 using Compose
 
-load("DataFrames.jl")
+require("DataFrames.jl")
 
 module Gadfly
 
@@ -21,10 +21,10 @@ abstract GeometryElement    <: Element
 abstract GuideElement       <: Element
 abstract StatisticElement   <: Element
 
-load("Gadfly/src/misc.jl")
-load("Gadfly/src/theme.jl")
-load("Gadfly/src/aesthetics.jl")
-load("Gadfly/src/data.jl")
+require("Gadfly/src/misc.jl")
+require("Gadfly/src/theme.jl")
+require("Gadfly/src/aesthetics.jl")
+require("Gadfly/src/data.jl")
 
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
@@ -243,11 +243,11 @@ function render(plot::Plot)
 end
 
 
-load("Gadfly/src/scale.jl")
-load("Gadfly/src/coord.jl")
-load("Gadfly/src/geometry.jl")
-load("Gadfly/src/guide.jl")
-load("Gadfly/src/statistics.jl")
+require("Gadfly/src/scale.jl")
+require("Gadfly/src/coord.jl")
+require("Gadfly/src/geometry.jl")
+require("Gadfly/src/guide.jl")
+require("Gadfly/src/statistics.jl")
 
 import Scale, Coord, Geom, Guide, Stat
 

@@ -1,5 +1,5 @@
 
-load("Compose.jl")
+require("Compose.jl")
 using Compose
 
 # TODO: These should probably be DataVec{Float64} not Vector{Float64}

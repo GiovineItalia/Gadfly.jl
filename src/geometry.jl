@@ -6,10 +6,10 @@ import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit
 
 using DataFrames
 
-load("Compose.jl")
+require("Compose.jl")
 using Compose
 
-load("Iterators.jl")
+require("Iterators.jl")
 import Iterators
 
 # Geometry that renders nothing.

@@ -1,8 +1,8 @@
 
-load("Iterators.jl")
+require("Iterators.jl")
 import Iterators
 
-load("Gadfly/src/aesthetics.jl")
+require("Gadfly/src/aesthetics.jl")
 
 
 

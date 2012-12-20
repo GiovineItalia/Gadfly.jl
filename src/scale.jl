@@ -6,7 +6,7 @@ import Gadfly.element_aesthetics
 
 using DataFrames
 
-load("Gadfly/src/color.jl")
+require("Gadfly/src/color.jl")
 
 # Apply some scales to data in the given order.
 #

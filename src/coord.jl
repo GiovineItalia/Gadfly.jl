@@ -5,7 +5,7 @@ export cartesian
 
 import Gadfly
 
-load("Compose.jl")
+require("Compose.jl")
 using Compose
 
 # Cartesian coordinates with position given by the x and y (and similar)
