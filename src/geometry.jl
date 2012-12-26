@@ -6,11 +6,11 @@ import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit
 
 using DataFrames
 
-require("Compose.jl")
+require("Compose")
 using Compose
 
-require("Iterators.jl")
-import Iterators
+require("Iterators")
+import Iterators.cycle
 
 # Geometry that renders nothing.
 type Nil <: Gadfly.GeometryElement
@@ -90,8 +90,8 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     # organize by color
     points = Dict{Color, Array{Tuple,1}}()
     for (x, y, c, s) in zip(aes.x, aes.y,
-                            Iterators.cycle(aes.color),
-                            Iterators.cycle(aes.size))
+                            cycle(aes.color),
+                            cycle(aes.size))
         if !has(points, c)
             points[c] = Array(Tuple,0)
         end
@@ -145,7 +145,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     else
         # group points by color
         points = Dict{Color, Array{(Float64, Float64),1}}()
-        for (x, y, c) in zip(aes.x, aes.y, Iterators.cycle(aes.color))
+        for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
             if !has(points, c)
                 points[c] = Array((Float64, Float64),0)
             end
@@ -171,6 +171,7 @@ type BarGeometry <: Gadfly.GeometryElement
 
     function BarGeometry()
         g = Gadfly.Aesthetics()
+        # TODO: This should be in theme.
         g.color = PooledDataVec(Color[color("steelblue")])
         new(g)
     end
@@ -227,10 +228,83 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         form = combine(forms...) << fill(aes.color[1])
     else
         form = combine([form << fill(c)
-                        for (f, c) in zip(forms, Iterators.cycle(aes.color))]...)
+                        for (f, c) in zip(forms, cycle(aes.color))]...)
     end
 
     form << stroke(nothing)
+end
+
+
+type BoxplotGeometry <: Gadfly.GeometryElement
+end
+
+
+const boxplot = BoxplotGeometry()
+
+element_aesthetics(::BoxplotGeometry) = [:x, :y, :color]
+
+default_statistic(::BoxplotGeometry) = Gadfly.Stat.boxplot
+
+function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+
+    default_aes = Gadfly.Aesthetics()
+    default_aes.color = PooledDataVec(Color[theme.default_color])
+    default_aes.x = Float64[1]
+    aes = inherit(aes, default_aes)
+
+    aes_iter = zip(aes.lower_fence,
+                   aes.lower_hinge,
+                   aes.middle,
+                   aes.upper_hinge,
+                   aes.upper_fence,
+                   aes.outliers,
+                   cycle(aes.x),
+                   cycle(aes.color.refs))
+
+    forms = Compose.Form[]
+    r = theme.default_point_size
+    bw = theme.bar_width_scale
+
+    # TODO: handle color non-nothing color
+
+    for (lf, lh, mid, uh, uf, outliers, x, cref) in aes_iter
+        c = aes.color.pool[cref]
+        sc = theme.highlight_color(c) # stroke color
+        mc = theme.middle_color(c) # middle color
+        # Box
+        push(forms, compose(rectangle(x - bw/2, lh, bw, uh - lh),
+                            fill(c), stroke(sc),
+                            linewidth(theme.highlight_width)))
+
+        # Middle
+        push(forms, compose(lines((x - 1/6, mid), (x + 1/6, mid)),
+                            linewidth(theme.line_width), stroke(mc)))
+
+        # Whiskers
+        push(forms, compose(lines((x, lh), (x, lf)),
+                            linewidth(theme.line_width), stroke(sc)))
+
+        push(forms, compose(lines((x, uh), (x, uf)),
+                            linewidth(theme.line_width), stroke(sc)))
+
+        # Fences
+        push(forms, compose(lines((x - 1/6, lf), (x + 1/6, lf)),
+                            linewidth(theme.line_width), stroke(sc)))
+
+        push(forms, compose(lines((x - 1/6, uf), (x + 1/6, uf)),
+                            linewidth(theme.line_width), stroke(sc)))
+
+        # Outliers
+        if !isempty(outliers)
+            push(forms, compose(combine([circle(x, y, r) for y in outliers]...),
+                                fill(c), stroke(sc)))
+        end
+    end
+
+    form = combine(forms...)
+
+
 end
 
 end # module Geom

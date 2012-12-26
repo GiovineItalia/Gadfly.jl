@@ -71,8 +71,11 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElement)
-    # XXX: We should consider making the statistic apply to the last geometry.
-    push(p.statistics, arg)
+    if isempty(p.layers)
+        push(p.layers, Layer())
+    end
+
+    p.layers[end].statistics = arg
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
@@ -128,7 +131,7 @@ end
 #
 # This is where magic happens (sausage is made). Processing all the parts of the
 # plot is actually pretty simple. It's made complicated by trying to handle
-# defaults. With that asside, plots are made in the following steps.
+# defaults. With that aside, plots are made in the following steps.
 #
 #    I. Apply scales to transform raw data to the form expected by the aesthetic.
 #   II. Apply statistics to the scaled data. Statistics are essentially functions
@@ -156,6 +159,12 @@ function render(plot::Plot)
         add_each(used_aesthetics, element_aesthetics(layer.geom))
     end
 
+    defined_unused_aesthetics = Set(keys(plot.mapping)...) - used_aesthetics
+    if !isempty(defined_unused_aesthetics)
+        println("Warning: the following aesthetics are mapped, but not used by any geometry:\n    ",
+                join([string(a) for a in defined_unused_aesthetics], ", "))
+    end
+
     scaled_aesthetics = Set{Symbol}()
     for scale in plot.scales
         add_each(scaled_aesthetics, element_aesthetics(scale))
@@ -163,10 +172,6 @@ function render(plot::Plot)
 
     scales = copy(plot.scales)
     for var in used_aesthetics - scaled_aesthetics
-        #println(var)
-        #println(typeof(getfield(plot.data, var)))
-        #println(classify_data(getfield(plot.data, var)))
-
         t = has(plot.mapping, var) ?
                 classify_data(getfield(plot.data, var)) : :discrete
         if has(default_scales[t], var)
@@ -240,6 +245,17 @@ function render(plot::Plot)
     # TODO: This is a kludge. Axis labels sometimes extend past the edge of the
     # canvas.
     pad(canvas, 5mm)
+end
+
+
+# A minor convenience: plotting continuous functions.
+function plot(f::Function, a, b)
+    a = convert(Float64, a)
+    b = convert(Float64, b)
+    step = (b - a) / 100 # TODO: do something smarter
+    xs = [x for x in a:step:b]
+    df = DataFrame({"x" => xs, "f(y)" => Float64[f(x) for x in xs]})
+    plot(df, {:x => "x", :y => "f(y)"}, Geom.line)
 end
 
 

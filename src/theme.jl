@@ -47,6 +47,10 @@ type Theme
 
     # A function mapping fill color to stoke color for highlights.
     highlight_color::Maybe(Function)
+
+    # A function mapping base fill color to the color of the median marker in a
+    # boxplot.
+    middle_color::Maybe(Function)
 end
 
 
@@ -58,6 +62,13 @@ function default_highlight_color(fill_color::Color)
     c
 end
 
+# Choose a middle color by darkening the fill color
+function default_middle_color(fill_color::Color)
+    fill_color = convert(LCHab, fill_color)
+    c = LCHab(fill_color.l, fill_color.c, fill_color.h)
+    c.l += 40
+    c
+end
 
 const default_theme =
     Theme(color("steel blue"),      # default_color
@@ -75,4 +86,6 @@ const default_theme =
           color("#362a35"),         # major_label_color
           0.9,                      # bar_width_scale
           0.3mm,                    # highlight_width
-          default_highlight_color)  # highlight_color
+          default_highlight_color,  # highlight_color
+          default_middle_color)     # middle_color
+

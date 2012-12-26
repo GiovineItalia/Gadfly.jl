@@ -2,16 +2,23 @@
 require("Compose.jl")
 using Compose
 
-# TODO: These should probably be DataVec{Float64} not Vector{Float64}
+# TODO: Use DataVec to support missing values.
 
 # Aesthetics is a set of bindings of typed values to symbols (Wilkinson calls
 # this a Varset). Each variable controls how geometries are realized.
 type Aesthetics
-    # TODO: x and y in particular should be DataVec to allow for missing data
     x::Union(Nothing, Vector{Float64}, Vector{Int64})
     y::Union(Nothing, Vector{Float64}, Vector{Int64})
     size::Maybe(Vector{Measure})
     color::Maybe(PooledDataVec{Color})
+
+    # Boxplot aesthetics
+    middle::Maybe(Vector{Float64})
+    lower_hinge::Maybe(Vector{Float64})
+    upper_hinge::Maybe(Vector{Float64})
+    lower_fence::Maybe(Vector{Float64})
+    upper_fence::Maybe(Vector{Float64})
+    outliers::Maybe(Vector{Vector{Float64}})
 
     # Aesthetics pertaining to guides
     xtick::Maybe(Vector{Float64})
@@ -30,8 +37,10 @@ type Aesthetics
 
     function Aesthetics()
         new(nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, fmt_float,
-            fmt_float, string, string, string)
+            nothing, nothing, nothing, nothing,
+            nothing, nothing, nothing, nothing,
+            nothing, fmt_float, fmt_float, string,
+            string, string)
     end
 
     # shallow copy constructor
@@ -42,6 +51,42 @@ type Aesthetics
         end
         b
     end
+end
+
+
+# Return the set of variables that are non-nothing.
+function defined_aesthetics(aes::Aesthetics)
+    vars = Set{Symbol}()
+    for name in Aesthetics.names
+        if !is(getfield(aes, name), nothing)
+            add(vars, name)
+        end
+    end
+    vars
+end
+
+
+# Checking aesthetics and giving reasonable error messages.
+
+
+# Raise an error if any of thu given aesthetics are not defined.
+#
+# Args:
+#   who: A string naming the caller which is printed in the error message.
+#   aes: An Aesthetics object.
+#   vars: Symbol that must be defined in the aesthetics.
+#
+function assert_aesthetics_defined(who::String, aes::Aesthetics, vars::Symbol...)
+    undefined_vars = setdiff(Set(vars...), defined_aesthetics(aes))
+    if !isempty(undefined_vars)
+        error(@sprintf("The following aesthetics are required by %s but are not defined: %s\n",
+                       who, join(undefined_vars, ", ")))
+    end
+end
+
+
+function assert_aesthetics_equal_length(aes::Aesthetics, vars::Symbol...)
+    # TODO: What was I doing here?
 end
 
 

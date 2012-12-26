@@ -5,7 +5,7 @@ require("Distributions.jl")
 import Distributions.Uniform
 
 require("Iterators.jl")
-import Iterators.chain
+import Iterators.chain, Iterators.cycle
 
 import Gadfly
 import Gadfly.Scale
@@ -292,6 +292,58 @@ function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics)
 
     setfield(aes, stat.out_var, ticks)
     setfield(aes, symbol(@sprintf("%s_label", stat.out_var)), labeler)
+
+    nothing
+end
+
+type BoxplotStatistic <: Gadfly.StatisticElement
+end
+
+const boxplot = BoxplotStatistic()
+
+
+function apply_statistic(stat::BoxplotStatistic, aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("BoxplotStatistic", aes, :y)
+
+    groups = Dict()
+
+    aes_x = aes.x === nothing ? [nothing] : aes.x
+    aes_color = aes.color === nothing ? [nothing] : aes.color
+
+    for (x, y, c) in zip(cycle(aes_x), aes.y, cycle(aes_color))
+        if !has(groups, (x, c))
+            groups[(x, c)] = Float64[]
+        else
+            push(groups[(x, c)], y)
+        end
+    end
+
+    m = length(groups)
+    aes.middle = Array(Float64, m)
+    aes.lower_hinge = Array(Float64, m)
+    aes.upper_hinge = Array(Float64, m)
+    aes.lower_fence = Array(Float64, m)
+    aes.upper_fence = Array(Float64, m)
+    aes.outliers = Vector{Float64}[]
+
+    for (i, ((x, c), ys)) in enumerate(groups)
+        aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
+                quantile(ys, [0.25, 0.5, 0.75])
+        iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
+        aes.lower_fence[i] = aes.lower_hinge[i] - 1.5iqr
+        aes.upper_fence[i] = aes.upper_hinge[i] + 1.5iqr
+        push(aes.outliers,
+             filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
+    end
+
+    if !is(aes.x, nothing)
+        aes.x = Int64[x for (x, c) in keys(groups)]
+    end
+
+    if !is(aes.color, nothing)
+        aes.color = PooledDataVec(Color[c for (x, c) in keys(groups)],
+                                  levels(aes.color))
+    end
 
     nothing
 end
