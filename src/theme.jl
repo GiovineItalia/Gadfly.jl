@@ -37,8 +37,14 @@ type Theme
     major_label_font_size::Measure
     major_label_color::ColorOrNothing
 
+    # Font name, size and color used for labels on plot elements.
+    point_label_font::String
+    point_label_font_size::Measure
+    point_label_color::ColorOrNothing
+
     # When 1.0, the bars in bar plots are smushed together. Numbers less than
     # one create some spacing between bars.
+    # TODO: On second thought, spacing between bars should be absolute.
     bar_width_scale::Maybe(Float64)
 
     # Points, etc, are highlighted by stroking in slightly different color. This
@@ -51,6 +57,18 @@ type Theme
     # A function mapping base fill color to the color of the median marker in a
     # boxplot.
     middle_color::Maybe(Function)
+
+    # Number of annealing iterations.
+    label_placement_iterations::Maybe(Int)
+
+    # Penalty for a label not being contained within the plot frame.
+    label_out_of_bounds_penalty::Maybe(Float64)
+
+    # Penalty for making a label hidden to avoid overlaps.
+    label_hidden_penalty::Maybe(Float64)
+
+    # Probability of proposing a visibility flip during label layout.
+    label_visibility_flip_pr::Maybe(Float64)
 end
 
 
@@ -84,8 +102,17 @@ const default_theme =
           "PT Sans",                # major_label_font
           11pt,                     # major_label_font_size
           color("#362a35"),         # major_label_color
+          "PT Sans",                # point_label_font
+          8pt,                      # point_label_font_size
+          color("#4c404b"),         # point_label_color
           0.9,                      # bar_width_scale
           0.3mm,                    # highlight_width
           default_highlight_color,  # highlight_color
-          default_middle_color)     # middle_color
+          default_middle_color,     # middle_color
+          5000,                     # label_placement_iterations
+          10.0,                     # label_out_of_bounds_penalty
+          0.5,                      # label_hidden_penalty
+          0.2)                      # label_visibility_flip_pr
+
+
 

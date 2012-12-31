@@ -18,10 +18,12 @@ type Data
     ytick_labels
     size
     color
+    label
 
     function Data()
         new(nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, nothing)
+            nothing, nothing, nothing, nothing,
+            nothing)
     end
 
     # shallow copy constructor

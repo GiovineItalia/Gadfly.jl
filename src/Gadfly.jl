@@ -93,6 +93,7 @@ end
 
 eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[string(arg)]
 eval_plot_mapping(data::AbstractDataFrame, arg::String) = data[arg]
+eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
 
 # This is the primary function used to produce plots, which are then turned into
@@ -231,8 +232,9 @@ function render(plot::Plot)
     end
 
     # IV. Geometries
-    plot_canvas <<= combine({render(layer.geom, plot.theme, aes)
-                             for (layer, aes) in zip(plot.layers, aess)}...)
+    plot_canvas = compose(plot_canvas,
+                          [render(layer.geom, plot.theme, aes)
+                           for (layer, aes) in zip(plot.layers, aess)]...)
 
     # V. Guides
     guide_canvases = {}
@@ -273,10 +275,12 @@ import Scale, Coord, Geom, Guide, Stat
 const default_scales = {
         :continuous => {:x     => Scale.x_continuous,
                         :y     => Scale.y_continuous,
-                        :color => Scale.color_hue},
+                        :color => Scale.color_hue,
+                        :label => Scale.label},
         :discrete   => {:x     => Scale.x_discrete,
                         :y     => Scale.y_discrete,
-                        :color => Scale.color_hue}}
+                        :color => Scale.color_hue,
+                        :label => Scale.label}}
 
 # Determine whether the input is discrete or continuous.
 classify_data(data::DataVec{Float64}) = :continuous

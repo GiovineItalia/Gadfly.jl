@@ -1,7 +1,8 @@
 
+require("Distributions")
+
 module Stat
 
-require("Distributions.jl")
 import Distributions.Uniform
 
 require("Iterators.jl")

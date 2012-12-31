@@ -58,3 +58,7 @@ function fmt_float(x::Float64)
 end
 
 
+function lerp(x::Float64, a::Float64, b::Float64)
+    a + (b - a) * max(min(x, 1.0), 0.0)
+end
+

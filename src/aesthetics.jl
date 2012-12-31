@@ -11,6 +11,7 @@ type Aesthetics
     y::Union(Nothing, Vector{Float64}, Vector{Int64})
     size::Maybe(Vector{Measure})
     color::Maybe(PooledDataVec{Color})
+    label::Maybe(PooledDataVec{UTF8String})
 
     # Boxplot aesthetics
     middle::Maybe(Vector{Float64})
@@ -39,8 +40,8 @@ type Aesthetics
         new(nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
-            nothing, fmt_float, fmt_float, string,
-            string, string)
+            nothing, nothing, fmt_float, fmt_float,
+            string, string, string)
     end
 
     # shallow copy constructor

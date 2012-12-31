@@ -76,11 +76,6 @@ type ContinuousScale <: Gadfly.ScaleElement
 end
 
 
-function scale_label(scale::ContinuousScale, x)
-    scale.trans.label(x)
-end
-
-
 # Commonly used scales.
 const x_continuous = ContinuousScale(:x, identity_transform)
 const y_continuous = ContinuousScale(:y, identity_transform)
@@ -179,13 +174,7 @@ end
 
 
 function element_aesthetics(scale::DiscreteColorScale)
-    return [:color]
-end
-
-
-function scale_label(scale::DiscreteColorScale, c)
-    # Ok, here we are. The decision I postponed until last. Here the scale
-    # somehow has to know the mapping of colors to values in the data.
+    [:color]
 end
 
 
@@ -209,6 +198,27 @@ function apply_scale(scale::DiscreteColorScale,
         aes.color_key_colors = colors
     end
 end
+
+
+# Label scale is always discrete, hence we call it 'label' rather
+# 'label_discrete'.
+type LabelScale <: Gadfly.ScaleElement
+end
+
+
+function apply_scale(scale::LabelScale,
+                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+    for (aes, data) in zip(aess, datas)
+        if data.label === nothing
+            continue
+        end
+
+        aes.label = discretize(data.label)
+    end
+end
+
+
+const label = LabelScale()
 
 
 end # module Scale
