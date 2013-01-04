@@ -523,7 +523,6 @@ function deferred_label_canvas(aes, theme, box, unit_box)
 
     forms = Array(Any, 0)
 
-
     # Quite useful for visually debugging this stuff:
     #for position in positions
         #if position === nothing

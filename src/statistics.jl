@@ -3,6 +3,8 @@ require("Distributions")
 
 module Stat
 
+require("Gadfly/src/bincount.jl")
+
 import Distributions.Uniform
 
 require("Iterators.jl")
@@ -51,110 +53,20 @@ end
 const histogram = HistogramStatistic()
 
 
-# Compute the cross validation risk for a histogram.
-#
-# This method was taken from "All of Statistics", by Larry Wasserman, but was
-# developed first in "Emperical Choice of Histograms and Kernel Density
-# Estimators" by Mats Rudemo.
-#
-# Args:
-#   xs: Data the histogram will represent, sorted in ascending order.
-#   m: Number of bins.
-#
-# Returns:
-#   A risk value that should be minimized.
-#
-function cross_val_risk(xs::Vector{Float64}, m::Int)
-    (x_min, x_max) = (xs[1], xs[end])
-
-    # bandwidth
-    h = (x_max - x_min) / m
-
-    # current bin's upper bound
-    b = x_min + h
-
-    i = 1
-    n = length(xs)
-    r = 0
-    for j in 1:m
-        p = 0
-        while i < n && xs[i] <= b
-            p += 1
-            i += 1
-        end
-
-        p /= n
-        r += p^2
-        b += h
-    end
-
-    r *= (n + 1) / ((n - 1) * h)
-    r = (2 / ((n - 1) * h)) - r
-    r
-end
-
-
-# Estimate the optimal number of bins for a histogram by minimizing cross
-# validation risk.
-#
-# Args:
-#   xs: Data the histogram will represent, sorted in asceding order.
-#
-# Returns:
-#   The optimal number of bins.
-#
-function choose_bin_count(xs::Vector{Float64})
-    # Number of bins
-    m = 3
-
-    # Cross validation risk, which we want to minimize.
-    r = cross_val_risk(xs, m)
-
-    # Magnitude of proposal offsets
-    d = Uniform(0, 3)
-
-    # Run a few rounds of stochastic hill-climbing to find a good number
-    N = 500
-    for _ in 1:N
-        off = int(rand(d))
-        m_proposed = randbool() ? m + off : max(1, m - off)
-        r_proposed = cross_val_risk(xs, m_proposed)
-
-        # accept/reject
-        if r_proposed < r
-            m = m_proposed
-            r = r_proposed
-        end
-    end
-
-    m
-end
-
-
 function apply_statistic(stat::HistogramStatistic, aes::Gadfly.Aesthetics)
-    sorted_x = sort(aes.x)
-    n = length(sorted_x)
-    m = choose_bin_count(sorted_x)
-    h = (sorted_x[end] - sorted_x[1]) / m
+    d, bincounts = choose_bin_count_1d(aes.x)
 
-    aes.x = Array(Float64, m)
-    aes.y = Array(Float64, m)
+    x_min, x_max = min(aes.x), max(aes.x)
+    binwidth = (x_max - x_min) / d
 
-    # current bin's upper bound
-    b = sorted_x[1] + h
-    i = 1
+    aes.x = Array(Float64, d)
+    aes.y = Array(Float64, d)
 
-    for j in 1:m
-        p = 0
-        while i < n && sorted_x[i] <= b
-            p += 1
-            i += 1
-        end
-
-        aes.x[j] = j * h
-        aes.y[j] = p
-        b += h
+    for k in 1:d
+        aes.x[k] = x_min + (k - 1) * binwidth
+        aes.y[k] = bincounts[k]
     end
+
     nothing
 end
 

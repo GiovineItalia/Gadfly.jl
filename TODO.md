@@ -3,6 +3,7 @@ Small/Medium projects:
  * Geom.rectbin and Geom.hexbin
  * Continuous color scales.
  * A proper Layer constructor.
+ * Something equivalent to xlim/ylim in ggplot2.
  * Discrete color scales with bar charts.
  * Stacked bar charts.
  * Mousing over a point should show text telling its coordinates.
