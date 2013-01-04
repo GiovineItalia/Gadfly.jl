@@ -1,4 +1,5 @@
 
+
 require("Compose.jl")
 using Compose
 
@@ -8,6 +9,7 @@ module Gadfly
 
 using DataFrames
 
+import Compose.draw
 import Base.copy, Base.push
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot
@@ -250,15 +252,65 @@ function render(plot::Plot)
 end
 
 
-# A minor convenience: plotting continuous functions.
-function plot(f::Function, a, b)
-    a = convert(Float64, a)
-    b = convert(Float64, b)
-    step = (b - a) / 100 # TODO: do something smarter
-    xs = [x for x in a:step:b]
-    df = DataFrame({"x" => xs, "f(y)" => Float64[f(x) for x in xs]})
-    plot(df, {:x => "x", :y => "f(y)"}, Geom.line)
+## Return a DataFrame with x, y column suitable for plotting a function.
+#
+# Args:
+#  f: Function/Expression to be evaluated.
+#  a: Lower bound.
+#  b: Upper bound.
+#  n: Number of points to evaluate the function at.
+#
+# Returns:
+#
+#
+function evalfunc(f::Function, a, b, n)
+    xs = [x for x in a:(b - a)/n:b]
+    df = DataFrame(xs, map(f, xs))
+    names!(df, ["x", "f(x)"])
+    df
 end
+
+
+evalfunc(f::Expr, a, b, n) = evalfunc(eval(:(x -> $f)), a, b, n)
+
+
+# A convenience plot function for quickly plotting functions are expressions.
+#
+# Args:
+#
+# Returns:
+#
+function plot(fs::Array, a, b, elements::Element...)
+    df = DataFrame()
+    for (i, f) in enumerate(fs)
+        df_i = evalfunc(f, a, b, 100)
+        name = typeof(f) == Expr ? string(f) : @sprintf("f<sub>%d</sub>", i)
+        df_i = cbind(df_i, [name for _ in 1:size(df_i)[1]])
+        names!(df_i, ["x", "f(x)", "f"])
+        df = rbind(df, df_i)
+    end
+
+    mapping = {:x => "x", :y => "f(x)"}
+    if length(fs) > 1
+        mapping[:color] = "f"
+    end
+
+    plot(df, mapping, Geom.line, elements...)
+end
+
+
+function plot(f::Function, a, b, elements::Element...)
+    plot([f], a, b, elements...)
+end
+
+
+function plot(f::Expr, a, b, elements::Element...)
+    plot([f], a, b, elements...)
+end
+
+
+# A convenience version of Compose.draw that let's you skip the call to render.
+draw(backend::Compose.Backend, p::Plot) = draw(backend, render(p))
 
 
 require("Gadfly/src/scale.jl")

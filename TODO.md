@@ -1,5 +1,8 @@
 
 Small/Medium projects:
+ * Geom.rectbin and Geom.hexbin
+ * Continuous color scales.
+ * A proper Layer constructor.
  * Discrete color scales with bar charts.
  * Stacked bar charts.
  * Mousing over a point should show text telling its coordinates.
@@ -12,11 +15,7 @@ Small/Medium projects:
  * A means by which statistics can modify guides. Particularly I need
    Stat.histogram to add the y-axis label of "Count" or "Frequency", but there's
    no way it can currently.
- * Boxplots.
- * A wrapper function to `plot` that plots a function over some range. For
-   example: `plot(x -> x^2, -10, 10)`.
  * An option to choose the orientation of tick labels.
- * Continuous color scales.
  * A size aesthetic.
  * A shape aesthetic, for drawing point plots with categorization using shapes.
    People are going to want it, despite the fact that most plots of this variety
@@ -41,8 +40,6 @@ Large projects:
    creates appropriate Plot objects, renders them and squishes them together.
    There will also no doubt need to be some special casing to make it look good.
  * Document things. This will eventually be a large project, anyway.
- * 2D rectangular and hexagonal binning. The latter is probably what makes this
-   a large project, but it's just too awesome to do without.
  * Equations in text. jsMath is one possibility, but that would break my
    "coherent without javascript" rule. A better option might be optionally
    requiring latex plus whatever is needed to convert latex output to svg.
