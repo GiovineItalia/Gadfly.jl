@@ -40,34 +40,6 @@ function element_aesthetics(::PointGeometry)
     [:x, :y, :size, :color]
 end
 
-# Check that the x and y aesthetics are properly specified.
-#
-# Args:
-#   aes: some aesthetics
-#
-# Returns:
-#   nothing, throws an error if the aesthetics are misspecified
-#
-function check_xy(aes::Gadfly.Aesthetics)
-    if typeof(aes.x) == Nothing || typeof(aes.y) == Nothing
-        error("Both `x` and `y` must be defined for point geometry.")
-    end
-
-    if length(aes.x) != length(aes.y)
-        error("`x` and `y` must be of equal length point geometry.")
-    end
-
-    n = length(aes.x)
-
-    if !is(aes.color, nothing) && length(aes.color) != n
-        error("`color` must be the same length as `x` and `y`.")
-    end
-
-    if !is(aes.size, nothing) && length(ael.size) != n
-        error("`size` must be the same length as `x` and `y`.")
-    end
-end
-
 
 # Generate a form for a point geometry.
 #
@@ -80,7 +52,9 @@ end
 #   A compose Form.
 #
 function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    check_xy(aes)
+    Gadfly.assert_aesthetics_defined("Geom.point", aes, :x, :y)
+    Gadfly.assert_aesthetics_equal_length("Geom.point", aes,
+                                          element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataVec(Color[theme.default_color])
@@ -121,7 +95,6 @@ function element_aesthetics(::LineGeometry)
 end
 
 
-
 # Render line geometry.
 #
 # Args:
@@ -133,7 +106,9 @@ end
 #   A compose Form.
 #
 function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    check_xy(aes)
+    Gadfly.assert_aesthetics_defined("Geom.point", aes, :x, :y)
+    Gadfly.assert_aesthetics_equal_length("Geom.point", aes,
+                                          element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataVec(Color[theme.default_color])
@@ -167,14 +142,6 @@ end
 
 # Bar geometry summarizes data as verticle bars.
 type BarGeometry <: Gadfly.GeometryElement
-    default_aes::Gadfly.Aesthetics
-
-    function BarGeometry()
-        g = Gadfly.Aesthetics()
-        # TODO: This should be in theme.
-        g.color = PooledDataVec(Color[color("steelblue")])
-        new(g)
-    end
 end
 
 
@@ -201,28 +168,18 @@ end
 #   A compose form.
 #
 function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    if typeof(aes.x) == Nothing
-        error("`x' must be defined for bar geometry.")
-    end
+    Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x_min, :x_max, :y)
+    Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x_min, :x_max, :y)
 
-    aes = Gadfly.inherit(aes, geom.default_aes)
+    default_aes = Gadfly.Aesthetics()
+    default_aes.color = PooledDataVec(Color[theme.default_color])
+    aes = Gadfly.inherit(aes, default_aes)
 
-    # Set the bar width to be the minimum distance between to x values, to avoid
-    # ovelapping.
-    bar_width = Inf
-    sorted_x = sort(aes.x)
-    for i in 2:length(sorted_x)
-        bar_width = min(bar_width, sorted_x[i] - sorted_x[i - 1])
-    end
+    pad = theme.bar_spacing / 2
 
-    if !isfinite(bar_width)
-        bar_width = 1.0
-    end
-
-    bar_width *= theme.bar_width_scale
-
-    forms = {rectangle(x - bar_width/2, 0.0, bar_width, y)
-             for (x, y) in zip(aes.x, aes.y)}
+    forms = {rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
+                       (x_max - x_min)*cx - theme.bar_spacing, y)
+             for (x_min, x_max, y) in zip(aes.x_min, aes.x_max, aes.y)}
 
     if length(aes.color) == 1
         form = combine(forms...) << fill(aes.color[1])
@@ -247,6 +204,11 @@ default_statistic(::BoxplotGeometry) = Gadfly.Stat.boxplot
 
 function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("Geom.bar", aes,
+                                     :lowor_fence, :lower_hinge, :middle,
+                                     :upper_hinge, :upper_fence, :outliers)
+    Gadfly.assert_aesthetics_equal_length("Geom.bar", aes,
+                                          element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataVec(Color[theme.default_color])

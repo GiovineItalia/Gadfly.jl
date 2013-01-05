@@ -42,10 +42,8 @@ type Theme
     point_label_font_size::Measure
     point_label_color::ColorOrNothing
 
-    # When 1.0, the bars in bar plots are smushed together. Numbers less than
-    # one create some spacing between bars.
-    # TODO: On second thought, spacing between bars should be absolute.
-    bar_width_scale::Maybe(Float64)
+    # Spacing between bars for Geom.bar.
+    bar_spacing::Maybe(Measure)
 
     # Points, etc, are highlighted by stroking in slightly different color. This
     # is the stroke width.
@@ -80,6 +78,7 @@ function default_highlight_color(fill_color::Color)
     c
 end
 
+
 # Choose a middle color by darkening the fill color
 function default_middle_color(fill_color::Color)
     fill_color = convert(LCHab, fill_color)
@@ -87,6 +86,7 @@ function default_middle_color(fill_color::Color)
     c.l += 40
     c
 end
+
 
 const default_theme =
     Theme(color("steel blue"),      # default_color
@@ -105,7 +105,7 @@ const default_theme =
           "PT Sans",                # point_label_font
           8pt,                      # point_label_font_size
           color("#4c404b"),         # point_label_color
-          0.9,                      # bar_width_scale
+          -0.2mm,                   # bar_spacing
           0.3mm,                    # highlight_width
           default_highlight_color,  # highlight_color
           default_middle_color,     # middle_color
@@ -113,6 +113,4 @@ const default_theme =
           10.0,                     # label_out_of_bounds_penalty
           0.5,                      # label_hidden_penalty
           0.2)                      # label_visibility_flip_pr
-
-
 

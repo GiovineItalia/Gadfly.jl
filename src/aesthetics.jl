@@ -13,6 +13,9 @@ type Aesthetics
     color::Maybe(PooledDataVec{Color})
     label::Maybe(PooledDataVec{UTF8String})
 
+    x_min::Union(Nothing, Vector{Float64}, Vector{Int64})
+    x_max::Union(Nothing, Vector{Float64}, Vector{Int64})
+
     # Boxplot aesthetics
     middle::Maybe(Vector{Float64})
     lower_hinge::Maybe(Vector{Float64})
@@ -40,7 +43,8 @@ type Aesthetics
         new(nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
-            nothing, nothing, fmt_float, fmt_float,
+            nothing, nothing, nothing, nothing,
+            fmt_float, fmt_float,
             string, string, string)
     end
 
@@ -86,8 +90,19 @@ function assert_aesthetics_defined(who::String, aes::Aesthetics, vars::Symbol...
 end
 
 
-function assert_aesthetics_equal_length(aes::Aesthetics, vars::Symbol...)
-    # TODO: What was I doing here?
+function assert_aesthetics_equal_length(who::String, aes::Aesthetics, vars::Symbol...)
+    defined_vars = Symbol[]
+    for var in filter(var -> !(getfield(aes, var) === nothing), vars)
+        push(defined_vars, var)
+    end
+
+    n = length(getfield(aes, vars[1]))
+    for i in 2:length(vars)
+        if length(getfield(aes, vars[1])) != n
+            error(@sprintf("The following aesthetics are required by %s to be of equal length: %s\n",
+                           who, join(vars, ", ")))
+        end
+    end
 end
 
 

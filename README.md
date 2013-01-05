@@ -25,9 +25,6 @@ using RDatasets
 load("Gadfly")
 using Gadfly
 
-load("Compose")
-using Compose
-
 # Load some arbitrary data.
 iris = data("datasets", "iris")
 
@@ -35,13 +32,8 @@ iris = data("datasets", "iris")
 p = plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width", :color => "Species"},
          Geom.point)
 
-# Render that plot, a definition definition of the graphic.
-g = render(p)
-
 # Draw the graphic as an SVG image.
-img = SVG("some_plot.svg", 6inch, 4inch)
-draw(img, g)
-finish(img)
+draw(SVG("some_plot.svg", 6inch, 4inch), p)
 ```
 
 Gadfly uses a declarative vector graphics system called
@@ -58,6 +50,5 @@ fig1 = hstack(fig1a, fig1b)
 
 img = SVG("fig1.svg", 9inch, 4inch)
 draw(img, fig1)
-finish(img)
 ```
 

@@ -77,7 +77,6 @@ function choose_bin_count_1d(xs::Vector{Float64})
 
         pll = bincount_pll(d, n, bincounts, binwidth)
         if pll > pll_best
-            println((d, pll))
             d_best = d
             pll_best = pll
         end

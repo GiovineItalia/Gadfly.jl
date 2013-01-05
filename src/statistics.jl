@@ -59,11 +59,13 @@ function apply_statistic(stat::HistogramStatistic, aes::Gadfly.Aesthetics)
     x_min, x_max = min(aes.x), max(aes.x)
     binwidth = (x_max - x_min) / d
 
-    aes.x = Array(Float64, d)
+    aes.x_min = Array(Float64, d)
+    aes.x_max = Array(Float64, d)
     aes.y = Array(Float64, d)
 
     for k in 1:d
-        aes.x[k] = x_min + (k - 1) * binwidth
+        aes.x_min[k] = x_min + (k - 1) * binwidth
+        aes.x_max[k] = x_min + k * binwidth
         aes.y[k] = bincounts[k]
     end
 
