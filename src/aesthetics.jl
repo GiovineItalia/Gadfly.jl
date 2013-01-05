@@ -2,16 +2,14 @@
 require("Compose.jl")
 using Compose
 
-# TODO: Use DataVec to support missing values.
-
 # Aesthetics is a set of bindings of typed values to symbols (Wilkinson calls
 # this a Varset). Each variable controls how geometries are realized.
 type Aesthetics
     x::Union(Nothing, Vector{Float64}, Vector{Int64})
     y::Union(Nothing, Vector{Float64}, Vector{Int64})
     size::Maybe(Vector{Measure})
-    color::Maybe(PooledDataVec{Color})
-    label::Maybe(PooledDataVec{UTF8String})
+    color::Maybe(PooledDataVector{Color})
+    label::Maybe(PooledDataVector{UTF8String})
 
     x_min::Union(Nothing, Vector{Float64}, Vector{Int64})
     x_max::Union(Nothing, Vector{Float64}, Vector{Int64})

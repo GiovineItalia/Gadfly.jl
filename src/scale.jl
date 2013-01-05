@@ -125,9 +125,9 @@ function apply_scale(scale::ContinuousScale,
 end
 
 
-discretize(values::Vector) = PooledDataVec(values)
-discretize(values::DataVec) = PooledDataVec(values)
-discretize(values::PooledDataVec) = values
+discretize(values::Vector) = PooledDataVector(values)
+discretize(values::DataVector) = PooledDataVector(values)
+discretize(values::PooledDataVector) = values
 
 type DiscreteScaleTransform
     f::Function
@@ -190,7 +190,7 @@ function apply_scale(scale::DiscreteColorScale,
         end
         ds = discretize(data.color)
         colors = scale.f(length(levels(ds)))
-        colored_ds = PooledDataVec(Color[colors[i] for i in ds.refs], colors)
+        colored_ds = PooledDataVector(Color[colors[i] for i in ds.refs], colors)
         aes.color = colored_ds
 
         color_map = {color => label for (label, color) in zip(levels(ds), colors)}

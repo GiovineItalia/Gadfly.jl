@@ -323,7 +323,7 @@ import Scale, Coord, Geom, Guide, Stat
 
 # All aesthetics must have a scale. If none is given, we use a default.
 # The default depends on whether the input is discrete or continuous (i.e.,
-# PooledDataVec or DataVec, respectively).
+# PooledDataVector or DataVector, respectively).
 const default_scales = {
         :continuous => {:x     => Scale.x_continuous,
                         :y     => Scale.y_continuous,
@@ -335,10 +335,10 @@ const default_scales = {
                         :label => Scale.label}}
 
 # Determine whether the input is discrete or continuous.
-classify_data(data::DataVec{Float64}) = :continuous
-classify_data(data::DataVec{Float32}) = :continuous
-classify_data(data::DataVec) = :discrete
-classify_data(data::PooledDataVec) = :discrete
+classify_data(data::DataVector{Float64}) = :continuous
+classify_data(data::DataVector{Float32}) = :continuous
+classify_data(data::DataVector) = :discrete
+classify_data(data::PooledDataVector) = :discrete
 
 
 end # module Gadfly

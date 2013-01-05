@@ -256,7 +256,7 @@ function apply_statistic(stat::BoxplotStatistic, aes::Gadfly.Aesthetics)
     end
 
     if !is(aes.color, nothing)
-        aes.color = PooledDataVec(Color[c for (x, c) in keys(groups)],
+        aes.color = PooledDataVector(Color[c for (x, c) in keys(groups)],
                                   levels(aes.color))
     end
 
