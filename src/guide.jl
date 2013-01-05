@@ -1,11 +1,10 @@
 
 module Guide
 
-import Gadfly
-import Gadfly.render
-
-require("Compose.jl")
+using Gadfly
 using Compose
+
+import Gadfly.render
 
 
 # Where the guide should be placed in relation to the plot.

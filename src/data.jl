@@ -1,12 +1,4 @@
 
-require("Iterators.jl")
-import Iterators
-
-require("Gadfly/src/aesthetics.jl")
-
-
-
-
 # Data binds untyped values to a aesthetic variables.
 # TODO: generate this from Aesthetics with a macro
 type Data

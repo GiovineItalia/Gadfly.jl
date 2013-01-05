@@ -1,9 +1,6 @@
 
 # Parameters controlling how a plot appears
 
-require("Compose.jl")
-using Compose
-
 type Theme
     # If the color aesthetic is not mapped to anything, this is the color that
     # is used.

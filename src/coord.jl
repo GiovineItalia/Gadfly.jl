@@ -1,12 +1,10 @@
 
 module Coord
 
-export cartesian
-
-import Gadfly
-
-require("Compose.jl")
+using Gadfly
 using Compose
+
+export cartesian
 
 # Cartesian coordinates with position given by the x and y (and similar)
 # aesthetics.

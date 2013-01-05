@@ -1,18 +1,14 @@
 
-require("Distributions")
-
 module Stat
 
-require("Gadfly/src/bincount.jl")
+import Gadfly
+using DataFrames
 
+import Gadfly.Scale
 import Distributions.Uniform
-
-require("Iterators.jl")
 import Iterators.chain, Iterators.cycle
 
-import Gadfly
-import Gadfly.Scale
-using DataFrames
+include("$(julia_pkgdir())/Gadfly/src/bincount.jl")
 
 # Apply a series of statistics.
 #

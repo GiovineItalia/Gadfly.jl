@@ -1,20 +1,29 @@
 
 
-require("Compose.jl")
-using Compose
+require("Compose")
+require("DataFrames")
+require("Distributions")
+require("Iterators")
 
-require("DataFrames.jl")
+# TODO: It's wrong to put thisg outside the module. What I want to do is have
+# Gadfly export everything that's exported by Compose, to avoid having to do
+# both using(Gadfly) and using(Compose), but I'm not sure if that's possible.
+#using Compose
 
 module Gadfly
 
+using Compose
 using DataFrames
 
+import Iterators
 import Compose.draw
 import Base.copy, Base.push
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot
 
+
 element_aesthetics(::Any) = []
+
 
 abstract Element
 abstract ScaleElement       <: Element
@@ -23,10 +32,13 @@ abstract GeometryElement    <: Element
 abstract GuideElement       <: Element
 abstract StatisticElement   <: Element
 
-require("Gadfly/src/misc.jl")
-require("Gadfly/src/theme.jl")
-require("Gadfly/src/aesthetics.jl")
-require("Gadfly/src/data.jl")
+
+include("$(julia_pkgdir())/Gadfly/src/misc.jl")
+include("$(julia_pkgdir())/Gadfly/src/color.jl")
+include("$(julia_pkgdir())/Gadfly/src/theme.jl")
+include("$(julia_pkgdir())/Gadfly/src/aesthetics.jl")
+include("$(julia_pkgdir())/Gadfly/src/data.jl")
+
 
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
@@ -97,6 +109,7 @@ eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[string(arg)]
 eval_plot_mapping(data::AbstractDataFrame, arg::String) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
+
 
 # This is the primary function used to produce plots, which are then turned into
 # compose objects with `render` and drawn to an image with `draw`.
@@ -313,11 +326,11 @@ end
 draw(backend::Compose.Backend, p::Plot) = draw(backend, render(p))
 
 
-require("Gadfly/src/scale.jl")
-require("Gadfly/src/coord.jl")
-require("Gadfly/src/geometry.jl")
-require("Gadfly/src/guide.jl")
-require("Gadfly/src/statistics.jl")
+include("$(julia_pkgdir())/Gadfly/src/scale.jl")
+include("$(julia_pkgdir())/Gadfly/src/coord.jl")
+include("$(julia_pkgdir())/Gadfly/src/geometry.jl")
+include("$(julia_pkgdir())/Gadfly/src/guide.jl")
+include("$(julia_pkgdir())/Gadfly/src/statistics.jl")
 
 import Scale, Coord, Geom, Guide, Stat
 

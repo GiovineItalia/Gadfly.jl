@@ -1,12 +1,13 @@
 
 module Scale
 
-import Gadfly
-import Gadfly.element_aesthetics
-
+using Gadfly
+using Compose
 using DataFrames
 
-require("Gadfly/src/color.jl")
+import Gadfly.element_aesthetics
+
+include("$(julia_pkgdir())/Gadfly/src/color.jl")
 
 # Apply some scales to data in the given order.
 #
@@ -179,7 +180,7 @@ end
 
 
 # Common discrete color scales
-const color_hue = DiscreteColorScale(h -> lab_rainbow(70, 54, 0, h))
+const color_hue = DiscreteColorScale(h -> Gadfly.lab_rainbow(70, 54, 0, h))
 
 
 function apply_scale(scale::DiscreteColorScale,

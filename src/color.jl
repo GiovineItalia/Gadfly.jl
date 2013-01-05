@@ -1,8 +1,6 @@
 
 # Various color scales.
 
-using Compose
-
 # Discrete scales
 # Each of these functions produce a vector of n colors.
 

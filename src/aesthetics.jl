@@ -1,7 +1,4 @@
 
-require("Compose.jl")
-using Compose
-
 # Aesthetics is a set of bindings of typed values to symbols (Wilkinson calls
 # this a Varset). Each variable controls how geometries are realized.
 type Aesthetics

@@ -1,16 +1,14 @@
 
 module Geom
 
-import Gadfly
-import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit
-
+using Gadfly
+using Compose
 using DataFrames
 
-require("Compose")
-using Compose
-
-require("Iterators")
+import Compose.combine # Prevent DataFrame.combine from taking over.
+import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit
 import Iterators.cycle
+
 
 # Geometry that renders nothing.
 type Nil <: Gadfly.GeometryElement
