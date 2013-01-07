@@ -4,6 +4,7 @@ require("Compose")
 require("DataFrames")
 require("Distributions")
 require("Iterators")
+require("JSON")
 
 # TODO: It's wrong to put thisg outside the module. What I want to do is have
 # Gadfly export everything that's exported by Compose, to avoid having to do
@@ -16,8 +17,9 @@ using Compose
 using DataFrames
 
 import Iterators
+import JSON
 import Compose.draw
-import Base.copy, Base.push
+import Base.copy, Base.push, Base.start, Base.next, Base.done
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot
 
@@ -38,6 +40,7 @@ include("$(julia_pkgdir())/Gadfly/src/color.jl")
 include("$(julia_pkgdir())/Gadfly/src/theme.jl")
 include("$(julia_pkgdir())/Gadfly/src/aesthetics.jl")
 include("$(julia_pkgdir())/Gadfly/src/data.jl")
+include("$(julia_pkgdir())/Gadfly/src/weave.jl")
 
 
 # A plot has zero or more layers. Layers have a particular geometry and their
