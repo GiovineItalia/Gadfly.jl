@@ -42,6 +42,9 @@ type Theme
     # Spacing between bars for Geom.bar.
     bar_spacing::Maybe(Measure)
 
+    # Spacing between boxplots in Geom.boxplot.
+    boxplot_spacing::Maybe(Measure)
+
     # Points, etc, are highlighted by stroking in slightly different color. This
     # is the stroke width.
     highlight_width::Maybe(Measure)
@@ -103,6 +106,7 @@ const default_theme =
           8pt,                      # point_label_font_size
           color("#4c404b"),         # point_label_color
           -0.2mm,                   # bar_spacing
+          1mm,                    # boxplot_spacing
           0.3mm,                    # highlight_width
           default_highlight_color,  # highlight_color
           default_middle_color,     # middle_color

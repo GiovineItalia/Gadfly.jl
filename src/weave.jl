@@ -1,6 +1,6 @@
 
 # Gadfly.weave implements a system for executable documentation, report
-# generation, literal programming, and such.
+# generation, literate programming, and such.
 # It works as follows:
 #   1. Input is parsed by pandoc into JSON.
 #   2. Weave executes the code blocks found in the JSON data, and inserts the

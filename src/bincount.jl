@@ -28,7 +28,7 @@
 #
 # Returns:
 #   Log-likelihood with Birge's penalty applied.
-#   
+#
 function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::Float64)
     ll = 0
     for i in 1:d
@@ -49,7 +49,7 @@ end
 #   A tuple of the form (d, bincounts), where d gives the optimal number of
 #   bins, and bincounts is an array giving the number of occurances in each bin.
 #
-function choose_bin_count_1d(xs::Vector{Float64})
+function choose_bin_count_1d(xs::Vector)
     n = length(xs)
     if n <= 1
         return 1

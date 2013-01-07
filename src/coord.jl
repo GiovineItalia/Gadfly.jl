@@ -14,7 +14,10 @@ type CartesianCoordinate <: Gadfly.CoordinateElement
 end
 
 
-const cartesian = CartesianCoordinate([:x, :xtick], [:y, :ytick])
+const cartesian = CartesianCoordinate(
+    [:x, :xtick, :x_min, :x_max],
+    [:y, :ytick, :middle, :lower_hinge, :upper_hinge,
+     :lower_fence, :upper_fence, :outliers])
 
 
 # Produce a canvas with suitable cartesian coordinates.
@@ -54,6 +57,23 @@ function apply_coordinate(coord::CartesianCoordinate, aess::Gadfly.Aesthetics...
                 continue
             end
 
+            # Outliers is an odd aesthetic that needs special treatment.
+            if var == :outliers
+                for vals in aes.outliers
+                    for val in vals
+                        if val < ymin
+                            ymin = val
+                        end
+
+                        if val > ymax
+                            ymax = val
+                        end
+                    end
+                end
+
+                continue
+            end
+
             for val in getfield(aes, var)
                 if val < ymin
                     ymin = val
@@ -65,6 +85,7 @@ function apply_coordinate(coord::CartesianCoordinate, aess::Gadfly.Aesthetics...
             end
         end
     end
+
 
     # A bit of kludge. We need to extend a bit to be able to fit bars when
     # using discrete scales. TODO: Think more carefully about this. Is there a

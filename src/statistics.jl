@@ -77,8 +77,9 @@ end
 
 
 const x_ticks = TickStatistic([:x], :xtick)
-const y_ticks = TickStatistic([:y], :ytick)
-
+const y_ticks = TickStatistic(
+    [:y, :middle, :lower_hinge, :upper_hinge,
+     :lower_fence, :upper_fence], :ytick)
 
 # Find some reasonable values for tick marks.
 #
@@ -128,7 +129,7 @@ function optimize_ticks(x_min::Float64, x_max::Float64)
                     g = 0 < k < 2k_ideal ? 1 - abs(k - k_ideal) / k_ideal : 0.0
 
                     # coverage
-                    c = xspan/span
+                    c = 1.5 * xspan/span
 
                     score = (1/4)g + (1/6)s + (1/3)c + (1/4)qscore
 
@@ -168,6 +169,7 @@ function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics)
     in_values = [getfield(aes, var) for var in stat.in_vars]
     in_values = filter(val -> !(val === nothing), in_values)
     in_values = chain(in_values...)
+    # TODO: handle the outliers aesthetic
 
     minval = Inf
     maxval = -Inf

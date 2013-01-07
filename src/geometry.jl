@@ -203,7 +203,7 @@ default_statistic(::BoxplotGeometry) = Gadfly.Stat.boxplot
 function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.bar", aes,
-                                     :lowor_fence, :lower_hinge, :middle,
+                                     :lower_fence, :lower_hinge, :middle,
                                      :upper_hinge, :upper_fence, :outliers)
     Gadfly.assert_aesthetics_equal_length("Geom.bar", aes,
                                           element_aesthetics(geom)...)
@@ -224,7 +224,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
 
     forms = Compose.Form[]
     r = theme.default_point_size
-    bw = theme.bar_width_scale
+    bw = 1.0cx - theme.boxplot_spacing
 
     # TODO: handle color non-nothing color
 
@@ -232,14 +232,15 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
         c = aes.color.pool[cref]
         sc = theme.highlight_color(c) # stroke color
         mc = theme.middle_color(c) # middle color
-        # Box
-        push(forms, compose(rectangle(x - bw/2, lh, bw, uh - lh),
-                            fill(c), stroke(sc),
-                            linewidth(theme.highlight_width)))
 
         # Middle
         push(forms, compose(lines((x - 1/6, mid), (x + 1/6, mid)),
                             linewidth(theme.line_width), stroke(mc)))
+
+        # Box
+        push(forms, compose(rectangle(x*cx - bw/2, lh, bw, uh - lh),
+                            fill(c), stroke(sc),
+                            linewidth(theme.highlight_width)))
 
         # Whiskers
         push(forms, compose(lines((x, lh), (x, lf)),
