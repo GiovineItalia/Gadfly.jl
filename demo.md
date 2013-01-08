@@ -1,4 +1,3 @@
-
 # A Brief Demonstration of Gadfly
 
 Gadfly is an implementation of a "grammar of graphics" style statistical
@@ -16,7 +15,7 @@ load("Gadfly")
 using Gadfly
 
 load("RDatasets")
-using RDataets
+using RDatasets
 
 iris = data("datasets", "iris")
 ```
