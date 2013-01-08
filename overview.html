@@ -3,55 +3,8 @@
 <head>
   <meta charset="utf-8">
   <title></title>
-  <author></author>
-
   <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <style type="text/css">
-      .container-fluid {
-        margin: auto;
-        width: auto;
-        max-width: 900px;
-      }
-
-      img {
-          display: block;
-          position: relative;
-          margin: auto;
-      }
-
-      object {
-          display: block;
-          position: relative;
-          margin: auto;
-      }
-
-      figure {
-          margin: 0 0;
-      }
-
-      figcaption {
-          text-align: center;
-      }
-
-      #footer {
-          width: auto;
-          margin: 10px;
-      }
-
-      // Don't color headings that link to TOC.
-      h1 a { color: #333; }
-      h1 a:visited { color: #333; }
-      h2 a { color: #333; }
-      h2 a:visited { color: #333; }
-      h3 a { color: #333; }
-      h3 a:visited { color: #333; }
-      h4 a { color: #333; }
-      h4 a:visited { color: #333; }
-      h5 a { color: #333; }
-      h5 a:visited { color: #333; }
-    </style>
-
+  <link href="css/gadflydoc.css" rel="stylesheet">
   <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
 
   <script type="text/javascript" src="js/fixup.js"></script>
@@ -76,7 +29,7 @@
       <div class="span8">
 <h1 id="a-quick-overview-of-gadfly"><a href="#TOC">A Quick Overview of Gadfly</a></h1>
 <p>Gadfly is a system for plotting and visualization based largly on Hadley Wickhams's <code>ggplot2</code> for R, and Leland Wilkinson's book &quot;The Grammar of Graphics&quot;.</p>
-<p>This document will give a quick overview of the current state of Gadfly's capabilities. The markdown version of this document is also executable, using the Gadfly.weave function, generating a self-contained html file, and so it can also be used to check that your installation of Gadfly works as advertised.</p>
+<p>This document will give a quick overview of the current state of Gadfly's capabilities. The markdown version of this document is also executable, using the <code>Gadfly.weave</code> function, generating a self-contained html file, and so it can also be used to check that your installation of Gadfly works as advertised.</p>
 <h2 id="installation"><a href="#TOC">Installation</a></h2>
 <p>Gadfly can be installed from the Julia repl quite easily.</p>
 <pre class="julia" execute="false"><code>require(&quot;Pkg&quot;)
@@ -118,7 +71,7 @@ draw(SVG(6inch, 4inch), p)</code></pre>
 p = plot(mammals,
          {:x =&gt; &quot;body&quot;, :y =&gt; &quot;brain&quot;},
          Geom.point)
-draw(SVG(5inch, 5inch), p)</code></pre>
+draw(SVG(6inch, 6inch), p)</code></pre>
 <figure><object alt="Figure 3" 
                                   data="overview_fig_3.svg" 
                                   type="image/svg+xml"></object> 
@@ -164,7 +117,7 @@ draw(SVG(4inch, 3inch), p)</code></pre>
                           <figcaption></figcaption></figure>
 <p>No need to specify the number of bins, if not given a reasonable number is chosen using a penalized maximum likelihood procedure.</p>
 <h2 id="boxplots"><a href="#TOC">Boxplots</a></h2>
-<p>The boxplot geometry shows the distribution of the y aesthetic, grouped by the x aesthetic. Here is the (log) wage distribution categorized by years of education.</p>
+<p>The boxplot geometry shows the distribution of the y aesthetic, grouped by the x aesthetic. Here is a (log) wage distribution categorized by years of education.</p>
 <pre class="julia img"><code>wages = data(&quot;plm&quot;, &quot;Wages&quot;)
 p = plot(wages,
          {:x =&gt; &quot;ed&quot;,
@@ -177,7 +130,7 @@ draw(SVG(4inch, 4inch), p)</code></pre>
                           <figcaption></figcaption></figure>
 <h2 id="plotting-functions"><a href="#TOC">Plotting functions</a></h2>
 <p>Though Gadfly primarily plots data frames, there are convenience functions to do simple function plotting.</p>
-<pre class="julia img"><code>p = plot([sin, cos], 1, 25)
+<pre class="julia img"><code>p = plot([sin, cos], 0, 25)
 draw(SVG(6inch, 3inch), p)</code></pre>
 <figure><object alt="Figure 8" 
                                   data="overview_fig_8.svg" 
@@ -208,7 +161,7 @@ draw(SVG(6inch, 3inch), p)</code></pre>
     </div>
 
     <div id="footer" class="span8">
-      <p class="muted">Written by . Last modified: .</p>
+      <p class="muted">Last modified by Daniel Jones on Tue Jan 8 00:45:32 2013 -0800.</p>
     </div>
   </div>
 </body>

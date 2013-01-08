@@ -10,19 +10,34 @@ url=../Gadfly
 
 gadfly=`julia -e 'println(julia_pkgdir())'`/Gadfly/bin/gadfly
 
+run_gadfly() {
+    infn=$1
+    outfn=`echo $infn | sed 's/\.md$/.html/'`
+
+    author=`git log -1 --format="%an" -- $infn`
+    date=`git log -1 --format="%ad" -- $infn`
+
+    $gadfly \
+        --variable="author:$author" \
+        --variable="date:$date" \
+        --toc \
+        --from=markdown \
+        --to=html5 \
+        --template=../../template.html \
+        $infn > $outfn
+}
+
 git clone $url gadfly
 pushd gadfly/doc
-$gadfly \
-    --toc \
-    --from=markdown \
-    --to=html5 \
-    --template=../../template.html \
-    overview.md > overview.html
+for fn in *.md
+do
+    echo gadfly $fn
+    run_gadfly $fn
+done
 cp *.html ../..
 cp *.svg ../..
 popd
 rm -rf gadfly
-git add *.html *.svg
 
 # TODO: automate removal of stale files?
 
