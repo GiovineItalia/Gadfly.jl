@@ -7,7 +7,7 @@ Graphics".
 
 This document will give a quick overview of the current state of Gadfly's
 capabilities. The markdown version of this document is also executable, using
-the Gadfly.weave function, generating a self-contained html file, and so it can
+the `Gadfly.weave` function, generating a self-contained html file, and so it can
 also be used to check that your installation of Gadfly works as advertised.
 
 ## Installation
@@ -80,7 +80,7 @@ mammals = data("MASS", "mammals")
 p = plot(mammals,
          {:x => "body", :y => "brain"},
          Geom.point)
-draw(SVG(5inch, 5inch), p)
+draw(SVG(6inch, 6inch), p)
 ```
 
 This is no good, the elephants are ruining things for us. Putting both axis on a
@@ -140,7 +140,7 @@ chosen using a penalized maximum likelihood procedure.
 ## Boxplots
 
 The boxplot geometry shows the distribution of the y aesthetic, grouped by the x
-aesthetic. Here is the (log) wage distribution categorized by years of education.
+aesthetic. Here is a (log) wage distribution categorized by years of education.
 
 ```{.julia .img}
 wages = data("plm", "Wages")
@@ -157,7 +157,7 @@ Though Gadfly primarily plots data frames, there are convenience functions to do
 simple function plotting.
 
 ```{.julia .img}
-p = plot([sin, cos], 1, 25)
+p = plot([sin, cos], 0, 25)
 draw(SVG(6inch, 3inch), p)
 ```
 

@@ -131,7 +131,7 @@ function weave(input::IOStream, docname::String, infmt::String, outfmt::String,
         end
 
         push(processed_document,
-             process_output(output, id, classes, keyvals, docname, fignum)...)
+             process_output(output, id, classes, keyvals, outfmt, docname, fignum)...)
     end
 
     jsonout_path, jsonout = mktemp()
@@ -170,22 +170,39 @@ end
 #   An array of JSON elements that will be inserted directly after the code
 #   block that was executed.
 #
-function process_output(output::String, id, classes, keyvals, docname, fignum)
+function process_output(output::String, id, classes, keyvals, outfmt, docname, fignum)
     if isempty(output)
         []
     elseif has(classes, "img")
         figname = isempty(id) ? "fig_$(fignum)" : id
         if has(keyvals, "alt")
-            alttext = @sprintf("Figure %d: %s", fignum, keyvals["alt"])
+            caption = alttext = @sprintf("Figure %d: %s", fignum, keyvals["alt"])
         else
             alttext = "Figure $(fignum)"
+            caption = ""
         end
         figfn = "$(docname)_$(figname).svg" # TODO: handle non-svg images
         figio = open(figfn, "w")
         write(figio, output)
         close(figio)
         figurl = figfn # TODO: support adding an absolute path
-        [["Para" => {["Image" => {{["Str" => alttext]}, {figurl, ""}}]}]]
+
+        # TODO: support output other than SVG. We could inspect the file with
+        # the unix file command, or maybe just classify it as SVG/not-SVG.
+
+        if outfmt == "html" || outfmt == "html5"
+            # SVG needs to be included using the object (or embed) tag for
+            # embeded javascript to work.
+            # TODO: captions
+            [["RawBlock" =>
+                ["html",
+                 "<figure><object alt=\"$(alttext)\" \
+                                  data=\"$(figurl)\" \
+                                  type=\"image/svg+xml\"></object> \
+                          <figcaption>$(caption)</figcaption></figure>"]]]
+         else
+            [["Para" => {["Image" => {{["Str" => alttext]}, {figurl, ""}}]}]]
+        end
     else
         [["CodeBlock" => {{"", {"julia_output"}, {}}, output}]]
     end
