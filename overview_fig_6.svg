@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="101.6mm" height="76.2mm" viewBox="0 0 101.6 76.2" style="stroke:black;fill:black" stroke-width="0.5">
+<g fill="#F5F5F5" stroke="#F2F2F2">
+  <path d="M 12.66 5 L 96.6 5 96.6 56.9 12.66 56.9 z" />
+  <g stroke="#FFFFFF" stroke-width="0.3">
+    <path d="M94.22,5 L 94.22 56.9" />
+    <path d="M74.43,5 L 74.43 56.9" />
+    <path d="M54.63,5 L 54.63 56.9" />
+    <path d="M34.83,5 L 34.83 56.9" />
+    <path d="M15.03,5 L 15.03 56.9" />
+  </g>
+  <g stroke="#FFFFFF" stroke-width="0.3">
+    <path d="M12.66,22.79 L 96.6 22.79" />
+    <path d="M12.66,55.43 L 96.6 55.43" />
+    <path d="M12.66,39.11 L 96.6 39.11" />
+    <path d="M12.66,6.47 L 96.6 6.47" />
+  </g>
+</g>
+<g fill="#4682B4" stroke="none">
+  <path d="M 23.12 55.43 L 25.92 55.43 25.92 53.8 23.12 53.8 z" />
+  <path d="M 25.72 55.43 L 28.52 55.43 28.52 49.23 25.72 49.23 z" />
+  <path d="M 28.32 55.43 L 31.12 55.43 31.12 34.54 28.32 34.54 z" />
+  <path d="M 30.92 55.43 L 33.72 55.43 33.72 19.53 30.92 19.53 z" />
+  <path d="M 33.52 55.43 L 36.32 55.43 36.32 17.57 33.52 17.57 z" />
+  <path d="M 36.12 55.43 L 38.92 55.43 38.92 23.12 36.12 23.12 z" />
+  <path d="M 38.72 55.43 L 41.52 55.43 41.52 36.5 38.72 36.5 z" />
+  <path d="M 41.32 55.43 L 44.11 55.43 44.11 47.6 41.32 47.6 z" />
+  <path d="M 43.91 55.43 L 46.71 55.43 46.71 54.13 43.91 54.13 z" />
+  <path d="M 46.51 55.43 L 49.31 55.43 49.31 55.11 46.51 55.11 z" />
+  <path d="M 49.11 55.43 L 51.91 55.43 51.91 55.43 49.11 55.43 z" />
+  <path d="M 51.71 55.43 L 54.51 55.43 54.51 55.43 51.71 55.43 z" />
+  <path d="M 54.31 55.43 L 57.11 55.43 57.11 55.43 54.31 55.43 z" />
+  <path d="M 56.91 55.43 L 59.71 55.43 59.71 55.43 56.91 55.43 z" />
+  <path d="M 59.51 55.43 L 62.31 55.43 62.31 55.11 59.51 55.11 z" />
+  <path d="M 62.11 55.43 L 64.91 55.43 64.91 54.45 62.11 54.45 z" />
+  <path d="M 64.71 55.43 L 67.51 55.43 67.51 52.5 64.71 52.5 z" />
+  <path d="M 67.31 55.43 L 70.11 55.43 70.11 35.52 67.31 35.52 z" />
+  <path d="M 69.91 55.43 L 72.71 55.43 72.71 31.28 69.91 31.28 z" />
+  <path d="M 72.51 55.43 L 75.31 55.43 75.31 9.41 72.51 9.41 z" />
+  <path d="M 75.11 55.43 L 77.91 55.43 77.91 19.53 75.11 19.53 z" />
+  <path d="M 77.71 55.43 L 80.51 55.43 80.51 34.54 77.71 34.54 z" />
+  <path d="M 80.31 55.43 L 83.11 55.43 83.11 45.31 80.31 45.31 z" />
+  <path d="M 82.91 55.43 L 85.71 55.43 85.71 53.48 82.91 53.48 z" />
+</g>
+<g fill="#4C404B" font-size="3.18" font-family="PT Sans Caption" stroke="none">
+  <text x="94.22" y="61.64" text-anchor="middle">10</text>
+  <text x="74.43" y="61.64" text-anchor="middle">5</text>
+  <text x="54.63" y="61.64" text-anchor="middle">0</text>
+  <text x="34.83" y="61.64" text-anchor="middle">-5</text>
+  <text x="15.03" y="61.64" text-anchor="middle">-10</text>
+</g>
+<g fill="#362A35" font-size="3.88" font-family="PT Sans" stroke="none">
+  <text x="54.63" y="69.2" text-anchor="middle">x</text>
+</g>
+<g fill="#4C404B" font-size="3.18" font-family="PT Sans Caption" stroke="none">
+  <text x="11.66" y="22.79" text-anchor="end" style="dominant-baseline:central">100</text>
+  <text x="11.66" y="55.43" text-anchor="end" style="dominant-baseline:central">0</text>
+  <text x="11.66" y="39.11" text-anchor="end" style="dominant-baseline:central">50</text>
+  <text x="11.66" y="6.47" text-anchor="end" style="dominant-baseline:central">150</text>
+</g>
+</svg>
