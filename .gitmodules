@@ -1,0 +1,3 @@
+[submodule "doc"]
+	path = doc
+	url = git://github.com/dcjones/gadfly-static-html.git
