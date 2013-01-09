@@ -37,7 +37,7 @@ draw(SVG("some_plot.svg", 6inch, 4inch), p)
 ```
 
 Gadfly uses a declarative vector graphics system called
-[Compose](https://github.com/dcjones/compose). This let's you manipulate plots
+"Compose". This let's you manipulate plots
 in interesting ways once you define them.
 
 ![Histogram](http://dcjones.github.com/gadfly/fig1.svg)
