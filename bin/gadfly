@@ -38,6 +38,9 @@ ap = ArgParseSettings("gadfly", "Excute an executable markdown file")
     "--css"
         help = "include the given stylesheet in an html file"
         arg_type = String
+    "--variable"
+        help = "pass key/value pairs to a template"
+        action = :append_arg
 end
 
 parsed_args = ArgParse.parse_args(ap)
@@ -61,6 +64,10 @@ end
 
 if !is(parsed_args["template"], nothing)
     push(pandoc_args, "--template=" * parsed_args["template"])
+end
+
+for keyval in parsed_args["variable"]
+    push(pandoc_args, "--variable=$(keyval)")
 end
 
 output = weave(parsed_args["filename"],

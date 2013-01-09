@@ -96,17 +96,17 @@ const default_theme =
           color("#f2f2f2"),         # panel_stroke
           color("white"),           # grid_color
           0.3mm,                    # grid line width
-          "PT Sans Caption",        # minor_label_font
+          "Source Sans Pro",        # minor_label_font
           9pt,                      # minor_label_font_size
           color("#4c404b"),         # minor_label_color
-          "PT Sans",                # major_label_font
+          "Source Sans Pro",        # major_label_font
           11pt,                     # major_label_font_size
           color("#362a35"),         # major_label_color
-          "PT Sans",                # point_label_font
+          "Source Sans Pro",        # point_label_font
           8pt,                      # point_label_font_size
           color("#4c404b"),         # point_label_color
           -0.2mm,                   # bar_spacing
-          1mm,                    # boxplot_spacing
+          1mm,                      # boxplot_spacing
           0.3mm,                    # highlight_width
           default_highlight_color,  # highlight_color
           default_middle_color,     # middle_color

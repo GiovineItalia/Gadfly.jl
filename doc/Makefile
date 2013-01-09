@@ -5,8 +5,13 @@ all : html
 
 html : overview.html
 
+markdown: overview.weaved.md
+
 %.html : %.md
-	$(gadfly) --self-contained $< > $@
+	$(gadfly) --to=html $< > $@
+
+%.weaved.md : %.md
+	$(gadfly) --to=markdown $< > $@
 
 clean :
 	rm -f *.html
