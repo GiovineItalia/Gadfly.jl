@@ -1,16 +1,12 @@
 
 # Introducing Gadfly
 
-Gadfly is a system for plotting and visualization based largly on Hadley
+Gadfly is a system for plotting and visualization based largely on Hadley
 Wickhams's [ggplot2](http://ggplot2.org/) for R, and Leland Wilkinson's book
 [The Grammar of Graphics](http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html).
 
-This document will give a quick overview of the current Gadfly's development.
-
 This document will give a quick overview of the current state of Gadfly's
-capabilities. The markdown version of this document is also executable, using
-the `Gadfly.weave` function, generating a self-contained html file, and so it can
-also be used to check that your installation of Gadfly works as advertised.
+development.
 
 ## Installation
 
@@ -26,17 +22,18 @@ Pkg.add("Gadfly")
 
 The markdown version of this document (`doc/overview.md`) is executable,
 generating all the figures and producing an HTML file. This is a good way to
-check that your install of Gadfly works as advertised. To execute it, go into
-the `doc` directly and type
+check that your install of Gadfly works as advertised. To execute it, you will
+need to have [Pandoc](http://johnmacfarlane.net/pandoc/) installed, then in the
+`doc` directory and type:
 
-```{.shell execute="false"}
-make html
+```{.bash execute="false"}
+../bin/gadfly overview.md > overview.html
 ```
 
 You should have a file called `overview.html` and a bunch of svg figures. If
 not, feel free to file a bug report.
 
-Writing your own executable markdown file is very simple. If your curious, have
+Writing your own executable markdown file is very simple. If you're curious, have
 a peek at the raw markdown version of this document.
 
 
@@ -73,7 +70,7 @@ number of elements, which are the nouns and verbs, so to speak, that form the
 grammar.
 
 Note that for these examples we will be drawing on an SVG backend that inserts
-the graphic directly into the document. To generate these images individualle,
+the graphic directly into the document. To generate these images individually,
 you should include a file name: `SVG("iris_plot.svg", 6inch, 4inch)`
 
 ## Aesthetics
@@ -196,8 +193,9 @@ Much more can and will be done in the future.
 
 ## Compose
 
-Gadfly is based on a declaritive vector graphics system called
-[Compose](https://github.com/dcjones/Compose.jl).
+Gadfly is based on a declarative vector graphics system called
+[Compose](https://github.com/dcjones/Compose.jl). This let's one do interesting
+things with plots, once they are defined.
 
 ```{.julia .img}
 fig1a = render(plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"},
@@ -209,6 +207,9 @@ draw(SVG(6inch, 3inch), fig1)
 ```
 
 The calls to `render` is necessary to convert the `Plot` object to Compose
-`Canvas` objects which represent graphics we can manipulate.
+`Canvas` objects which represent graphics we can manipulate. Ultimately Compose
+will allow the creation of complex plots
+
+
 
 
