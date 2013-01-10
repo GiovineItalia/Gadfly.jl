@@ -57,7 +57,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
             label = aes.color_label(color)
             if !has(used_colors, color)
                 add(used_colors, color)
-                push(colors, color)
+                push!(colors, color)
                 labels[color] = Set{String}(label)
             else
                 add(labels[color], label)
@@ -297,15 +297,15 @@ function layout_guides(plot_canvas::Canvas,
     under_guides  = Canvas[]
     for (guide, pos) in guides
         if pos === top_guide_position
-            push(top_guides, guide)
+            push!(top_guides, guide)
         elseif pos === right_guide_position
-            push(right_guides, guide)
+            push!(right_guides, guide)
         elseif pos === bottom_guide_position
-            push(bottom_guides, guide)
+            push!(bottom_guides, guide)
         elseif pos === left_guide_position
-            push(left_guides, guide)
+            push!(left_guides, guide)
         elseif pos === under_guide_position
-            push(under_guides, guide)
+            push!(under_guides, guide)
         end
     end
 

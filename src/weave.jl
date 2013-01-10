@@ -42,7 +42,7 @@ function pandoc(io, infmt::String, outfmt::String, args::String...)
                      "--from=$(infmt)",
                      "--to=$(outfmt)"]
     for arg in args
-        push(cmd, arg)
+        push!(cmd, arg)
     end
 
     readall(io > Cmd(cmd))
@@ -98,7 +98,7 @@ function weave(input::IOStream, docname::String, infmt::String, outfmt::String,
 
     for block in document
         if keys(block)[1] != "CodeBlock"
-            push(processed_document, block)
+            push!(processed_document, block)
             continue
         end
 
@@ -109,7 +109,7 @@ function weave(input::IOStream, docname::String, infmt::String, outfmt::String,
         keyvals = [k => v for (k,v) in keyvals]
 
         if !attrib_bool(keyvals, "execute", true)
-            push(processed_document, block)
+            push!(processed_document, block)
             continue
         end
 
@@ -127,10 +127,10 @@ function weave(input::IOStream, docname::String, infmt::String, outfmt::String,
         end
 
         if !attrib_bool(keyvals, "hide", false)
-            push(processed_document, block)
+            push!(processed_document, block)
         end
 
-        push(processed_document,
+        push!(processed_document,
              process_output(output, id, classes, keyvals, outfmt, docname, fignum)...)
     end
 
