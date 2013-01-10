@@ -67,7 +67,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
         if !has(points, c)
             points[c] = Array(Tuple,0)
         end
-        push(points[c], (x, y, s))
+        push!(points[c], (x, y, s))
     end
 
     form = combine([combine([circle(x, y, s) for (x, y, s) in xys]...) <<
@@ -122,7 +122,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
             if !has(points, c)
                 points[c] = Array((Float64, Float64),0)
             end
-            push(points[c], (x, y))
+            push!(points[c], (x, y))
         end
 
         forms = Array(Any, length(points))
@@ -234,31 +234,31 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
         mc = theme.middle_color(c) # middle color
 
         # Middle
-        push(forms, compose(lines((x - 1/6, mid), (x + 1/6, mid)),
+        push!(forms, compose(lines((x - 1/6, mid), (x + 1/6, mid)),
                             linewidth(theme.line_width), stroke(mc)))
 
         # Box
-        push(forms, compose(rectangle(x*cx - bw/2, lh, bw, uh - lh),
+        push!(forms, compose(rectangle(x*cx - bw/2, lh, bw, uh - lh),
                             fill(c), stroke(sc),
                             linewidth(theme.highlight_width)))
 
         # Whiskers
-        push(forms, compose(lines((x, lh), (x, lf)),
+        push!(forms, compose(lines((x, lh), (x, lf)),
                             linewidth(theme.line_width), stroke(sc)))
 
-        push(forms, compose(lines((x, uh), (x, uf)),
+        push!(forms, compose(lines((x, uh), (x, uf)),
                             linewidth(theme.line_width), stroke(sc)))
 
         # Fences
-        push(forms, compose(lines((x - 1/6, lf), (x + 1/6, lf)),
+        push!(forms, compose(lines((x - 1/6, lf), (x + 1/6, lf)),
                             linewidth(theme.line_width), stroke(sc)))
 
-        push(forms, compose(lines((x - 1/6, uf), (x + 1/6, uf)),
+        push!(forms, compose(lines((x - 1/6, uf), (x + 1/6, uf)),
                             linewidth(theme.line_width), stroke(sc)))
 
         # Outliers
         if !isempty(outliers)
-            push(forms, compose(combine([circle(x, y, r) for y in outliers]...),
+            push!(forms, compose(combine([circle(x, y, r) for y in outliers]...),
                                 fill(c), stroke(sc)))
         end
     end
@@ -303,7 +303,7 @@ function deferred_label_canvas(aes, theme, box, unit_box)
     for (x, y) in zip(aes.x, aes.y)
         x = absolute_measure(x*cx, unit_box, box)
         y = absolute_measure(y*cy, unit_box, box)
-        push(point_positions, (x, y))
+        push!(point_positions, (x, y))
     end
 
     extents = [text_extents(theme.point_label_font,
@@ -317,13 +317,13 @@ function deferred_label_canvas(aes, theme, box, unit_box)
     positions = Gadfly.Maybe(BoundingBox)[]
     for (i, (text_width, text_height)) in enumerate(extents)
         x, y = point_positions[i]
-        push(positions, BoundingBox(x, y, text_width, text_height))
+        push!(positions, BoundingBox(x, y, text_width, text_height))
     end
 
     # TODO: use Aesthetics.size and/or theme.default_point_size
     for (x, y) in point_positions
-        push(positions, BoundingBox(x - 0.5mm, y - 0.5mm, 1mm, 1mm))
-        push(extents, (1mm, 1mm))
+        push!(positions, BoundingBox(x - 0.5mm, y - 0.5mm, 1mm, 1mm))
+        push!(extents, (1mm, 1mm))
     end
 
     n = length(aes.label)
@@ -364,8 +364,8 @@ function deferred_label_canvas(aes, theme, box, unit_box)
     for j in 1:n
         for i in (j+1):n
             if overlaps(max_extents(i), max_extents(j))
-                push(possible_overlaps[i], j)
-                push(possible_overlaps[j], i)
+                push!(possible_overlaps[i], j)
+                push!(possible_overlaps[j], i)
             end
         end
 
@@ -376,8 +376,8 @@ function deferred_label_canvas(aes, theme, box, unit_box)
             end
 
             if overlaps(positions[i], max_extents(j))
-                push(possible_overlaps[i], j)
-                push(possible_overlaps[j], i)
+                push!(possible_overlaps[i], j)
+                push!(possible_overlaps[j], i)
             end
         end
     end
@@ -490,7 +490,7 @@ function deferred_label_canvas(aes, theme, box, unit_box)
             #continue
         #end
 
-        #push(forms,
+        #push!(forms,
              #rectangle(position.x0, position.y0, position.width, position.height)
              #<< stroke("red") << fill(nothing) << linewidth(0.1mm))
     #end
@@ -504,7 +504,7 @@ function deferred_label_canvas(aes, theme, box, unit_box)
             x += extents[i][1] / 2
             y += extents[i][2] / 2
 
-            push(forms, text(x, y, aes.label[i], hcenter, vcenter))
+            push!(forms, text(x, y, aes.label[i], hcenter, vcenter))
         end
     end
 

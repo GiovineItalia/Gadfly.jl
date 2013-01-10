@@ -88,7 +88,7 @@ end
 function assert_aesthetics_equal_length(who::String, aes::Aesthetics, vars::Symbol...)
     defined_vars = Symbol[]
     for var in filter(var -> !(getfield(aes, var) === nothing), vars)
-        push(defined_vars, var)
+        push!(defined_vars, var)
     end
 
     n = length(getfield(aes, vars[1]))
