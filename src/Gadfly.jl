@@ -19,7 +19,7 @@ using DataFrames
 import Iterators
 import JSON
 import Compose.draw
-import Base.copy, Base.push, Base.start, Base.next, Base.done
+import Base.copy, Base.push!, Base.start, Base.next, Base.done
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot
 
@@ -77,34 +77,34 @@ end
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement)
     layer = Layer()
     layer.geom = arg
-    insert(p.layers, 1, layer)
+    insert!(p.layers, 1, layer)
     # XXX: I weirdly get a stack overflow error from this, which is probably a
     # julia bug.
-    #push(p.layers, layer)
+    #push!(p.layers, layer)
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
-    push(p.scales, arg)
+    push!(p.scales, arg)
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElement)
     if isempty(p.layers)
-        push(p.layers, Layer())
+        push!(p.layers, Layer())
     end
 
     p.layers[end].statistics = arg
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
-    push(p.coordinates, arg)
+    push!(p.coordinates, arg)
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GuideElement)
-    push(p.guides, arg)
+    push!(p.guides, arg)
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Layer)
-    push(p.layers, arg)
+    push!(p.layers, arg)
 end
 
 
@@ -194,7 +194,7 @@ function render(plot::Plot)
         t = has(plot.mapping, var) ?
                 classify_data(getfield(plot.data, var)) : :discrete
         if has(default_scales[t], var)
-            push(scales, default_scales[t][var])
+            push!(scales, default_scales[t][var])
         end
     end
 
@@ -208,24 +208,24 @@ function render(plot::Plot)
     # always on and there is no way to turn them off. Think of a good way to
     # supress defaults.
     guides = copy(plot.guides)
-    push(guides, Guide.background)
-    push(guides, Guide.x_ticks)
-    push(guides, Guide.y_ticks)
+    push!(guides, Guide.background)
+    push!(guides, Guide.x_ticks)
+    push!(guides, Guide.y_ticks)
 
     if has(plot.mapping, :color) && has(used_aesthetics, :color)
-        push(guides, Guide.ColorKey(string(plot.mapping[:color])))
+        push!(guides, Guide.ColorKey(string(plot.mapping[:color])))
     end
 
     statistics = copy(plot.statistics)
-    push(statistics, Stat.x_ticks)
-    push(statistics, Stat.y_ticks)
+    push!(statistics, Stat.x_ticks)
+    push!(statistics, Stat.y_ticks)
 
     if has(plot.mapping, :x) && has(used_aesthetics, :x)
-        push(guides, Guide.XLabel(string(plot.mapping[:x])))
+        push!(guides, Guide.XLabel(string(plot.mapping[:x])))
     end
 
     if has(plot.mapping, :y) && has(used_aesthetics, :y)
-        push(guides, Guide.YLabel(string(plot.mapping[:y])))
+        push!(guides, Guide.YLabel(string(plot.mapping[:y])))
     end
 
     # I. Scales

@@ -227,7 +227,7 @@ function apply_statistic(stat::BoxplotStatistic, aes::Gadfly.Aesthetics)
         if !has(groups, (x, c))
             groups[(x, c)] = Float64[]
         else
-            push(groups[(x, c)], y)
+            push!(groups[(x, c)], y)
         end
     end
 
@@ -245,7 +245,7 @@ function apply_statistic(stat::BoxplotStatistic, aes::Gadfly.Aesthetics)
         iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
         aes.lower_fence[i] = aes.lower_hinge[i] - 1.5iqr
         aes.upper_fence[i] = aes.upper_hinge[i] + 1.5iqr
-        push(aes.outliers,
+        push!(aes.outliers,
              filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
     end
 
