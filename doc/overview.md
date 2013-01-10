@@ -39,6 +39,9 @@ a peek at the raw markdown version of this document.
 
 ## Simple plots
 
+(It is assumed that you will be running all of the following commands in the
+same Julia session.)
+
 We'll need some data to plot. Plotting is primarily performed on DataFrame
 objects. The RDatasets packages has a treasure trove of examples we can use.
 
@@ -50,6 +53,10 @@ using RDatasets
 Fisher's measurements on irises is a good first data set.
 
 ```{.julia .img}
+require("Gadfly")
+using Gadfly
+using Compose
+
 iris = data("datasets", "iris")
 
 p = plot(iris,
