@@ -35,12 +35,12 @@ abstract GuideElement       <: Element
 abstract StatisticElement   <: Element
 
 
-include("$(julia_pkgdir())/Gadfly/src/misc.jl")
-include("$(julia_pkgdir())/Gadfly/src/color.jl")
-include("$(julia_pkgdir())/Gadfly/src/theme.jl")
-include("$(julia_pkgdir())/Gadfly/src/aesthetics.jl")
-include("$(julia_pkgdir())/Gadfly/src/data.jl")
-include("$(julia_pkgdir())/Gadfly/src/weave.jl")
+include("misc.jl")
+include("color.jl")
+include("theme.jl")
+include("aesthetics.jl")
+include("data.jl")
+include("weave.jl")
 
 
 # A plot has zero or more layers. Layers have a particular geometry and their
@@ -329,11 +329,11 @@ end
 draw(backend::Compose.Backend, p::Plot) = draw(backend, render(p))
 
 
-include("$(julia_pkgdir())/Gadfly/src/scale.jl")
-include("$(julia_pkgdir())/Gadfly/src/coord.jl")
-include("$(julia_pkgdir())/Gadfly/src/geometry.jl")
-include("$(julia_pkgdir())/Gadfly/src/guide.jl")
-include("$(julia_pkgdir())/Gadfly/src/statistics.jl")
+include("scale.jl")
+include("coord.jl")
+include("geometry.jl")
+include("guide.jl")
+include("statistics.jl")
 
 import Scale, Coord, Geom, Guide, Stat
 

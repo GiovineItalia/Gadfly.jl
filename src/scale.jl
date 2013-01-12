@@ -7,7 +7,7 @@ using DataFrames
 
 import Gadfly.element_aesthetics
 
-include("$(julia_pkgdir())/Gadfly/src/color.jl")
+include("color.jl")
 
 # Apply some scales to data in the given order.
 #
@@ -126,8 +126,8 @@ function apply_scale(scale::ContinuousScale,
 end
 
 
-discretize(values::Vector) = PooledDataVector(values)
-discretize(values::DataVector) = PooledDataVector(values)
+discretize(values::Vector) = PooledDataArray(values)
+discretize(values::DataVector) = PooledDataArray(values)
 discretize(values::PooledDataVector) = values
 
 type DiscreteScaleTransform
@@ -191,7 +191,7 @@ function apply_scale(scale::DiscreteColorScale,
         end
         ds = discretize(data.color)
         colors = scale.f(length(levels(ds)))
-        colored_ds = PooledDataVector(Color[colors[i] for i in ds.refs], colors)
+        colored_ds = PooledDataArray(Color[colors[i] for i in ds.refs], colors)
         aes.color = colored_ds
 
         color_map = {color => label for (label, color) in zip(levels(ds), colors)}

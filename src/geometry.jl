@@ -55,7 +55,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataVector(Color[theme.default_color])
+    default_aes.color = PooledDataArray(Color[theme.default_color])
     default_aes.size = Measure[theme.default_point_size]
     aes = inherit(aes, default_aes)
 
@@ -109,7 +109,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataVector(Color[theme.default_color])
+    default_aes.color = PooledDataArray(Color[theme.default_color])
     aes = inherit(aes, default_aes)
 
     if length(aes.color) == 1
@@ -170,7 +170,7 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x_min, :x_max, :y)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataVector(Color[theme.default_color])
+    default_aes.color = PooledDataArray(Color[theme.default_color])
     aes = Gadfly.inherit(aes, default_aes)
 
     pad = theme.bar_spacing / 2
@@ -209,7 +209,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataVector(Color[theme.default_color])
+    default_aes.color = PooledDataArray(Color[theme.default_color])
     default_aes.x = Float64[1]
     aes = inherit(aes, default_aes)
 

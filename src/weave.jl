@@ -17,18 +17,15 @@ export weave
 
 # A special module in which a documents code is executed.
 module WeaveSandbox
-    using Gadfly
-    using Compose
-
     # Replace OUTPUT_STREAM references so we can capture output.
     OUTPUT_STREAM = IOString()
     print(x) = Base.print(OUTPUT_STREAM, x)
     println(x) = Base.println(OUTPUT_STREAM, x)
 
-    # Define Compose backend constructors that don't take a file orgument and
-    # write to standard out. This lets us write, e.g.,
-    #     draw(SVG(4inch, 4inch), my_plot)
-    # and have it show up in the document.
+    # A special SVG backend for compose to Write to our dummy OUTPUT_STREAM.
+    # TODO: This is a kludge. Ideally we would avoid any Compose/Gadfly specific
+    # hacks here. Think about a more general solution.
+    import Compose
     import Compose.SVG
     function SVG(width::Compose.MeasureOrNumber, height::Compose.MeasureOrNumber)
         SVG(OUTPUT_STREAM, width, height)
@@ -37,7 +34,7 @@ end
 
 
 # Super-simple pandoc interface.
-function pandoc(io, infmt::String, outfmt::String, args::String...)
+function pandoc(infn, infmt::String, outfmt::String, args::String...)
     cmd = ByteString["pandoc",
                      "--from=$(infmt)",
                      "--to=$(outfmt)"]
@@ -45,7 +42,7 @@ function pandoc(io, infmt::String, outfmt::String, args::String...)
         push!(cmd, arg)
     end
 
-    readall(io > Cmd(cmd))
+    readall(infn > Cmd(cmd))
 end
 
 
@@ -71,9 +68,7 @@ done(it::ParseIt, pos) = pos > length(it.value)
 # to the block.
 #
 # Args:
-#   input: Input stream in the format specified by infmt.
-#   docname: A name given to the document. This is used mainly for naming output
-#            files such an images.
+#   infn: Input filename.
 #   infmt: Pandoc-compatible input format. E.g., markdown, rst, html, json, latex.
 #   outfmt: Pandoc-compatibly output format.
 #   pandoc_args: Extra arguments passed to pandoc.
@@ -81,9 +76,10 @@ done(it::ParseIt, pos) = pos > length(it.value)
 # Returns:
 #   A string in the requested output format.
 #
-function weave(input::IOStream, docname::String, infmt::String, outfmt::String,
+function weave(infn::String, infmt::String, outfmt::String,
                pandoc_args::String...)
-    metadata, document = JSON.parse(pandoc(input, infmt, "json"))
+    docname = match(r"^(.*)(\.[^\.]*)$", basename(infn)).captures[1]
+    metadata, document = JSON.parse(pandoc(infn, infmt, "json"))
 
     # document is an array of singeton dictionaries. The one key gives the block
     # type, while the format of the value depends on the type.
@@ -137,21 +133,10 @@ function weave(input::IOStream, docname::String, infmt::String, outfmt::String,
     jsonout_path, jsonout = mktemp()
     JSON.print_to_json(jsonout, {metadata, processed_document})
     flush(jsonout)
-    seek(jsonout, 0)
-    output = pandoc(jsonout, "json", outfmt, pandoc_args...)
+    #run(`cat $(jsonout_path)`)
+    output = pandoc(jsonout_path, "json", outfmt, pandoc_args...)
     close(jsonout)
     rm(jsonout_path)
-    output
-end
-
-
-# Call weave taking the document name from the input file name.
-function weave(input::String, infmt::String, outfmt::String,
-               pandoc_args::String...)
-    docname = match(r"^(.*)(\.[^\.]*)$", basename(input)).captures[1]
-    io = open(input)
-    output = weave(io, docname, infmt, outfmt, pandoc_args...)
-    close(io)
     output
 end
 
@@ -233,12 +218,12 @@ function execblock_latex(source)
     flush(input)
     seek(input, 0)
     latexout_dir = mktempdir()
-    run(`latex -output-format=dvi -output-directory=$(latexout_dir) $(input_path)` &> "/dev/null")
+    run(`latex -output-format=dvi -output-directory=$(latexout_dir) $(input_path)` &> SpawnNullStream())
     rm(input_path)
 
     # dvi -> svg
     latexout_path = "$(latexout_dir)/$(basename(input_path)).dvi"
-    output = readall(`dvisvgm --stdout --no-fonts $(latexout_path)` .> "/dev/null")
+    output = readall(`dvisvgm --stdout --no-fonts $(latexout_path)` .> SpawnNullStream())
     run(`rm -rf $(latexout_dir)`)
 
     output

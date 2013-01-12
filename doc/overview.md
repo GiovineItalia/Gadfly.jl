@@ -13,7 +13,6 @@ development.
 Gadfly can be installed from the Julia repl quite easily.
 
 ```{.julia execute="false"}
-require("Pkg")
 import Pkg
 Pkg.add("Gadfly")
 ```
@@ -46,14 +45,12 @@ We'll need some data to plot. Plotting is primarily performed on DataFrame
 objects. The RDatasets packages has a treasure trove of examples we can use.
 
 ```{.julia}
-require("RDatasets")
 using RDatasets
 ```
 
 Fisher's measurements on irises is a good first data set.
 
 ```{.julia .img}
-require("Gadfly")
 using Gadfly
 using Compose
 
@@ -143,10 +140,7 @@ The bar geometry applies the `Stat.histogram` statistic by default, producing a
 histogram.
 
 ```{.julia .img}
-require("Distributions")
 using Distributions
-
-require("DataFrames")
 using DataFrames
 
 normmix = DataFrame({"x" => vcat(rand(Normal(-5), 500),

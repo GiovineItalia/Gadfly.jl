@@ -8,7 +8,7 @@ import Gadfly.Scale
 import Distributions.Uniform
 import Iterators.chain, Iterators.cycle
 
-include("$(julia_pkgdir())/Gadfly/src/bincount.jl")
+include("bincount.jl")
 
 # Apply a series of statistics.
 #
@@ -254,8 +254,8 @@ function apply_statistic(stat::BoxplotStatistic, aes::Gadfly.Aesthetics)
     end
 
     if !is(aes.color, nothing)
-        aes.color = PooledDataVector(Color[c for (x, c) in keys(groups)],
-                                  levels(aes.color))
+        aes.color = PooledDataArray(Color[c for (x, c) in keys(groups)],
+                                    levels(aes.color))
     end
 
     nothing
