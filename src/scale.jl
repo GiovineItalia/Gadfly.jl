@@ -283,6 +283,9 @@ function apply_scale(scale::LabelScale,
 end
 
 
+element_aesthetics(::LabelScale) = [:scale]
+
+
 const label = LabelScale()
 
 
