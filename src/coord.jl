@@ -16,7 +16,7 @@ end
 
 const cartesian = CartesianCoordinate(
     [:x, :xtick, :x_min, :x_max],
-    [:y, :ytick, :middle, :lower_hinge, :upper_hinge,
+    [:y, :ytick, :y_min, :y_max, :middle, :lower_hinge, :upper_hinge,
      :lower_fence, :upper_fence, :outliers])
 
 
@@ -85,7 +85,6 @@ function apply_coordinate(coord::CartesianCoordinate, aess::Gadfly.Aesthetics...
             end
         end
     end
-
 
     # A bit of kludge. We need to extend a bit to be able to fit bars when
     # using discrete scales. TODO: Think more carefully about this. Is there a

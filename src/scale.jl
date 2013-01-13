@@ -12,14 +12,14 @@ include("color.jl")
 # Apply some scales to data in the given order.
 #
 # Args:
-#   scales: Zero or more scales
+#   scales: An iterable object of ScaleElements.
 #   aess: Aesthetics (of the same length as datas) to update with scaled data.
 #   datas: Zero or more data objects. (Yes, I know "datas" is not a real word.)
 #
 # Returns:
 #   nothing
 #
-function apply_scales(scales::Vector{Gadfly.ScaleElement},
+function apply_scales(scales,
                       aess::Vector{Gadfly.Aesthetics},
                       datas::Gadfly.Data...)
     for scale in scales
@@ -31,13 +31,13 @@ end
 # Apply some scales to data in the given order.
 #
 # Args:
-#   scales: Zero or more scales
+#   scales: An iterable object of ScaleElements.
 #   datas: Zero or more data objects.
 #
 # Returns:
 #   A vector of Aesthetics of the same length as datas containing scaled data.
 #
-function apply_scales(scales::Vector{Gadfly.ScaleElement}, datas::Gadfly.Data...)
+function apply_scales(scales, datas::Gadfly.Data...)
     aess = [Gadfly.Aesthetics() for _ in datas]
     apply_scales(scales, aess, datas...)
     aess
@@ -140,6 +140,9 @@ type DiscreteScale <: Gadfly.ScaleElement
 end
 
 
+element_aesthetics(scale::DiscreteScale) = [scale.var]
+
+
 const x_discrete = DiscreteScale(:x)
 const y_discrete = DiscreteScale(:y)
 
@@ -198,6 +201,67 @@ function apply_scale(scale::DiscreteColorScale,
         aes.color_label = c -> color_map[c]
         aes.color_key_colors = colors
     end
+end
+
+
+type ContinuousColorScale <: Gadfly.ScaleElement
+    # A function of the form f(p) where 0 <= p <= 1, that returns a color.
+    f::Function
+end
+
+
+element_aesthetics(::ContinuousColorScale) = [:color]
+
+
+# Common continuous color scales
+# TODO: find a good color combo
+const color_gradient = ContinuousColorScale(
+        lab_gradient(LCHab(20, 54, 262), LCHab(100, 54, 262)))
+
+
+function apply_scale(scale::ContinuousColorScale,
+                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+    cmin = Inf
+    cmax = -Inf
+    for data in datas
+        if data.color === nothing
+            continue
+        end
+
+        for c in data.color
+            if c === NA
+                continue
+            end
+
+            c = convert(Float64, c)
+            if c < cmin
+                cmin = c
+            end
+
+            if c > cmax
+                cmax = c
+            end
+        end
+    end
+
+    for (aes, data) in zip(aess, datas)
+        if data.color === nothing
+            continue
+        end
+
+        nas = [c === NA for c in data.color]
+        cs = Array(Color, length(data.color))
+        for (i, c) in enumerate(data.color)
+            if c === NA
+                continue
+            end
+            cs[i] = scale.f((convert(Float64, c) - cmin) / (cmax - cmin))
+        end
+
+        aes.color = DataArray(cs, nas)
+    end
+
+    # TODO: What do we do about color key aesthetics?
 end
 
 

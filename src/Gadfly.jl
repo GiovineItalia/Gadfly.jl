@@ -25,6 +25,7 @@ export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot
 
 
 element_aesthetics(::Any) = []
+default_scales(::Any) = []
 
 
 abstract Element
@@ -172,10 +173,21 @@ end
 #   A compose Canvas containing the graphic.
 #
 function render(plot::Plot)
-    # 0. Insert default scales
+
+    # Add default statistics for geometries.
+    layer_stats = Array(StatisticElement, length(plot.layers))
+    for (i, layer) in enumerate(plot.layers)
+        layer_stats[i] = is(layer.statistic, Stat.nil) ?
+                            Geom.default_statistic(layer.geom) : layer.statistic
+    end
+
     used_aesthetics = Set{Symbol}()
     for layer in plot.layers
         add_each(used_aesthetics, element_aesthetics(layer.geom))
+    end
+
+    for stat in layer_stats
+        add_each(used_aesthetics, element_aesthetics(stat))
     end
 
     defined_unused_aesthetics = Set(keys(plot.mapping)...) - used_aesthetics
@@ -189,19 +201,45 @@ function render(plot::Plot)
         add_each(scaled_aesthetics, element_aesthetics(scale))
     end
 
-    scales = copy(plot.scales)
-    for var in used_aesthetics - scaled_aesthetics
-        t = has(plot.mapping, var) ?
-                classify_data(getfield(plot.data, var)) : :discrete
-        if has(default_scales[t], var)
-            push!(scales, default_scales[t][var])
+    # Only one scale can be applied to an aesthetic (without getting some weird
+    # and incorrect results), so we organize scales into a dict.
+    scales = Dict{Symbol, ScaleElement}()
+    for scale in plot.scales
+        for var in element_aesthetics(scale)
+            scales[var] = scale
         end
     end
 
-    layer_stats = Array(StatisticElement, length(plot.layers))
-    for (i, layer) in enumerate(plot.layers)
-        layer_stats[i] = is(layer.statistic, Stat.nil) ?
-                            Geom.default_statistic(layer.geom) : layer.statistic
+    unscaled_aesthetics = used_aesthetics - scaled_aesthetics
+
+    # Add default scales for statistics.
+    for stat in layer_stats
+        for scale in default_scales(stat)
+            # Use the statistics default scale only when it covers some
+            # aesthetic that is not already scaled.
+            scale_aes = Set(element_aesthetics(scale)...)
+            if !isempty(intersect(scale_aes, unscaled_aesthetics))
+                for var in scale_aes
+                    scales[var] = scale
+                end
+                unscaled_aesthetics -= scale_aes
+            end
+        end
+    end
+
+    # Add default scales for mapped aesthetics.
+    while !isempty(unscaled_aesthetics)
+        var = pop!(unscaled_aesthetics)
+        t = has(plot.mapping, var) ?
+                classify_data(getfield(plot.data, var)) : :discrete
+        if has(default_aes_scales[t], var)
+            scale = default_aes_scales[t][var]
+            scale_aes = Set(element_aesthetics(scale)...)
+            for var in scale_aes
+                scales[var] = scale
+            end
+            unscaled_aesthetics -= scale_aes
+        end
     end
 
     # TODO: Reasonable handling of default guides. Currently x/y ticks are
@@ -229,17 +267,17 @@ function render(plot::Plot)
     end
 
     # I. Scales
-    aess = Scale.apply_scales(scales, plot.data,
+    aess = Scale.apply_scales(Iterators.distinct(values(scales)), plot.data,
                               [layer.data for layer in plot.layers]...)
 
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, aess)
-        Stat.apply_statistics(StatisticElement[layer_stat], aes)
+        Stat.apply_statistics(StatisticElement[layer_stat], scales, aes)
     end
 
     # IIb. Plot-wise Statistics
     plot_aes = cat(aess...)
-    Stat.apply_statistics(statistics, plot_aes)
+    Stat.apply_statistics(statistics, scales, plot_aes)
 
     # III. Coordinates
     plot_canvas = Coord.apply_coordinate(plot.coord, plot_aes, aess...)
@@ -340,7 +378,7 @@ import Scale, Coord, Geom, Guide, Stat
 # All aesthetics must have a scale. If none is given, we use a default.
 # The default depends on whether the input is discrete or continuous (i.e.,
 # PooledDataVector or DataVector, respectively).
-const default_scales = {
+const default_aes_scales = {
         :continuous => {:x     => Scale.x_continuous,
                         :y     => Scale.y_continuous,
                         :color => Scale.color_hue,

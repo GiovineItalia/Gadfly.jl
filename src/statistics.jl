@@ -3,8 +3,9 @@ module Stat
 
 import Gadfly
 using DataFrames
+using Compose
 
-import Gadfly.Scale
+import Gadfly.Scale, Gadfly.element_aesthetics, Gadfly.default_scales
 import Distributions.Uniform
 import Iterators.chain, Iterators.cycle
 
@@ -14,16 +15,17 @@ include("bincount.jl")
 #
 # Args:
 #   stats: Statistics to apply in order.
+#   scales: Scales used by the plot.
 #   aes: A Aesthetics instance.
-#   trans: Map of variables to the transform applied to it.
 #
 # Returns:
 #   Nothing, modifies aes.
 #
 function apply_statistics(stats::Vector{Gadfly.StatisticElement},
+                          scales::Dict{Symbol, Gadfly.ScaleElement},
                           aes::Gadfly.Aesthetics)
     for stat in stats
-        apply_statistic(stat, aes)
+        apply_statistic(stat, scales, aes)
     end
     nothing
 end
@@ -36,7 +38,9 @@ const nil = Nil()
 type Identity <: Gadfly.StatisticElement
 end
 
-function apply_statistic(stat::Identity, aes::Gadfly.Aesthetics)
+function apply_statistic(stat::Identity,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         aes::Gadfly.Aesthetics)
     nothing
 end
 
@@ -46,10 +50,16 @@ const identity = Identity()
 type HistogramStatistic <: Gadfly.StatisticElement
 end
 
+
+element_aesthetics(::HistogramStatistic) = [:x]
+
+
 const histogram = HistogramStatistic()
 
 
-function apply_statistic(stat::HistogramStatistic, aes::Gadfly.Aesthetics)
+function apply_statistic(stat::HistogramStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         aes::Gadfly.Aesthetics)
     d, bincounts = choose_bin_count_1d(aes.x)
 
     x_min, x_max = min(aes.x), max(aes.x)
@@ -64,9 +74,65 @@ function apply_statistic(stat::HistogramStatistic, aes::Gadfly.Aesthetics)
         aes.x_max[k] = x_min + k * binwidth
         aes.y[k] = bincounts[k]
     end
+end
 
+
+type RectangularBinStatistic <: Gadfly.StatisticElement
+end
+
+
+element_aesthetics(::RectangularBinStatistic) = [:x, :y, :color]
+
+
+default_scales(::RectangularBinStatistic) = [Gadfly.Scale.color_gradient]
+
+
+const rectbin = RectangularBinStatistic()
+
+
+function apply_statistic(stat::RectangularBinStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         aes::Gadfly.Aesthetics)
+
+    dx, dy, bincounts = choose_bin_count_2d(aes.x, aes.y)
+
+    x_min, x_max = min(aes.x), max(aes.x)
+    y_min, y_max = min(aes.y), max(aes.y)
+
+    # bin widths
+    wx = (x_max - x_min) / dx
+    wy = (y_max - y_min) / dy
+
+    aes.x_min = Array(Float64, dx)
+    aes.x_max = Array(Float64, dx)
+    for k in 1:dx
+        aes.x_min[k] = x_min + (k - 1) * wx
+        aes.x_max[k] = x_min + k * wx
+    end
+
+    aes.y_min = Array(Float64, dy)
+    aes.y_max = Array(Float64, dy)
+    for k in 1:dy
+        aes.y_min[k] = y_min + (k - 1) * wy
+        aes.y_max[k] = y_min + k * wy
+    end
+
+    if !has(scales, :color)
+        error("RectangularBinStatistic requires a color scale.")
+    end
+    color_scale = scales[:color]
+    if !(typeof(color_scale) <: Scale.ContinuousColorScale)
+        error("RectangularBinStatistic requires a continuous color scale.")
+    end
+
+    data = Gadfly.Data()
+    data.color = [cnt <= 1 ? NA : cnt for cnt in bincounts]
+    Scale.apply_scale(color_scale, [aes], data)
     nothing
 end
+
+
+default_statistic(stat::RectangularBinStatistic) = [Scale.color_gradient]
 
 
 # Find reasonable places to put tick marks and grid lines.
@@ -165,7 +231,9 @@ end
 # Modifies:
 #   aes
 #
-function apply_statistic(stat::TickStatistic, aes::Gadfly.Aesthetics)
+function apply_statistic(stat::TickStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         aes::Gadfly.Aesthetics)
     in_values = [getfield(aes, var) for var in stat.in_vars]
     in_values = filter(val -> !(val === nothing), in_values)
     in_values = chain(in_values...)
@@ -212,10 +280,16 @@ end
 type BoxplotStatistic <: Gadfly.StatisticElement
 end
 
+
+element_aesthetics(::BoxplotStatistic) = [:x, :y]
+
+
 const boxplot = BoxplotStatistic()
 
 
-function apply_statistic(stat::BoxplotStatistic, aes::Gadfly.Aesthetics)
+function apply_statistic(stat::BoxplotStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("BoxplotStatistic", aes, :y)
 
     groups = Dict()

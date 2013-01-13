@@ -2,6 +2,8 @@
 Small/Medium projects:
  * Geom.rectbin and Geom.hexbin
  * Continuous color scales.
+ * Weave should detect the format of the output of code blocks and embed it
+   appropriately.
  * A proper Layer constructor.
  * Something equivalent to xlim/ylim in ggplot2.
  * Discrete color scales with bar charts.
@@ -29,6 +31,8 @@ Small/Medium projects:
  * Fix glitches in the cairo backend, I think all of which inlove rendering
    text, and would probably be fixed if pango was used for rendering rather than
    the "toy api".
+ * Write a function that examines a plot (rendered or otherwise) and reports
+   the minimum size needed to render it such that no labels overlap.
 
 Large projects:
  * Zoom/pan in cartesian coordinates: Write javascript to scale everything in
@@ -44,8 +48,6 @@ Large projects:
  * Equations in text. jsMath is one possibility, but that would break my
    "coherent without javascript" rule. A better option might be optionally
    requiring latex plus whatever is needed to convert latex output to svg.
- * Write a function that examines a plot (rendered or otherwise) and reports
-   the minimum size needed to render it such that no labels overlap.
  * Scales based on time.
  * Rendering and embedding raster graphics. If a plot has many thousands of data
    points, there should be a way to make part of the plot a bitmap. If the cairo
@@ -71,6 +73,5 @@ Experimental/long-term projects:
    try to fit text into the alloted size by rotating labels and word-wrapping.
    Is there a reasonable interface where the final plot size could be optionally
    supplied?
- * Integration into a sweave like application for Julia.
 
 

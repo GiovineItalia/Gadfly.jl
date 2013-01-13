@@ -5,11 +5,13 @@ type Aesthetics
     x::Union(Nothing, Vector{Float64}, Vector{Int64})
     y::Union(Nothing, Vector{Float64}, Vector{Int64})
     size::Maybe(Vector{Measure})
-    color::Maybe(PooledDataVector{Color})
+    color::Maybe(AbstractDataVector{Color})
     label::Maybe(PooledDataVector{UTF8String})
 
     x_min::Union(Nothing, Vector{Float64}, Vector{Int64})
     x_max::Union(Nothing, Vector{Float64}, Vector{Int64})
+    y_min::Union(Nothing, Vector{Float64}, Vector{Int64})
+    y_max::Union(Nothing, Vector{Float64}, Vector{Int64})
 
     # Boxplot aesthetics
     middle::Maybe(Vector{Float64})
@@ -39,6 +41,7 @@ type Aesthetics
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
+            nothing, nothing,
             fmt_float, fmt_float,
             string, string, string)
     end
@@ -134,7 +137,7 @@ end
 
 
 # Serialize aesthetics to JSON.
-#
+
 # Args:
 #  a: aesthetics to serialize.
 #

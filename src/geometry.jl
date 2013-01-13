@@ -138,7 +138,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
 
 
-# Bar geometry summarizes data as verticle bars.
+# Bar geometry summarizes data as vertical bars.
 type BarGeometry <: Gadfly.GeometryElement
 end
 
@@ -190,6 +190,61 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
 
 
+type RectangularBinGeometry <: Gadfly.GeometryElement
+end
+
+
+const rectbin = RectangularBinGeometry()
+
+
+function element_aesthetics(::RectangularBinGeometry)
+    [:x_min, :x_max, :y_min, :y_max, :color]
+end
+
+
+# Render rectangular bin (e.g., heatmap) geometry.
+#
+# Args:
+#   geom: rectbin geometry
+#   theme: the plot's theme
+#   aes: some aesthetics
+#
+# Returns
+#   A compose form.
+#
+function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x_min, :x_max, :y_min, :y_max)
+    Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x_min, :x_max, :y_min, :y_max)
+
+    dx = length(aes.x_min)
+    dy = length(aes.y_min)
+
+    forms = Array(Compose.Form, sum(!isna(aes.color)))
+    l = 1 # index into forms
+    k = 1 # index into aes.color
+
+    for i in 1:dx
+        for j in 1:dy
+            if !isna(aes.color[k])
+                forms[l] = rectangle(aes.x_min[i], aes.y_min[j],
+                                    (aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
+                                    (aes.y_max[j] - aes.y_min[j])*cy + theme.bar_spacing) <<
+                           fill(color(aes.color[k]))
+                l += 1
+            end
+            k += 1
+        end
+    end
+
+    combine(forms...) << stroke(nothing)
+end
+
+
+function default_statistic(::RectangularBinGeometry)
+    Gadfly.Stat.rectbin
+end
+
+
 type BoxplotGeometry <: Gadfly.GeometryElement
 end
 
@@ -206,7 +261,8 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                                      :lower_fence, :lower_hinge, :middle,
                                      :upper_hinge, :upper_fence, :outliers)
     Gadfly.assert_aesthetics_equal_length("Geom.bar", aes,
-                                          element_aesthetics(geom)...)
+                                     :lower_fence, :lower_hinge, :middle,
+                                     :upper_hinge, :upper_fence, :outliers)
 
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataArray(Color[theme.default_color])

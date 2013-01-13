@@ -2,7 +2,7 @@
 # Various color scales.
 
 # Discrete scales
-# Each of these functions produce a vector of n colors.
+# ---------------
 
 # Generate colors in the LCHab (LCHuv, resp.) colorspace by using a fixed
 # luminance and chroma, and varying the hue.
@@ -30,4 +30,25 @@ function plot_color_scale{T <: Color}(colors::Vector{T})
 end
 
 
+# Continuous scales
+# -----------------
+
+# Generate a gradient between n >= 2, colors.
+
+# Then functions return functions suitable for ContinuousColorScales.
+function lab_gradient(cs::Color...)
+    if length(cs) < 2
+        error("Two or more colors are needed for gradients")
+    end
+
+    cs_lab = [convert(LAB, c) for c in cs]
+    n = length(cs_lab)
+    function f(p::Float64)
+        @assert 0.0 <= p <= 1.0
+        i = 1 + min(n - 2, max(0, int(floor(p*(n-1)))))
+        w = p*(n-1) + 1 - i
+        weighted_color_mean([cs_lab[i], cs_lab[i+1]], [1.0 - w, w])
+    end
+    f
+end
 

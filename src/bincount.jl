@@ -23,7 +23,7 @@
 # Args:
 #   d: Number of bins in the histogram.
 #   n: Number of sample (which should equal sum(bincounts[1:d])).
-#   bincounts: An array giving the number occurences in each bin.
+#   bincounts: An array giving the number occurrences in each bin.
 #   binwidth: Width of each bin in the histogram.
 #
 # Returns:
@@ -40,7 +40,7 @@ function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::Float64)
 end
 
 
-# Optimize the number of bins for a regular histogram.
+# Optimize the number of bins for a regular one dimensional histogram.
 #
 # Args:
 #   xs: A sample.
@@ -90,6 +90,42 @@ function choose_bin_count_1d(xs::Vector)
 
     (d_best, bincounts)
 end
+
+
+# Optimize the number of bins for regular two dimensional histograms.
+#
+# Args:
+#   xs: Dimension one data.
+#   ys: Dimension two data.
+#
+# Returns:
+#   A tuple of the form (dx, dy, bincounts), where dx, dy gives the number of
+#   bins in each respective dimension and bincounts is a dx by dy matrix giving
+#   the count in each bin.
+#
+function choose_bin_count_2d(xs::Vector, ys::Vector)
+    # For two demensions, I'm just going to optimize the marginal bin counts.
+    # This might not be optimal, but its simple and fast.
+    dx, _ = choose_bin_count_1d(xs)
+    dy, _ = choose_bin_count_1d(ys)
+
+    x_min, x_max = min(xs), max(xs)
+    y_min, y_max = min(ys), max(ys)
+
+    # bin widths
+    wx = (x_max - x_min) / dx
+    wy = (y_max - y_min) / dy
+
+    bincounts = zeros(Int, (dy, dx))
+    for (x, y) in zip(xs, ys)
+        i = max(1, min(dx, int(ceil((x - x_min) / wx))))
+        j = max(1, min(dy, int(ceil((y - y_min) / wy))))
+        bincounts[j, i] += 1
+    end
+
+    (dx, dy, bincounts)
+end
+
 
 
 
