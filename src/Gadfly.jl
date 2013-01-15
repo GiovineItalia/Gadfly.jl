@@ -19,7 +19,7 @@ using DataFrames
 import Iterators
 import JSON
 import Compose.draw
-import Base.copy, Base.push!, Base.start, Base.next, Base.done
+import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot
 

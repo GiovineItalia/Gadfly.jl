@@ -26,6 +26,17 @@ issomething(u) = !isnothing(u)
 
 negate(f) = x -> !f(x)
 
+
+function has{T,N}(xs::AbstractArray{T,N}, y::T)
+    for x in xs
+        if x == y
+            return true
+        end
+    end
+    return false
+end
+
+
 function push!{T}(xs::Vector{T}, ys::T...)
     for y in ys
         push!(xs, y)

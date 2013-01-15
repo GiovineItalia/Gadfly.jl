@@ -141,6 +141,50 @@ function weave(infn::String, infmt::String, outfmt::String,
 end
 
 
+# Detect data type.
+#
+# This is a sparse and crude version of the unix file command which takes a
+# chunk of data and tries to figure out what it is. The only classification we
+# need to do is between text, svg, and images types. Everything else is just
+# binary noise which we should avoid outputting.
+#
+# Args:
+#   data: Data with a type to be detected.
+#
+# Returns:
+#   A mime type, or "binary" for unknown binary output.
+#
+function datatype(data::Vector{Uint8})
+    const magic_numbers =
+        [(Uint8['G', 'I', 'F', '8'], "image/gif"),
+         (Uint8[0x89, 'P', 'N', 'G', 0x0d, 0x0a, 0x1a, 0x0a], "image/png"),
+         (Uint8[0xff, 0xd8], "image/jpeg")]
+
+    for (magic, mime) in magic_numbers
+        if length(data) <= length(magic) && data[1:length(magic)] == magic
+            return mime
+        end
+    end
+
+    # Note: this falsely detects utf16 data as binary. Also, "binary" is not a
+    # real mime type.
+    if has(data, uint8('\0'))
+        return "binary"
+    end
+
+    xml_magic = "<?xml"
+    if length(data) >= length(xml_magic) &&
+       bytestring(data[1:length(xml_magic)]) == xml_magic &&
+       !is(match(r"<svg", bytestring(data)), nothing)
+        "image/svg+xml"
+    else
+        "text/plain"
+    end
+
+    # TODO: detect html
+end
+
+
 # Generate JSON for the output of an executed code block.
 #
 # Args:
@@ -155,10 +199,20 @@ end
 #   An array of JSON elements that will be inserted directly after the code
 #   block that was executed.
 #
-function process_output(output::String, id, classes, keyvals, outfmt, docname, fignum)
+function process_output(output::Vector{Uint8},
+                        id, classes, keyvals, outfmt, docname, fignum)
+
+    mime = datatype(output)
+    println(mime)
+
     if isempty(output)
         []
-    elseif has(classes, "img")
+    elseif mime == "binary"
+        warn("Skipping unknown binary data produced by a code block.")
+        []
+    elseif mime == "text/plain"
+        [["CodeBlock" => {{"", {"julia_output"}, {}}, bytestring(output)}]]
+    elseif !is(match(r"^image", mime), nothing)
         figname = isempty(id) ? "fig_$(fignum)" : id
         if has(keyvals, "alt")
             caption = alttext = @sprintf("Figure %d: %s", fignum, keyvals["alt"])
@@ -166,30 +220,38 @@ function process_output(output::String, id, classes, keyvals, outfmt, docname, f
             alttext = "Figure $(fignum)"
             caption = ""
         end
-        figfn = "$(docname)_$(figname).svg" # TODO: handle non-svg images
+
+        figext = ""
+        if mime == "image/svg+xml"
+            figext = ".svg"
+        elseif mime == "image/gif"
+            figext = ".gif"
+        elseif mime == "image/png"
+            figext = ".png"
+        elseif mime == "image/jpeg"
+            figext = ".jpg"
+        end
+
+        figfn = "$(docname)_$(figname).$(figext)"
         figio = open(figfn, "w")
         write(figio, output)
         close(figio)
         figurl = figfn # TODO: support adding an absolute path
 
-        # TODO: support output other than SVG. We could inspect the file with
-        # the unix file command, or maybe just classify it as SVG/not-SVG.
-
-        if outfmt == "html" || outfmt == "html5"
+        if mime == "image/svg+xml" && (outfmt == "html" || outfmt == "html5")
             # SVG needs to be included using the object (or embed) tag for
             # embeded javascript to work.
-            # TODO: captions
             [["RawBlock" =>
                 ["html",
                  "<figure><object alt=\"$(alttext)\" \
                                   data=\"$(figurl)\" \
                                   type=\"image/svg+xml\"></object> \
                           <figcaption>$(caption)</figcaption></figure>"]]]
-         else
+        else
             [["Para" => {["Image" => {{["Str" => alttext]}, {figurl, ""}}]}]]
         end
     else
-        [["CodeBlock" => {{"", {"julia_output"}, {}}, output}]]
+        error("Unknown mime type: ", mime)
     end
 end
 
@@ -238,7 +300,7 @@ function execblock_julia(source)
         #       of each expression.
     end
 
-    output = bytestring(WeaveSandbox.OUTPUT_STREAM)
+    output = takebuf_array(WeaveSandbox.OUTPUT_STREAM)
     seek(WeaveSandbox.OUTPUT_STREAM, 0)
     truncate(WeaveSandbox.OUTPUT_STREAM, 0)
     output
