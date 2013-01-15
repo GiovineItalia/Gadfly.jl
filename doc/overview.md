@@ -13,7 +13,6 @@ development.
 Gadfly can be installed from the Julia repl quite easily.
 
 ```{.julia execute="false"}
-import Pkg
 Pkg.add("Gadfly")
 ```
 
