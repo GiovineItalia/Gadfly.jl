@@ -50,7 +50,7 @@ using RDatasets
 
 Fisher's measurements on irises is a good first data set.
 
-```{.julia .img}
+```{.julia}
 using Gadfly
 using Compose
 
@@ -83,7 +83,7 @@ Every geometry has some set of required and optional aesthetics. The point
 geometry requires that `:x` and `:y` be mapped, and has the optional aesthetic
 `:color` which will group points categorically indicated by color.
 
-```{.julia .img}
+```{.julia}
 p = plot(iris,
          {:x => "Sepal.Length", :y => "Sepal.Width", :color => "Species"},
          Geom.point)
@@ -95,7 +95,7 @@ draw(SVG(6inch, 4inch), p)
 Scale transforms also work as expected. Let's look at some data where this is
 useful.
 
-```{.julia .img}
+```{.julia}
 mammals = data("MASS", "mammals")
 
 p = plot(mammals,
@@ -107,7 +107,7 @@ draw(SVG(6inch, 6inch), p)
 This is no good, the elephants are ruining things for us. Putting both axis on a
 log-scale clears things up.
 
-```{.julia .img}
+```{.julia}
 p = plot(mammals,
          {:x => "body", :y => "brain"},
          Geom.point, Scale.x_log10, Scale.y_log10)
@@ -123,7 +123,7 @@ default, labels that cannot be plotted without overlapping are hidden.
 
 Let's label that previous plot.
 
-```{.julia .img}
+```{.julia}
 p = plot(mammals,
          {:x => "body", :y => "brain", :label => 1},
          Geom.point, Geom.label, Scale.x_log10, Scale.y_log10)
@@ -139,7 +139,7 @@ named, but contains the species that each measurement was made on.
 The bar geometry applies the `Stat.histogram` statistic by default, producing a
 histogram.
 
-```{.julia .img}
+```{.julia}
 using Distributions
 using DataFrames
 
@@ -160,7 +160,7 @@ chosen using a penalized maximum likelihood procedure.
 The boxplot geometry shows the distribution of the y aesthetic, grouped by the x
 aesthetic. Here is a (log) wage distribution categorized by years of education.
 
-```{.julia .img}
+```{.julia}
 wages = data("plm", "Wages")
 p = plot(wages,
          {:x => "ed",
@@ -174,7 +174,7 @@ draw(SVG(4inch, 4inch), p)
 Though Gadfly primarily plots data frames, there are convenience functions to do
 simple function plotting.
 
-```{.julia .img}
+```{.julia}
 p = plot([sin, cos], 0, 25)
 draw(SVG(6inch, 3inch), p)
 ```
@@ -198,7 +198,7 @@ Gadfly is based on a declarative vector graphics system called
 [Compose](https://github.com/dcjones/Compose.jl). This let's one do interesting
 things with plots, once they are defined.
 
-```{.julia .img}
+```{.julia}
 fig1a = render(plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"},
                     Geom.point))
 fig1b = render(plot(iris, {:x => "Sepal.Width"}, Geom.bar))

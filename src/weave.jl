@@ -90,7 +90,7 @@ function weave(infn::String, infmt::String, outfmt::String,
     end
 
     processed_document = {}
-    fignum = 0
+    fignum = WeakRef(0)
 
     for block in document
         if keys(block)[1] != "CodeBlock"
@@ -107,10 +107,6 @@ function weave(infn::String, infmt::String, outfmt::String,
         if !attrib_bool(keyvals, "execute", true)
             push!(processed_document, block)
             continue
-        end
-
-        if has(classes, "img")
-            fignum += 1
         end
 
         # dispatch on the block type, defaulting to julia
@@ -193,7 +189,7 @@ end
 #   classes: The set of classes assigned to the code block.
 #   keyval: Dictionary of key/value attributes assigned to the code block.
 #   docname: Name of the document.
-#   fignum: Number for the next figure.
+#   fignum: Reference to a number for the next figure.
 #
 # Return:
 #   An array of JSON elements that will be inserted directly after the code
@@ -211,23 +207,25 @@ function process_output(output::Vector{Uint8},
     elseif mime == "text/plain"
         [["CodeBlock" => {{"", {"julia_output"}, {}}, bytestring(output)}]]
     elseif !is(match(r"^image", mime), nothing)
-        figname = isempty(id) ? "fig_$(fignum)" : id
+        fignum.value += 1
+
+        figname = isempty(id) ? "fig_$(fignum.value)" : id
         if has(keyvals, "alt")
-            caption = alttext = @sprintf("Figure %d: %s", fignum, keyvals["alt"])
+            caption = alttext = @sprintf("Figure %d: %s", fignum.value, keyvals["alt"])
         else
-            alttext = "Figure $(fignum)"
+            alttext = "Figure $(fignum.value)"
             caption = ""
         end
 
         figext = ""
         if mime == "image/svg+xml"
-            figext = ".svg"
+            figext = "svg"
         elseif mime == "image/gif"
-            figext = ".gif"
+            figext = "gif"
         elseif mime == "image/png"
-            figext = ".png"
+            figext = "png"
         elseif mime == "image/jpeg"
-            figext = ".jpg"
+            figext = "jpg"
         end
 
         figfn = "$(docname)_$(figname).$(figext)"
