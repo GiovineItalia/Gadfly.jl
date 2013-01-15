@@ -320,7 +320,7 @@ end
 function evalfunc(f::Function, a, b, n)
     xs = [x for x in a:(b - a)/n:b]
     df = DataFrame(xs, map(f, xs))
-    names!(df, ["x", "f(x)"])
+    colnames!(df, ["x", "f(x)"])
     df
 end
 
@@ -340,7 +340,7 @@ function plot(fs::Array, a, b, elements::Element...)
         df_i = evalfunc(f, a, b, 250)
         name = typeof(f) == Expr ? string(f) : @sprintf("f<sub>%d</sub>", i)
         df_i = cbind(df_i, [name for _ in 1:size(df_i)[1]])
-        names!(df_i, ["x", "f(x)", "f"])
+        colnames!(df_i, ["x", "f(x)", "f"])
         df = rbind(df, df_i)
     end
 

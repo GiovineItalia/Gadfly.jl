@@ -10,7 +10,7 @@ using Gadfly
 require("ArgParse")
 using ArgParse
 
-ap = ArgParseSettings("gadfly", "Excute an executable markdown file")
+ap = ArgParseSettings("Excute an executable markdown file")
 
 @add_arg_table ap begin
     "filename"

@@ -161,7 +161,7 @@ function datatype(data::Vector{Uint8})
          (Uint8[0xff, 0xd8], "image/jpeg")]
 
     for (magic, mime) in magic_numbers
-        if length(data) <= length(magic) && data[1:length(magic)] == magic
+        if length(data) >= length(magic) && data[1:length(magic)] == magic
             return mime
         end
     end
@@ -201,9 +201,7 @@ end
 #
 function process_output(output::Vector{Uint8},
                         id, classes, keyvals, outfmt, docname, fignum)
-
     mime = datatype(output)
-    println(mime)
 
     if isempty(output)
         []
