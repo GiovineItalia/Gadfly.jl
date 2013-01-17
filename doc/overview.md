@@ -142,9 +142,10 @@ histogram.
 using Distributions
 using DataFrames
 
-normmix = DataFrame({"x" => vcat(rand(Normal(-5), 500),
-                                 rand(Normal(5), 500))})
-p = plot(normmix,
+normmix = MixtureModel([Normal(-3, 1), Normal(3, 1)], [0.7, 0.3])
+xs = DataFrame({"x" => Float64[rand(normmix) for _ in 1:5000]})
+
+p = plot(xs,
          {:x => "x"},
          Geom.bar)
 draw(SVG(4inch, 3inch), p)
@@ -152,6 +153,24 @@ draw(SVG(4inch, 3inch), p)
 
 No need to specify the number of bins, if not given a reasonable number is
 chosen using a penalized maximum likelihood procedure.
+
+
+## 2D Histograms / Heat maps
+
+Histograms in two-dimensions can be drawn with Geom.rectbin.
+
+```{.julia}
+d = MultivariateNormal([0.0, 0.0], [1.0 0.5; 0.5 1.0])
+xys = [rand(d) for _ in 1:5000]
+xs = Float64[xy[1] for xy in xys]
+ys = Float64[xy[2] for xy in xys]
+
+p = plot(DataFrame({"x" => xs, "y" => ys}),
+                   {:x => "x", :y => "y"},
+                   Geom.rectbin)
+
+draw(SVG(5inch, 4inch), p)
+```
 
 
 ## Boxplots
@@ -167,6 +186,7 @@ p = plot(wages,
          Geom.boxplot)
 draw(SVG(4inch, 4inch), p)
 ```
+
 
 ## Plotting functions
 
