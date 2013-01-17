@@ -38,8 +38,10 @@ end
 
 
 type ColorKey <: Gadfly.GuideElement
-    title::String
 end
+
+
+const colorkey = ColorKey()
 
 
 function render(guide::ColorKey, theme::Gadfly.Theme,
@@ -48,7 +50,13 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     colors = Array(Color, 0) # to preserve ordering
     labels = Dict{Color, Set{String}}()
 
+    guide_title = nothing
+
     for aes in aess
+        if guide_title === nothing && !is(aes.color_key_title, nothing)
+            guide_title = aes.color_key_title
+        end
+
         if aes.color_key_colors === nothing
             continue
         end
@@ -65,6 +73,10 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         end
     end
 
+    if guide_title === nothing
+        guide_title = ""
+    end
+
     pretty_labels = Dict{Color, String}()
     for (color, label) in labels
         pretty_labels[color] = join(labels[color], ", ")
@@ -73,11 +85,11 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     # Key title
     title_width, title_height = text_extents(theme.major_label_font,
                                              theme.major_label_font_size,
-                                             guide.title)
+                                             guide_title)
 
     title_padding = 2mm
     title_canvas = compose(canvas(0w, 0h, 1w, title_height + title_padding),
-                           text(0.5w, title_height, guide.title, hcenter, vbottom),
+                           text(0.5w, title_height, guide_title, hcenter, vbottom),
                            stroke(nothing),
                            font(theme.major_label_font),
                            fontsize(theme.major_label_font_size),
@@ -132,7 +144,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     swatch_canvas <<= font(theme.minor_label_font) |
                       fontsize(theme.minor_label_font_size)
 
-    c = canvas(0, 0, entry_width + 3swatch_padding,
+    c = canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
                swatch_canvas.box.height + title_canvas.box.height) <<
         pad(canvas() << swatch_canvas << title_canvas, 2mm)
 
@@ -168,7 +180,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     (_, height) = text_extents(theme.minor_label_font,
                                theme.minor_label_font_size,
                                values(ticks)...)
-    padding = 1mm
+    #padding = 1mm
+    padding = 0mm
 
     tick_labels = compose(canvas(0, 0, 1w, height + 2padding),
                           [text(tick, 1h - padding, label, hcenter, vbottom)

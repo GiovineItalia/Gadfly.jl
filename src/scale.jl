@@ -259,9 +259,18 @@ function apply_scale(scale::ContinuousColorScale,
         end
 
         aes.color = DataArray(cs, nas)
-    end
 
-    # TODO: What do we do about color key aesthetics?
+        color_labels = Dict{Color, String}()
+        label_color_step = 0.1
+        for r in label_color_step:label_color_step:(1.0 - label_color_step)
+            color_labels[scale.f(r)] = ""
+        end
+        color_labels[scale.f(0.0)] = Gadfly.fmt_float(cmin)
+        color_labels[scale.f(1.0)] = Gadfly.fmt_float(cmax)
+
+        aes.color_label = c -> color_labels[c]
+        aes.color_key_colors = reverse(sort(keys(color_labels)))
+    end
 end
 
 

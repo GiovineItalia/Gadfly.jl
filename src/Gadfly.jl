@@ -270,6 +270,11 @@ function render(plot::Plot)
     aess = Scale.apply_scales(Iterators.distinct(values(scales)), plot.data,
                               [layer.data for layer in plot.layers]...)
 
+    # set default labels
+    if has(plot.mapping, :color)
+        aess[1].color = string(plot.mapping[:color])
+    end
+
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, aess)
         Stat.apply_statistics(StatisticElement[layer_stat], scales, aes)
@@ -278,6 +283,11 @@ function render(plot::Plot)
     # IIb. Plot-wise Statistics
     plot_aes = cat(aess...)
     Stat.apply_statistics(statistics, scales, plot_aes)
+
+    # Add some default guides determined by defined aesthetics
+    if !all([aes.color === nothing for aes in [plot_aes, aess...]])
+        push!(guides, Guide.colorkey)
+    end
 
     # III. Coordinates
     plot_canvas = Coord.apply_coordinate(plot.coord, plot_aes, aess...)

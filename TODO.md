@@ -1,9 +1,10 @@
 
+Current mission:
+Generate a reasonable color key for continuous color scales.
+
 Small/Medium projects:
  * Geom.rectbin and Geom.hexbin
  * Continuous color scales.
- * Weave should detect the format of the output of code blocks and embed it
-   appropriately.
  * A proper Layer constructor.
  * Something equivalent to xlim/ylim in ggplot2.
  * Discrete color scales with bar charts.

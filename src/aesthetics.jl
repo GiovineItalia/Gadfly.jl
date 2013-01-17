@@ -36,6 +36,9 @@ type Aesthetics
     ytick_label::Function
     color_label::Function
 
+    # Titles
+    color_key_title::Maybe(String)
+
     function Aesthetics()
         new(nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
@@ -43,7 +46,7 @@ type Aesthetics
             nothing, nothing, nothing, nothing,
             nothing, nothing,
             fmt_float, fmt_float,
-            string, string, string)
+            string, string, string, nothing)
     end
 
     # shallow copy constructor

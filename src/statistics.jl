@@ -125,8 +125,10 @@ function apply_statistic(stat::RectangularBinStatistic,
         error("RectangularBinStatistic requires a continuous color scale.")
     end
 
+    aes.color_key_title = "Count"
+
     data = Gadfly.Data()
-    data.color = [cnt <= 1 ? NA : cnt for cnt in bincounts]
+    data.color = [cnt < 1 ? NA : cnt for cnt in bincounts]
     Scale.apply_scale(color_scale, [aes], data)
     nothing
 end
