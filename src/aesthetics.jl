@@ -26,6 +26,8 @@ type Aesthetics
     ytick::Maybe(Vector{Float64})
 
     color_key_colors::Maybe(Vector{Color})
+    color_key_title::Maybe(String)
+    color_key_continuous::Maybe(Bool)
 
     # Labels. These are not aesthetics per se, but functions that assign lables
     # to values taken by aesthetics. Often this means simply inverting the
@@ -36,17 +38,15 @@ type Aesthetics
     ytick_label::Function
     color_label::Function
 
-    # Titles
-    color_key_title::Maybe(String)
 
     function Aesthetics()
         new(nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
-            nothing, nothing,
+            nothing, nothing, nothing, nothing,
             fmt_float, fmt_float,
-            string, string, string, nothing)
+            string, string, string)
     end
 
     # shallow copy constructor

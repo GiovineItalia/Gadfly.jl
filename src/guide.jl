@@ -44,12 +44,147 @@ end
 const colorkey = ColorKey()
 
 
+# A helper for render(::ColorKey) for rendering guides for discrete color
+# scales.
+function render_discrete_color_key(colors::Vector{Color},
+                                   labels::Dict{Color, String},
+                                   title_canvas::Canvas,
+                                   title_width::Measure,
+                                   theme::Gadfly.Theme)
+    # Key entries
+    n = length(colors)
+
+    entry_width, entry_height = text_extents(theme.minor_label_font,
+                                             theme.minor_label_font_size,
+                                             values(labels)...)
+    entry_width += entry_height # make space for the color swatch
+
+    # Rewrite to put toggleable things in a group.
+    swatch_padding = 1mm
+    swatch_size = 1cy - swatch_padding
+    swatch_canvas = canvas(0w, 0h + title_canvas.box.height,
+                           1w, n * (entry_height + swatch_padding),
+                           Units(0, 0, 1, n))
+    for (i, c) in enumerate(colors)
+        swatch_square = compose(rectangle(0, i - 1, swatch_size, swatch_size),
+                                fill(c),
+                                stroke(theme.highlight_color(c)),
+                                linewidth(theme.highlight_width))
+
+        label = labels[c]
+        swatch_label = compose(text(1cy, (i - 1)cy + entry_height/2,
+                                    label, hleft, vcenter),
+                               stroke(nothing),
+                               fill(theme.minor_label_color))
+        swatch = swatch_square | swatch_label
+
+        swatch <<= svgid(@sprintf("color_key_%s", label))
+        swatch <<= onclick(
+            @sprintf("geoms = document.getElementsByClassName('color_group_%s');
+                      entry = document.getElementById('color_key_%s');
+                      state = geoms[0].getAttribute('visibility');
+                      if (!state || state == 'visible') {
+                          for (i = 0; i < geoms.length; ++i) {
+                              geoms[i].setAttribute('visibility', 'hidden');
+                          }
+                          entry.setAttribute('opacity', 0.5);
+                      } else {
+                          for (i = 0; i < geoms.length; ++i) {
+                              geoms[i].setAttribute('visibility', 'visible');
+                          }
+                          entry.setAttribute('opacity', 1.0);
+                      }", label, label))
+        swatch <<= svglink("#")
+        swatch_canvas <<= swatch
+    end
+    swatch_canvas <<= font(theme.minor_label_font) |
+                      fontsize(theme.minor_label_font_size)
+    c = canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
+               swatch_canvas.box.height + title_canvas.box.height) <<
+        pad(canvas() << swatch_canvas << title_canvas, 2mm)
+    c
+end
+
+
+# A helper for render(::ColorKey) for rendering guides for continuous color
+# scales.
+function render_continuous_color_key(colors::Vector{Color},
+                                   labels::Dict{Color, String},
+                                   title_canvas::Canvas,
+                                   title_width::Measure,
+                                   theme::Gadfly.Theme)
+
+    # Key entries
+    entry_width, entry_height = text_extents(theme.minor_label_font,
+                                             theme.minor_label_font_size,
+                                             values(labels)...)
+    entry_width += entry_height # make space for the color swatch
+
+    unlabeled_swatches = 0
+    for c in colors
+        if labels[c] == ""
+            unlabeled_swatches += 1
+        end
+    end
+
+    unlabeled_swatch_height = 1.0mm
+    swatch_padding = 1mm
+
+    swatch_canvas = canvas(0w, 0h + title_canvas.box.height, 1w,
+                           unlabeled_swatches * unlabeled_swatch_height +
+                           (length(colors) - unlabeled_swatches) * entry_height)
+
+    # Nudge things to overlap slightly avoiding any gaps.
+    nudge = 0.1mm
+
+    y = 0cy
+    for (i, c) in enumerate(colors)
+        if labels[c] == ""
+            swatch_square = compose(rectangle(0, y,
+                                              entry_height,
+                                              unlabeled_swatch_height + nudge),
+                                    fill(c),
+                                    linewidth(theme.highlight_width))
+
+            swatch_canvas <<= swatch_square
+
+            y += unlabeled_swatch_height
+        else
+            swatch_square = compose(rectangle(0, y,
+                                              entry_height,
+                                              entry_height + nudge),
+                                    fill(c),
+                                    linewidth(theme.highlight_width))
+            swatch_label = compose(text(entry_height + swatch_padding,
+                                        y + entry_height / 2,
+                                        labels[c],
+                                        hleft, vcenter),
+                                   fill(theme.minor_label_color))
+
+            swatch_canvas <<= swatch_square | swatch_label
+
+            y += entry_height
+        end
+    end
+
+    swatch_canvas <<= font(theme.minor_label_font) |
+                      fontsize(theme.minor_label_font_size) |
+                      stroke(nothing)
+
+    c = canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
+               swatch_canvas.box.height + title_canvas.box.height) <<
+        pad(canvas() << swatch_canvas << title_canvas, 2mm)
+    c
+end
+
+
 function render(guide::ColorKey, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
     used_colors = Set{Color}()
     colors = Array(Color, 0) # to preserve ordering
     labels = Dict{Color, Set{String}}()
 
+    continuous_guide = false
     guide_title = nothing
 
     for aes in aess
@@ -59,6 +194,10 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
 
         if aes.color_key_colors === nothing
             continue
+        end
+
+        if !is(aes.color_key_continuous, nothing) && aes.color_key_continuous
+            continuous_guide = true
         end
 
         for color in aes.color_key_colors
@@ -95,58 +234,13 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
                            fontsize(theme.major_label_font_size),
                            fill(theme.major_label_color))
 
-    # Key entries
-    n = length(colors)
-
-    entry_width, entry_height = text_extents(theme.minor_label_font,
-                                             theme.minor_label_font_size,
-                                             values(pretty_labels)...)
-    entry_width += entry_height # make space for the color swatch
-
-    # Rewrite to put toggleable things in a group.
-    swatch_padding = 1mm
-    swatch_size = 1cy - swatch_padding
-    swatch_canvas = canvas(0w, 0h + title_canvas.box.height,
-                           1w, n * (entry_height + swatch_padding),
-                           Units(0, 0, 1, n))
-    for (i, c) in enumerate(colors)
-        swatch_square = compose(rectangle(0, i - 1, swatch_size, swatch_size),
-                                fill(c),
-                                stroke(theme.highlight_color(c)),
-                                linewidth(theme.highlight_width))
-
-        label = pretty_labels[c]
-        swatch_label = compose(text(1cy, (i - 1)cy + entry_height/2,
-                                    label, hleft, vcenter),
-                               stroke(nothing),
-                               fill(theme.minor_label_color))
-        swatch = swatch_square | swatch_label
-
-        swatch <<= svgid(@sprintf("color_key_%s", label))
-        swatch <<= onclick(
-            @sprintf("geoms = document.getElementsByClassName('color_group_%s');
-                      entry = document.getElementById('color_key_%s');
-                      state = geoms[0].getAttribute('visibility');
-                      if (!state || state == 'visible') {
-                          for (i = 0; i < geoms.length; ++i) {
-                              geoms[i].setAttribute('visibility', 'hidden');
-                          }
-                          entry.setAttribute('opacity', 0.5);
-                      } else {
-                          for (i = 0; i < geoms.length; ++i) {
-                              geoms[i].setAttribute('visibility', 'visible');
-                          }
-                          entry.setAttribute('opacity', 1.0);
-                      }", label, label))
-        swatch <<= svglink("#")
-        swatch_canvas <<= swatch
+    if continuous_guide
+        c = render_continuous_color_key(colors, pretty_labels, title_canvas,
+                                        title_width, theme)
+    else
+        c = render_discrete_color_key(colors, pretty_labels, title_canvas,
+                                      title_width, theme)
     end
-    swatch_canvas <<= font(theme.minor_label_font) |
-                      fontsize(theme.minor_label_font_size)
-
-    c = canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
-               swatch_canvas.box.height + title_canvas.box.height) <<
-        pad(canvas() << swatch_canvas << title_canvas, 2mm)
 
     {(c, right_guide_position)}
 end

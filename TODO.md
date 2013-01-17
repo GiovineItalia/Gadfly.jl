@@ -6,6 +6,8 @@ Small/Medium projects:
  * Geom.rectbin and Geom.hexbin
  * Continuous color scales.
  * A proper Layer constructor.
+ * Add an option for weave to produce entirely self-contained html files by
+   base64 encoding everything.
  * Something equivalent to xlim/ylim in ggplot2.
  * Discrete color scales with bar charts.
  * Stacked bar charts.

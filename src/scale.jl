@@ -216,7 +216,7 @@ element_aesthetics(::ContinuousColorScale) = [:color]
 # Common continuous color scales
 # TODO: find a good color combo
 const color_gradient = ContinuousColorScale(
-        lab_gradient(LCHab(20, 54, 262), LCHab(100, 54, 262)))
+        lab_gradient(LCHab(20, 44, 262), LCHab(100, 44, 262)))
 
 
 function apply_scale(scale::ContinuousColorScale,
@@ -244,6 +244,21 @@ function apply_scale(scale::ContinuousColorScale,
         end
     end
 
+    # It's a little weird to be doing this here. If a more elegant solution
+    # arises, it's worth reorganizing.
+
+    if cmin == Inf || cmax == -Inf
+        return nothing
+    end
+
+    ticks = Gadfly.optimize_ticks(cmin, cmax)
+    if ticks[1] == 0 && cmin >= 1
+        ticks[1] = 1
+    end
+
+    cmin = ticks[1]
+    cmax = ticks[end]
+
     for (aes, data) in zip(aess, datas)
         if data.color === nothing
             continue
@@ -261,15 +276,25 @@ function apply_scale(scale::ContinuousColorScale,
         aes.color = DataArray(cs, nas)
 
         color_labels = Dict{Color, String}()
-        label_color_step = 0.1
-        for r in label_color_step:label_color_step:(1.0 - label_color_step)
-            color_labels[scale.f(r)] = ""
+        for tick in ticks
+            r = (tick - cmin) / (cmax - cmin)
+            color_labels[scale.f(r)] = Gadfly.fmt_float(tick)
         end
-        color_labels[scale.f(0.0)] = Gadfly.fmt_float(cmin)
-        color_labels[scale.f(1.0)] = Gadfly.fmt_float(cmax)
+
+        # Add a gradient of steps between labeled colors.
+        num_steps = 1
+        for (i, j) in zip(ticks, ticks[2:end])
+            span = j - i
+            for step in 1:num_steps
+                k = i + span * (step / (1 + num_steps))
+                r = (k - cmin) / (cmax - cmin)
+                color_labels[scale.f(r)] = ""
+            end
+        end
 
         aes.color_label = c -> color_labels[c]
         aes.color_key_colors = reverse(sort(keys(color_labels)))
+        aes.color_key_continuous = true
     end
 end
 
