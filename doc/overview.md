@@ -198,18 +198,13 @@ Gadfly is based on a declarative vector graphics system called
 things with plots, once they are defined.
 
 ```{.julia}
-fig1a = render(plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"},
-                    Geom.point))
-fig1b = render(plot(iris, {:x => "Sepal.Width"}, Geom.bar))
+fig1a = plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"}, Geom.point)
+fig1b = plot(iris, {:x => "Sepal.Width"}, Geom.bar)
 fig1 = hstack(fig1a, fig1b)
 
 draw(SVG(6inch, 3inch), fig1)
 ```
 
-The calls to `render` is necessary to convert the `Plot` object to Compose
-`Canvas` objects which represent graphics we can manipulate. Ultimately Compose
-will allow the creation of complex plots
-
-
-
+Ultimately Compose will allow the creation of more complex plots, such as those
+containing facets, or plots within plots.
 

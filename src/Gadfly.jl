@@ -6,7 +6,7 @@ require("Distributions")
 require("Iterators")
 require("JSON")
 
-# TODO: It's wrong to put thisg outside the module. What I want to do is have
+# TODO: It's wrong to put this outside the module. What I want to do is have
 # Gadfly export everything that's exported by Compose, to avoid having to do
 # both using(Gadfly) and using(Compose), but I'm not sure if that's possible.
 #using Compose
@@ -18,7 +18,7 @@ using DataFrames
 
 import Iterators
 import JSON
-import Compose.draw
+import Compose.draw, Compose.hstack, Compose.vstack
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot
@@ -250,10 +250,6 @@ function render(plot::Plot)
     push!(guides, Guide.x_ticks)
     push!(guides, Guide.y_ticks)
 
-    if has(plot.mapping, :color) && has(used_aesthetics, :color)
-        push!(guides, Guide.ColorKey(string(plot.mapping[:color])))
-    end
-
     statistics = copy(plot.statistics)
     push!(statistics, Stat.x_ticks)
     push!(statistics, Stat.y_ticks)
@@ -272,7 +268,7 @@ function render(plot::Plot)
 
     # set default labels
     if has(plot.mapping, :color)
-        aess[1].color = string(plot.mapping[:color])
+        aess[1].color_key_title = string(plot.mapping[:color])
     end
 
     # IIa. Layer-wise statistics
@@ -375,6 +371,10 @@ end
 
 # A convenience version of Compose.draw that let's you skip the call to render.
 draw(backend::Compose.Backend, p::Plot) = draw(backend, render(p))
+
+# Convenience stacking functions
+vstack(ps::Plot...) = vstack([render(p) for p in ps]...)
+hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
 
 
 include("scale.jl")
