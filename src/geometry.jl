@@ -85,26 +85,32 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     for (c, xys) in points
         group_form = empty_form
         for (x, y, s) in xys
+            # TODO: choose ids so they won't collide when there are multiple
+            # point geometries.
             annotation_id = "point_annotation_$(i)"
+            point_id = "point_$(i)"
 
-            group_form |= circle(x, y, s)
+            group_form |= circle(x, y, s) << svgid(point_id) <<
+                                             svgclass("geometry")
 
             # Points tend to be too small to easily mouse over, so we instead
             # use an invisible box that is a bit larger than the point itself.
             bounding_rect =
                 compose(rectangle(x*cx - s - 1mm, y*cy - s - 1mm,
                                   2*s + 2mm, 2*s + 2mm),
-                        onmouseover("show_annotation('$(annotation_id)')"),
-                        onmouseout("hide_annotation('$(annotation_id)')"))
+                        onmouseover("show_annotation('$(annotation_id)'); present_geometry(['$(point_id)'])"),
+                        onmouseout("hide_annotation('$(annotation_id)'); unpresent_geometry()"))
 
-            # TODO: x and y are numbers obtained after scale transforms.
-            msg = "$(Gadfly.fmt_float(x)), $(Gadfly.fmt_float(y))"
+            msg = "$(aes.x_label(x)), $(aes.y_label(y))"
             msgwidth, msgheight = text_extents(theme.minor_label_font,
                                                theme.minor_label_font_size,
                                                msg)
             bounding_rect_form |= bounding_rect
             annotation_form |=
-                text(x, y*cy - s - 1mm, msg, hcenter, vbottom) <<
+                (rectangle(x*cx - msgwidth/2, y*cy - msgheight - s - 1mm,
+                          msgwidth, msgheight) <<
+                          fill(theme.panel_fill) << opacity(0.8) |
+                 text(x, y*cy - s - 1mm, msg, hcenter, vbottom)) <<
                     svgid(annotation_id)
             i += 1
         end
@@ -126,7 +132,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                               stroke(nothing),
                               visible(false))
 
-    annotation_form | bounding_rect_form | point_form
+    form = point_form | bounding_rect_form | annotation_form
 end
 
 

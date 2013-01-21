@@ -125,7 +125,7 @@ Let's label that previous plot.
 ```{.julia}
 p = plot(mammals,
          {:x => "body", :y => "brain", :label => 1},
-         Geom.point, Geom.label, Scale.x_log10, Scale.y_log10)
+         Geom.label, Geom.point, Scale.x_log10, Scale.y_log10)
 draw(SVG(6inch, 6inch), p)
 ```
 

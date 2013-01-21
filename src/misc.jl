@@ -51,7 +51,7 @@ Maybe(T) = Union(T, Nothing)
 # This is largely taken from cairo's function _cairo_dtostr.
 function fmt_float(x::Float64)
     if x < 0.1
-        a = @sprintf("%0.18f", x)
+        a = @sprintf("%0.4f", x)
     else
         a = @sprintf("%f", x)
     end

@@ -1,17 +1,15 @@
 
-Current mission:
-Generate a reasonable color key for continuous color scales.
 
 Small/Medium projects:
- * Geom.rectbin and Geom.hexbin
- * Continuous color scales.
+ * Improve legibility of mouseover effects, possibly by dimming everything that
+   is not moused over.
+ * Geom.hexbin
  * A proper Layer constructor.
  * Add an option for weave to produce entirely self-contained html files by
    base64 encoding everything.
  * Something equivalent to xlim/ylim in ggplot2.
  * Discrete color scales with bar charts.
  * Stacked bar charts.
- * Mousing over a point should show text telling its coordinates.
  * Handle NaN and Inf gracefully. NaN should be filtered out it most cases. We
    could handle Inf/-Inf like ggplot2 does by placing points at the very edge of
    the plot, but this can be misleading. Maybe filtering them and issuing a
@@ -38,6 +36,7 @@ Small/Medium projects:
    the minimum size needed to render it such that no labels overlap.
 
 Large projects:
+ * Compose needs a stronger notion of z-order. Think of a way to do this.
  * Zoom/pan in cartesian coordinates: Write javascript to scale everything in
    the plot pane appropriately on mouse events. One really tricky part is
    updating axis ticks and tick labels. Writing javascript to generate new ticks
