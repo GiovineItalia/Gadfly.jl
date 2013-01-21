@@ -79,21 +79,7 @@ function render_discrete_color_key(colors::Vector{Color},
         swatch = swatch_square | swatch_label
 
         swatch <<= svgid(@sprintf("color_key_%s", label))
-        swatch <<= onclick(
-            @sprintf("geoms = document.getElementsByClassName('color_group_%s');
-                      entry = document.getElementById('color_key_%s');
-                      state = geoms[0].getAttribute('visibility');
-                      if (!state || state == 'visible') {
-                          for (i = 0; i < geoms.length; ++i) {
-                              geoms[i].setAttribute('visibility', 'hidden');
-                          }
-                          entry.setAttribute('opacity', 0.5);
-                      } else {
-                          for (i = 0; i < geoms.length; ++i) {
-                              geoms[i].setAttribute('visibility', 'visible');
-                          }
-                          entry.setAttribute('opacity', 1.0);
-                      }", label, label))
+        swatch <<= onclick(@sprintf("toggle_color_group('%s')", label))
         swatch <<= svglink("#")
         swatch_canvas <<= swatch
     end

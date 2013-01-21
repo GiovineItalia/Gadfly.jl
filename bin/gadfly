@@ -3,8 +3,8 @@
 # A gadfly executable that takes executable markdown files,
 # excecutes them, and renders them into self contained html files.
 
-# Yikes: doing require("Gadfly") causes this file to require itself.
-include("$(julia_pkgdir())/Gadfly/src/Gadfly.jl")
+pkgdir = Pkg.dir("Gadfly")
+include("$(pkgdir)/src/Gadfly.jl")
 using Gadfly
 
 require("ArgParse")

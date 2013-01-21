@@ -28,6 +28,10 @@ element_aesthetics(::Any) = []
 default_scales(::Any) = []
 
 
+# Javascript library embedded in every SVG produced by Gadfly.
+const jsdynamicslib = readall(open(joinpath(Pkg.dir("Gadfly"), "src", "dynamics.js")))
+
+
 abstract Element
 abstract ScaleElement       <: Element
 abstract CoordinateElement  <: Element
@@ -306,6 +310,7 @@ function render(plot::Plot)
     end
 
     canvas = Guide.layout_guides(plot_canvas, guide_canvases...)
+    canvas <<= embeddedjavascript(jsdynamicslib)
 
     # TODO: This is a kludge. Axis labels sometimes extend past the edge of the
     # canvas.

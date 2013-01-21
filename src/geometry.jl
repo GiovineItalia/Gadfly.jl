@@ -70,13 +70,63 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
         push!(points[c], (x, y, s))
     end
 
-    form = combine([combine([circle(x, y, s) for (x, y, s) in xys]...) <<
-                        fill(c) <<
-                        stroke(theme.highlight_color(c)) <<
-                        svgclass(@sprintf("color_group_%s", aes.color_label(c)))
-                    for (c, xys) in points]...)
+    n = 0
+    for (c, xys) in points
+        for (x, y, s) in xys
+            n += 1
+        end
+    end
 
-    form << stroke(nothing) << linewidth(theme.highlight_width)
+    point_form = empty_form
+    annotation_form = empty_form
+    bounding_rect_form = empty_form
+
+    i = 1
+    for (c, xys) in points
+        group_form = empty_form
+        for (x, y, s) in xys
+            annotation_id = "point_annotation_$(i)"
+
+            group_form |= circle(x, y, s)
+
+            # Points tend to be too small to easily mouse over, so we instead
+            # use an invisible box that is a bit larger than the point itself.
+            bounding_rect =
+                compose(rectangle(x*cx - s - 1mm, y*cy - s - 1mm,
+                                  2*s + 2mm, 2*s + 2mm),
+                        onmouseover("show_annotation('$(annotation_id)')"),
+                        onmouseout("hide_annotation('$(annotation_id)')"))
+
+            # TODO: x and y are numbers obtained after scale transforms.
+            msg = "$(Gadfly.fmt_float(x)), $(Gadfly.fmt_float(y))"
+            msgwidth, msgheight = text_extents(theme.minor_label_font,
+                                               theme.minor_label_font_size,
+                                               msg)
+            bounding_rect_form |= bounding_rect
+            annotation_form |=
+                text(x, y*cy - s - 1mm, msg, hcenter, vbottom) <<
+                    svgid(annotation_id)
+            i += 1
+        end
+
+        group_form <<=
+            fill(c) |
+            stroke(theme.highlight_color(c)) |
+            svgclass(@sprintf("color_group_%s", aes.color_label(c)))
+        point_form |= group_form
+    end
+
+    bounding_rect_form <<= opacity(0) | stroke(nothing)
+
+    point_form <<= linewidth(theme.highlight_width)
+
+    annotation_form = compose(annotation_form,
+                              font(theme.minor_label_font),
+                              fontsize(theme.minor_label_font_size),
+                              stroke(nothing),
+                              visible(false))
+
+    annotation_form | bounding_rect_form | point_form
 end
 
 
