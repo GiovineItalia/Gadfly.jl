@@ -7,7 +7,7 @@ using Compose
 
 import Gadfly.Scale, Gadfly.element_aesthetics, Gadfly.default_scales
 import Distributions.Uniform
-import Iterators.chain, Iterators.cycle
+import Iterators.chain, Iterators.cycle, Iterators.product
 
 include("bincount.jl")
 
@@ -103,18 +103,27 @@ function apply_statistic(stat::RectangularBinStatistic,
     wx = (x_max - x_min) / dx
     wy = (y_max - y_min) / dy
 
-    aes.x_min = Array(Float64, dx)
-    aes.x_max = Array(Float64, dx)
-    for k in 1:dx
-        aes.x_min[k] = x_min + (k - 1) * wx
-        aes.x_max[k] = x_min + k * wx
+    n = 0
+    for cnt in bincounts
+        if cnt > 0
+            n += 1
+        end
     end
 
-    aes.y_min = Array(Float64, dy)
-    aes.y_max = Array(Float64, dy)
-    for k in 1:dy
-        aes.y_min[k] = y_min + (k - 1) * wy
-        aes.y_max[k] = y_min + k * wy
+    aes.x_min = Array(Float64, n)
+    aes.x_max = Array(Float64, n)
+    aes.y_min = Array(Float64, n)
+    aes.y_max = Array(Float64, n)
+
+    k = 1
+    for ((i, j), cnt) in zip(product(1:dy, 1:dx), bincounts)
+        if cnt > 0
+            aes.x_min[k] = x_min + (i - 1) * wx
+            aes.x_max[k] = x_min + i * wx
+            aes.y_min[k] = y_min + (j - 1) * wy
+            aes.y_max[k] = y_min + j * wy
+            k += 1
+        end
     end
 
     if !has(scales, :color)
@@ -128,7 +137,14 @@ function apply_statistic(stat::RectangularBinStatistic,
     aes.color_key_title = "Count"
 
     data = Gadfly.Data()
-    data.color = [cnt < 1 ? NA : cnt for cnt in bincounts]
+    data.color = Array(Int, n)
+    k = 1
+    for cnt in bincounts
+        if cnt > 0
+            data.color[k] = cnt
+            k += 1
+        end
+    end
     Scale.apply_scale(color_scale, [aes], data)
     nothing
 end
@@ -174,18 +190,21 @@ function apply_statistic(stat::TickStatistic,
     maxval = -Inf
     all_int = true
 
+    n = 0
     for val in in_values
         if val < minval
-            minval = val
+            minval = float64(val)
         end
 
         if val > maxval
-            maxval = val
+            maxval = float64(val)
         end
 
         if !(typeof(val) <: Integer)
             all_int = false
         end
+
+        n += 1
     end
 
     # all the input values in order.

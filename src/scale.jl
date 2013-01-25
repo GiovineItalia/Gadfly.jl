@@ -72,28 +72,30 @@ const sqrt_transform =
 # Continuous scale maps data on a continuous scale simple by calling
 # `convert(Float64, ...)`.
 type ContinuousScale <: Gadfly.ScaleElement
-    var::Symbol
+    vars::Vector{Symbol}
     trans::ContinuousScaleTransform
 end
 
+const x_vars = [:x, :x_min, :x_max]
+const y_vars = [:y, :y_min, :y_max]
 
 # Commonly used scales.
-const x_continuous = ContinuousScale(:x, identity_transform)
-const y_continuous = ContinuousScale(:y, identity_transform)
-const x_log10      = ContinuousScale(:x, log10_transform)
-const y_log10      = ContinuousScale(:y, log10_transform)
-const x_log2       = ContinuousScale(:x, log2_transform)
-const y_log2       = ContinuousScale(:y, log2_transform)
-const x_log        = ContinuousScale(:x, ln_transform)
-const y_log        = ContinuousScale(:y, ln_transform)
-const x_asinh      = ContinuousScale(:x, asinh_transform)
-const y_asinh      = ContinuousScale(:y, asinh_transform)
-const x_sqrt       = ContinuousScale(:x, sqrt_transform)
-const y_sqrt       = ContinuousScale(:y, sqrt_transform)
+const x_continuous = ContinuousScale(x_vars, identity_transform)
+const y_continuous = ContinuousScale(y_vars, identity_transform)
+const x_log10      = ContinuousScale(x_vars, log10_transform)
+const y_log10      = ContinuousScale(y_vars, log10_transform)
+const x_log2       = ContinuousScale(x_vars, log2_transform)
+const y_log2       = ContinuousScale(y_vars, log2_transform)
+const x_log        = ContinuousScale(x_vars, ln_transform)
+const y_log        = ContinuousScale(y_vars, ln_transform)
+const x_asinh      = ContinuousScale(x_vars, asinh_transform)
+const y_asinh      = ContinuousScale(y_vars, asinh_transform)
+const x_sqrt       = ContinuousScale(x_vars, sqrt_transform)
+const y_sqrt       = ContinuousScale(y_vars, sqrt_transform)
 
 
 function element_aesthetics(scale::ContinuousScale)
-    return [scale.var]
+    return scale.vars
 end
 
 
@@ -109,19 +111,23 @@ end
 #
 function apply_scale(scale::ContinuousScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-    label_var = symbol(@sprintf("%s_label", string(scale.var)))
     for (aes, data) in zip(aess, datas)
-        if getfield(data, scale.var) === nothing
-            continue
-        end
+        for var in scale.vars
+            label_var = symbol(@sprintf("%s_label", string(var)))
+            if getfield(data, var) === nothing
+                continue
+            end
 
-        ds = Array(Float64, length(getfield(data, scale.var)))
-        for (i, d) in enumerate(getfield(data, scale.var))
-            ds[i] = scale.trans.f(convert(Float64, d))
-        end
+            ds = Array(Float64, length(getfield(data, var)))
+            for (i, d) in enumerate(getfield(data, var))
+                ds[i] = scale.trans.f(convert(Float64, d))
+            end
 
-        setfield(aes, scale.var, ds)
-        setfield(aes, label_var, scale.trans.label)
+            setfield(aes, var, ds)
+            if has(Set(names(aes)...), label_var)
+                setfield(aes, label_var, scale.trans.label)
+            end
+        end
     end
 end
 

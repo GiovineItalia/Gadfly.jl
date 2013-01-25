@@ -88,6 +88,8 @@ function default_middle_color(fill_color::Color)
 end
 
 
+const default_font_desc = "Source Sans Pro,PT Sans,Helvetica Neue,Helvetica,sans"
+
 const default_theme =
     Theme(color("steel blue"),      # default_color
           0.5mm,                    # default_point_size
@@ -96,13 +98,13 @@ const default_theme =
           color("#f2f2f2"),         # panel_stroke
           color("white"),           # grid_color
           0.3mm,                    # grid line width
-          "Source Sans Pro",        # minor_label_font
+          default_font_desc,        # minor_label_font
           9pt,                      # minor_label_font_size
           color("#4c404b"),         # minor_label_color
-          "Source Sans Pro",        # major_label_font
+          default_font_desc,        # major_label_font
           11pt,                     # major_label_font_size
           color("#362a35"),         # major_label_color
-          "Source Sans Pro",        # point_label_font
+          default_font_desc,        # point_label_font
           8pt,                      # point_label_font_size
           color("#4c404b"),         # point_label_color
           -0.1mm,                   # bar_spacing

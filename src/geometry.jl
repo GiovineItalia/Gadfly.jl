@@ -7,7 +7,7 @@ using DataFrames
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
 import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit
-import Iterators.cycle
+import Iterators.cycle, Iterators.product
 
 
 # Geometry that renders nothing.
@@ -107,10 +107,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                                                msg)
             bounding_rect_form |= bounding_rect
             annotation_form |=
-                (rectangle(x*cx - msgwidth/2, y*cy - msgheight - s - 1mm,
-                          msgwidth, msgheight) <<
-                          fill(theme.panel_fill) << opacity(0.8) |
-                 text(x, y*cy - s - 1mm, msg, hcenter, vbottom)) <<
+                 text(x, y*cy - s - 1mm, msg, hcenter, vbottom) <<
                     svgid(annotation_id)
             i += 1
         end
@@ -272,25 +269,46 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
     Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x_min, :x_max, :y_min, :y_max)
     Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x_min, :x_max, :y_min, :y_max)
 
-    dx = length(aes.x_min)
-    dy = length(aes.y_min)
+    default_aes = Gadfly.Aesthetics()
+    default_aes.color = PooledDataArray(Color[theme.default_color])
+    aes = inherit(aes, default_aes)
 
-    forms = Array(Compose.Form, sum(!isna(aes.color)))
-    l = 1 # index into forms
-    k = 1 # index into aes.color
+    n = length(aes.x_min)
 
-    for i in 1:dx
-        for j in 1:dy
-            if !isna(aes.color[k])
-                forms[l] = rectangle(aes.x_min[i], aes.y_min[j],
-                                    (aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
-                                    (aes.y_max[j] - aes.y_min[j])*cy + theme.bar_spacing) <<
-                           fill(color(aes.color[k]))
-                l += 1
-            end
-            k += 1
+    forms = Array(Compose.Form, 0)
+
+    for (i, c) in zip(1:n, cycle(aes.color))
+        if !isna(c)
+            push!(forms, rectangle(aes.x_min[i], aes.y_min[i],
+                                  (aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
+                                  (aes.y_max[i] - aes.y_min[i])*cy + theme.bar_spacing) <<
+                             fill(color(c)))
         end
     end
+
+
+    #for ((i, j), c) in zip(product(1:dx, 1:dy), cycle(aes.color))
+        #println((i,j,c))
+        #if !isna(c)
+            #push!(forms, rectangle(aes.x_min[i], aes.y_min[j],
+                                  #(aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
+                                  #(aes.y_max[j] - aes.y_min[j])*cy + theme.bar_spacing) <<
+                             #fill(color(c)))
+        #end
+    #end
+
+    #for i in 1:dx
+        #for j in 1:dy
+            #if !isna(aes.color[k])
+                #forms[l] = rectangle(aes.x_min[i], aes.y_min[j],
+                                    #(aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
+                                    #(aes.y_max[j] - aes.y_min[j])*cy + theme.bar_spacing) <<
+                           #fill(color(aes.color[k]))
+                #l += 1
+            #end
+            #k += 1
+        #end
+    #end
 
     combine(forms...) << stroke(nothing)
 end
@@ -518,7 +536,7 @@ function deferred_label_canvas(aes, theme, box, unit_box)
         if total_penalty == 0
             break
         end
-        j = randi(n)
+        j = rand(1:n)
 
         new_total_penalty = total_penalty
 

@@ -98,7 +98,7 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElemen
         push!(p.layers, Layer())
     end
 
-    p.layers[end].statistics = arg
+    p.layers[end].statistic = arg
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
@@ -232,18 +232,33 @@ function render(plot::Plot)
         end
     end
 
-    # Add default scales for mapped aesthetics.
-    while !isempty(unscaled_aesthetics)
-        var = pop!(unscaled_aesthetics)
-        t = has(plot.mapping, var) ?
-                classify_data(getfield(plot.data, var)) : :discrete
+    # Assign scales to mapped aesthetics first.
+    for var in unscaled_aesthetics
+        if !has(plot.mapping, var)
+            continue
+        end
+
+        t = classify_data(getfield(plot.data, var))
         if has(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
             scale_aes = Set(element_aesthetics(scale)...)
             for var in scale_aes
                 scales[var] = scale
             end
-            unscaled_aesthetics -= scale_aes
+        end
+    end
+
+    for var in unscaled_aesthetics
+        if has(plot.mapping, var) || has(scales, var)
+            continue
+        end
+
+        if has(default_aes_scales[:discrete], var)
+            scale = default_aes_scales[t][var]
+            scale_aes = Set(element_aesthetics(scale)...)
+            for var in scale_aes
+                scales[var] = scale
+            end
         end
     end
 
@@ -259,18 +274,31 @@ function render(plot::Plot)
     push!(statistics, Stat.x_ticks)
     push!(statistics, Stat.y_ticks)
 
-    if has(plot.mapping, :x) && has(used_aesthetics, :x)
-        push!(guides, Guide.XLabel(string(plot.mapping[:x])))
+
+    function mapped_and_used(vs)
+        any([has(plot.mapping, v) && has(used_aesthetics, v) for v in vs])
     end
 
-    if has(plot.mapping, :y) && has(used_aesthetics, :y)
-        push!(guides, Guide.YLabel(string(plot.mapping[:y])))
+    function choose_name(vs)
+        for v in vs
+            if has(plot.mapping, v)
+                return string(plot.mapping[v])
+            end
+        end
+        ""
+    end
+
+    if mapped_and_used(Scale.x_vars)
+        push!(guides, Guide.XLabel(choose_name(Scale.x_vars)))
+    end
+
+    if mapped_and_used(Scale.y_vars)
+        push!(guides, Guide.YLabel(choose_name(Scale.y_vars)))
     end
 
     # I. Scales
     aess = Scale.apply_scales(Iterators.distinct(values(scales)), plot.data,
                               [layer.data for layer in plot.layers]...)
-
     # set default labels
     if has(plot.mapping, :color)
         aess[1].color_key_title = string(plot.mapping[:color])
@@ -396,11 +424,19 @@ import Scale, Coord, Geom, Guide, Stat
 # PooledDataVector or DataVector, respectively).
 const default_aes_scales = {
         :continuous => {:x     => Scale.x_continuous,
+                        :x_min => Scale.x_continuous,
+                        :x_max => Scale.x_continuous,
                         :y     => Scale.y_continuous,
-                        :color => Scale.color_hue,
+                        :y_min => Scale.y_continuous,
+                        :y_max => Scale.y_continuous,
+                        :color => Scale.color_gradient,
                         :label => Scale.label},
         :discrete   => {:x     => Scale.x_discrete,
+                        :x_min => Scale.x_discrete,
+                        :x_max => Scale.x_discrete,
                         :y     => Scale.y_discrete,
+                        :y_min => Scale.y_discrete,
+                        :y_max => Scale.y_discrete,
                         :color => Scale.color_hue,
                         :label => Scale.label}}
 
@@ -409,6 +445,10 @@ classify_data(data::DataVector{Float64}) = :continuous
 classify_data(data::DataVector{Float32}) = :continuous
 classify_data(data::DataVector) = :discrete
 classify_data(data::PooledDataVector) = :discrete
+
+# Very long unfactorized integer data should be treated as continuous
+classify_data{T <: Integer}(data::DataVector{T}) =
+    length(data) < 25 ? :discrete : :continuous
 
 
 end # module Gadfly

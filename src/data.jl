@@ -4,6 +4,10 @@
 type Data
     x
     y
+    x_min
+    x_max
+    y_min
+    y_max
     xtick
     ytick
     xtick_labels
@@ -14,6 +18,7 @@ type Data
 
     function Data()
         new(nothing, nothing, nothing, nothing,
+            nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing)
     end
