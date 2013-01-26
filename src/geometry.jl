@@ -85,10 +85,10 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     for (c, xys) in points
         group_form = empty_form
         for (x, y, s) in xys
-            # TODO: choose ids so they won't collide when there are multiple
-            # point geometries.
-            annotation_id = "point_annotation_$(i)"
             point_id = "point_$(i)"
+            annotation_id = "point_annotation_$(i)"
+            # TODO: choose ids so they won't collide when there are multiple
+            # point geometries. Or, figure out a way to avoid ids altogether.
 
             group_form |= circle(x, y, s) << svgid(point_id) <<
                                              svgclass("geometry")
@@ -98,7 +98,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
             bounding_rect =
                 compose(rectangle(x*cx - s - 1mm, y*cy - s - 1mm,
                                   2*s + 2mm, 2*s + 2mm),
-                        onmouseover("show_annotation('$(annotation_id)'); present_geometry(['$(point_id)'])"),
+                        onmouseover("show_annotation('$(annotation_id)');present_geometry(['$(point_id)'])"),
                         onmouseout("hide_annotation('$(annotation_id)'); unpresent_geometry()"))
 
             msg = "$(aes.x_label(x)), $(aes.y_label(y))"
@@ -285,30 +285,6 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
                              fill(color(c)))
         end
     end
-
-
-    #for ((i, j), c) in zip(product(1:dx, 1:dy), cycle(aes.color))
-        #println((i,j,c))
-        #if !isna(c)
-            #push!(forms, rectangle(aes.x_min[i], aes.y_min[j],
-                                  #(aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
-                                  #(aes.y_max[j] - aes.y_min[j])*cy + theme.bar_spacing) <<
-                             #fill(color(c)))
-        #end
-    #end
-
-    #for i in 1:dx
-        #for j in 1:dy
-            #if !isna(aes.color[k])
-                #forms[l] = rectangle(aes.x_min[i], aes.y_min[j],
-                                    #(aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
-                                    #(aes.y_max[j] - aes.y_min[j])*cy + theme.bar_spacing) <<
-                           #fill(color(aes.color[k]))
-                #l += 1
-            #end
-            #k += 1
-        #end
-    #end
 
     combine(forms...) << stroke(nothing)
 end

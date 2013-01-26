@@ -30,10 +30,11 @@ const background = PanelBackground()
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    c = compose(canvas(), rectangle(),
+    back = compose(canvas(), rectangle(),
                 stroke(theme.panel_stroke),
                 fill(theme.panel_fill))
-    {(c, under_guide_position)}
+
+    {(back, under_guide_position)}
 end
 
 

@@ -29,7 +29,12 @@ default_scales(::Any) = []
 
 
 # Javascript library embedded in every SVG produced by Gadfly.
-const jsdynamicslib = readall(open(joinpath(Pkg.dir("Gadfly"), "src", "dynamics.js")))
+const jsdynamicslib =
+    @sprintf("<script type=\"application/ecmascript\"><![CDATA[\n%s\n]]></script>",
+             readall(open(joinpath(Pkg.dir("Gadfly"), "src", "dynamics.js"))))
+
+# Filter effects and other definitions used in SVG output.
+const globalsvgdefs = readall(open(joinpath(Pkg.dir("Gadfly"), "src", "defs.xml")))
 
 
 abstract Element
@@ -338,7 +343,9 @@ function render(plot::Plot)
     end
 
     canvas = Guide.layout_guides(plot_canvas, guide_canvases...)
-    canvas <<= embeddedjavascript(jsdynamicslib)
+
+    # Standard includes for SVGs
+    canvas <<= svgembed(jsdynamicslib * "\n" * globalsvgdefs)
 
     # TODO: This is a kludge. Axis labels sometimes extend past the edge of the
     # canvas.

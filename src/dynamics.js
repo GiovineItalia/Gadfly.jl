@@ -44,13 +44,13 @@ function present_geometry(ids)
 {
     geoms = document.getElementsByClassName('geometry');
     for (i = 0; i < geoms.length; ++i) {
-        geoms[i].setAttribute('opacity', 0.2);
+        geoms[i].setAttribute('filter', 'url(#panel-focus-filter)');
     }
 
     for (i = 0; i < ids.length; ++i) {
         console.info(ids[i]);
         geom = document.getElementById(ids[i]);
-        geom.setAttribute('opacity', 1.0);
+        geom.setAttribute('filter', 'inherit');
     }
 }
 
@@ -60,7 +60,7 @@ function unpresent_geometry()
 {
     geoms = document.getElementsByClassName('geometry');
     for (i = 0; i < geoms.length; ++i) {
-        geoms[i].setAttribute('opacity', 1.0);
+        geoms[i].setAttribute('filter', 'inherit');
     }
 }
 
