@@ -254,7 +254,7 @@ function render(plot::Plot)
         end
 
         if has(default_aes_scales[:discrete], var)
-            scale = default_aes_scales[t][var]
+            scale = default_aes_scales[:discrete][var]
             scale_aes = Set(element_aesthetics(scale)...)
             for var in scale_aes
                 scales[var] = scale
