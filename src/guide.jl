@@ -190,11 +190,11 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         for color in aes.color_key_colors
             label = aes.color_label(color)
             if !has(used_colors, color)
-                add(used_colors, color)
+                add!(used_colors, color)
                 push!(colors, color)
                 labels[color] = Set{String}(label)
             else
-                add(labels[color], label)
+                add!(labels[color], label)
             end
         end
     end

@@ -65,7 +65,7 @@ function defined_aesthetics(aes::Aesthetics)
     vars = Set{Symbol}()
     for name in Aesthetics.names
         if !is(getfield(aes, name), nothing)
-            add(vars, name)
+            add!(vars, name)
         end
     end
     vars

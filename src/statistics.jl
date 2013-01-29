@@ -210,7 +210,7 @@ function apply_statistic(stat::TickStatistic,
     # all the input values in order.
     if all_int
         ticks = Set{Float64}()
-        add_each(ticks, chain(in_values))
+        add_each!(ticks, chain(in_values))
         ticks = Float64[t for t in ticks]
         sort!(ticks)
     else

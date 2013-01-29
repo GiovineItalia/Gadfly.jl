@@ -193,11 +193,11 @@ function render(plot::Plot)
 
     used_aesthetics = Set{Symbol}()
     for layer in plot.layers
-        add_each(used_aesthetics, element_aesthetics(layer.geom))
+        add_each!(used_aesthetics, element_aesthetics(layer.geom))
     end
 
     for stat in layer_stats
-        add_each(used_aesthetics, element_aesthetics(stat))
+        add_each!(used_aesthetics, element_aesthetics(stat))
     end
 
     defined_unused_aesthetics = Set(keys(plot.mapping)...) - used_aesthetics
@@ -208,7 +208,7 @@ function render(plot::Plot)
 
     scaled_aesthetics = Set{Symbol}()
     for scale in plot.scales
-        add_each(scaled_aesthetics, element_aesthetics(scale))
+        add_each!(scaled_aesthetics, element_aesthetics(scale))
     end
 
     # Only one scale can be applied to an aesthetic (without getting some weird
