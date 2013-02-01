@@ -94,7 +94,7 @@ Scale transforms also work as expected. Let's look at some data where this is
 useful.
 
 ```julia
-mpg = data("MASS", "mammals")
+mammals = data("MASS", "mammals")
 p = plot(mammals, {:x => "body", :y => "brain"}, Geom.point)
 ```
 
