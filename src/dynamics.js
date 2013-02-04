@@ -121,6 +121,12 @@ function unpresent_geometry_end()
         return;
     }
 
+    // Skip this if the off animation isn't actually finished.
+    elapsed = off_anim.getCurrentTime() - off_anim.getStartTime();
+    if (elapsed < off_anim.getSimpleDuration()) {
+        return;
+    }
+
     geoms = document.getElementsByClassName('geometry');
     for (i = 0; i < geoms.length; ++i) {
         geoms[i].setAttribute('filter', 'inherit');
