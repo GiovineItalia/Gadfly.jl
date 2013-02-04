@@ -73,3 +73,16 @@ function lerp(x::Float64, a::Float64, b::Float64)
     a + (b - a) * max(min(x, 1.0), 0.0)
 end
 
+
+# Generate a unique id, primarily for assigning IDs to SVG elements.
+let next_unique_svg_id_num = 0
+    global unique_svg_id
+    function unique_svg_id()
+        uid = @sprintf("id%d", next_unique_svg_id_num)
+        next_unique_svg_id_num += 1
+        uid
+    end
+end
+
+
+

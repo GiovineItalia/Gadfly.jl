@@ -426,7 +426,9 @@ function layout_guides(plot_canvas::Canvas,
     left_guides   = set_box(left_guides,   BoundingBox(0, t, l, ph))
 
     compose(canvas(),
-            (canvas(l, t, pw, ph), under_guides, plot_canvas),
+            (canvas(l, t, pw, ph),
+                (canvas(InheritedUnits(), Order(-1)), under_guides),
+                (canvas(InheritedUnits(), Order(1)),  plot_canvas)),
             top_guides, right_guides, bottom_guides, left_guides)
 end
 

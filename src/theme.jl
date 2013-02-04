@@ -107,7 +107,7 @@ const default_theme =
           default_font_desc,        # point_label_font
           8pt,                      # point_label_font_size
           color("#4c404b"),         # point_label_color
-          -0.1mm,                   # bar_spacing
+          0.0mm,                    # bar_spacing
           1mm,                      # boxplot_spacing
           0.3mm,                    # highlight_width
           default_highlight_color,  # highlight_color

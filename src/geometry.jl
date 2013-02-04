@@ -39,6 +39,21 @@ function element_aesthetics(::PointGeometry)
 end
 
 
+# Produce the necessary properties for mouseover effects.
+#
+# Args:
+#   geometry_id: ID of the geometry being presented.
+#   annotation_id: ID of the annotation to show on mouseover.
+#
+# Return:
+#   Array of properties to be composed into the moused over element.
+#
+function mouseover_properties(geometry_id, annotation_id)
+    {onmouseover("show_annotation('$(annotation_id)');present_geometry(['$(geometry_id)'])"),
+     onmouseout("hide_annotation('$(annotation_id)'); unpresent_geometry()")}
+end
+
+
 # Generate a form for a point geometry.
 #
 # Args:
@@ -81,16 +96,13 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     annotation_form = empty_form
     bounding_rect_form = empty_form
 
-    i = 1
     for (c, xys) in points
         group_form = empty_form
         for (x, y, s) in xys
-            point_id = "point_$(i)"
-            annotation_id = "point_annotation_$(i)"
-            # TODO: choose ids so they won't collide when there are multiple
-            # point geometries. Or, figure out a way to avoid ids altogether.
+            geometry_id = Gadfly.unique_svg_id()
+            annotation_id = Gadfly.unique_svg_id()
 
-            group_form |= circle(x, y, s) << svgid(point_id) <<
+            group_form |= circle(x, y, s) << svgid(geometry_id) <<
                                              svgclass("geometry")
 
             # Points tend to be too small to easily mouse over, so we instead
@@ -98,8 +110,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
             bounding_rect =
                 compose(rectangle(x*cx - s - 1mm, y*cy - s - 1mm,
                                   2*s + 2mm, 2*s + 2mm),
-                        onmouseover("show_annotation('$(annotation_id)');present_geometry(['$(point_id)'])"),
-                        onmouseout("hide_annotation('$(annotation_id)'); unpresent_geometry()"))
+                        mouseover_properties(geometry_id, annotation_id)...)
 
             msg = "$(aes.x_label(x)), $(aes.y_label(y))"
             msgwidth, msgheight = text_extents(theme.minor_label_font,
@@ -109,7 +120,6 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
             annotation_form |=
                  text(x, y*cy - s - 1mm, msg, hcenter, vbottom) <<
                     svgid(annotation_id)
-            i += 1
         end
 
         group_form <<=
@@ -129,10 +139,10 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                               stroke(nothing),
                               visible(false))
 
-    compose(canvas(InheritedUnits()),
-            (canvas(InheritedUnits()), point_form),
+    compose(canvas(InheritedUnits(), Order(1)),
+            (canvas(InheritedUnits()), bounding_rect_form),
             (canvas(InheritedUnits()), annotation_form),
-            (canvas(InheritedUnits()), bounding_rect_form))
+            (canvas(InheritedUnits()), point_form))
 end
 
 
@@ -231,18 +241,32 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     pad = theme.bar_spacing / 2
 
-    forms = {rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
-                       (x_max - x_min)*cx - theme.bar_spacing, y)
-             for (x_min, x_max, y) in zip(aes.x_min, aes.x_max, aes.y)}
+    bar_form = empty_form
+    annotation_form = empty_form
+    for (x_min, x_max, y) in zip(aes.x_min, aes.x_max, aes.y)
+        annotation_id = Gadfly.unique_svg_id()
+        geometry_id = Gadfly.unique_svg_id()
 
-    if length(aes.color) == 1
-        form = combine(forms...) << fill(aes.color[1])
-    else
-        form = combine([form << fill(c)
-                        for (f, c) in zip(forms, cycle(aes.color))]...)
+        bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
+                                      (x_max - x_min)*cx - theme.bar_spacing, y),
+                            svgid(geometry_id), svgclass("geometry"),
+                            mouseover_properties(geometry_id, annotation_id)...)
+
+        annotation_form |=
+            text((x_min + x_max) / 2, y*cy - 1mm,
+                 aes.y_label(y), hcenter, vbottom) <<
+                svgid(annotation_id)
     end
 
-    form << stroke(nothing)
+    compose(canvas(InheritedUnits()),
+            stroke(nothing),
+            (bar_form,
+                fill(theme.default_color),
+                svgattribute("shape-rendering", "crispEdges")),
+            (annotation_form,
+                visible(false),
+                font(theme.minor_label_font),
+                fontsize(theme.minor_label_font_size)))
 end
 
 
@@ -285,11 +309,13 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
             push!(forms, rectangle(aes.x_min[i], aes.y_min[i],
                                   (aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
                                   (aes.y_max[i] - aes.y_min[i])*cy + theme.bar_spacing) <<
-                             fill(color(c)))
+                             fill(color(c)) << svgclass("geometry"))
         end
     end
 
-    combine(forms...) << stroke(nothing)
+    compose(combine(forms...),
+            stroke(nothing),
+            svgattribute("shape-rendering", "crispEdges"))
 end
 
 
@@ -332,6 +358,8 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                    cycle(aes.color.refs))
 
     forms = Compose.Form[]
+    middle_forms = Compose.Form[]
+
     r = theme.default_point_size
     bw = 1.0cx - theme.boxplot_spacing
 
@@ -343,8 +371,8 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
         mc = theme.middle_color(c) # middle color
 
         # Middle
-        push!(forms, compose(lines((x - 1/6, mid), (x + 1/6, mid)),
-                            linewidth(theme.line_width), stroke(mc)))
+        push!(middle_forms, compose(lines((x - 1/6, mid), (x + 1/6, mid)),
+                                    linewidth(theme.line_width), stroke(mc)))
 
         # Box
         push!(forms, compose(rectangle(x*cx - bw/2, lh, bw, uh - lh),
@@ -372,7 +400,10 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
         end
     end
 
-    form = combine(forms...)
+    compose(canvas(InheritedUnits()),
+            (canvas(InheritedUnits()), combine(forms...)),
+            (canvas(InheritedUnits(), Order(1)), combine(middle_forms...)),
+            svgclass("geometry"))
 end
 
 
@@ -613,7 +644,8 @@ function deferred_label_canvas(aes, theme, box, unit_box)
             x += extents[i][1] / 2
             y += extents[i][2] / 2
 
-            push!(forms, text(x, y, aes.label[i], hcenter, vcenter))
+            push!(forms, text(x, y, aes.label[i], hcenter, vcenter) <<
+                    svgclass("geometry"))
         end
     end
 
