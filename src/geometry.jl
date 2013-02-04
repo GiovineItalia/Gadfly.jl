@@ -129,7 +129,10 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                               stroke(nothing),
                               visible(false))
 
-    form = point_form | bounding_rect_form | annotation_form
+    compose(canvas(InheritedUnits()),
+            (canvas(InheritedUnits()), point_form),
+            (canvas(InheritedUnits()), annotation_form),
+            (canvas(InheritedUnits()), bounding_rect_form))
 end
 
 
