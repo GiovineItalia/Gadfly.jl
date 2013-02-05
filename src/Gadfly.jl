@@ -21,7 +21,7 @@ import JSON
 import Compose.draw, Compose.hstack, Compose.vstack
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has
 
-export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot
+export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, @plot, spy
 
 
 element_aesthetics(::Any) = []
@@ -52,6 +52,7 @@ include("theme.jl")
 include("aesthetics.jl")
 include("data.jl")
 include("weave.jl")
+include("poetry.jl")
 
 
 # A plot has zero or more layers. Layers have a particular geometry and their
@@ -350,63 +351,6 @@ function render(plot::Plot)
     # TODO: This is a kludge. Axis labels sometimes extend past the edge of the
     # canvas.
     pad(canvas, 5mm)
-end
-
-
-## Return a DataFrame with x, y column suitable for plotting a function.
-#
-# Args:
-#  f: Function/Expression to be evaluated.
-#  a: Lower bound.
-#  b: Upper bound.
-#  n: Number of points to evaluate the function at.
-#
-# Returns:
-#
-#
-function evalfunc(f::Function, a, b, n)
-    xs = [x for x in a:(b - a)/n:b]
-    df = DataFrame(xs, map(f, xs))
-    colnames!(df, ["x", "f(x)"])
-    df
-end
-
-
-evalfunc(f::Expr, a, b, n) = evalfunc(eval(:(x -> $f)), a, b, n)
-
-
-# A convenience plot function for quickly plotting functions are expressions.
-#
-# Args:
-#
-# Returns:
-#
-function plot(fs::Array, a, b, elements::Element...)
-    df = DataFrame()
-    for (i, f) in enumerate(fs)
-        df_i = evalfunc(f, a, b, 250)
-        name = typeof(f) == Expr ? string(f) : @sprintf("f<sub>%d</sub>", i)
-        df_i = cbind(df_i, [name for _ in 1:size(df_i)[1]])
-        colnames!(df_i, ["x", "f(x)", "f"])
-        df = rbind(df, df_i)
-    end
-
-    mapping = {:x => "x", :y => "f(x)"}
-    if length(fs) > 1
-        mapping[:color] = "f"
-    end
-
-    plot(df, mapping, Geom.line, elements...)
-end
-
-
-function plot(f::Function, a, b, elements::Element...)
-    plot([f], a, b, elements...)
-end
-
-
-function plot(f::Expr, a, b, elements::Element...)
-    plot([f], a, b, elements...)
 end
 
 

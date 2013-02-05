@@ -160,9 +160,9 @@ type TickStatistic <: Gadfly.StatisticElement
 end
 
 
-const x_ticks = TickStatistic([:x], :xtick)
+const x_ticks = TickStatistic([:x, :x_min, :x_max], :xtick)
 const y_ticks = TickStatistic(
-    [:y, :middle, :lower_hinge, :upper_hinge,
+    [:y, :y_min, :y_max, :middle, :lower_hinge, :upper_hinge,
      :lower_fence, :upper_fence], :ytick)
 
 

@@ -46,9 +46,14 @@ function present_geometry(ids)
     on_anim_dur = 0.1;
 
     off_anim = document.getElementById('panel-focus-filter-off-anim');
+    try {
+        t0 = Number(off_anim.getStartTime());
+    }
+    catch (err) {
+        t0 = Infinity;
+    }
     off_anim.endElement();
 
-    t0 = Number(off_anim.getStartTime());
     if (t0 < Infinity) {
         t = Number(off_anim.getCurrentTime());
         d = Number(off_anim.getSimpleDuration());
@@ -85,14 +90,19 @@ function unpresent_geometry()
     off_anim_dur = 0.3;
 
     on_anim = document.getElementById('panel-focus-filter-on-anim');
+    try {
+        t0 = Number(on_anim.getStartTime());
+        t = Number(on_anim.getCurrentTime());
+        d = Number(on_anim.getSimpleDuration());
+        p = Math.max(0.0, Math.min(1.0, ((t - t0) / d)));
+    }
+    catch (err) {
+        p = 1.0;
+    }
     on_anim.endElement();
 
-    t0 = Number(on_anim.getStartTime());
-    t = Number(on_anim.getCurrentTime());
-    d = Number(on_anim.getSimpleDuration());
     from = Number(on_anim.getAttribute('from'));
     to = Number(on_anim.getAttribute('to'));
-    p = Math.max(0.0, Math.min(1.0, ((t - t0) / d)));
     v = from + p * (to - from);
 
     off_anim = document.getElementById('panel-focus-filter-off-anim');
@@ -122,7 +132,7 @@ function unpresent_geometry_end()
     }
 
     // Skip this if the off animation isn't actually finished.
-    elapsed = off_anim.getCurrentTime() - off_anim.getStartTime();
+    elapsed = off_anim.getCurrentTime() - off_anim.getStartTime()
     if (elapsed < off_anim.getSimpleDuration()) {
         return;
     }
