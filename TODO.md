@@ -1,12 +1,13 @@
 
+Current mission:
+Weave should be able to generate entirely self contained html files. This means
+base64 encoding image data, embedding svg directly in the document, etc.
 
 Small/Medium projects:
- * Improve legibility of mouseover effects, possibly by dimming everything that
-   is not moused over.
- * Geom.hexbin
- * A proper Layer constructor.
  * Add an option for weave to produce entirely self-contained html files by
    base64 encoding everything.
+ * Geom.hexbin
+ * A proper Layer constructor.
  * Something equivalent to xlim/ylim in ggplot2.
  * Discrete color scales with bar charts.
  * Stacked bar charts.
@@ -36,7 +37,6 @@ Small/Medium projects:
    the minimum size needed to render it such that no labels overlap.
 
 Large projects:
- * Compose needs a stronger notion of z-order. Think of a way to do this.
  * Zoom/pan in cartesian coordinates: Write javascript to scale everything in
    the plot pane appropriately on mouse events. One really tricky part is
    updating axis ticks and tick labels. Writing javascript to generate new ticks

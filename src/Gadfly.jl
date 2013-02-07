@@ -19,7 +19,8 @@ using DataFrames
 import Iterators
 import JSON
 import Compose.draw, Compose.hstack, Compose.vstack
-import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has
+import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
+       Base.show
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, @plot, spy
 
@@ -362,6 +363,17 @@ vstack(ps::Plot...) = vstack([render(p) for p in ps]...)
 hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
 
 
+# Displaying plots, for interactive use.
+#
+# This is a show function that, rather than outputing a totally incomprehensible
+# representation of the Plot object, renders it, and emits the graphic. (Which
+# usually means, shows it in a browser window.)
+#
+function show(io::IO, p::Plot)
+    draw(SVG(6inch, 5inch), p)
+end
+
+
 include("scale.jl")
 include("coord.jl")
 include("geometry.jl")
@@ -369,6 +381,7 @@ include("guide.jl")
 include("statistics.jl")
 
 import Scale, Coord, Geom, Guide, Stat
+
 
 # All aesthetics must have a scale. If none is given, we use a default.
 # The default depends on whether the input is discrete or continuous (i.e.,

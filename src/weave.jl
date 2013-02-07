@@ -21,15 +21,6 @@ module WeaveSandbox
     OUTPUT_STREAM = IOString()
     print(x) = Base.print(OUTPUT_STREAM, x)
     println(x) = Base.println(OUTPUT_STREAM, x)
-
-    # A special SVG backend for compose to Write to our dummy OUTPUT_STREAM.
-    # TODO: This is a kludge. Ideally we would avoid any Compose/Gadfly specific
-    # hacks here. Think about a more general solution.
-    import Compose
-    import Compose.SVG
-    function SVG(width::Compose.MeasureOrNumber, height::Compose.MeasureOrNumber)
-        SVG(OUTPUT_STREAM, width, height)
-    end
 end
 
 
@@ -74,10 +65,18 @@ done(it::ParseIt, pos) = pos > length(it.value)
 #   pandoc_args: Extra arguments passed to pandoc.
 #
 # Returns:
-#   A string in the requested output format.
+#   A string in the requested output format,
 #
 function weave(infn::String, infmt::String, outfmt::String,
                pandoc_args::String...)
+
+    # Substitute the default emitters for ones that simply print the image data.
+    # Weave will detect the type of the data and embed it appropriately.
+    Compose.emitters["image/svg+xml"] = WeaveSandbox.print
+    Compose.emitters["image/png"]     = WeaveSandbox.print
+    Compose.emitters["image/gif"]     = WeaveSandbox.print
+    Compose.emitters["image/jpeg"]    = WeaveSandbox.print
+
     docname = match(r"^(.*)(\.[^\.]*)$", basename(infn)).captures[1]
     metadata, document = JSON.parse(pandoc(infn, infmt, "json"))
 
@@ -169,15 +168,16 @@ function datatype(data::Vector{Uint8})
     end
 
     xml_magic = "<?xml"
+    html_magic = "<!DOCTYPE html"
     if length(data) >= length(xml_magic) &&
        bytestring(data[1:length(xml_magic)]) == xml_magic &&
        !is(match(r"<svg", bytestring(data)), nothing)
         "image/svg+xml"
+    elseif !is(match(r"^\s*<!DOCTYPE\s+html", bytestring(data)), nothing)
+        "text/html"
     else
         "text/plain"
     end
-
-    # TODO: detect html
 end
 
 
@@ -296,8 +296,8 @@ function execblock_julia(source)
         #       of each expression.
     end
 
-    output = takebuf_array(WeaveSandbox.OUTPUT_STREAM)
     seek(WeaveSandbox.OUTPUT_STREAM, 0)
+    output = takebuf_array(WeaveSandbox.OUTPUT_STREAM)
     truncate(WeaveSandbox.OUTPUT_STREAM, 0)
     output
 end
