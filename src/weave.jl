@@ -69,6 +69,8 @@ done(it::ParseIt, pos) = pos > length(it.value)
 #
 function weave(infn::String, infmt::String, outfmt::String,
                pandoc_args::String...)
+    selfcontained = any([pandoc_arg == "--self-contained"
+                         for pandoc_arg in pandoc_args])
 
     # Substitute the default emitters for ones that simply print the image data.
     # Weave will detect the type of the data and embed it appropriately.
@@ -122,13 +124,13 @@ function weave(infn::String, infmt::String, outfmt::String,
         end
 
         push!(processed_document,
-             process_output(output, id, classes, keyvals, outfmt, docname, fignum)...)
+             process_output(output, id, classes, keyvals,
+                            outfmt, docname, fignum, selfcontained)...)
     end
 
     jsonout_path, jsonout = mktemp()
     JSON.print_to_json(jsonout, {metadata, processed_document})
     flush(jsonout)
-    #run(`cat $(jsonout_path)`)
     output = pandoc(jsonout_path, "json", outfmt, pandoc_args...)
     close(jsonout)
     rm(jsonout_path)
@@ -190,13 +192,18 @@ end
 #   keyval: Dictionary of key/value attributes assigned to the code block.
 #   docname: Name of the document.
 #   fignum: Reference to a number for the next figure.
+#   selfcontained: True if output should be inserted without generating any
+#                  external files.
 #
 # Return:
 #   An array of JSON elements that will be inserted directly after the code
 #   block that was executed.
 #
 function process_output(output::Vector{Uint8},
-                        id, classes, keyvals, outfmt, docname, fignum)
+                        id::String, classes::Set, keyvals::Dict,
+                        outfmt::String, docname::String, fignum::WeakRef,
+                        selfcontained::Bool)
+
     mime = datatype(output)
 
     if isempty(output)
@@ -217,34 +224,56 @@ function process_output(output::Vector{Uint8},
             caption = ""
         end
 
-        figext = ""
-        if mime == "image/svg+xml"
-            figext = "svg"
-        elseif mime == "image/gif"
-            figext = "gif"
-        elseif mime == "image/png"
-            figext = "png"
-        elseif mime == "image/jpeg"
-            figext = "jpg"
-        end
-
-        figfn = "$(docname)_$(figname).$(figext)"
-        figio = open(figfn, "w")
-        write(figio, output)
-        close(figio)
-        figurl = figfn # TODO: support adding an absolute path
-
-        if mime == "image/svg+xml" && (outfmt == "html" || outfmt == "html5")
-            # SVG needs to be included using the object (or embed) tag for
-            # embeded javascript to work.
-            [["RawBlock" =>
-                ["html",
-                 "<figure><object alt=\"$(alttext)\" \
-                                  data=\"$(figurl)\" \
-                                  type=\"image/svg+xml\"></object> \
-                          <figcaption>$(caption)</figcaption></figure>"]]]
+        if selfcontained
+            if mime == "image/svg+xml" && (outfmt == "html" || outfmt == "html5")
+                # TODO: This works on firefox and safari, but is somewhat broken
+                # on chrome. It seems to be a chrome bug, but I need to
+                # investigate more.
+                svgdata = bytestring(encode(Base64(), output))
+                [["RawBlock" =>
+                    ["html",
+                     "<figure>
+                      <object alt=\"$(alttext)\" type=\"image/svg+xml\"
+                              data=\"data:image/svg+xml;base64,$(svgdata)\">
+                      </object>
+                     </figure>"]]]
+            else
+                # Let pandoc handle binary image formats.
+                figfn, figio = mktemp()
+                write(figio, output)
+                close(figio)
+                [["Para" => {["Image" => {{["Str" => alttext]}, {figfn, ""}}]}]]
+            end
         else
-            [["Para" => {["Image" => {{["Str" => alttext]}, {figurl, ""}}]}]]
+            figext = ""
+            if mime == "image/svg+xml"
+                figext = "svg"
+            elseif mime == "image/gif"
+                figext = "gif"
+            elseif mime == "image/png"
+                figext = "png"
+            elseif mime == "image/jpeg"
+                figext = "jpg"
+            end
+
+            figfn = "$(docname)_$(figname).$(figext)"
+            figio = open(figfn, "w")
+            write(figio, output)
+            close(figio)
+            figurl = figfn # TODO: support adding an absolute path
+
+            if mime == "image/svg+xml" && (outfmt == "html" || outfmt == "html5")
+                # SVG needs to be included using the object (or embed) tag for
+                # embeded javascript to work.
+                [["RawBlock" =>
+                    ["html",
+                     "<figure><object alt=\"$(alttext)\" \
+                                      data=\"$(figurl)\" \
+                                      type=\"image/svg+xml\"></object> \
+                              <figcaption>$(caption)</figcaption></figure>"]]]
+            else
+                [["Para" => {["Image" => {{["Str" => alttext]}, {figurl, ""}}]}]]
+            end
         end
     else
         error("Unknown mime type: ", mime)

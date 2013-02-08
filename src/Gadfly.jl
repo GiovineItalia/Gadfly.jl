@@ -1,5 +1,6 @@
 
 
+require("Codecs")
 require("Compose")
 require("DataFrames")
 require("Distributions")
@@ -13,6 +14,7 @@ require("JSON")
 
 module Gadfly
 
+using Codecs
 using Compose
 using DataFrames
 
