@@ -1,11 +1,5 @@
 
-Current mission:
-Weave should be able to generate entirely self contained html files. This means
-base64 encoding image data, embedding svg directly in the document, etc.
-
 Small/Medium projects:
- * Add an option for weave to produce entirely self-contained html files by
-   base64 encoding everything.
  * Geom.hexbin
  * A proper Layer constructor.
  * Something equivalent to xlim/ylim in ggplot2.
@@ -28,8 +22,6 @@ Small/Medium projects:
    choice in shapes makes some categories seem more significant than others.
    Think about ways to mitigate the damage.
  * Polar coordinates.
- * Look into embedding SVG fonts and/or using web fonts so plots look roughly
-   the same across platforms.
  * Fix glitches in the cairo backend, I think all of which inlove rendering
    text, and would probably be fixed if pango was used for rendering rather than
    the "toy api".
@@ -37,6 +29,9 @@ Small/Medium projects:
    the minimum size needed to render it such that no labels overlap.
 
 Large projects:
+ * Come up with a documentation standard and apply it. Something along the line
+   of: one .md file for every exported symbol. Then implement a help function
+   that prints these prettily. Also, a weaved vignette.
  * Zoom/pan in cartesian coordinates: Write javascript to scale everything in
    the plot pane appropriately on mouse events. One really tricky part is
    updating axis ticks and tick labels. Writing javascript to generate new ticks

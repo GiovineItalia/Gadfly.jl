@@ -271,18 +271,19 @@ function render(plot::Plot)
         end
     end
 
-    # TODO: Reasonable handling of default guides. Currently x/y ticks are
-    # always on and there is no way to turn them off. Think of a good way to
-    # supress defaults.
-    guides = copy(plot.guides)
-    push!(guides, Guide.background)
-    push!(guides, Guide.x_ticks)
-    push!(guides, Guide.y_ticks)
+    # There can be at most one instance of each guide. This is primarily to
+    # prevent default guides being applied over user-supplied guides.
+    guides = Dict{Type, GuideElement}()
+    for guide in plot.guides
+        guides[typeof(guide)] = guide
+    end
+    guides[Guide.PanelBackground] = Guide.background
+    guides[Guide.XTicks] = Guide.x_ticks
+    guides[Guide.YTicks] = Guide.y_ticks
 
     statistics = copy(plot.statistics)
     push!(statistics, Stat.x_ticks)
     push!(statistics, Stat.y_ticks)
-
 
     function mapped_and_used(vs)
         any([has(plot.mapping, v) && has(used_aesthetics, v) for v in vs])
@@ -297,12 +298,12 @@ function render(plot::Plot)
         ""
     end
 
-    if mapped_and_used(Scale.x_vars)
-        push!(guides, Guide.XLabel(choose_name(Scale.x_vars)))
+    if mapped_and_used(Scale.x_vars) && !has(guides, Guide.XLabel)
+        guides[Guide.XLabel] =  Guide.XLabel(choose_name(Scale.x_vars))
     end
 
-    if mapped_and_used(Scale.y_vars)
-        push!(guides, Guide.YLabel(choose_name(Scale.y_vars)))
+    if mapped_and_used(Scale.y_vars) && !has(guides, Guide.YLabel)
+        guides[Guide.YLabel] = Guide.YLabel(choose_name(Scale.y_vars))
     end
 
     # I. Scales
@@ -323,8 +324,9 @@ function render(plot::Plot)
     Stat.apply_statistics(statistics, scales, plot_aes)
 
     # Add some default guides determined by defined aesthetics
-    if !all([aes.color === nothing for aes in [plot_aes, aess...]])
-        push!(guides, Guide.colorkey)
+    if !all([aes.color === nothing for aes in [plot_aes, aess...]]) &&
+       !has(guides, Guide.ColorKey)
+        guides[Guide.ColorKey] = Guide.colorkey
     end
 
     # III. Coordinates
@@ -342,7 +344,7 @@ function render(plot::Plot)
 
     # V. Guides
     guide_canvases = {}
-    for guide in guides
+    for guide in values(guides)
         append!(guide_canvases, render(guide, plot.theme, aess))
     end
 

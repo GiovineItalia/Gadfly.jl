@@ -30,7 +30,7 @@ const background = PanelBackground()
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    back = compose(canvas(), rectangle(),
+    back = compose(canvas(Order(-1)), rectangle(),
                 stroke(theme.panel_stroke),
                 fill(theme.panel_fill))
 
@@ -264,7 +264,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     #padding = 1mm
     padding = 0mm
 
-    tick_labels = compose(canvas(0, 0, 1w, height + 2padding),
+    tick_labels = compose(canvas(0, 0, 1w, height + 2padding, Order(-1)),
                           [text(tick, 1h - padding, label, hcenter, vbottom)
                            for (tick, label) in ticks]...,
                           stroke(nothing),
@@ -306,7 +306,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     padding = 1mm
     width += 2padding
 
-    tick_labels = compose(canvas(0, 0, width, 1cy),
+    tick_labels = compose(canvas(0, 0, width, 1cy, Order(-1)),
                           [text(width - padding, t, label, hright, vcenter)
                            for (t, label) in ticks]...,
                           stroke(nothing),
@@ -402,15 +402,23 @@ function layout_guides(plot_canvas::Canvas,
             push!(under_guides, guide)
         end
     end
-
-    reverse!(left_guides)
+    
+    # Since top/right/bottom/left guides are drawn without overlaps, we use the
+    # canvas z-order to determine ordering, with lowest ordered guides placed
+    # nearest to the panel.
+    canvas_order = canvas -> canvas.order
+    rev_canvas_order = canvas -> -canvas.order
+    sortby!(canvas_order,     top_guides)
+    sortby!(canvas_order,     right_guides)
+    sortby!(canvas_order,     bottom_guides)
+    sortby!(rev_canvas_order, left_guides)
 
     # Stack the guides on edge edge of the plot
     top_guides    = vstack(0, 0, 1, [(g, hcenter) for g in top_guides]...)
     right_guides  = hstack(0, 0, 1, [(g, vcenter) for g in right_guides]...)
     bottom_guides = vstack(0, 0, 1, [(g, hcenter) for g in bottom_guides]...)
     left_guides   = hstack(0, 0, 1, [(g, vcenter) for g in left_guides]...)
-
+    
     # Reposition each guide stack, now that we know the extents
     t = top_guides.box.height
     r = right_guides.box.width
@@ -427,7 +435,7 @@ function layout_guides(plot_canvas::Canvas,
 
     compose(canvas(),
             (canvas(l, t, pw, ph),
-                (canvas(InheritedUnits(), Order(-1)), under_guides),
+                {canvas(InheritedUnits(), Order(-1)), under_guides...},
                 (canvas(InheritedUnits(), Order(1)),  plot_canvas)),
             top_guides, right_guides, bottom_guides, left_guides)
 end
