@@ -7,7 +7,6 @@ pkgdir = Pkg.dir("Gadfly")
 include("$(pkgdir)/src/Gadfly.jl")
 using Gadfly
 
-require("ArgParse")
 using ArgParse
 
 ap = ArgParseSettings("Excute an executable markdown file")

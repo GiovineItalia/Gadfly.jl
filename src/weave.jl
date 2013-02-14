@@ -226,7 +226,7 @@ function process_output(output::Vector{Uint8},
                 # TODO: This works on firefox and safari, but is somewhat broken
                 # on chrome. It seems to be a chrome bug, but I need to
                 # investigate more.
-                svgdata = bytestring(encode(Base64(), output))
+                svgdata = bytestring(encode(Base64, output))
                 [["RawBlock" =>
                     ["html",
                      "<figure>
