@@ -148,7 +148,7 @@ end
 #   JSON data as a string.
 #
 function json(a::Aesthetics)
-    join([strcat(a, ":", json(getfield(a, var))) for var in aes_vars], ",\n")
+    join([string(a, ":", json(getfield(a, var))) for var in aes_vars], ",\n")
 end
 
 

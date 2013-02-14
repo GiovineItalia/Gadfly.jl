@@ -90,7 +90,7 @@ function apply_coordinate(coord::CartesianCoordinate, aess::Gadfly.Aesthetics...
     # using discrete scales. TODO: Think more carefully about this. Is there a
     # way for the geometry to let the coordinates know that a little extra room
     # is needed to draw everything?
-    if all([aes.x === nothing || typeof(aes.x) == Array{Int64, 1} for aes in aess]...)
+    if all([aes.x === nothing || typeof(aes.x) == Array{Int64, 1} for aes in aess])
         xmin -= 0.5
         xmax += 0.5
         xpadding = 0
@@ -98,7 +98,7 @@ function apply_coordinate(coord::CartesianCoordinate, aess::Gadfly.Aesthetics...
         xpadding = 0.03 * (xmax - xmin)
     end
 
-    if all([aes.y === nothing || typeof(aes.y) == Array{Int64, 1} for aes in aess]...)
+    if all([aes.y === nothing || typeof(aes.y) == Array{Int64, 1} for aes in aess])
         ymin -= 0.5
         ymax += 0.5
         ypadding = 0

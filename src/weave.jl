@@ -45,10 +45,7 @@ end
 
 parseit(value::String) = ParseIt(value)
 start(it::ParseIt) = 1
-function next(it::ParseIt, pos)
-    (expr, off) = parse(it.value[pos:])
-    (expr, pos + off - 1)
-end
+next(it::ParseIt, pos) = parse(it.value, pos)
 done(it::ParseIt, pos) = pos > length(it.value)
 
 
