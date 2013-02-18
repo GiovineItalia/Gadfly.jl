@@ -221,24 +221,46 @@ function default_statistic(::BarGeometry)
     Gadfly.Stat.histogram
 end
 
-# Render bar geometry.
-#
-# Args:
-#   geom: bar geometry
-#   theme: the plot's theme
-#   aes: some aesthetics
-#
-# Returns
-#   A compose form.
-#
-function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x_min, :x_max, :y)
-    Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x_min, :x_max, :y)
 
-    default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(Color[theme.default_color])
-    aes = Gadfly.inherit(aes, default_aes)
+# Render bar geometry with a discrete x axis.
+function render_discrete_bar(geom::BarGeometry,
+                             theme::Gadfly.Theme,
+                             aes::Gadfly.Aesthetics)
+    # Group by x-axis.
+    bars = Dict()
+    for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color.refs))
+        if !has(bars, x)
+            bars[x] = {}
+        end
+        push!(bars[x], (c, y))
+    end
+    ncolors = length(levels(aes.color))
+    pad = 2mm
+    barwidth = (1.0cx - pad) / ncolors
 
+    bar_form = empty_form
+    for (x, cys) in bars
+        for (cref, y) in cys
+            c = aes.color.pool[cref]
+            hc = theme.highlight_color(c)
+            bar_form |=
+                compose(rectangle((x - 0.5)cx + pad/2 + (cref-1) * barwidth, 0.0,
+                                  barwidth, y),
+                        fill(c))
+        end
+    end
+
+    compose(canvas(InheritedUnits()),
+            bar_form,
+            svgattribute("shape-rendering", "crispEdges"),
+            stroke(nothing))
+end
+
+
+# Render bar geometry with a continuous x axis.
+function render_continuous_bar(geom::BarGeometry,
+                               theme::Gadfly.Theme,
+                               aes::Gadfly.Aesthetics)
     pad = theme.bar_spacing / 2
 
     bar_form = empty_form
@@ -267,6 +289,32 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                 visible(false),
                 font(theme.minor_label_font),
                 fontsize(theme.minor_label_font_size)))
+end
+
+# Render bar geometry.
+#
+# Args:
+#   geom: bar geometry
+#   theme: the plot's theme
+#   aes: some aesthetics
+#
+# Returns
+#   A compose form.
+#
+function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+    default_aes = Gadfly.Aesthetics()
+    default_aes.color = PooledDataArray(Color[theme.default_color])
+    aes = Gadfly.inherit(aes, default_aes)
+
+    if aes.x === nothing
+        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x_min, :x_max, :y)
+        Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x_min, :x_max, :y)
+        render_continuous_bar(geom, theme, aes)
+    else
+        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x, :y)
+        Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x, :y)
+        render_discrete_bar(geom, theme, aes)
+    end
 end
 
 

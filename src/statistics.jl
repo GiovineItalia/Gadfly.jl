@@ -156,14 +156,14 @@ default_statistic(stat::RectangularBinStatistic) = [Scale.color_gradient]
 # Find reasonable places to put tick marks and grid lines.
 type TickStatistic <: Gadfly.StatisticElement
     in_vars::Vector{Symbol}
-    out_var::Symbol
+    out_var::String
 end
 
 
-const x_ticks = TickStatistic([:x, :x_min, :x_max], :xtick)
+const x_ticks = TickStatistic([:x, :x_min, :x_max], "x")
 const y_ticks = TickStatistic(
     [:y, :y_min, :y_max, :middle, :lower_hinge, :upper_hinge,
-     :lower_fence, :upper_fence], :ytick)
+     :lower_fence, :upper_fence], "y")
 
 
 # Apply a tick statistic.
@@ -213,16 +213,18 @@ function apply_statistic(stat::TickStatistic,
         add_each!(ticks, chain(in_values))
         ticks = Float64[t for t in ticks]
         sort!(ticks)
+        grids = (ticks - 0.5)[2:end]
     else
-        ticks = Gadfly.optimize_ticks(minval, maxval)
+        grids = ticks = Gadfly.optimize_ticks(minval, maxval)
     end
 
     # We use the first label function we find for any of the aesthetics. I'm not
     # positive this is the right thing to do, or would would be.
-    labeler = getfield(aes, symbol(@sprintf("%s_label", stat.in_vars[1])))
+    labeler = getfield(aes, symbol(string(stat.out_var, "_label")))
 
-    setfield(aes, stat.out_var, ticks)
-    setfield(aes, symbol(@sprintf("%s_label", stat.out_var)), labeler)
+    setfield(aes, symbol(string(stat.out_var, "tick")), ticks)
+    setfield(aes, symbol(string(stat.out_var, "grid")), grids)
+    setfield(aes, symbol(string(stat.out_var, "tick_label")), labeler)
 
     nothing
 end

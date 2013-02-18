@@ -24,6 +24,8 @@ type Aesthetics
     # Aesthetics pertaining to guides
     xtick::Maybe(Vector{Float64})
     ytick::Maybe(Vector{Float64})
+    xgrid::Maybe(Vector{Float64})
+    ygrid::Maybe(Vector{Float64})
 
     color_key_colors::Maybe(Vector{Color})
     color_key_title::Maybe(String)
@@ -45,6 +47,7 @@ type Aesthetics
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
+            nothing, nothing,
             fmt_float, fmt_float,
             string, string, string)
     end

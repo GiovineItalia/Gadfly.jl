@@ -242,22 +242,31 @@ const x_ticks = XTicks()
 
 function render(guide::XTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
+
     ticks = Dict{Float64, String}()
+    grids = Set()
     for aes in aess
         if Gadfly.issomething(aes.xtick)
             for val in aes.xtick
                 ticks[val] = aes.xtick_label(val)
             end
         end
+
+        if Gadfly.issomething(aes.xgrid)
+            for val in aes.xgrid
+                add!(grids, val)
+            end
+        end
     end
 
     # grid lines
     grid_lines = compose(canvas(),
-                         [lines((t, 0h), (t, 1h)) for (t, _) in ticks]...,
+                         [lines((t, 0h), (t, 1h)) for (t, _) in grids]...,
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width))
 
     # tick labels
+
     (_, height) = text_extents(theme.minor_label_font,
                                theme.minor_label_font_size,
                                values(ticks)...)

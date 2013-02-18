@@ -92,10 +92,7 @@ end
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement)
     layer = Layer()
     layer.geom = arg
-    insert!(p.layers, 1, layer)
-    # XXX: I weirdly get a stack overflow error from this, which is probably a
-    # julia bug.
-    #push!(p.layers, layer)
+    push!(p.layers, layer)
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
@@ -187,7 +184,6 @@ end
 #   A compose Canvas containing the graphic.
 #
 function render(plot::Plot)
-
     # Add default statistics for geometries.
     layer_stats = Array(StatisticElement, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
@@ -206,8 +202,8 @@ function render(plot::Plot)
 
     defined_unused_aesthetics = Set(keys(plot.mapping)...) - used_aesthetics
     if !isempty(defined_unused_aesthetics)
-        println("Warning: the following aesthetics are mapped, but not used by any geometry:\n    ",
-                join([string(a) for a in defined_unused_aesthetics], ", "))
+        warn("The following aesthetics are mapped, but not used by any geometry:\n    ",
+             join([string(a) for a in defined_unused_aesthetics], ", "))
     end
 
     scaled_aesthetics = Set{Symbol}()
