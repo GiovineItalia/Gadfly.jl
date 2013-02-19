@@ -294,17 +294,24 @@ const y_ticks = YTicks()
 function render(guide::YTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
     ticks = Dict{Float64, String}()
+    grids = Set()
     for aes in aess
         if Gadfly.issomething(aes.ytick)
             for val in aes.ytick
                 ticks[val] = aes.ytick_label(val)
             end
         end
+
+        if Gadfly.issomething(aes.ygrid)
+            for val in aes.ygrid
+                add!(grids, val)
+            end
+        end
     end
 
     # grid lines
     grid_lines = compose(canvas(),
-                         [lines((0w, t), (1w, t)) for (t, _) in ticks]...,
+                         [lines((0w, t), (1w, t)) for (t, _) in grids]...,
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width))
 
@@ -411,7 +418,7 @@ function layout_guides(plot_canvas::Canvas,
             push!(under_guides, guide)
         end
     end
-    
+
     # Since top/right/bottom/left guides are drawn without overlaps, we use the
     # canvas z-order to determine ordering, with lowest ordered guides placed
     # nearest to the panel.
@@ -427,7 +434,7 @@ function layout_guides(plot_canvas::Canvas,
     right_guides  = hstack(0, 0, 1, [(g, vcenter) for g in right_guides]...)
     bottom_guides = vstack(0, 0, 1, [(g, hcenter) for g in bottom_guides]...)
     left_guides   = hstack(0, 0, 1, [(g, vcenter) for g in left_guides]...)
-    
+
     # Reposition each guide stack, now that we know the extents
     t = top_guides.box.height
     r = right_guides.box.width

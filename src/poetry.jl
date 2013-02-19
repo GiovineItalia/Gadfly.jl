@@ -84,11 +84,8 @@ end
 #
 function spy(M)
     is, js, values = findn_nzs(M)
-    df = DataFrame({"i" => is - 1, "j" => js - 1, "value" => values})
-    plot(df, {:x_min => "j", :x_max => :(j + 1),
-              :y_min => "i", :y_max => :(i + 1),
-              :color => "value"},
-         Scale.x_continuous, Scale.y_continuous,
+    df = DataFrame({"i" => is, "j" => js, "value" => values})
+    plot(df, {:x => "j", :y => "i", :color => "value"},
          Scale.color_gradient,
          Geom.rectbin, Stat.identity)
 end

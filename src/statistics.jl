@@ -200,7 +200,7 @@ function apply_statistic(stat::TickStatistic,
             maxval = float64(val)
         end
 
-        if !(typeof(val) <: Integer)
+        if !(typeof(val) <: Integer) && int(val) != val
             all_int = false
         end
 
@@ -211,9 +211,17 @@ function apply_statistic(stat::TickStatistic,
     if all_int
         ticks = Set{Float64}()
         add_each!(ticks, chain(in_values))
-        ticks = Float64[t for t in ticks]
-        sort!(ticks)
-        grids = (ticks - 0.5)[2:end]
+        if length(ticks) > 20
+            grids = ticks = Gadfly.optimize_ticks(minval, maxval)
+            if ticks[1] == 0
+                ticks[1] = 1
+            end
+            grids = ticks
+        else
+            ticks = Float64[t for t in ticks]
+            sort!(ticks)
+            grids = (ticks - 0.5)[2:end]
+        end
     else
         grids = ticks = Gadfly.optimize_ticks(minval, maxval)
     end

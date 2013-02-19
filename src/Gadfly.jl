@@ -412,8 +412,9 @@ classify_data(data::DataVector) = :discrete
 classify_data(data::PooledDataVector) = :discrete
 
 # Very long unfactorized integer data should be treated as continuous
-classify_data{T <: Integer}(data::DataVector{T}) =
-    length(data) < 25 ? :discrete : :continuous
+function classify_data{T <: Integer}(data::DataVector{T})
+    length(Set{T}(data...)) <= 20 ? :discrete : :continuous
+end
 
 
 end # module Gadfly
