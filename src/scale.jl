@@ -272,6 +272,7 @@ function apply_scale(scale::ContinuousColorScale,
 
     cmin = ticks[1]
     cmax = ticks[end]
+    cspan = cmax != cmin ? cmax - cmin : 1
 
     for (aes, data) in zip(aess, datas)
         if data.color === nothing
@@ -284,14 +285,14 @@ function apply_scale(scale::ContinuousColorScale,
             if c === NA
                 continue
             end
-            cs[i] = scale.f((convert(Float64, c) - cmin) / (cmax - cmin))
+            cs[i] = scale.f((convert(Float64, c) - cmin) / cspan)
         end
 
         aes.color = DataArray(cs, nas)
 
         color_labels = Dict{Color, String}()
         for tick in ticks
-            r = (tick - cmin) / (cmax - cmin)
+            r = (tick - cmin) / cspan
             color_labels[scale.f(r)] = Gadfly.fmt_float(tick)
         end
 
@@ -301,7 +302,7 @@ function apply_scale(scale::ContinuousColorScale,
             span = j - i
             for step in 1:num_steps
                 k = i + span * (step / (1 + num_steps))
-                r = (k - cmin) / (cmax - cmin)
+                r = (k - cmin) / cspan
                 color_labels[scale.f(r)] = ""
             end
         end

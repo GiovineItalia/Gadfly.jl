@@ -13,6 +13,10 @@
 #   A Float64 vector containing tick marks.
 #
 function optimize_ticks(x_min::Float64, x_max::Float64)
+    if x_min == x_max
+        return [x_min]
+    end
+
     # TODO: these should perhaps be part of the theme
     const Q = {(1,1), (5, 0.9), (2, 0.7), (25, 0.5), (3, 0.2)}
     const n = length(Q)
