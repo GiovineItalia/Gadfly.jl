@@ -7,7 +7,7 @@ using Compose
 
 import Gadfly.Scale, Gadfly.element_aesthetics, Gadfly.default_scales
 import Distributions.Uniform
-import Iterators.chain, Iterators.cycle, Iterators.product
+import Iterators.chain, Iterators.cycle, Iterators.product, Iterators.partition
 
 include("bincount.jl")
 
@@ -210,16 +210,24 @@ function apply_statistic(stat::TickStatistic,
     # all the input values in order.
     if all_int
         ticks = Set{Float64}()
-        add_each!(ticks, chain(in_values))
-        if length(ticks) > 20
+        add_each!(ticks, in_values)
+        ticks = Float64[t for t in ticks]
+        sort!(ticks)
+
+        maxgap = 0
+        for (i, j) in partition(ticks, 2, 1)
+            if j - i > maxgap
+                maxgap = j -i
+            end
+        end
+
+        if length(ticks) > 20 || maxgap > 1
             grids = ticks = Gadfly.optimize_ticks(minval, maxval)
             if ticks[1] == 0
                 ticks[1] = 1
             end
             grids = ticks
         else
-            ticks = Float64[t for t in ticks]
-            sort!(ticks)
             grids = (ticks - 0.5)[2:end]
         end
     else

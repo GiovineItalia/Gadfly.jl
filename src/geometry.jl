@@ -306,14 +306,14 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     default_aes.color = PooledDataArray(Color[theme.default_color])
     aes = Gadfly.inherit(aes, default_aes)
 
-    if aes.x === nothing
-        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x_min, :x_max, :y)
-        Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x_min, :x_max, :y)
-        render_continuous_bar(geom, theme, aes)
-    else
+    if aes.x_min === nothing
         Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x, :y)
         Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x, :y)
         render_discrete_bar(geom, theme, aes)
+    else
+        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x_min, :x_max, :y)
+        Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x_min, :x_max, :y)
+        render_continuous_bar(geom, theme, aes)
     end
 end
 
@@ -392,20 +392,18 @@ function render(geom::RectangularBinGeometry,
     default_aes.color = PooledDataArray(Color[theme.default_color])
     aes = inherit(aes, default_aes)
 
-    if aes.x === nothing
+    if aes.x_min === nothing
+        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x, :y)
+        Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x, :y)
+        render_discrete_rectbin(geom, theme, aes)
+    else
         Gadfly.assert_aesthetics_defined("Geom.bar",
                                          aes, :x_min, :x_max, :y_min, :y_max)
         Gadfly.assert_aesthetics_equal_length("Geom.bar",
                                               aes, :x_min, :x_max,
                                               :y_min, :y_max)
         render_continuous_rectbin(geom, theme, aes)
-    else
-        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x, :y)
-        Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x, :y)
-        render_discrete_rectbin(geom, theme, aes)
     end
-
-
 end
 
 
