@@ -1,9 +1,10 @@
 
 Small/Medium projects:
+ * Discrete color scales with bar charts.
+ * Discrete x/y scales with rectbin charts.
  * Geom.hexbin
  * A proper Layer constructor.
  * Something equivalent to xlim/ylim in ggplot2.
- * Discrete color scales with bar charts.
  * Stacked bar charts.
  * Handle NaN and Inf gracefully. NaN should be filtered out it most cases. We
    could handle Inf/-Inf like ggplot2 does by placing points at the very edge of

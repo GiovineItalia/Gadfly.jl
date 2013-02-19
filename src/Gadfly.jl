@@ -305,6 +305,7 @@ function render(plot::Plot)
     # I. Scales
     aess = Scale.apply_scales(Iterators.distinct(values(scales)), plot.data,
                               [layer.data for layer in plot.layers]...)
+
     # set default labels
     if has(plot.mapping, :color)
         aess[1].color_key_title = string(plot.mapping[:color])

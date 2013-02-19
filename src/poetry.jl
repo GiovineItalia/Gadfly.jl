@@ -88,6 +88,9 @@ function spy(M)
     plot(df, {:x_min => "j", :x_max => :(j + 1),
               :y_min => "i", :y_max => :(i + 1),
               :color => "value"},
+         Scale.x_continuous, Scale.y_continuous,
+         Scale.color_gradient,
          Geom.rectbin, Stat.identity)
 end
+
 

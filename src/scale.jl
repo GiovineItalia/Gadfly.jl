@@ -136,44 +136,50 @@ discretize(values::Vector) = PooledDataArray(values)
 discretize(values::DataVector) = PooledDataArray(values)
 discretize(values::PooledDataVector) = values
 
+
 type DiscreteScaleTransform
     f::Function
 end
 
 
 type DiscreteScale <: Gadfly.ScaleElement
-    var::Symbol
+    vars::Vector{Symbol}
 end
 
 
-element_aesthetics(scale::DiscreteScale) = [scale.var]
+element_aesthetics(scale::DiscreteScale) = scale.vars
 
 
-const x_discrete = DiscreteScale(:x)
-const y_discrete = DiscreteScale(:y)
+const x_discrete = DiscreteScale(x_vars)
+const y_discrete = DiscreteScale(y_vars)
 
 
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                      datas::Gadfly.Data...)
-    label_var = symbol(@sprintf("%s_label", string(scale.var)))
     for (aes, data) in zip(aess, datas)
-        if getfield(data, scale.var) === nothing
-            continue
-        end
+        for var in scale.vars
+            label_var = symbol(@sprintf("%s_label", string(var)))
 
-        disc_data = discretize(getfield(data, scale.var))
-        setfield(aes, scale.var, Int64[r for r in disc_data.refs])
+            if getfield(data, var) === nothing
+                continue
+            end
 
-        # The labeler for discrete scales is a closure over the discretized data.
-        function labeler(i)
-            if 0 < i <= length(levels(disc_data))
-                string(levels(disc_data)[int(i)])
-            else
-                ""
+            disc_data = discretize(getfield(data, var))
+            setfield(aes, var, Int64[r for r in disc_data.refs])
+
+            # The labeler for discrete scales is a closure over the discretized data.
+            function labeler(i)
+                if 0 < i <= length(levels(disc_data))
+                    string(levels(disc_data)[int(i)])
+                else
+                    ""
+                end
+            end
+
+            if has(Set(names(aes)...), label_var)
+                setfield(aes, label_var, labeler)
             end
         end
-
-        setfield(aes, label_var, labeler)
     end
 end
 
@@ -207,7 +213,8 @@ function apply_scale(scale::DiscreteColorScale,
         colored_ds = PooledDataArray(Color[colors[i] for i in ds.refs], colors)
         aes.color = colored_ds
 
-        color_map = {color => label for (label, color) in zip(levels(ds), colors)}
+        color_map = {color => string(label)
+                     for (label, color) in zip(levels(ds), colors)}
         aes.color_label = c -> color_map[c]
         aes.color_key_colors = colors
     end

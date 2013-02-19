@@ -354,6 +354,8 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
 
     for (i, c) in zip(1:n, cycle(aes.color))
         if !isna(c)
+            println(STDERR, (c, aes.x_min[i], aes.x_max[i],
+                             aes.y_min[i], aes.y_max[i]))
             push!(forms, rectangle(aes.x_min[i], aes.y_min[i],
                                   (aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
                                   (aes.y_max[i] - aes.y_min[i])*cy + theme.bar_spacing) <<
