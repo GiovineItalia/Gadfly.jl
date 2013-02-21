@@ -195,8 +195,12 @@ end
 
 
 # Common discrete color scales
-const color_hue = DiscreteColorScale(h -> Gadfly.lab_rainbow(70, 54, 0, h))
-#const color_hue = DiscreteColorScale(h -> distinguishable_colors(h, deuteranopic))
+const color_hue = DiscreteColorScale(
+    h -> distinguishable_colors(h, c -> deuteranopic(c, 0.8),
+                                LCHab(70, 60, 240),
+                                Float64[65, 70, 75, 80, 85],
+                                Float64[0, 50, 60],
+                                Float64[h for h in 0:30:360]))
 
 
 function apply_scale(scale::DiscreteColorScale,
