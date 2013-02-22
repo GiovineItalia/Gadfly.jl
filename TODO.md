@@ -1,7 +1,5 @@
 
 Small/Medium projects:
- * Discrete color scales with bar charts.
- * Discrete x/y scales with rectbin charts.
  * Geom.hexbin
  * A proper Layer constructor.
  * Something equivalent to xlim/ylim in ggplot2.

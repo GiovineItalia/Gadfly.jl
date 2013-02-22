@@ -7,11 +7,6 @@ require("Distributions")
 require("Iterators")
 require("JSON")
 
-# TODO: It's wrong to put this outside the module. What I want to do is have
-# Gadfly export everything that's exported by Compose, to avoid having to do
-# both using(Gadfly) and using(Compose), but I'm not sure if that's possible.
-#using Compose
-
 module Gadfly
 
 using Codecs
@@ -25,6 +20,9 @@ import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
        Base.show
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, @plot, spy
+
+# Re-export some essentials from Compose
+export SVG, draw, inch, mm, px, pt
 
 
 element_aesthetics(::Any) = []

@@ -240,7 +240,7 @@ function render_discrete_bar(geom::BarGeometry,
 
     bar_form = empty_form
     for (x, cys) in bars
-        for (cref, y) in cys
+        for (cref, y) in sort(cys)
             c = aes.color.pool[cref]
             hc = theme.highlight_color(c)
             bar_form |=

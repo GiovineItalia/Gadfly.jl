@@ -133,8 +133,8 @@ end
 
 
 discretize(values::Vector) = PooledDataArray(values)
-discretize(values::DataVector) = PooledDataArray(values)
-discretize(values::PooledDataVector) = values
+discretize(values::DataArray) = PooledDataArray(values)
+discretize(values::PooledDataArray) = values
 
 
 type DiscreteScaleTransform
@@ -212,6 +212,7 @@ function apply_scale(scale::DiscreteColorScale,
         ds = discretize(data.color)
         colors = scale.f(length(levels(ds)))
         colored_ds = PooledDataArray(Color[colors[i] for i in ds.refs], colors)
+        colored_ds = PooledDataArray(colored_ds, colors)
         aes.color = colored_ds
 
         color_map = {color => string(label)
