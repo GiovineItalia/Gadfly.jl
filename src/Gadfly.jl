@@ -22,7 +22,7 @@ import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, @plot, spy
 
 # Re-export some essentials from Compose
-export SVG, draw, inch, mm, px, pt
+export SVG, PNG, PS, PDF, draw, inch, mm, px, pt, color
 
 
 element_aesthetics(::Any) = []
