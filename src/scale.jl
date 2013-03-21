@@ -1,9 +1,10 @@
 
 module Scale
 
-using Gadfly
+using Color
 using Compose
 using DataFrames
+using Gadfly
 
 import Gadfly.element_aesthetics
 
@@ -211,7 +212,7 @@ function apply_scale(scale::DiscreteColorScale,
         end
         ds = discretize(data.color)
         colors = scale.f(length(levels(ds)))
-        colored_ds = PooledDataArray(Color[colors[i] for i in ds.refs], colors)
+        colored_ds = PooledDataArray(ColorValue[colors[i] for i in ds.refs], colors)
         aes.color = colored_ds
 
         color_map = {color => string(label)
@@ -284,7 +285,7 @@ function apply_scale(scale::ContinuousColorScale,
         end
 
         nas = [c === NA for c in data.color]
-        cs = Array(Color, length(data.color))
+        cs = Array(ColorValue, length(data.color))
         for (i, c) in enumerate(data.color)
             if c === NA
                 continue
@@ -294,7 +295,7 @@ function apply_scale(scale::ContinuousColorScale,
 
         aes.color = DataArray(cs, nas)
 
-        color_labels = Dict{Color, String}()
+        color_labels = Dict{ColorValue, String}()
         for tick in ticks
             r = (tick - cmin) / cspan
             color_labels[scale.f(r)] = Gadfly.fmt_float(tick)

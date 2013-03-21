@@ -71,20 +71,17 @@ end
 
 
 # Choose highlight color by darkening the fill color
-function default_highlight_color(fill_color::Color)
+function default_highlight_color(fill_color::ColorValue)
     fill_color = convert(LCHab, fill_color)
     c = LCHab(fill_color.l, fill_color.c, fill_color.h)
-    c.l -= 15
-    c
+    LCHab(c.l - 15, c.c, c.h)
 end
 
 
 # Choose a middle color by darkening the fill color
-function default_middle_color(fill_color::Color)
+function default_middle_color(fill_color::ColorValue)
     fill_color = convert(LCHab, fill_color)
-    c = LCHab(fill_color.l, fill_color.c, fill_color.h)
-    c.l += 40
-    c
+    LCHab(fill_color.l + 40, fill_color.c, fill_color.h)
 end
 
 

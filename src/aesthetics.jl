@@ -5,7 +5,7 @@ type Aesthetics
     x::Union(Nothing, Vector{Float64}, Vector{Int64})
     y::Union(Nothing, Vector{Float64}, Vector{Int64})
     size::Maybe(Vector{Measure})
-    color::Maybe(AbstractDataVector{Color})
+    color::Maybe(AbstractDataVector{ColorValue})
     label::Maybe(PooledDataVector{UTF8String})
 
     x_min::Union(Nothing, Vector{Float64}, Vector{Int64})
@@ -27,7 +27,7 @@ type Aesthetics
     xgrid::Maybe(Vector{Float64})
     ygrid::Maybe(Vector{Float64})
 
-    color_key_colors::Maybe(Vector{Color})
+    color_key_colors::Maybe(Vector{ColorValue})
     color_key_title::Maybe(String)
     color_key_continuous::Maybe(Bool)
 

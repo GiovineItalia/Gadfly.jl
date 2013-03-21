@@ -1,8 +1,9 @@
 
 module Guide
 
-using Gadfly
+using Color
 using Compose
+using Gadfly
 
 import Gadfly.render
 
@@ -47,8 +48,8 @@ const colorkey = ColorKey()
 
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
-function render_discrete_color_key(colors::Vector{Color},
-                                   labels::Dict{Color, String},
+function render_discrete_color_key(colors::Vector{ColorValue},
+                                   labels::Dict{ColorValue, String},
                                    title_canvas::Canvas,
                                    title_width::Measure,
                                    theme::Gadfly.Theme)
@@ -95,8 +96,8 @@ end
 
 # A helper for render(::ColorKey) for rendering guides for continuous color
 # scales.
-function render_continuous_color_key(colors::Vector{Color},
-                                   labels::Dict{Color, String},
+function render_continuous_color_key(colors::Vector{ColorValue},
+                                   labels::Dict{ColorValue, String},
                                    title_canvas::Canvas,
                                    title_width::Measure,
                                    theme::Gadfly.Theme)
@@ -167,9 +168,9 @@ end
 
 function render(guide::ColorKey, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    used_colors = Set{Color}()
-    colors = Array(Color, 0) # to preserve ordering
-    labels = Dict{Color, Set{String}}()
+    used_colors = Set{ColorValue}()
+    colors = Array(ColorValue, 0) # to preserve ordering
+    labels = Dict{ColorValue, Set{String}}()
 
     continuous_guide = false
     guide_title = nothing
@@ -203,7 +204,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         guide_title = ""
     end
 
-    pretty_labels = Dict{Color, String}()
+    pretty_labels = Dict{ColorValue, String}()
     for (color, label) in labels
         pretty_labels[color] = join(labels[color], ", ")
     end

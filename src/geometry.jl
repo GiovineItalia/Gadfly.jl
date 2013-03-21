@@ -1,9 +1,10 @@
 
 module Geom
 
-using Gadfly
+using Color
 using Compose
 using DataFrames
+using Gadfly
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
 import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit
@@ -70,12 +71,12 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(Color[theme.default_color])
+    default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     default_aes.size = Measure[theme.default_point_size]
     aes = inherit(aes, default_aes)
 
     # organize by color
-    points = Dict{Color, Array{Tuple,1}}()
+    points = Dict{ColorValue, Array{Tuple,1}}()
     for (x, y, c, s) in zip(aes.x, aes.y,
                             cycle(aes.color),
                             cycle(aes.size))
@@ -175,7 +176,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(Color[theme.default_color])
+    default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
 
     if length(aes.color) == 1
@@ -183,7 +184,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                stroke(aes.color[1])
     else
         # group points by color
-        points = Dict{Color, Array{(Float64, Float64),1}}()
+        points = Dict{ColorValue, Array{(Float64, Float64),1}}()
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
             if !has(points, c)
                 points[c] = Array((Float64, Float64),0)
@@ -303,7 +304,7 @@ end
 #
 function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(Color[theme.default_color])
+    default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = Gadfly.inherit(aes, default_aes)
 
     if aes.x_min === nothing
@@ -343,7 +344,7 @@ function render_continuous_rectbin(geom::RectangularBinGeometry,
             push!(forms, rectangle(aes.x_min[i], aes.y_min[i],
                                   (aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
                                   (aes.y_max[i] - aes.y_min[i])*cy + theme.bar_spacing) <<
-                             fill(color(c)) << svgclass("geometry"))
+                             fill(c) << svgclass("geometry"))
         end
     end
 
@@ -363,7 +364,7 @@ function render_discrete_rectbin(geom::RectangularBinGeometry,
         if !isna(c)
             x, y = aes.x[i], aes.y[i]
             push!(forms, compose(rectangle(x - 0.5, y - 0.5, 1.0, 1.0),
-                                 fill(color(c)),
+                                 fill(c),
                                  svgclass("geometry")))
         end
     end
@@ -389,7 +390,7 @@ function render(geom::RectangularBinGeometry,
                 aes::Gadfly.Aesthetics)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(Color[theme.default_color])
+    default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
 
     if aes.x_min === nothing
@@ -432,7 +433,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                                      :upper_hinge, :upper_fence, :outliers)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(Color[theme.default_color])
+    default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     default_aes.x = Float64[1]
     aes = inherit(aes, default_aes)
 
