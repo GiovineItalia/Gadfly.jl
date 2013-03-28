@@ -407,10 +407,10 @@ const default_aes_scales = {
                         :label => Scale.label}}
 
 # Determine whether the input is discrete or continuous.
-classify_data(data::DataVector{Float64}) = :continuous
-classify_data(data::DataVector{Float32}) = :continuous
-classify_data(data::DataVector) = :discrete
-classify_data(data::PooledDataVector) = :discrete
+classify_data{N}(data::DataArray{Float64, N}) = :continuous
+classify_data{N}(data::DataArray{Float32, N}) = :continuous
+classify_data(data::DataArray) = :discrete
+classify_data(data::PooledDataArray) = :discrete
 
 # Very long unfactorized integer data should be treated as continuous
 function classify_data{T <: Integer}(data::DataVector{T})
