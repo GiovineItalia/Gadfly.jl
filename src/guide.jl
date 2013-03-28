@@ -261,7 +261,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
     # grid lines
     grid_lines = compose(canvas(),
-                         [lines((t, 0h), (t, 1h)) for (t, _) in grids]...,
+                         [lines((t, 0h), (t, 1h)) for t in grids]...,
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width))
 
@@ -311,7 +311,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
 
     # grid lines
     grid_lines = compose(canvas(),
-                         [lines((0w, t), (1w, t)) for (t, _) in grids]...,
+                         [lines((0w, t), (1w, t)) for t in grids]...,
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width))
 
