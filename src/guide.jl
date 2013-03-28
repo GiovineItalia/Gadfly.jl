@@ -80,9 +80,12 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                                fill(theme.minor_label_color))
         swatch = swatch_square | swatch_label
 
-        swatch <<= svgid(@sprintf("color_key_%s", label))
-        swatch <<= onclick(@sprintf("toggle_color_group('%s')", label))
-        swatch <<= svglink("#")
+        color_class = @sprintf("color_%s", escape_string(label))
+        swatch <<= svgclass(@sprintf("guide %s", color_class))
+
+        swatch <<= d3embed(@sprintf(".on(\"click\", guide_toggle_color(\"%s\"))",
+                                    color_class))
+
         swatch_canvas <<= swatch
     end
     swatch_canvas <<= font(theme.minor_label_font) |

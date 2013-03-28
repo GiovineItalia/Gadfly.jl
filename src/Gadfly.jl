@@ -16,7 +16,7 @@ using DataFrames
 using JSON
 
 import Iterators
-import Compose.draw, Compose.hstack, Compose.vstack, Compose.write_data_frame
+import Compose.draw, Compose.hstack, Compose.vstack
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
        Base.show, Base.getindex
 
@@ -30,15 +30,6 @@ typealias ColorOrNothing Union(ColorValue, Nothing)
 
 element_aesthetics(::Any) = []
 default_scales(::Any) = []
-
-
-# Javascript library embedded in every SVG produced by Gadfly.
-const jsdynamicslib =
-    @sprintf("<script type=\"application/ecmascript\"><![CDATA[\n%s\n]]></script>",
-             readall(open(joinpath(Pkg.dir("Gadfly"), "src", "dynamics.js"))))
-
-# Filter effects and other definitions used in SVG output.
-const globalsvgdefs = readall(open(joinpath(Pkg.dir("Gadfly"), "src", "defs.xml")))
 
 
 abstract Element
@@ -347,9 +338,6 @@ function render(plot::Plot)
     end
 
     canvas = Guide.layout_guides(plot_canvas, guide_canvases...)
-
-    # Standard includes for SVGs
-    canvas <<= svgembed(jsdynamicslib * "\n" * globalsvgdefs)
 
     # TODO: This is a kludge. Axis labels sometimes extend past the edge of the
     # canvas.

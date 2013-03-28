@@ -69,47 +69,6 @@ function getindex(aes::Aesthetics, i::Integer, j::String)
 end
 
 
-# Serialization to JSON for the Compose D3 backend.
-function write_data_frame(img::D3, aes::Aesthetics)
-    println("WRITING AESTHETICS")
-    usednames = Symbol[]
-    for name in Aesthetics.names
-        if typeof(getfield(aes, name)) <: AbstractArray
-            push!(usednames, name)
-        end
-    end
-
-    if isempty(usednames)
-        return "[]"
-    end
-
-    n = length(getfield(aes, usednames[1]))
-    m = length(usednames)
-
-    write(img.out, "  [")
-    for i in 1:n
-        if i > 1
-            write(img.out, "   ")
-        end
-        write(img.out, "{")
-        for j in 1:m
-            println((i, usednames[j]))
-            @printf(img.out, "\"%s\": %s",
-                    usednames[j],
-                    to_json(getfield(aes, usednames[j])[i]))
-            if j < m
-                write(img.out, ", ")
-            end
-        end
-        write(img.out, "}")
-        if i < n
-            write(img.out, ",\n")
-        end
-    end
-    write(img.out, "]")
-end
-
-
 # Return the set of variables that are non-nothing.
 function defined_aesthetics(aes::Aesthetics)
     vars = Set{Symbol}()
