@@ -1,5 +1,5 @@
 
-# Introducing Gadfly
+# gadfly
 
 Gadfly is a system for plotting and visualization based largely on Hadley
 Wickhams's [ggplot2](http://ggplot2.org/) for R, and Leland Wilkinson's book

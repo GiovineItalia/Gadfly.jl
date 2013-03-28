@@ -49,10 +49,10 @@ end
 # Return:
 #   Array of properties to be composed into the moused over element.
 #
-function mouseover_properties(geometry_id, annotation_id)
-    {onmouseover("show_annotation('$(annotation_id)');present_geometry(['$(geometry_id)'])"),
-     onmouseout("hide_annotation('$(annotation_id)'); unpresent_geometry()")}
-end
+#function mouseover_properties(geometry_id, annotation_id)
+    #{onmouseover("show_annotation('$(annotation_id)');present_geometry(['$(geometry_id)'])"),
+     #onmouseout("hide_annotation('$(annotation_id)'); unpresent_geometry()")}
+#end
 
 
 # Generate a form for a point geometry.
@@ -75,75 +75,83 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     default_aes.size = Measure[theme.default_point_size]
     aes = inherit(aes, default_aes)
 
-    # organize by color
-    points = Dict{ColorValue, Array{Tuple,1}}()
-    for (x, y, c, s) in zip(aes.x, aes.y,
-                            cycle(aes.color),
-                            cycle(aes.size))
-        if !has(points, c)
-            points[c] = Array(Tuple,0)
-        end
-        push!(points[c], (x, y, s))
-    end
+    circle(aes.x, aes.y, aes.size)
+    # How do we set color now?
 
-    n = 0
-    for (c, xys) in points
-        for (x, y, s) in xys
-            n += 1
-        end
-    end
+    ## organize by color
+    #points = Dict{ColorValue, Array{Tuple,1}}()
+    #for (x, y, c, s) in zip(aes.x, aes.y,
+                            #cycle(aes.color),
+                            #cycle(aes.size))
+        #if !has(points, c)
+            #points[c] = Array(Tuple,0)
+        #end
+        #push!(points[c], (x, y, s))
+    #end
 
-    point_form = empty_form
-    annotation_form = empty_form
-    bounding_rect_form = empty_form
+    #n = 0
+    #for (c, xys) in points
+        #for (x, y, s) in xys
+            #n += 1
+        #end
+    #end
 
-    for (c, xys) in points
-        group_form = empty_form
-        for (x, y, s) in xys
-            geometry_id = Gadfly.unique_svg_id()
-            annotation_id = Gadfly.unique_svg_id()
+    #point_form = empty_form
+    #annotation_form = empty_form
+    #bounding_rect_form = empty_form
 
-            group_form |= circle(x, y, s) << svgid(geometry_id) <<
-                                             svgclass("geometry")
+    #for (c, xys) in points
+        #group_form = empty_form
+        #for (x, y, s) in xys
+            #geometry_id = Gadfly.unique_svg_id()
+            #annotation_id = @sprintf("%s-annotation", geometry_id)
 
-            # Points tend to be too small to easily mouse over, so we instead
-            # use an invisible box that is a bit larger than the point itself.
-            bounding_rect =
-                compose(rectangle(x*cx - s - 1mm, y*cy - s - 1mm,
-                                  2*s + 2mm, 2*s + 2mm),
-                        mouseover_properties(geometry_id, annotation_id)...)
+            #group_form |= circle(x, y, s) << svgid(geometry_id) <<
+                                             #svgclass("geometry")
 
-            msg = "$(aes.x_label(x)), $(aes.y_label(y))"
-            msgwidth, msgheight = text_extents(theme.minor_label_font,
-                                               theme.minor_label_font_size,
-                                               msg)
-            bounding_rect_form |= bounding_rect
-            annotation_form |=
-                 text(x, y*cy - s - 1mm, msg, hcenter, vbottom) <<
-                    svgid(annotation_id)
-        end
+            ## Points tend to be too small to easily mouse over, so we instead
+            ## use an invisible box that is a bit larger than the point itself.
+            #bounding_rect =
+                #compose(rectangle(x*cx - s - 1mm, y*cy - s - 1mm,
+                                  #2*s + 2mm, 2*s + 2mm),
+                        #svgattribute("onmouseover", "show_annotation('$(geometry_id)')"),
+                        #svgattribute("onmouseout", "hide_annotation('$(geometry_id)')"))
 
-        group_form <<=
-            fill(c) |
-            stroke(theme.highlight_color(c)) |
-            svgclass(@sprintf("color_group_%s", aes.color_label(c)))
-        point_form |= group_form
-    end
+            #msg = "$(aes.x_label(x)), $(aes.y_label(y))"
+            #msgwidth, msgheight = text_extents(theme.minor_label_font,
+                                               #theme.minor_label_font_size,
+                                               #msg)
+            #bounding_rect_form |= bounding_rect
+            #annotation_form |=
+                #combine(lines((0w, y), (1w, y)),
+                        #lines((x, 0h), (x, 1h))) << svgid(annotation_id)
 
-    bounding_rect_form <<= opacity(0) | stroke(nothing)
+                 ##text(x, y*cy - s - 1mm, msg, hcenter, vbottom) <<
+                    ##svgid(annotation_id)
+        #end
 
-    point_form <<= linewidth(theme.highlight_width)
+        #group_form <<=
+            #fill(c) |
+            #stroke(theme.highlight_color(c)) |
+            #svgclass(@sprintf("color_group_%s", aes.color_label(c)))
+        #point_form |= group_form
+    #end
 
-    annotation_form = compose(annotation_form,
-                              font(theme.minor_label_font),
-                              fontsize(theme.minor_label_font_size),
-                              stroke(nothing),
-                              visible(false))
+    #bounding_rect_form <<= opacity(0) | stroke(nothing)
 
-    compose(canvas(InheritedUnits(), Order(1)),
-            (canvas(InheritedUnits()), bounding_rect_form),
-            (canvas(InheritedUnits()), annotation_form),
-            (canvas(InheritedUnits()), point_form))
+    #point_form <<= linewidth(theme.highlight_width)
+
+    #annotation_form = compose(annotation_form,
+                              #font(theme.minor_label_font),
+                              #fontsize(theme.minor_label_font_size),
+                              #stroke(theme.grid_color_focused),
+                              #linewidth(theme.grid_line_width),
+                              #visible(false))
+
+    #compose(canvas(InheritedUnits(), Order(1)),
+            #(canvas(InheritedUnits(), Order(2)), bounding_rect_form),
+            #(canvas(InheritedUnits(), Order(0)), annotation_form),
+            #(canvas(InheritedUnits(), Order(1)), point_form))
 end
 
 
@@ -272,8 +280,7 @@ function render_continuous_bar(geom::BarGeometry,
 
         bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
                                       (x_max - x_min)*cx - theme.bar_spacing, y),
-                            svgid(geometry_id), svgclass("geometry"),
-                            mouseover_properties(geometry_id, annotation_id)...)
+                            svgid(geometry_id), svgclass("geometry"))
 
         annotation_form |=
             text((x_min + x_max) / 2, y*cy - 1mm,

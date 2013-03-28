@@ -13,12 +13,12 @@ using Codecs
 using Color
 using Compose
 using DataFrames
+using JSON
 
 import Iterators
-import JSON
-import Compose.draw, Compose.hstack, Compose.vstack
+import Compose.draw, Compose.hstack, Compose.vstack, Compose.write_data_frame
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
-       Base.show
+       Base.show, Base.getindex
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, @plot, spy
 

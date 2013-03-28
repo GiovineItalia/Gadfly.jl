@@ -24,19 +24,22 @@ function toggle_color_group(name)
 
 
 // Turn on a possibily hidden annotation.
-function show_annotation(id)
+function show_annotation(geom_id)
 {
-    annot = document.getElementById(id)
-    annot.setAttribute('visibility', 'visible')
+    annot_id = geom_id + "-annotation";
+    annot = document.getElementById(annot_id);
+    annot.setAttribute('visibility', 'visible');
+    present_geometry([geom_id]);
 }
 
 
 // Turn off a possibly hidden annotation.
-function hide_annotation(id)
+function hide_annotation(geom_id)
 {
-
-    annot = document.getElementById(id)
+    annot_id = geom_id + "-annotation"
+    annot = document.getElementById(annot_id)
     annot.setAttribute('visibility', 'hidden')
+    unpresent_geometry();
 }
 
 

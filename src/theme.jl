@@ -21,6 +21,9 @@ type Theme
     # Grid line color.
     grid_color::ColorOrNothing
 
+    # Grid lines for focused item.
+    grid_color_focused::ColorOrNothing
+
     # Width of grid lines
     grid_line_width::Measure
 
@@ -85,15 +88,16 @@ function default_middle_color(fill_color::ColorValue)
 end
 
 
-const default_font_desc = "Source Sans Pro,PT Sans,Helvetica Neue,Helvetica,sans"
+const default_font_desc = "PT Sans,Helvetica Neue,Helvetica,sans"
 
 const default_theme =
     Theme(color("steel blue"),      # default_color
           0.5mm,                    # default_point_size
           0.4mm,                    # line_width
-          color("#f5f5f5"),         # panel_fill
-          color("#f2f2f2"),         # panel_stroke
-          color("white"),           # grid_color
+          color("#fcfcfc"),         # panel_fill
+          color("#f4f4f8"),         # panel_stroke
+          color("#f4f4f8"),         # grid_color
+          color("#f0f0f0"),         # grid_color_focused
           0.3mm,                    # grid line width
           default_font_desc,        # minor_label_font
           9pt,                      # minor_label_font_size
