@@ -36,3 +36,29 @@ var guide_toggle_color = function(colorclass) {
 }
 
 
+// Construct a callback used to toggle highly-visibility grid lines.
+//
+// Args:
+//   color: Faded-in/faded-out color, respectively.
+//
+// Returns:
+//   Callback function.
+//
+var guide_background_mouseover = function(color) {
+    return (function () {
+        d3.selectAll(".gridlines")
+          .transition()
+          .duration(250)
+          .attr("stroke", color);
+    });
+}
+
+var guide_background_mouseout = function(color) {
+    return (function () {
+        d3.selectAll(".gridlines")
+          .transition()
+          .duration(250)
+          .attr("stroke", color);
+    });
+}
+

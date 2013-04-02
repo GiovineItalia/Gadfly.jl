@@ -4,6 +4,7 @@ module Guide
 using Color
 using Compose
 using Gadfly
+using JSON
 
 import Gadfly.render
 
@@ -33,7 +34,11 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
     back = compose(canvas(Order(-1)), rectangle(),
                 stroke(theme.panel_stroke),
-                fill(theme.panel_fill))
+                fill(theme.panel_fill),
+                d3embed(@sprintf(".on(\"mouseover\", guide_background_mouseover(%s))",
+                        to_json(theme.highlight_color(theme.grid_color)))),
+                d3embed(@sprintf(".on(\"mouseout\", guide_background_mouseout(%s))",
+                        to_json(theme.grid_color))))
 
     {(back, under_guide_position)}
 end
@@ -267,7 +272,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     grid_lines = compose(canvas(),
                          [lines((t, 0h), (t, 1h)) for t in grids]...,
                          stroke(theme.grid_color),
-                         linewidth(theme.grid_line_width))
+                         linewidth(theme.grid_line_width),
+                         svgclass("guide gridlines"))
 
     # tick labels
 
@@ -317,7 +323,8 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     grid_lines = compose(canvas(),
                          [lines((0w, t), (1w, t)) for t in grids]...,
                          stroke(theme.grid_color),
-                         linewidth(theme.grid_line_width))
+                         linewidth(theme.grid_line_width),
+                         svgclass("guide gridlines"))
 
     # tick labels
     (width, _) = text_extents(theme.minor_label_font,
