@@ -1,5 +1,4 @@
 
-
 require("Codecs")
 require("Compose")
 require("DataFrames")
@@ -381,8 +380,6 @@ include("coord.jl")
 include("geometry.jl")
 include("guide.jl")
 include("statistics.jl")
-
-import Scale, Coord, Geom, Guide, Stat
 
 
 # All aesthetics must have a scale. If none is given, we use a default.
