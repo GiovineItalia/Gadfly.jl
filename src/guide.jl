@@ -32,13 +32,11 @@ const background = PanelBackground()
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    back = compose(canvas(Order(-1)), rectangle(),
-                stroke(theme.panel_stroke),
-                fill(theme.panel_fill),
-                d3embed(@sprintf(".on(\"mouseover\", guide_background_mouseover(%s))",
-                        to_json(theme.highlight_color(theme.grid_color)))),
-                d3embed(@sprintf(".on(\"mouseout\", guide_background_mouseout(%s))",
-                        to_json(theme.grid_color))))
+    back = compose(canvas(Order(-1)),
+                   rectangle(),
+                   svgclass("guide background"),
+                   stroke(theme.panel_stroke),
+                   fill(theme.panel_fill))
 
     {(back, under_guide_position)}
 end
@@ -198,7 +196,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
 
         for color in aes.color_key_colors
             label = aes.color_label(color)
-            if !has(used_colors, color)
+            if !contains(used_colors, color)
                 add!(used_colors, color)
                 push!(colors, color)
                 labels[color] = Set{String}(label)
@@ -273,7 +271,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                          [lines((t, 0h), (t, 1h)) for t in grids]...,
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width),
-                         svgclass("guide gridlines"))
+                         svgclass("guide xgridlines"))
 
     # tick labels
 
@@ -289,7 +287,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                           stroke(nothing),
                           fill(theme.minor_label_color),
                           font(theme.minor_label_font),
-                          fontsize(theme.minor_label_font_size))
+                          fontsize(theme.minor_label_font_size),
+                          svgclass("guide xlabels"))
 
     {(grid_lines, under_guide_position),
      (tick_labels, bottom_guide_position)}
@@ -324,7 +323,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                          [lines((0w, t), (1w, t)) for t in grids]...,
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width),
-                         svgclass("guide gridlines"))
+                         svgclass("guide ygridlines"))
 
     # tick labels
     (width, _) = text_extents(theme.minor_label_font,
@@ -339,7 +338,8 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                           stroke(nothing),
                           fill(theme.minor_label_color),
                           font(theme.minor_label_font),
-                          fontsize(theme.minor_label_font_size))
+                          fontsize(theme.minor_label_font_size),
+                          svgclass("guide ylabels"))
 
     {(grid_lines, under_guide_position),
      (tick_labels, left_guide_position)}
@@ -404,6 +404,7 @@ end
 #   A new canvas containing the plot with guides layed out in the specified
 #   manner.
 function layout_guides(plot_canvas::Canvas,
+                       theme::Gadfly.Theme,
                        guides::(Canvas, GuidePosition)...)
 
     # Every guide is updated to use the plot's unit box.
@@ -463,7 +464,13 @@ function layout_guides(plot_canvas::Canvas,
     compose(canvas(),
             (canvas(l, t, pw, ph),
                 {canvas(InheritedUnits(), Order(-1)), under_guides...},
-                (canvas(InheritedUnits(), Order(1)),  plot_canvas)),
+                (canvas(InheritedUnits(), Order(1)),  plot_canvas),
+                svgid("panel"),
+                d3embed(@sprintf(".on(\"mouseover\", guide_background_mouseover(%s))",
+                        to_json(theme.highlight_color(theme.grid_color)))),
+                d3embed(@sprintf(".on(\"mouseout\", guide_background_mouseout(%s))",
+                        to_json(theme.grid_color))),
+                d3embed(".call(drag_behavior(t))")),
             top_guides, right_guides, bottom_guides, left_guides)
 end
 

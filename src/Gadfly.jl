@@ -185,11 +185,11 @@ function render(plot::Plot)
 
     used_aesthetics = Set{Symbol}()
     for layer in plot.layers
-        add_each!(used_aesthetics, element_aesthetics(layer.geom))
+        union!(used_aesthetics, element_aesthetics(layer.geom))
     end
 
     for stat in layer_stats
-        add_each!(used_aesthetics, element_aesthetics(stat))
+        union!(used_aesthetics, element_aesthetics(stat))
     end
 
     defined_unused_aesthetics = Set(keys(plot.mapping)...) - used_aesthetics
@@ -231,12 +231,12 @@ function render(plot::Plot)
 
     # Assign scales to mapped aesthetics first.
     for var in unscaled_aesthetics
-        if !has(plot.mapping, var)
+        if !haskey(plot.mapping, var)
             continue
         end
 
         t = classify_data(getfield(plot.data, var))
-        if has(default_aes_scales[t], var)
+        if haskey(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
             scale_aes = Set(element_aesthetics(scale)...)
             for var in scale_aes
@@ -246,11 +246,11 @@ function render(plot::Plot)
     end
 
     for var in unscaled_aesthetics
-        if has(plot.mapping, var) || has(scales, var)
+        if haskey(plot.mapping, var) || haskey(scales, var)
             continue
         end
 
-        if has(default_aes_scales[:discrete], var)
+        if haskey(default_aes_scales[:discrete], var)
             scale = default_aes_scales[:discrete][var]
             scale_aes = Set(element_aesthetics(scale)...)
             for var in scale_aes
@@ -274,23 +274,23 @@ function render(plot::Plot)
     push!(statistics, Stat.y_ticks)
 
     function mapped_and_used(vs)
-        any([has(plot.mapping, v) && has(used_aesthetics, v) for v in vs])
+        any([haskey(plot.mapping, v) && contains(used_aesthetics, v) for v in vs])
     end
 
     function choose_name(vs)
         for v in vs
-            if has(plot.mapping, v)
+            if haskey(plot.mapping, v)
                 return string(plot.mapping[v])
             end
         end
         ""
     end
 
-    if mapped_and_used(Scale.x_vars) && !has(guides, Guide.XLabel)
+    if mapped_and_used(Scale.x_vars) && !haskey(guides, Guide.XLabel)
         guides[Guide.XLabel] =  Guide.XLabel(choose_name(Scale.x_vars))
     end
 
-    if mapped_and_used(Scale.y_vars) && !has(guides, Guide.YLabel)
+    if mapped_and_used(Scale.y_vars) && !haskey(guides, Guide.YLabel)
         guides[Guide.YLabel] = Guide.YLabel(choose_name(Scale.y_vars))
     end
 
@@ -337,7 +337,18 @@ function render(plot::Plot)
         append!(guide_canvases, render(guide, plot.theme, aess))
     end
 
-    canvas = Guide.layout_guides(plot_canvas, guide_canvases...)
+    canvas = Guide.layout_guides(plot_canvas, plot.theme, guide_canvases...)
+
+    canvas <<= d3hook(
+        """
+        g.append("defs")
+         .append("svg:clipPath")
+         .attr("id", "panel_clip")
+         .append("svg:path")
+         .attr("d",
+             d3.select(".guide.background").select("path").attr("d"));
+        d3.select("#panel").attr("clip-path", "url(#panel_clip)");
+        """)
 
     # TODO: This is a kludge. Axis labels sometimes extend past the edge of the
     # canvas.
@@ -370,7 +381,7 @@ include("geometry.jl")
 include("guide.jl")
 include("statistics.jl")
 
-import Scale, Coord, Geom, Guide, Stat
+import .Scale, .Coord, .Geom, .Guide, .Stat
 
 
 # All aesthetics must have a scale. If none is given, we use a default.

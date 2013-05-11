@@ -60,11 +60,17 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     default_aes.size = Measure[theme.default_point_size]
     aes = inherit(aes, default_aes)
 
+    lw0 = convert(Compose.SimpleMeasure{Compose.MillimeterUnit}, theme.line_width)
+    lw1 = 10 * lw0
     compose(circle(aes.x, aes.y, aes.size),
             fill(aes.color),
             stroke([theme.highlight_color(c) for c in aes.color]),
             linewidth(theme.line_width),
-            svgclass([@sprintf("geom color_%s", escape_string(aes.color_label(c)))
+            d3embed(@sprintf(".on(\"mouseover\", geom_point_mouseover(%0.2f), false)",
+                             lw1.value)),
+            d3embed(@sprintf(".on(\"mouseout\", geom_point_mouseover(%0.2f), false)",
+                             lw0.value)),
+            svgclass([@sprintf("geometry color_%s", escape_string(aes.color_label(c)))
                       for c in aes.color]))
 end
 

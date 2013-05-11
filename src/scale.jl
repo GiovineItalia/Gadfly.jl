@@ -125,7 +125,7 @@ function apply_scale(scale::ContinuousScale,
             end
 
             setfield(aes, var, ds)
-            if has(Set(names(aes)...), label_var)
+            if contains(Set(names(aes)...), label_var)
                 setfield(aes, label_var, scale.trans.label)
             end
         end
@@ -211,7 +211,7 @@ function apply_scale(scale::DiscreteColorScale,
             continue
         end
         ds = discretize(data.color)
-        colors = scale.f(length(levels(ds)))
+        colors = convert(Vector{ColorValue}, scale.f(length(levels(ds))))
         colored_ds = PooledDataArray(ColorValue[colors[i] for i in ds.refs], colors)
         aes.color = colored_ds
 
