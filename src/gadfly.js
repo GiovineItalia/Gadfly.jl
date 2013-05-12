@@ -104,12 +104,15 @@ var drag_behavior = function(t) {
                 return "translate(" + [0.0, t.y] + ")";
             });
 
-
         // TODO:
-        // Gridlines: we need to handle x and y gridlines differently.
-        // Or, maybe this is a dead end.
-        // Eventually we are going to have to figure out how to recompute grid
-        // lines.
+        // Clip tick labels.
+        //  How?
+        //  This would be nicer if we just added a Clip boolean to the canvas
+        //  constructor. Then any canvas could clip its contents. Ok. Let's do
+        //  that.
+        //
+        // Off-screen grid lines.
+        // Pan limits.
     });
 }
 

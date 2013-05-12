@@ -417,8 +417,8 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
     end
 
     compose(canvas(InheritedUnits()),
-            (canvas(InheritedUnits()), combine(forms...)),
-            (canvas(InheritedUnits(), Order(1)), combine(middle_forms...)),
+            (canvas(units_inherited=true), combine(forms...)),
+            (canvas(units_inherited=true, order=1), combine(middle_forms...)),
             svgclass("geometry"))
 end
 

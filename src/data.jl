@@ -12,12 +12,17 @@ type Data
     ytick
     xtick_labels
     ytick_labels
+    x_viewmin
+    x_viewmax
+    y_viewmin
+    y_viewmax
     size
     color
     label
 
     function Data()
         new(nothing, nothing, nothing, nothing,
+            nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing)

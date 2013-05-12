@@ -339,17 +339,6 @@ function render(plot::Plot)
 
     canvas = Guide.layout_guides(plot_canvas, plot.theme, guide_canvases...)
 
-    canvas <<= d3hook(
-        """
-        g.append("defs")
-         .append("svg:clipPath")
-         .attr("id", "panel_clip")
-         .append("svg:path")
-         .attr("d",
-             d3.select(".guide.background").select("path").attr("d"));
-        d3.select("#panel").attr("clip-path", "url(#panel_clip)");
-        """)
-
     # TODO: This is a kludge. Axis labels sometimes extend past the edge of the
     # canvas.
     pad(canvas, 5mm)

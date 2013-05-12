@@ -32,7 +32,7 @@ const background = PanelBackground()
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    back = compose(canvas(Order(-1)),
+    back = compose(canvas(order=-1),
                    rectangle(),
                    svgclass("guide background"),
                    stroke(theme.panel_stroke),
@@ -69,7 +69,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
     swatch_size = 1cy - swatch_padding
     swatch_canvas = canvas(0w, 0h + title_canvas.box.height,
                            1w, n * (entry_height + swatch_padding),
-                           Units(0, 0, 1, n))
+                           unit_box=Units(0, 0, 1, n))
     for (i, c) in enumerate(colors)
         swatch_square = compose(rectangle(0, i - 1, swatch_size, swatch_size),
                                 fill(c),
@@ -281,7 +281,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     #padding = 1mm
     padding = 0mm
 
-    tick_labels = compose(canvas(0, 0, 1w, height + 2padding, Order(-1)),
+    tick_labels = compose(canvas(0, 0, 1w, height + 2padding, order=-1),
                           [text(tick, 1h - padding, label, hcenter, vbottom)
                            for (tick, label) in ticks]...,
                           stroke(nothing),
@@ -332,7 +332,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     padding = 1mm
     width += 2padding
 
-    tick_labels = compose(canvas(0, 0, width, 1cy, Order(-1)),
+    tick_labels = compose(canvas(0, 0, width, 1cy, order=-1),
                           [text(width - padding, t, label, hright, vcenter)
                            for (t, label) in ticks]...,
                           stroke(nothing),
@@ -382,7 +382,7 @@ function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aestheti
                                              guide.label)
     padding = 2mm
     c = compose(canvas(0, 0, text_height + 2padding, 1cy,
-                       Rotation(-0.5pi, 0.5w, 0.5h)),
+                       rotation=Rotation(-0.5pi, 0.5w, 0.5h)),
                 text(0.5w, 0.5h, guide.label, hcenter, vcenter),
                 stroke(nothing),
                 fill(theme.major_label_color),
@@ -457,15 +457,23 @@ function layout_guides(plot_canvas::Canvas,
     ph = 1cy - t - b # plot height
 
     top_guides    = set_box(top_guides,    BoundingBox(l, 0, pw, t))
+        # TODO: clip path
+
     right_guides  = set_box(right_guides,  BoundingBox(l + pw, t, r, ph))
-    bottom_guides = set_box(bottom_guides, BoundingBox(l, t + ph, pw, b))
-    left_guides   = set_box(left_guides,   BoundingBox(0, t, l, ph))
+        # TODO: clip path
+
+    bottom_guides = set_box(bottom_guides, BoundingBox(l, t + ph, pw, b)) <<
+                      clip((0cx, 1cy - b), (1cx, 1cy - b),
+                           (1cx, 1cy), (0cx, 1cy))
+
+    left_guides   = set_box(left_guides,   BoundingBox(0, t, l, ph)) <<
+                      clip((0cx, 0cy), (0cx + l, 0cy),
+                           (0cx + l, 1cy), (0cx, 1cy))
 
     compose(canvas(),
             (canvas(l, t, pw, ph),
-                {canvas(InheritedUnits(), Order(-1)), under_guides...},
-                (canvas(InheritedUnits(), Order(1)),  plot_canvas),
-                svgid("panel"),
+                {canvas(units_inherited=true, order=-1, clip=true), under_guides...},
+                (canvas(units_inherited=true, order=1, clip=true),  plot_canvas),
                 d3embed(@sprintf(".on(\"mouseover\", guide_background_mouseover(%s))",
                         to_json(theme.highlight_color(theme.grid_color)))),
                 d3embed(@sprintf(".on(\"mouseout\", guide_background_mouseout(%s))",
