@@ -81,35 +81,103 @@ var geom_point_mouseover = function(lw) {
 };
 
 
-// Construct a callback used for dragbehavior.
+
+// Translate and scale geometry while trying to maintain scale invariance for
+// certain ellements.
 //
 // Args:
-//   t: A transform of the form {"x": x, "y": x} to close arround.
+//   t: A transform of the form {"x": x, "y": y, "scale": scale}
+//   old_scale: The scaling factor applied prior to t.scale.
 //
-// Returns:
-//   A drag behavior.
-//
-var drag_behavior = function(t) {
-    return d3.behavior.drag()
-      .on("drag", function(d, i) {
-        var bbox = d3.select(".guide.background").select("path").node().getBBox();
-        t.x = Math.max(Math.min(t.x + d3.event.dx, bbox.width), -bbox.width);
-        t.y = Math.max(Math.min(t.y + d3.event.dy, bbox.height), -bbox.height);
+var set_geometry_transform = function(t, old_scale) {
+    // transform geometries
+    d3.selectAll(".geometry")
+      .attr("transform", function() {
+          return "translate(" + [t.x, t.y] + ") " +
+                 "scale(" + t.scale + ")";
+      });
 
-        d3.selectAll(".geometry")
-          .attr("transform", function() {
-              return "translate(" + [t.x, t.y] + ")";
-          });
+    // unscale geometry widths, radiuses, etc.
+    var size_attribs = ["r", "font-size"];
+    d3.selectAll(".geometry")
+      .each(function() {
+          this_selection = d3.select(this);
+          for (var i in size_attribs) {
+              var attrib = size_attribs[i];
+              this_selection.attr(attrib,
+                  old_scale / t.scale * this_selection.attr(attrib));
+          }
+      });
 
-        d3.selectAll(".xgridlines,.xlabels")
-        .attr("transform", function() {
-            return "translate(" + [t.x, 0.0] + ")";
+    // TODO:
+    // Is this going to work when we do things other than circles. Suppose we
+    // have plots where we have a path drawing some sort of symbol which we want
+    // to remain size-invariant. Should we be trying to place things using
+    // translate?
+
+    // transform gridlines
+    d3.selectAll(".xgridlines")
+      .attr("transform", function() {
+        return "translate(" + [t.x, 0.0] + ") " +
+               "scale(" + [t.scale, 1.0] + ")";
+      });
+
+    d3.selectAll(".ygridlines")
+      .attr("transform", function() {
+          return "translate(" + [0.0, t.y] + ") " +
+                 "scale(" + [1.0, t.scale] + ")";
+      });
+
+    // unscale gridline widths
+    d3.selectAll(".xgridlines,.ygridlines")
+      .each(function() {
+          d3.select(this).attr("stroke-width",
+              old_scale / t.scale * d3.select(this).attr("stroke-width"));
+      });
+
+    // move labels around
+    d3.selectAll(".xlabels")
+      .attr("transform", function() {
+          return "translate(" + [t.x, 0.0] + ")";
+      })
+      .selectAll("text")
+        .each(function() {
+            d3.select(this).attr("x",
+                t.scale / old_scale * d3.select(this).attr("x"));
         });
 
-        d3.selectAll(".ygridlines,.ylabels")
-          .attr("transform", function() {
-              return "translate(" + [0.0, t.y] + ")";
-          });
+    d3.selectAll(".ylabels")
+      .attr("transform", function() {
+          return "translate(" + [0.0, t.y] + ")";
+      })
+      .selectAll("text")
+        .each(function() {
+            d3.select(this).attr("y",
+                t.scale / old_scale * d3.select(this).attr("y"));
+        });
+};
+
+
+// Construct a callback used for zoombehavior.
+//
+// Args:
+//   t: A transform of the form {"x": x, "y": x, "scale": scale} to close arround.
+//
+// Returns:
+//   A zoom behavior.
+//
+var zoom_behavior = function(t) {
+    //var bbox = d3.select(".guide.background").select("path").node().getBBox();
+    return d3.behavior.zoom()
+      .on("zoom", function(d, i) {
+        old_scale = t.scale;
+        t.scale = d3.event.scale;
+        //set_geometry_transform(t, old_scale);
+        set_geometry_transform(
+            {"x": d3.event.translate[0],
+             "y": d3.event.translate[1],
+             "scale": t.scale}, old_scale);
     });
 };
+
 

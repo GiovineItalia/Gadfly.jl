@@ -302,7 +302,7 @@ function execblock_latex(source)
     flush(input)
     seek(input, 0)
     latexout_dir = mktempdir()
-    run(`latex -output-format=dvi -output-directory=$(latexout_dir) $(input_path)` &> SpawnNullStream())
+    run(`latex -output-format=dvi -output-directory=$(latexout_dir) $(input_path)` > SpawnNullStream())
     rm(input_path)
 
     # dvi -> svg
