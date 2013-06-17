@@ -117,20 +117,68 @@ eval_plot_mapping(data::AbstractDataFrame, arg::String) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
 
+# Acceptable types of values that can be bound to aesthetics.
+typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr)
 
-# This is the primary function used to produce plots, which are then turned into
-# compose objects with `render` and drawn to an image with `draw`.
+
+# Create a new plot.
 #
-# The first argument is always a data frame that will be plotted. There are then
-# any number of arguments each of which is either a plot element (geometry,
-# statistic, etc) or a mapping which maps a plot aesthetic to a column in the
-# data frame..
+# Grammar of graphics style plotting consists of specifying a dataset, one or
+# more plot elements (scales, coordinates, geometries, etc), and binding of
+# aesthetics to columns or expressions of the dataset.
 #
-# As an example, you might write something like:
+# For example, a simple scatter plot would look something like:
 #
-#     plot(my_data, (:x, :height), Geom.histogram)
+#     plot(my_data, Geom.point, x="time", y="price")
 #
-# To plot a histogram of some height measurements.
+# Where "time" and "price" are the names of columns in my_data.
+#
+# Args:
+#   data: Data to be bound to aesthetics.
+#   mapping: Aesthetics symbols (e.g. :x, :y, :color) mapped to
+#            names of columns in the data frame or other expressions.
+#   elements: Geometries, statistics, etc.
+
+function plot(data::AbstractDataFrame, elements::Element...; mapping...)
+    p = Plot()
+    p.mapping = Dict()
+    valid_aesthetics = Set(names(Aesthetics)...)
+    for (k, v) in mapping
+        if !has(valid_aesthetics, k)
+            error("$(k) is not a recognized aesthetic")
+        end
+
+        if !(typeof(v) <: AestheticValue)
+            error(
+            """Aesthetic $(k) is mapped to a value of type $(typeof(v)).
+               It must be mapped to a string, symbol, or expression.""")
+        end
+
+        setfield(p.data, k, eval_plot_mapping(data, v))
+        p.mapping[k] = v
+    end
+
+    for element in elements
+        add_plot_element(p, data, element)
+    end
+
+    p
+end
+
+
+# The old fashioned (pre named arguments) version of plot.
+#
+# This version takes an explicit mapping dictionary, mapping aesthetics symbols
+# to expressions or columns in the data frame.
+#
+# Args:
+#   data: Data to be bound to aesthetics.
+#   mapping: Dictionary of aesthetics symbols (e.g. :x, :y, :color) to
+#            names of columns in the data frame or other expressions.
+#   elements: Geometries, statistics, etc.
+#
+# Returns:
+#   A Plot object.
 #
 function plot(data::AbstractDataFrame, mapping::Dict, elements::Element...)
     p = Plot()
