@@ -441,11 +441,6 @@ function layout_guides(plot_canvas::Canvas,
     sortby!(canvas_order,     bottom_guides)
     sortby!(rev_canvas_order, left_guides)
 
-    for g in bottom_guides
-        #println(g.property)
-        println(g.clip)
-    end
-
     # Stack the guides on edge edge of the plot
     top_guides    = vstack(0, 0, 1, [(g, hcenter) for g in top_guides]...)
     right_guides  = hstack(0, 0, 1, [(g, vcenter) for g in right_guides]...)

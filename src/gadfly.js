@@ -86,7 +86,7 @@ var geom_point_mouseover = function(lw) {
 // certain ellements.
 //
 // Args:
-//   t: A transform of the form {"x": x, "y": y, "scale": scale}
+//   t: A transform of the form {"scale": scale}
 //   old_scale: The scaling factor applied prior to t.scale.
 //
 var set_geometry_transform = function(t, old_scale) {
@@ -161,23 +161,40 @@ var set_geometry_transform = function(t, old_scale) {
 // Construct a callback used for zoombehavior.
 //
 // Args:
-//   t: A transform of the form {"x": x, "y": x, "scale": scale} to close arround.
+//   t: A transform of the form {"scale": scale} to close arround.
 //
 // Returns:
 //   A zoom behavior.
 //
 var zoom_behavior = function(t) {
-    //var bbox = d3.select(".guide.background").select("path").node().getBBox();
-    return d3.behavior.zoom()
+    var zm = d3.behavior.zoom();
+    zm.scaleExtent([1.0/3.0, 10.0])
       .on("zoom", function(d, i) {
         old_scale = t.scale;
         t.scale = d3.event.scale;
-        //set_geometry_transform(t, old_scale);
+        var bbox = d3.select(".guide.background").select("path").node().getBBox();
+
+        var x_min = -bbox.width * t.scale - (t.scale * bbox.width - bbox.width);
+        var x_max = bbox.width * t.scale;
+        var y_min = -bbox.height * t.scale - (t.scale * bbox.height - bbox.height);
+        var y_max = bbox.height * t.scale;
+
+        var x0 = bbox.x - t.scale * bbox.x;
+        var y0 = bbox.y - t.scale * bbox.y;
+
+        var tx = Math.max(Math.min(d3.event.translate[0] - x0, x_max), x_min);
+        var ty = Math.max(Math.min(d3.event.translate[1] - y0, y_max), y_min);
+
+        tx += x0;
+        ty += y0;
+
         set_geometry_transform(
-            {"x": d3.event.translate[0],
-             "y": d3.event.translate[1],
+            {"x": tx,
+             "y": ty,
              "scale": t.scale}, old_scale);
+        zm.translate([tx, ty]);
     });
+    return zm;
 };
 
 
