@@ -248,7 +248,7 @@ function render(plot::Plot)
 
     scaled_aesthetics = Set{Symbol}()
     for scale in plot.scales
-        add_each!(scaled_aesthetics, element_aesthetics(scale))
+        union!(scaled_aesthetics, element_aesthetics(scale))
     end
 
     # Only one scale can be applied to an aesthetic (without getting some weird
@@ -260,7 +260,7 @@ function render(plot::Plot)
         end
     end
 
-    unscaled_aesthetics = used_aesthetics - scaled_aesthetics
+    unscaled_aesthetics = setdiff(used_aesthetics, scaled_aesthetics)
 
     # Add default scales for statistics.
     for stat in layer_stats
@@ -272,7 +272,7 @@ function render(plot::Plot)
                 for var in scale_aes
                     scales[var] = scale
                 end
-                unscaled_aesthetics -= scale_aes
+                setdiff!(unscaled_aesthetics, scale_aes)
             end
         end
     end

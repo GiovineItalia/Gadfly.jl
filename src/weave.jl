@@ -13,6 +13,7 @@
 
 
 export weave
+import Base.parse
 
 
 # A special module in which a documents code is executed.
@@ -84,20 +85,21 @@ function weave(infn::String, infmt::String, outfmt::String,
 
     # Return a true/false for an attribute with the given default value.
     function attrib_bool(keyvals::Dict, key, default::Bool)
-        has(keyvals, key) ? lowercase(strip(keyvals[key])) != "false" : default
+        haskey(keyvals, key) ? lowercase(strip(keyvals[key])) != "false" : default
     end
 
     processed_document = {}
     fignum = WeakRef(0)
 
     for block in document
-        if keys(block)[1] != "CodeBlock"
+        if !haskey(block, "CodeBlock")
             push!(processed_document, block)
             continue
         end
 
+
         # Process code blocks
-        attribs, source = values(block)[1]
+        attribs, source = [v for v in values(block)][1]
         id, classes, keyvals = attribs
         classes = Set(classes...)
         keyvals = [k => v for (k,v) in keyvals]
@@ -108,9 +110,9 @@ function weave(infn::String, infmt::String, outfmt::String,
         end
 
         # dispatch on the block type, defaulting to julia
-        if has(classes, "graphviz")
+        if contains(classes, "graphviz")
             output = execblock_graphviz(source)
-        elseif has(classes, "latex")
+        elseif contains(classes, "latex")
             output = execblock_latex(source)
         else
             output = execblock_julia(source)

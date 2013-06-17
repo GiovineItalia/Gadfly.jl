@@ -177,7 +177,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                 end
             end
 
-            if has(Set(names(aes)...), label_var)
+            if contains(Set(names(aes)...), label_var)
                 setfield(aes, label_var, labeler)
             end
         end
@@ -313,7 +313,8 @@ function apply_scale(scale::ContinuousColorScale,
         end
 
         aes.color_label = c -> color_labels[c]
-        aes.color_key_colors = reverse(sort(keys(color_labels)))
+        aes.color_key_colors = [k for k in keys(color_labels)]
+        sort!(aes.color_key_colors, Sort.Reverse)
         aes.color_key_continuous = true
     end
 end

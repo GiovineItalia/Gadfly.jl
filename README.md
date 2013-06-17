@@ -2,7 +2,7 @@
 !["Alice looked up at the Rocking-horse-fly with great interest, and made up her
 mind that it must have been just repainted, it looked so bright and sticky."](http://dcjones.github.com/Gadfly.jl/rockinghorsefly.png)
 
-Gadfly is a plotting and data visualization system written in
+**Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
 
 It's influenced heavily by Leland Wilkinson's book

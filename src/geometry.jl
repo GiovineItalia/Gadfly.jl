@@ -179,7 +179,7 @@ function render_discrete_bar(geom::BarGeometry,
         end
     end
 
-    compose(canvas(InheritedUnits()),
+    compose(canvas(units_inherited=true),
             bar_form,
             svgattribute("shape-rendering", "crispEdges"),
             stroke(nothing))
@@ -208,7 +208,7 @@ function render_continuous_bar(geom::BarGeometry,
                 svgid(annotation_id)
     end
 
-    compose(canvas(InheritedUnits()),
+    compose(canvas(units_inherited=true),
             stroke(nothing),
             (bar_form,
                 fill(theme.default_color),
@@ -416,7 +416,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
         end
     end
 
-    compose(canvas(InheritedUnits()),
+    compose(canvas(units_inherited=true),
             (canvas(units_inherited=true), combine(forms...)),
             (canvas(units_inherited=true, order=1), combine(middle_forms...)),
             svgclass("geometry"))
