@@ -667,7 +667,7 @@ function deferred_label_canvas(aes, theme, box, unit_box)
 
     #println("total_penalty = ", total_penalty)
 
-    compose(canvas(convert(Units, unit_box)),
+    compose(canvas(unit_box=convert(Units, unit_box)),
             combine(forms...),
             font(theme.point_label_font),
             fontsize(theme.point_label_font_size),

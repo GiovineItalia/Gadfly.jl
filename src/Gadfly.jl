@@ -240,7 +240,7 @@ function render(plot::Plot)
         union!(used_aesthetics, element_aesthetics(stat))
     end
 
-    defined_unused_aesthetics = Set(keys(plot.mapping)...) - used_aesthetics
+    defined_unused_aesthetics = setdiff(Set(keys(plot.mapping)...), used_aesthetics)
     if !isempty(defined_unused_aesthetics)
         warn("The following aesthetics are mapped, but not used by any geometry:\n    ",
              join([string(a) for a in defined_unused_aesthetics], ", "))
