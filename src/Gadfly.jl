@@ -418,8 +418,6 @@ include("geometry.jl")
 include("guide.jl")
 include("statistics.jl")
 
-import .Scale, .Coord, .Geom, .Guide, .Stat
-
 
 # All aesthetics must have a scale. If none is given, we use a default.
 # The default depends on whether the input is discrete or continuous (i.e.,
