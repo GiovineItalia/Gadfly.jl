@@ -125,7 +125,7 @@ function apply_scale(scale::ContinuousScale,
             end
 
             setfield(aes, var, ds)
-            if has(Set(names(aes)...), label_var)
+            if contains(Set(names(aes)...), label_var)
                 setfield(aes, label_var, scale.trans.label)
             end
         end
@@ -177,7 +177,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                 end
             end
 
-            if has(Set(names(aes)...), label_var)
+            if contains(Set(names(aes)...), label_var)
                 setfield(aes, label_var, labeler)
             end
         end
@@ -212,7 +212,7 @@ function apply_scale(scale::DiscreteColorScale,
             continue
         end
         ds = discretize(data.color)
-        colors = scale.f(length(levels(ds)))
+        colors = convert(Vector{ColorValue}, scale.f(length(levels(ds))))
         colored_ds = PooledDataArray(ColorValue[colors[i] for i in ds.refs], colors)
         aes.color = colored_ds
 
@@ -314,7 +314,8 @@ function apply_scale(scale::ContinuousColorScale,
         end
 
         aes.color_label = c -> color_labels[c]
-        aes.color_key_colors = reverse(sort(keys(color_labels)))
+        aes.color_key_colors = [k for k in keys(color_labels)]
+        sort!(aes.color_key_colors, Sort.Reverse)
         aes.color_key_continuous = true
     end
 end

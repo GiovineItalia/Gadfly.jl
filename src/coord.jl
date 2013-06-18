@@ -15,9 +15,9 @@ end
 
 
 const cartesian = CartesianCoordinate(
-    [:x, :xtick, :x_min, :x_max],
-    [:y, :ytick, :y_min, :y_max, :middle, :lower_hinge, :upper_hinge,
-     :lower_fence, :upper_fence, :outliers])
+    [:x, :x_viewmin, :x_viewmax, :x_min, :x_max],
+    [:y, :y_viewmin, :y_viewmax, :y_min, :y_max, :middle,
+     :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers])
 
 
 # Produce a canvas with suitable cartesian coordinates.
@@ -109,7 +109,7 @@ function apply_coordinate(coord::CartesianCoordinate, aess::Gadfly.Aesthetics...
     width  = xmax - xmin + 2xpadding
     height = ymax - ymin + 2ypadding
 
-    canvas(Units(xmin - xpadding, ymax + ypadding, width, -height))
+    canvas(unit_box=Units(xmin - xpadding, ymax + ypadding, width, -height))
 end
 
 end # module Coord

@@ -7,7 +7,7 @@ using DataFrames
 using Gadfly
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
-import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit
+import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit, Gadfly.escape_id
 import Iterators.cycle, Iterators.product
 
 
@@ -40,21 +40,6 @@ function element_aesthetics(::PointGeometry)
 end
 
 
-# Produce the necessary properties for mouseover effects.
-#
-# Args:
-#   geometry_id: ID of the geometry being presented.
-#   annotation_id: ID of the annotation to show on mouseover.
-#
-# Return:
-#   Array of properties to be composed into the moused over element.
-#
-function mouseover_properties(geometry_id, annotation_id)
-    {onmouseover("show_annotation('$(annotation_id)');present_geometry(['$(geometry_id)'])"),
-     onmouseout("hide_annotation('$(annotation_id)'); unpresent_geometry()")}
-end
-
-
 # Generate a form for a point geometry.
 #
 # Args:
@@ -75,75 +60,18 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     default_aes.size = Measure[theme.default_point_size]
     aes = inherit(aes, default_aes)
 
-    # organize by color
-    points = Dict{ColorValue, Array{Tuple,1}}()
-    for (x, y, c, s) in zip(aes.x, aes.y,
-                            cycle(aes.color),
-                            cycle(aes.size))
-        if !has(points, c)
-            points[c] = Array(Tuple,0)
-        end
-        push!(points[c], (x, y, s))
-    end
-
-    n = 0
-    for (c, xys) in points
-        for (x, y, s) in xys
-            n += 1
-        end
-    end
-
-    point_form = empty_form
-    annotation_form = empty_form
-    bounding_rect_form = empty_form
-
-    for (c, xys) in points
-        group_form = empty_form
-        for (x, y, s) in xys
-            geometry_id = Gadfly.unique_svg_id()
-            annotation_id = Gadfly.unique_svg_id()
-
-            group_form |= circle(x, y, s) << svgid(geometry_id) <<
-                                             svgclass("geometry")
-
-            # Points tend to be too small to easily mouse over, so we instead
-            # use an invisible box that is a bit larger than the point itself.
-            bounding_rect =
-                compose(rectangle(x*cx - s - 1mm, y*cy - s - 1mm,
-                                  2*s + 2mm, 2*s + 2mm),
-                        mouseover_properties(geometry_id, annotation_id)...)
-
-            msg = "$(aes.x_label(x)), $(aes.y_label(y))"
-            msgwidth, msgheight = text_extents(theme.minor_label_font,
-                                               theme.minor_label_font_size,
-                                               msg)
-            bounding_rect_form |= bounding_rect
-            annotation_form |=
-                 text(x, y*cy - s - 1mm, msg, hcenter, vbottom) <<
-                    svgid(annotation_id)
-        end
-
-        group_form <<=
-            fill(c) |
-            stroke(theme.highlight_color(c)) |
-            svgclass(@sprintf("color_group_%s", aes.color_label(c)))
-        point_form |= group_form
-    end
-
-    bounding_rect_form <<= opacity(0) | stroke(nothing)
-
-    point_form <<= linewidth(theme.highlight_width)
-
-    annotation_form = compose(annotation_form,
-                              font(theme.minor_label_font),
-                              fontsize(theme.minor_label_font_size),
-                              stroke(nothing),
-                              visible(false))
-
-    compose(canvas(InheritedUnits(), Order(1)),
-            (canvas(InheritedUnits()), bounding_rect_form),
-            (canvas(InheritedUnits()), annotation_form),
-            (canvas(InheritedUnits()), point_form))
+    lw0 = convert(Compose.SimpleMeasure{Compose.MillimeterUnit}, theme.line_width)
+    lw1 = 10 * lw0
+    compose(circle(aes.x, aes.y, aes.size),
+            fill(aes.color),
+            stroke([theme.highlight_color(c) for c in aes.color]),
+            linewidth(theme.line_width),
+            d3embed(@sprintf(".on(\"mouseover\", geom_point_mouseover(%0.2f), false)",
+                             lw1.value)),
+            d3embed(@sprintf(".on(\"mouseout\", geom_point_mouseover(%0.2f), false)",
+                             lw0.value)),
+            svgclass([@sprintf("geometry color_%s", escape_id(aes.color_label(c)))
+                      for c in aes.color]))
 end
 
 
@@ -196,7 +124,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         for (i, (c, c_points)) in enumerate(points)
             forms[i] = lines({(x, y) for (x, y) in c_points}...) <<
                             stroke(c) <<
-                            svgclass(@sprintf("color_group_%s", aes.color_label(c)))
+                            svgclass(@sprintf("geometry color_%s", escape_id(aes.color_label(c))))
         end
         form = combine(forms...)
     end
@@ -251,7 +179,7 @@ function render_discrete_bar(geom::BarGeometry,
         end
     end
 
-    compose(canvas(InheritedUnits()),
+    compose(canvas(units_inherited=true),
             bar_form,
             svgattribute("shape-rendering", "crispEdges"),
             stroke(nothing))
@@ -265,31 +193,20 @@ function render_continuous_bar(geom::BarGeometry,
     pad = theme.bar_spacing / 2
 
     bar_form = empty_form
-    annotation_form = empty_form
     for (x_min, x_max, y) in zip(aes.x_min, aes.x_max, aes.y)
         annotation_id = Gadfly.unique_svg_id()
         geometry_id = Gadfly.unique_svg_id()
 
         bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
                                       (x_max - x_min)*cx - theme.bar_spacing, y),
-                            svgid(geometry_id), svgclass("geometry"),
-                            mouseover_properties(geometry_id, annotation_id)...)
-
-        annotation_form |=
-            text((x_min + x_max) / 2, y*cy - 1mm,
-                 aes.y_label(y), hcenter, vbottom) <<
-                svgid(annotation_id)
+                            svgid(geometry_id), svgclass("geometry"))
     end
 
-    compose(canvas(InheritedUnits()),
+    compose(canvas(units_inherited=true),
             stroke(nothing),
             (bar_form,
                 fill(theme.default_color),
-                svgattribute("shape-rendering", "crispEdges")),
-            (annotation_form,
-                visible(false),
-                font(theme.minor_label_font),
-                fontsize(theme.minor_label_font_size)))
+                svgattribute("shape-rendering", "crispEdges")))
 end
 
 # Render bar geometry.
@@ -489,9 +406,9 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
         end
     end
 
-    compose(canvas(InheritedUnits()),
-            (canvas(InheritedUnits()), combine(forms...)),
-            (canvas(InheritedUnits(), Order(1)), combine(middle_forms...)),
+    compose(canvas(units_inherited=true),
+            (canvas(units_inherited=true), combine(forms...)),
+            (canvas(units_inherited=true, order=1), combine(middle_forms...)),
             svgclass("geometry"))
 end
 
@@ -740,7 +657,7 @@ function deferred_label_canvas(aes, theme, box, unit_box)
 
     #println("total_penalty = ", total_penalty)
 
-    compose(canvas(convert(Units, unit_box)),
+    compose(canvas(unit_box=convert(Units, unit_box)),
             combine(forms...),
             font(theme.point_label_font),
             fontsize(theme.point_label_font_size),

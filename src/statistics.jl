@@ -210,7 +210,7 @@ function apply_statistic(stat::TickStatistic,
     # all the input values in order.
     if all_int
         ticks = Set{Float64}()
-        add_each!(ticks, in_values)
+        union!(ticks, in_values)
         ticks = Float64[t for t in ticks]
         sort!(ticks)
 
@@ -230,8 +230,18 @@ function apply_statistic(stat::TickStatistic,
         else
             grids = (ticks - 0.5)[2:end]
         end
+        viewmin = min(ticks)
+        viewmax = max(ticks)
     else
-        grids = ticks = Gadfly.optimize_ticks(minval, maxval)
+        ticks = Gadfly.optimize_ticks(minval, maxval)
+        viewmin = min(ticks)
+        viewmax = max(ticks)
+
+        # Extend ticks
+        d = ticks[2] - ticks[1]
+        lowerticks = ticks - (ticks[end] - ticks[1]) - d
+        upperticks = ticks + (ticks[end] - ticks[1]) + d
+        grids = ticks = vcat(lowerticks, ticks, upperticks)
     end
 
     # We use the first label function we find for any of the aesthetics. I'm not
@@ -241,6 +251,18 @@ function apply_statistic(stat::TickStatistic,
     setfield(aes, symbol(string(stat.out_var, "tick")), ticks)
     setfield(aes, symbol(string(stat.out_var, "grid")), grids)
     setfield(aes, symbol(string(stat.out_var, "tick_label")), labeler)
+
+    viewmin_var = symbol(string(stat.out_var, "_viewmin"))
+    if getfield(aes, viewmin_var) === nothing ||
+       getfield(aes, viewmin_var) > viewmin
+        setfield(aes, viewmin_var, viewmin)
+    end
+
+    viewmax_var = symbol(string(stat.out_var, "_viewmax"))
+    if getfield(aes, viewmax_var) === nothing ||
+       getfield(aes, viewmax_var) < viewmax
+        setfield(aes, viewmax_var, viewmax)
+    end
 
     nothing
 end

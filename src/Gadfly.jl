@@ -12,12 +12,12 @@ using Codecs
 using Color
 using Compose
 using DataFrames
+using JSON
 
 import Iterators
-import JSON
 import Compose.draw, Compose.hstack, Compose.vstack
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
-       Base.show
+       Base.show, Base.getindex
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, @plot, spy
 
@@ -29,15 +29,6 @@ typealias ColorOrNothing Union(ColorValue, Nothing)
 
 element_aesthetics(::Any) = []
 default_scales(::Any) = []
-
-
-# Javascript library embedded in every SVG produced by Gadfly.
-const jsdynamicslib =
-    @sprintf("<script type=\"application/ecmascript\"><![CDATA[\n%s\n]]></script>",
-             readall(open(joinpath(Pkg.dir("Gadfly"), "src", "dynamics.js"))))
-
-# Filter effects and other definitions used in SVG output.
-const globalsvgdefs = readall(open(joinpath(Pkg.dir("Gadfly"), "src", "defs.xml")))
 
 
 abstract Element
@@ -125,20 +116,68 @@ eval_plot_mapping(data::AbstractDataFrame, arg::String) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
 
+# Acceptable types of values that can be bound to aesthetics.
+typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr)
 
-# This is the primary function used to produce plots, which are then turned into
-# compose objects with `render` and drawn to an image with `draw`.
+
+# Create a new plot.
 #
-# The first argument is always a data frame that will be plotted. There are then
-# any number of arguments each of which is either a plot element (geometry,
-# statistic, etc) or a mapping which maps a plot aesthetic to a column in the
-# data frame..
+# Grammar of graphics style plotting consists of specifying a dataset, one or
+# more plot elements (scales, coordinates, geometries, etc), and binding of
+# aesthetics to columns or expressions of the dataset.
 #
-# As an example, you might write something like:
+# For example, a simple scatter plot would look something like:
 #
-#     plot(my_data, (:x, :height), Geom.histogram)
+#     plot(my_data, Geom.point, x="time", y="price")
 #
-# To plot a histogram of some height measurements.
+# Where "time" and "price" are the names of columns in my_data.
+#
+# Args:
+#   data: Data to be bound to aesthetics.
+#   mapping: Aesthetics symbols (e.g. :x, :y, :color) mapped to
+#            names of columns in the data frame or other expressions.
+#   elements: Geometries, statistics, etc.
+
+function plot(data::AbstractDataFrame, elements::Element...; mapping...)
+    p = Plot()
+    p.mapping = Dict()
+    valid_aesthetics = Set(names(Aesthetics)...)
+    for (k, v) in mapping
+        if !has(valid_aesthetics, k)
+            error("$(k) is not a recognized aesthetic")
+        end
+
+        if !(typeof(v) <: AestheticValue)
+            error(
+            """Aesthetic $(k) is mapped to a value of type $(typeof(v)).
+               It must be mapped to a string, symbol, or expression.""")
+        end
+
+        setfield(p.data, k, eval_plot_mapping(data, v))
+        p.mapping[k] = v
+    end
+
+    for element in elements
+        add_plot_element(p, data, element)
+    end
+
+    p
+end
+
+
+# The old fashioned (pre named arguments) version of plot.
+#
+# This version takes an explicit mapping dictionary, mapping aesthetics symbols
+# to expressions or columns in the data frame.
+#
+# Args:
+#   data: Data to be bound to aesthetics.
+#   mapping: Dictionary of aesthetics symbols (e.g. :x, :y, :color) to
+#            names of columns in the data frame or other expressions.
+#   elements: Geometries, statistics, etc.
+#
+# Returns:
+#   A Plot object.
 #
 function plot(data::AbstractDataFrame, mapping::Dict, elements::Element...)
     p = Plot()
@@ -193,14 +232,14 @@ function render(plot::Plot)
 
     used_aesthetics = Set{Symbol}()
     for layer in plot.layers
-        add_each!(used_aesthetics, element_aesthetics(layer.geom))
+        union!(used_aesthetics, element_aesthetics(layer.geom))
     end
 
     for stat in layer_stats
-        add_each!(used_aesthetics, element_aesthetics(stat))
+        union!(used_aesthetics, element_aesthetics(stat))
     end
 
-    defined_unused_aesthetics = Set(keys(plot.mapping)...) - used_aesthetics
+    defined_unused_aesthetics = setdiff(Set(keys(plot.mapping)...), used_aesthetics)
     if !isempty(defined_unused_aesthetics)
         warn("The following aesthetics are mapped, but not used by any geometry:\n    ",
              join([string(a) for a in defined_unused_aesthetics], ", "))
@@ -208,7 +247,7 @@ function render(plot::Plot)
 
     scaled_aesthetics = Set{Symbol}()
     for scale in plot.scales
-        add_each!(scaled_aesthetics, element_aesthetics(scale))
+        union!(scaled_aesthetics, element_aesthetics(scale))
     end
 
     # Only one scale can be applied to an aesthetic (without getting some weird
@@ -220,7 +259,7 @@ function render(plot::Plot)
         end
     end
 
-    unscaled_aesthetics = used_aesthetics - scaled_aesthetics
+    unscaled_aesthetics = setdiff(used_aesthetics, scaled_aesthetics)
 
     # Add default scales for statistics.
     for stat in layer_stats
@@ -232,19 +271,19 @@ function render(plot::Plot)
                 for var in scale_aes
                     scales[var] = scale
                 end
-                unscaled_aesthetics -= scale_aes
+                setdiff!(unscaled_aesthetics, scale_aes)
             end
         end
     end
 
     # Assign scales to mapped aesthetics first.
     for var in unscaled_aesthetics
-        if !has(plot.mapping, var)
+        if !haskey(plot.mapping, var)
             continue
         end
 
         t = classify_data(getfield(plot.data, var))
-        if has(default_aes_scales[t], var)
+        if haskey(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
             scale_aes = Set(element_aesthetics(scale)...)
             for var in scale_aes
@@ -254,11 +293,11 @@ function render(plot::Plot)
     end
 
     for var in unscaled_aesthetics
-        if has(plot.mapping, var) || has(scales, var)
+        if haskey(plot.mapping, var) || haskey(scales, var)
             continue
         end
 
-        if has(default_aes_scales[:discrete], var)
+        if haskey(default_aes_scales[:discrete], var)
             scale = default_aes_scales[:discrete][var]
             scale_aes = Set(element_aesthetics(scale)...)
             for var in scale_aes
@@ -282,23 +321,23 @@ function render(plot::Plot)
     push!(statistics, Stat.y_ticks)
 
     function mapped_and_used(vs)
-        any([has(plot.mapping, v) && has(used_aesthetics, v) for v in vs])
+        any([haskey(plot.mapping, v) && contains(used_aesthetics, v) for v in vs])
     end
 
     function choose_name(vs)
         for v in vs
-            if has(plot.mapping, v)
+            if haskey(plot.mapping, v)
                 return string(plot.mapping[v])
             end
         end
         ""
     end
 
-    if mapped_and_used(Scale.x_vars) && !has(guides, Guide.XLabel)
+    if mapped_and_used(Scale.x_vars) && !haskey(guides, Guide.XLabel)
         guides[Guide.XLabel] =  Guide.XLabel(choose_name(Scale.x_vars))
     end
 
-    if mapped_and_used(Scale.y_vars) && !has(guides, Guide.YLabel)
+    if mapped_and_used(Scale.y_vars) && !haskey(guides, Guide.YLabel)
         guides[Guide.YLabel] = Guide.YLabel(choose_name(Scale.y_vars))
     end
 
@@ -345,10 +384,7 @@ function render(plot::Plot)
         append!(guide_canvases, render(guide, plot.theme, aess))
     end
 
-    canvas = Guide.layout_guides(plot_canvas, guide_canvases...)
-
-    # Standard includes for SVGs
-    canvas <<= svgembed(jsdynamicslib * "\n" * globalsvgdefs)
+    canvas = Guide.layout_guides(plot_canvas, plot.theme, guide_canvases...)
 
     # TODO: This is a kludge. Axis labels sometimes extend past the edge of the
     # canvas.

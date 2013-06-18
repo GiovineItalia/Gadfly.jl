@@ -27,6 +27,12 @@ type Aesthetics
     xgrid::Maybe(Vector{Float64})
     ygrid::Maybe(Vector{Float64})
 
+    # Plot viewport extents
+    x_viewmin::Maybe(Float64)
+    x_viewmax::Maybe(Float64)
+    y_viewmin::Maybe(Float64)
+    y_viewmax::Maybe(Float64)
+
     color_key_colors::Maybe(Vector{ColorValue})
     color_key_title::Maybe(String)
     color_key_continuous::Maybe(Bool)
@@ -40,9 +46,9 @@ type Aesthetics
     ytick_label::Function
     color_label::Function
 
-
     function Aesthetics()
         new(nothing, nothing, nothing, nothing,
+            nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
@@ -60,6 +66,12 @@ type Aesthetics
         end
         b
     end
+end
+
+
+# Index as if this were a data frame
+function getindex(aes::Aesthetics, i::Integer, j::String)
+    getfield(aes, symbol(j))[i]
 end
 
 
