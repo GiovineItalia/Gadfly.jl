@@ -104,7 +104,7 @@ var set_geometry_transform = function(parent_id, t, old_scale) {
       });
 
     // unscale geometry widths, radiuses, etc.
-    var size_attribs = ["r", "font-size"];
+    var size_attribs = ["r"];
     d3.select(parent_id)
       .selectAll(".geometry")
       .each(function() {

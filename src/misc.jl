@@ -85,4 +85,11 @@ let next_unique_svg_id_num = 0
 end
 
 
+# Remove any markup or whitespace from a string.
+function escape_id(s::String)
+    s = replace(s, r"<[^>]*>", "")
+    s = replace(s, r" ", "_")
+    s
+end
+
 

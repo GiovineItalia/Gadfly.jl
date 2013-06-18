@@ -207,8 +207,6 @@ function process_output(mime::String, output::Vector{Uint8},
                         outfmt::String, docname::String, fignum::WeakRef,
                         selfcontained::Bool)
 
-    println(STDERR, mime)
-
     if isempty(output)
         []
     elseif mime == "binary"

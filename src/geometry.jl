@@ -7,7 +7,7 @@ using DataFrames
 using Gadfly
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
-import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit
+import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit, Gadfly.escape_id
 import Iterators.cycle, Iterators.product
 
 
@@ -70,7 +70,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                              lw1.value)),
             d3embed(@sprintf(".on(\"mouseout\", geom_point_mouseover(%0.2f), false)",
                              lw0.value)),
-            svgclass([@sprintf("geometry color_%s", escape_string(aes.color_label(c)))
+            svgclass([@sprintf("geometry color_%s", escape_id(aes.color_label(c)))
                       for c in aes.color]))
 end
 
@@ -124,7 +124,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         for (i, (c, c_points)) in enumerate(points)
             forms[i] = lines({(x, y) for (x, y) in c_points}...) <<
                             stroke(c) <<
-                            svgclass(@sprintf("color_group_%s", aes.color_label(c)))
+                            svgclass(@sprintf("geometry color_%s", escape_id(aes.color_label(c))))
         end
         form = combine(forms...)
     end
@@ -193,7 +193,6 @@ function render_continuous_bar(geom::BarGeometry,
     pad = theme.bar_spacing / 2
 
     bar_form = empty_form
-    annotation_form = empty_form
     for (x_min, x_max, y) in zip(aes.x_min, aes.x_max, aes.y)
         annotation_id = Gadfly.unique_svg_id()
         geometry_id = Gadfly.unique_svg_id()
@@ -201,22 +200,13 @@ function render_continuous_bar(geom::BarGeometry,
         bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
                                       (x_max - x_min)*cx - theme.bar_spacing, y),
                             svgid(geometry_id), svgclass("geometry"))
-
-        annotation_form |=
-            text((x_min + x_max) / 2, y*cy - 1mm,
-                 aes.y_label(y), hcenter, vbottom) <<
-                svgid(annotation_id)
     end
 
     compose(canvas(units_inherited=true),
             stroke(nothing),
             (bar_form,
                 fill(theme.default_color),
-                svgattribute("shape-rendering", "crispEdges")),
-            (annotation_form,
-                visible(false),
-                font(theme.minor_label_font),
-                fontsize(theme.minor_label_font_size)))
+                svgattribute("shape-rendering", "crispEdges")))
 end
 
 # Render bar geometry.

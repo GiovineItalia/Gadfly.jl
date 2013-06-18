@@ -6,7 +6,7 @@ using Compose
 using Gadfly
 using JSON
 
-import Gadfly.render
+import Gadfly.render, Gadfly.escape_id
 
 
 # Where the guide should be placed in relation to the plot.
@@ -83,7 +83,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                                fill(theme.minor_label_color))
         swatch = swatch_square | swatch_label
 
-        color_class = @sprintf("color_%s", escape_string(label))
+        color_class = @sprintf("color_%s", escape_id(label))
         swatch <<= svgclass(@sprintf("guide %s", color_class))
 
         swatch <<= d3embed(
