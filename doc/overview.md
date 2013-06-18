@@ -56,9 +56,9 @@ using Compose
 iris = data("datasets", "iris")
 
 p = plot(iris,
-         {:x => "Sepal.Length", :y => "Sepal.Width"},
+         x="Sepal.Length", y="Sepal.Width",
          Geom.point)
-draw(SVG(6inch, 4inch), p)
+draw(D3(6inch, 4inch), p)
 ```
 
 The `plot` function in Gadfly is of the form:
@@ -84,9 +84,9 @@ geometry requires that `:x` and `:y` be mapped, and has the optional aesthetic
 
 ```{.julia}
 p = plot(iris,
-         {:x => "Sepal.Length", :y => "Sepal.Width", :color => "Species"},
+         x="Sepal.Length", y="Sepal.Width", color="Species",
          Geom.point)
-draw(SVG(6inch, 4inch), p)
+draw(D3(6inch, 4inch), p)
 ```
 
 ## Scale Transformations
@@ -98,9 +98,9 @@ useful.
 mammals = data("MASS", "mammals")
 
 p = plot(mammals,
-         {:x => "body", :y => "brain"},
+         x="body", y="brain",
          Geom.point)
-draw(SVG(6inch, 6inch), p)
+draw(D3(6inch, 6inch), p)
 ```
 
 This is no good, the elephants are ruining things for us. Putting both axis on a
@@ -108,9 +108,9 @@ log-scale clears things up.
 
 ```{.julia}
 p = plot(mammals,
-         {:x => "body", :y => "brain"},
+         x="body", y="brain",
          Geom.point, Scale.x_log10, Scale.y_log10)
-draw(SVG(6inch, 6inch), p)
+draw(D3(6inch, 6inch), p)
 ```
 
 ## Labels
@@ -124,9 +124,9 @@ Let's label that previous plot.
 
 ```{.julia}
 p = plot(mammals,
-         {:x => "body", :y => "brain", :label => 1},
+         x="body", y="brain", label=1,
          Geom.label, Geom.point, Scale.x_log10, Scale.y_log10)
-draw(SVG(6inch, 6inch), p)
+draw(D3(6inch, 6inch), p)
 ```
 
 Mapping `:label` to 1, gives the first column of the data frame, which is not
@@ -146,7 +146,7 @@ normmix = MixtureModel([Normal(-3, 1), Normal(3, 1)], [0.7, 0.3])
 xs = DataFrame({"x" => Float64[rand(normmix) for _ in 1:5000]})
 
 p = plot(xs,
-         {:x => "x"},
+         x="x",
          Geom.bar)
 draw(SVG(4inch, 3inch), p)
 ```
@@ -166,7 +166,7 @@ xs = Float64[xy[1] for xy in xys]
 ys = Float64[xy[2] for xy in xys]
 
 p = plot(DataFrame({"x" => xs, "y" => ys}),
-                   {:x => "x", :y => "y"},
+                   x="x", y="y",
                    Geom.rectbin)
 
 draw(SVG(5inch, 4inch), p)
@@ -181,8 +181,8 @@ aesthetic. Here is a (log) wage distribution categorized by years of education.
 ```{.julia}
 wages = data("plm", "Wages")
 p = plot(wages,
-         {:x => "ed",
-          :y => "lwage"},
+         x="ed",
+         y="lwage",
          Geom.boxplot)
 draw(SVG(4inch, 4inch), p)
 ```
@@ -195,7 +195,7 @@ simple function plotting.
 
 ```{.julia}
 p = plot([sin, cos], 0, 25)
-draw(SVG(6inch, 3inch), p)
+draw(D3(6inch, 3inch), p)
 ```
 
 This form of `plot` takes one or more functions, followed by a lower and upper
@@ -218,11 +218,11 @@ Gadfly is based on a declarative vector graphics system called
 things with plots, once they are defined.
 
 ```{.julia}
-fig1a = plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"}, Geom.point)
-fig1b = plot(iris, {:x => "Sepal.Width"}, Geom.bar)
+fig1a = plot(iris, x="Sepal.Length", y="Sepal.Width", Geom.point)
+fig1b = plot(iris, x="Sepal.Width", Geom.bar)
 fig1 = hstack(fig1a, fig1b)
 
-draw(SVG(6inch, 3inch), fig1)
+draw(D3(6inch, 3inch), fig1)
 ```
 
 Ultimately Compose will allow the creation of more complex plots, such as those

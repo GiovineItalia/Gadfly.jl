@@ -8,7 +8,7 @@
 // Returns:
 //   A callback function.
 //
-var guide_toggle_color = function(colorclass) {
+var guide_toggle_color = function(parent_id, colorclass) {
     var visible = true;
     return (function() {
         if (visible) {
@@ -16,7 +16,8 @@ var guide_toggle_color = function(colorclass) {
               .transition()
               .duration(250)
               .style("opacity", 0.5);
-            d3.selectAll(".geometry." + colorclass)
+            d3.select(parent_id)
+              .selectAll(".geometry." + colorclass)
               .transition()
               .duration(250)
               .style("opacity", 0);
@@ -26,7 +27,8 @@ var guide_toggle_color = function(colorclass) {
               .transition()
               .duration(250)
               .style("opacity", 1.0);
-            d3.selectAll(".geometry." + colorclass)
+            d3.select(parent_id)
+              .selectAll(".geometry." + colorclass)
               .transition()
               .duration(250)
               .style("opacity", 1.0);
@@ -44,18 +46,20 @@ var guide_toggle_color = function(colorclass) {
 // Returns:
 //   Callback function.
 //
-var guide_background_mouseover = function(color) {
+var guide_background_mouseover = function(parent_id, color) {
     return (function () {
-        d3.selectAll(".xgridlines, .ygridlines")
+        d3.select(parent_id)
+          .selectAll(".xgridlines, .ygridlines")
           .transition()
           .duration(250)
           .attr("stroke", color);
     });
 };
 
-var guide_background_mouseout = function(color) {
+var guide_background_mouseout = function(parent_id, color) {
     return (function () {
-        d3.selectAll(".xgridlines, .ygridlines")
+        d3.select(parent_id)
+          .selectAll(".xgridlines, .ygridlines")
           .transition()
           .duration(250)
           .attr("stroke", color);
@@ -86,12 +90,14 @@ var geom_point_mouseover = function(lw) {
 // certain ellements.
 //
 // Args:
+//   parent_id: Id of the parent element containing the svg element.
 //   t: A transform of the form {"scale": scale}
 //   old_scale: The scaling factor applied prior to t.scale.
 //
-var set_geometry_transform = function(t, old_scale) {
+var set_geometry_transform = function(parent_id, t, old_scale) {
     // transform geometries
-    d3.selectAll(".geometry")
+    d3.select(parent_id)
+      .selectAll(".geometry")
       .attr("transform", function() {
           return "translate(" + [t.x, t.y] + ") " +
                  "scale(" + t.scale + ")";
@@ -99,7 +105,8 @@ var set_geometry_transform = function(t, old_scale) {
 
     // unscale geometry widths, radiuses, etc.
     var size_attribs = ["r", "font-size"];
-    d3.selectAll(".geometry")
+    d3.select(parent_id)
+      .selectAll(".geometry")
       .each(function() {
           this_selection = d3.select(this);
           for (var i in size_attribs) {
@@ -116,27 +123,31 @@ var set_geometry_transform = function(t, old_scale) {
     // translate?
 
     // transform gridlines
-    d3.selectAll(".xgridlines")
+    d3.select(parent_id)
+      .selectAll(".xgridlines")
       .attr("transform", function() {
         return "translate(" + [t.x, 0.0] + ") " +
                "scale(" + [t.scale, 1.0] + ")";
       });
 
-    d3.selectAll(".ygridlines")
-      .attr("transform", function() {
+      d3.select(parent_id)
+        .selectAll(".ygridlines")
+        .attr("transform", function() {
           return "translate(" + [0.0, t.y] + ") " +
                  "scale(" + [1.0, t.scale] + ")";
       });
 
     // unscale gridline widths
-    d3.selectAll(".xgridlines,.ygridlines")
+    d3.select(parent_id)
+      .selectAll(".xgridlines,.ygridlines")
       .each(function() {
           d3.select(this).attr("stroke-width",
               old_scale / t.scale * d3.select(this).attr("stroke-width"));
       });
 
     // move labels around
-    d3.selectAll(".xlabels")
+    d3.select(parent_id)
+      .selectAll(".xlabels")
       .attr("transform", function() {
           return "translate(" + [t.x, 0.0] + ")";
       })
@@ -146,7 +157,8 @@ var set_geometry_transform = function(t, old_scale) {
                 t.scale / old_scale * d3.select(this).attr("x"));
         });
 
-    d3.selectAll(".ylabels")
+    d3.select(parent_id)
+      .selectAll(".ylabels")
       .attr("transform", function() {
           return "translate(" + [0.0, t.y] + ")";
       })
@@ -161,18 +173,21 @@ var set_geometry_transform = function(t, old_scale) {
 // Construct a callback used for zoombehavior.
 //
 // Args:
+//   parent_id: Id of the parent element containing the svg element.
 //   t: A transform of the form {"scale": scale} to close arround.
 //
 // Returns:
 //   A zoom behavior.
 //
-var zoom_behavior = function(t) {
+var zoom_behavior = function(parent_id, t) {
     var zm = d3.behavior.zoom();
     zm.scaleExtent([1.0/3.0, 10.0])
       .on("zoom", function(d, i) {
         old_scale = t.scale;
         t.scale = d3.event.scale;
-        var bbox = d3.select(".guide.background").select("path").node().getBBox();
+        var bbox = d3.select(parent_id)
+                     .select(".guide.background")
+                     .select("path").node().getBBox();
 
         var x_min = -bbox.width * t.scale - (t.scale * bbox.width - bbox.width);
         var x_max = bbox.width * t.scale;
@@ -189,6 +204,7 @@ var zoom_behavior = function(t) {
         ty += y0;
 
         set_geometry_transform(
+            parent_id,
             {"x": tx,
              "y": ty,
              "scale": t.scale}, old_scale);

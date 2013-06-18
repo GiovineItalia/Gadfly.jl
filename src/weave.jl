@@ -22,6 +22,10 @@ module WeaveSandbox
     OUTPUT_STREAM = IOString()
     print(x) = Base.print(OUTPUT_STREAM, x)
     println(x) = Base.println(OUTPUT_STREAM, x)
+
+    # Output
+    MIME_OUTPUT = Array(Tuple, 0)
+    emit(mime, data) = push!(MIME_OUTPUT, (mime, data))
 end
 
 
@@ -72,10 +76,11 @@ function weave(infn::String, infmt::String, outfmt::String,
 
     # Substitute the default emitters for ones that simply print the image data.
     # Weave will detect the type of the data and embed it appropriately.
-    Compose.emitters["image/svg+xml"] = WeaveSandbox.print
-    Compose.emitters["image/png"]     = WeaveSandbox.print
-    Compose.emitters["image/gif"]     = WeaveSandbox.print
-    Compose.emitters["image/jpeg"]    = WeaveSandbox.print
+    Compose.emitters["image/svg+xml"]          = WeaveSandbox.emit
+    Compose.emitters["image/png"]              = WeaveSandbox.emit
+    Compose.emitters["image/gif"]              = WeaveSandbox.emit
+    Compose.emitters["image/jpeg"]             = WeaveSandbox.emit
+    Compose.emitters["application/javascript"] = WeaveSandbox.emit
 
     docname = match(r"^(.*)(\.[^\.]*)$", basename(infn)).captures[1]
     metadata, document = JSON.parse(pandoc(infn, infmt, "json"))
@@ -97,7 +102,6 @@ function weave(infn::String, infmt::String, outfmt::String,
             continue
         end
 
-
         # Process code blocks
         attribs, source = [v for v in values(block)][1]
         id, classes, keyvals = attribs
@@ -111,11 +115,11 @@ function weave(infn::String, infmt::String, outfmt::String,
 
         # dispatch on the block type, defaulting to julia
         if contains(classes, "graphviz")
-            output = execblock_graphviz(source)
+            mime, output = execblock_graphviz(source)
         elseif contains(classes, "latex")
-            output = execblock_latex(source)
+            mime, output = execblock_latex(source)
         else
-            output = execblock_julia(source)
+            mime, output = execblock_julia(source)
         end
 
         if !attrib_bool(keyvals, "hide", false)
@@ -123,7 +127,7 @@ function weave(infn::String, infmt::String, outfmt::String,
         end
 
         push!(processed_document,
-             process_output(output, id, classes, keyvals,
+             process_output(mime, output, id, classes, keyvals,
                             outfmt, docname, fignum, selfcontained)...)
     end
 
@@ -198,12 +202,12 @@ end
 #   An array of JSON elements that will be inserted directly after the code
 #   block that was executed.
 #
-function process_output(output::Vector{Uint8},
+function process_output(mime::String, output::Vector{Uint8},
                         id::String, classes::Set, keyvals::Dict,
                         outfmt::String, docname::String, fignum::WeakRef,
                         selfcontained::Bool)
 
-    mime = datatype(output)
+    println(STDERR, mime)
 
     if isempty(output)
         []
@@ -212,7 +216,7 @@ function process_output(output::Vector{Uint8},
         []
     elseif mime == "text/plain"
         [["CodeBlock" => {{"", {"julia_output"}, {}}, bytestring(output)}]]
-    elseif !is(match(r"^image", mime), nothing)
+    elseif mime == "application/javascript" || !is(match(r"^image", mime), nothing)
         fignum.value += 1
 
         figname = isempty(id) ? "fig_$(fignum.value)" : id
@@ -236,6 +240,13 @@ function process_output(output::Vector{Uint8},
                               data=\"data:image/svg+xml;base64,$(svgdata)\">
                       </object>
                      </figure>"]]]
+            elseif mime == "application/javascript"
+                jsdata = bytestring(output)
+                [["RawBlock" =>
+                    ["html",
+                     "<script type=\"text/javascript\">
+                        $(jsdata)
+                      </script>"]]]
             else
                 # Let pandoc handle binary image formats.
                 figfn, figio = mktemp()
@@ -253,6 +264,8 @@ function process_output(output::Vector{Uint8},
                 figext = "png"
             elseif mime == "image/jpeg"
                 figext = "jpg"
+            elseif mime == "application/javascript"
+                figext = "js"
             end
 
             figfn = "$(docname)_$(figname).$(figext)"
@@ -270,6 +283,13 @@ function process_output(output::Vector{Uint8},
                                       data=\"$(figurl)\" \
                                       type=\"image/svg+xml\"></object> \
                               <figcaption>$(caption)</figcaption></figure>"]]]
+            elseif mime == "application/javascript"
+                parent_id = string(figname, "_container")
+                [["RawBlock" =>
+                    ["html",
+                        "<div id=\"$(parent_id)\"></div>
+                         <script src=\"$(figurl)\"></script>
+                         <script>draw(\"#$(parent_id)\");</script>"]]]
             else
                 [["Para" => {["Image" => {{["Str" => alttext]}, {figurl, ""}}]}]]
             end
@@ -292,7 +312,7 @@ function execblock_graphviz(source)
     output = readall(input > `dot -Tsvg`)
     close(input)
     rm(input_path)
-    output
+    "image/svg+xml", output
 end
 
 
@@ -312,7 +332,7 @@ function execblock_latex(source)
     output = readall(`dvisvgm --stdout --no-fonts $(latexout_path)` .> SpawnNullStream())
     run(`rm -rf $(latexout_dir)`)
 
-    output
+    "image/svg+xml", output
 end
 
 
@@ -324,10 +344,15 @@ function execblock_julia(source)
         #       of each expression.
     end
 
-    seek(WeaveSandbox.OUTPUT_STREAM, 0)
-    output = takebuf_array(WeaveSandbox.OUTPUT_STREAM)
-    truncate(WeaveSandbox.OUTPUT_STREAM, 0)
-    output
+    if length(WeaveSandbox.MIME_OUTPUT) > 0
+        mime, output = pop!(WeaveSandbox.MIME_OUTPUT)
+        mime, convert(Vector{Uint8}, output)
+    else
+        seek(WeaveSandbox.OUTPUT_STREAM, 0)
+        output = takebuf_array(WeaveSandbox.OUTPUT_STREAM)
+        truncate(WeaveSandbox.OUTPUT_STREAM, 0)
+        "text/plain", output
+    end
 end
 
 

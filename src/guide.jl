@@ -86,8 +86,9 @@ function render_discrete_color_key(colors::Vector{ColorValue},
         color_class = @sprintf("color_%s", escape_string(label))
         swatch <<= svgclass(@sprintf("guide %s", color_class))
 
-        swatch <<= d3embed(@sprintf(".on(\"click\", guide_toggle_color(\"%s\"))",
-                                    color_class))
+        swatch <<= d3embed(
+            @sprintf(".on(\"click\", guide_toggle_color(parent_id, \"%s\"))",
+                     color_class))
 
         swatch_canvas <<= swatch
     end
@@ -474,11 +475,13 @@ function layout_guides(plot_canvas::Canvas,
             (canvas(l, t, pw, ph),
                 {canvas(units_inherited=true, order=-1, clip=true), under_guides...},
                 (canvas(units_inherited=true, order=1, clip=true),  plot_canvas),
-                d3embed(@sprintf(".on(\"mouseover\", guide_background_mouseover(%s))",
-                        to_json(theme.highlight_color(theme.grid_color)))),
-                d3embed(@sprintf(".on(\"mouseout\", guide_background_mouseout(%s))",
-                        to_json(theme.grid_color))),
-                d3embed(".call(zoom_behavior(t))")),
+                d3embed(@sprintf(
+                    ".on(\"mouseover\", guide_background_mouseover(parent_id, %s))",
+                    to_json(theme.highlight_color(theme.grid_color)))),
+                d3embed(@sprintf(
+                    ".on(\"mouseout\", guide_background_mouseout(parent_id, %s))",
+                    to_json(theme.grid_color))),
+                d3embed(".call(zoom_behavior(parent_id, t))")),
             top_guides, right_guides, bottom_guides, left_guides)
 end
 
