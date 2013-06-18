@@ -142,8 +142,16 @@ Now the output can be included in an HTML like.
 <script src="gadfly.js"></script>
 
 <!-- Placed whereever you want the graphic to be rendered. -->
+<div id="my_chart"></div>
 <script src="mammals.js"></script>
+<script>
+draw("#my_chart");
+</script>
 ```
+
+A `div` element must be placed, and the `draw` function defined in mammals.js
+must be passed the id of this element, so it knows where in the document to
+place the plot.
 
 The d3 backend is very new, so these directions may change in the future. (I.e.
 I might start embedding d3 and gadfly javascript by default.)
