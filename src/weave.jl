@@ -76,11 +76,10 @@ function weave(infn::String, infmt::String, outfmt::String,
 
     # Substitute the default emitters for ones that simply print the image data.
     # Weave will detect the type of the data and embed it appropriately.
-    Compose.emitters["image/svg+xml"]          = WeaveSandbox.emit
-    Compose.emitters["image/png"]              = WeaveSandbox.emit
-    Compose.emitters["image/gif"]              = WeaveSandbox.emit
-    Compose.emitters["image/jpeg"]             = WeaveSandbox.emit
-    Compose.emitters["application/javascript"] = WeaveSandbox.emit
+    for mime in ["image/svg+xml", "image/png", "image/gif", "image/jpeg",
+                 "application/javascript"]
+        Compose.emitters[mime] = data -> WeaveSandbox.emit(mime, data)
+    end
 
     docname = match(r"^(.*)(\.[^\.]*)$", basename(infn)).captures[1]
     metadata, document = JSON.parse(pandoc(infn, infmt, "json"))
