@@ -38,7 +38,7 @@ function pandoc(infn, infmt::String, outfmt::String, args::String...)
         push!(cmd, arg)
     end
 
-    readall(infn > Cmd(cmd))
+    readall(infn |> Cmd(cmd))
 end
 
 
@@ -48,9 +48,13 @@ type ParseIt
     value::String
 end
 
+## iterate over (cmd, expr)
 parseit(value::String) = ParseIt(value)
 start(it::ParseIt) = 1
-next(it::ParseIt, pos) = parse(it.value, pos)
+function next(it::ParseIt, pos)
+    (ex,newpos) = Base.parse(it.value, pos)
+    ((it.value[pos:(newpos-1)], ex), newpos)
+end
 done(it::ParseIt, pos) = pos > length(it.value)
 
 
@@ -97,7 +101,7 @@ function weave(infn::String, infmt::String, outfmt::String,
 
     for block in document
         if !haskey(block, "CodeBlock")
-            push!(processed_document, block)
+            push!(processed_document, process_block(block))
             continue
         end
 
@@ -118,11 +122,24 @@ function weave(infn::String, infmt::String, outfmt::String,
         elseif contains(classes, "latex")
             mime, output = execblock_latex(source)
         else
-            mime, output = execblock_julia(source)
+            mime, output, results = execblock_julia(source)
         end
 
         if !attrib_bool(keyvals, "hide", false)
-            push!(processed_document, block)
+            for (cmd, expr, result) in results
+
+                push!(processed_document, ["CodeBlock"=>{{"", {"julia"}, {}}, cmd}])
+                ## print result if there
+                if isa(expr, Expr) && expr.head != :toplevel && 
+                    !isa(result, Nothing) &&
+                    !isa(result, Function) &&
+                    length(string(result)) > 0
+                    
+                    out = "## " * replace(chomp(string(result)), "\n", "\n## ") # ala knitr
+                    push!(processed_document, ["CodeBlock"=>{{"", {"julia"}, {}}, out}])
+
+                end
+            end
         end
 
         push!(processed_document,
@@ -138,6 +155,31 @@ function weave(infn::String, infmt::String, outfmt::String,
     rm(jsonout_path)
     output
 end
+
+
+## loop over values to replace inline code
+function process_block(p::Dict)
+    for (k,v) in p
+        if k == "Code"
+            lang = v[1][2]
+            if length(lang) > 0 && lang[1] == "julia"
+                out = eval(WeaveSandbox, parse(v[2]))
+                p[k][2] = string(out)
+            end
+        else
+            p[k] = process_block(v)
+        end
+    end
+    p
+end
+
+function process_block(p::Array)
+    for i in 1:length(p)
+        p[i] = process_block(p[i])
+    end
+    p
+end
+process_block(p::Any) = p
 
 
 # Detect data type.
@@ -212,7 +254,8 @@ function process_output(mime::String, output::Vector{Uint8},
         warn("Skipping unknown binary data produced by a code block.")
         []
     elseif mime == "text/plain"
-        [["CodeBlock" => {{"", {"julia_output"}, {}}, bytestring(output)}]]
+        out = "## " * replace(chomp(bytestring(output)), "\n", "\n## ")
+        [["CodeBlock" => {{"", {"julia_output"}, {}}, out}]]
     elseif mime == "application/javascript" || !is(match(r"^image", mime), nothing)
         fignum.value += 1
 
@@ -224,9 +267,10 @@ function process_output(mime::String, output::Vector{Uint8},
             caption = ""
         end
 
+
         if selfcontained
             if mime == "image/svg+xml" && (outfmt == "html" || outfmt == "html5")
-                # TODO: This works on firefox and safari, but is somewhat broken
+                # TODO: Thides works on firefox and safari, but is somewhat broken
                 # on chrome. It seems to be a chrome bug, but I need to
                 # investigate more.
                 svgdata = bytestring(encode(Base64, output))
@@ -335,20 +379,22 @@ end
 
 # Execute a block of julia code, capturing its output.
 function execblock_julia(source)
-    for expr in parseit(strip(source))
+    out = Any[]
+    for (cmd, expr) in parseit(strip(source))
         result = eval(WeaveSandbox, expr)
         # TODO: If the echo attribute is set, find a way to insert the result
         #       of each expression.
+        push!(out, (cmd, expr, result))
     end
 
     if length(WeaveSandbox.MIME_OUTPUT) > 0
         mime, output = pop!(WeaveSandbox.MIME_OUTPUT)
-        mime, convert(Vector{Uint8}, output)
+        mime, convert(Vector{Uint8}, output), out
     else
         seek(WeaveSandbox.OUTPUT_STREAM, 0)
         output = takebuf_array(WeaveSandbox.OUTPUT_STREAM)
         truncate(WeaveSandbox.OUTPUT_STREAM, 0)
-        "text/plain", output
+        "text/plain", output, out
     end
 end
 
