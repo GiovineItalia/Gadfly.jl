@@ -109,7 +109,8 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     if length(aes.color) == 1
         form = lines({(x, y) for (x, y) in zip(aes.x, aes.y)}...) <<
-               stroke(aes.color[1])
+               stroke(aes.color[1]) <<
+               svgclass("geometry")
     else
         # group points by color
         points = Dict{ColorValue, Array{(Float64, Float64),1}}()

@@ -283,11 +283,17 @@ function process_output(mime::String, output::Vector{Uint8},
                      </figure>"]]]
             elseif mime == "application/javascript"
                 jsdata = bytestring(output)
+                parent_id = string(figname, "_container")
                 [["RawBlock" =>
                     ["html",
-                     "<script type=\"text/javascript\">
+                    """
+                     <div id=\"$(parent_id)\"></div>
+                     <script type=\"text/javascript\">
                         $(jsdata)
-                      </script>"]]]
+                     </script>
+                     <script>draw(\"#$(parent_id)\");</script>
+                    """
+                      ]]]
             else
                 # Let pandoc handle binary image formats.
                 figfn, figio = mktemp()
