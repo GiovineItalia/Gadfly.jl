@@ -58,6 +58,16 @@ end
 done(it::ParseIt, pos) = pos > length(it.value)
 
 
+# Means to format output for including in results
+# export so user can write methods for other outputs
+export gadfly_format
+gadfly_format(x...) = string(x...)
+gadfly_format(x::Vector) = string(reshape(x, (1, length(x))))
+
+# comment output ala knitr
+commentify(x::String) = "## " * replace(chomp(x), "\n", "\n## ")
+commentify(x) = x
+
 # Execute an executable document.
 #
 # Code blocks within their own paragraph are executed, and their output is
@@ -117,6 +127,7 @@ function weave(infn::String, infmt::String, outfmt::String,
         end
 
         # dispatch on the block type, defaulting to julia
+
         if contains(classes, "graphviz")
             mime, output = execblock_graphviz(source)
         elseif contains(classes, "latex")
@@ -125,26 +136,44 @@ function weave(infn::String, infmt::String, outfmt::String,
             mime, output, results = execblock_julia(source)
         end
 
+## commands to pass to manage what is printed. Default is opposite.
+#         hide=true  output=false   results=false commands=false asis=true
+# cmd        no          yes          yes             no           yes
+# results    no          yes           no            yes          asis
+# output    yes           no          yes            yes           yes
+
         if !attrib_bool(keyvals, "hide", false)
             for (cmd, expr, result) in results
-
-                push!(processed_document, ["CodeBlock"=>{{"", {"julia"}, {}}, cmd}])
+                if attrib_bool(keyvals, "commands", true)
+                    push!(processed_document, ["CodeBlock"=>{{"", {"julia"}, {}}, cmd}])
+                end
+                
                 ## print result if there
-                if isa(expr, Expr) && expr.head != :toplevel && 
-                    !isa(result, Nothing) &&
+                res = gadfly_format(result)
+                if  attrib_bool(keyvals, "results", true) &&
+                    isa(expr, Expr) && expr.head != :toplevel && 
+                        !isa(result, Nothing) &&
                     !isa(result, Function) &&
-                    length(string(result)) > 0
+                    length(res) > 0
                     
-                    out = "## " * replace(chomp(string(result)), "\n", "\n## ") # ala knitr
-                    push!(processed_document, ["CodeBlock"=>{{"", {"julia"}, {}}, out}])
-
+                    ## asis. Can be used to return raw output from julia
+                    if attrib_bool(keyvals, "asis", false)
+                        push!(processed_document,
+                              ["RawBlock"=>["html",gadfly_format(result)]])
+                    else
+                        out = commentify(res)
+                        push!(processed_document, ["CodeBlock"=>{{"", {"julia"}, {}}, out}])
+                    end
+                    
                 end
             end
         end
-
-        push!(processed_document,
-             process_output(mime, output, id, classes, keyvals,
-                            outfmt, docname, fignum, selfcontained)...)
+    
+        if attrib_bool(keyvals, "output", true)
+            push!(processed_document,
+                  process_output(mime, output, id, classes, keyvals,
+                                 outfmt, docname, fignum, selfcontained)...)
+        end
     end
 
     jsonout_path, jsonout = mktemp()
@@ -254,9 +283,11 @@ function process_output(mime::String, output::Vector{Uint8},
         warn("Skipping unknown binary data produced by a code block.")
         []
     elseif mime == "text/plain"
-        out = "## " * replace(chomp(bytestring(output)), "\n", "\n## ")
+        out = commentify(bytestring(output))
         [["CodeBlock" => {{"", {"julia_output"}, {}}, out}]]
     elseif mime == "application/javascript" || !is(match(r"^image", mime), nothing)
+
+
         fignum.value += 1
 
         figname = isempty(id) ? "fig_$(fignum.value)" : id
@@ -386,12 +417,15 @@ end
 # Execute a block of julia code, capturing its output.
 function execblock_julia(source)
     out = Any[]
+
+    ## flush MIME_OUTPUT if present for some reason
+    while(length(WeaveSandbox.MIME_OUTPUT) > 0) pop!(WeaveSandbox.MIME_OUTPUT) end
+
     for (cmd, expr) in parseit(strip(source))
         result = eval(WeaveSandbox, expr)
-        # TODO: If the echo attribute is set, find a way to insert the result
-        #       of each expression.
         push!(out, (cmd, expr, result))
     end
+    
 
     if length(WeaveSandbox.MIME_OUTPUT) > 0
         mime, output = pop!(WeaveSandbox.MIME_OUTPUT)
@@ -402,6 +436,7 @@ function execblock_julia(source)
         truncate(WeaveSandbox.OUTPUT_STREAM, 0)
         "text/plain", output, out
     end
+
 end
 
 
