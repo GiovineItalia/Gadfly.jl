@@ -84,7 +84,7 @@ commentify(x) = x
 #   A string in the requested output format,
 #
 function weave(infn::String, infmt::String, outfmt::String,
-               pandoc_args::String...)
+               pandoc_args::String...; debug::Bool=false)
     selfcontained = any([pandoc_arg == "--self-contained"
                          for pandoc_arg in pandoc_args])
 
@@ -110,6 +110,11 @@ function weave(infn::String, infmt::String, outfmt::String,
     fignum = WeakRef(0)
 
     for block in document
+        if debug
+            println("Block: ", block)
+            println("---")
+        end
+
         if !haskey(block, "CodeBlock")
             push!(processed_document, process_block(block))
             continue
@@ -126,6 +131,7 @@ function weave(infn::String, infmt::String, outfmt::String,
             continue
         end
 
+
         # dispatch on the block type, defaulting to julia
 
         if contains(classes, "graphviz")
@@ -137,10 +143,10 @@ function weave(infn::String, infmt::String, outfmt::String,
         end
 
 ## commands to pass to manage what is printed. Default is opposite.
-#         hide=true  output=false   results=false commands=false asis=true
-# cmd        no          yes          yes             no           yes
-# results    no          yes           no            yes          asis
-# output    yes           no          yes            yes           yes
+#         hide=true  execute=false output=false   results=false commands=false asis=true 
+# cmd        no          yes (block)  yes          yes             no           yes     
+# results    no           no          yes           no            yes          asis     
+# output    yes           no           no          yes            yes           yes     
 
         if !attrib_bool(keyvals, "hide", false)
             for (cmd, expr, result) in results
@@ -419,7 +425,16 @@ function execblock_julia(source)
     out = Any[]
 
     for (cmd, expr) in parseit(strip(source))
-        result = eval(WeaveSandbox, expr)
+        result = try 
+            eval(WeaveSandbox, expr) 
+        catch e
+            io = IOBuffer()
+            print(io, "ERROR: ")
+            Base.error_show(io, e)
+            tmp = bytestring(io)
+            close(io)
+            tmp
+        end
         push!(out, (cmd, expr, result))
     end
     
