@@ -6,7 +6,7 @@ using DataFrames
 using Compose
 
 import Gadfly.Scale, Gadfly.element_aesthetics, Gadfly.default_scales
-import Distributions.Uniform
+import Distributions.Uniform, Distributions.kde
 import Iterators.chain, Iterators.cycle, Iterators.product, Iterators.partition
 
 include("bincount.jl")
@@ -60,6 +60,7 @@ const histogram = HistogramStatistic()
 function apply_statistic(stat::HistogramStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("HistogramStatistic", aes, :x)
     d, bincounts = choose_bin_count_1d(aes.x)
 
     x_min, x_max = min(aes.x), max(aes.x)
@@ -75,6 +76,30 @@ function apply_statistic(stat::HistogramStatistic,
         aes.y[k] = bincounts[k]
     end
 end
+
+
+type DensityStatistic <: Gadfly.StatisticElement
+    # Number of points sampled
+    n::Int
+end
+
+
+const density = DensityStatistic(300)
+
+
+element_aesthetics(::DensityStatistic) = [:x, :y]
+
+
+function apply_statistic(stat::DensityStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("DensityStatistic", aes, :x)
+
+    f = kde(aes.x, stat.n)
+    aes.x = f.x
+    aes.y = f.density
+end
+
 
 
 type RectangularBinStatistic <: Gadfly.StatisticElement

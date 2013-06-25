@@ -22,7 +22,7 @@ import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, @plot, spy
 
 # Re-export some essentials from Compose
-export SVG, PNG, PS, PDF, draw, inch, mm, px, pt, color
+export D3, SVG, PNG, PS, PDF, draw, inch, mm, px, pt, color
 
 typealias ColorOrNothing Union(ColorValue, Nothing)
 
@@ -143,7 +143,7 @@ function plot(data::AbstractDataFrame, elements::Element...; mapping...)
     p.mapping = Dict()
     valid_aesthetics = Set(names(Aesthetics)...)
     for (k, v) in mapping
-        if !has(valid_aesthetics, k)
+        if !contains(valid_aesthetics, k)
             error("$(k) is not a recognized aesthetic")
         end
 
