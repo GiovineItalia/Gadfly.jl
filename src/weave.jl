@@ -418,9 +418,6 @@ end
 function execblock_julia(source)
     out = Any[]
 
-    ## flush MIME_OUTPUT if present for some reason
-    while(length(WeaveSandbox.MIME_OUTPUT) > 0) pop!(WeaveSandbox.MIME_OUTPUT) end
-
     for (cmd, expr) in parseit(strip(source))
         result = eval(WeaveSandbox, expr)
         push!(out, (cmd, expr, result))

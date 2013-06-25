@@ -406,9 +406,11 @@ hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
 # representation of the Plot object, renders it, and emits the graphic. (Which
 # usually means, shows it in a browser window.)
 #
-function show(io::IO, p::Plot)
-    draw(SVG(6inch, 5inch), p)
-end
+#function show(io::IO, p::Plot)
+    #draw(SVG(6inch, 5inch), p)
+#end
+# TODO: Find a more elegant way to automatically show plots. This is unexpected
+# and gives weave problems.
 
 
 include("scale.jl")
