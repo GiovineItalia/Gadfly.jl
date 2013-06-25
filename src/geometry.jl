@@ -140,6 +140,7 @@ end
 
 
 const bar = BarGeometry()
+const histogram = BarGeometry()
 
 
 function element_aesthetics(::BarGeometry)

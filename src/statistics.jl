@@ -95,6 +95,8 @@ function apply_statistic(stat::DensityStatistic,
                          aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("DensityStatistic", aes, :x)
 
+    # TODO: handle grouping by color
+
     f = kde(aes.x, stat.n)
     aes.x = f.x
     aes.y = f.density

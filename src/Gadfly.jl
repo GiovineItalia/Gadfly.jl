@@ -19,7 +19,7 @@ import Compose.draw, Compose.hstack, Compose.vstack
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
        Base.show, Base.getindex
 
-export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, @plot, spy
+export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, layer, @plot, spy
 
 # Re-export some essentials from Compose
 export D3, SVG, PNG, PS, PDF, draw, inch, mm, px, pt, color
@@ -52,19 +52,46 @@ include("poetry.jl")
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 type Layer <: Element
-    data::Data
-    geom::GeometryElement
+    data_source::Union(AbstractDataFrame, Nothing)
+    mapping::Dict
     statistic::StatisticElement
+    geom::GeometryElement
 
     function Layer()
-        new(Data(), Geom.nil, Stat.nil)
+        new(nothing, Dict(), Stat.nil, Geom.nil)
     end
+
+    function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
+                   statistic::StatisticElement, geom::GeometryElement)
+        new(data, Dict(), statistic, geom)
+    end
+end
+
+
+function layer(data::Union(AbstractDataFrame, Nothing),
+               statistic::StatisticElement=Stat.nil,
+               geom::GeometryElement=Geom.nil;
+               mapping...)
+    Layer(data, Dict(mapping...), statistic, geom)
+end
+
+
+function layer(statistic::StatisticElement,
+               geom::GeometryElement;
+               mapping...)
+    layer(nothing, statistic, geom; mapping...)
+end
+
+
+function layer(geom::GeometryElement; mapping...)
+    layer(nothing, Stat.nil, geom; mapping...)
 end
 
 
 # A full plot specification.
 type Plot
     layers::Vector{Layer}
+    data_source::Union(Nothing, AbstractDataFrame)
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
@@ -74,7 +101,7 @@ type Plot
     mapping::Dict
 
     function Plot()
-        new(Layer[], Data(), ScaleElement[], StatisticElement[],
+        new(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
             Coord.cartesian, GuideElement[], default_theme)
     end
 end
@@ -141,6 +168,7 @@ typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr)
 function plot(data::AbstractDataFrame, elements::Element...; mapping...)
     p = Plot()
     p.mapping = Dict()
+    p.data_source = data
     valid_aesthetics = Set(names(Aesthetics)...)
     for (k, v) in mapping
         if !contains(valid_aesthetics, k)
@@ -189,12 +217,10 @@ function plot(data::AbstractDataFrame, mapping::Dict, elements::Element...)
         setfield(p.data, var, eval_plot_mapping(data, value))
     end
     p.mapping = mapping
+    p.data_source = data
 
     p
 end
-
-
-# TODO: We need to then build a layer() function that works very much like plot.
 
 
 # Turn a graph specification into a graphic.
@@ -223,6 +249,33 @@ end
 #   A compose Canvas containing the graphic.
 #
 function render(plot::Plot)
+    if isempty(plot.layers)
+        error("Plot has no layers. Try adding a geometry.")
+    end
+
+    # Process layers, filling inheriting mappings or data from the Plot where
+    # they are missing.
+    datas = Array(Data, length(plot.layers))
+    for (i, layer) in enumerate(plot.layers)
+        if layer.data_source === nothing && isempty(layer.mapping)
+            datas[i] = plot.data
+        else
+            datas[i] = Data()
+
+            if layer.data_source === nothing
+                layer.data_sourcee = plot.data_source
+            end
+
+            if isempty(layer.mapping)
+                layer.mapping = plot.mapping
+            end
+
+            for (k, v) in layer.mapping
+                setfield(datas[i], k, eval_plot_mapping(layer.data_source, v))
+            end
+        end
+    end
+
     # Add default statistics for geometries.
     layer_stats = Array(StatisticElement, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
@@ -342,8 +395,7 @@ function render(plot::Plot)
     end
 
     # I. Scales
-    aess = Scale.apply_scales(Iterators.distinct(values(scales)), plot.data,
-                              [layer.data for layer in plot.layers]...)
+    aess = Scale.apply_scales(Iterators.distinct(values(scales)), datas...)
 
     # set default labels
     if has(plot.mapping, :color)
