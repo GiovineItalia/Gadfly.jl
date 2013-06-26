@@ -11,6 +11,22 @@ import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit, Gadfly.escape_i
 import Iterators.cycle, Iterators.product
 
 
+# Convert parsed JSON an instance of the specified geometry.
+#
+# Input should be a 2-mer of the for
+#    ["TypeName", serialized object data]
+function geometry_from_json(data::Array)
+    @assort length(data) == 2
+    from_json(eval(symbol(data[1])), data[2])
+end
+
+
+function geomery_to_json(geom::Geometry)
+    @sprintf("[\"%s\",%s]", string(typeof(geom)), to_json(geom))
+end
+
+
+
 # Geometry that renders nothing.
 type Nil <: Gadfly.GeometryElement
 end
@@ -19,6 +35,9 @@ const nil = Nil()
 
 function render(geom::Nil, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
+
+to_json(geom::Nil) = "{}"
+from_json(::Type{Nil}, data::Dict) = Nil()
 
 
 # Catchall
@@ -72,6 +91,14 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                              lw0.value)),
             svgclass([@sprintf("geometry color_%s", escape_id(aes.color_label(c)))
                       for c in aes.color]))
+end
+
+
+to_json(geom::PointGeometry) = "{}"
+from_json(::Type{PointGeometry}, ::Dict) = PointGeometry()
+
+
+function from_json(::Type{PointGeometry}, data)
 end
 
 
@@ -132,6 +159,10 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     form << fill(nothing) << linewidth(theme.line_width)
 end
+
+
+to_json(geom::LineGeometry) = "{}"
+from_json(geom::LineGeometry, ::Dict) = LineGeometry()
 
 
 # Bar geometry summarizes data as vertical bars.
@@ -238,6 +269,10 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
 
 
+to_json(geom::BarGeometry) = "{}"
+from_json(::Type{BarGeometry}, ::Dict) = BarGeometry()
+
+
 type RectangularBinGeometry <: Gadfly.GeometryElement
 end
 
@@ -327,6 +362,10 @@ function render(geom::RectangularBinGeometry,
 end
 
 
+to_json(geom::RectangularBinGeometry) = "{}"
+from_json(::Type{RectangularBinGeometry}, ::Dict) = RectangularBinGeometry()
+
+
 function default_statistic(::RectangularBinGeometry)
     Gadfly.Stat.rectbin
 end
@@ -413,6 +452,10 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
             (canvas(units_inherited=true, order=1), combine(middle_forms...)),
             svgclass("geometry"))
 end
+
+
+to_json(geom::BoxplotGeometry) = "{}"
+from_json(::Type{BoxplotGeometry}, ::Dict) = BoxplotGeometry()
 
 
 type LabelGeometry <: Gadfly.GeometryElement
@@ -672,6 +715,10 @@ function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     Gadfly.assert_aesthetics_defined("Geom.Label", aes, :label, :x, :y)
     deferredcanvas((box, unit_box) -> deferred_label_canvas(aes, theme, box, unit_box))
 end
+
+
+to_json(geom::LabelGeometry) = "{}"
+from_json(::Type{LabelGeometry}, ::Dict) = LabelGeometry()
 
 
 end # module Geom

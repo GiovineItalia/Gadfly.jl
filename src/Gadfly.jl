@@ -16,6 +16,7 @@ using JSON
 
 import Iterators
 import Compose.draw, Compose.hstack, Compose.vstack
+import JSON.to_json
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
        Base.show, Base.getindex
 
@@ -503,6 +504,32 @@ classify_data(data::PooledDataArray) = :discrete
 function classify_data{T <: Integer}(data::DataVector{T})
     length(Set{T}(data...)) <= 20 ? :discrete : :continuous
 end
+
+
+# Serialization of Plot objects to JSON.
+
+function to_json(layer::Layer; with_data=false)
+    out = IOBuffer()
+    write(out, "{")
+    if with_data
+        # TODO: write data source and mapping
+    else
+        write(out, "\"data_source\":null, \"mapping\":null")
+    end
+
+    # I guess we have to write to_json functions for every plot element.
+    #
+    # Suppose we want to serialize a ContinuousScaleTransform.
+    # 
+    # Or, just statistics and geometries.
+end
+
+
+function to_json(plot::Plot; with_data=false)
+
+end
+
+
 
 
 end # module Gadfly

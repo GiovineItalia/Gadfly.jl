@@ -9,6 +9,21 @@ import Gadfly.Scale, Gadfly.element_aesthetics, Gadfly.default_scales
 import Distributions.Uniform, Distributions.kde
 import Iterators.chain, Iterators.cycle, Iterators.product, Iterators.partition
 
+
+# Convert parsed JSON an instance of the specified statistic.
+#
+# Input should be a 2-mer of the for
+#    ["TypeName", serialized object data]
+function statistic_from_json(data::Array)
+    @assort length(data) == 2
+    from_json(eval(symbol(data[1])), data[2])
+end
+
+function statistic_to_json(stat::Statistic)
+    @sprintf("[\"%s\",%s]", string(typeof(stat)), to_json(stat))
+end
+
+
 include("bincount.jl")
 
 # Apply a series of statistics.
@@ -44,6 +59,11 @@ function apply_statistic(stat::Identity,
     nothing
 end
 
+
+to_json(stat::Identity) = "{}"
+from_json(::Type{Identity}, ::Dict) = Identity()
+
+
 const identity = Identity()
 
 
@@ -78,6 +98,10 @@ function apply_statistic(stat::HistogramStatistic,
 end
 
 
+to_json(stat::HistogramStatistic) = "{}"
+from_json(::Type{HistogramStatistic}, ::Dict) = HistogramStatistic()
+
+
 type DensityStatistic <: Gadfly.StatisticElement
     # Number of points sampled
     n::Int
@@ -102,6 +126,9 @@ function apply_statistic(stat::DensityStatistic,
     aes.y = f.density
 end
 
+
+to_json(stat::HistogramStatistic) = @sprintf("{\"n\":%d}", stat.n)
+from_json(::Type{HistogramStatistic}, data::Dict) = HistogramStatistic(data["n"])
 
 
 type RectangularBinStatistic <: Gadfly.StatisticElement
@@ -175,6 +202,10 @@ function apply_statistic(stat::RectangularBinStatistic,
     Scale.apply_scale(color_scale, [aes], data)
     nothing
 end
+
+
+to_json(stat::RectangularBinStatistic) = "{}"
+from_json(::Type{RectangularBinStatistic}, ::Dict) = RectangularBinStatistic()
 
 
 default_statistic(stat::RectangularBinStatistic) = [Scale.color_gradient]
@@ -294,6 +325,21 @@ function apply_statistic(stat::TickStatistic,
     nothing
 end
 
+
+function to_json(stat::TickStatistic)
+    out = IOBuffer()
+    write(out, "{\"in_vars\":")
+    write(out, to_json([string(in_var) for in_var in stat.in_vars]))
+    @printf(out, ",\"out_var\":\"%s\"}", escape_string(stat.out_var))
+    takebuf_string(out)
+end
+
+
+function from_json(::Type{TickStatistic}, data::Dict)
+    TickStatistic(Symbol[symbol(s) for s in data["in_vars"]], data["out_var"])
+end
+
+
 type BoxplotStatistic <: Gadfly.StatisticElement
 end
 
@@ -351,6 +397,10 @@ function apply_statistic(stat::BoxplotStatistic,
 
     nothing
 end
+
+
+to_json(stat::BoxplotStatistic) = "{}"
+from_json(::Type{BoxplotStatistic}, ::Dict) = BoxplotStatistic()
 
 
 end # module Stat
