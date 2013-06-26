@@ -50,21 +50,31 @@ include("weave.jl")
 include("poetry.jl")
 
 
+# We maintain a dictionary of every Data abject in layer that's been added to
+# a plot, indexed by object id. This lets us serialize Plots while only
+# sending a reference to the data, and not the data itself, which can be too
+# costly.
+const DATA_INDEX = Dict{Uint64, Data}()
+
+
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 type Layer <: Element
+    # populated when the layer is added to the plot
+    data::Union(Data, Nothing)
+
     data_source::Union(AbstractDataFrame, Nothing)
     mapping::Dict
     statistic::StatisticElement
     geom::GeometryElement
 
     function Layer()
-        new(nothing, Dict(), Stat.nil, Geom.nil)
+        new(nothing, nothing, Dict(), Stat.nil, Geom.nil)
     end
 
-    function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
+    function Layer(data_source::Union(Nothing, AbstractDataFrame), mapping::Dict,
                    statistic::StatisticElement, geom::GeometryElement)
-        new(data, Dict(), statistic, geom)
+        new(nothing, data_source, Dict(), statistic, geom)
     end
 end
 
@@ -111,7 +121,7 @@ end
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement)
     layer = Layer()
     layer.geom = arg
-    push!(p.layers, layer)
+    add_plot_element(p, data, layer)
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
@@ -120,7 +130,7 @@ end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElement)
     if isempty(p.layers)
-        push!(p.layers, Layer())
+        add_plot_element(p, data, Layer())
     end
 
     p.layers[end].statistic = arg
@@ -134,8 +144,28 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GuideElement)
     push!(p.guides, arg)
 end
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Layer)
-    push!(p.layers, arg)
+function add_plot_element(p::Plot, data::AbstractDataFrame, layer::Layer)
+    # Inherit mappings or data from the Plot where they are missing in the Layer.
+    if layer.data_source === nothing && isempty(layer.mapping)
+        layer.data = p.data
+    else
+        if layer.data_source === nothing
+            layer.data_source = p.data_source
+        end
+
+        if isempty(layer.mapping)
+            layer.mapping = p.mapping
+        end
+
+        layer.data = Data()
+        for (k, v) in layer.mapping
+            setfield(layer.data, k, eval_plot_mapping(layer.data_source, v))
+        end
+    end
+
+    DATA_INDEX[object_id(layer.data)] = layer.data
+
+    push!(p.layers, layer)
 end
 
 
@@ -254,28 +284,7 @@ function render(plot::Plot)
         error("Plot has no layers. Try adding a geometry.")
     end
 
-    # Process layers, filling inheriting mappings or data from the Plot where
-    # they are missing.
-    datas = Array(Data, length(plot.layers))
-    for (i, layer) in enumerate(plot.layers)
-        if layer.data_source === nothing && isempty(layer.mapping)
-            datas[i] = plot.data
-        else
-            datas[i] = Data()
-
-            if layer.data_source === nothing
-                layer.data_sourcee = plot.data_source
-            end
-
-            if isempty(layer.mapping)
-                layer.mapping = plot.mapping
-            end
-
-            for (k, v) in layer.mapping
-                setfield(datas[i], k, eval_plot_mapping(layer.data_source, v))
-            end
-        end
-    end
+    datas = [layer.data for layer in plot.layers]
 
     # Add default statistics for geometries.
     layer_stats = Array(StatisticElement, length(plot.layers))
@@ -506,30 +515,45 @@ function classify_data{T <: Integer}(data::DataVector{T})
 end
 
 
-# Serialization of Plot objects to JSON.
+# Serialization of Plot objects.
 
-function to_json(layer::Layer; with_data=false)
-    out = IOBuffer()
-    write(out, "{")
+#  We don't bother serializing layer.mapping or layer.data_source, since these
+# are used only for construction. Once the layer is added to a plot, they become irrelevent.
+#
+# Args:
+#   with_data: Serialize the literal data, rather than just a reference.
+#
+# Returns:
+#  A simple dict/array serialization of the Layer.
+#
+function serialize(layer::Layer; with_data=true)
+    out = Dict()
     if with_data
-        # TODO: write data source and mapping
+        out["data"] = {"type" => "Data",
+                       "value" => serialize(layer.data)}
     else
-        write(out, "\"data_source\":null, \"mapping\":null")
+        out["data"] = {"type"  => "DataRef",
+                       "value" => @sprintf("%x", (object_id(layer.data)))}
     end
 
-    # I guess we have to write to_json functions for every plot element.
-    #
-    # Suppose we want to serialize a ContinuousScaleTransform.
-    # 
-    # Or, just statistics and geometries.
+    out["statistic"] = Stat.serialize_statistic(layer.statistic)
+    out["geom"] = Geom.serialize_geometry(layer.geom)
+    out
 end
 
 
-function to_json(plot::Plot; with_data=false)
+function deserialize(::Type{Layer}, data::Dict)
+    layer = Layer()
+    if data["data"]["type"] == "DataRef"
+        layer.data = DATA_INDEX[parseint(Uint64, data["data"]["value"], 16)]
+    else
+        layer.data = deserialize(Data, data["data"]["value"])
+    end
 
+    layer.statistic = Stat.deserialize_statistic(data["statistic"])
+    layer.geom = Geom.deserialize_geometry(data["geom"])
+    layer
 end
-
-
 
 
 end # module Gadfly

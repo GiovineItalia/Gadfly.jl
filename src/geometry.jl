@@ -15,14 +15,16 @@ import Iterators.cycle, Iterators.product
 #
 # Input should be a 2-mer of the for
 #    ["TypeName", serialized object data]
-function geometry_from_json(data::Array)
-    @assort length(data) == 2
-    from_json(eval(symbol(data[1])), data[2])
+function deserialize_geometry(data::Dict)
+    deserialize(eval(symbol(data["type"])), data["value"])
 end
 
 
-function geomery_to_json(geom::Geometry)
-    @sprintf("[\"%s\",%s]", string(typeof(geom)), to_json(geom))
+function serialize_geometry(geom::Gadfly.GeometryElement)
+    {
+        "type" => string(typeof(geom)),
+        "value" => serialize(geom)
+    }
 end
 
 
@@ -36,8 +38,8 @@ const nil = Nil()
 function render(geom::Nil, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
 
-to_json(geom::Nil) = "{}"
-from_json(::Type{Nil}, data::Dict) = Nil()
+serialize(geom::Nil) = Dict()
+deserialize(::Type{Nil}, data::Dict) = Nil()
 
 
 # Catchall
@@ -94,8 +96,8 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 end
 
 
-to_json(geom::PointGeometry) = "{}"
-from_json(::Type{PointGeometry}, ::Dict) = PointGeometry()
+serialize(geom::PointGeometry) = Dict()
+deserialize(::Type{PointGeometry}, ::Dict) = PointGeometry()
 
 
 function from_json(::Type{PointGeometry}, data)
@@ -161,8 +163,8 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
 
 
-to_json(geom::LineGeometry) = "{}"
-from_json(geom::LineGeometry, ::Dict) = LineGeometry()
+serialize(geom::LineGeometry) = Dict()
+deserialize(geom::LineGeometry, ::Dict) = LineGeometry()
 
 
 # Bar geometry summarizes data as vertical bars.
@@ -269,8 +271,8 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
 
 
-to_json(geom::BarGeometry) = "{}"
-from_json(::Type{BarGeometry}, ::Dict) = BarGeometry()
+serialize(geom::BarGeometry) = Dict()
+deserialize(::Type{BarGeometry}, ::Dict) = BarGeometry()
 
 
 type RectangularBinGeometry <: Gadfly.GeometryElement
@@ -362,8 +364,8 @@ function render(geom::RectangularBinGeometry,
 end
 
 
-to_json(geom::RectangularBinGeometry) = "{}"
-from_json(::Type{RectangularBinGeometry}, ::Dict) = RectangularBinGeometry()
+serialize(geom::RectangularBinGeometry) = Dict()
+deserialize(::Type{RectangularBinGeometry}, ::Dict) = RectangularBinGeometry()
 
 
 function default_statistic(::RectangularBinGeometry)
@@ -454,8 +456,8 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
 end
 
 
-to_json(geom::BoxplotGeometry) = "{}"
-from_json(::Type{BoxplotGeometry}, ::Dict) = BoxplotGeometry()
+serialize(geom::BoxplotGeometry) = Dict()
+deserialize(::Type{BoxplotGeometry}, ::Dict) = BoxplotGeometry()
 
 
 type LabelGeometry <: Gadfly.GeometryElement
@@ -717,8 +719,8 @@ function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 end
 
 
-to_json(geom::LabelGeometry) = "{}"
-from_json(::Type{LabelGeometry}, ::Dict) = LabelGeometry()
+serialize(geom::LabelGeometry) = Dict()
+deserialize(::Type{LabelGeometry}, ::Dict) = LabelGeometry()
 
 
 end # module Geom

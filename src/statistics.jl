@@ -14,13 +14,15 @@ import Iterators.chain, Iterators.cycle, Iterators.product, Iterators.partition
 #
 # Input should be a 2-mer of the for
 #    ["TypeName", serialized object data]
-function statistic_from_json(data::Array)
-    @assort length(data) == 2
-    from_json(eval(symbol(data[1])), data[2])
+function deserialize_statistic(data::Dict)
+    deserialize(eval(symbol(data["type"])), data["value"])
 end
 
-function statistic_to_json(stat::Statistic)
-    @sprintf("[\"%s\",%s]", string(typeof(stat)), to_json(stat))
+function serialize_statistic(stat::Gadfly.StatisticElement)
+    {
+        "type" => string(typeof(stat)),
+        "value" => serialize(stat)
+    }
 end
 
 
@@ -50,6 +52,12 @@ end
 
 const nil = Nil()
 
+
+serialize(stat::Nil) = Dict()
+deserialize(::Type{Nil}, ::Dict) = Nil()
+
+
+
 type Identity <: Gadfly.StatisticElement
 end
 
@@ -60,8 +68,8 @@ function apply_statistic(stat::Identity,
 end
 
 
-to_json(stat::Identity) = "{}"
-from_json(::Type{Identity}, ::Dict) = Identity()
+serialize(stat::Identity) = Dict()
+deserialize(::Type{Identity}, ::Dict) = Identity()
 
 
 const identity = Identity()
@@ -98,8 +106,8 @@ function apply_statistic(stat::HistogramStatistic,
 end
 
 
-to_json(stat::HistogramStatistic) = "{}"
-from_json(::Type{HistogramStatistic}, ::Dict) = HistogramStatistic()
+serialize(stat::HistogramStatistic) = Dict()
+deserialize(::Type{HistogramStatistic}, ::Dict) = HistogramStatistic()
 
 
 type DensityStatistic <: Gadfly.StatisticElement
@@ -127,8 +135,8 @@ function apply_statistic(stat::DensityStatistic,
 end
 
 
-to_json(stat::HistogramStatistic) = @sprintf("{\"n\":%d}", stat.n)
-from_json(::Type{HistogramStatistic}, data::Dict) = HistogramStatistic(data["n"])
+serialize(stat::HistogramStatistic) = {"n" => stat.n}
+deserialize(::Type{HistogramStatistic}, data::Dict) = HistogramStatistic(data["n"])
 
 
 type RectangularBinStatistic <: Gadfly.StatisticElement
@@ -204,8 +212,8 @@ function apply_statistic(stat::RectangularBinStatistic,
 end
 
 
-to_json(stat::RectangularBinStatistic) = "{}"
-from_json(::Type{RectangularBinStatistic}, ::Dict) = RectangularBinStatistic()
+serialize(stat::RectangularBinStatistic) = Dict()
+deserialize(::Type{RectangularBinStatistic}, ::Dict) = RectangularBinStatistic()
 
 
 default_statistic(stat::RectangularBinStatistic) = [Scale.color_gradient]
@@ -326,16 +334,15 @@ function apply_statistic(stat::TickStatistic,
 end
 
 
-function to_json(stat::TickStatistic)
-    out = IOBuffer()
-    write(out, "{\"in_vars\":")
-    write(out, to_json([string(in_var) for in_var in stat.in_vars]))
-    @printf(out, ",\"out_var\":\"%s\"}", escape_string(stat.out_var))
-    takebuf_string(out)
+function serialize(stat::TickStatistic)
+    {
+       "in_vars" => [string(in_var) for in_var in stat.in_vars],
+       "out_var" => stat.out.var
+    }
 end
 
 
-function from_json(::Type{TickStatistic}, data::Dict)
+function deserialize(::Type{TickStatistic}, data::Dict)
     TickStatistic(Symbol[symbol(s) for s in data["in_vars"]], data["out_var"])
 end
 
@@ -399,8 +406,8 @@ function apply_statistic(stat::BoxplotStatistic,
 end
 
 
-to_json(stat::BoxplotStatistic) = "{}"
-from_json(::Type{BoxplotStatistic}, ::Dict) = BoxplotStatistic()
+serialize(stat::BoxplotStatistic) = Dict()
+deserialize(::Type{BoxplotStatistic}, ::Dict) = BoxplotStatistic()
 
 
 end # module Stat
