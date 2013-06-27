@@ -517,7 +517,24 @@ end
 
 # Serialization of Plot objects.
 
-#  We don't bother serializing layer.mapping or layer.data_source, since these
+# Serialize a Plot object.
+function serialize(plot::Plot; with_data=true)
+    out = Dict()
+    out["layers"] = {serialize(layer, with_data=with_data) for layer in plot.layers}
+    out["scales"] = {Scale.serialize_scale(scale) for scale in plot.scales}
+    out["statistics"] = {Stat.serialize_statistic(stat) for stat in plot.statistics}
+    out["coord"] = Coord.serialize_coordinate(plot.coord)
+    out["guides"] = {Guide.serialize_guide(guide) for guide in plot.guides}
+
+    # TODO: omitting theme for now. In the future we may want to serialize
+    # this to allow the client to change the appearance.
+
+    # We intentionally amit 'mapping' and 'data_source' since they are used
+    # only for construction.
+    out
+end
+
+# We don't bother serializing layer.mapping or layer.data_source, since these
 # are used only for construction. Once the layer is added to a plot, they become irrelevent.
 #
 # Args:

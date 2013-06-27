@@ -10,6 +10,21 @@ import Gadfly.element_aesthetics
 
 include("color.jl")
 
+
+
+function serialize_scale(scale::Gadfly.ScaleElement)
+    {
+        "type" => string(typeof(scale)),
+        "value" => serialize(scale)
+    }
+end
+
+
+function deserialize_scale(data::Dict)
+    deserialize(eval(symbol(data["type"])), data["value"])
+end
+
+
 # Apply some scales to data in the given order.
 #
 # Args:
@@ -47,34 +62,46 @@ end
 
 # Transformations on continuous scales
 type ContinuousScaleTransform
+    name::String    # where this is stored in TRANSFORM_INDEX
     f::Function     # transform function
     finv::Function  # f's inverse
     label::Function # produce a string given some value f(x)
 end
 
 const identity_transform =
-    ContinuousScaleTransform(identity, identity, Gadfly.fmt_float)
+    ContinuousScaleTransform("identity", identity, identity, Gadfly.fmt_float)
 const log10_transform =
-    ContinuousScaleTransform(log10, x -> 10^x,
+    ContinuousScaleTransform("log10", log10, x -> 10^x,
                              x -> @sprintf("10<sup>%s</sup>", Gadfly.fmt_float(x)))
 const log2_transform =
-    ContinuousScaleTransform(log10, x -> 2^x,
+    ContinuousScaleTransform("log2", log2, x -> 2^x,
                              x -> @sprintf("2<sup>%s</sup>", Gadfly.fmt_float(x)))
 const ln_transform =
-    ContinuousScaleTransform(log, exp,
+    ContinuousScaleTransform("ln", log, exp,
                              x -> @sprintf("e<sup>%s</sup>", Gadfly.fmt_float(x)))
 const asinh_transform =
-    ContinuousScaleTransform(asinh, sinh, x -> Gadfly.fmt_float(sinh(x)))
+    ContinuousScaleTransform("asinh", asinh, sinh, x -> Gadfly.fmt_float(sinh(x)))
 const sqrt_transform =
-    ContinuousScaleTransform(sqrt, x -> x^2,
+    ContinuousScaleTransform("sqrt", sqrt, x -> x^2,
                              x -> @sprintf("√%s", Gadfly.fmt_float(x)))
+
+# For serialization/deserialization to work, we need to choose transforms from
+# a predefined set.
+const TRANSFORM_INDEX = [
+    identity_transform.name => identity_transform,
+    log10_transform.name    => log10_transform,
+    log2_transform.name     => log2_transform,
+    ln_transform.name       => ln_transform,
+    asinh_transform.name    => asinh_transform,
+    sqrt_transform.name     => sqrt_transform
+]
 
 
 # Continuous scale maps data on a continuous scale simple by calling
 # `convert(Float64, ...)`.
 type ContinuousScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
-    trans::ContinuousScaleTransform
+    transform::ContinuousScaleTransform
 end
 
 const x_vars = [:x, :x_min, :x_max]
@@ -121,26 +148,37 @@ function apply_scale(scale::ContinuousScale,
 
             ds = Array(Float64, length(getfield(data, var)))
             for (i, d) in enumerate(getfield(data, var))
-                ds[i] = scale.trans.f(convert(Float64, d))
+                ds[i] = scale.transform.f(convert(Float64, d))
             end
 
             setfield(aes, var, ds)
             if contains(Set(names(aes)...), label_var)
-                setfield(aes, label_var, scale.trans.label)
+                setfield(aes, label_var, scale.transform.label)
             end
         end
     end
 end
 
 
+# Serialize a continuous scale
+function serialize(scale::ContinuousScale)
+    {
+        "vars" => {string(var) for var in x_vars},
+        "transform" => scale.transform.name
+    }
+end
+
+
+# Deserialize a continuous scale
+function deserialize(::Type{ContinuousScale}, data::Dict)
+    ContinuousScale([symbol(var) for var in data["vars"]],
+                    TRANSFORM_INDEX[data["transform"]])
+end
+
+
 discretize(values::Vector) = PooledDataArray(values)
 discretize(values::DataArray) = PooledDataArray(values)
 discretize(values::PooledDataArray) = values
-
-
-type DiscreteScaleTransform
-    f::Function
-end
 
 
 type DiscreteScale <: Gadfly.ScaleElement
@@ -185,8 +223,44 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
 end
 
 
+function serialize(scale::DiscreteScale)
+    {
+        "vars" => {string(var) for var in scale.vars}
+    }
+end
+
+
+function deserialize(::Type{DiscreteScale}, data::Dict)
+    DiscreteScale([symbol(var) for var in data["vars"]])
+end
+
+
+# Color generation functions
+
+type DiscreteColorGenerator
+    name::String # where this is stored in DISCRETE_COLOR_GEN_FUN_INDEX
+    f::Function # map a number n to a vector of n colors
+end
+
+
+const deuteranopic_discrete_hue_generator =
+    DiscreteColorGenerator(
+        "deuteranopic_discrete_hue",
+        h -> distinguishable_colors(h, c -> deuteranopic(c, 0.8),
+                                    LCHab(70, 60, 240),
+                                    Float64[65, 70, 75, 80, 85],
+                                    Float64[0, 50, 60],
+                                    Float64[h for h in 0:30:360]))
+
+
+# Index of color generator functions by name
+const DISCRETE_COLOR_GEN_FUN_INDEX = [
+    deuteranopic_discrete_hue_generator.name => deuteranopic_discrete_hue_generator
+]
+
+
 type DiscreteColorScale <: Gadfly.ScaleElement
-    f::Function # A function f(n) that produces a vector of n colors.
+    gen::DiscreteColorGenerator
 end
 
 
@@ -196,23 +270,18 @@ end
 
 
 # Common discrete color scales
-const color_hue = DiscreteColorScale(
-    h -> convert(Vector{ColorValue},
-        distinguishable_colors(h, c -> deuteranopic(c, 0.8),
-                               LCHab(70, 60, 240),
-                               Float64[65, 70, 75, 80, 85],
-                               Float64[0, 50, 60],
-                               Float64[h for h in 0:30:360])))
+const color_hue = DiscreteColorScale(deuteranopic_discrete_hue_generator)
 
 
 function apply_scale(scale::DiscreteColorScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics},
+                     datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         if data.color === nothing
             continue
         end
         ds = discretize(data.color)
-        colors = convert(Vector{ColorValue}, scale.f(length(levels(ds))))
+        colors = convert(Vector{ColorValue}, scale.gen.f(length(levels(ds))))
         colored_ds = PooledDataArray(ColorValue[colors[i] for i in ds.refs], colors)
         aes.color = colored_ds
 
@@ -224,19 +293,45 @@ function apply_scale(scale::DiscreteColorScale,
 end
 
 
-type ContinuousColorScale <: Gadfly.ScaleElement
-    # A function of the form f(p) where 0 <= p <= 1, that returns a color.
-    f::Function
+function serialize(scale::DiscreteColorScale)
+    {
+        "gen" => scale.gen.name
+    }
 end
 
 
-element_aesthetics(::ContinuousColorScale) = [:color]
+function deserialize(::Type{DiscreteColorScale}, data::Dict)
+    DiscreteColorScale(DISCRETE_COLOR_GEN_FUN_INDEX[data["gen"]])
+end
 
 
-# Common continuous color scales
+type ContinuousColorGenerator
+    name::String # where this is stored in CONTINUOUS_COLOR_GEN_FUN_INDEX
+    f::Function # map a number in [0,1] to a color
+end
+
+
 # TODO: find a good color combo
-const color_gradient = ContinuousColorScale(
-        lab_gradient(LCHab(20, 44, 262), LCHab(100, 44, 262)))
+const default_continuous_hue_generator =
+    ContinuousColorGenerator("default_continuous_hue",
+                             lab_gradient(LCHab(20,  44, 262),
+                                          LCHab(100, 44, 262)))
+
+
+const CONTINUOUS_COLOR_GEN_FUN_INDEX = [
+    default_continuous_hue_generator.name => default_continuous_hue_generator
+]
+
+
+type ContinuousColorScale <: Gadfly.ScaleElement
+    gen::ContinuousColorGenerator
+end
+
+
+const color_gradient = ContinuousColorScale(default_continuous_hue_generator)
+
+
+element_aesthetics(::ContinuousColorScale) = [:color]
 
 
 function apply_scale(scale::ContinuousColorScale,
@@ -321,6 +416,19 @@ function apply_scale(scale::ContinuousColorScale,
 end
 
 
+function serialize(scale::ContinuousColorScale)
+    {
+        "gen" => scale.gen.name
+    }
+end
+
+
+function deserilaize(::Type{ContinuousColorScale}, date::Dict)
+    ContinuousColorScale(CONTINUOUS_COLOR_GEN_FUN_INDEX[data["gen"]])
+end
+
+
+
 # Label scale is always discrete, hence we call it 'label' rather
 # 'label_discrete'.
 type LabelScale <: Gadfly.ScaleElement
@@ -337,6 +445,10 @@ function apply_scale(scale::LabelScale,
         aes.label = discretize(data.label)
     end
 end
+
+
+serialize(scale::LabelScale) = {}
+deserialize(::Type{LabelScale}, data::Dict) = LabelScale()
 
 
 element_aesthetics(::LabelScale) = [:scale]

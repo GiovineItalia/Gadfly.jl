@@ -6,6 +6,19 @@ using Compose
 
 export cartesian
 
+
+function deserialize_coordinate(data::Dict)
+    deserialize(eval(symbol(data["type"])), data["value"])
+end
+
+function serialize_coordinate(coord::Gadfly.CoordinateElement)
+    {
+        "type" => string(typeof(coord)),
+        "value" => serialize(coord)
+    }
+end
+
+
 # Cartesian coordinates with position given by the x and y (and similar)
 # aesthetics.
 type CartesianCoordinate <: Gadfly.CoordinateElement
@@ -110,6 +123,21 @@ function apply_coordinate(coord::CartesianCoordinate, aess::Gadfly.Aesthetics...
     height = ymax - ymin + 2ypadding
 
     canvas(unit_box=Units(xmin - xpadding, ymax + ypadding, width, -height))
+end
+
+
+function serialize(coord::CartesianCoordinate)
+    out = Dict()
+    out["xvars"] = {string(var) for var in coord.xvars}
+    out["yvars"] = {string(var) for var in coord.yvars}
+    out
+end
+
+
+function deserialize(::Type{CartesianCoordinate}, data::Dict)
+    CartesianCoordinate(
+        [symbol(var) for var in data["xvars"]],
+        [symbol(var) for var in data["yvars"]])
 end
 
 end # module Coord

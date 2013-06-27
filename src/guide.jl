@@ -9,6 +9,19 @@ using JSON
 import Gadfly.render, Gadfly.escape_id
 
 
+function serialize_guide(guide::Gadfly.GuideElement)
+    {
+        "type" => string(typeof(guide)),
+        "value" => serialize(guide)
+    }
+end
+
+
+function deserialize_guide(data::Dict)
+    deserialize(eval(symbol(data["type"])), data["value"])
+end
+
+
 # Where the guide should be placed in relation to the plot.
 abstract GuidePosition
 type TopGuidePosition    <: GuidePosition end
@@ -40,6 +53,10 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
 
     {(back, under_guide_position)}
 end
+
+
+serialize(guide::PanelBackground) = {}
+deserialize(::Type{PanelBackground}, data::Dict) = PanelBackground()
 
 
 type ColorKey <: Gadfly.GuideElement
@@ -241,6 +258,9 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
 end
 
 
+serialize(guide::ColorKey) = {}
+deserialize(::Type{ColorKey}, data::Dict) = ColorKey()
+
 
 type XTicks <: Gadfly.GuideElement
 end
@@ -296,6 +316,10 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 end
 
 
+serialize(guide::XTicks) = {}
+deserialize(::Type{XTicks}, data::Dict) = XTicks()
+
+
 type YTicks <: Gadfly.GuideElement
 end
 
@@ -347,6 +371,10 @@ function render(guide::YTicks, theme::Gadfly.Theme,
 end
 
 
+serialize(guide::YTicks) = {}
+deserialize(::Type{YTicks}, data::Dict) = YTicks()
+
+
 # X-axis label Guide
 type XLabel <: Gadfly.GuideElement
     label::String
@@ -371,6 +399,10 @@ function render(guide::XLabel, theme::Gadfly.Theme,
 end
 
 
+serialize(guide::XLabel) = {"label" => guide.label}
+deserialize(::Type{XLabel}, data::Dict) = XLabel(data["label"])
+
+
 # Y-axis label Guide
 type YLabel <: Gadfly.GuideElement
     label::String
@@ -392,6 +424,11 @@ function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aestheti
 
     {(c, left_guide_position)}
 end
+
+
+serialize(guide::YLabel) = {"label" => guide.label}
+deserialize(::Type{YLabel}, data::Dict) = YLabel(data["label"])
+
 
 
 # Arrange a plot with its guides

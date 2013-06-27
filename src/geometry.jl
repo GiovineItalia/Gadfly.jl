@@ -12,9 +12,6 @@ import Iterators.cycle, Iterators.product
 
 
 # Convert parsed JSON an instance of the specified geometry.
-#
-# Input should be a 2-mer of the for
-#    ["TypeName", serialized object data]
 function deserialize_geometry(data::Dict)
     deserialize(eval(symbol(data["type"])), data["value"])
 end
