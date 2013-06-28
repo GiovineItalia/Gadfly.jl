@@ -171,7 +171,7 @@ end
 
 # Deserialize a continuous scale
 function deserialize(::Type{ContinuousScale}, data::Dict)
-    ContinuousScale([symbol(var) for var in data["vars"]],
+    ContinuousScale(Symbol[symbol(var) for var in data["vars"]],
                     TRANSFORM_INDEX[data["transform"]])
 end
 

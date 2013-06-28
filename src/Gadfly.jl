@@ -5,6 +5,7 @@ require("DataFrames")
 require("Distributions")
 require("Iterators")
 require("JSON")
+require("WebSockets")
 
 module Gadfly
 
@@ -54,7 +55,7 @@ include("poetry.jl")
 # a plot, indexed by object id. This lets us serialize Plots while only
 # sending a reference to the data, and not the data itself, which can be too
 # costly.
-const DATA_INDEX = Dict{Uint64, Data}()
+const DATA_INDEX = Dict{Uint64, Union(Nothing, AbstractDataFrame)}()
 
 
 # A plot has zero or more layers. Layers have a particular geometry and their
@@ -118,36 +119,38 @@ type Plot
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement)
+function add_plot_element(p::Plot, arg::GeometryElement)
     layer = Layer()
     layer.geom = arg
-    add_plot_element(p, data, layer)
+    add_plot_element(p, layer)
 end
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
+function add_plot_element(p::Plot, arg::ScaleElement)
     push!(p.scales, arg)
 end
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElement)
+function add_plot_element(p::Plot, arg::StatisticElement)
     if isempty(p.layers)
-        add_plot_element(p, data, Layer())
+        add_plot_element(p, Layer())
     end
 
     p.layers[end].statistic = arg
 end
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
+function add_plot_element(p::Plot, arg::CoordinateElement)
     push!(p.coordinates, arg)
 end
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GuideElement)
+function add_plot_element(p::Plot, arg::GuideElement)
     push!(p.guides, arg)
 end
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, layer::Layer)
+function add_plot_element(p::Plot, layer::Layer)
     # Inherit mappings or data from the Plot where they are missing in the Layer.
     if layer.data_source === nothing && isempty(layer.mapping)
         layer.data = p.data
+        layer.data_source = p.data_source
+        layer.mapping = p.mapping
     else
         if layer.data_source === nothing
             layer.data_source = p.data_source
@@ -163,7 +166,7 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, layer::Layer)
         end
     end
 
-    DATA_INDEX[object_id(layer.data)] = layer.data
+    DATA_INDEX[object_id(layer.data_source)] = layer.data_source
 
     push!(p.layers, layer)
 end
@@ -196,12 +199,27 @@ typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr)
 #            names of columns in the data frame or other expressions.
 #   elements: Geometries, statistics, etc.
 
-function plot(data::AbstractDataFrame, elements::Element...; mapping...)
+function plot(data_source::AbstractDataFrame, elements::Element...; mapping...)
     p = Plot()
-    p.mapping = Dict()
-    p.data_source = data
+    p.mapping = {k => v for (k, v) in mapping}
+    p.data_source = data_source
+    DATA_INDEX[object_id(data_source)] = data_source
+    build_plot_data(p)
+
+    for element in elements
+        add_plot_element(p, element)
+    end
+
+    p
+end
+
+# Build the "data" field in a Plot object.
+#
+# This assumes the mapping and data_source fields have been populated. The
+# mapping is then evaluated in the context of the data_source.
+function build_plot_data(p::Plot)
     valid_aesthetics = Set(names(Aesthetics)...)
-    for (k, v) in mapping
+    for (k, v) in p.mapping
         if !contains(valid_aesthetics, k)
             error("$(k) is not a recognized aesthetic")
         end
@@ -212,15 +230,8 @@ function plot(data::AbstractDataFrame, elements::Element...; mapping...)
                It must be mapped to a string, symbol, or expression.""")
         end
 
-        setfield(p.data, k, eval_plot_mapping(data, v))
-        p.mapping[k] = v
+        setfield(p.data, k, eval_plot_mapping(p.data_source, v))
     end
-
-    for element in elements
-        add_plot_element(p, data, element)
-    end
-
-    p
 end
 
 
@@ -240,15 +251,15 @@ end
 #
 function plot(data::AbstractDataFrame, mapping::Dict, elements::Element...)
     p = Plot()
+    p.mapping = mapping
+    p.data_source = data
     for element in elements
-        add_plot_element(p, data, element)
+        add_plot_element(p, element)
     end
 
     for (var, value) in mapping
         setfield(p.data, var, eval_plot_mapping(data, value))
     end
-    p.mapping = mapping
-    p.data_source = data
 
     p
 end
@@ -468,9 +479,9 @@ hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
 # representation of the Plot object, renders it, and emits the graphic. (Which
 # usually means, shows it in a browser window.)
 #
-#function show(io::IO, p::Plot)
-    #draw(SVG(6inch, 5inch), p)
-#end
+function show(io::IO, p::Plot)
+    draw(SVG(6inch, 5inch), p)
+end
 # TODO: Find a more elegant way to automatically show plots. This is unexpected
 # and gives weave problems.
 
@@ -515,24 +526,65 @@ function classify_data{T <: Integer}(data::DataVector{T})
 end
 
 
-# Serialization of Plot objects.
-
 # Serialize a Plot object.
-function serialize(plot::Plot; with_data=true)
+function serialize(plot::Plot; with_data=false)
     out = Dict()
     out["layers"] = {serialize(layer, with_data=with_data) for layer in plot.layers}
     out["scales"] = {Scale.serialize_scale(scale) for scale in plot.scales}
     out["statistics"] = {Stat.serialize_statistic(stat) for stat in plot.statistics}
     out["coord"] = Coord.serialize_coordinate(plot.coord)
     out["guides"] = {Guide.serialize_guide(guide) for guide in plot.guides}
+    out["mapping"] = serialize_mapping(plot.mapping)
+
+    if with_data
+        # TODO: In the future we may want to serialize the actual data frame
+        # and let the user modify the data within the browser.
+        error("Seralizing data_source not yet implemented.")
+    else
+        out["data_source"] = {"type" => "Ref",
+                              "value" => @sprintf("%x", object_id(plot.data_source))}
+    end
 
     # TODO: omitting theme for now. In the future we may want to serialize
     # this to allow the client to change the appearance.
 
-    # We intentionally amit 'mapping' and 'data_source' since they are used
-    # only for construction.
     out
 end
+
+
+# Deserialize a Plot object.
+function deserialize(::Type{Plot}, data::Dict)
+    out = Plot()
+    out.scales = ScaleElement[Scale.deserialize_scale(scale_data)
+                              for scale_data in data["scales"]]
+    out.statistics =  StatisticElement[Stat.deserialize_statistic(stat_data)
+                                       for stat_data in data["statistics"]]
+    out.coord = Coord.deserialize_coordinate(data["coord"])
+    out.guides = GuideElement[Guide.deserialize_guide(guide_data)
+                              for guide_data in data["guides"]]
+    out.mapping = deserialize_mapping(data["mapping"])
+    if data["data_source"]["type"] == "Ref"
+        out.data_source = DATA_INDEX[parseint(Uint64, data["data_source"]["value"], 16)]
+    end
+
+    build_plot_data(out)
+
+    for layer_data in data["layers"]
+        layer = deserialize(Layer, layer_data)
+        if layer.data_source === out.data_source && layer.mapping == out.mapping
+            layer.data = out.data
+        else
+            layer.data = Data()
+            for (k, v) in layer.mapping
+                setfield(layer.data, k, eval_plot_mapping(layer.data_source, v))
+            end
+        end
+        push!(out.layers, layer)
+    end
+
+    out
+end
+
 
 # We don't bother serializing layer.mapping or layer.data_source, since these
 # are used only for construction. Once the layer is added to a plot, they become irrelevent.
@@ -543,35 +595,68 @@ end
 # Returns:
 #  A simple dict/array serialization of the Layer.
 #
-function serialize(layer::Layer; with_data=true)
+function serialize(layer::Layer; with_data=false)
     out = Dict()
     if with_data
-        out["data"] = {"type" => "Data",
-                       "value" => serialize(layer.data)}
+        error("Seralizing data_source not yet implemented.")
     else
-        out["data"] = {"type"  => "DataRef",
-                       "value" => @sprintf("%x", (object_id(layer.data)))}
+        out["data_source"] = {"type"  => "Ref",
+                              "value" => @sprintf("%x", (object_id(layer.data_source)))}
     end
-
+    out["mapping"] = serialize_mapping(layer.mapping)
     out["statistic"] = Stat.serialize_statistic(layer.statistic)
     out["geom"] = Geom.serialize_geometry(layer.geom)
     out
 end
 
 
+# Deserialize a Layer object
 function deserialize(::Type{Layer}, data::Dict)
     layer = Layer()
-    if data["data"]["type"] == "DataRef"
-        layer.data = DATA_INDEX[parseint(Uint64, data["data"]["value"], 16)]
-    else
-        layer.data = deserialize(Data, data["data"]["value"])
+    if data["data_source"]["type"] == "Ref"
+        layer.data_source = DATA_INDEX[parseint(Uint64, data["data_source"]["value"], 16)]
     end
-
+    layer.mapping = deserialize_mapping(data["mapping"])
     layer.statistic = Stat.deserialize_statistic(data["statistic"])
     layer.geom = Geom.deserialize_geometry(data["geom"])
     layer
 end
 
+
+# Serialize aesthetics mappings
+function serialize_mapping(mapping::Dict)
+    out = Dict()
+    for (k, v) in mapping
+        if typeof(v) <: String || typeof(v) == Symbol
+            out[string(k)] = {"type" => "String", "value" => string(v)}
+        elseif typeof(v) == Expr
+            out[string(k)] = {"type" => "Expr", "value" => string(v)}
+        else
+            warn("Unable to serialize mapping of type $(typeof(v))")
+        end
+    end
+    out
+end
+
+
+# Deserrialize aesthetics mappings
+function deserialize_mapping(data::Dict)
+    out = Dict()
+    for (k, v) in data
+        t = v["type"]
+        if t == "String"
+            out[symbol(k)] = v["value"]
+        elseif t == "Expr"
+            out[symbol(k)] = parse(v["value"])
+        else
+            warn("Unable to deserialize mapping of type $(t)")
+        end
+    end
+    out
+end
+
+
+include("webshow.jl")
 
 end # module Gadfly
 

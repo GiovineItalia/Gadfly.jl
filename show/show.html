@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Gadfly Plot</title>
+		<script src="../src/gadfly.js"></script>
+		<script src="d3.min.js"></script>
+		<script src="jquery-2.0.2.min.js"></script>
+
+	</head>
+	<body>
+		The plot should appear below sometime soon.
+		<div id="plotdiv"></div>
+
+		<script>
+			var conn = new WebSocket("ws://localhost:8080")
+			var plot = null;
+			var backend = null;
+
+			var echo_test = true;
+
+			conn.onmessage = function(msg) {
+				console.info("message received")
+				var msgcontents = JSON.parse(msg.data);
+				jQuery.globalEval(msgcontents["graphic"]);
+				$("#plotdiv svg").remove();
+				draw("#plotdiv");
+				plot = msgcontents["plot"];
+				backend = msgcontents["backend"];
+
+				if (echo_test) {
+					sendreq();
+					echo_test = false;
+				}
+			}
+
+			var sendreq = function() {
+				console.info("sending request")
+				msg = JSON.stringify({"plot": plot, "backend": backend});
+				conn.send(msg);
+			}
+		</script>
+
+		<!-- TODO
+			2. Prove that we can make a round trip: try sending the plot serialization back to the server and see what happens.
+
+			I think we are still missing a plot deserialize function...
+
+			3. Figure out what the user interface is going to look like.
+			   I know we want it to be possible to add plot elements. Changing the mapping seems less likely.
+		 -->
+	</body>
+</html>

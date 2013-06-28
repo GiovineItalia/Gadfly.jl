@@ -92,7 +92,7 @@ end
 function deserialize(::Type{Data}, data::Dict)
     out = Data()
     for (name, value) in data
-        setfield(out, name,
+        setfield(out, symbol(name),
                  deserialize(eval(symbol(value["type"])), value["value"]))
     end
     out

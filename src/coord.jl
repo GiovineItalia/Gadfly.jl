@@ -136,8 +136,8 @@ end
 
 function deserialize(::Type{CartesianCoordinate}, data::Dict)
     CartesianCoordinate(
-        [symbol(var) for var in data["xvars"]],
-        [symbol(var) for var in data["yvars"]])
+        Symbol[symbol(var) for var in data["xvars"]],
+        Symbol[symbol(var) for var in data["yvars"]])
 end
 
 end # module Coord
