@@ -629,6 +629,8 @@ function serialize_mapping(mapping::Dict)
     for (k, v) in mapping
         if typeof(v) <: String || typeof(v) == Symbol
             out[string(k)] = {"type" => "String", "value" => string(v)}
+        elseif typeof(v) <: Integer
+            out[string(k)] = {"type" => "Int", "value" => v}
         elseif typeof(v) == Expr
             out[string(k)] = {"type" => "Expr", "value" => string(v)}
         else
@@ -646,6 +648,8 @@ function deserialize_mapping(data::Dict)
         t = v["type"]
         if t == "String"
             out[symbol(k)] = v["value"]
+        elseif t == "Int"
+            out[symbol(k)] = v["value"] 
         elseif t == "Expr"
             out[symbol(k)] = parse(v["value"])
         else

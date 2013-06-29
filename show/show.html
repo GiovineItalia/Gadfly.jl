@@ -2,21 +2,40 @@
 <html>
 	<head>
 		<title>Gadfly Plot</title>
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 		<script src="../src/gadfly.js"></script>
 		<script src="d3.min.js"></script>
 		<script src="jquery-2.0.2.min.js"></script>
-
+		<script src="jquery-ui/ui/jquery.ui.core.js"></script>
+		<script src="jquery-ui/ui/jquery.ui.widget.js"></script>
+		<script src="jquery-ui/ui/jquery.ui.mouse.js"></script>
+		<script src="jquery-ui/ui/jquery.ui.resizable.js"></script>
+		<script>
+		// Gadfly uses millimeters by default where most of the dom/javascript
+		// stuff uses pixels.
+		var get_px_per_mm = function() {
+			var div = document.createElement("div");
+			div.style.width = "1mm";
+			var body = document.getElementsByTagName("body")[0];
+			body.appendChild(div);
+			var ppm = document.defaultView.getComputedStyle(div, null)
+			                              .getPropertyValue('width');
+            body.removeChild(div);
+			return parseFloat(ppm);
+		}
+		</script>
 	</head>
 	<body>
 		The plot should appear below sometime soon.
-		<div id="plotdiv"></div>
+		<div id="plotdiv" class="ui-widget-content">
+		</div>
 
 		<script>
+			var ppm = get_px_per_mm();
+			console.info(ppm);
 			var conn = new WebSocket("ws://localhost:8080")
 			var plot = null;
 			var backend = null;
-
-			var echo_test = true;
 
 			conn.onmessage = function(msg) {
 				console.info("message received")
@@ -26,11 +45,21 @@
 				draw("#plotdiv");
 				plot = msgcontents["plot"];
 				backend = msgcontents["backend"];
+				$("#plotdiv").resizable(
+					{
+						stop: function(event, ui) {
+							console.info(event);
+							console.info($("#plotdiv").css("width"));
+							var div = $("#plotdiv");
+							backend.width = parseFloat(div.css("width")) / ppm;
+							backend.height = parseFloat(div.css("height")) / ppm;
+							sendreq();
+						}
+					});
 
-				if (echo_test) {
-					sendreq();
-					echo_test = false;
-				}
+				// size the container arround the plot
+				$("#plotdiv").css("width", backend.width + "mm");
+				$("#plotdiv").css("height", backend.height + "mm");
 			}
 
 			var sendreq = function() {

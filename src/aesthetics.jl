@@ -198,4 +198,11 @@ function cat_aes_var!(a, b)
     a
 end
 
+function cat_aes_var!{T}(xs::PooledDataVector{T}, ys::PooledDataVector{T})
+    newpool = T[x for x in union(Set(xs.pool...), Set(ys.pool...))]
+    newdata = vcat(T[x for x in xs], T[y for y in ys])
+    PooledDataArray(newdata, newpool, [false for _ in newdata])
+end
+
+
 
