@@ -113,7 +113,7 @@ const default_theme =
           0.3mm,                    # highlight_width
           default_highlight_color,  # highlight_color
           default_middle_color,     # middle_color
-          5000,                     # label_placement_iterations
+          1000,                     # label_placement_iterations
           10.0,                     # label_out_of_bounds_penalty
           0.5,                      # label_hidden_penalty
           0.2)                      # label_visibility_flip_pr
