@@ -1,4 +1,3 @@
-
 # Gadfly.weave implements a system for executable documentation, report
 # generation, literate programming, and such.
 # It works as follows:
@@ -115,7 +114,7 @@ function weave(infn::String, infmt::String, outfmt::String,
             println("---")
         end
 
-        if !haskey(block, "CodeBlock")
+        if !isa(block, Dict) || !haskey(block, "CodeBlock")
             push!(processed_document, process_block(block))
             continue
         end
