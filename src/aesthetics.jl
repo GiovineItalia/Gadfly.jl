@@ -6,7 +6,7 @@ type Aesthetics
     y::Union(Nothing, Vector{Float64}, Vector{Int64})
     size::Maybe(Vector{Measure})
     color::Maybe(AbstractDataVector{ColorValue})
-    label::Maybe(PooledDataVector{UTF8String})
+    label::Maybe(PooledDataVector)
 
     x_min::Union(Nothing, Vector{Float64}, Vector{Int64})
     x_max::Union(Nothing, Vector{Float64}, Vector{Int64})
