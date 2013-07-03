@@ -193,6 +193,11 @@ const y_ticks = TickStatistic(
      :lower_fence, :upper_fence], "y")
 
 
+# Can a numerical value be treated as an integer
+is_int_compatable(::Integer) = true
+is_int_compatable{T <: FloatingPoint}(x::T) = abs(x) < maxintfloat(T) && float(int(x)) == x
+is_int_compatable(::Any) = false
+
 # Apply a tick statistic.
 #
 # Args:
@@ -227,7 +232,7 @@ function apply_statistic(stat::TickStatistic,
             maxval = float64(val)
         end
 
-        if !(typeof(val) <: Integer) && int(val) != val
+        if !is_int_compatable(val)
             all_int = false
         end
 
