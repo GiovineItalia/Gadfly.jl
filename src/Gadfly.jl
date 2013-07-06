@@ -126,7 +126,7 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElemen
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
-    push!(p.coordinates, arg)
+    p.coord = arg
 end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GuideElement)
@@ -404,12 +404,12 @@ function render(plot::Plot)
 
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, aess)
-        Stat.apply_statistics(StatisticElement[layer_stat], scales, aes)
+        Stat.apply_statistics(StatisticElement[layer_stat], scales, plot.coord, aes)
     end
 
     # IIb. Plot-wise Statistics
     plot_aes = cat(aess...)
-    Stat.apply_statistics(statistics, scales, plot_aes)
+    Stat.apply_statistics(statistics, scales, plot.coord, plot_aes)
 
     # Add some default guides determined by defined aesthetics
     if !all([aes.color === nothing for aes in [plot_aes, aess...]]) &&

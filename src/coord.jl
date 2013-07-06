@@ -4,20 +4,39 @@ module Coord
 using Gadfly
 using Compose
 
+import Gadfly.Maybe
 export cartesian
 
 # Cartesian coordinates with position given by the x and y (and similar)
 # aesthetics.
-type CartesianCoordinate <: Gadfly.CoordinateElement
+#
+# Args:
+#   xvars: Aesthetics to consider when choosing x bounds.
+#   yvars: Aesthetics to consider when choosing y bounds.
+#   xmin, xmax, ymin, ymax:
+#     Force a particular x or y bound, rather than trying to choose it
+#     from the data.
+#
+#
+type Cartesian <: Gadfly.CoordinateElement
     xvars::Vector{Symbol}
     yvars::Vector{Symbol}
+    xmin
+    xmax
+    ymin
+    ymax
+
+    function Cartesian(
+            xvars=[:x, :x_viewmin, :x_viewmax, :x_min, :x_max],
+            yvars=[:y, :y_viewmin, :y_viewmax, :y_min, :y_max, :middle,
+                   :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers];
+            xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing)
+        new(xvars, yvars, xmin, xmax, ymin, ymax)
+    end
 end
 
 
-const cartesian = CartesianCoordinate(
-    [:x, :x_viewmin, :x_viewmax, :x_min, :x_max],
-    [:y, :y_viewmin, :y_viewmax, :y_min, :y_max, :middle,
-     :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers])
+const cartesian = Cartesian()
 
 
 # Produce a canvas with suitable cartesian coordinates.
@@ -28,7 +47,7 @@ const cartesian = CartesianCoordinate(
 # Returns:
 #   A compose Canvas.
 #
-function apply_coordinate(coord::CartesianCoordinate, aess::Gadfly.Aesthetics...)
+function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     xmin = Inf
     xmax = -Inf
     for var in coord.xvars
@@ -85,6 +104,11 @@ function apply_coordinate(coord::CartesianCoordinate, aess::Gadfly.Aesthetics...
             end
         end
     end
+
+    xmin = coord.xmin === nothing ? xmin : coord.xmin
+    xmax = coord.xmax === nothing ? xmax : coord.xmax
+    ymin = coord.ymin === nothing ? ymin : coord.ymin
+    ymax = coord.ymax === nothing ? ymax : coord.ymax
 
     # A bit of kludge. We need to extend a bit to be able to fit bars when
     # using discrete scales. TODO: Think more carefully about this. Is there a
