@@ -63,7 +63,7 @@ type Layer <: Element
 
     function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
                    statistic::StatisticElement, geom::GeometryElement)
-        new(data, Dict(), statistic, geom)
+        new(data, mapping, statistic, geom)
     end
 end
 
@@ -72,7 +72,7 @@ function layer(data::Union(AbstractDataFrame, Nothing),
                statistic::StatisticElement=Stat.nil,
                geom::GeometryElement=Geom.nil;
                mapping...)
-    Layer(data, Dict(mapping...), statistic, geom)
+    Layer(data, {k => v for (k, v) in mapping}, statistic, geom)
 end
 
 
@@ -263,7 +263,7 @@ function render(plot::Plot)
             datas[i] = Data()
 
             if layer.data_source === nothing
-                layer.data_sourcee = plot.data_source
+                layer.data_source = plot.data_source
             end
 
             if isempty(layer.mapping)
