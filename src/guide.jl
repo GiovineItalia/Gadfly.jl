@@ -437,10 +437,10 @@ function layout_guides(plot_canvas::Canvas,
     # nearest to the panel.
     canvas_order = canvas -> canvas.order
     rev_canvas_order = canvas -> -canvas.order
-    sortby!(canvas_order,     top_guides)
-    sortby!(canvas_order,     right_guides)
-    sortby!(canvas_order,     bottom_guides)
-    sortby!(rev_canvas_order, left_guides)
+    sort!(by=canvas_order,     top_guides)
+    sort!(by=canvas_order,     right_guides)
+    sort!(by=canvas_order,     bottom_guides)
+    sort!(by=rev_canvas_order, left_guides)
 
     # Stack the guides on edge edge of the plot
     top_guides    = vstack(0, 0, 1, [(g, hcenter) for g in top_guides]...)

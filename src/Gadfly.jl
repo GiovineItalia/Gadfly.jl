@@ -413,7 +413,7 @@ function render(plot::Plot)
 
     # Add some default guides determined by defined aesthetics
     if !all([aes.color === nothing for aes in [plot_aes, aess...]]) &&
-       !has(guides, Guide.ColorKey)
+       !haskey(guides, Guide.ColorKey)
         guides[Guide.ColorKey] = Guide.colorkey
     end
 
