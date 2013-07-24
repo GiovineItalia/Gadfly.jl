@@ -5,7 +5,7 @@ import Gadfly
 using DataFrames
 using Compose
 
-import Gadfly.Scale, Gadfly.element_aesthetics, Gadfly.default_scales
+import Gadfly.Scale, Gadfly.Coord, Gadfly.element_aesthetics, Gadfly.default_scales
 import Distributions.Uniform, Distributions.kde
 import Iterators.chain, Iterators.cycle, Iterators.product, Iterators.partition
 
@@ -40,9 +40,10 @@ include("bincount.jl")
 #
 function apply_statistics(stats::Vector{Gadfly.StatisticElement},
                           scales::Dict{Symbol, Gadfly.ScaleElement},
+                          coord::Gadfly.CoordinateElement,
                           aes::Gadfly.Aesthetics)
     for stat in stats
-        apply_statistic(stat, scales, aes)
+        apply_statistic(stat, scales, coord, aes)
     end
     nothing
 end
@@ -63,6 +64,7 @@ end
 
 function apply_statistic(stat::Identity,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     nothing
 end
@@ -87,6 +89,7 @@ const histogram = HistogramStatistic()
 
 function apply_statistic(stat::HistogramStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("HistogramStatistic", aes, :x)
     d, bincounts = choose_bin_count_1d(aes.x)
@@ -124,6 +127,7 @@ element_aesthetics(::DensityStatistic) = [:x, :y]
 
 function apply_statistic(stat::DensityStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("DensityStatistic", aes, :x)
 
@@ -154,6 +158,7 @@ const rectbin = RectangularBinStatistic()
 
 function apply_statistic(stat::RectangularBinStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
 
     dx, dy, bincounts = choose_bin_count_2d(aes.x, aes.y)
@@ -232,6 +237,11 @@ const y_ticks = TickStatistic(
      :lower_fence, :upper_fence], "y")
 
 
+# Can a numerical value be treated as an integer
+is_int_compatable(::Integer) = true
+is_int_compatable{T <: FloatingPoint}(x::T) = abs(x) < maxintfloat(T) && float(int(x)) == x
+is_int_compatable(::Any) = false
+
 # Apply a tick statistic.
 #
 # Args:
@@ -246,6 +256,7 @@ const y_ticks = TickStatistic(
 #
 function apply_statistic(stat::TickStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     in_values = [getfield(aes, var) for var in stat.in_vars]
     in_values = filter(val -> !(val === nothing), in_values)
@@ -266,11 +277,30 @@ function apply_statistic(stat::TickStatistic,
             maxval = float64(val)
         end
 
-        if !(typeof(val) <: Integer) && int(val) != val
+        if !is_int_compatable(val)
             all_int = false
         end
 
         n += 1
+    end
+
+    # Take into account a forced viewport in cartesian coordinates.
+    if typeof(coord) == Coord.Cartesian
+        if stat.out_var == "x"
+            if !is(coord.xmin, nothing)
+                minval == min(minval, float64(coord.xmin))
+            end
+            if !is(coord.xmax, nothing)
+                maxval == max(maxval, float64(coord.xmax))
+            end
+        elseif stat.out_var == "y"
+            if !is(coord.ymin, nothing)
+                minval == min(minval, float64(coord.ymin))
+            end
+            if !is(coord.ymax, nothing)
+                maxval == min(maxval, float64(coord.ymax))
+            end
+        end
     end
 
     # all the input values in order.
@@ -359,6 +389,7 @@ const boxplot = BoxplotStatistic()
 
 function apply_statistic(stat::BoxplotStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("BoxplotStatistic", aes, :y)
 

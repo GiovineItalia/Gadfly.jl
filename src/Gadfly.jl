@@ -24,7 +24,7 @@ import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, layer, @plot, spy
 
 # Re-export some essentials from Compose
-export D3, SVG, PNG, PS, PDF, draw, inch, mm, px, pt, color
+export D3, SVG, PNG, PS, PDF, draw, inch, mm, px, pt, color, vstack, hstack
 
 typealias ColorOrNothing Union(ColorValue, Nothing)
 
@@ -75,7 +75,7 @@ type Layer <: Element
 
     function Layer(data_source::Union(Nothing, AbstractDataFrame), mapping::Dict,
                    statistic::StatisticElement, geom::GeometryElement)
-        new(nothing, data_source, Dict(), statistic, geom)
+        new(data, mapping, statistic, geom)
     end
 end
 
@@ -84,7 +84,7 @@ function layer(data::Union(AbstractDataFrame, Nothing),
                statistic::StatisticElement=Stat.nil,
                geom::GeometryElement=Geom.nil;
                mapping...)
-    Layer(data, Dict(mapping...), statistic, geom)
+    Layer(data, {k => v for (k, v) in mapping}, statistic, geom)
 end
 
 
@@ -137,8 +137,8 @@ function add_plot_element(p::Plot, arg::StatisticElement)
     p.layers[end].statistic = arg
 end
 
-function add_plot_element(p::Plot, arg::CoordinateElement)
-    push!(p.coordinates, arg)
+function add_plot_element(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
+    p.coord = arg
 end
 
 function add_plot_element(p::Plot, arg::GuideElement)
@@ -295,7 +295,28 @@ function render(plot::Plot)
         error("Plot has no layers. Try adding a geometry.")
     end
 
-    datas = [layer.data for layer in plot.layers]
+    # Process layers, filling inheriting mappings or data from the Plot where
+    # they are missing.
+    datas = Array(Data, length(plot.layers))
+    for (i, layer) in enumerate(plot.layers)
+        if layer.data_source === nothing && isempty(layer.mapping)
+            datas[i] = plot.data
+        else
+            datas[i] = Data()
+
+            if layer.data_source === nothing
+                layer.data_source = plot.data_source
+            end
+
+            if isempty(layer.mapping)
+                layer.mapping = plot.mapping
+            end
+
+            for (k, v) in layer.mapping
+                setfield(datas[i], k, eval_plot_mapping(layer.data_source, v))
+            end
+        end
+    end
 
     # Add default statistics for geometries.
     layer_stats = Array(StatisticElement, length(plot.layers))
@@ -419,22 +440,22 @@ function render(plot::Plot)
     aess = Scale.apply_scales(Iterators.distinct(values(scales)), datas...)
 
     # set default labels
-    if has(plot.mapping, :color)
+    if haskey(plot.mapping, :color)
         aess[1].color_key_title = string(plot.mapping[:color])
     end
 
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, aess)
-        Stat.apply_statistics(StatisticElement[layer_stat], scales, aes)
+        Stat.apply_statistics(StatisticElement[layer_stat], scales, plot.coord, aes)
     end
 
     # IIb. Plot-wise Statistics
     plot_aes = cat(aess...)
-    Stat.apply_statistics(statistics, scales, plot_aes)
+    Stat.apply_statistics(statistics, scales, plot.coord, plot_aes)
 
     # Add some default guides determined by defined aesthetics
     if !all([aes.color === nothing for aes in [plot_aes, aess...]]) &&
-       !has(guides, Guide.ColorKey)
+       !haskey(guides, Guide.ColorKey)
         guides[Guide.ColorKey] = Guide.colorkey
     end
 
@@ -470,7 +491,10 @@ draw(backend::Compose.Backend, p::Plot) = draw(backend, render(p))
 
 # Convenience stacking functions
 vstack(ps::Plot...) = vstack([render(p) for p in ps]...)
+vstack(ps::Vector{Plot}) = vstack([render(p) for p in ps]...)
+
 hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
+hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 
 
 # Displaying plots, for interactive use.
@@ -480,7 +504,12 @@ hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
 # usually means, shows it in a browser window.)
 #
 function show(io::IO, p::Plot)
-    draw(SVG(6inch, 5inch), p)
+    # TODO: This is stilly kludgy
+    if io === STDOUT
+        draw(SVG(6inch, 5inch), p)
+    else
+        print(io, "Plot(...)")
+    end
 end
 # TODO: Find a more elegant way to automatically show plots. This is unexpected
 # and gives weave problems.

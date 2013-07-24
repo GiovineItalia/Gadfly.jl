@@ -134,7 +134,9 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     aes = inherit(aes, default_aes)
 
     if length(aes.color) == 1
-        form = lines({(x, y) for (x, y) in zip(aes.x, aes.y)}...) <<
+        points = {(x, y) for (x, y) in zip(aes.x, aes.y)}
+        sort!(points)
+        form = lines(points...) <<
                stroke(aes.color[1]) <<
                svgclass("geometry")
     else
@@ -149,6 +151,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
         forms = Array(Any, length(points))
         for (i, (c, c_points)) in enumerate(points)
+            sort!(c_points)
             forms[i] = lines({(x, y) for (x, y) in c_points}...) <<
                             stroke(c) <<
                             svgclass(@sprintf("geometry color_%s", escape_id(aes.color_label(c))))
