@@ -2,17 +2,17 @@
 <html>
 	<head>
 		<title>Gadfly Plot</title>
-		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+		<link rel="stylesheet" href="css/jquery-ui-1.10.3.custom.css" />
+		<link rel="stylesheet" href="css/bootstrap.css" />
+		<link rel="stylesheet" href="css/show.css" />
 		<script src="../src/gadfly.js"></script>
-		<script src="d3.min.js"></script>
-		<script src="jquery-2.0.2.min.js"></script>
-		<script src="jquery-ui/ui/jquery.ui.core.js"></script>
-		<script src="jquery-ui/ui/jquery.ui.widget.js"></script>
-		<script src="jquery-ui/ui/jquery.ui.mouse.js"></script>
-		<script src="jquery-ui/ui/jquery.ui.resizable.js"></script>
+		<script src="js/d3.min.js"></script>
+		<script src="js/jquery-2.0.2.min.js"></script>
+		<script src="js/jquery-ui-1.10.3.custom.js"></script>
+        <script src="js/bootstrap.js"></script>
 		<script>
 		// Gadfly uses millimeters by default where most of the dom/javascript
-		// stuff uses pixels.
+		// stuff uses pixels. Figure out how to transform between the two.
 		var get_px_per_mm = function() {
 			var div = document.createElement("div");
 			div.style.width = "1mm";
@@ -26,8 +26,26 @@
 		</script>
 	</head>
 	<body>
-		The plot should appear below sometime soon.
-		<div id="plotdiv" class="ui-widget-content">
+		<div class="tabbable">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#view" data-toggle="tab">View</a></li>
+				<li><a href="#edit" data-toggle="tab">Edit</a></li>
+				<li><a href="#export" data-toggle="tab">Export</a></li>
+			</ul>
+
+            <div class="tab-content">
+                <div id="view" class="tab-pane active">
+                </div>
+
+                <div id="edit" class="tab-pane">
+                TODO: Controls for making changes to the plot.
+
+                </div>
+
+                <div id="export" class="tab-pane">
+                TODO: Some controls for exporting the plot to an image file.
+                </div>
+            </div>
 		</div>
 
 		<script>
@@ -41,25 +59,45 @@
 				console.info("message received")
 				var msgcontents = JSON.parse(msg.data);
 				jQuery.globalEval(msgcontents["graphic"]);
-				$("#plotdiv svg").remove();
-				draw("#plotdiv");
+				$("#view svg").remove();
+				draw("#view");
+				$("svg").attr("preserveAspectRatio", "none");
 				plot = msgcontents["plot"];
 				backend = msgcontents["backend"];
-				$("#plotdiv").resizable(
+				$("#view").resizable(
 					{
+						autoHide: true,
+                        start: function(event, ui) {
+                            console.info("start resize");
+                            var div = $("#view");
+                            div.css("border", "1px dashed #ccc");
+                        },
 						stop: function(event, ui) {
-							console.info(event);
-							console.info($("#plotdiv").css("width"));
-							var div = $("#plotdiv");
+							var div = $("#view");
 							backend.width = parseFloat(div.css("width")) / ppm;
 							backend.height = parseFloat(div.css("height")) / ppm;
+                            div.css("border", "none");
 							sendreq();
+						},
+						resize: function(event, ui) {
+							$(this).css("left",
+								(($(window).width() - ui.size.width) / 2) + "px");
+							$("#view").css("width", ui.size.width + "px");
+							$("#view").css("height", ui.size.height + "px");
+
+							var svg = $("#view > svg");
+							svg.attr("width", ui.size.width + "px");
+							svg.attr("height", ui.size.height + "px");
 						}
 					});
 
 				// size the container arround the plot
-				$("#plotdiv").css("width", backend.width + "mm");
-				$("#plotdiv").css("height", backend.height + "mm");
+				view = $("#view");
+				view.css("width", backend.width + "mm");
+				view.css("height", backend.height + "mm");
+
+				// re-center the container
+				view.css("left", (($(window).width() - backend.width * ppm) / 2) + "px");
 			}
 
 			var sendreq = function() {
@@ -67,15 +105,26 @@
 				msg = JSON.stringify({"plot": plot, "backend": backend});
 				conn.send(msg);
 			}
+
+
+            $("#tabs").click(function (e) {
+                e.preventDefault();
+                $(this).tab("show");
+            });
 		</script>
 
 		<!-- TODO
-			2. Prove that we can make a round trip: try sending the plot serialization back to the server and see what happens.
+			Exporting:
+			I think the solution will look like this:
+				1. Ask the server for a SVG/PNG/PS/PDF copy.
+				2. The server responds with base64 encoded data.
+				3. Client-side creates a data URI. When clicked
 
-			I think we are still missing a plot deserialize function...
-
-			3. Figure out what the user interface is going to look like.
-			   I know we want it to be possible to add plot elements. Changing the mapping seems less likely.
+			Here's some things we should be able to do:
+				1. Export the plot to an image.
+				2. Modify the plot specification by:
+					Resizing
+					Adding/removing plot elements.
 		 -->
 	</body>
 </html>

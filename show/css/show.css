@@ -1,0 +1,37 @@
+
+body {
+	/*font-size: 62.5%;*/
+	/*background-color: #f4f4f4;*/
+    font-weight: lighter;
+    font-size: 10pt;
+    font-family: "PT Sans",Helvetica,Arial,sans;
+}
+
+a {
+    font-weight: normal;
+    /*color: #a66377;*/
+    color: black;
+}
+
+#header {
+	width: 100%;
+	margin: auto;
+	padding: 0;
+	font-family: "PT Sans";
+	/*border: 1px solid black;*/
+}
+
+#plotdiv {
+	/*border: 2px solid rgba(0,0,0,0);*/
+	position: absolute;
+}
+
+.ui-widget-content {
+	border: 2px solid #f0f0f0;
+}
+
+
+.tab-content {
+    padding-top: 10px;
+}
+

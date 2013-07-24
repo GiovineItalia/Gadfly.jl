@@ -163,7 +163,7 @@ end
 # Serialize a continuous scale
 function serialize(scale::ContinuousScale)
     {
-        "vars" => {string(var) for var in x_vars},
+        "vars" => {string(var) for var in scale.vars},
         "transform" => scale.transform.name
     }
 end
