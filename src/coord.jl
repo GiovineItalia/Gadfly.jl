@@ -150,7 +150,7 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
 end
 
 
-function serialize(coord::CartesianCoordinate)
+function serialize(coord::Cartesian)
     out = Dict()
     out["xvars"] = {string(var) for var in coord.xvars}
     out["yvars"] = {string(var) for var in coord.yvars}
@@ -158,8 +158,8 @@ function serialize(coord::CartesianCoordinate)
 end
 
 
-function deserialize(::Type{CartesianCoordinate}, data::Dict)
-    CartesianCoordinate(
+function deserialize(::Type{Cartesian}, data::Dict)
+    Cartesian(
         Symbol[symbol(var) for var in data["xvars"]],
         Symbol[symbol(var) for var in data["yvars"]])
 end
