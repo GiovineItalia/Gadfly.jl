@@ -22,7 +22,7 @@ import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, layer, @plot, spy
 
 # Re-export some essentials from Compose
-export D3, SVG, PNG, PS, PDF, draw, inch, mm, px, pt, color
+export D3, SVG, PNG, PS, PDF, draw, inch, mm, px, pt, color, vstack, hstack
 
 typealias ColorOrNothing Union(ColorValue, Nothing)
 
@@ -449,7 +449,10 @@ draw(backend::Compose.Backend, p::Plot) = draw(backend, render(p))
 
 # Convenience stacking functions
 vstack(ps::Plot...) = vstack([render(p) for p in ps]...)
+vstack(ps::Vector{Plot}) = vstack([render(p) for p in ps]...)
+
 hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
+hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 
 
 # Displaying plots, for interactive use.
