@@ -10,6 +10,8 @@
 		<script src="js/jquery-2.0.2.min.js"></script>
 		<script src="js/jquery-ui-1.10.3.custom.js"></script>
         <script src="js/bootstrap.js"></script>
+        <script src="js/Blob.js"></script>
+        <script src="js/FileSaver.js"></script>
 		<script>
 		// Gadfly uses millimeters by default where most of the dom/javascript
 		// stuff uses pixels. Figure out how to transform between the two.
@@ -34,16 +36,57 @@
 			</ul>
 
             <div class="tab-content">
-                <div id="view" class="tab-pane active">
+                <!--Where the plot is rendered.-->
+                <div id="view" class="tab-pane active span8">
                 </div>
 
-                <div id="edit" class="tab-pane">
-                TODO: Controls for making changes to the plot.
-
+                <!-- Controls for making non-trivial changes to the plot. -->
+                <div id="edit" class="tab-pane span8">
+                    TODO: controls for modifying the plot object.
                 </div>
 
-                <div id="export" class="tab-pane">
-                TODO: Some controls for exporting the plot to an image file.
+                <!--Controls for exporting the current viewed plot to a files.-->
+                <div id="export" class="tab-pane span8">
+                    <script>
+                        var export_current_ext = "svg";
+
+                        export_format_change = function() {
+                            var ext = $("#export_format_select").val();
+                            var name = $("#export_name_input").val().split(".");
+
+                            if (name.length > 1 &&
+                                name[name.length-1] == export_current_ext) {
+                                name[name.length-1] = ext;
+                                $("#export_name_input").val(name.join("."));
+                            }
+
+                            export_current_ext = ext;
+                        };
+
+                        export_button_click = function() {
+                            console.info("sending export request");
+                            var export_backend = {
+                                "type": export_current_ext.toUpperCase(),
+                                "width": backend.width,
+                                "height": backend.height};
+                            sendreq("export", export_backend);
+                        };
+                    </script>
+
+                    <label>Save As:
+                        <input id="export_name_input"
+                                type="text"
+                                value="plot.svg" />
+                    </label>
+                    <label>Format:
+                        <select id="export_format_select" onchange="export_format_change()">
+                            <option>svg</option>
+                            <option>png</option>
+                            <option>ps</option>
+                            <option>pdf</option>
+                        </select>
+                    </label>
+                    <button class="btn" onclick="export_button_click()">Save</button>
                 </div>
             </div>
 		</div>
@@ -58,7 +101,31 @@
 			conn.onmessage = function(msg) {
 				console.info("message received")
 				var msgcontents = JSON.parse(msg.data);
-				jQuery.globalEval(msgcontents["graphic"]);
+
+                // Handle special messages meant to be sent to a file.
+                if (msgcontents["msg"] == "export") {
+                    var mime = "";
+                    if (export_current_ext == "svg") {
+                        mime = "image/svg+xml";
+                    }
+                    else if (export_current_ext == "png") {
+                        mime = "image/png";
+                    }
+                    else if (export_current_ext == "pdf") {
+                        mime = "application/pdf";
+                    }
+                    else if (export_current_ext == "ps") {
+                        mime = "application/postscript";
+                    }
+
+                    data = atob(msgcontents["graphic"]);
+                    blob = new Blob([data],
+                                    {"type": mime});
+                    saveAs(blob, $("#export_name_input").val());
+                    return;
+                }
+
+				jQuery.globalEval(atob(msgcontents["graphic"]));
 				$("#view svg").remove();
 				draw("#view");
 				$("svg").attr("preserveAspectRatio", "none");
@@ -77,7 +144,7 @@
 							backend.width = parseFloat(div.css("width")) / ppm;
 							backend.height = parseFloat(div.css("height")) / ppm;
                             div.css("border", "none");
-							sendreq();
+							sendreq("update", backend);
 						},
 						resize: function(event, ui) {
 							$(this).css("left",
@@ -100,9 +167,9 @@
 				view.css("left", (($(window).width() - backend.width * ppm) / 2) + "px");
 			}
 
-			var sendreq = function() {
+			var sendreq = function(msg, backend) {
 				console.info("sending request")
-				msg = JSON.stringify({"plot": plot, "backend": backend});
+				msg = JSON.stringify({"msg": msg, "plot": plot, "backend": backend});
 				conn.send(msg);
 			}
 
