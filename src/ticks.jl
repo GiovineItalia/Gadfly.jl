@@ -56,6 +56,11 @@ function optimize_ticks(x_min::Float64, x_max::Float64)
 
                     score = (1/4)g + (1/6)s + (1/3)c + (1/4)qscore
 
+                    # strict limits on coverage
+                    if span >= 2*xspan || span < xspan
+                        score -= 1000
+                    end
+
                     if score > high_score
                         (q_best, r_best, k_best, z_best) = (q, r, k, z)
                         high_score = score

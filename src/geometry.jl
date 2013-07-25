@@ -117,7 +117,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         # group points by color
         points = Dict{ColorValue, Array{(Float64, Float64),1}}()
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
-            if !has(points, c)
+            if !haskey(points, c)
                 points[c] = Array((Float64, Float64),0)
             end
             push!(points[c], (x, y))
@@ -163,7 +163,7 @@ function render_discrete_bar(geom::BarGeometry,
     # Group by x-axis.
     bars = Dict()
     for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color.refs))
-        if !has(bars, x)
+        if !haskey(bars, x)
             bars[x] = {}
         end
         push!(bars[x], (c, y))

@@ -12,11 +12,11 @@ tests = [
 ]
 
 backends = {
-    "svg" => name -> SVG("$(name).svg", 5inch, 3inch),
-    "d3"  => name -> D3("$(name).js",   5inch, 3inch),
-    "png" => name -> PNG("$(name).png", 5inch, 3inch),
-    "ps"  => name -> PS("$(name).ps",   5inch, 3inch),
-    "pdf" => name -> PDF("$(name).pdf", 5inch, 3inch)
+    "svg" => name -> SVG("$(name).svg", 6inch, 3inch),
+    "d3"  => name -> D3("$(name).js",   6inch, 3inch),
+    "png" => name -> PNG("$(name).png", 6inch, 3inch),
+    "ps"  => name -> PS("$(name).ps",   6inch, 3inch),
+    "pdf" => name -> PDF("$(name).pdf", 6inch, 3inch)
 }
 
 
