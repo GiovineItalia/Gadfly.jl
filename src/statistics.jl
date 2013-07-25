@@ -4,6 +4,7 @@ module Stat
 import Gadfly
 using DataFrames
 using Compose
+using Color
 
 import Gadfly.Scale, Gadfly.Coord, Gadfly.element_aesthetics, Gadfly.default_scales
 import Distributions.Uniform, Distributions.kde
@@ -69,14 +70,57 @@ function apply_statistic(stat::HistogramStatistic,
     x_min, x_max = min(aes.x), max(aes.x)
     binwidth = (x_max - x_min) / d
 
-    aes.x_min = Array(Float64, d)
-    aes.x_max = Array(Float64, d)
-    aes.y = Array(Float64, d)
+    if aes.color === nothing
+        aes.x_min = Array(Float64, d)
+        aes.x_max = Array(Float64, d)
+        aes.y = Array(Float64, d)
 
-    for k in 1:d
-        aes.x_min[k] = x_min + (k - 1) * binwidth
-        aes.x_max[k] = x_min + k * binwidth
-        aes.y[k] = bincounts[k]
+        for j in 1:d
+            aes.x_min[j] = x_min + (j - 1) * binwidth
+            aes.x_max[j] = x_min + j * binwidth
+            aes.y[j] = bincounts[j]
+        end
+    else
+        groups = Dict()
+        for (x, c) in zip(aes.x, cycle(aes.color))
+            if !haskey(groups, c)
+                groups[c] = Float64[x]
+            else
+                push!(groups[c], x)
+            end
+        end
+
+        aes.x_min = Array(Float64, d * length(groups))
+        aes.x_max = Array(Float64, d * length(groups))
+        aes.y = Array(Float64, d * length(groups))
+        colors = Array(ColorValue, d * length(groups))
+
+        x_min = min(aes.x)
+        x_max = max(aes.x)
+        stack_height = zeros(Int, d)
+        for (i, (c, xs)) in enumerate(groups)
+            fill!(bincounts, 0)
+            for x in xs
+                bin = max(1, min(d, int(ceil((x - x_min) / binwidth))))
+                bincounts[bin] += 1
+            end
+            stack_height += bincounts[1:d]
+
+            for j in 1:d
+                idx = (i-1)*d + j
+                aes.x_min[idx] = x_min + (j - 1) * binwidth
+                aes.x_max[idx] = x_min + j * binwidth
+                aes.y[idx] = bincounts[j]
+                colors[idx] = c
+            end
+        end
+
+        y_drawmax = float64(max(stack_height))
+        if aes.y_drawmax === nothing || aes.y_drawmax < y_drawmax
+            aes.y_drawmax = y_drawmax
+        end
+
+        aes.color = PooledDataArray(colors)
     end
 end
 
@@ -192,10 +236,10 @@ type TickStatistic <: Gadfly.StatisticElement
 end
 
 
-const x_ticks = TickStatistic([:x, :x_min, :x_max], "x")
+const x_ticks = TickStatistic([:x, :x_min, :x_max, :x_drawmin, :x_drawmax], "x")
 const y_ticks = TickStatistic(
     [:y, :y_min, :y_max, :middle, :lower_hinge, :upper_hinge,
-     :lower_fence, :upper_fence], "y")
+     :lower_fence, :upper_fence, :y_drawmin, :y_drawmax], "y")
 
 
 # Can a numerical value be treated as an integer
@@ -346,8 +390,8 @@ function apply_statistic(stat::BoxplotStatistic,
     aes_color = aes.color === nothing ? [nothing] : aes.color
 
     for (x, y, c) in zip(cycle(aes_x), aes.y, cycle(aes_color))
-        if !has(groups, (x, c))
-            groups[(x, c)] = Float64[]
+        if !haskey(groups, (x, c))
+            groups[(x, c)] = Float64[y]
         else
             push!(groups[(x, c)], y)
         end

@@ -8,7 +8,7 @@ using Gadfly
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
 import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit, Gadfly.escape_id
-import Iterators.cycle, Iterators.product
+import Iterators.cycle, Iterators.product, Iterators.distinct
 
 
 # Geometry that renders nothing.
@@ -196,15 +196,36 @@ function render_continuous_bar(geom::BarGeometry,
                                theme::Gadfly.Theme,
                                aes::Gadfly.Aesthetics)
     pad = theme.bar_spacing / 2
-
     bar_form = empty_form
-    for (x_min, x_max, y) in zip(aes.x_min, aes.x_max, aes.y)
-        annotation_id = Gadfly.unique_svg_id()
-        geometry_id = Gadfly.unique_svg_id()
 
-        bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
-                                      (x_max - x_min)*cx - theme.bar_spacing, y),
-                            svgid(geometry_id), svgclass("geometry"))
+    if aes.color === nothing
+        for (x_min, x_max, y) in zip(aes.x_min, aes.x_max, aes.y)
+            annotation_id = Gadfly.unique_svg_id()
+            geometry_id = Gadfly.unique_svg_id()
+
+            bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
+                                          (x_max - x_min)*cx - theme.bar_spacing, y),
+                                svgid(geometry_id), svgclass("geometry"))
+        end
+    else
+        stack_height = Dict()
+        for x_min in aes.x_min
+            stack_height[x_min] = 0.0
+        end
+
+        zeros(Int, length(aes.x_min))
+        for (x_min, x_max, y, c) in zip(aes.x_min, aes.x_max, aes.y, aes.color)
+            annotation_id = Gadfly.unique_svg_id()
+            geometry_id = Gadfly.unique_svg_id()
+            bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2,
+                                          stack_height[x_min],
+                                          (x_max - x_min)*cx - theme.bar_spacing,
+                                          y),
+                                fill(c),
+                                svgid(geometry_id),
+                                svgclass("geometry"))
+            stack_height[x_min] += y
+        end
     end
 
     compose(canvas(units_inherited=true),

@@ -8,14 +8,15 @@ tests = [
     "colored_points",
     "vstack",
     "hstack",
+    "colored_hist"
 ]
 
 backends = {
-    "svg" => name -> SVG("$(name).svg", 8inch, 6inch),
-    "d3"  => name -> D3("$(name).js",   8inch, 6inch),
-    "png" => name -> PNG("$(name).png", 8inch, 6inch),
-    "ps"  => name -> PS("$(name).ps",   8inch, 6inch),
-    "pdf" => name -> PDF("$(name).pdf", 8inch, 6inch)
+    "svg" => name -> SVG("$(name).svg", 5inch, 3inch),
+    "d3"  => name -> D3("$(name).js",   5inch, 3inch),
+    "png" => name -> PNG("$(name).png", 5inch, 3inch),
+    "ps"  => name -> PS("$(name).ps",   5inch, 3inch),
+    "pdf" => name -> PDF("$(name).pdf", 5inch, 3inch)
 }
 
 

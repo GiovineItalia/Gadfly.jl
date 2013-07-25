@@ -27,6 +27,13 @@ type Aesthetics
     xgrid::Maybe(Vector{Float64})
     ygrid::Maybe(Vector{Float64})
 
+    # Pesudo-aesthetics used to indicate that drawing might
+    # occur beyond any x/y value.
+    x_drawmin::Maybe(Float64)
+    x_drawmax::Maybe(Float64)
+    y_drawmin::Maybe(Float64)
+    y_drawmax::Maybe(Float64)
+
     # Plot viewport extents
     x_viewmin::Maybe(Float64)
     x_viewmax::Maybe(Float64)
@@ -48,6 +55,7 @@ type Aesthetics
 
     function Aesthetics()
         new(nothing, nothing, nothing, nothing,
+            nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
             nothing, nothing, nothing, nothing,
