@@ -18,8 +18,11 @@ end
 
 function webshow_response(msg, p::Plot, backend_type, width, height)
 	out = IOBuffer(true, true)
-	backend = backend_type(out, width, height, emit_on_finish=false)
+	backend = backend_type(out, width, height, false)
 	draw(backend, p)
+
+    data = takebuf_array(out)
+    println(STDERR, "First byte: ", data[1])
 
 	@sprintf("{\"msg\":\"%s\",
                \"plot\":%s,
@@ -31,7 +34,7 @@ function webshow_response(msg, p::Plot, backend_type, width, height)
 		       }}",
              msg,
 		     JSON.to_json(serialize(p)),
-             bytestring(encode(Base64, takebuf_string(out))),
+             bytestring(encode(Base64, data)),
 		     string(backend_type),
 		     width / mm,
 		     height / mm)

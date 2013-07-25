@@ -12,6 +12,7 @@
         <script src="js/bootstrap.js"></script>
         <script src="js/Blob.js"></script>
         <script src="js/FileSaver.js"></script>
+        <script src="js/base64.js"></script>
 		<script>
 		// Gadfly uses millimeters by default where most of the dom/javascript
 		// stuff uses pixels. Figure out how to transform between the two.
@@ -93,7 +94,6 @@
 
 		<script>
 			var ppm = get_px_per_mm();
-			console.info(ppm);
 			var conn = new WebSocket("ws://localhost:8080")
 			var plot = null;
 			var backend = null;
@@ -118,7 +118,7 @@
                         mime = "application/postscript";
                     }
 
-                    data = atob(msgcontents["graphic"]);
+                    data = base64DecToArr(msgcontents["graphic"]);
                     blob = new Blob([data],
                                     {"type": mime});
                     saveAs(blob, $("#export_name_input").val());
@@ -135,7 +135,6 @@
 					{
 						autoHide: true,
                         start: function(event, ui) {
-                            console.info("start resize");
                             var div = $("#view");
                             div.css("border", "1px dashed #ccc");
                         },
