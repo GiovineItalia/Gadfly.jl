@@ -139,11 +139,16 @@ end
 
 # Bar geometry summarizes data as vertical bars.
 type BarGeometry <: Gadfly.GeometryElement
+    # How bars should be positioned if they are grouped by color.
+    # Valid options are:
+    #   :stack -> place bars on top of each other (default)
+    #   :dodge -> place bar next to each other
+    position::Symbol
 end
 
 
-const bar = BarGeometry()
-const histogram = BarGeometry()
+const bar = BarGeometry(:dodge)
+const histogram = BarGeometry(:stack)
 
 
 function element_aesthetics(::BarGeometry)
@@ -156,84 +161,76 @@ function default_statistic(::BarGeometry)
 end
 
 
-# Render bar geometry with a discrete x axis.
-function render_discrete_bar(geom::BarGeometry,
-                             theme::Gadfly.Theme,
-                             aes::Gadfly.Aesthetics)
-    # Group by x-axis.
-    bars = Dict()
-    for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color.refs))
-        if !haskey(bars, x)
-            bars[x] = {}
-        end
-        push!(bars[x], (c, y))
-    end
-    ncolors = length(levels(aes.color))
-    pad = 2mm
-    barwidth = (1.0cx - pad) / ncolors
-
+# Render a single color bar chart
+function render_colorless_bar(geom::BarGeometry,
+                              theme::Gadfly.Theme,
+                              aes::Gadfly.Aesthetics)
     bar_form = empty_form
-    for (x, cys) in bars
-        for (cref, y) in sort(cys)
-            c = aes.color.pool[cref]
-            hc = theme.highlight_color(c)
-            bar_form |=
-                compose(rectangle((x - 0.5)cx + pad/2 + (cref-1) * barwidth, 0.0,
-                                  barwidth, y),
-                        fill(c))
-        end
+    for (x_min, x_max, y) in zip(aes.x_min, aes.x_max, aes.y)
+        geometry_id = Gadfly.unique_svg_id()
+        bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
+                                      (x_max - x_min)*cx - theme.bar_spacing, y),
+                            svgid(geometry_id), svgclass("geometry"))
     end
-
-    compose(canvas(units_inherited=true),
-            bar_form,
-            svgattribute("shape-rendering", "crispEdges"),
-            stroke(nothing))
+    bar_form
 end
 
 
-# Render bar geometry with a continuous x axis.
-function render_continuous_bar(geom::BarGeometry,
-                               theme::Gadfly.Theme,
-                               aes::Gadfly.Aesthetics)
-    pad = theme.bar_spacing / 2
+# Render a bar chart grouped by discrete colors and stacked.
+function render_colorful_stacked_bar(geom::BarGeometry,
+                                     theme::Gadfly.Theme,
+                                     aes::Gadfly.Aesthetics)
     bar_form = empty_form
 
-    if aes.color === nothing
-        for (x_min, x_max, y) in zip(aes.x_min, aes.x_max, aes.y)
-            annotation_id = Gadfly.unique_svg_id()
-            geometry_id = Gadfly.unique_svg_id()
-
-            bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
-                                          (x_max - x_min)*cx - theme.bar_spacing, y),
-                                svgid(geometry_id), svgclass("geometry"))
-        end
-    else
-        stack_height = Dict()
-        for x_min in aes.x_min
-            stack_height[x_min] = 0.0
-        end
-
-        zeros(Int, length(aes.x_min))
-        for (x_min, x_max, y, c) in zip(aes.x_min, aes.x_max, aes.y, aes.color)
-            annotation_id = Gadfly.unique_svg_id()
-            geometry_id = Gadfly.unique_svg_id()
-            bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2,
-                                          stack_height[x_min],
-                                          (x_max - x_min)*cx - theme.bar_spacing,
-                                          y),
-                                fill(c),
-                                svgid(geometry_id),
-                                svgclass("geometry"))
-            stack_height[x_min] += y
-        end
+    stack_height = Dict()
+    for x_min in aes.x_min
+        stack_height[x_min] = 0.0
     end
 
-    compose(canvas(units_inherited=true),
-            stroke(nothing),
-            (bar_form,
-                fill(theme.default_color),
-                svgattribute("shape-rendering", "crispEdges")))
+    for i in sortperm(aes.color.refs, order=Sort.Reverse)
+        x_min, x_max, y, c = aes.x_min[i], aes.x_max[i], aes.y[i], aes.color[i]
+        geometry_id = Gadfly.unique_svg_id()
+        bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2,
+                                      stack_height[x_min],
+                                      (x_max - x_min)*cx - theme.bar_spacing,
+                                      y),
+                            fill(c),
+                            svgid(geometry_id),
+                            svgclass("geometry"))
+        stack_height[x_min] += y
+    end
+    bar_form
 end
+
+
+# Render a bar chart grouped by discrete colors and stuck next to each other.
+function render_colorful_dodged_bar(geom::BarGeometry,
+                                    theme::Gadfly.Theme,
+                                    aes::Gadfly.Aesthetics)
+    bar_form = empty_form
+    dodge_width = Dict()
+    dodge_count = Dict()
+    for x_min in aes.x_min
+        dodge_width[x_min] = 0.0cx
+        dodge_count[x_min] = get(dodge_count, x_min, 0) + 1
+    end
+
+    for i in sortperm(aes.color.refs, order=Sort.Reverse)
+        x_min, x_max, y, c = aes.x_min[i], aes.x_max[i], aes.y[i], aes.color[i]
+        geometry_id = Gadfly.unique_svg_id()
+        barwidth = ((x_max - x_min)*cx - theme.bar_spacing) / dodge_count[x_min]
+        bar_form |= compose(rectangle(x_min*cx + dodge_width[x_min] + theme.bar_spacing/2,
+                                      0.0,
+                                      barwidth,
+                                      y),
+                            fill(c),
+                            svgid(geometry_id),
+                            svgclass("geometry"))
+        dodge_width[x_min] += barwidth
+    end
+    bar_form
+end
+
 
 # Render bar geometry.
 #
@@ -246,19 +243,37 @@ end
 #   A compose form.
 #
 function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(ColorValue[theme.default_color])
-    aes = Gadfly.inherit(aes, default_aes)
+    Gadfly.assert_aesthetics_defined("Geom.bar", aes, :y)
+    if (is(aes.x_min, nothing) || is(aes.x_max, nothing)) && is(aes.x, nothing)
+        error("Geom.bar required \"x\" to be bound or both \"x_min\" and \"x_max\".")
+    end
 
     if aes.x_min === nothing
-        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x, :y)
-        Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x, :y)
-        render_discrete_bar(geom, theme, aes)
-    else
-        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x_min, :x_max, :y)
-        Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x_min, :x_max, :y)
-        render_continuous_bar(geom, theme, aes)
+        aes2 = Gadfly.Aesthetics()
+        aes2.x_min = Array(Float64, length(aes.x))
+        aes2.x_max = Array(Float64, length(aes.x))
+        for (i, x) in enumerate(aes.x)
+            aes2.x_min[i] = x - 0.5
+            aes2.x_max[i] = x + 0.5
+        end
+        aes = inherit(aes, aes2)
     end
+
+    if aes.color === nothing
+        form = render_colorless_bar(geom, theme, aes)
+    elseif geom.position == :stack
+        form = render_colorful_stacked_bar(geom, theme, aes)
+    elseif geom.position == :dodge
+        form = render_colorful_dodged_bar(geom, theme, aes)
+    else
+        error("$(geom.position) is not a valid position for the bar geometry.")
+    end
+
+    compose(canvas(units_inherited=true),
+            form,
+            svgattribute("shape-rendering", "crispEdges"),
+            fill(theme.default_color),
+            stroke(nothing))
 end
 
 

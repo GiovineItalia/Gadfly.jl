@@ -6,7 +6,8 @@ using Compose
 using DataFrames
 using Gadfly
 
-import Gadfly.element_aesthetics
+import Gadfly.element_aesthetics, Gadfly.isconcrete, Gadfly.concrete_length,
+       Gadfly.nonzero_length
 
 include("color.jl")
 
@@ -119,9 +120,13 @@ function apply_scale(scale::ContinuousScale,
                 continue
             end
 
-            ds = Array(Float64, length(getfield(data, var)))
-            for (i, d) in enumerate(getfield(data, var))
-                ds[i] = scale.trans.f(convert(Float64, d))
+            ds = Array(Float64, concrete_length(getfield(data, var)))
+            i = 1
+            for d in getfield(data, var)
+                if isconcrete(d)
+                    ds[i] = scale.trans.f(convert(Float64, d))
+                    i += 1
+                end
             end
 
             setfield(aes, var, ds)
@@ -213,7 +218,16 @@ function apply_scale(scale::DiscreteColorScale,
         end
         ds = discretize(data.color)
         colors = convert(Vector{ColorValue}, scale.f(length(levels(ds))))
-        colored_ds = PooledDataArray(ColorValue[colors[i] for i in ds.refs], colors)
+        colorvals = Array(ColorValue, nonzero_length(ds.refs))
+        i = 1
+        for k in ds.refs
+            if k != 0
+                colorvals[i] = colors[k]
+                i += 1
+            end
+        end
+
+        colored_ds = PooledDataArray(colorvals, colors)
         aes.color = colored_ds
 
         color_map = {color => string(label)
@@ -294,7 +308,7 @@ function apply_scale(scale::ContinuousColorScale,
             cs[i] = scale.f((convert(Float64, c) - cmin) / cspan)
         end
 
-        aes.color = DataArray(cs, nas)
+        aes.color = PooledDataArray(cs, nas)
 
         color_labels = Dict{ColorValue, String}()
         for tick in ticks
@@ -315,7 +329,7 @@ function apply_scale(scale::ContinuousColorScale,
 
         aes.color_label = c -> color_labels[c]
         aes.color_key_colors = [k for k in keys(color_labels)]
-        sort!(aes.color_key_colors, Sort.Reverse)
+        sort!(aes.color_key_colors, order=Sort.Reverse)
         aes.color_key_continuous = true
     end
 end

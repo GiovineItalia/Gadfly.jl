@@ -1,5 +1,36 @@
 
 
+# Is this usable data?
+function isconcrete{T<:Number}(x::T)
+    !isna(x) && isfinite(x)
+end
+
+function isconcrete(x)
+    !isna(x)
+end
+
+# How many concrete elements in an iterable
+function concrete_length(xs)
+    n = 0
+    for x in xs
+        if isconcrete(x)
+            n += 1
+        end
+    end
+    n
+end
+
+function nonzero_length(xs)
+    n = 0
+    for x in xs
+        if x != 0
+            n += 1
+        end
+    end
+    n
+end
+
+
 # Create a new object of type T from a with missing values (i.e., those set to
 # nothing) inherited from b.
 function inherit{T}(a::T, b::T)

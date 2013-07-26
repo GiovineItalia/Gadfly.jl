@@ -6,7 +6,8 @@ using DataFrames
 using Compose
 using Color
 
-import Gadfly.Scale, Gadfly.Coord, Gadfly.element_aesthetics, Gadfly.default_scales
+import Gadfly.Scale, Gadfly.Coord, Gadfly.element_aesthetics,
+       Gadfly.default_scales, Gadfly.isconcrete, Gadfly.nonzero_length
 import Distributions.Uniform, Distributions.kde
 import Iterators.chain, Iterators.cycle, Iterators.product, Iterators.partition
 

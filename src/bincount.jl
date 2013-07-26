@@ -59,7 +59,7 @@ function choose_bin_count_1d(xs::Vector)
     span = x_max - x_min
 
     d_min = 3
-    d_max = min(250, int(ceil(n / log(n))))
+    d_max = min(150, int(ceil(n / log(n))))
     bincounts = zeros(Int, d_max)
 
     d_best = d_min
@@ -72,6 +72,9 @@ function choose_bin_count_1d(xs::Vector)
         bincounts[1:d] = 0
 
         for x in xs
+            if !isconcrete(x)
+                continue
+            end
             bincounts[max(1, min(d, int(ceil((x - x_min) / binwidth))))] += 1
         end
 
@@ -85,6 +88,9 @@ function choose_bin_count_1d(xs::Vector)
     bincounts[1:d_best] = 0
     binwidth = span / d_best
     for x in xs
+        if !isconcrete(x)
+            continue
+        end
         bincounts[max(1, min(d_best, int(ceil((x - x_min) / binwidth))))] += 1
     end
 

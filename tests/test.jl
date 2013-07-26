@@ -8,7 +8,9 @@ tests = [
     "colored_points",
     "vstack",
     "hstack",
-    "colored_hist"
+    "colored_hist",
+    "stacked_discrete_histogram",
+    "dodged_discrete_histogram"
 ]
 
 backends = {
