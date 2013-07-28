@@ -262,7 +262,9 @@ end
 #
 function render(plot::Plot)
     if isempty(plot.layers)
-        error("Plot has no layers. Try adding a geometry.")
+        layer = Layer()
+        layer.geom = Geom.point
+        push!(plot.layers, layer)
     end
 
     # Process layers, filling inheriting mappings or data from the Plot where
@@ -514,13 +516,15 @@ const default_aes_scales = {
                         :label => Scale.label}}
 
 # Determine whether the input is discrete or continuous.
+classify_data{N}(data::AbstractArray{Float64, N}) = :continuous
+classify_data{N}(data::AbstractArray{Float32, N}) = :continuous
 classify_data{N}(data::DataArray{Float64, N}) = :continuous
 classify_data{N}(data::DataArray{Float32, N}) = :continuous
 classify_data(data::DataArray) = :discrete
 classify_data(data::PooledDataArray) = :discrete
 
 # Very long unfactorized integer data should be treated as continuous
-function classify_data{T <: Integer}(data::AbstractArray{T})
+function classify_data{T <: Integer}(data::Union(AbstractArray{T}, DataArray{T}))
     length(Set{T}(data...)) <= 20 ? :discrete : :continuous
 end
 

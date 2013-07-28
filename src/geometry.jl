@@ -147,7 +147,7 @@ type BarGeometry <: Gadfly.GeometryElement
 end
 
 
-const bar = BarGeometry(:dodge)
+const bar = BarGeometry(:stack)
 const histogram = BarGeometry(:stack)
 
 

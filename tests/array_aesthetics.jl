@@ -4,6 +4,6 @@
 using Gadfly
 using DataFrames
 
-plot(x=collect(1:100), y=collect(1:100), Geom.point)
+plot(x=collect(1:100), y=sort(rand(100)))
 
 

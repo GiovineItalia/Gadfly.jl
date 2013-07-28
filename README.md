@@ -16,18 +16,7 @@ interactivity like panning, zooming, and toggling.
 
 To see Gadfly in action, have gander at some [examples](http://dcjones.github.io/Gadfly.jl/doc/).
 
-# Installing
-
-## Optional: install cairo, pango, and fontconfig
-
-Gadfly works best with the C libraries cairo, pango, and fontconfig installed.
-The PNG, PS, and PDF backends require cairo, but without it the SVG and
-Javascript/D3 backends are still available.
-
-Complex layouts involving text are also somewhat more accurate when pango and
-fontconfig are available.
-
-## Install Gadfly and dependencies
+# Installation
 
 From the Julia REPL a reasonably up to data version can be installed with
 
@@ -38,49 +27,126 @@ Pkg.add("Gadfly")
 This will likely result in half a dozen or so other packages also being
 installed.
 
-# Using
+## Optional: cairo, pango, and fontconfig
 
-The "grammar of graphics" idiom using in Gadfly may seem a a little strange at
-first, but once basic ideas are grasped, figuring out how to combine the pieces
-to make a new plot is quite easy.
+Gadfly works best with the C libraries cairo, pango, and fontconfig installed.
+The PNG, PS, and PDF backends require cairo, but without it the SVG and
+Javascript/D3 backends are still available.
 
-Specifying plot in Gadfly consists of three parts:
+Complex layouts involving text are also somewhat more accurate when pango and
+fontconfig are available.
 
-  1. A DataFrame containing the data you wish to plot.
-  2. Bindings of "aesthetics" to columns or expressions from your data frame.
-  3. Plot elements, which are statistics, scales, or geometries used to
-     construct the graphic.
-
-Here's a quick example.
+Julia's Cairo bindings can be installed with
 
 ```julia
-using Gadfly
-using RDataSets
-
-# grab some data to plot
-mammals = data("MASS", "mammals")
-
-p = plot(mammals,
-         x="body", y="brain", label=1,
-         Scale.x_log10, Scale.y_log10,
-         Geom.label, Geom.point)
-
-# render the plot on a backend
-draw(SVG("mammals.svg", 6inch, 6inch), p)
+Pkg.add("Cairo")
 ```
 
-![Mammals](http://dcjones.github.com/Gadfly.jl/mammals.svg)
+# Three Invocations
+
+All interaction with Gadfly is through the `plot` function, which takes three
+major forms.
 
 
-The data we are plotting is contained in `mammals`.
+## Orthodox
 
-We bind columns from `mammals` to aesthetics, which are used by the plot
-geometries to draw the graphic. Here we bind `x` to the body column, `y` to the
-brain column, and `label` to column 1, which is an unnamed column containing the
-animal's name.
+```julia
+plot(data::AbstractDataFrame, elements::Element...; mapping...)
+```
 
-Finally we add plot elements. We override the default linear scale with a log10
-scale for both the x and y axis, add the label and point geometries.
+This form is the standard "grammar of graphics" method of plotting. data is
+supplied in the form of a
+[dataframe](https://github.com/juliastats/dataframes.jl), columns of the data
+are bound to *aesthetics*, and plot elements including **scales**,
+**coordinates**, **statistics**, **guides**, and **geometries** are added to the
+plot.
+
+All of the examples that follow will be plotting data from
+[RDatasets](https://github.com/johnmyleswhite/RDatasets.jl).
+
+To render these plots to a file, call `draw` on the resulting plot.
+
+```julia
+draw(SVG("myplot.svg", 6inch, 3inch), plot(...))
+```
+
+A few examples now.
+
+
+```julia
+# E.g.
+plot(data("datasets", "iris"),x="Sepal.Length", y="Sepal.Width", Geom.point)
+```
+
+![Iris](http://homes.cs.washington.edu/~dcjones/gadfly/iris.svg)
+
+```julia
+# E.g.
+plot(data("car", "SLID"), x="wages", color="language", Geom.bar)
+```
+
+![Car](http://homes.cs.washington.edu/~dcjones/gadfly/car.svg)
+
+A catalog of plot elements given later in this document.
+
+
+## Heretical
+
+```julia
+plot(elements::Element...; mapping...)
+```
+
+Along with the orthodox invocation of `plot`, some relaxed invocations of the
+grammar exist as a "slang of graphics". This form of `plot` omits the the data
+frame. Instead, plain old arrays are bound to aesthetics.
+
+```julia
+# E.g.
+plot(x=collect(1:100), y=sort(rand(100)))
+```
+
+![Points](http://homes.cs.washington.edu/~dcjones/gadfly/points.svg)
+
+If no geometry is specified, like in the example above, a `Geom.point` is stuck
+into your plot.
+
+This `plot` otherwise works the same. We might want to name these axis, for
+example.
+
+```julia
+# E.g.
+plot(x=collect(1:100), y=sort(rand(100)),
+     Guide.XLabel("Index"), Guide.YLabel("Step"))
+```
+
+![Labeled_points](http://homes.cs.washington.edu/~dcjones/gadfly/labeled_points.svg)
+
+
+## Functions and Expressions
+
+```julia
+plot(f::Function, a, b, elements::Element...)
+
+plot(fs::Array, a, b, elements::Element...)
+
+@plot(expr, a, b)
+```
+
+Some special forms of `plot` exist for quickly generating 2d plots of functions.
+
+```julia
+# E.g.
+plot([sin, cos], 0, 25)
+```
+
+![Sin/Cos](http://homes.cs.washington.edu/~dcjones/gadfly/sin_cos.svg)
+
+```julia
+# E.g.
+@plot(cos(x)/x, 5, 25)
+```
+
+![Cosx](http://homes.cs.washington.edu/~dcjones/gadfly/cosx.svg)
 
 # Elements
 
@@ -90,7 +156,7 @@ operates on data bound to aesthetics, but in different ways.
 ### Statistics
 
 Statistics are functions taking as input one or more aesthetics, operating on
-those values, then outputing one or more aesthetic. For example, drawing of
+those values, then output to one or more aesthetic. For example, drawing of
 boxplots typically uses the boxplot statistic (Stat.boxplot) that takes as input
 the `x` and `y` aesthetic, and outputs the middle, and upper and lower hinge,
 and upper and lower fence aesthetics.
@@ -98,9 +164,9 @@ and upper and lower fence aesthetics.
 ### Scales
 
 Scales, similarly to statistics apply a transformation to the original data,
-typically mapping one aesthetic to the same aethetic, while retaining the
+typically mapping one aesthetic to the same aesthetic, while retaining the
 original value. The `Scale.x_log10` aesthetic maps the `x` aesthetic back the
-`x` aesthetic after appling a log10 transformation, but keeps track of the
+`x` aesthetic after applying a log10 transformation, but keeps track of the
 original value so that data points are properly identified.
 
 ### Geometries
@@ -117,8 +183,19 @@ visualization, such al axis ticks and labels and color keys. The major
 distinction is that geometries always draw within the rectangular plot frame,
 while guides have some special layout considerations.
 
+# Drawing to backends
 
-# Using the d3 backend
+Gadfly plots can be rendered to number of formats. Without cairo, or any
+non-julia libraries, it can produce SVG and d3-powered javascript. Installing
+cairo gives you access to the `PNG`, `PDF`, and `PS` backends. Rendering to a
+backend works the same for any of these.
+
+```julia
+some_plot = plot(x=[1,2,3], y[4,5,6])
+draw(PNG("myplot.png", 6inch, 3inch), some_plot)
+```
+
+## Using the d3 backend
 
 The `D3` backend writes javascript. Making use of it's output is slightly more
 involved than with the image backends.
@@ -131,7 +208,8 @@ draw(D3("mammals.js", 6inch, 6inch), p)
 
 Before the output can be included, you must include the d3 and gadfly javascript
 libraries. The necessary include for Gadfly is "gadfly.js" which lives in the
-src directory (so, by default `~/.julia/Gadfly/src/gadfly.js`).
+src directory (which you can find by running `joinpath(Pkg.dir("Gadfly"), "src",
+"gadfly.js")` in julia).
 
 D3 can be downloaded from [here](http://d3js.org/d3.v3.zip).
 
@@ -153,6 +231,11 @@ A `div` element must be placed, and the `draw` function defined in mammals.js
 must be passed the id of this element, so it knows where in the document to
 place the plot.
 
-The d3 backend is very new, so these directions may change in the future. (I.e.
-I might start embedding d3 and gadfly javascript by default.)
+# Reporting Bugs
+
+This is a new and fairly complex piece of software. [Filing an
+issue](https://github.com/dcjones/Gadfly.jl/issues/new) to report a bug,
+counterintuitive behavior, or even to request a feature is extremely valuable in
+helping me prioritize what to work on, so don't hestitate.
+
 
