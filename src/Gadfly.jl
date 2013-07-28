@@ -142,9 +142,11 @@ eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[string(arg)]
 eval_plot_mapping(data::AbstractDataFrame, arg::String) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
+eval_plot_mapping(data::AbstractDataFrame, arg::AbstractArray) = arg
 
 # Acceptable types of values that can be bound to aesthetics.
-typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr)
+typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
+                               AbstractArray)
 
 
 # Create a new plot.
@@ -193,6 +195,11 @@ function plot(data::AbstractDataFrame, elements::Element...; mapping...)
 end
 
 
+function plot(elements::Element...; mapping...)
+    plot(DataFrame(), elements...; mapping...)
+end
+
+
 # The old fashioned (pre named arguments) version of plot.
 #
 # This version takes an explicit mapping dictionary, mapping aesthetics symbols
@@ -220,6 +227,11 @@ function plot(data::AbstractDataFrame, mapping::Dict, elements::Element...)
     p.data_source = data
 
     p
+end
+
+
+function plot(mapping::Dict, elements::Element...)
+    plot(DataFrame, mapping, elements...)
 end
 
 
@@ -379,11 +391,11 @@ function render(plot::Plot)
 
     function choose_name(vs)
         for v in vs
-            if haskey(plot.mapping, v)
+            if haskey(plot.mapping, v) && !(typeof(plot.mapping[v]) <: AbstractArray)
                 return string(plot.mapping[v])
             end
         end
-        ""
+        string(vs[1])
     end
 
     if mapped_and_used(Scale.x_vars) && !haskey(guides, Guide.XLabel)
@@ -508,7 +520,7 @@ classify_data(data::DataArray) = :discrete
 classify_data(data::PooledDataArray) = :discrete
 
 # Very long unfactorized integer data should be treated as continuous
-function classify_data{T <: Integer}(data::DataVector{T})
+function classify_data{T <: Integer}(data::AbstractArray{T})
     length(Set{T}(data...)) <= 20 ? :discrete : :continuous
 end
 
