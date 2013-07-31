@@ -182,7 +182,7 @@ function weave(infn::String, infmt::String, outfmt::String,
     end
 
     jsonout_path, jsonout = mktemp()
-    JSON.print_to_json(jsonout, {metadata, processed_document})
+    JSON.print(jsonout, {metadata, processed_document})
     flush(jsonout)
     output = pandoc(jsonout_path, "json", outfmt, pandoc_args...)
     close(jsonout)
