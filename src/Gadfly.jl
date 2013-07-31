@@ -520,14 +520,18 @@ classify_data{N}(data::AbstractArray{Float64, N}) = :continuous
 classify_data{N}(data::AbstractArray{Float32, N}) = :continuous
 classify_data{N}(data::DataArray{Float64, N}) = :continuous
 classify_data{N}(data::DataArray{Float32, N}) = :continuous
-classify_data(data::DataArray) = :discrete
-classify_data(data::PooledDataArray) = :discrete
 
 # Very long unfactorized integer data should be treated as continuous
-function classify_data{T <: Integer}(data::Union(AbstractArray{T}, DataArray{T}))
+function classify_data{T <: Integer}(data:: DataArray{T})
     length(Set{T}(data...)) <= 20 ? :discrete : :continuous
 end
 
+function classify_data{N, T <: Integer}(data::AbstractArray{T, N})
+    length(Set{T}(data...)) <= 20 ? :discrete : :continuous
+end
+
+classify_data(data::DataArray) = :discrete
+classify_data(data::PooledDataArray) = :discrete
 
 end # module Gadfly
 
