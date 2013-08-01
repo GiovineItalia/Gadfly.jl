@@ -12,10 +12,10 @@ import Iterators.cycle, Iterators.product, Iterators.distinct
 
 
 # Geometry that renders nothing.
-type Nil <: Gadfly.GeometryElement
+immutable Nil <: Gadfly.GeometryElement
 end
 
-const nil = Nil()
+const nil = Nil
 
 function render(geom::Nil, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
@@ -23,16 +23,16 @@ end
 
 # Catchall
 function default_statistic(::Gadfly.GeometryElement)
-    Gadfly.Stat.identity
+    Gadfly.Stat.identity()
 end
 
 
 # Geometry which displays points at given (x, y) positions.
-type PointGeometry <: Gadfly.GeometryElement
+immutable PointGeometry <: Gadfly.GeometryElement
 end
 
 
-const point = PointGeometry()
+const point = PointGeometry
 
 
 function element_aesthetics(::PointGeometry)
@@ -76,11 +76,11 @@ end
 
 
 # Line geometry connects (x, y) coordinates with lines.
-type LineGeometry <: Gadfly.GeometryElement
+immutable LineGeometry <: Gadfly.GeometryElement
 end
 
 
-const line = LineGeometry()
+const line = LineGeometry
 
 
 function element_aesthetics(::LineGeometry)
@@ -138,17 +138,21 @@ end
 
 
 # Bar geometry summarizes data as vertical bars.
-type BarGeometry <: Gadfly.GeometryElement
+immutable BarGeometry <: Gadfly.GeometryElement
     # How bars should be positioned if they are grouped by color.
     # Valid options are:
     #   :stack -> place bars on top of each other (default)
     #   :dodge -> place bar next to each other
     position::Symbol
+
+    function BarGeometry(position=:stack)
+        new(position)
+    end
 end
 
 
-const bar = BarGeometry(:stack)
-const histogram = BarGeometry(:stack)
+const bar = BarGeometry
+const histogram = BarGeometry
 
 
 function element_aesthetics(::BarGeometry)
@@ -157,7 +161,7 @@ end
 
 
 function default_statistic(::BarGeometry)
-    Gadfly.Stat.histogram
+    Gadfly.Stat.histogram()
 end
 
 
@@ -277,11 +281,11 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
 
 
-type RectangularBinGeometry <: Gadfly.GeometryElement
+immutable RectangularBinGeometry <: Gadfly.GeometryElement
 end
 
 
-const rectbin = RectangularBinGeometry()
+const rectbin = RectangularBinGeometry
 
 
 function element_aesthetics(::RectangularBinGeometry)
@@ -367,19 +371,19 @@ end
 
 
 function default_statistic(::RectangularBinGeometry)
-    Gadfly.Stat.rectbin
+    Gadfly.Stat.rectbin()
 end
 
 
-type BoxplotGeometry <: Gadfly.GeometryElement
+immutable BoxplotGeometry <: Gadfly.GeometryElement
 end
 
 
-const boxplot = BoxplotGeometry()
+const boxplot = BoxplotGeometry
 
 element_aesthetics(::BoxplotGeometry) = [:x, :y, :color]
 
-default_statistic(::BoxplotGeometry) = Gadfly.Stat.boxplot
+default_statistic(::BoxplotGeometry) = Gadfly.Stat.boxplot()
 
 function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
@@ -454,17 +458,17 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
 end
 
 
-type LabelGeometry <: Gadfly.GeometryElement
+immutable LabelGeometry <: Gadfly.GeometryElement
 end
 
 
 element_aesthetics(::LabelGeometry) = [:x, :y, :label]
 
 
-default_statistic(::LabelGeometry) = Gadfly.Stat.identity
+default_statistic(::LabelGeometry) = Gadfly.Stat.identity()
 
 
-const label = LabelGeometry()
+const label = LabelGeometry
 
 
 # A deferred canvas function for labeling points in a plot. Optimizing label

@@ -11,11 +11,11 @@ import Gadfly.render, Gadfly.escape_id
 
 # Where the guide should be placed in relation to the plot.
 abstract GuidePosition
-type TopGuidePosition    <: GuidePosition end
-type RightGuidePosition  <: GuidePosition end
-type BottomGuidePosition <: GuidePosition end
-type LeftGuidePosition   <: GuidePosition end
-type UnderGuidePosition  <: GuidePosition end
+immutable TopGuidePosition    <: GuidePosition end
+immutable RightGuidePosition  <: GuidePosition end
+immutable BottomGuidePosition <: GuidePosition end
+immutable LeftGuidePosition   <: GuidePosition end
+immutable UnderGuidePosition  <: GuidePosition end
 
 const top_guide_position    = TopGuidePosition()
 const right_guide_position  = RightGuidePosition()
@@ -24,10 +24,10 @@ const left_guide_position   = LeftGuidePosition()
 const under_guide_position  = UnderGuidePosition()
 
 
-type PanelBackground <: Gadfly.GuideElement
+immutable PanelBackground <: Gadfly.GuideElement
 end
 
-const background = PanelBackground()
+const background = PanelBackground
 
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
@@ -42,11 +42,11 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
 end
 
 
-type ColorKey <: Gadfly.GuideElement
+immutable ColorKey <: Gadfly.GuideElement
 end
 
 
-const colorkey = ColorKey()
+const colorkey = ColorKey
 
 
 # A helper for render(::ColorKey) for rendering guides for discrete color
@@ -242,10 +242,10 @@ end
 
 
 
-type XTicks <: Gadfly.GuideElement
+immutable XTicks <: Gadfly.GuideElement
 end
 
-const x_ticks = XTicks()
+const x_ticks = XTicks
 
 
 function render(guide::XTicks, theme::Gadfly.Theme,
@@ -296,10 +296,10 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 end
 
 
-type YTicks <: Gadfly.GuideElement
+immutable YTicks <: Gadfly.GuideElement
 end
 
-const y_ticks = YTicks()
+const y_ticks = YTicks
 
 function render(guide::YTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
@@ -348,9 +348,11 @@ end
 
 
 # X-axis label Guide
-type XLabel <: Gadfly.GuideElement
+immutable XLabel <: Gadfly.GuideElement
     label::String
 end
+
+const x_label = XLabel
 
 
 function render(guide::XLabel, theme::Gadfly.Theme,
@@ -372,10 +374,11 @@ end
 
 
 # Y-axis label Guide
-type YLabel <: Gadfly.GuideElement
+immutable YLabel <: Gadfly.GuideElement
     label::String
 end
 
+const y_label = YLabel
 
 function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aesthetics})
     (text_width, text_height) = text_extents(theme.major_label_font,

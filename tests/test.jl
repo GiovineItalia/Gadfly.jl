@@ -26,8 +26,13 @@ function run_tests()
     for test in tests
         for (backend_name, backend) in backends
             println(STDERR, "Rendering $(test) on $(backend_name) backend.")
-            p = evalfile("$(test).jl")
-            draw(backend(test), p)
+            try
+                p = evalfile("$(test).jl")
+                draw(backend(test), p)
+            catch
+                println(STDERR, "FAILED!")
+                rethrow()
+            end
         end
     end
 end

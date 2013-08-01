@@ -18,7 +18,7 @@ export cartesian
 #     from the data.
 #
 #
-type Cartesian <: Gadfly.CoordinateElement
+immutable Cartesian <: Gadfly.CoordinateElement
     xvars::Vector{Symbol}
     yvars::Vector{Symbol}
     xmin
@@ -36,7 +36,7 @@ type Cartesian <: Gadfly.CoordinateElement
 end
 
 
-const cartesian = Cartesian()
+const cartesian = Cartesian
 
 
 # Produce a canvas with suitable cartesian coordinates.

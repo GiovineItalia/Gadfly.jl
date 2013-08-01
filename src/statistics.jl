@@ -33,12 +33,12 @@ function apply_statistics(stats::Vector{Gadfly.StatisticElement},
     nothing
 end
 
-type Nil <: Gadfly.StatisticElement
+immutable Nil <: Gadfly.StatisticElement
 end
 
-const nil = Nil()
+const nil = Nil
 
-type Identity <: Gadfly.StatisticElement
+immutable Identity <: Gadfly.StatisticElement
 end
 
 function apply_statistic(stat::Identity,
@@ -48,17 +48,17 @@ function apply_statistic(stat::Identity,
     nothing
 end
 
-const identity = Identity()
+const identity = Identity
 
 
-type HistogramStatistic <: Gadfly.StatisticElement
+immutable HistogramStatistic <: Gadfly.StatisticElement
 end
 
 
 element_aesthetics(::HistogramStatistic) = [:x]
 
 
-const histogram = HistogramStatistic()
+const histogram = HistogramStatistic
 
 
 function apply_statistic(stat::HistogramStatistic,
@@ -126,13 +126,17 @@ function apply_statistic(stat::HistogramStatistic,
 end
 
 
-type DensityStatistic <: Gadfly.StatisticElement
+immutable DensityStatistic <: Gadfly.StatisticElement
     # Number of points sampled
     n::Int
+
+    function DensityStatistic(n=300)
+        new(n)
+    end
 end
 
 
-const density = DensityStatistic(300)
+const density = DensityStatistic
 
 
 element_aesthetics(::DensityStatistic) = [:x, :y]
@@ -153,7 +157,7 @@ end
 
 
 
-type RectangularBinStatistic <: Gadfly.StatisticElement
+immutable RectangularBinStatistic <: Gadfly.StatisticElement
 end
 
 
@@ -163,7 +167,7 @@ element_aesthetics(::RectangularBinStatistic) = [:x, :y, :color]
 default_scales(::RectangularBinStatistic) = [Gadfly.Scale.color_gradient]
 
 
-const rectbin = RectangularBinStatistic()
+const rectbin = RectangularBinStatistic
 
 
 function apply_statistic(stat::RectangularBinStatistic,
@@ -231,7 +235,7 @@ default_statistic(stat::RectangularBinStatistic) = [Scale.color_gradient]
 
 
 # Find reasonable places to put tick marks and grid lines.
-type TickStatistic <: Gadfly.StatisticElement
+immutable TickStatistic <: Gadfly.StatisticElement
     in_vars::Vector{Symbol}
     out_var::String
 end
@@ -369,14 +373,14 @@ function apply_statistic(stat::TickStatistic,
     nothing
 end
 
-type BoxplotStatistic <: Gadfly.StatisticElement
+immutable BoxplotStatistic <: Gadfly.StatisticElement
 end
 
 
 element_aesthetics(::BoxplotStatistic) = [:x, :y]
 
 
-const boxplot = BoxplotStatistic()
+const boxplot = BoxplotStatistic
 
 
 function apply_statistic(stat::BoxplotStatistic,

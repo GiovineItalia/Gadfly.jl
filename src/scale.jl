@@ -47,7 +47,7 @@ end
 
 
 # Transformations on continuous scales
-type ContinuousScaleTransform
+immutable ContinuousScaleTransform
     f::Function     # transform function
     finv::Function  # f's inverse
     label::Function # produce a string given some value f(x)
@@ -73,7 +73,7 @@ const sqrt_transform =
 
 # Continuous scale maps data on a continuous scale simple by calling
 # `convert(Float64, ...)`.
-type ContinuousScale <: Gadfly.ScaleElement
+immutable ContinuousScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
     trans::ContinuousScaleTransform
 end
@@ -143,12 +143,12 @@ discretize(values::DataArray) = PooledDataArray(values)
 discretize(values::PooledDataArray) = values
 
 
-type DiscreteScaleTransform
+immutable DiscreteScaleTransform
     f::Function
 end
 
 
-type DiscreteScale <: Gadfly.ScaleElement
+immutable DiscreteScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
 end
 
@@ -190,7 +190,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
 end
 
 
-type DiscreteColorScale <: Gadfly.ScaleElement
+immutable DiscreteColorScale <: Gadfly.ScaleElement
     f::Function # A function f(n) that produces a vector of n colors.
 end
 
@@ -238,7 +238,7 @@ function apply_scale(scale::DiscreteColorScale,
 end
 
 
-type ContinuousColorScale <: Gadfly.ScaleElement
+immutable ContinuousColorScale <: Gadfly.ScaleElement
     # A function of the form f(p) where 0 <= p <= 1, that returns a color.
     f::Function
 end
@@ -337,7 +337,7 @@ end
 
 # Label scale is always discrete, hence we call it 'label' rather
 # 'label_discrete'.
-type LabelScale <: Gadfly.ScaleElement
+immutable LabelScale <: Gadfly.ScaleElement
 end
 
 
@@ -356,7 +356,7 @@ end
 element_aesthetics(::LabelScale) = [:scale]
 
 
-const label = LabelScale()
+const label = LabelScale
 
 
 end # module Scale

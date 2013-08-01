@@ -39,6 +39,11 @@ abstract GuideElement       <: Element
 abstract StatisticElement   <: Element
 
 
+# The layer and plot functions can also take functions that are evaluated with
+# no arguments and are expected to produce an element.
+typealias ElementOrFunction{T <: Element} Union(Element, Type{T})
+
+
 include("misc.jl")
 include("ticks.jl")
 include("color.jl")
@@ -58,7 +63,7 @@ type Layer <: Element
     geom::GeometryElement
 
     function Layer()
-        new(nothing, Dict(), Stat.nil, Geom.nil)
+        new(nothing, Dict(), Stat.nil(), Geom.nil())
     end
 
     function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
@@ -69,7 +74,7 @@ end
 
 
 function layer(data::Union(AbstractDataFrame, Nothing),
-               statistic::StatisticElement=Stat.nil,
+               statistic::StatisticElement=Stat.nil(),
                geom::GeometryElement=Geom.nil;
                mapping...)
     Layer(data, {k => v for (k, v) in mapping}, statistic, geom)
@@ -84,7 +89,7 @@ end
 
 
 function layer(geom::GeometryElement; mapping...)
-    layer(nothing, Stat.nil, geom; mapping...)
+    layer(nothing, Stat.nil(), geom; mapping...)
 end
 
 
@@ -102,7 +107,7 @@ type Plot
 
     function Plot()
         new(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
-            Coord.cartesian, GuideElement[], default_theme)
+            Coord.cartesian(), GuideElement[], default_theme)
     end
 end
 
@@ -113,9 +118,11 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement
     push!(p.layers, layer)
 end
 
+
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
     push!(p.scales, arg)
 end
+
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElement)
     if isempty(p.layers)
@@ -125,18 +132,25 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElemen
     p.layers[end].statistic = arg
 end
 
+
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
     p.coord = arg
 end
+
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GuideElement)
     push!(p.guides, arg)
 end
 
+
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Layer)
     push!(p.layers, arg)
 end
 
+
+function add_plot_element{T <: Element}(p::Plot, data::AbstractDataFrame, f::Type{T})
+    add_plot_element(p, data, f())
+end
 
 eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[string(arg)]
 eval_plot_mapping(data::AbstractDataFrame, arg::String) = data[arg]
@@ -167,7 +181,7 @@ typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
 #            names of columns in the data frame or other expressions.
 #   elements: Geometries, statistics, etc.
 
-function plot(data::AbstractDataFrame, elements::Element...; mapping...)
+function plot(data::AbstractDataFrame, elements::ElementOrFunction...; mapping...)
     p = Plot()
     p.mapping = Dict()
     p.data_source = data
@@ -195,7 +209,7 @@ function plot(data::AbstractDataFrame, elements::Element...; mapping...)
 end
 
 
-function plot(elements::Element...; mapping...)
+function plot(elements::ElementOrFunction...; mapping...)
     plot(DataFrame(), elements...; mapping...)
 end
 
@@ -214,7 +228,7 @@ end
 # Returns:
 #   A Plot object.
 #
-function plot(data::AbstractDataFrame, mapping::Dict, elements::Element...)
+function plot(data::AbstractDataFrame, mapping::Dict, elements::ElementOrFunction...)
     p = Plot()
     for element in elements
         add_plot_element(p, data, element)
@@ -230,7 +244,7 @@ function plot(data::AbstractDataFrame, mapping::Dict, elements::Element...)
 end
 
 
-function plot(mapping::Dict, elements::Element...)
+function plot(mapping::Dict, elements::ElementOrFunction...)
     plot(DataFrame, mapping, elements...)
 end
 
@@ -263,7 +277,7 @@ end
 function render(plot::Plot)
     if isempty(plot.layers)
         layer = Layer()
-        layer.geom = Geom.point
+        layer.geom = Geom.point()
         push!(plot.layers, layer)
     end
 
@@ -293,8 +307,8 @@ function render(plot::Plot)
     # Add default statistics for geometries.
     layer_stats = Array(StatisticElement, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
-        layer_stats[i] = is(layer.statistic, Stat.nil) ?
-                            Geom.default_statistic(layer.geom) : layer.statistic
+        layer_stats[i] = typeof(layer.statistic) == Stat.nil ?
+            Geom.default_statistic(layer.geom) : layer.statistic
     end
 
     used_aesthetics = Set{Symbol}()
@@ -379,9 +393,9 @@ function render(plot::Plot)
     for guide in plot.guides
         guides[typeof(guide)] = guide
     end
-    guides[Guide.PanelBackground] = Guide.background
-    guides[Guide.XTicks] = Guide.x_ticks
-    guides[Guide.YTicks] = Guide.y_ticks
+    guides[Guide.PanelBackground] = Guide.background()
+    guides[Guide.XTicks] = Guide.x_ticks()
+    guides[Guide.YTicks] = Guide.y_ticks()
 
     statistics = copy(plot.statistics)
     push!(statistics, Stat.x_ticks)
@@ -401,11 +415,11 @@ function render(plot::Plot)
     end
 
     if mapped_and_used(Scale.x_vars) && !haskey(guides, Guide.XLabel)
-        guides[Guide.XLabel] =  Guide.XLabel(choose_name(Scale.x_vars))
+        guides[Guide.XLabel] =  Guide.x_label(choose_name(Scale.x_vars))
     end
 
     if mapped_and_used(Scale.y_vars) && !haskey(guides, Guide.YLabel)
-        guides[Guide.YLabel] = Guide.YLabel(choose_name(Scale.y_vars))
+        guides[Guide.YLabel] = Guide.y_label(choose_name(Scale.y_vars))
     end
 
     # I. Scales
@@ -428,7 +442,7 @@ function render(plot::Plot)
     # Add some default guides determined by defined aesthetics
     if !all([aes.color === nothing for aes in [plot_aes, aess...]]) &&
        !haskey(guides, Guide.ColorKey)
-        guides[Guide.ColorKey] = Guide.colorkey
+        guides[Guide.ColorKey] = Guide.colorkey()
     end
 
     # III. Coordinates
