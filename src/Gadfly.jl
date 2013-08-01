@@ -393,13 +393,26 @@ function render(plot::Plot)
     for guide in plot.guides
         guides[typeof(guide)] = guide
     end
-    guides[Guide.PanelBackground] = Guide.background()
-    guides[Guide.XTicks] = Guide.x_ticks()
-    guides[Guide.YTicks] = Guide.y_ticks()
 
     statistics = copy(plot.statistics)
-    push!(statistics, Stat.x_ticks)
-    push!(statistics, Stat.y_ticks)
+
+    # Default guides and statistics
+    facet_plot = true
+    for layer in plot.layers
+        if typeof(layer.geom) != Geom.subplot_grid
+            facet_plot = false
+            break
+        end
+    end
+
+    if !facet_plot
+        guides[Guide.PanelBackground] = Guide.background()
+        guides[Guide.XTicks] = Guide.x_ticks()
+        guides[Guide.YTicks] = Guide.y_ticks()
+
+        push!(statistics, Stat.x_ticks)
+        push!(statistics, Stat.y_ticks)
+    end
 
     function mapped_and_used(vs)
         any([haskey(plot.mapping, v) && contains(used_aesthetics, v) for v in vs])
@@ -543,22 +556,26 @@ include("statistics.jl")
 # The default depends on whether the input is discrete or continuous (i.e.,
 # PooledDataVector or DataVector, respectively).
 const default_aes_scales = {
-        :continuous => {:x     => Scale.x_continuous,
-                        :x_min => Scale.x_continuous,
-                        :x_max => Scale.x_continuous,
-                        :y     => Scale.y_continuous,
-                        :y_min => Scale.y_continuous,
-                        :y_max => Scale.y_continuous,
-                        :color => Scale.color_gradient,
+        :continuous => {:x       => Scale.x_continuous,
+                        :x_min   => Scale.x_continuous,
+                        :x_max   => Scale.x_continuous,
+                        :y       => Scale.y_continuous,
+                        :y_min   => Scale.y_continuous,
+                        :y_max   => Scale.y_continuous,
+                        :x_group => Scale.x_group,
+                        :y_group => Scale.y_group,
+                        :color   => Scale.color_gradient,
                         :label => Scale.label},
-        :discrete   => {:x     => Scale.x_discrete,
-                        :x_min => Scale.x_discrete,
-                        :x_max => Scale.x_discrete,
-                        :y     => Scale.y_discrete,
-                        :y_min => Scale.y_discrete,
-                        :y_max => Scale.y_discrete,
-                        :color => Scale.color_hue,
-                        :label => Scale.label}}
+        :discrete   => {:x       => Scale.x_discrete,
+                        :x_min   => Scale.x_discrete,
+                        :x_max   => Scale.x_discrete,
+                        :y       => Scale.y_discrete,
+                        :y_min   => Scale.y_discrete,
+                        :y_max   => Scale.y_discrete,
+                        :x_group => Scale.x_group,
+                        :y_group => Scale.y_group,
+                        :color   => Scale.color_hue,
+                        :label   => Scale.label}}
 
 # Determine whether the input is discrete or continuous.
 classify_data{N}(data::AbstractArray{Float64, N}) = :continuous

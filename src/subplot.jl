@@ -1,23 +1,83 @@
 
 # Subplot geometries
 
+
+abstract SubplotGeometry <: Gadfly.GeometryElement
+
+
 immutable SubplotLayer
     statistic::Gadfly.StatisticElement
     geom::Gadfly.GeometryElement
+
+    function SubplotLayer(geom::Gadfly.GeometryElement=Geom.nil(),
+                          statistic::Gadfly.StatisticElement=Stat.nil())
+        new(statistic, geom)
+    end
 end
 
 
-immutable SubplotGrid <: Gadfly.GeometryElement
+# Adding elements to subplots in a generic way.
+function add_subplot_element(subplot::SubplotGeometry, arg::SubplotLayer)
+    push!(subplot.layers, arg)
+end
+
+
+function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.GeometryElement)
+    push!(subplot.layers, SubplotLayer(arg))
+end
+
+
+function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.StatisticElement)
+    push!(subplot.statistics, arg)
+end
+
+
+function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.GuideElement)
+    push!(subplot.guides, arg)
+end
+
+
+function add_subplot_element{T <: Gadfly.Element}(subplot::SubplotGeometry,
+                                                  arg::Type{T})
+    add_subplot_element(subplot, arg())
+end
+
+
+function add_subplot_element(subplot::SubplotGeometry, arg)
+    error("Subplots do not support elements of type $(typeof(arg))")
+end
+
+
+immutable SubplotGrid <: SubplotGeometry
     layers::Vector{SubplotLayer}
     statistics::Vector{Gadfly.StatisticElement}
     guides::Vector{Gadfly.GuideElement}
 
     # Current plot has no way of passing existing aesthetics. It always produces
     # these using scales.
+    function SubplotGrid(elements::Gadfly.ElementOrFunction...)
+        subplot = new(SubplotLayer[], Gadfly.StatisticElement[], Gadfly.GuideElement[])
+
+        for element in elements
+            add_subplot_element(subplot, element)
+        end
+
+        # TODO: Handle default guides and statistics
+        subplot
+    end
 end
 
 
 const subplot_grid = SubplotGrid
+
+
+function element_aesthetics(geom::SubplotGrid)
+    vars = [:x_group, :y_group]
+    for layer in geom.layers
+        append!(vars, element_aesthetics(layer.geom))
+    end
+    vars
+end
 
 
 # Render a subplot grid geometry, which consists of rendering and arranging
@@ -28,8 +88,17 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         error("Geom.subplot_grid requires \"x_group\" and/or \"y_group\" to be bound.")
     end
 
-    aes_grid = aes_by_xy_group(aes)
+    aes_grid = Gadfly.aes_by_xy_group(aes)
     n, m = size(aes_grid)
+
+    guide_dict = Dict{Type, Gadfly.GuideElement}()
+    for guide in geom.guides
+        guide_dict[typeof(guide)] = guide
+    end
+
+    layer_stats = Gadfly.StatisticElement[typeof(layer.statistic) == Stat.nil ?
+                       Geom.default_statistic(layer.geom) : layer.statistic
+                   for layer in geom.layers]
 
     canvas_grid = Array(Canvas, n, m)
     for i in 1:n, j in 1:m
@@ -44,13 +113,17 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         aess = fill(aes, length(geom.layers))
 
         canvas_grid[i, j] =
-            render_prepared(p, aess,
-                            [layer.statistic for layer in geom.layers],
-                            Dict{Symbol, ScalaElement}(),
+            Gadfly.render_prepared(
+                            p, aess,
+                            layer_stats,
+                            Dict{Symbol, Gadfly.ScaleElement}(),
                             geom.statistics,
-                            Dict{Type, GuideElement})
+                            guide_dict)
     end
 
+    println(STDERR, "TODO: arrange and compose subplot canvases")
+
+    # TODO: arrange canvases in a grid and return
 end
 
 

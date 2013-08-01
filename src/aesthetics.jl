@@ -239,11 +239,11 @@ function aes_by_xy_group(aes::Aesthetics)
     @assert aes.x_group === nothing || aes.y_group === nothing ||
             length(aes.x_group) == length(aes.y_group)
 
-    xlevels = aes.x_group === nothing ? levels(aes.x_group) : {}
-    ylevels = aes.y_group === nothing ? levels(aes.y_gorup) : {}
+    xlevels = aes.x_group === nothing ? [1] : levels(aes.x_group)
+    ylevels = aes.y_group === nothing ? [1] : levels(aes.y_group)
 
-    xrefs = aes.x_group === nothing ? aes.x_group.refs : [1]
-    yrefs = aes.y_group === nothing ? aes.y_group.refs : [1]
+    xrefs = aes.x_group === nothing ? [1] : aes.x_group.refs
+    yrefs = aes.y_group === nothing ? [1] : aes.y_group.refs
 
     aes_grid = Array(Aesthetics, length(xlevels), length(ylevels))
     staging = Array(Vector{Any}, length(xlevels), length(ylevels))
@@ -252,7 +252,7 @@ function aes_by_xy_group(aes::Aesthetics)
         staging[i, j] = Array(Any, 0)
     end
 
-    for var in Aesthetics.name
+    for var in Aesthetics.names
         vals = getfield(aes, var)
         if typeof(vals) <: AbstractArray
             if !is(aes.x_group, nothing) && length(vals) != length(aes.x_group) ||
@@ -264,12 +264,18 @@ function aes_by_xy_group(aes::Aesthetics)
                 empty!(staging[i, j])
             end
 
-            for (i, j, v) in zip(cycle(xrefs), cycle(yrefs), vals)
+            for (i, j, v) in zip(Iterators.cycle(xrefs), Iterators.cycle(yrefs), vals)
                 push!(staging[i, j], v)
             end
 
             for i in 1:length(xlevels), j in 1:length(ylevels)
-                setfield(aes_grid[i, j], var, staging[i, j])
+                if typeof(vals) <: PooledDataArray
+                    setfield(aes_grid[i, j], var,
+                             PooledDataArray(staging[i, j]))
+                else
+                    setfield(aes_grid[i, j], var,
+                             convert(typeof(vals), staging[i, j]))
+                end
             end
         else
             for i in 1:length(xlevels), j in 1:length(ylevels)

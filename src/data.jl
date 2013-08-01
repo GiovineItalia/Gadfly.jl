@@ -8,6 +8,8 @@ type Data
     x_max
     y_min
     y_max
+    x_group
+    y_group
     xtick
     ytick
     xtick_labels
@@ -21,11 +23,11 @@ type Data
     label
 
     function Data()
-        new(nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, nothing,
-            nothing)
+        data = new()
+        for i in 1:length(Data.names)
+            setfield(data, Data.names[i], nothing)
+        end
+        data
     end
 
     # shallow copy constructor
