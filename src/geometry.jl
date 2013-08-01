@@ -11,6 +11,9 @@ import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit, Gadfly.escape_i
 import Iterators.cycle, Iterators.product, Iterators.distinct
 
 
+include("subplot.jl")
+
+
 # Geometry that renders nothing.
 immutable Nil <: Gadfly.GeometryElement
 end

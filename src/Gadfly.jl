@@ -430,6 +430,37 @@ function render(plot::Plot)
         aess[1].color_key_title = string(plot.mapping[:color])
     end
 
+    render_prepared(plot, aess, layer_stats, scales, statistics, guides)
+end
+
+
+# Render a plot given a precomputed Aesthetics object for each layer.
+#
+# Additionally, without all the work to choose reasonable defaults performed by
+# `render`. This is a separate function from `render` to facilitate rendering
+# subplots.
+#
+# Args:
+#   plot: Plot to be rendered.
+#   aess: A vector of precomputed Aesthetics objects of the same length
+#       as plot.layers.
+#   layer_stats: A vector of statistic elements of the same length as
+#       plot.layers.
+#   scales: Dictionary mapping an aesthetics symbol to the scale applied to it.
+#   statistics: Statistic elements applied plot-wise.
+#   guides: Guide elements indexed by type. (Only one type of each guide may
+#       be in the same plot.)
+#
+# Returns:
+#   A Compose canvas containing the rendered plot.
+#
+function render_prepared(plot::Plot,
+                         aess::Vector{Aesthetics},
+                         layer_stats::Vector{StatisticElement},
+                         scales::Dict{Symbol, ScaleElement},
+                         statistics::Vector{StatisticElement},
+                         guides::Dict{Type, GuideElement})
+
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, aess)
         Stat.apply_statistics(StatisticElement[layer_stat], scales, plot.coord, aes)

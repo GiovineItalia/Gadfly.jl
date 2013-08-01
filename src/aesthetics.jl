@@ -21,11 +21,16 @@ type Aesthetics
     upper_fence::Maybe(Vector{Float64})
     outliers::Maybe(Vector{Vector{Float64}})
 
+    # Subplot aesthetics
+    x_group::Maybe(PooledDataVector)
+    y_group::Maybe(PooledDataVector)
+
     # Aesthetics pertaining to guides
     xtick::Maybe(Vector{Float64})
     ytick::Maybe(Vector{Float64})
     xgrid::Maybe(Vector{Float64})
     ygrid::Maybe(Vector{Float64})
+    # TODO: make these "x_", "y_" to be consistent.
 
     # Pesudo-aesthetics used to indicate that drawing might
     # occur beyond any x/y value.
@@ -54,16 +59,17 @@ type Aesthetics
     color_label::Function
 
     function Aesthetics()
-        new(nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, nothing,
-            nothing, nothing, nothing, nothing,
-            nothing, nothing,
-            fmt_float, fmt_float,
-            string, string, string)
+        aes = new()
+        for i in 1:length(Aesthetics.names)-5
+            setfield(aes, Aesthetics.names[i], nothing)
+        end
+        aes.x_label = fmt_float
+        aes.y_label = fmt_float
+        aes.xtick_label = string
+        aes.ytick_label = string
+        aes.color_label = string
+
+        aes
     end
 
     # shallow copy constructor
@@ -211,6 +217,68 @@ function cat_aes_var!{T}(xs::PooledDataVector{T}, ys::PooledDataVector{T})
     newpool = T[x for x in union(Set(xs.pool...), Set(ys.pool...))]
     newdata = vcat(T[x for x in xs], T[y for y in ys])
     PooledDataArray(newdata, newpool, [false for _ in newdata])
+end
+
+
+# Summarizing aesthetics
+
+# Produce a matrix of Aesthetic objects partitioning the ariginal
+# Aesthetics object by the cartesian product of x_group and y_group.
+#
+# This is useful primarily for drawing facets and subplots.
+#
+# Args:
+#   aes: Aesthetics objects to partition.
+#
+# Returns:
+#   A Array{Aesthetics} of size max(1, length(x_group)) by
+#   max(1, length(y_group))
+#
+function aes_by_xy_group(aes::Aesthetics)
+    @assert !is(aes.x_group, nothing) || !is(aes.y_group, nothing)
+    @assert aes.x_group === nothing || aes.y_group === nothing ||
+            length(aes.x_group) == length(aes.y_group)
+
+    xlevels = aes.x_group === nothing ? levels(aes.x_group) : {}
+    ylevels = aes.y_group === nothing ? levels(aes.y_gorup) : {}
+
+    xrefs = aes.x_group === nothing ? aes.x_group.refs : [1]
+    yrefs = aes.y_group === nothing ? aes.y_group.refs : [1]
+
+    aes_grid = Array(Aesthetics, length(xlevels), length(ylevels))
+    staging = Array(Vector{Any}, length(xlevels), length(ylevels))
+    for i in 1:length(xlevels), j in 1:length(ylevels)
+        aes_grid[i, j] = Aesthetics()
+        staging[i, j] = Array(Any, 0)
+    end
+
+    for var in Aesthetics.name
+        vals = getfield(aes, var)
+        if typeof(vals) <: AbstractArray
+            if !is(aes.x_group, nothing) && length(vals) != length(aes.x_group) ||
+               !is(aes.y_group, nothing) && length(vals) != length(aes.y_group)
+                error("Aesthetic $(var) must be the same length as x_group or y_group")
+            end
+
+            for i in 1:length(xlevels), j in 1:length(ylevels)
+                empty!(staging[i, j])
+            end
+
+            for (i, j, v) in zip(cycle(xrefs), cycle(yrefs), vals)
+                push!(staging[i, j], v)
+            end
+
+            for i in 1:length(xlevels), j in 1:length(ylevels)
+                setfield(aes_grid[i, j], var, staging[i, j])
+            end
+        else
+            for i in 1:length(xlevels), j in 1:length(ylevels)
+                setfield(aes_grid[i, j], var, vals)
+            end
+        end
+    end
+
+    aes_grid
 end
 
 
