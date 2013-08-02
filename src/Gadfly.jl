@@ -427,12 +427,14 @@ function render(plot::Plot)
         string(vs[1])
     end
 
-    if mapped_and_used(Scale.x_vars) && !haskey(guides, Guide.XLabel)
-        guides[Guide.XLabel] =  Guide.x_label(choose_name(Scale.x_vars))
+    if mapped_and_used(x_axis_label_aesthetics) && !haskey(guides, Guide.XLabel)
+        guides[Guide.XLabel] =
+            Guide.x_label(choose_name(x_axis_label_aesthetics))
     end
 
-    if mapped_and_used(Scale.y_vars) && !haskey(guides, Guide.YLabel)
-        guides[Guide.YLabel] = Guide.y_label(choose_name(Scale.y_vars))
+    if mapped_and_used(y_axis_label_aesthetics) && !haskey(guides, Guide.YLabel)
+        guides[Guide.YLabel] =
+            Guide.y_label(choose_name(y_axis_label_aesthetics))
     end
 
     # I. Scales
@@ -443,7 +445,9 @@ function render(plot::Plot)
         aess[1].color_key_title = string(plot.mapping[:color])
     end
 
-    render_prepared(plot, aess, layer_stats, scales, statistics, guides)
+    canvas = render_prepared(plot, aess, layer_stats, scales, statistics, guides)
+
+    pad_inner(canvas, 5mm)
 end
 
 
@@ -463,6 +467,8 @@ end
 #   statistics: Statistic elements applied plot-wise.
 #   guides: Guide elements indexed by type. (Only one type of each guide may
 #       be in the same plot.)
+#   preserve_plot_canvas_size: Don't squish the plot to fit the guides.
+#       Guides will be drawn outside the canvas
 #
 # Returns:
 #   A Compose canvas containing the rendered plot.
@@ -472,7 +478,8 @@ function render_prepared(plot::Plot,
                          layer_stats::Vector{StatisticElement},
                          scales::Dict{Symbol, ScaleElement},
                          statistics::Vector{StatisticElement},
-                         guides::Dict{Type, GuideElement})
+                         guides::Dict{Type, GuideElement};
+                         preserve_plot_canvas_size=false)
 
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, aess)
@@ -508,11 +515,8 @@ function render_prepared(plot::Plot,
         append!(guide_canvases, render(guide, plot.theme, aess))
     end
 
-    canvas = Guide.layout_guides(plot_canvas, plot.theme, guide_canvases...)
-
-    # TODO: This is a kludge. Axis labels sometimes extend past the edge of the
-    # canvas.
-    pad(canvas, 5mm)
+    canvas = Guide.layout_guides(plot_canvas, plot.theme, guide_canvases...,
+                                 preserve_plot_canvas_size=preserve_plot_canvas_size)
 end
 
 
@@ -594,6 +598,12 @@ end
 
 classify_data(data::DataArray) = :discrete
 classify_data(data::PooledDataArray) = :discrete
+
+
+# Axis labels are taken whatever is mapped to these aesthetics, in order of
+# preference.
+const x_axis_label_aesthetics = [:x_group, :x, :x_min, :x_max]
+const y_axis_label_aesthetics = [:y_group, :y, :y_min, :y_max]
 
 end # module Gadfly
 

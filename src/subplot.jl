@@ -91,19 +91,26 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     aes_grid = Gadfly.aes_by_xy_group(aes)
     n, m = size(aes_grid)
 
-    guide_dict = Dict{Type, Gadfly.GuideElement}()
-    for guide in geom.guides
-        guide_dict[typeof(guide)] = guide
-    end
+    #guide_dict = Dict{Type, Gadfly.GuideElement}()
+    #for guide in geom.guides
+        #guide_dict[typeof(guide)] = guide
+    #end
 
     # default guides
-    guide_dict[Guide.background] = Guide.background()
+    #guide_dict[Guide.background] = Guide.background()
+    #guide_dict[Guide.x_ticks] = Guide.x_ticks()
+    #guide_dict[Guide.y_ticks] = Guide.y_ticks()
+
+    plot_stats = Gadfly.StatisticElement[stat for stat in geom.statistics]
+    #push!(plot_stats, Stat.x_ticks)
+    #push!(plot_stats, Stat.y_ticks)
 
     layer_stats = Gadfly.StatisticElement[typeof(layer.statistic) == Stat.nil ?
                        Geom.default_statistic(layer.geom) : layer.statistic
                    for layer in geom.layers]
 
     canvas_grid = Array(Canvas, n, m)
+
     for i in 1:n, j in 1:m
         p = Plot()
         p.theme = theme
@@ -114,14 +121,32 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             push!(p.layers, plot_layer)
         end
         aess = fill(aes_grid[i,j], length(geom.layers))
+        guides = (Type => Gadfly.GuideElement)[typeof(guide) => guide
+                                               for guide in geom.guides]
+
+        # default guides
+        guides[Guide.background] = Guide.background()
+
+        if i == n && !is(aes.x_group, nothing)
+            guides[Guide.x_label] =
+                Guide.x_label(string(levels(aes.x_group)[j]))
+        end
+
+        if j == 1 && !is(aes.y_group, nothing)
+            guides[Guide.y_label] =
+                Guide.y_label(string(levels(aes.y_group)[i]))
+        end
 
         canvas_grid[i, j] =
             Gadfly.render_prepared(
                             p, aess,
                             layer_stats,
                             Dict{Symbol, Gadfly.ScaleElement}(),
-                            geom.statistics,
-                            guide_dict)
+                            plot_stats,
+                            guides,
+                            preserve_plot_canvas_size=true)
+
+        canvas_grid[i, j] = pad(canvas_grid[i, j], 2.5mm)
     end
 
     gridstack(canvas_grid, 0w, 0h)

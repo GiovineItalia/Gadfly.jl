@@ -409,7 +409,8 @@ end
 #   manner.
 function layout_guides(plot_canvas::Canvas,
                        theme::Gadfly.Theme,
-                       guides::(Canvas, GuidePosition)...)
+                       guides::(Canvas, GuidePosition)...;
+                       preserve_plot_canvas_size=false)
 
     # Every guide is updated to use the plot's unit box.
     guides = [(set_unit_box(guide, plot_canvas.unit_box), pos)
@@ -474,7 +475,10 @@ function layout_guides(plot_canvas::Canvas,
                       clip((0cx, 0cy), (0cx + l, 0cy),
                            (0cx + l, 1cy), (0cx, 1cy))
 
-    compose(canvas(),
+    root_canvas = preserve_plot_canvas_size ?
+        canvas(0, 0, 1.0w + l + r, 1.0h + t + b) : canvas()
+
+    compose(root_canvas,
             (canvas(l, t, pw, ph),
                 {canvas(units_inherited=true, order=-1, clip=true), under_guides...},
                 (canvas(units_inherited=true, order=1, clip=true),  plot_canvas),

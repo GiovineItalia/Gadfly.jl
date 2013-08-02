@@ -245,9 +245,9 @@ function aes_by_xy_group(aes::Aesthetics)
     xrefs = aes.x_group === nothing ? [1] : aes.x_group.refs
     yrefs = aes.y_group === nothing ? [1] : aes.y_group.refs
 
-    aes_grid = Array(Aesthetics, length(xlevels), length(ylevels))
-    staging = Array(Vector{Any}, length(xlevels), length(ylevels))
-    for i in 1:length(xlevels), j in 1:length(ylevels)
+    aes_grid = Array(Aesthetics, length(ylevels), length(xlevels))
+    staging = Array(Vector{Any}, length(ylevels), length(xlevels))
+    for i in 1:length(ylevels), j in 1:length(xlevels)
         aes_grid[i, j] = Aesthetics()
         staging[i, j] = Array(Any, 0)
     end
@@ -260,15 +260,15 @@ function aes_by_xy_group(aes::Aesthetics)
                 error("Aesthetic $(var) must be the same length as x_group or y_group")
             end
 
-            for i in 1:length(xlevels), j in 1:length(ylevels)
+            for i in 1:length(ylevels), j in 1:length(xlevels)
                 empty!(staging[i, j])
             end
 
-            for (i, j, v) in zip(Iterators.cycle(xrefs), Iterators.cycle(yrefs), vals)
+            for (i, j, v) in zip(Iterators.cycle(yrefs), Iterators.cycle(xrefs), vals)
                 push!(staging[i, j], v)
             end
 
-            for i in 1:length(xlevels), j in 1:length(ylevels)
+            for i in 1:length(ylevels), j in 1:length(xlevels)
                 if typeof(vals) <: PooledDataArray
                     setfield(aes_grid[i, j], var,
                              PooledDataArray(staging[i, j]))
@@ -278,7 +278,7 @@ function aes_by_xy_group(aes::Aesthetics)
                 end
             end
         else
-            for i in 1:length(xlevels), j in 1:length(ylevels)
+            for i in 1:length(ylevels), j in 1:length(xlevels)
                 setfield(aes_grid[i, j], var, vals)
             end
         end
