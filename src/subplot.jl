@@ -96,6 +96,9 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         guide_dict[typeof(guide)] = guide
     end
 
+    # default guides
+    guide_dict[Guide.background] = Guide.background()
+
     layer_stats = Gadfly.StatisticElement[typeof(layer.statistic) == Stat.nil ?
                        Geom.default_statistic(layer.geom) : layer.statistic
                    for layer in geom.layers]
@@ -110,7 +113,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             plot_layer.geom = layer.geom
             push!(p.layers, plot_layer)
         end
-        aess = fill(aes, length(geom.layers))
+        aess = fill(aes_grid[i,j], length(geom.layers))
 
         canvas_grid[i, j] =
             Gadfly.render_prepared(
@@ -121,9 +124,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                             guide_dict)
     end
 
-    println(STDERR, "TODO: arrange and compose subplot canvases")
-
-    # TODO: arrange canvases in a grid and return
+    gridstack(canvas_grid, 0w, 0h)
 end
 
 

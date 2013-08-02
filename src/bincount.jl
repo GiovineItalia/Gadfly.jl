@@ -49,17 +49,17 @@ end
 #   A tuple of the form (d, bincounts), where d gives the optimal number of
 #   bins, and bincounts is an array giving the number of occurances in each bin.
 #
-function choose_bin_count_1d(xs::Vector)
+function choose_bin_count_1d(xs::Vector, max_bin_count=150)
     n = length(xs)
     if n <= 1
-        return 1
+        return 1, Int[0]
     end
 
     x_min, x_max = min(xs), max(xs)
     span = x_max - x_min
 
     d_min = 3
-    d_max = min(150, int(ceil(n / log(n))))
+    d_max = min(max_bin_count, int(ceil(n / log(n))))
     bincounts = zeros(Int, d_max)
 
     d_best = d_min
@@ -79,6 +79,7 @@ function choose_bin_count_1d(xs::Vector)
         end
 
         pll = bincount_pll(d, n, bincounts, binwidth)
+
         if pll > pll_best
             d_best = d
             pll_best = pll

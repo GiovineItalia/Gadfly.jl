@@ -8,7 +8,7 @@ using Color
 
 import Gadfly.Scale, Gadfly.Coord, Gadfly.element_aesthetics,
        Gadfly.default_scales, Gadfly.isconcrete, Gadfly.nonzero_length
-import Distributions.Uniform, Distributions.kde
+import Distributions.Uniform, Distributions.kde, Distributions.bandwidth
 import Iterators.chain, Iterators.cycle, Iterators.product, Iterators.partition
 
 include("bincount.jl")
@@ -66,7 +66,29 @@ function apply_statistic(stat::HistogramStatistic,
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("HistogramStatistic", aes, :x)
-    d, bincounts = choose_bin_count_1d(aes.x)
+
+    if isempty(aes.x)
+        aes.x_min = Float64[1.0]
+        aes.x_max = Float64[1.0]
+        aes.y = Float64[0.0]
+        return
+    end
+
+    if typeof(aes.x) <: Array{Int}
+        x_min = min(aes.x)
+        x_max = max(aes.x)
+        if x_max - x_min + 1 <= 20
+            d = x_max - x_min + 1
+            bincounts = zeros(Int, d)
+            for x in aes.x
+                bincounts[x - x_min + 1] += 1
+            end
+        else
+            d, bincounts = choose_bin_count_1d(aes.x, x_max - x_min + 1)
+        end
+    else
+        d, bincounts = choose_bin_count_1d(aes.x)
+    end
 
     x_min, x_max = min(aes.x), max(aes.x)
     binwidth = (x_max - x_min) / d
@@ -148,9 +170,9 @@ function apply_statistic(stat::DensityStatistic,
                          aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("DensityStatistic", aes, :x)
 
-    # TODO: handle grouping by color
+    window = length(stat.n) > 1 ? bandwidth(aes.x) : 0.1
+    f = kde(aes.x, window, stat.n)
 
-    f = kde(aes.x, stat.n)
     aes.x = f.x
     aes.y = f.density
 end
