@@ -52,10 +52,13 @@ immutable SubplotGrid <: SubplotGeometry
     layers::Vector{SubplotLayer}
     statistics::Vector{Gadfly.StatisticElement}
     guides::Vector{Gadfly.GuideElement}
+    free_x_axis::Bool
+    free_y_axis::Bool
 
     # Current plot has no way of passing existing aesthetics. It always produces
     # these using scales.
-    function SubplotGrid(elements::Gadfly.ElementOrFunction...)
+    function SubplotGrid(elements::Gadfly.ElementOrFunction...;
+                         free_x_axis=false, free_y_axis=false)
         subplot = new(SubplotLayer[], Gadfly.StatisticElement[], Gadfly.GuideElement[])
 
         for element in elements
@@ -83,35 +86,61 @@ end
 # Render a subplot grid geometry, which consists of rendering and arranging
 # many smaller plots.
 function render(geom::SubplotGrid, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
-    if aes.x_group === nothing && aes.y_group === nothing
+                superplot_aes::Gadfly.Aesthetics)
+    if superplot_aes.x_group === nothing && superplot_aes.y_group === nothing
         error("Geom.subplot_grid requires \"x_group\" and/or \"y_group\" to be bound.")
     end
 
-    aes_grid = Gadfly.aes_by_xy_group(aes)
+    # partition the each aesthetic into a matrix of aesthetics
+    aes_grid = Gadfly.aes_by_xy_group(superplot_aes)
     n, m = size(aes_grid)
 
-    #guide_dict = Dict{Type, Gadfly.GuideElement}()
-    #for guide in geom.guides
-        #guide_dict[typeof(guide)] = guide
-    #end
+    # if we want to share any information across subplots (i.e. axisi, tick
+    # marks), we need to apply statistics on the joint aesthetics.
+    geom_stats = Gadfly.StatisticElement[]
+    if !geom.free_x_axis
+        push!(geom_stats, Stat.x_ticks)
+    end
 
-    # default guides
-    #guide_dict[Guide.background] = Guide.background()
-    #guide_dict[Guide.x_ticks] = Guide.x_ticks()
-    #guide_dict[Guide.y_ticks] = Guide.y_ticks()
+    if !geom.free_y_axis
+        push!(geom_stats, Stat.y_ticks)
+    end
 
+    coord = Coord.cartesian()
+    scales = Dict{Symbol, Gadfly.ScaleElement}()
     plot_stats = Gadfly.StatisticElement[stat for stat in geom.statistics]
-    #push!(plot_stats, Stat.x_ticks)
-    #push!(plot_stats, Stat.y_ticks)
-
     layer_stats = Gadfly.StatisticElement[typeof(layer.statistic) == Stat.nil ?
                        Geom.default_statistic(layer.geom) : layer.statistic
                    for layer in geom.layers]
 
+    layer_aes_grid = Array(Array{Gadfly.Aesthetics, 1}, n, m)
+    for i in 1:n, j in 1:m
+        layer_aes = fill(copy(aes_grid[i, j]), length(geom.layers))
+        for (layer_stat, aes) in zip(layer_stats, layer_aes)
+            Stat.apply_statistics(Gadfly.StatisticElement[layer_stat],
+                                  scales, coord, aes)
+        end
+
+        plot_aes = cat(layer_aes...)
+        Stat.apply_statistics(plot_stats, scales, coord, plot_aes)
+
+        aes_grid[i, j] = plot_aes
+        layer_aes_grid[i, j] = layer_aes
+    end
+
+    # apply geom-wide statistics
+    geom_aes = cat(aes_grid...)
+    Stat.apply_statistics(geom_stats, scales, coord, geom_aes)
+
+    for i in 1:n, j in 1:m
+        Gadfly.inherit!(aes_grid[i, j], geom_aes)
+    end
+
+
     canvas_grid = Array(Canvas, n, m)
 
     for i in 1:n, j in 1:m
+        # TODO: Ok, now rewrite this fucking shit
         p = Plot()
         p.theme = theme
         for layer in geom.layers
@@ -120,26 +149,29 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             plot_layer.geom = layer.geom
             push!(p.layers, plot_layer)
         end
-        aess = fill(aes_grid[i,j], length(geom.layers))
+        #aess = fill(aes_grid[i,j], length(geom.layers))
         guides = (Type => Gadfly.GuideElement)[typeof(guide) => guide
                                                for guide in geom.guides]
 
         # default guides
         guides[Guide.background] = Guide.background()
+        guides[Guide.x_ticks] = Guide.x_ticks()
+        guides[Guide.y_ticks] = Guide.y_ticks()
 
-        if i == n && !is(aes.x_group, nothing)
+
+        if i == n && !is(superplot_aes.x_group, nothing)
             guides[Guide.x_label] =
-                Guide.x_label(string(levels(aes.x_group)[j]))
+                Guide.x_label(string(levels(superplot_aes.x_group)[j]))
         end
 
-        if j == 1 && !is(aes.y_group, nothing)
+        if j == 1 && !is(superplot_aes.y_group, nothing)
             guides[Guide.y_label] =
-                Guide.y_label(string(levels(aes.y_group)[i]))
+                Guide.y_label(string(levels(superplot_aes.y_group)[i]))
         end
 
         canvas_grid[i, j] =
             Gadfly.render_prepared(
-                            p, aess,
+                            p, aes_grid[i, j], layer_aes_grid[i, j],
                             layer_stats,
                             Dict{Symbol, Gadfly.ScaleElement}(),
                             plot_stats,

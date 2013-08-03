@@ -17,7 +17,7 @@ using JSON
 import Iterators
 import Compose.draw, Compose.hstack, Compose.vstack
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
-       Base.show, Base.getindex
+       Base.show, Base.getindex, Base.cat
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, layer, @plot, spy
 
@@ -438,14 +438,30 @@ function render(plot::Plot)
     end
 
     # I. Scales
-    aess = Scale.apply_scales(Iterators.distinct(values(scales)), datas...)
+    layer_aess = Scale.apply_scales(Iterators.distinct(values(scales)), datas...)
 
     # set default labels
     if haskey(plot.mapping, :color)
-        aess[1].color_key_title = string(plot.mapping[:color])
+        layer_aess[1].color_key_title = string(plot.mapping[:color])
     end
 
-    canvas = render_prepared(plot, aess, layer_stats, scales, statistics, guides)
+    # IIa. Layer-wise statistics
+    for (layer_stat, aes) in zip(layer_stats, layer_aess)
+        Stat.apply_statistics(StatisticElement[layer_stat], scales, plot.coord, aes)
+    end
+
+    # IIb. Plot-wise Statistics
+    plot_aes = cat(layer_aess...)
+    Stat.apply_statistics(statistics, scales, plot.coord, plot_aes)
+
+    # Add some default guides determined by defined aesthetics
+    if !all([aes.color === nothing for aes in [plot_aes, layer_aess...]]) &&
+       !haskey(guides, Guide.ColorKey)
+        guides[Guide.ColorKey] = Guide.colorkey()
+    end
+
+    canvas = render_prepared(plot, plot_aes, layer_aess, layer_stats, scales,
+                             statistics, guides)
 
     pad_inner(canvas, 5mm)
 end
@@ -474,45 +490,31 @@ end
 #   A Compose canvas containing the rendered plot.
 #
 function render_prepared(plot::Plot,
-                         aess::Vector{Aesthetics},
+                         plot_aes::Aesthetics,
+                         layer_aess::Vector{Aesthetics},
                          layer_stats::Vector{StatisticElement},
                          scales::Dict{Symbol, ScaleElement},
                          statistics::Vector{StatisticElement},
                          guides::Dict{Type, GuideElement};
                          preserve_plot_canvas_size=false)
 
-    # IIa. Layer-wise statistics
-    for (layer_stat, aes) in zip(layer_stats, aess)
-        Stat.apply_statistics(StatisticElement[layer_stat], scales, plot.coord, aes)
-    end
-
-    # IIb. Plot-wise Statistics
-    plot_aes = cat(aess...)
-    Stat.apply_statistics(statistics, scales, plot.coord, plot_aes)
-
-    # Add some default guides determined by defined aesthetics
-    if !all([aes.color === nothing for aes in [plot_aes, aess...]]) &&
-       !haskey(guides, Guide.ColorKey)
-        guides[Guide.ColorKey] = Guide.colorkey()
-    end
-
     # III. Coordinates
-    plot_canvas = Coord.apply_coordinate(plot.coord, plot_aes, aess...)
+    plot_canvas = Coord.apply_coordinate(plot.coord, plot_aes, layer_aess...)
 
     # Now that coordinates are set, layer aesthetics inherit plot aesthetics.
-    for aes in aess
+    for aes in layer_aess
         inherit!(aes, plot_aes)
     end
 
     # IV. Geometries
     plot_canvas = compose(plot_canvas,
                           [render(layer.geom, plot.theme, aes)
-                           for (layer, aes) in zip(plot.layers, aess)]...)
+                           for (layer, aes) in zip(plot.layers, layer_aess)]...)
 
     # V. Guides
     guide_canvases = {}
     for guide in values(guides)
-        append!(guide_canvases, render(guide, plot.theme, aess))
+        append!(guide_canvases, render(guide, plot.theme, layer_aess))
     end
 
     canvas = Guide.layout_guides(plot_canvas, plot.theme, guide_canvases...,

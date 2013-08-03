@@ -203,6 +203,7 @@ function cat(aess::Aesthetics...)
     cataes
 end
 
+
 cat_aes_var!(a::Nothing, b::Nothing) = a
 cat_aes_var!(a::Nothing, b) = copy(b)
 cat_aes_var!(a, b::Nothing) = a
