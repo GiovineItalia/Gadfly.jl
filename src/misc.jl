@@ -42,10 +42,13 @@ end
 
 function inherit!{T}(a::T, b::T)
     for field in T.names
-        val = getfield(a, field)
+        aval = getfield(a, field)
+        bval = getfield(b, field)
         # TODO: this is a hack to let non-default labelers overide the defaults
-        if val === nothing || val === string || val === fmt_float
-            setfield(a, field, getfield(b, field))
+        if aval === nothing || aval === string || aval === fmt_float
+            setfield(a, field, bval)
+        elseif typeof(aval) <: Dict && typeof(bval) <: Dict
+            merge!(aval, getfield(b, field))
         end
     end
     nothing

@@ -22,11 +22,14 @@ type Data
     color
     label
 
+    titles::Dict{Symbol, String}
+
     function Data()
         data = new()
-        for i in 1:length(Data.names)
+        for i in 1:length(Data.names)-1
             setfield(data, Data.names[i], nothing)
         end
+        data.titles = Dict{Symbol, String}()
         data
     end
 

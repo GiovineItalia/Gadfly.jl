@@ -22,8 +22,8 @@ type Aesthetics
     outliers::Maybe(Vector{Vector{Float64}})
 
     # Subplot aesthetics
-    x_group::Maybe(PooledDataVector)
-    y_group::Maybe(PooledDataVector)
+    x_group::Maybe(Vector{Int64})
+    y_group::Maybe(Vector{Int64})
 
     # Aesthetics pertaining to guides
     xtick::Maybe(Vector{Float64})
@@ -49,6 +49,10 @@ type Aesthetics
     color_key_title::Maybe(String)
     color_key_continuous::Maybe(Bool)
 
+    # Human readable titles of aesthetics, used for labeling. This is (maybe) a
+    # dict mapping aesthetics names to suitable string.s
+    titles::Maybe(Dict{Symbol, String})
+
     # Labels. These are not aesthetics per se, but functions that assign lables
     # to values taken by aesthetics. Often this means simply inverting the
     # application of a scale to arrive at the original value.
@@ -57,10 +61,12 @@ type Aesthetics
     xtick_label::Function
     ytick_label::Function
     color_label::Function
+    x_group_label::Function
+    y_group_label::Function
 
     function Aesthetics()
         aes = new()
-        for i in 1:length(Aesthetics.names)-5
+        for i in 1:length(Aesthetics.names)-7
             setfield(aes, Aesthetics.names[i], nothing)
         end
         aes.x_label = fmt_float
@@ -68,6 +74,8 @@ type Aesthetics
         aes.xtick_label = string
         aes.ytick_label = string
         aes.color_label = string
+        aes.x_group_label = fmt_float
+        aes.y_group_label = fmt_float
 
         aes
     end
@@ -208,6 +216,14 @@ cat_aes_var!(a::Nothing, b::Nothing) = a
 cat_aes_var!(a::Nothing, b) = copy(b)
 cat_aes_var!(a, b::Nothing) = a
 cat_aes_var!(a::Function, b::Function) = a === string || a === fmt_float ? b : a
+
+
+function cat_aes_var!(a::Dict, b::Dict)
+    merge!(a, b)
+    a
+end
+
+
 function cat_aes_var!(a, b)
     append!(a, b)
     a
@@ -240,20 +256,27 @@ function aes_by_xy_group(aes::Aesthetics)
     @assert aes.x_group === nothing || aes.y_group === nothing ||
             length(aes.x_group) == length(aes.y_group)
 
-    xlevels = aes.x_group === nothing ? [1] : levels(aes.x_group)
-    ylevels = aes.y_group === nothing ? [1] : levels(aes.y_group)
+    n = aes.y_group === nothing ? 1 : max(aes.y_group)
+    m = aes.x_group === nothing ? 1 : max(aes.x_group)
 
-    xrefs = aes.x_group === nothing ? [1] : aes.x_group.refs
-    yrefs = aes.y_group === nothing ? [1] : aes.y_group.refs
+    xrefs = aes.x_group === nothing ? [1] : aes.x_group
+    yrefs = aes.y_group === nothing ? [1] : aes.y_group
 
-    aes_grid = Array(Aesthetics, length(ylevels), length(xlevels))
-    staging = Array(Vector{Any}, length(ylevels), length(xlevels))
-    for i in 1:length(ylevels), j in 1:length(xlevels)
+    aes_grid = Array(Aesthetics, n, m)
+    staging = Array(Vector{Any}, n, m)
+    for i in 1:n, j in 1:m
         aes_grid[i, j] = Aesthetics()
         staging[i, j] = Array(Any, 0)
     end
 
     for var in Aesthetics.names
+
+        # don't partition the aesthetics we are using to partition, they are one
+        # time use.
+        if var == :x_group || var == :y_group
+            continue
+        end
+
         vals = getfield(aes, var)
         if typeof(vals) <: AbstractArray
             if !is(aes.x_group, nothing) && length(vals) != length(aes.x_group) ||
@@ -261,7 +284,7 @@ function aes_by_xy_group(aes::Aesthetics)
                 error("Aesthetic $(var) must be the same length as x_group or y_group")
             end
 
-            for i in 1:length(ylevels), j in 1:length(xlevels)
+            for i in 1:n, j in 1:m
                 empty!(staging[i, j])
             end
 
@@ -269,7 +292,7 @@ function aes_by_xy_group(aes::Aesthetics)
                 push!(staging[i, j], v)
             end
 
-            for i in 1:length(ylevels), j in 1:length(xlevels)
+            for i in 1:n, j in 1:m
                 if typeof(vals) <: PooledDataArray
                     setfield(aes_grid[i, j], var,
                              PooledDataArray(staging[i, j]))
@@ -279,7 +302,7 @@ function aes_by_xy_group(aes::Aesthetics)
                 end
             end
         else
-            for i in 1:length(ylevels), j in 1:length(xlevels)
+            for i in 1:n, j in 1:m
                 setfield(aes_grid[i, j], var, vals)
             end
         end

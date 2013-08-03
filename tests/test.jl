@@ -10,8 +10,7 @@ tests = [
     "hstack",
     "stacked_discrete_histogram",
     "dodged_discrete_histogram",
-    "array_aesthetics",
-    "subplot_grid"
+    "array_aesthetics"
 ]
 
 backends = {

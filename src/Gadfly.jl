@@ -15,6 +15,7 @@ using DataFrames
 using JSON
 
 import Iterators
+import Iterators.distinct
 import Compose.draw, Compose.hstack, Compose.vstack
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
        Base.show, Base.getindex, Base.cat
@@ -152,6 +153,32 @@ function add_plot_element{T <: Element}(p::Plot, data::AbstractDataFrame, f::Typ
     add_plot_element(p, data, f())
 end
 
+
+# Evaluate a plot mapping, and update the Data structure appropriately.
+#
+# Args:
+#   data: Data object to be updated.
+#   data_source: data frame in which context of which the mapping is evaluated.
+#   k: key
+#   v: value
+#
+# Modifies:
+#   data
+#
+function set_mapped_data!(data::Data, data_source::AbstractDataFrame, k::Symbol, v)
+    setfield(data, k, eval_plot_mapping(data_source, v))
+
+    if typeof(v) <: AbstractArray
+        data.titles[k] = string(v)
+    elseif typeof(v) <: String
+        data.titles[k] = v
+    else
+        data.titles[k] = string(k)
+    end
+end
+
+
+# Evaluate a mapping.
 eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[string(arg)]
 eval_plot_mapping(data::AbstractDataFrame, arg::String) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
@@ -176,15 +203,15 @@ typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
 # Where "time" and "price" are the names of columns in my_data.
 #
 # Args:
-#   data: Data to be bound to aesthetics.
+#   data_source: Data to be bound to aesthetics.
 #   mapping: Aesthetics symbols (e.g. :x, :y, :color) mapped to
 #            names of columns in the data frame or other expressions.
 #   elements: Geometries, statistics, etc.
 
-function plot(data::AbstractDataFrame, elements::ElementOrFunction...; mapping...)
+function plot(data_source::AbstractDataFrame, elements::ElementOrFunction...; mapping...)
     p = Plot()
     p.mapping = Dict()
-    p.data_source = data
+    p.data_source = data_source
     valid_aesthetics = Set(names(Aesthetics)...)
     for (k, v) in mapping
         if !contains(valid_aesthetics, k)
@@ -197,12 +224,12 @@ function plot(data::AbstractDataFrame, elements::ElementOrFunction...; mapping..
                It must be mapped to a string, symbol, or expression.""")
         end
 
-        setfield(p.data, k, eval_plot_mapping(data, v))
+        set_mapped_data!(p.data, data_source, k, v)
         p.mapping[k] = v
     end
 
     for element in elements
-        add_plot_element(p, data, element)
+        add_plot_element(p, data_source, element)
     end
 
     p
@@ -220,7 +247,7 @@ end
 # to expressions or columns in the data frame.
 #
 # Args:
-#   data: Data to be bound to aesthetics.
+#   data_source: Data to be bound to aesthetics.
 #   mapping: Dictionary of aesthetics symbols (e.g. :x, :y, :color) to
 #            names of columns in the data frame or other expressions.
 #   elements: Geometries, statistics, etc.
@@ -228,17 +255,17 @@ end
 # Returns:
 #   A Plot object.
 #
-function plot(data::AbstractDataFrame, mapping::Dict, elements::ElementOrFunction...)
+function plot(data_source::AbstractDataFrame, mapping::Dict, elements::ElementOrFunction...)
     p = Plot()
     for element in elements
-        add_plot_element(p, data, element)
+        add_plot_element(p, data_source, element)
     end
 
     for (var, value) in mapping
-        setfield(p.data, var, eval_plot_mapping(data, value))
+        set_mapped_data(p.data, data_source, var, value)
     end
     p.mapping = mapping
-    p.data_source = data
+    p.data_source = data_source
 
     p
 end
@@ -420,8 +447,8 @@ function render(plot::Plot)
 
     function choose_name(vs)
         for v in vs
-            if haskey(plot.mapping, v) && !(typeof(plot.mapping[v]) <: AbstractArray)
-                return string(plot.mapping[v])
+            if haskey(plot.data.titles, v)
+                return plot.data.titles[v]
             end
         end
         string(vs[1])

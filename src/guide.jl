@@ -241,8 +241,12 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
 end
 
 
-
 immutable XTicks <: Gadfly.GuideElement
+    label::Bool
+
+    function XTicks(label::Bool=true)
+        new(label)
+    end
 end
 
 const x_ticks = XTicks
@@ -274,6 +278,10 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                          linewidth(theme.grid_line_width),
                          svgclass("guide xgridlines"))
 
+    if !guide.label
+        return {(grid_lines, under_guide_position)}
+    end
+
     # tick labels
 
     (_, height) = text_extents(theme.minor_label_font,
@@ -297,6 +305,11 @@ end
 
 
 immutable YTicks <: Gadfly.GuideElement
+    label::Bool
+
+    function YTicks(label::Bool=true)
+        new(label)
+    end
 end
 
 const y_ticks = YTicks
@@ -325,6 +338,10 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width),
                          svgclass("guide ygridlines"))
+
+    if !guide.label
+        return {(grid_lines, under_guide_position)}
+    end
 
     # tick labels
     (width, _) = text_extents(theme.minor_label_font,

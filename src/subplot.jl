@@ -136,11 +136,25 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         Gadfly.inherit!(aes_grid[i, j], geom_aes)
     end
 
-
     canvas_grid = Array(Canvas, n, m)
 
+    xtitle = "x"
+    for v in [:x, :x_min, :x_max]
+        if haskey(superplot_aes.titles, v)
+            xtitle = superplot_aes.titles[v]
+            break
+        end
+    end
+
+    ytitle = "y"
+    for v in [:y, :y_min, :y_max]
+        if haskey(superplot_aes.titles, v)
+            ytitle = superplot_aes.titles[v]
+            break
+        end
+    end
+
     for i in 1:n, j in 1:m
-        # TODO: Ok, now rewrite this fucking shit
         p = Plot()
         p.theme = theme
         for layer in geom.layers
@@ -155,18 +169,23 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
         # default guides
         guides[Guide.background] = Guide.background()
-        guides[Guide.x_ticks] = Guide.x_ticks()
-        guides[Guide.y_ticks] = Guide.y_ticks()
-
 
         if i == n && !is(superplot_aes.x_group, nothing)
-            guides[Guide.x_label] =
-                Guide.x_label(string(levels(superplot_aes.x_group)[j]))
+            guides[Guide.x_ticks] = Guide.x_ticks()
+        else
+            guides[Guide.x_ticks] = Guide.x_ticks(false)
         end
 
+
         if j == 1 && !is(superplot_aes.y_group, nothing)
-            guides[Guide.y_label] =
-                Guide.y_label(string(levels(superplot_aes.y_group)[i]))
+            guides[Guide.y_ticks] = Guide.y_ticks()
+        else
+            guides[Guide.y_ticks] = Guide.y_ticks(false)
+        end
+
+        if i == n && j == 1
+            guides[Guide.x_label] = Guide.x_label(xtitle)
+            guides[Guide.y_label] = Guide.y_label(ytitle)
         end
 
         canvas_grid[i, j] =
@@ -181,7 +200,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         canvas_grid[i, j] = pad(canvas_grid[i, j], 2.5mm)
     end
 
-    gridstack(canvas_grid, 0w, 0h)
+    gridstack(canvas_grid, 0w, 0h, halign=hright)
 end
 
 

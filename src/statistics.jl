@@ -290,9 +290,15 @@ function apply_statistic(stat::TickStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    in_values = [getfield(aes, var) for var in stat.in_vars]
-    in_values = filter(val -> !(val === nothing), in_values)
-    in_values = chain(in_values...)
+    in_group_var = symbol(string(stat.out_var, "_group"))
+    if getfield(aes, in_group_var) === nothing
+        in_values = [getfield(aes, var) for var in stat.in_vars]
+        in_values = filter(val -> !(val === nothing), in_values)
+        in_values = chain(in_values...)
+    else
+        in_values = getfield(aes, in_group_var)
+    end
+
     # TODO: handle the outliers aesthetic
 
     minval = Inf
