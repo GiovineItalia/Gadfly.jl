@@ -271,9 +271,15 @@ function aes_by_xy_group(aes::Aesthetics)
 
     for var in Aesthetics.names
 
-        # don't partition the aesthetics we are using to partition, they are one
-        # time use.
-        if var == :x_group || var == :y_group
+        # Skipped aesthetics. Don't try to partition aesthetics for which it
+        # makes no sense to pass on to subplots.
+        if var == :x_group || var == :y_group||
+           var == :xtick || var == :ytick ||
+           var == :xgrid || var == :ygrid ||
+           var == :x_drawmin || var == :y_drawmin ||
+           var == :x_drawmax || var == :y_drawmax ||
+           var == :x_viewmin || var == :y_viewmin ||
+           var == :x_viewmax || var == :y_viewmax
             continue
         end
 

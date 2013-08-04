@@ -455,13 +455,19 @@ function render(plot::Plot)
     end
 
     if mapped_and_used(x_axis_label_aesthetics) && !haskey(guides, Guide.XLabel)
-        guides[Guide.XLabel] =
-            Guide.x_label(choose_name(x_axis_label_aesthetics))
+        label = choose_name(x_axis_label_aesthetics)
+        if facet_plot && haskey(plot.data.titles, :x_group)
+            label = string(label, " <i>by</i> ", plot.data.titles[:x_group])
+        end
+        guides[Guide.XLabel] = Guide.x_label(label)
     end
 
     if mapped_and_used(y_axis_label_aesthetics) && !haskey(guides, Guide.YLabel)
-        guides[Guide.YLabel] =
-            Guide.y_label(choose_name(y_axis_label_aesthetics))
+        label = choose_name(y_axis_label_aesthetics)
+        if facet_plot && haskey(plot.data.titles, :y_group)
+            label = string(label, " <i>by</i> ", plot.data.titles[:y_group])
+        end
+        guides[Guide.YLabel] = Guide.y_label(label)
     end
 
     # I. Scales
@@ -488,7 +494,7 @@ function render(plot::Plot)
     end
 
     canvas = render_prepared(plot, plot_aes, layer_aess, layer_stats, scales,
-                             statistics, guides)
+                             statistics, collect(values(guides)))
 
     pad_inner(canvas, 5mm)
 end
@@ -522,7 +528,7 @@ function render_prepared(plot::Plot,
                          layer_stats::Vector{StatisticElement},
                          scales::Dict{Symbol, ScaleElement},
                          statistics::Vector{StatisticElement},
-                         guides::Dict{Type, GuideElement};
+                         guides::Vector{GuideElement};
                          preserve_plot_canvas_size=false)
 
     # III. Coordinates
@@ -540,7 +546,7 @@ function render_prepared(plot::Plot,
 
     # V. Guides
     guide_canvases = {}
-    for guide in values(guides)
+    for guide in guides
         append!(guide_canvases, render(guide, plot.theme, layer_aess))
     end
 
@@ -631,8 +637,8 @@ classify_data(data::PooledDataArray) = :discrete
 
 # Axis labels are taken whatever is mapped to these aesthetics, in order of
 # preference.
-const x_axis_label_aesthetics = [:x_group, :x, :x_min, :x_max]
-const y_axis_label_aesthetics = [:y_group, :y, :y_min, :y_max]
+const x_axis_label_aesthetics = [:x, :x_min, :x_max]
+const y_axis_label_aesthetics = [:y, :y_min, :y_max]
 
 end # module Gadfly
 

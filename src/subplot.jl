@@ -163,29 +163,27 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             plot_layer.geom = layer.geom
             push!(p.layers, plot_layer)
         end
-        #aess = fill(aes_grid[i,j], length(geom.layers))
-        guides = (Type => Gadfly.GuideElement)[typeof(guide) => guide
-                                               for guide in geom.guides]
+        guides = Gadfly.GuideElement[guide for guide in geom.guides]
 
         # default guides
-        guides[Guide.background] = Guide.background()
+        push!(guides, Guide.background())
 
         if i == n && !is(superplot_aes.x_group, nothing)
-            guides[Guide.x_ticks] = Guide.x_ticks()
+            push!(guides, Guide.x_ticks())
+            if !is(superplot_aes.x_group, nothing)
+                push!(guides, Guide.x_label(superplot_aes.x_group_label(j)))
+            end
         else
-            guides[Guide.x_ticks] = Guide.x_ticks(false)
+            push!(guides, Guide.x_ticks(false))
         end
-
 
         if j == 1 && !is(superplot_aes.y_group, nothing)
-            guides[Guide.y_ticks] = Guide.y_ticks()
+            push!(guides, Guide.y_ticks())
+            if !is(superplot_aes.y_group, nothing)
+                push!(guides, Guide.y_label(superplot_aes.y_group_label(i)))
+            end
         else
-            guides[Guide.y_ticks] = Guide.y_ticks(false)
-        end
-
-        if i == n && j == 1
-            guides[Guide.x_label] = Guide.x_label(xtitle)
-            guides[Guide.y_label] = Guide.y_label(ytitle)
+            push!(guides, Guide.y_ticks(false))
         end
 
         canvas_grid[i, j] =

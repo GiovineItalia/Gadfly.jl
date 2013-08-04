@@ -404,7 +404,7 @@ function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aestheti
     padding = 2mm
     c = compose(canvas(0, 0, text_height + 2padding, 1cy,
                        rotation=Rotation(-0.5pi, 0.5w, 0.5h)),
-                text(0.5w, 0.5h, guide.label, hcenter, vcenter),
+                text(0.5w, 0.5h, guide.label, hcenter, vbottom),
                 stroke(nothing),
                 fill(theme.major_label_color),
                 font(theme.major_label_font),
