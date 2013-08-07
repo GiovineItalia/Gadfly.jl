@@ -457,7 +457,7 @@ function render(plot::Plot)
     if mapped_and_used(x_axis_label_aesthetics) && !haskey(guides, Guide.XLabel)
         label = choose_name(x_axis_label_aesthetics)
         if facet_plot && haskey(plot.data.titles, :x_group)
-            label = string(label, " <i>by</i> ", plot.data.titles[:x_group])
+            label = string(label, " <i><b>by</b></i> ", plot.data.titles[:x_group])
         end
         guides[Guide.XLabel] = Guide.x_label(label)
     end
@@ -465,7 +465,7 @@ function render(plot::Plot)
     if mapped_and_used(y_axis_label_aesthetics) && !haskey(guides, Guide.YLabel)
         label = choose_name(y_axis_label_aesthetics)
         if facet_plot && haskey(plot.data.titles, :y_group)
-            label = string(label, " <i>by</i> ", plot.data.titles[:y_group])
+            label = string(label, " <i><b>by</b></i> ", plot.data.titles[:y_group])
         end
         guides[Guide.YLabel] = Guide.y_label(label)
     end

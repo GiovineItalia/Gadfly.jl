@@ -4,31 +4,34 @@ using Gadfly
 using RDatasets
 
 tests = [
-    "points",
-    "colored_points",
-    "vstack",
-    "hstack",
-    "stacked_discrete_histogram",
-    "dodged_discrete_histogram",
-    "array_aesthetics"
+    ("points",                     6inch, 3inch),
+    ("colored_points",             6inch, 3inch),
+    ("vstack",                     6inch, 6inch),
+    ("hstack",                     6inch, 3inch),
+    ("stacked_discrete_histogram", 6inch, 3inch),
+    ("dodged_discrete_histogram",  6inch, 3inch),
+    ("array_aesthetics",           6inch, 3inch),
+    ("subplot_grid",               6inch, 3inch),
+    ("subplot_grid_histogram",     6inch, 3inch)
 ]
 
+
 backends = {
-    "svg" => name -> SVG("$(name).svg", 6inch, 3inch),
-    "d3"  => name -> D3("$(name).js",   6inch, 3inch),
-    "png" => name -> PNG("$(name).png", 6inch, 3inch),
-    "ps"  => name -> PS("$(name).ps",   6inch, 3inch),
-    "pdf" => name -> PDF("$(name).pdf", 6inch, 3inch)
+    "svg" => (name, width, height) -> SVG("$(name).svg", width, height),
+    "d3"  => (name, width, height) -> D3("$(name).js",   width, height),
+    "png" => (name, width, height) -> PNG("$(name).png", width, height),
+    "ps"  => (name, width, height) -> PS("$(name).ps",   width, height),
+    "pdf" => (name, width, height) -> PDF("$(name).pdf", width, height)
 }
 
 
 function run_tests()
-    for test in tests
+    for (name, width, height) in tests
         for (backend_name, backend) in backends
-            println(STDERR, "Rendering $(test) on $(backend_name) backend.")
+            println(STDERR, "Rendering $(name) on $(backend_name) backend.")
             try
-                p = evalfile("$(test).jl")
-                draw(backend(test), p)
+                p = evalfile("$(name).jl")
+                draw(backend(name, width, height), p)
             catch
                 println(STDERR, "FAILED!")
                 rethrow()
