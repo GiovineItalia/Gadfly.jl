@@ -262,7 +262,7 @@ function plot(data_source::AbstractDataFrame, mapping::Dict, elements::ElementOr
     end
 
     for (var, value) in mapping
-        set_mapped_data(p.data, data_source, var, value)
+        set_mapped_data!(p.data, data_source, var, value)
     end
     p.mapping = mapping
     p.data_source = data_source
