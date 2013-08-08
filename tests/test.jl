@@ -8,6 +8,7 @@ tests = [
     ("colored_points",             6inch, 3inch),
     ("vstack",                     6inch, 6inch),
     ("hstack",                     6inch, 3inch),
+    ("colorful_hist",              6inch, 3inch),
     ("stacked_discrete_histogram", 6inch, 3inch),
     ("dodged_discrete_histogram",  6inch, 3inch),
     ("array_aesthetics",           6inch, 3inch),

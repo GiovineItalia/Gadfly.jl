@@ -91,7 +91,7 @@ end
 const default_font_desc = "PT Sans,Helvetica Neue,Helvetica,sans"
 
 const default_theme =
-    Theme(color("steel blue"),      # default_color
+    Theme(LCHab(70, 60, 240),         # default_color
           0.6mm,                    # default_point_size
           0.3mm,                    # line_width
           color("#fafafa"),         # panel_fill

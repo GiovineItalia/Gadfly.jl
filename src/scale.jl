@@ -209,11 +209,11 @@ end
 # Common discrete color scales
 const color_hue = DiscreteColorScale(
     h -> convert(Vector{ColorValue},
-        distinguishable_colors(h, c -> deuteranopic(c, 0.8),
-                               LCHab(70, 60, 240),
-                               Float64[65, 70, 75, 80, 85],
-                               Float64[0, 50, 60],
-                               Float64[h for h in 0:30:360])))
+         distinguishable_colors(h, ColorValue[LCHab(70, 60, 240)],
+                                lchoices=Float64[65, 70, 75, 80],
+                                cchoices=Float64[0, 50, 60, 70],
+                                hchoices=linspace(0, 330, 24),
+                                transform=c -> deuteranopic(c, 0.5))))
 
 
 function apply_scale(scale::DiscreteColorScale,
