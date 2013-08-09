@@ -58,17 +58,17 @@ include("poetry.jl")
 # Prepare the display backend (ijuila, in particular) to show plots rendered on
 # the d3 backend.
 
-# TODO: if we are going to do it this way, we may want to try to version it.
-const gadfly_js_url = "https://raw.github.com/dcjones/Gadfly.jl/master/src/gadfly.js"
+const gadfly_js = readall(joinpath(Pkg.dir("Gadfly"), "src", "gadfly.js"))
+
 
 function prepare_display(d::Display)
     Compose.prepare_display(d)
-    display(d, "text/html", """<script src="$(gadfly_js_url)" charset="utf-8"></script>""")
+    display(d, "text/html", """<script charset="utf-8">$(gadfly_js)</script>""")
 end
 
 
 try
-    display("text/html", """<script src="$(gadfly_js_url)" charset="utf-8"></script>""")
+    display("text/html", """<script charset="utf-8">$(gadfly_js)</script>""")
 catch
 end
 
