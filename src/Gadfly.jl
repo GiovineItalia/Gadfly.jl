@@ -18,7 +18,7 @@ import Iterators
 import Iterators.distinct
 import Compose.draw, Compose.hstack, Compose.vstack
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
-       Base.show, Base.getindex, Base.cat
+       Base.show, Base.getindex, Base.cat, Base.writemime
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, layer, @plot, spy
 
@@ -53,6 +53,24 @@ include("aesthetics.jl")
 include("data.jl")
 include("weave.jl")
 include("poetry.jl")
+
+
+# Prepare the display backend (ijuila, in particular) to show plots rendered on
+# the d3 backend.
+
+# TODO: if we are going to do it this way, we may want to try to version it.
+const gadfly_js_url = "https://raw.github.com/dcjones/Gadfly.jl/master/src/gadfly.js"
+
+function prepare_display(d::Display)
+    Compose.prepare_display(d)
+    display(d, "text/html", """<script src="$(gadfly_js_url)" charset="utf-8"></script>""")
+end
+
+
+try
+    display("text/html", """<script src="$(gadfly_js_url)" charset="utf-8"></script>""")
+catch
+end
 
 
 # A plot has zero or more layers. Layers have a particular geometry and their
@@ -566,22 +584,25 @@ hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
 hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 
 
-# Displaying plots, for interactive use.
+# writemime functions for all supported compose backends.
 #
-# This is a show function that, rather than outputing a totally incomprehensible
-# representation of the Plot object, renders it, and emits the graphic. (Which
-# usually means, shows it in a browser window.)
-#
-function show(io::IO, p::Plot)
-    # TODO: This is stilly kludgy
-    if io === STDOUT
-        draw(SVG(6inch, 5inch), p)
-    else
-        print(io, "Plot(...)")
-    end
+# TODO: These functions should inspect the plot to choose a reasonable default
+# size. (This is mainly a compose todo.)
+
+function writemime(io::IO, ::@MIME("text/html"), p::Plot)
+    draw(D3(6inch, 4inch), p)
 end
-# TODO: Find a more elegant way to automatically show plots. This is unexpected
-# and gives weave problems.
+
+
+# TODO: the serializeable branch has to be merged before this will work.
+#function writemime(io::IO, ::@MIME("application/json"), p::Plot)
+    #JSON.print(io, serialize(p, with_data=true))
+#end
+
+
+function writemime(io::IO, ::@MIME("text/plain"), p::Plot)
+    write(io, "Plot(...)")
+end
 
 
 include("scale.jl")
