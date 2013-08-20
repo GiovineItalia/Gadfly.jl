@@ -23,7 +23,7 @@ import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, layer, @plot, spy
 
 # Re-export some essentials from Compose
-export D3, SVG, PNG, PS, PDF, draw, inch, mm, px, pt, color, vstack, hstack
+export D3, SVG, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
 
 typealias ColorOrNothing Union(ColorValue, Nothing)
 
@@ -67,9 +67,28 @@ function prepare_display(d::Display)
 end
 
 
+function prepare_display()
+    prepare_display(Base.Multimedia.displays[end])
+end
+
+
 try
     display("text/html", """<script charset="utf-8">$(gadfly_js)</script>""")
 catch
+end
+
+
+# Set prefereed canvas size when rendering a plot with an explicit call to
+# `draw`.
+default_plot_width = 12cm
+default_plot_height = 8cm
+
+function set_default_plot_size(width::Compose.MeasureOrNumber,
+                               height::Compose.MeasureOrNumber)
+    global default_plot_width
+    global default_plot_height
+    default_plot_width = Compose.x_measure(width)
+    default_plot_height = Compose.y_measure(height)
 end
 
 
@@ -409,6 +428,7 @@ function render(plot::Plot)
         end
 
         t = classify_data(getfield(plot.data, var))
+
         if haskey(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
             scale_aes = Set(element_aesthetics(scale)...)
@@ -590,7 +610,7 @@ hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 # size. (This is mainly a compose todo.)
 
 function writemime(io::IO, ::@MIME("text/html"), p::Plot)
-    draw(D3(6inch, 4inch), p)
+    draw(D3(default_plot_width, default_plot_height), p)
 end
 
 
@@ -625,7 +645,7 @@ const default_aes_scales = {
                         :x_group => Scale.x_group,
                         :y_group => Scale.y_group,
                         :color   => Scale.color_gradient,
-                        :label => Scale.label},
+                        :label   => Scale.label()},
         :discrete   => {:x       => Scale.x_discrete,
                         :x_min   => Scale.x_discrete,
                         :x_max   => Scale.x_discrete,
@@ -635,7 +655,7 @@ const default_aes_scales = {
                         :x_group => Scale.x_group,
                         :y_group => Scale.y_group,
                         :color   => Scale.color_hue,
-                        :label   => Scale.label}}
+                        :label   => Scale.label()}}
 
 # Determine whether the input is discrete or continuous.
 classify_data{N}(data::AbstractArray{Float64, N}) = :continuous

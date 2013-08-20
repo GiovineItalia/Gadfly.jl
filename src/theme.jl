@@ -59,6 +59,9 @@ type Theme
     # boxplot.
     middle_color::Maybe(Function)
 
+    # Width of the middle line in a boxplot.
+    middle_width::Maybe(Measure)
+
     # Number of annealing iterations.
     label_placement_iterations::Maybe(Int)
 
@@ -91,7 +94,7 @@ end
 const default_font_desc = "PT Sans,Helvetica Neue,Helvetica,sans"
 
 const default_theme =
-    Theme(LCHab(70, 60, 240),         # default_color
+    Theme(LCHab(70, 60, 240),       # default_color
           0.6mm,                    # default_point_size
           0.3mm,                    # line_width
           color("#fafafa"),         # panel_fill
@@ -113,6 +116,7 @@ const default_theme =
           0.3mm,                    # highlight_width
           default_highlight_color,  # highlight_color
           default_middle_color,     # middle_color
+          0.6mm,                    # middle_width
           1000,                     # label_placement_iterations
           10.0,                     # label_out_of_bounds_penalty
           0.5,                      # label_hidden_penalty

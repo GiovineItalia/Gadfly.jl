@@ -73,8 +73,10 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                              lw1.value)),
             d3embed(@sprintf(".on(\"mouseout\", geom_point_mouseover(%0.2f), false)",
                              lw0.value)),
-            svgclass([@sprintf("geometry color_%s", escape_id(aes.color_label(c)))
-                      for c in aes.color]))
+            aes.color_key_continuous == true ?
+                svgclass("geometry") :
+                svgclass([@sprintf("geometry color_%s", escape_id(aes.color_label(c)))
+                          for c in aes.color]))
 end
 
 
@@ -426,7 +428,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
 
         # Middle
         push!(middle_forms, compose(lines((x - 1/6, mid), (x + 1/6, mid)),
-                                    linewidth(theme.line_width), stroke(mc)))
+                                    linewidth(theme.middle_width), stroke(mc)))
 
         # Box
         push!(forms, compose(rectangle(x*cx - bw/2, lh, bw, uh - lh),
