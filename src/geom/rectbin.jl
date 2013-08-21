@@ -1,57 +1,29 @@
 
 immutable RectangularBinGeometry <: Gadfly.GeometryElement
+    default_statistic::Gadfly.StatisticElement
+
+    function RectangularBinGeometry(
+            default_statistic::Gadfly.StatisticElement=Gadfly.Stat.identity())
+        new(default_statistic)
+    end
 end
 
 
 const rectbin = RectangularBinGeometry
 
 
+function histogram2d()
+    RectangularBinGeometry(Gadfly.Stat.histogram2d())
+end
+
+
+function default_statistic(geom::RectangularBinGeometry)
+    geom.default_statistic
+end
+
+
 function element_aesthetics(::RectangularBinGeometry)
     [:x, :y, :x_min, :x_max, :y_min, :y_max, :color]
-end
-
-
-
-# Render a rectbin geometry with continuous x_min/x_max y_min/y_max coordinates.
-function render_continuous_rectbin(geom::RectangularBinGeometry,
-                                   theme::Gadfly.Theme,
-                                   aes::Gadfly.Aesthetics)
-    n = length(aes.x_min)
-    forms = Array(Compose.Form, 0)
-
-    for (i, c) in zip(1:n, cycle(aes.color))
-        if !isna(c)
-            push!(forms, rectangle(aes.x_min[i], aes.y_min[i],
-                                  (aes.x_max[i] - aes.x_min[i])*cx - theme.bar_spacing,
-                                  (aes.y_max[i] - aes.y_min[i])*cy + theme.bar_spacing) <<
-                             fill(c) << svgclass("geometry"))
-        end
-    end
-
-    compose(combine(forms...),
-            stroke(nothing),
-            svgattribute("shape-rendering", "crispEdges"))
-end
-
-
-# Rendere a rectbin geometry with discrete x/y coordinaes.
-function render_discrete_rectbin(geom::RectangularBinGeometry,
-                                   theme::Gadfly.Theme,
-                                   aes::Gadfly.Aesthetics)
-    n = length(aes.x)
-    forms = Array(Compose.Form, 0)
-    for (i, c) in zip(1:n, cycle(aes.color))
-        if !isna(c)
-            x, y = aes.x[i], aes.y[i]
-            push!(forms, compose(rectangle(x - 0.5, y - 0.5, 1.0, 1.0),
-                                 fill(c),
-                                 svgclass("geometry")))
-        end
-    end
-
-    compose(combine(forms...),
-            stroke(nothing),
-            svgattribute("shape-rendering", "crispEdges"))
 end
 
 
@@ -73,23 +45,62 @@ function render(geom::RectangularBinGeometry,
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
 
-    if aes.x_min === nothing
-        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x, :y)
-        Gadfly.assert_aesthetics_equal_length("Geom.bar", aes, :x, :y)
-        render_discrete_rectbin(geom, theme, aes)
-    else
-        Gadfly.assert_aesthetics_defined("Geom.bar",
-                                         aes, :x_min, :x_max, :y_min, :y_max)
-        Gadfly.assert_aesthetics_equal_length("Geom.bar",
-                                              aes, :x_min, :x_max,
-                                              :y_min, :y_max)
-        render_continuous_rectbin(geom, theme, aes)
+    if aes.x === nothing && (aes.x_min === nothing || aes.x_max === nothing)
+        error("Geom.rectbin requires either x or both x_min and x_max be defined.")
     end
-end
 
+    if aes.y === nothing && (aes.y_min === nothing || aes.y_max === nothing)
+        error("Geom.rectbin requires either y or both y_min and y_max be defined.")
+    end
 
-function default_statistic(::RectangularBinGeometry)
-    Gadfly.Stat.rectbin()
+    if aes.x_min != nothing && length(aes.x_min) != length(aes.x_max)
+        error("Geom.rectbin requires that x_min and x_max be of equal length.")
+    end
+
+    if aes.y_min != nothing && length(aes.y_min) != length(aes.y_max)
+        error("Geom.rectbin requires that y_min and y_max be of equal length.")
+    end
+
+    nx = aes.x_min === nothing ? length(aes.x) : length(aes.x_min)
+    ny = aes.y_min === nothing ? length(aes.y) : length(aes.y_min)
+
+    if nx != ny
+        error("""Geom.rectbin requires an equal number of x (or x_min/x_max) and
+                 y (or y_min/y_max) values.""")
+    end
+
+    if aes.x_min === nothing
+        x_min = aes.x - 0.5
+        x_max = aes.x + 0.5
+    else
+        x_min = aes.x_min
+        x_max = aes.x_max
+    end
+
+    if aes.y_min === nothing
+        y_min = aes.y - 0.5
+        y_max = aes.y + 0.5
+    else
+        y_min = aes.y_min
+        y_max = aes.y_max
+    end
+
+    n = nx
+    forms = Array(Compose.Form, 0)
+    for (i, c) in zip(1:n, cycle(aes.color))
+        if !isna(c)
+            form = compose(rectangle(x_min[i], y_min[i],
+                                    (x_max[i] - x_min[i])*cx - theme.bar_spacing,
+                                    (y_max[i] - y_min[i])*cy - theme.bar_spacing),
+                           fill(c), svgclass("geometry"))
+
+            push!(forms, form)
+        end
+    end
+
+    compose(combine(forms...),
+            stroke(nothing),
+            svgattribute("shape-rendering", "crispEdges"))
 end
 
 

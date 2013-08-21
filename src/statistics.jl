@@ -203,32 +203,47 @@ end
 
 
 
-immutable RectangularBinStatistic <: Gadfly.StatisticElement
+immutable Histogram2DStatistic <: Gadfly.StatisticElement
 end
 
 
-element_aesthetics(::RectangularBinStatistic) = [:x, :y, :color]
+element_aesthetics(::Histogram2DStatistic) = [:x, :y, :color]
 
 
-default_scales(::RectangularBinStatistic) = [Gadfly.Scale.color_gradient]
+default_scales(::Histogram2DStatistic) = [Gadfly.Scale.color_gradient]
 
 
-const rectbin = RectangularBinStatistic
+const histogram2d = Histogram2DStatistic
 
 
-function apply_statistic(stat::RectangularBinStatistic,
+function apply_statistic(stat::Histogram2DStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
+
+    Gadfly.assert_aesthetics_defined("Histogram2DStatistic", aes, :x, :y)
 
     dx, dy, bincounts = choose_bin_count_2d(aes.x, aes.y)
 
     x_min, x_max = min(aes.x), max(aes.x)
     y_min, y_max = min(aes.y), max(aes.y)
 
-    # bin widths
-    wx = (x_max - x_min) / dx
-    wy = (y_max - y_min) / dy
+    # should we tread x/y as categorical data
+    if typeof(aes.x) <: Array{Int} && dx == x_max - x_min + 1 <= 20
+        wx = 1
+        x_categorial = true
+    else
+        wx = (x_max - x_min) / dx
+        x_categorial = false
+    end
+
+    if typeof(aes.y) <: Array{Int} && dy == y_max - y_min + 1
+        wy = 1
+        y_categorial = true
+    else
+        wy = (y_max - y_min) / dy
+        y_categorial = false
+    end
 
     n = 0
     for cnt in bincounts
@@ -237,28 +252,48 @@ function apply_statistic(stat::RectangularBinStatistic,
         end
     end
 
-    aes.x_min = Array(Float64, n)
-    aes.x_max = Array(Float64, n)
-    aes.y_min = Array(Float64, n)
-    aes.y_max = Array(Float64, n)
+    if x_categorial
+        aes.x = Array(Int64, n)
+        aes.x = Array(Int64, n)
+    else
+        aes.x_min = Array(Float64, n)
+        aes.x_max = Array(Float64, n)
+    end
+
+    if y_categorial
+        aes.y = Array(Int64, n)
+        aes.y = Array(Int64, n)
+    else
+        aes.y_min = Array(Float64, n)
+        aes.y_max = Array(Float64, n)
+    end
 
     k = 1
-    for ((i, j), cnt) in zip(product(1:dy, 1:dx), bincounts)
+    for ((i, j), cnt) in zip(product(1:dx, 1:dy), bincounts)
         if cnt > 0
-            aes.x_min[k] = x_min + (i - 1) * wx
-            aes.x_max[k] = x_min + i * wx
-            aes.y_min[k] = y_min + (j - 1) * wy
-            aes.y_max[k] = y_min + j * wy
+            if x_categorial
+                aes.x[k] = x_min + (i - 1)
+            else
+                aes.x_min[k] = x_min + (i - 1) * wx
+                aes.x_max[k] = x_min + i * wx
+            end
+
+            if y_categorial
+                aes.y[k] = y_min + (j - 1)
+            else
+                aes.y_min[k] = y_min + (j - 1) * wy
+                aes.y_max[k] = y_min + j * wy
+            end
             k += 1
         end
     end
 
-    if !has(scales, :color)
-        error("RectangularBinStatistic requires a color scale.")
+    if !haskey(scales, :color)
+        error("Histogram2DStatistic requires a color scale.")
     end
     color_scale = scales[:color]
     if !(typeof(color_scale) <: Scale.ContinuousColorScale)
-        error("RectangularBinStatistic requires a continuous color scale.")
+        error("Histogram2DStatistic requires a continuous color scale.")
     end
 
     aes.color_key_title = "Count"
@@ -277,7 +312,7 @@ function apply_statistic(stat::RectangularBinStatistic,
 end
 
 
-default_statistic(stat::RectangularBinStatistic) = [Scale.color_gradient]
+default_statistic(stat::Histogram2DStatistic) = [Scale.color_gradient]
 
 
 # Find reasonable places to put tick marks and grid lines.

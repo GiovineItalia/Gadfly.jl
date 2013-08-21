@@ -670,11 +670,11 @@ classify_data{N}(data::DataArray{Float32, N}) = :continuous
 
 # Very long unfactorized integer data should be treated as continuous
 function classify_data{T <: Integer}(data:: DataArray{T})
-    length(Set{T}(data...)) <= 20 ? :discrete : :continuous
+    length(Set(data...)) <= 20 ? :discrete : :continuous
 end
 
 function classify_data{N, T <: Integer}(data::AbstractArray{T, N})
-    length(Set{T}(data...)) <= 20 ? :discrete : :continuous
+    length(Set(data...)) <= 20 ? :discrete : :continuous
 end
 
 classify_data(data::DataArray) = :discrete

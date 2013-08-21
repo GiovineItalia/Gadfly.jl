@@ -1,7 +1,7 @@
 ---
 title: Geom.subplot_grid
 author: Daniel Jones
-order: 8
+order: 9
 ...
 
 TODO
