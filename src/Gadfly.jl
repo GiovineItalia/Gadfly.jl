@@ -42,7 +42,7 @@ abstract StatisticElement   <: Element
 
 # The layer and plot functions can also take functions that are evaluated with
 # no arguments and are expected to produce an element.
-typealias ElementOrFunction{T <: Element} Union(Element, Type{T})
+typealias ElementOrFunction{T <: Element} Union(Element, Type{T}, Function)
 
 
 include("misc.jl")
@@ -147,6 +147,11 @@ type Plot
         new(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
             Coord.cartesian(), GuideElement[], default_theme)
     end
+end
+
+
+function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Function)
+    add_plot_element(p, data, arg())
 end
 
 

@@ -8,14 +8,20 @@ immutable BarGeometry <: Gadfly.GeometryElement
     #   :dodge -> place bar next to each other
     position::Symbol
 
-    function BarGeometry(position=:stack)
-        new(position)
+    default_statistic::Gadfly.StatisticElement
+
+    function BarGeometry(position=:stack,
+                         default_statistic=Gadfly.Stat.identity())
+        new(position, default_statistic)
     end
 end
 
 
 const bar = BarGeometry
-const histogram = BarGeometry
+
+function histogram(position=:stack)
+    BarGeometry(position, Gadfly.Stat.histogram())
+end
 
 
 function element_aesthetics(::BarGeometry)
@@ -23,8 +29,8 @@ function element_aesthetics(::BarGeometry)
 end
 
 
-function default_statistic(::BarGeometry)
-    Gadfly.Stat.histogram()
+function default_statistic(geom::BarGeometry)
+    geom.default_statistic
 end
 
 

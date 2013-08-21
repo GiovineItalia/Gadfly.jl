@@ -17,6 +17,12 @@ end
 
 
 # Adding elements to subplots in a generic way.
+
+function add_subplot_element(subplot::SubplotGeometry, arg::Function)
+    add_subplot_element(subplot, arg())
+end
+
+
 function add_subplot_element(subplot::SubplotGeometry, arg::SubplotLayer)
     push!(subplot.layers, arg)
 end

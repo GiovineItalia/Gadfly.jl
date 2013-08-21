@@ -170,11 +170,35 @@ function apply_statistic(stat::DensityStatistic,
                          aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("DensityStatistic", aes, :x)
 
-    window = length(stat.n) > 1 ? bandwidth(aes.x) : 0.1
-    f = kde(aes.x, window, stat.n)
+    if aes.color === nothing
+        window = length(stat.n) > 1 ? bandwidth(aes.x) : 0.1
+        f = kde(aes.x, window, stat.n)
+        aes.x = f.x
+        aes.y = f.density
+    else
+        groups = Dict()
+        for (x, c) in zip(aes.x, cycle(aes.color))
+            if !haskey(groups, c)
+                groups[c] = Float64[x]
+            else
+                push!(groups[c], x)
+            end
+        end
 
-    aes.x = f.x
-    aes.y = f.density
+        colors = Array(ColorValue, 0)
+        aes.x = Array(Float64, 0)
+        aes.y = Array(Float64, 0)
+        for (c, xs) in groups
+            window = length(stat.n) > 1 ? bandwidth(aes.x) : 0.1
+            f = kde(xs, window, stat.n)
+            append!(aes.x, f.x)
+            append!(aes.y, f.density)
+            for _ in length(f.x)
+                push!(colors, c)
+            end
+        end
+        aes.color = PooledDataArray(colors)
+    end
 end
 
 

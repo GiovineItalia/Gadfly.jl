@@ -1,10 +1,25 @@
 
 # Line geometry connects (x, y) coordinates with lines.
 immutable LineGeometry <: Gadfly.GeometryElement
+    default_statistic::Gadfly.StatisticElement
+
+    function LineGeometry(default_statistic=Gadfly.Stat.identity())
+        new(default_statistic)
+    end
 end
 
 
 const line = LineGeometry
+
+
+function density()
+    LineGeometry(Gadfly.Stat.density())
+end
+
+
+function default_statistic(geom::LineGeometry)
+    geom.default_statistic
+end
 
 
 function element_aesthetics(::LineGeometry)
