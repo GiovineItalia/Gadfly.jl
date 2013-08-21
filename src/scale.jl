@@ -375,24 +375,5 @@ const x_group = DiscreteScale([:x_group])
 const y_group = DiscreteScale([:y_group])
 
 
-#const x_group = GroupingScale(:x_group)
-#const y_group = GroupingScale(:y_group)
-
-
-#function element_aesthetics(scale::GroupingScale)
-    #[scale.var]
-#end
-
-
-#function apply_scale(scale::GroupingScale,
-                     #aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-    #for (aes, data) in zip(aess, datas)
-        #if !is(getfield(data, scale.var), nothing)
-            #setfield(aes, scale.var, discretize(getfield(data, scale.var)))
-        #end
-    #end
-#end
-
-
 end # module Scale
 
