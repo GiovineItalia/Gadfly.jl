@@ -48,6 +48,9 @@ type Theme
     # Spacing between boxplots in Geom.boxplot.
     boxplot_spacing::Maybe(Measure)
 
+    # Length of caps on error bars
+    errorbar_cap_length::Maybe(Measure)
+
     # Points, etc, are highlighted by stroking in slightly different color. This
     # is the stroke width.
     highlight_width::Maybe(Measure)
@@ -113,6 +116,7 @@ const default_theme =
           color("#4c404b"),         # point_label_color
           0.0mm,                    # bar_spacing
           1mm,                      # boxplot_spacing
+          3mm,                      # errorbar_cap_length
           0.3mm,                    # highlight_width
           default_highlight_color,  # highlight_color
           default_middle_color,     # middle_color

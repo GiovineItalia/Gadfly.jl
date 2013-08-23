@@ -144,6 +144,7 @@ end
 
 discretize(values::Vector) = PooledDataArray(values)
 discretize(values::DataArray) = PooledDataArray(values)
+discretize(values::Range1) = PooledDataArray(collect(values))
 discretize(values::PooledDataArray) = values
 
 
