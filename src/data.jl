@@ -4,20 +4,20 @@
 type Data
     x
     y
-    x_min
-    x_max
-    y_min
-    y_max
-    x_group
-    y_group
+    xmin
+    xmax
+    ymin
+    ymax
+    xgroup
+    ygroup
     xtick
     ytick
     xtick_labels
     ytick_labels
-    x_viewmin
-    x_viewmax
-    y_viewmin
-    y_viewmax
+    xviewmin
+    xviewmax
+    yviewmin
+    yviewmax
     size
     color
     label

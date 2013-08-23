@@ -68,8 +68,8 @@ function apply_statistic(stat::HistogramStatistic,
     Gadfly.assert_aesthetics_defined("HistogramStatistic", aes, :x)
 
     if isempty(aes.x)
-        aes.x_min = Float64[1.0]
-        aes.x_max = Float64[1.0]
+        aes.xmin = Float64[1.0]
+        aes.xmax = Float64[1.0]
         aes.y = Float64[0.0]
         return
     end
@@ -94,13 +94,13 @@ function apply_statistic(stat::HistogramStatistic,
     binwidth = (x_max - x_min) / d
 
     if aes.color === nothing
-        aes.x_min = Array(Float64, d)
-        aes.x_max = Array(Float64, d)
+        aes.xmin = Array(Float64, d)
+        aes.xmax = Array(Float64, d)
         aes.y = Array(Float64, d)
 
         for j in 1:d
-            aes.x_min[j] = x_min + (j - 1) * binwidth
-            aes.x_max[j] = x_min + j * binwidth
+            aes.xmin[j] = x_min + (j - 1) * binwidth
+            aes.xmax[j] = x_min + j * binwidth
             aes.y[j] = bincounts[j]
         end
     else
@@ -113,8 +113,8 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
 
-        aes.x_min = Array(Float64, d * length(groups))
-        aes.x_max = Array(Float64, d * length(groups))
+        aes.xmin = Array(Float64, d * length(groups))
+        aes.xmax = Array(Float64, d * length(groups))
         aes.y = Array(Float64, d * length(groups))
         colors = Array(ColorValue, d * length(groups))
 
@@ -131,16 +131,16 @@ function apply_statistic(stat::HistogramStatistic,
 
             for j in 1:d
                 idx = (i-1)*d + j
-                aes.x_min[idx] = x_min + (j - 1) * binwidth
-                aes.x_max[idx] = x_min + j * binwidth
+                aes.xmin[idx] = x_min + (j - 1) * binwidth
+                aes.xmax[idx] = x_min + j * binwidth
                 aes.y[idx] = bincounts[j]
                 colors[idx] = c
             end
         end
 
         y_drawmax = float64(max(stack_height))
-        if aes.y_drawmax === nothing || aes.y_drawmax < y_drawmax
-            aes.y_drawmax = y_drawmax
+        if aes.ydrawmax === nothing || aes.ydrawmax < y_drawmax
+            aes.ydrawmax = y_drawmax
         end
 
         aes.color = PooledDataArray(colors)
@@ -256,16 +256,16 @@ function apply_statistic(stat::Histogram2DStatistic,
         aes.x = Array(Int64, n)
         aes.x = Array(Int64, n)
     else
-        aes.x_min = Array(Float64, n)
-        aes.x_max = Array(Float64, n)
+        aes.xmin = Array(Float64, n)
+        aes.xmax = Array(Float64, n)
     end
 
     if y_categorial
         aes.y = Array(Int64, n)
         aes.y = Array(Int64, n)
     else
-        aes.y_min = Array(Float64, n)
-        aes.y_max = Array(Float64, n)
+        aes.ymin = Array(Float64, n)
+        aes.ymax = Array(Float64, n)
     end
 
     k = 1
@@ -274,15 +274,15 @@ function apply_statistic(stat::Histogram2DStatistic,
             if x_categorial
                 aes.x[k] = x_min + (i - 1)
             else
-                aes.x_min[k] = x_min + (i - 1) * wx
-                aes.x_max[k] = x_min + i * wx
+                aes.xmin[k] = x_min + (i - 1) * wx
+                aes.xmax[k] = x_min + i * wx
             end
 
             if y_categorial
                 aes.y[k] = y_min + (j - 1)
             else
-                aes.y_min[k] = y_min + (j - 1) * wy
-                aes.y_max[k] = y_min + j * wy
+                aes.ymin[k] = y_min + (j - 1) * wy
+                aes.ymax[k] = y_min + j * wy
             end
             k += 1
         end
@@ -322,10 +322,10 @@ immutable TickStatistic <: Gadfly.StatisticElement
 end
 
 
-const x_ticks = TickStatistic([:x, :x_min, :x_max, :x_drawmin, :x_drawmax], "x")
-const y_ticks = TickStatistic(
-    [:y, :y_min, :y_max, :middle, :lower_hinge, :upper_hinge,
-     :lower_fence, :upper_fence, :y_drawmin, :y_drawmax], "y")
+const xticks = TickStatistic([:x, :xmin, :xmax, :xdrawmin, :xdrawmax], "x")
+const yticks = TickStatistic(
+    [:y, :ymin, :ymax, :middle, :lower_hinge, :upper_hinge,
+     :lower_fence, :upper_fence, :ydrawmin, :ydrawmax], "y")
 
 
 # Can a numerical value be treated as an integer
@@ -349,7 +349,7 @@ function apply_statistic(stat::TickStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    in_group_var = symbol(string(stat.out_var, "_group"))
+    in_group_var = symbol(string(stat.out_var, "group"))
     if getfield(aes, in_group_var) === nothing
         in_values = [getfield(aes, var) for var in stat.in_vars]
         in_values = filter(val -> !(val === nothing), in_values)
@@ -445,13 +445,13 @@ function apply_statistic(stat::TickStatistic,
     setfield(aes, symbol(string(stat.out_var, "grid")), grids)
     setfield(aes, symbol(string(stat.out_var, "tick_label")), labeler)
 
-    viewmin_var = symbol(string(stat.out_var, "_viewmin"))
+    viewmin_var = symbol(string(stat.out_var, "viewmin"))
     if getfield(aes, viewmin_var) === nothing ||
        getfield(aes, viewmin_var) > viewmin
         setfield(aes, viewmin_var, viewmin)
     end
 
-    viewmax_var = symbol(string(stat.out_var, "_viewmax"))
+    viewmax_var = symbol(string(stat.out_var, "viewmax"))
     if getfield(aes, viewmax_var) === nothing ||
        getfield(aes, viewmax_var) < viewmax
         setfield(aes, viewmax_var, viewmax)

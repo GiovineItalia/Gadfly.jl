@@ -249,7 +249,7 @@ immutable XTicks <: Gadfly.GuideElement
     end
 end
 
-const x_ticks = XTicks
+const xticks = XTicks
 
 
 function render(guide::XTicks, theme::Gadfly.Theme,
@@ -312,7 +312,7 @@ immutable YTicks <: Gadfly.GuideElement
     end
 end
 
-const y_ticks = YTicks
+const yticks = YTicks
 
 function render(guide::YTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
@@ -369,7 +369,7 @@ immutable XLabel <: Gadfly.GuideElement
     label::String
 end
 
-const x_label = XLabel
+const xlabel = XLabel
 
 
 function render(guide::XLabel, theme::Gadfly.Theme,
@@ -395,7 +395,7 @@ immutable YLabel <: Gadfly.GuideElement
     label::String
 end
 
-const y_label = YLabel
+const ylabel = YLabel
 
 function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aesthetics})
     (text_width, text_height) = text_extents(theme.major_label_font,

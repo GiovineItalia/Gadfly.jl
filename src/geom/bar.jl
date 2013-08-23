@@ -39,7 +39,7 @@ function render_colorless_bar(geom::BarGeometry,
                               theme::Gadfly.Theme,
                               aes::Gadfly.Aesthetics)
     bar_form = empty_form
-    for (x_min, x_max, y) in zip(aes.x_min, aes.x_max, aes.y)
+    for (x_min, x_max, y) in zip(aes.xmin, aes.xmax, aes.y)
         geometry_id = Gadfly.unique_svg_id()
         bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
                                       (x_max - x_min)*cx - theme.bar_spacing, y),
@@ -56,12 +56,12 @@ function render_colorful_stacked_bar(geom::BarGeometry,
     bar_form = empty_form
 
     stack_height = Dict()
-    for x_min in aes.x_min
+    for x_min in aes.xmin
         stack_height[x_min] = 0.0
     end
 
     for i in sortperm(aes.color.refs, rev=true)
-        x_min, x_max, y, c = aes.x_min[i], aes.x_max[i], aes.y[i], aes.color[i]
+        x_min, x_max, y, c = aes.xmin[i], aes.xmax[i], aes.y[i], aes.color[i]
         geometry_id = Gadfly.unique_svg_id()
         bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2,
                                       stack_height[x_min],
@@ -83,13 +83,13 @@ function render_colorful_dodged_bar(geom::BarGeometry,
     bar_form = empty_form
     dodge_width = Dict()
     dodge_count = Dict()
-    for x_min in aes.x_min
+    for x_min in aes.xmin
         dodge_width[x_min] = 0.0cx
         dodge_count[x_min] = get(dodge_count, x_min, 0) + 1
     end
 
     for i in sortperm(aes.color.refs, rev=true)
-        x_min, x_max, y, c = aes.x_min[i], aes.x_max[i], aes.y[i], aes.color[i]
+        x_min, x_max, y, c = aes.xmin[i], aes.xmax[i], aes.y[i], aes.color[i]
         geometry_id = Gadfly.unique_svg_id()
         barwidth = ((x_max - x_min)*cx - theme.bar_spacing) / dodge_count[x_min]
         bar_form |= compose(rectangle(x_min*cx + dodge_width[x_min] + theme.bar_spacing/2,
@@ -117,11 +117,11 @@ end
 #
 function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.bar", aes, :y)
-    if (is(aes.x_min, nothing) || is(aes.x_max, nothing)) && is(aes.x, nothing)
+    if (is(aes.xmin, nothing) || is(aes.xmax, nothing)) && is(aes.x, nothing)
         error("Geom.bar required \"x\" to be bound or both \"x_min\" and \"x_max\".")
     end
 
-    if aes.x_min === nothing
+    if aes.xmin === nothing
         aes2 = Gadfly.Aesthetics()
         aes2.x_min = Array(Float64, length(aes.x))
         aes2.x_max = Array(Float64, length(aes.x))

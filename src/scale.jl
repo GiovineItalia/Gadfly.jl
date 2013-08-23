@@ -82,8 +82,8 @@ immutable ContinuousScale <: Gadfly.ScaleElement
     trans::ContinuousScaleTransform
 end
 
-const x_vars = [:x, :x_min, :x_max]
-const y_vars = [:y, :y_min, :y_max]
+const x_vars = [:x, :xmin, :xmax]
+const y_vars = [:y, :ymin, :ymax]
 
 # Commonly used scales.
 const x_continuous = ContinuousScale(x_vars, identity_transform)
@@ -371,8 +371,8 @@ immutable GroupingScale <: Gadfly.ScaleElement
 end
 
 
-const x_group = DiscreteScale([:x_group])
-const y_group = DiscreteScale([:y_group])
+const xgroup = DiscreteScale([:xgroup])
+const ygroup = DiscreteScale([:ygroup])
 
 
 end # module Scale

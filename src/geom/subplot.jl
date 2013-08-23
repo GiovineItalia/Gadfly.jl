@@ -81,7 +81,7 @@ const subplot_grid = SubplotGrid
 
 
 function element_aesthetics(geom::SubplotGrid)
-    vars = [:x_group, :y_group]
+    vars = [:xgroup, :ygroup]
     for layer in geom.layers
         append!(vars, element_aesthetics(layer.geom))
     end
@@ -93,8 +93,8 @@ end
 # many smaller plots.
 function render(geom::SubplotGrid, theme::Gadfly.Theme,
                 superplot_aes::Gadfly.Aesthetics)
-    if superplot_aes.x_group === nothing && superplot_aes.y_group === nothing
-        error("Geom.subplot_grid requires \"x_group\" and/or \"y_group\" to be bound.")
+    if superplot_aes.xgroup === nothing && superplot_aes.ygroup === nothing
+        error("Geom.subplot_grid requires \"xgroup\" and/or \"ygroup\" to be bound.")
     end
 
     # partition the each aesthetic into a matrix of aesthetics
@@ -105,11 +105,11 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     # marks), we need to apply statistics on the joint aesthetics.
     geom_stats = Gadfly.StatisticElement[]
     if !geom.free_x_axis
-        push!(geom_stats, Stat.x_ticks)
+        push!(geom_stats, Stat.xticks)
     end
 
     if !geom.free_y_axis
-        push!(geom_stats, Stat.y_ticks)
+        push!(geom_stats, Stat.yticks)
     end
 
     coord = Coord.cartesian()
@@ -145,7 +145,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     canvas_grid = Array(Canvas, n, m)
 
     xtitle = "x"
-    for v in [:x, :x_min, :x_max]
+    for v in [:x, :xmin, :xmax]
         if haskey(superplot_aes.titles, v)
             xtitle = superplot_aes.titles[v]
             break
@@ -153,7 +153,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     end
 
     ytitle = "y"
-    for v in [:y, :y_min, :y_max]
+    for v in [:y, :ymin, :ymax]
         if haskey(superplot_aes.titles, v)
             ytitle = superplot_aes.titles[v]
             break
@@ -174,22 +174,22 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         # default guides
         push!(guides, Guide.background())
 
-        if i == n && !is(superplot_aes.x_group, nothing)
-            push!(guides, Guide.x_ticks())
-            if !is(superplot_aes.x_group, nothing)
-                push!(guides, Guide.x_label(superplot_aes.x_group_label(j)))
+        if i == n && !is(superplot_aes.xgroup, nothing)
+            push!(guides, Guide.xticks())
+            if !is(superplot_aes.xgroup, nothing)
+                push!(guides, Guide.xlabel(superplot_aes.xgroup_label(j)))
             end
         else
-            push!(guides, Guide.x_ticks(false))
+            push!(guides, Guide.xticks(false))
         end
 
-        if j == 1 && !is(superplot_aes.y_group, nothing)
-            push!(guides, Guide.y_ticks())
-            if !is(superplot_aes.y_group, nothing)
-                push!(guides, Guide.y_label(superplot_aes.y_group_label(i)))
+        if j == 1 && !is(superplot_aes.ygroup, nothing)
+            push!(guides, Guide.yticks())
+            if !is(superplot_aes.ygroup, nothing)
+                push!(guides, Guide.ylabel(superplot_aes.ygroup_label(i)))
             end
         else
-            push!(guides, Guide.y_ticks(false))
+            push!(guides, Guide.yticks(false))
         end
 
         canvas_grid[i, j] =

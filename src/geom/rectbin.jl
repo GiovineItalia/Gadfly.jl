@@ -23,7 +23,7 @@ end
 
 
 function element_aesthetics(::RectangularBinGeometry)
-    [:x, :y, :x_min, :x_max, :y_min, :y_max, :color]
+    [:x, :y, :xmin, :xmax, :ymin, :ymax, :color]
 end
 
 
@@ -45,53 +45,53 @@ function render(geom::RectangularBinGeometry,
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
 
-    if aes.x === nothing && (aes.x_min === nothing || aes.x_max === nothing)
-        error("Geom.rectbin requires either x or both x_min and x_max be defined.")
+    if aes.x === nothing && (aes.xmin === nothing || aes.xmax === nothing)
+        error("Geom.rectbin requires either x or both xmin and xmax be defined.")
     end
 
-    if aes.y === nothing && (aes.y_min === nothing || aes.y_max === nothing)
-        error("Geom.rectbin requires either y or both y_min and y_max be defined.")
+    if aes.y === nothing && (aes.ymin === nothing || aes.ymax === nothing)
+        error("Geom.rectbin requires either y or both ymin and ymax be defined.")
     end
 
-    if aes.x_min != nothing && length(aes.x_min) != length(aes.x_max)
-        error("Geom.rectbin requires that x_min and x_max be of equal length.")
+    if aes.xmin != nothing && length(aes.xmin) != length(aes.xmax)
+        error("Geom.rectbin requires that xmin and xmax be of equal length.")
     end
 
-    if aes.y_min != nothing && length(aes.y_min) != length(aes.y_max)
-        error("Geom.rectbin requires that y_min and y_max be of equal length.")
+    if aes.ymin != nothing && length(aes.ymin) != length(aes.ymax)
+        error("Geom.rectbin requires that ymin and ymax be of equal length.")
     end
 
-    nx = aes.x_min === nothing ? length(aes.x) : length(aes.x_min)
-    ny = aes.y_min === nothing ? length(aes.y) : length(aes.y_min)
+    nx = aes.xmin === nothing ? length(aes.x) : length(aes.xmin)
+    ny = aes.ymin === nothing ? length(aes.y) : length(aes.ymin)
 
     if nx != ny
-        error("""Geom.rectbin requires an equal number of x (or x_min/x_max) and
-                 y (or y_min/y_max) values.""")
+        error("""Geom.rectbin requires an equal number of x (or xmin/xmax) and
+                 y (or ymin/ymax) values.""")
     end
 
-    if aes.x_min === nothing
-        x_min = aes.x - 0.5
-        x_max = aes.x + 0.5
+    if aes.xmin === nothing
+        xmin = aes.x - 0.5
+        xmax = aes.x + 0.5
     else
-        x_min = aes.x_min
-        x_max = aes.x_max
+        xmin = aes.xmin
+        xmax = aes.xmax
     end
 
-    if aes.y_min === nothing
-        y_min = aes.y - 0.5
-        y_max = aes.y + 0.5
+    if aes.ymin === nothing
+        ymin = aes.y - 0.5
+        ymax = aes.y + 0.5
     else
-        y_min = aes.y_min
-        y_max = aes.y_max
+        ymin = aes.ymin
+        ymax = aes.ymax
     end
 
     n = nx
     forms = Array(Compose.Form, 0)
     for (i, c) in zip(1:n, cycle(aes.color))
         if !isna(c)
-            form = compose(rectangle(x_min[i], y_min[i],
-                                    (x_max[i] - x_min[i])*cx - theme.bar_spacing,
-                                    (y_max[i] - y_min[i])*cy - theme.bar_spacing),
+            form = compose(rectangle(xmin[i], ymin[i],
+                                    (xmax[i] - xmin[i])*cx - theme.bar_spacing,
+                                    (ymax[i] - ymin[i])*cy - theme.bar_spacing),
                            fill(c), svgclass("geometry"))
 
             push!(forms, form)

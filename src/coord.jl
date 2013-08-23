@@ -27,8 +27,8 @@ immutable Cartesian <: Gadfly.CoordinateElement
     ymax
 
     function Cartesian(
-            xvars=[:x, :x_viewmin, :x_viewmax, :x_min, :x_max],
-            yvars=[:y, :y_viewmin, :y_viewmax, :y_min, :y_max, :middle,
+            xvars=[:x, :xviewmin, :xviewmax, :xmin, :xmax],
+            yvars=[:y, :yviewmin, :yviewmax, :ymin, :ymax, :middle,
                    :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers];
             xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing)
         new(xvars, yvars, xmin, xmax, ymin, ymax)
@@ -127,18 +127,14 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     if all([aes.x === nothing || typeof(aes.x) == Array{Int64, 1} for aes in aess])
         xmin -= 0.5
         xmax += 0.5
-        xpadding = 0
-    else
-        xpadding = 0.03 * (xmax - xmin)
     end
+    xpadding = 0.03 * (xmax - xmin)
 
     if all([aes.y === nothing || typeof(aes.y) == Array{Int64, 1} for aes in aess])
         ymin -= 0.5
         ymax += 0.5
-        ypadding = 0
-    else
-        ypadding = 0.03 * (ymax - ymin)
     end
+    ypadding = 0.03 * (ymax - ymin)
 
     width  = xmax - xmin + 2xpadding
     height = ymax - ymin + 2ypadding

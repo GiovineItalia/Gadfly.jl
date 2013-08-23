@@ -115,7 +115,7 @@ function layer(data::Union(AbstractDataFrame, Nothing),
                statistic::StatisticElement=Stat.nil(),
                geom::GeometryElement=Geom.nil;
                mapping...)
-    Layer(data, {k => v for (k, v) in mapping}, statistic, geom)
+    Layer(data, clean_mapping(mapping), statistic, geom)
 end
 
 
@@ -220,6 +220,33 @@ function set_mapped_data!(data::Data, data_source::AbstractDataFrame, k::Symbol,
 end
 
 
+# Handle aesthetics aliases and warn about unrecognized aesthetics.
+#
+# Returns:
+#   A new mapping with aliases evaluated and unrecognized aesthetics removed.
+#
+function clean_mapping(mapping)
+    cleaned = Dict{Symbol, AestheticValue}()
+    for (key, val) in mapping
+        if haskey(aesthetic_aliases, key)
+            key = aesthetic_aliases[key]
+        elseif !contains(Aesthetics.names, key)
+            warn("$(string(key)) is not a recognized aesthetic. Ignoring.")
+            continue
+        end
+
+        if !(typeof(val) <: AestheticValue)
+            error(
+            """Aesthetic $(k) is mapped to a value of type $(typeof(v)).
+               It must be mapped to a string, symbol, array, or expression.""")
+        end
+
+        cleaned[key] = val
+    end
+    cleaned
+end
+
+
 # Evaluate a mapping.
 eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[string(arg)]
 eval_plot_mapping(data::AbstractDataFrame, arg::String) = data[arg]
@@ -252,22 +279,11 @@ typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
 
 function plot(data_source::AbstractDataFrame, elements::ElementOrFunction...; mapping...)
     p = Plot()
-    p.mapping = Dict()
+    p.mapping = clean_mapping(mapping)
     p.data_source = data_source
     valid_aesthetics = Set(names(Aesthetics)...)
-    for (k, v) in mapping
-        if !contains(valid_aesthetics, k)
-            error("$(k) is not a recognized aesthetic")
-        end
-
-        if !(typeof(v) <: AestheticValue)
-            error(
-            """Aesthetic $(k) is mapped to a value of type $(typeof(v)).
-               It must be mapped to a string, symbol, or expression.""")
-        end
-
+    for (k, v) in p.mapping
         set_mapped_data!(p.data, data_source, k, v)
-        p.mapping[k] = v
     end
 
     for element in elements
@@ -477,11 +493,11 @@ function render(plot::Plot)
 
     if !facet_plot
         guides[Guide.PanelBackground] = Guide.background()
-        guides[Guide.XTicks] = Guide.x_ticks()
-        guides[Guide.YTicks] = Guide.y_ticks()
+        guides[Guide.XTicks] = Guide.xticks()
+        guides[Guide.YTicks] = Guide.yticks()
 
-        push!(statistics, Stat.x_ticks)
-        push!(statistics, Stat.y_ticks)
+        push!(statistics, Stat.xticks)
+        push!(statistics, Stat.yticks)
     end
 
     function mapped_and_used(vs)
@@ -499,18 +515,18 @@ function render(plot::Plot)
 
     if mapped_and_used(x_axis_label_aesthetics) && !haskey(guides, Guide.XLabel)
         label = choose_name(x_axis_label_aesthetics)
-        if facet_plot && haskey(plot.data.titles, :x_group)
-            label = string(label, " <i><b>by</b></i> ", plot.data.titles[:x_group])
+        if facet_plot && haskey(plot.data.titles, :xgroup)
+            label = string(label, " <i><b>by</b></i> ", plot.data.titles[:xgroup])
         end
-        guides[Guide.XLabel] = Guide.x_label(label)
+        guides[Guide.XLabel] = Guide.xlabel(label)
     end
 
     if mapped_and_used(y_axis_label_aesthetics) && !haskey(guides, Guide.YLabel)
         label = choose_name(y_axis_label_aesthetics)
-        if facet_plot && haskey(plot.data.titles, :y_group)
-            label = string(label, " <i><b>by</b></i> ", plot.data.titles[:y_group])
+        if facet_plot && haskey(plot.data.titles, :ygroup)
+            label = string(label, " <i><b>by</b></i> ", plot.data.titles[:ygroup])
         end
-        guides[Guide.YLabel] = Guide.y_label(label)
+        guides[Guide.YLabel] = Guide.ylabel(label)
     end
 
     # I. Scales
@@ -642,23 +658,23 @@ include("statistics.jl")
 # PooledDataVector or DataVector, respectively).
 const default_aes_scales = {
         :continuous => {:x       => Scale.x_continuous,
-                        :x_min   => Scale.x_continuous,
-                        :x_max   => Scale.x_continuous,
+                        :xmin    => Scale.x_continuous,
+                        :xmax    => Scale.x_continuous,
                         :y       => Scale.y_continuous,
-                        :y_min   => Scale.y_continuous,
-                        :y_max   => Scale.y_continuous,
-                        :x_group => Scale.x_group,
-                        :y_group => Scale.y_group,
+                        :ymin    => Scale.y_continuous,
+                        :ymax    => Scale.y_continuous,
+                        :xgroup  => Scale.xgroup,
+                        :ygroup  => Scale.ygroup,
                         :color   => Scale.color_gradient,
                         :label   => Scale.label()},
         :discrete   => {:x       => Scale.x_discrete,
-                        :x_min   => Scale.x_discrete,
-                        :x_max   => Scale.x_discrete,
+                        :xmin    => Scale.x_discrete,
+                        :xmax    => Scale.x_discrete,
                         :y       => Scale.y_discrete,
-                        :y_min   => Scale.y_discrete,
-                        :y_max   => Scale.y_discrete,
-                        :x_group => Scale.x_group,
-                        :y_group => Scale.y_group,
+                        :ymin    => Scale.y_discrete,
+                        :ymax    => Scale.y_discrete,
+                        :xgroup  => Scale.xgroup,
+                        :ygroup  => Scale.ygroup,
                         :color   => Scale.color_hue,
                         :label   => Scale.label()}}
 
@@ -683,8 +699,8 @@ classify_data(data::PooledDataArray) = :discrete
 
 # Axis labels are taken whatever is mapped to these aesthetics, in order of
 # preference.
-const x_axis_label_aesthetics = [:x, :x_min, :x_max]
-const y_axis_label_aesthetics = [:y, :y_min, :y_max]
+const x_axis_label_aesthetics = [:x, :xmin, :xmax]
+const y_axis_label_aesthetics = [:y, :ymin, :ymax]
 
 end # module Gadfly
 

@@ -8,10 +8,10 @@ type Aesthetics
     color::Maybe(AbstractDataVector{ColorValue})
     label::Maybe(PooledDataVector)
 
-    x_min::Union(Nothing, Vector{Float64}, Vector{Int64})
-    x_max::Union(Nothing, Vector{Float64}, Vector{Int64})
-    y_min::Union(Nothing, Vector{Float64}, Vector{Int64})
-    y_max::Union(Nothing, Vector{Float64}, Vector{Int64})
+    xmin::Union(Nothing, Vector{Float64}, Vector{Int64})
+    xmax::Union(Nothing, Vector{Float64}, Vector{Int64})
+    ymin::Union(Nothing, Vector{Float64}, Vector{Int64})
+    ymax::Union(Nothing, Vector{Float64}, Vector{Int64})
 
     # Boxplot aesthetics
     middle::Maybe(Vector{Float64})
@@ -22,8 +22,8 @@ type Aesthetics
     outliers::Maybe(Vector{Vector{Float64}})
 
     # Subplot aesthetics
-    x_group::Maybe(Vector{Int64})
-    y_group::Maybe(Vector{Int64})
+    xgroup::Maybe(Vector{Int64})
+    ygroup::Maybe(Vector{Int64})
 
     # Aesthetics pertaining to guides
     xtick::Maybe(Vector{Float64})
@@ -34,16 +34,16 @@ type Aesthetics
 
     # Pesudo-aesthetics used to indicate that drawing might
     # occur beyond any x/y value.
-    x_drawmin::Maybe(Float64)
-    x_drawmax::Maybe(Float64)
-    y_drawmin::Maybe(Float64)
-    y_drawmax::Maybe(Float64)
+    xdrawmin::Maybe(Float64)
+    xdrawmax::Maybe(Float64)
+    ydrawmin::Maybe(Float64)
+    ydrawmax::Maybe(Float64)
 
     # Plot viewport extents
-    x_viewmin::Maybe(Float64)
-    x_viewmax::Maybe(Float64)
-    y_viewmin::Maybe(Float64)
-    y_viewmax::Maybe(Float64)
+    xviewmin::Maybe(Float64)
+    xviewmax::Maybe(Float64)
+    yviewmin::Maybe(Float64)
+    yviewmax::Maybe(Float64)
 
     color_key_colors::Maybe(Vector{ColorValue})
     color_key_title::Maybe(String)
@@ -61,8 +61,8 @@ type Aesthetics
     xtick_label::Function
     ytick_label::Function
     color_label::Function
-    x_group_label::Function
-    y_group_label::Function
+    xgroup_label::Function
+    ygroup_label::Function
 
     function Aesthetics()
         aes = new()
@@ -74,8 +74,8 @@ type Aesthetics
         aes.xtick_label = string
         aes.ytick_label = string
         aes.color_label = string
-        aes.x_group_label = fmt_float
-        aes.y_group_label = fmt_float
+        aes.xgroup_label = fmt_float
+        aes.ygroup_label = fmt_float
 
         aes
     end
@@ -89,6 +89,26 @@ type Aesthetics
         b
     end
 end
+
+
+# Alternate aesthetic names
+const aesthetic_aliases =
+    [:x_min         => :xmin,
+     :x_max         => :xmax,
+     :y_min         => :ymin,
+     :y_max         => :ymax,
+     :x_group       => :xgroup,
+     :y_group       => :ygroup,
+     :x_viewmin     => :xviewmin,
+     :x_viewmax     => :xviewmax,
+     :y_viewmin     => :yviewmin,
+     :y_viewmax     => :yviewmax,
+     :x_group_label => :xgroup_label,
+     :y_group_label => :ygroup_label,
+     :x_tick        => :xtick,
+     :y_tick        => :ytick,
+     :x_grid        => :xgrid,
+     :y_grid        => :ygrid]
 
 
 # Index as if this were a data frame
@@ -240,7 +260,7 @@ end
 # Summarizing aesthetics
 
 # Produce a matrix of Aesthetic objects partitioning the ariginal
-# Aesthetics object by the cartesian product of x_group and y_group.
+# Aesthetics object by the cartesian product of xgroup and ygroup.
 #
 # This is useful primarily for drawing facets and subplots.
 #
@@ -248,19 +268,19 @@ end
 #   aes: Aesthetics objects to partition.
 #
 # Returns:
-#   A Array{Aesthetics} of size max(1, length(x_group)) by
-#   max(1, length(y_group))
+#   A Array{Aesthetics} of size max(1, length(xgroup)) by
+#   max(1, length(ygroup))
 #
 function aes_by_xy_group(aes::Aesthetics)
-    @assert !is(aes.x_group, nothing) || !is(aes.y_group, nothing)
-    @assert aes.x_group === nothing || aes.y_group === nothing ||
-            length(aes.x_group) == length(aes.y_group)
+    @assert !is(aes.xgroup, nothing) || !is(aes.ygroup, nothing)
+    @assert aes.xgroup === nothing || aes.ygroup === nothing ||
+            length(aes.xgroup) == length(aes.ygroup)
 
-    n = aes.y_group === nothing ? 1 : max(aes.y_group)
-    m = aes.x_group === nothing ? 1 : max(aes.x_group)
+    n = aes.ygroup === nothing ? 1 : max(aes.ygroup)
+    m = aes.xgroup === nothing ? 1 : max(aes.xgroup)
 
-    xrefs = aes.x_group === nothing ? [1] : aes.x_group
-    yrefs = aes.y_group === nothing ? [1] : aes.y_group
+    xrefs = aes.xgroup === nothing ? [1] : aes.xgroup
+    yrefs = aes.ygroup === nothing ? [1] : aes.ygroup
 
     aes_grid = Array(Aesthetics, n, m)
     staging = Array(Vector{Any}, n, m)
@@ -273,7 +293,7 @@ function aes_by_xy_group(aes::Aesthetics)
 
         # Skipped aesthetics. Don't try to partition aesthetics for which it
         # makes no sense to pass on to subplots.
-        if var == :x_group || var == :y_group||
+        if var == :xgroup || var == :ygroup||
            var == :xtick || var == :ytick ||
            var == :xgrid || var == :ygrid ||
            var == :x_drawmin || var == :y_drawmin ||
@@ -285,9 +305,9 @@ function aes_by_xy_group(aes::Aesthetics)
 
         vals = getfield(aes, var)
         if typeof(vals) <: AbstractArray
-            if !is(aes.x_group, nothing) && length(vals) != length(aes.x_group) ||
-               !is(aes.y_group, nothing) && length(vals) != length(aes.y_group)
-                error("Aesthetic $(var) must be the same length as x_group or y_group")
+            if !is(aes.xgroup, nothing) && length(vals) != length(aes.xgroup) ||
+               !is(aes.ygroup, nothing) && length(vals) != length(aes.ygroup)
+                error("Aesthetic $(var) must be the same length as xgroup or ygroup")
             end
 
             for i in 1:n, j in 1:m
