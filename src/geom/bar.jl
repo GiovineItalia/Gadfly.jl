@@ -123,11 +123,14 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     if aes.xmin === nothing
         aes2 = Gadfly.Aesthetics()
-        aes2.x_min = Array(Float64, length(aes.x))
-        aes2.x_max = Array(Float64, length(aes.x))
+        aes2.xmin = Array(Float64, length(aes.x))
+        aes2.xmax = Array(Float64, length(aes.x))
+
+        span = length(aes.x) > 1 ?
+            (max(aes.x) - min(aes.x)) / (length(Set(aes.x...)) - 1) : 1.0
         for (i, x) in enumerate(aes.x)
-            aes2.x_min[i] = x - 0.5
-            aes2.x_max[i] = x + 0.5
+            aes2.xmin[i] = x - span/2
+            aes2.xmax[i] = x + span/2
         end
         aes = inherit(aes, aes2)
     end

@@ -65,7 +65,8 @@ immutable SubplotGrid <: SubplotGeometry
     # these using scales.
     function SubplotGrid(elements::Gadfly.ElementOrFunction...;
                          free_x_axis=false, free_y_axis=false)
-        subplot = new(SubplotLayer[], Gadfly.StatisticElement[], Gadfly.GuideElement[])
+        subplot = new(SubplotLayer[], Gadfly.StatisticElement[],
+                      Gadfly.GuideElement[], free_x_axis, free_y_axis)
 
         for element in elements
             add_subplot_element(subplot, element)
@@ -174,7 +175,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         # default guides
         push!(guides, Guide.background())
 
-        if i == n && !is(superplot_aes.xgroup, nothing)
+        if i == n
             push!(guides, Guide.xticks())
             if !is(superplot_aes.xgroup, nothing)
                 push!(guides, Guide.xlabel(superplot_aes.xgroup_label(j)))
@@ -183,7 +184,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             push!(guides, Guide.xticks(false))
         end
 
-        if j == 1 && !is(superplot_aes.ygroup, nothing)
+        if j == 1
             push!(guides, Guide.yticks())
             if !is(superplot_aes.ygroup, nothing)
                 push!(guides, Guide.ylabel(superplot_aes.ygroup_label(i)))

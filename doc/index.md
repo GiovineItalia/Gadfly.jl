@@ -175,6 +175,22 @@ A `div` element must be placed, and the `draw` function defined in mammals.js
 must be passed the id of this element, so it knows where in the document to
 place the plot.
 
+# IJulia
+
+The [IJulia](https://github.com/JuliaLang/IJulia.jl) project adds Julia support
+to [IPython](http://ipython.org/). This includes a browser based notebook that
+can inline graphics and plots. Gadfly works out of the box with IJulia, with or
+without drawing explicity to a backend.
+
+Without a specific call to `draw` (i.e. just calling `plot`), the D3 backend is
+used with a default plot size. The default plot size can be changed with
+`set_default_plot_size`.
+
+```{.julia execute="false"}
+# E.g.
+set_default_plot_size(12cm, 8cm)
+```
+
 # Reporting Bugs
 
 This is a new and fairly complex piece of software. [Filing an

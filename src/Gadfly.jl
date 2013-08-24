@@ -20,7 +20,9 @@ import Compose.draw, Compose.hstack, Compose.vstack
 import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
        Base.show, Base.getindex, Base.cat, Base.writemime
 
-export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, layer, @plot, spy
+export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, layer, @plot,
+       spy, set_default_plot_size, prepare_display
+
 
 # Re-export some essentials from Compose
 export D3, SVG, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
@@ -686,11 +688,11 @@ classify_data{N}(data::DataArray{Float32, N}) = :continuous
 
 # Very long unfactorized integer data should be treated as continuous
 function classify_data{T <: Integer}(data:: DataArray{T})
-    length(Set(data...)) <= 20 ? :discrete : :continuous
+    length(Set(data...)) <= 10 ? :discrete : :continuous
 end
 
 function classify_data{N, T <: Integer}(data::AbstractArray{T, N})
-    length(Set(data...)) <= 20 ? :discrete : :continuous
+    length(Set(data...)) <= 10 ? :discrete : :continuous
 end
 
 classify_data(data::DataArray) = :discrete

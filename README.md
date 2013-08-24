@@ -14,7 +14,8 @@ It renders publication quality graphics to PNG, Postscript, PDF, SVG, and
 Javascript. The Javascript backend uses [d3](http://d3js.org/) to add
 interactivity like panning, zooming, and toggling.
 
-To see Gadfly in action, have gander at some [examples](http://dcjones.github.io/Gadfly.jl/doc/).
+Check out the [manual](http://dcjones.github.io/Gadfly.jl) for more details and
+examples.
 
 # Installation
 

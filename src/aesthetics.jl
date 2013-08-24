@@ -244,8 +244,13 @@ function cat_aes_var!(a::Dict, b::Dict)
 end
 
 
-function cat_aes_var!(a, b)
+function cat_aes_var!(a::AbstractArray, b::AbstractArray)
     append!(a, b)
+    a
+end
+
+
+function cat_aes_var!(a, b)
     a
 end
 
@@ -289,6 +294,11 @@ function aes_by_xy_group(aes::Aesthetics)
         staging[i, j] = Array(Any, 0)
     end
 
+    function make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},
+                                          arr::Array)
+        PooledDataArray(convert(Array{T}, arr))
+    end
+
     for var in Aesthetics.names
 
         # Skipped aesthetics. Don't try to partition aesthetics for which it
@@ -299,7 +309,8 @@ function aes_by_xy_group(aes::Aesthetics)
            var == :x_drawmin || var == :y_drawmin ||
            var == :x_drawmax || var == :y_drawmax ||
            var == :x_viewmin || var == :y_viewmin ||
-           var == :x_viewmax || var == :y_viewmax
+           var == :x_viewmax || var == :y_viewmax ||
+           var == :color_key_colors
             continue
         end
 
@@ -321,7 +332,7 @@ function aes_by_xy_group(aes::Aesthetics)
             for i in 1:n, j in 1:m
                 if typeof(vals) <: PooledDataArray
                     setfield(aes_grid[i, j], var,
-                             PooledDataArray(staging[i, j]))
+                             make_pooled_data_array(typeof(vals), staging[i, j]))
                 else
                     setfield(aes_grid[i, j], var,
                              convert(typeof(vals), staging[i, j]))
