@@ -466,8 +466,8 @@ function render(plot::Plot)
             continue
         end
 
-        if haskey(default_aes_scales[:discrete], var)
-            scale = default_aes_scales[:discrete][var]
+        if haskey(default_aes_scales[:categorical], var)
+            scale = default_aes_scales[:categorical][var]
             scale_aes = Set(element_aesthetics(scale)...)
             for var in scale_aes
                 scales[var] = scale
@@ -659,7 +659,7 @@ include("statistics.jl")
 # The default depends on whether the input is discrete or continuous (i.e.,
 # PooledDataVector or DataVector, respectively).
 const default_aes_scales = {
-        :continuous => {:x       => Scale.x_continuous,
+        :numerical => {:x       => Scale.x_continuous,
                         :xmin    => Scale.x_continuous,
                         :xmax    => Scale.x_continuous,
                         :y       => Scale.y_continuous,
@@ -669,7 +669,7 @@ const default_aes_scales = {
                         :ygroup  => Scale.ygroup,
                         :color   => Scale.color_gradient,
                         :label   => Scale.label()},
-        :discrete   => {:x       => Scale.x_discrete,
+        :categorical   => {:x       => Scale.x_discrete,
                         :xmin    => Scale.x_discrete,
                         :xmax    => Scale.x_discrete,
                         :y       => Scale.y_discrete,
@@ -680,24 +680,22 @@ const default_aes_scales = {
                         :color   => Scale.color_hue,
                         :label   => Scale.label()}}
 
-# Determine whether the input is discrete or continuous.
-classify_data{N}(data::AbstractArray{Float64, N}) = :continuous
-classify_data{N}(data::AbstractArray{Float32, N}) = :continuous
-classify_data{N}(data::DataArray{Float64, N}) = :continuous
-classify_data{N}(data::DataArray{Float32, N}) = :continuous
-
-# Very long unfactorized integer data should be treated as continuous
-function classify_data{T <: Integer}(data:: DataArray{T})
-    length(Set(data...)) <= 10 ? :discrete : :continuous
-end
+# Determine whether the input is categorical or numerical
 
 function classify_data{N, T <: Integer}(data::AbstractArray{T, N})
-    length(Set(data...)) <= 10 ? :discrete : :continuous
+    length(Set(data...)) <= 10 ? :categorical : :numerical
 end
 
-classify_data(data::DataArray) = :discrete
-classify_data(data::PooledDataArray) = :discrete
 
+function classify_data{N, T <: FloatingPoint}(data::AbstractArray{T, N})
+    if all(map(is_int_compatable, data)) && length(Set([int(x) for x in data]...)) <= 10
+        :categorical
+    else
+        :numerical
+    end
+end
+
+classify_data(data::AbstractArray)   = :categorical
 
 # Axis labels are taken whatever is mapped to these aesthetics, in order of
 # preference.

@@ -178,12 +178,17 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
             end
 
             disc_data = discretize(getfield(data, var))
-            setfield(aes, var, Int64[r for r in disc_data.refs])
+            setfield(aes, var, PooledDataArray(int64(disc_data.refs)))
 
             # The labeler for discrete scales is a closure over the discretized data.
             function labeler(i)
                 if 0 < i <= length(levels(disc_data))
-                    string(levels(disc_data)[int(i)])
+                    d = levels(disc_data)[int(i)]
+                    if typeof(d) <: FloatingPoint
+                        Gadfly.fmt_float(d)
+                    else
+                        string(d)
+                    end
                 else
                     ""
                 end

@@ -307,6 +307,15 @@ function apply_statistic(stat::Histogram2DStatistic,
             k += 1
         end
     end
+
+    if x_categorial
+        aes.x = PooledDataArray(aes.x)
+    end
+
+    if y_categorial
+        aes.y = PooledDataArray(aes.y)
+    end
+
     Scale.apply_scale(color_scale, [aes], data)
     nothing
 end
@@ -327,11 +336,6 @@ const yticks = TickStatistic(
     [:y, :ymin, :ymax, :middle, :lower_hinge, :upper_hinge,
      :lower_fence, :upper_fence, :ydrawmin, :ydrawmax], "y")
 
-
-# Can a numerical value be treated as an integer
-is_int_compatable(::Integer) = true
-is_int_compatable{T <: FloatingPoint}(x::T) = abs(x) < maxintfloat(T) && float(int(x)) == x
-is_int_compatable(::Any) = false
 
 # Apply a tick statistic.
 #
@@ -354,15 +358,17 @@ function apply_statistic(stat::TickStatistic,
         in_values = [getfield(aes, var) for var in stat.in_vars]
         in_values = filter(val -> !(val === nothing), in_values)
         in_values = chain(in_values...)
+        categorical = all([getfield(aes, var) === nothing || typeof(getfield(aes, var)) <: PooledDataArray
+                           for var in stat.in_vars])
     else
         in_values = getfield(aes, in_group_var)
+        categorical = true
     end
 
     # TODO: handle the outliers aesthetic
 
     minval = Inf
     maxval = -Inf
-    all_int = true
 
     n = 0
     for val in in_values
@@ -372,10 +378,6 @@ function apply_statistic(stat::TickStatistic,
 
         if val > maxval
             maxval = float64(val)
-        end
-
-        if !is_int_compatable(val)
-            all_int = false
         end
 
         n += 1
@@ -401,7 +403,7 @@ function apply_statistic(stat::TickStatistic,
     end
 
     # all the input values in order.
-    if all_int
+    if categorical
         ticks = Set{Float64}()
         union!(ticks, in_values)
         ticks = Float64[t for t in ticks]
@@ -508,7 +510,7 @@ function apply_statistic(stat::BoxplotStatistic,
     end
 
     if !is(aes.x, nothing)
-        aes.x = Int64[x for (x, c) in keys(groups)]
+        aes.x = PooledDataArray(Int64[x for (x, c) in keys(groups)])
     end
 
     if !is(aes.color, nothing)

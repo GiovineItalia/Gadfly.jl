@@ -283,7 +283,6 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     end
 
     # tick labels
-
     (_, height) = text_extents(theme.minor_label_font,
                                theme.minor_label_font_size,
                                values(ticks)...)

@@ -70,16 +70,16 @@ function render(geom::RectangularBinGeometry,
     end
 
     if aes.xmin === nothing
-        xmin = aes.x - 0.5
-        xmax = aes.x + 0.5
+        xmin = [x - 0.5 for x in aes.x]
+        xmax = [x + 0.5 for x in aes.x]
     else
         xmin = aes.xmin
         xmax = aes.xmax
     end
 
     if aes.ymin === nothing
-        ymin = aes.y - 0.5
-        ymax = aes.y + 0.5
+        ymin = [y - 0.5 for y in aes.y]
+        ymax = [y + 0.5 for y in aes.y]
     else
         ymin = aes.ymin
         ymax = aes.ymax

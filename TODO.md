@@ -34,16 +34,6 @@ Large projects:
        * Some way of editing the json representation that isn't totally
          worthless.
        * Make axis lables editable by clicking on them?
- * Figure out a way to document this thing. Gadfly.weave should be separated
-   into its own repository. Automate building package documentation from
-   markdown files found in a package's doc directory. Support metadata specified
-   as YAML font matter. Cross-link between pages. Look at mdoc for inspiration.
-   Integrate with jocco for viewing source? Reasonable default stylesheets.
-   Long-long term: parse markdown ourselves, liberate ourselves from
-   haskell/pandoc. Write our own help system, unless something significant
-   happens in base (we want to be able to open browser windown to view long-form
-   man pages).
- * Integration into ipython.
  * Equations in text. jsMath is one possibility, but that would break my
    "coherent without javascript" rule. A better option might be optionally
    requiring latex plus whatever is needed to convert latex output to svg.

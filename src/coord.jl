@@ -3,6 +3,7 @@ module Coord
 
 using Gadfly
 using Compose
+using DataFrames
 
 import Gadfly.Maybe
 export cartesian
@@ -124,13 +125,13 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     # using discrete scales. TODO: Think more carefully about this. Is there a
     # way for the geometry to let the coordinates know that a little extra room
     # is needed to draw everything?
-    if all([aes.x === nothing || typeof(aes.x) == Array{Int64, 1} for aes in aess])
+    if all([aes.x === nothing || typeof(aes.x) <: PooledDataArray for aes in aess])
         xmin -= 0.5
         xmax += 0.5
     end
     xpadding = 0.03 * (xmax - xmin)
 
-    if all([aes.y === nothing || typeof(aes.y) == Array{Int64, 1} for aes in aess])
+    if all([aes.y === nothing || typeof(aes.y) <: PooledDataArray for aes in aess])
         ymin -= 0.5
         ymax += 0.5
     end

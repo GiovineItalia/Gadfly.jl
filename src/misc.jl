@@ -127,3 +127,8 @@ function escape_id(s::String)
 end
 
 
+# Can a numerical value be treated as an integer
+is_int_compatable(::Integer) = true
+is_int_compatable{T <: FloatingPoint}(x::T) = abs(x) < maxintfloat(T) && float(int(x)) == x
+is_int_compatable(::Any) = false
+

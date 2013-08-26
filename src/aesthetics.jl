@@ -2,8 +2,8 @@
 # Aesthetics is a set of bindings of typed values to symbols (Wilkinson calls
 # this a Varset). Each variable controls how geometries are realized.
 type Aesthetics
-    x::Union(Nothing, Vector{Float64}, Vector{Int64})
-    y::Union(Nothing, Vector{Float64}, Vector{Int64})
+    x::Union(Nothing, Vector{Float64}, Vector{Int64}, PooledDataArray)
+    y::Union(Nothing, Vector{Float64}, Vector{Int64}, PooledDataArray)
     size::Maybe(Vector{Measure})
     color::Maybe(AbstractDataVector{ColorValue})
     label::Maybe(PooledDataVector)
@@ -22,15 +22,14 @@ type Aesthetics
     outliers::Maybe(Vector{Vector{Float64}})
 
     # Subplot aesthetics
-    xgroup::Maybe(Vector{Int64})
-    ygroup::Maybe(Vector{Int64})
+    xgroup::Maybe(PooledDataArray)
+    ygroup::Maybe(PooledDataArray)
 
     # Aesthetics pertaining to guides
     xtick::Maybe(Vector{Float64})
     ytick::Maybe(Vector{Float64})
     xgrid::Maybe(Vector{Float64})
     ygrid::Maybe(Vector{Float64})
-    # TODO: make these "x_", "y_" to be consistent.
 
     # Pesudo-aesthetics used to indicate that drawing might
     # occur beyond any x/y value.
