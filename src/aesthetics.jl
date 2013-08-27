@@ -131,15 +131,19 @@ end
 # Checking aesthetics and giving reasonable error messages.
 
 
-# Raise an error if any of thu given aesthetics are not defined.
+# Raise an error if any of the given aesthetics are not defined.
 #
 # Args:
 #   who: A string naming the caller which is printed in the error message.
 #   aes: An Aesthetics object.
 #   vars: Symbol that must be defined in the aesthetics.
 #
+function undefined_aesthetics(aes::Aesthetics, vars::Symbol...)
+    setdiff(Set(vars...), defined_aesthetics(aes))
+end
+
 function assert_aesthetics_defined(who::String, aes::Aesthetics, vars::Symbol...)
-    undefined_vars = setdiff(Set(vars...), defined_aesthetics(aes))
+    undefined_vars = undefined_aesthetics(aes, vars...)
     if !isempty(undefined_vars)
         error(@sprintf("The following aesthetics are required by %s but are not defined: %s\n",
                        who, join(undefined_vars, ", ")))
