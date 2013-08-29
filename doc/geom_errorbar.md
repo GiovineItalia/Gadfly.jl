@@ -4,14 +4,20 @@ author: Daniel Jones
 order: 10
 ...
 
-Draw an vertical error bar.
+Draw an vertical and/or horizontal error bars.
 
 # Asthetics
 
   * `x`: X-position of the bar.
   * `ymin`: Lower Y-position.
   * `ymax`: Upper Y-position.
+  * `y`: Y-position of the bar.
+  * `xmin`: Lef-tmost X-position
+  * `ymax`: Right-most X-position.
   * `color` (optional): Bar color (categorial or continuous)
+
+The `x`, `ymin`, `ymax` and/or `y`, `xmin`, `xmax` aesthetics must be defined.
+With the later a vertical error bar is drawn, and the former, a horizontal bar.
 
 # Examples
 
