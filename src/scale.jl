@@ -341,7 +341,7 @@ function apply_scale(scale::ContinuousColorScale,
 
         aes.color_label = c -> color_labels[c]
         aes.color_key_colors = [k for k in keys(color_labels)]
-        sort!(aes.color_key_colors, order=Order.Reverse)
+        sort!(aes.color_key_colors, rev=true)
         aes.color_key_continuous = true
     end
 end
