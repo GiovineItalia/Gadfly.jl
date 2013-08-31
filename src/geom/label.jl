@@ -1,5 +1,10 @@
 
 immutable LabelGeometry <: Gadfly.GeometryElement
+    hide_overlaps::Bool
+
+    function LabelGeometry(;hide_overlaps::Bool=true)
+        new(hide_overlaps)
+    end
 end
 
 
@@ -14,7 +19,9 @@ const label = LabelGeometry
 
 # A deferred canvas function for labeling points in a plot. Optimizing label
 # placement depends on knowing the absolute size of the containing canvas.
-function deferred_label_canvas(aes, theme, box, unit_box)
+function deferred_label_canvas(geom::LabelGeometry,
+                               aes::Gadfly.Aesthetics,
+                               theme::Gadfly.Theme, box, unit_box)
 
     # Label layout is non-trivial problem. Quite a few papers and at least one
     # Phd thesis has been written on the topic. The approach here is pretty
@@ -143,7 +150,9 @@ function deferred_label_canvas(aes, theme, box, unit_box)
         new_total_penalty = total_penalty
 
         # Propose flipping the visibility of the label.
-        if !is(positions[j], nothing) && rand() < theme.label_visibility_flip_pr
+        if !is(positions[j], nothing) &&
+           geom.hide_overlaps &&
+           rand() < theme.label_visibility_flip_pr
             pos = nothing
             new_total_penalty += theme.label_hidden_penalty
 
@@ -254,6 +263,6 @@ end
 
 function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.Label", aes, :label, :x, :y)
-    deferredcanvas((box, unit_box) -> deferred_label_canvas(aes, theme, box, unit_box))
+    deferredcanvas((box, unit_box) -> deferred_label_canvas(geom, aes, theme, box, unit_box))
 end
 
