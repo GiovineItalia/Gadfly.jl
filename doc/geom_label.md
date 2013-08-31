@@ -19,6 +19,7 @@ overlap, and hides any that would overlap.
 
 ```{.julia execute="fales"}
 Geom.label(;hide_overlaps=true)
+```
 
   * `hide_overlaps`: If true, labels that would otherwise overlap another
     label or be drawn outside the plot panel are hidden. (default: true)

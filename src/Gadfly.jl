@@ -232,7 +232,7 @@ function clean_mapping(mapping)
     for (key, val) in mapping
         if haskey(aesthetic_aliases, key)
             key = aesthetic_aliases[key]
-        elseif !contains(Aesthetics.names, key)
+        elseif !in(key, Aesthetics.names)
             warn("$(string(key)) is not a recognized aesthetic. Ignoring.")
             continue
         end
@@ -503,7 +503,7 @@ function render(plot::Plot)
     end
 
     function mapped_and_used(vs)
-        any([haskey(plot.mapping, v) && contains(used_aesthetics, v) for v in vs])
+        any([haskey(plot.mapping, v) && in(v, used_aesthetics) for v in vs])
     end
 
     function choose_name(vs)
@@ -632,18 +632,18 @@ hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 # TODO: These functions should inspect the plot to choose a reasonable default
 # size. (This is mainly a compose todo.)
 
-function writemime(io::IO, ::@MIME("text/html"), p::Plot)
+function writemime(io::IO, ::MIME"text/html", p::Plot)
     draw(D3(default_plot_width, default_plot_height), p)
 end
 
 
 # TODO: the serializeable branch has to be merged before this will work.
-#function writemime(io::IO, ::@MIME("application/json"), p::Plot)
+#function writemime(io::IO, ::MIME"application/json", p::Plot)
     #JSON.print(io, serialize(p, with_data=true))
 #end
 
 
-function writemime(io::IO, ::@MIME("text/plain"), p::Plot)
+function writemime(io::IO, ::MIME"text/plain", p::Plot)
     write(io, "Plot(...)")
 end
 

@@ -133,9 +133,9 @@ function weave(infn::String, infmt::String, outfmt::String,
 
         # dispatch on the block type, defaulting to julia
 
-        if contains(classes, "graphviz")
+        if in("graphviz", classes)
             mime, output = execblock_graphviz(source)
-        elseif contains(classes, "latex")
+        elseif in("latex", classes)
             mime, output = execblock_latex(source)
         else
             mime, output, results = execblock_julia(source)

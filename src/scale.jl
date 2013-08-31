@@ -134,7 +134,7 @@ function apply_scale(scale::ContinuousScale,
             end
 
             setfield(aes, var, ds)
-            if contains(Set(names(aes)...), label_var)
+            if in(label_var, Set(names(aes)...))
                 setfield(aes, label_var, scale.trans.label)
             end
         end
@@ -194,7 +194,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                 end
             end
 
-            if contains(Set(names(aes)...), label_var)
+            if in(label_var, Set(names(aes)...))
                 setfield(aes, label_var, labeler)
             end
         end

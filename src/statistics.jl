@@ -405,7 +405,9 @@ function apply_statistic(stat::TickStatistic,
     # all the input values in order.
     if categorical
         ticks = Set{Float64}()
-        union!(ticks, in_values)
+        for in_value in in_values
+            push!(ticks, float64(in_value))
+        end
         ticks = Float64[t for t in ticks]
         sort!(ticks)
 
