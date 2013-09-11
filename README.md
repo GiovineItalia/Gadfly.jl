@@ -1,4 +1,3 @@
-
 !["Alice looked up at the Rocking-horse-fly with great interest, and made up her
 mind that it must have been just repainted, it looked so bright and sticky."](http://dcjones.github.com/Gadfly.jl/rockinghorsefly.png)
 
@@ -19,7 +18,7 @@ examples.
 
 # Installation
 
-From the Julia REPL a reasonably up to data version can be installed with
+From the Julia REPL a reasonably up to date version can be installed with
 
 ```julia
 Pkg.add("Gadfly")
