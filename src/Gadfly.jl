@@ -110,25 +110,40 @@ type Layer <: Element
                    statistic::StatisticElement, geom::GeometryElement)
         new(data, mapping, statistic, geom)
     end
+
+    function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
+                   statistic::Union(Function, Type), geom::GeometryElement)
+        new(data, mapping, statistic(), geom)
+    end
+
+    function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
+                   statistic::StatisticElement, geom::Union(Function, Type))
+        new(data, mapping, statistic, geom())
+    end
+
+    function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
+                   statistic::Union(Function, Type), geom::Union(Function, Type))
+        new(data, mapping, statistic(), geom())
+    end
 end
 
 
 function layer(data::Union(AbstractDataFrame, Nothing),
-               statistic::StatisticElement=Stat.nil(),
-               geom::GeometryElement=Geom.nil;
+               statistic::Union(Function, Type, StatisticElement)=Stat.nil(),
+               geom::Union(Function, Type, GeometryElement)=Geom.nil;
                mapping...)
     Layer(data, clean_mapping(mapping), statistic, geom)
 end
 
 
-function layer(statistic::StatisticElement,
-               geom::GeometryElement;
+function layer(statistic::Union(Function, Type, StatisticElement),
+               geom::Union(Function, Type, GeometryElement);
                mapping...)
     layer(nothing, statistic, geom; mapping...)
 end
 
 
-function layer(geom::GeometryElement; mapping...)
+function layer(geom::Union(Function, Type, GeometryElement); mapping...)
     layer(nothing, Stat.nil(), geom; mapping...)
 end
 
