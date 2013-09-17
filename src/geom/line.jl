@@ -17,6 +17,11 @@ function density()
 end
 
 
+function smooth(; smoothing::Float64=0.75)
+    LineGeometry(Gadfly.Stat.smooth(smoothing=smoothing))
+end
+
+
 function default_statistic(geom::LineGeometry)
     geom.default_statistic
 end

@@ -7,8 +7,9 @@ using DataFrames
 using Gadfly
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
-import Gadfly.render, Gadfly.element_aesthetics, Gadfly.inherit, Gadfly.escape_id
-import Iterators.cycle, Iterators.product, Iterators.distinct
+import Gadfly: render, element_aesthetics, inherit, escape_id
+import Iterators
+import Iterators: cycle, product, distinct, take
 
 
 # Geometry that renders nothing.

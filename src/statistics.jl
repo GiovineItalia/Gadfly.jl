@@ -5,6 +5,7 @@ import Gadfly
 using DataFrames
 using Compose
 using Color
+using Loess
 
 import Gadfly.Scale, Gadfly.Coord, Gadfly.element_aesthetics,
        Gadfly.default_scales, Gadfly.isconcrete, Gadfly.nonzero_length
@@ -12,6 +13,7 @@ import Distributions.Uniform, Distributions.kde, Distributions.bandwidth
 import Iterators.chain, Iterators.cycle, Iterators.product, Iterators.partition
 
 include("bincount.jl")
+
 
 # Apply a series of statistics.
 #
@@ -523,6 +525,85 @@ function apply_statistic(stat::BoxplotStatistic,
     nothing
 end
 
+
+
+immutable SmoothStatistic <: Gadfly.StatisticElement
+    method::Symbol
+    smoothing::Float64
+
+    function SmoothStatistic(; method::Symbol=:loess, smoothing::Float64=0.75)
+        new(method, smoothing)
+    end
+end
+
+
+const smooth = SmoothStatistic
+
+
+element_aesthetics(::SmoothStatistic) = [:x, :y]
+
+
+function apply_statistic(stat::SmoothStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+
+    Gadfly.assert_aesthetics_defined("Stat.smooth", aes, :x, :y)
+    Gadfly.assert_aesthetics_equal_length("Stat.smooth", aes, :x, :y)
+
+    if stat.method != :loess
+        error("The only Stat.smooth method currently supported is loess.")
+    end
+
+    num_steps = 750
+
+    if aes.color === nothing
+        x_min, x_max = min(aes.x), max(aes.x)
+
+        if x_min == x_max
+            error("Stat.smooth requires more than one distinct x value")
+        end
+
+        # loess can't predict points <x_min or >x_max. Make sure that doesn't
+        # happen through a floating point fluke
+        nudge = 1e-5 * (x_max - x_min)
+
+        xs, ys = aes.x, aes.y
+        aes.x = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
+        aes.y = predict(loess(xs, ys, span=stat.smoothing), aes.x)
+    else
+        groups = Dict()
+        aes_color = aes.color === nothing ? [nothing] : aes.color
+        for (x, y, c) in zip(aes.x, aes.y, cycle(aes_color))
+            if !haskey(groups, c)
+                groups[c] = (Float64[x], Float64[y])
+            else
+                push!(groups[c][1], x)
+                push!(groups[c][2], y)
+            end
+        end
+
+        aes.x = Array(Float64, length(groups) * num_steps)
+        aes.y = Array(Float64, length(groups) * num_steps)
+        colors = Array(ColorValue, length(groups) * num_steps)
+
+        for (i, (c, (xs, ys))) in enumerate(groups)
+            x_min, x_max = min(xs), max(xs)
+            if x_min == x_max
+                error("Stat.smooth requires more than one distinct x value")
+            end
+            nudge = 1e-5 * (x_max - x_min)
+            steps = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
+
+            for (j, (x, y)) in enumerate(zip(steps, predict(loess(xs, ys, span=stat.smoothing), steps)))
+                aes.x[(i - 1) * num_steps + j] = x
+                aes.y[(i - 1) * num_steps + j] = y
+                colors[(i - 1) * num_steps + j] = c
+            end
+        end
+        aes.color = PooledDataArray(colors)
+    end
+end
 
 end # module Stat
 

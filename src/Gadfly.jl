@@ -5,6 +5,7 @@ require("DataFrames")
 require("Distributions")
 require("Iterators")
 require("JSON")
+require("Loess")
 
 module Gadfly
 
