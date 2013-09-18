@@ -17,7 +17,7 @@
     <div class="container">
       <div class="row">
         <ul>
-          <li><div id="pkgname">Gadfly 0.1.8+</div></li>
+          <li><div id="pkgname">Gadfly 0.1.11+</div></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl">Code</a></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl/issues">Issues</a></li>
         </ul>
@@ -278,7 +278,7 @@ var zoom_behavior = function(parent_id, t) {
 
 </script>
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;Zelig&quot;</span>, <span class="st">&quot;macro&quot;</span>), x=<span class="st">&quot;year&quot;</span>, y=<span class="st">&quot;country&quot;</span>, color=<span class="st">&quot;gdp&quot;</span>, Geom.rectbin)</code></pre>
-<div id="gadflyplot-3DIcIeajXrQPHhyeM0wl"></div>
+<div id="gadflyplot-xpCobgO1lg7ZL4bPUwmN"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -313,92 +313,11 @@ function draw_with_data(data, parent_id) {
 ;
     g.append("svg:text")
        .attr("x", 34.68)
-       .attr("y", 47.46)
+       .attr("y", 24.13)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("Denmark");
-})
-;
-    g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 51.35)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("Canada");
-})
-;
-    g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 28.02)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("Netherlands");
-})
-;
-    g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 39.68)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("France");
-})
-;
-    g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 31.91)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("Japan");
-})
-;
-    g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 43.57)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("Finland");
-})
-;
-    g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 16.35)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("United Kingdom");
-})
-;
-    g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 59.13)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("Austria");
-})
-;
-    g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 20.24)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("Sweden");
-})
-;
-    g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 8.58)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("West Germany");
+  text.text("Norway");
 })
 ;
     g.append("svg:text")
@@ -412,6 +331,33 @@ function draw_with_data(data, parent_id) {
 ;
     g.append("svg:text")
        .attr("x", 34.68)
+       .attr("y", 8.58)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("West Germany");
+})
+;
+    g.append("svg:text")
+       .attr("x", 34.68)
+       .attr("y", 31.91)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("Japan");
+})
+;
+    g.append("svg:text")
+       .attr("x", 34.68)
+       .attr("y", 28.02)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("Netherlands");
+})
+;
+    g.append("svg:text")
+       .attr("x", 34.68)
        .attr("y", 12.47)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
@@ -421,11 +367,65 @@ function draw_with_data(data, parent_id) {
 ;
     g.append("svg:text")
        .attr("x", 34.68)
-       .attr("y", 24.13)
+       .attr("y", 16.35)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("Norway");
+  text.text("United Kingdom");
+})
+;
+    g.append("svg:text")
+       .attr("x", 34.68)
+       .attr("y", 39.68)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("France");
+})
+;
+    g.append("svg:text")
+       .attr("x", 34.68)
+       .attr("y", 47.46)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("Denmark");
+})
+;
+    g.append("svg:text")
+       .attr("x", 34.68)
+       .attr("y", 20.24)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("Sweden");
+})
+;
+    g.append("svg:text")
+       .attr("x", 34.68)
+       .attr("y", 51.35)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("Canada");
+})
+;
+    g.append("svg:text")
+       .attr("x", 34.68)
+       .attr("y", 43.57)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("Finland");
+})
+;
+    g.append("svg:text")
+       .attr("x", 34.68)
+       .attr("y", 59.13)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("Austria");
 })
 ;
   }(g.append("g")));
@@ -459,11 +459,19 @@ function draw_with_data(data, parent_id) {
      .attr("font-size", "3.18")
      .attr("class", "guide xlabels");
     g.append("svg:text")
-       .attr("x", 122.28)
+       .attr("x", -12.24)
        .attr("y", 66.44)
        .attr("text-anchor", "middle")
     .call(function(text) {
-  text.text("1990");
+  text.text("1950");
+})
+;
+    g.append("svg:text")
+       .attr("x", 189.54)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("2010");
 })
 ;
     g.append("svg:text")
@@ -475,19 +483,27 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 71.84)
+       .attr("x", 172.73)
        .attr("y", 66.44)
        .attr("text-anchor", "middle")
     .call(function(text) {
-  text.text("1975");
+  text.text("2005");
 })
 ;
     g.append("svg:text")
-       .attr("x", 88.65)
+       .attr("x", 206.36)
        .attr("y", 66.44)
        .attr("text-anchor", "middle")
     .call(function(text) {
-  text.text("1980");
+  text.text("2015");
+})
+;
+    g.append("svg:text")
+       .attr("x", 4.58)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("1955");
 })
 ;
     g.append("svg:text")
@@ -499,11 +515,91 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
+       .attr("x", 88.65)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("1980");
+})
+;
+    g.append("svg:text")
+       .attr("x", 155.91)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("2000");
+})
+;
+    g.append("svg:text")
+       .attr("x", -29.06)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("1945");
+})
+;
+    g.append("svg:text")
+       .attr("x", 223.18)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("2020");
+})
+;
+    g.append("svg:text")
+       .attr("x", 21.39)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("1960");
+})
+;
+    g.append("svg:text")
+       .attr("x", -62.69)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("1935");
+})
+;
+    g.append("svg:text")
+       .attr("x", 139.1)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("1995");
+})
+;
+    g.append("svg:text")
+       .attr("x", 122.28)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("1990");
+})
+;
+    g.append("svg:text")
        .attr("x", 55.02)
        .attr("y", 66.44)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1970");
+})
+;
+    g.append("svg:text")
+       .attr("x", 71.84)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("1975");
+})
+;
+    g.append("svg:text")
+       .attr("x", -45.87)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("1940");
 })
 ;
   }(g.append("g")));
@@ -703,17 +799,41 @@ function draw_with_data(data, parent_id) {
        .attr("stroke-width", "0.2")
        .attr("class", "guide xgridlines");
       g.append("svg:path")
-         .attr("d", "M122.28,5 L 122.28 62.7");
+         .attr("d", "M-12.24,5 L -12.24 62.7");
+      g.append("svg:path")
+         .attr("d", "M189.54,5 L 189.54 62.7");
       g.append("svg:path")
          .attr("d", "M38.21,5 L 38.21 62.7");
       g.append("svg:path")
-         .attr("d", "M71.84,5 L 71.84 62.7");
+         .attr("d", "M172.73,5 L 172.73 62.7");
       g.append("svg:path")
-         .attr("d", "M88.65,5 L 88.65 62.7");
+         .attr("d", "M206.36,5 L 206.36 62.7");
+      g.append("svg:path")
+         .attr("d", "M4.58,5 L 4.58 62.7");
       g.append("svg:path")
          .attr("d", "M105.47,5 L 105.47 62.7");
       g.append("svg:path")
+         .attr("d", "M88.65,5 L 88.65 62.7");
+      g.append("svg:path")
+         .attr("d", "M155.91,5 L 155.91 62.7");
+      g.append("svg:path")
+         .attr("d", "M-29.06,5 L -29.06 62.7");
+      g.append("svg:path")
+         .attr("d", "M223.18,5 L 223.18 62.7");
+      g.append("svg:path")
+         .attr("d", "M21.39,5 L 21.39 62.7");
+      g.append("svg:path")
+         .attr("d", "M-62.69,5 L -62.69 62.7");
+      g.append("svg:path")
+         .attr("d", "M139.1,5 L 139.1 62.7");
+      g.append("svg:path")
+         .attr("d", "M122.28,5 L 122.28 62.7");
+      g.append("svg:path")
          .attr("d", "M55.02,5 L 55.02 62.7");
+      g.append("svg:path")
+         .attr("d", "M71.84,5 L 71.84 62.7");
+      g.append("svg:path")
+         .attr("d", "M-45.87,5 L -45.87 62.7");
     }(g.append("g")));
   }(g.append("g")));
   (function (g) {
@@ -2837,7 +2957,7 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-3DIcIeajXrQPHhyeM0wl");
+draw("#gadflyplot-xpCobgO1lg7ZL4bPUwmN");
 </script>
 
         <hr>
@@ -2856,7 +2976,7 @@ draw("#gadflyplot-3DIcIeajXrQPHhyeM0wl");
             <li><a href="#see-also">See Also</a/></li>
             <li><a href="#examples">Examples</a/></li>
             </ul>
-            </li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li></ul>
+            </li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li></ul>
           </div>
         </div>
       </div>

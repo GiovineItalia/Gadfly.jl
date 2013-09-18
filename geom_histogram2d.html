@@ -17,7 +17,7 @@
     <div class="container">
       <div class="row">
         <ul>
-          <li><div id="pkgname">Gadfly 0.1.8+</div></li>
+          <li><div id="pkgname">Gadfly 0.1.11+</div></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl">Code</a></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl/issues">Issues</a></li>
         </ul>
@@ -263,944 +263,9 @@ var zoom_behavior = function(parent_id, t) {
 
 </script>
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;Womenlf&quot;</span>), x=<span class="st">&quot;hincome&quot;</span>, y=<span class="st">&quot;region&quot;</span>, Geom.histogram2d)</code></pre>
-<div id="gadflyplot-vIZy6QSZ1xaO6f1QtUDH"></div>
-<script>
-function draw_with_data(data, parent_id) {
-  var g = d3.select(parent_id)
-            .append("svg")
-              .attr("width", "140mm")
-              .attr("height", "80mm")
-              .attr("viewBox", "0 0 140 80")
-              .attr("stroke-width", "0.5")
-              .attr("style", "stroke:black;fill:black");
-  g.append("defs");
-  var t = {"scale": 1.0};
-(function (g) {
-  d3.select("defs")
-  .append("svg:clipPath")
-    .attr("id", parent_id + "_clippath0")
-    .append("svg:path")
-      .attr("d", " M5,0 L 24.09 0 24.09 67.7 5 67.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#4C404B")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.18")
-     .attr("class", "guide ylabels");
-    g.append("svg:text")
-       .attr("x", 23.09)
-       .attr("y", 33.85)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("Ontario");
-})
-;
-    g.append("svg:text")
-       .attr("x", 23.09)
-       .attr("y", 22.96)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("Prairie");
-})
-;
-    g.append("svg:text")
-       .attr("x", 23.09)
-       .attr("y", 12.08)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("Quebec");
-})
-;
-    g.append("svg:text")
-       .attr("x", 23.09)
-       .attr("y", 44.74)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("BC");
-})
-;
-    g.append("svg:text")
-       .attr("x", 23.09)
-       .attr("y", 55.63)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("Atlantic");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#362A35")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.88");
-    g.append("svg:text")
-       .attr("x", 8.28)
-       .attr("y", 33.85)
-       .attr("text-anchor", "middle")
-       .style("dominant-baseline", "central")
-       .attr("transform", "rotate(-90, 8.28, 33.85)")
-    .call(function(text) {
-  text.text("region");
-})
-;
-  }(g.append("g")));
-}(g.append("g")));
-(function (g) {
-  d3.select("defs")
-  .append("svg:clipPath")
-    .attr("id", parent_id + "_clippath1")
-    .append("svg:path")
-      .attr("d", " M19.09,62.7 L 127.17 62.7 127.17 75 19.09 75 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#4C404B")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.18")
-     .attr("class", "guide xlabels");
-    g.append("svg:text")
-       .attr("x", 8.36)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("-10");
-})
-;
-    g.append("svg:text")
-       .attr("x", 119.4)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("50");
-})
-;
-    g.append("svg:text")
-       .attr("x", 100.89)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("40");
-})
-;
-    g.append("svg:text")
-       .attr("x", -65.66)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("-50");
-})
-;
-    g.append("svg:text")
-       .attr("x", 174.92)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("80");
-})
-;
-    g.append("svg:text")
-       .attr("x", -84.16)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("-60");
-})
-;
-    g.append("svg:text")
-       .attr("x", 82.39)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("30");
-})
-;
-    g.append("svg:text")
-       .attr("x", 230.43)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("110");
-})
-;
-    g.append("svg:text")
-       .attr("x", 63.88)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("20");
-})
-;
-    g.append("svg:text")
-       .attr("x", -10.14)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("-20");
-})
-;
-    g.append("svg:text")
-       .attr("x", 137.9)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("60");
-})
-;
-    g.append("svg:text")
-       .attr("x", 26.87)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("0");
-})
-;
-    g.append("svg:text")
-       .attr("x", -28.65)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("-30");
-})
-;
-    g.append("svg:text")
-       .attr("x", -47.15)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("-40");
-})
-;
-    g.append("svg:text")
-       .attr("x", 193.42)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("90");
-})
-;
-    g.append("svg:text")
-       .attr("x", 156.41)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("70");
-})
-;
-    g.append("svg:text")
-       .attr("x", 45.38)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("10");
-})
-;
-    g.append("svg:text")
-       .attr("x", 211.93)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("100");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#362A35")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.88");
-    g.append("svg:text")
-       .attr("x", 73.13)
-       .attr("y", 73)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("hincome");
-})
-;
-  }(g.append("g")));
-}(g.append("g")));
-(function (g) {
-  g.attr("stroke", "none")
-   .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-   .attr("font-size", "3.88")
-   .attr("fill", "#362A35");
-  g.append("svg:text")
-     .attr("x", 130.59)
-     .attr("y", 28.17)
-     .attr("text-anchor", "middle")
-  .call(function(text) {
-  text.text("Count");
-})
-;
-}(g.append("g")));
-(function (g) {
-  g.attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-   .attr("font-size", "3.18")
-   .attr("stroke", "none");
-  (function (g) {
-    g.attr("fill", "#00518F")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,43.37 L 127.91 43.37 127.91 44.47 124.17 44.47 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#1B90D5")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,38.63 L 127.91 38.63 127.91 39.73 124.17 39.73 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#87DEFF")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,33.9 L 127.91 33.9 127.91 35 124.17 35 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4C404B");
-    g.append("svg:text")
-       .attr("x", 128.91)
-       .attr("y", 32.03)
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("15");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#B3FFFF")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,30.17 L 127.91 30.17 127.91 34 124.17 34 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4C404B");
-    g.append("svg:text")
-       .attr("x", 128.91)
-       .attr("y", 36.77)
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("10");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#59B6FE")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,34.9 L 127.91 34.9 127.91 38.73 124.17 38.73 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4C404B");
-    g.append("svg:text")
-       .attr("x", 128.91)
-       .attr("y", 41.5)
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("5");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#006CAD")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,39.63 L 127.91 39.63 127.91 43.47 124.17 43.47 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4C404B");
-    g.append("svg:text")
-       .attr("x", 128.91)
-       .attr("y", 46.23)
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("1");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#003771")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,44.37 L 127.91 44.37 127.91 48.2 124.17 48.2 z");
-  }(g.append("g")));
-}(g.append("g")));
-(function (g) {
-  g.on("mouseover", guide_background_mouseover(parent_id, "#C6C6C9"))
-   .on("mouseout", guide_background_mouseout(parent_id, "#F0F0F3"))
-   .call(zoom_behavior(parent_id, t));
-  (function (g) {
-    d3.select("defs")
-  .append("svg:clipPath")
-    .attr("id", parent_id + "_clippath2")
-    .append("svg:path")
-      .attr("d", " M24.09,5 L 122.17 5 122.17 62.7 24.09 62.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
-    (function (g) {
-      g.attr("class", "guide background")
-       .attr("stroke", "#F1F1F5")
-       .attr("fill", "#FAFAFA");
-      g.append("svg:path")
-         .attr("d", "M24.09,5 L 122.17 5 122.17 62.7 24.09 62.7 z");
-    }(g.append("g")));
-    (function (g) {
-      g.attr("stroke", "#F0F0F3")
-       .attr("stroke-width", "0.2")
-       .attr("class", "guide ygridlines");
-      g.append("svg:path")
-         .attr("d", "M24.09,39.3 L 122.17 39.3");
-      g.append("svg:path")
-         .attr("d", "M24.09,28.41 L 122.17 28.41");
-      g.append("svg:path")
-         .attr("d", "M24.09,50.18 L 122.17 50.18");
-      g.append("svg:path")
-         .attr("d", "M24.09,17.52 L 122.17 17.52");
-    }(g.append("g")));
-    (function (g) {
-      g.attr("stroke", "#F0F0F3")
-       .attr("stroke-width", "0.2")
-       .attr("class", "guide xgridlines");
-      g.append("svg:path")
-         .attr("d", "M8.36,5 L 8.36 62.7");
-      g.append("svg:path")
-         .attr("d", "M119.4,5 L 119.4 62.7");
-      g.append("svg:path")
-         .attr("d", "M100.89,5 L 100.89 62.7");
-      g.append("svg:path")
-         .attr("d", "M-65.66,5 L -65.66 62.7");
-      g.append("svg:path")
-         .attr("d", "M174.92,5 L 174.92 62.7");
-      g.append("svg:path")
-         .attr("d", "M-84.16,5 L -84.16 62.7");
-      g.append("svg:path")
-         .attr("d", "M82.39,5 L 82.39 62.7");
-      g.append("svg:path")
-         .attr("d", "M230.43,5 L 230.43 62.7");
-      g.append("svg:path")
-         .attr("d", "M63.88,5 L 63.88 62.7");
-      g.append("svg:path")
-         .attr("d", "M-10.14,5 L -10.14 62.7");
-      g.append("svg:path")
-         .attr("d", "M137.9,5 L 137.9 62.7");
-      g.append("svg:path")
-         .attr("d", "M26.87,5 L 26.87 62.7");
-      g.append("svg:path")
-         .attr("d", "M-28.65,5 L -28.65 62.7");
-      g.append("svg:path")
-         .attr("d", "M-47.15,5 L -47.15 62.7");
-      g.append("svg:path")
-         .attr("d", "M193.42,5 L 193.42 62.7");
-      g.append("svg:path")
-         .attr("d", "M156.41,5 L 156.41 62.7");
-      g.append("svg:path")
-         .attr("d", "M45.38,5 L 45.38 62.7");
-      g.append("svg:path")
-         .attr("d", "M211.93,5 L 211.93 62.7");
-    }(g.append("g")));
-  }(g.append("g")));
-  (function (g) {
-    d3.select("defs")
-  .append("svg:clipPath")
-    .attr("id", parent_id + "_clippath3")
-    .append("svg:path")
-      .attr("d", " M24.09,5 L 122.17 5 122.17 62.7 24.09 62.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath3)");
-    (function (g) {
-      g.attr("stroke", "none")
-       .attr("shape-rendering", "crispEdges");
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M28.72,61.07 L 30.42 61.07 30.42 50.18 28.72 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M33.81,61.07 L 35.51 61.07 35.51 50.18 33.81 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M43.99,61.07 L 45.68 61.07 45.68 50.18 43.99 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M45.68,61.07 L 47.38 61.07 47.38 50.18 45.68 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M49.08,61.07 L 50.77 61.07 50.77 50.18 49.08 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M52.47,61.07 L 54.17 61.07 54.17 50.18 52.47 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M57.56,61.07 L 59.26 61.07 59.26 50.18 57.56 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M62.65,61.07 L 64.34 61.07 64.34 50.18 62.65 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M64.34,61.07 L 66.04 61.07 66.04 50.18 64.34 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M66.04,61.07 L 67.74 61.07 67.74 50.18 66.04 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M67.74,61.07 L 69.43 61.07 69.43 50.18 67.74 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#007ABD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M69.43,61.07 L 71.13 61.07 71.13 50.18 69.43 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M71.13,61.07 L 72.83 61.07 72.83 50.18 71.13 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M72.83,61.07 L 74.52 61.07 74.52 50.18 72.83 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M77.92,61.07 L 79.61 61.07 79.61 50.18 77.92 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M79.61,61.07 L 81.31 61.07 81.31 50.18 79.61 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M81.31,61.07 L 83 61.07 83 50.18 81.31 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#006CAD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M83,61.07 L 84.7 61.07 84.7 50.18 83 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M84.7,61.07 L 86.4 61.07 86.4 50.18 84.7 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#00518F")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M86.4,61.07 L 88.09 61.07 88.09 50.18 86.4 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M89.79,61.07 L 91.49 61.07 91.49 50.18 89.79 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#007ABD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M96.58,61.07 L 98.27 61.07 98.27 50.18 96.58 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M98.27,61.07 L 99.97 61.07 99.97 50.18 98.27 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#B3FFFF")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M99.97,61.07 L 101.66 61.07 101.66 50.18 99.97 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M101.66,61.07 L 103.36 61.07 103.36 50.18 101.66 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#00518F")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M103.36,61.07 L 105.06 61.07 105.06 50.18 103.36 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M108.45,61.07 L 110.15 61.07 110.15 50.18 108.45 50.18 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#00518F")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M28.72,50.18 L 30.42 50.18 30.42 39.3 28.72 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M30.42,50.18 L 32.11 50.18 32.11 39.3 30.42 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#00518F")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M32.11,50.18 L 33.81 50.18 33.81 39.3 32.11 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M33.81,50.18 L 35.51 50.18 35.51 39.3 33.81 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#00518F")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M35.51,50.18 L 37.2 50.18 37.2 39.3 35.51 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#00518F")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M37.2,50.18 L 38.9 50.18 38.9 39.3 37.2 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#59B6FE")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M38.9,50.18 L 40.6 50.18 40.6 39.3 38.9 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M42.29,50.18 L 43.99 50.18 43.99 39.3 42.29 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#007ABD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M59.26,50.18 L 60.95 50.18 60.95 39.3 59.26 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#90E6FF")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M60.95,50.18 L 62.65 50.18 62.65 39.3 60.95 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#2C98DD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M62.65,50.18 L 64.34 50.18 64.34 39.3 62.65 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#2C98DD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M64.34,50.18 L 66.04 50.18 66.04 39.3 64.34 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#006CAD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M69.43,50.18 L 71.13 50.18 71.13 39.3 69.43 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M71.13,50.18 L 72.83 50.18 72.83 39.3 71.13 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#00518F")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M74.52,50.18 L 76.22 50.18 76.22 39.3 74.52 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#006CAD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M76.22,50.18 L 77.92 50.18 77.92 39.3 76.22 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#B3FFFF")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M77.92,50.18 L 79.61 50.18 79.61 39.3 77.92 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M79.61,50.18 L 81.31 50.18 81.31 39.3 79.61 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#7ED6FF")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M81.31,50.18 L 83 50.18 83 39.3 81.31 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M83,50.18 L 84.7 50.18 84.7 39.3 83 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M84.7,50.18 L 86.4 50.18 86.4 39.3 84.7 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M89.79,50.18 L 91.49 50.18 91.49 39.3 89.79 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#005E9E")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M91.49,50.18 L 93.18 50.18 93.18 39.3 91.49 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#44A7ED")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M94.88,50.18 L 96.58 50.18 96.58 39.3 94.88 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#005E9E")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M96.58,50.18 L 98.27 50.18 98.27 39.3 96.58 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M98.27,50.18 L 99.97 50.18 99.97 39.3 98.27 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M103.36,50.18 L 105.06 50.18 105.06 39.3 103.36 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M108.45,50.18 L 110.15 50.18 110.15 39.3 108.45 39.3 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#005E9E")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M28.72,39.3 L 30.42 39.3 30.42 28.41 28.72 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#6CC6FF")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M30.42,39.3 L 32.11 39.3 32.11 28.41 30.42 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M32.11,39.3 L 33.81 39.3 33.81 28.41 32.11 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#006CAD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M33.81,39.3 L 35.51 39.3 35.51 28.41 33.81 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M38.9,39.3 L 40.6 39.3 40.6 28.41 38.9 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M42.29,39.3 L 43.99 39.3 43.99 28.41 42.29 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M55.86,39.3 L 57.56 39.3 57.56 28.41 55.86 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#005E9E")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M60.95,39.3 L 62.65 39.3 62.65 28.41 60.95 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M62.65,39.3 L 64.34 39.3 64.34 28.41 62.65 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#2C98DD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M64.34,39.3 L 66.04 39.3 66.04 28.41 64.34 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#00518F")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M66.04,39.3 L 67.74 39.3 67.74 28.41 66.04 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#007ABD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M67.74,39.3 L 69.43 39.3 69.43 28.41 67.74 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M81.31,39.3 L 83 39.3 83 28.41 81.31 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M98.27,39.3 L 99.97 39.3 99.97 28.41 98.27 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M105.06,39.3 L 106.75 39.3 106.75 28.41 105.06 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M106.75,39.3 L 108.45 39.3 108.45 28.41 106.75 28.41 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M32.11,28.41 L 33.81 28.41 33.81 17.52 32.11 17.52 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#006CAD")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M33.81,28.41 L 35.51 28.41 35.51 17.52 33.81 17.52 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M37.2,28.41 L 38.9 28.41 38.9 17.52 37.2 17.52 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M50.77,28.41 L 52.47 28.41 52.47 17.52 50.77 17.52 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#00518F")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M101.66,28.41 L 103.36 28.41 103.36 17.52 101.66 17.52 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#004480")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M45.68,17.52 L 47.38 17.52 47.38 6.63 45.68 6.63 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M101.66,17.52 L 103.36 17.52 103.36 6.63 101.66 6.63 z");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("fill", "#003771")
-         .attr("class", "geometry");
-        g.append("svg:path")
-           .attr("d", "M105.06,17.52 L 106.75 17.52 106.75 6.63 105.06 6.63 z");
-      }(g.append("g")));
-    }(g.append("g")));
-  }(g.append("g")));
-}(g.append("g")));
-}
-
-var data = [
-];
-
-var draw = function(parent_id) {
-    draw_with_data(data, parent_id);
-};
-
-draw("#gadflyplot-vIZy6QSZ1xaO6f1QtUDH");
-</script>
-
-
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;UN&quot;</span>), x=<span class="st">&quot;gdp&quot;</span>, y=<span class="st">&quot;infant.mortality&quot;</span>,
      Scale.x_log10, Scale.y_log10, Geom.histogram2d)</code></pre>
-<div id="gadflyplot-PwrEOzRdt1C1IQJrlceu"></div>
+<div id="gadflyplot-3eJdrjvPXhkP1eA55EWh"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -1241,7 +306,7 @@ function draw_with_data(data, parent_id) {
 ;
     g.append("svg:text")
        .attr("x", 20.43)
-       .attr("y", -14.71)
+       .attr("y", 113.12)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -1249,82 +314,7 @@ function draw_with_data(data, parent_id) {
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("3.5");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 17.25)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("2");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 27.9)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("1.5");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", -4.05)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("3");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 102.47)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("-2");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 59.86)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("0");
+        text.text("-2.5");
       })
       ;
 })
@@ -1361,6 +351,36 @@ function draw_with_data(data, parent_id) {
 ;
     g.append("svg:text")
        .attr("x", 20.43)
+       .attr("y", 49.21)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("0.5");
+      })
+      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 20.43)
+       .attr("y", -4.05)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("3");
+      })
+      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 20.43)
        .attr("y", 123.77)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
@@ -1376,7 +396,7 @@ function draw_with_data(data, parent_id) {
 ;
     g.append("svg:text")
        .attr("x", 20.43)
-       .attr("y", -57.32)
+       .attr("y", 59.86)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -1384,7 +404,7 @@ function draw_with_data(data, parent_id) {
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5.5");
+        text.text("0");
       })
       ;
 })
@@ -1406,7 +426,7 @@ function draw_with_data(data, parent_id) {
 ;
     g.append("svg:text")
        .attr("x", 20.43)
-       .attr("y", 70.51)
+       .attr("y", -57.32)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -1414,22 +434,7 @@ function draw_with_data(data, parent_id) {
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("-0.5");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 49.21)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("0.5");
+        text.text("5.5");
       })
       ;
 })
@@ -1451,7 +456,7 @@ function draw_with_data(data, parent_id) {
 ;
     g.append("svg:text")
        .attr("x", 20.43)
-       .attr("y", 113.12)
+       .attr("y", 70.51)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -1459,7 +464,67 @@ function draw_with_data(data, parent_id) {
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("-2.5");
+        text.text("-0.5");
+      })
+      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 20.43)
+       .attr("y", 102.47)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-2");
+      })
+      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 20.43)
+       .attr("y", 27.9)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("1.5");
+      })
+      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 20.43)
+       .attr("y", 17.25)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("2");
+      })
+      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 20.43)
+       .attr("y", -14.71)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("3.5");
       })
       ;
 })
@@ -1525,6 +590,34 @@ function draw_with_data(data, parent_id) {
      .attr("font-size", "3.18")
      .attr("class", "guide xlabels");
     g.append("svg:text")
+       .attr("x", 43.29)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("1");
+      })
+      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 119.32)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("5");
+      })
+      ;
+})
+;
+    g.append("svg:text")
        .attr("x", 214.37)
        .attr("y", 66.44)
        .attr("text-anchor", "middle")
@@ -1534,20 +627,6 @@ function draw_with_data(data, parent_id) {
         .attr("baseline-shift", "super")
       .call(function(text) {
         text.text("10");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 100.31)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("4");
       })
       ;
 })
@@ -1567,62 +646,6 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 195.36)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("9");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 5.27)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("-1");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 138.33)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("6");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 43.29)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("1");
-      })
-      ;
-})
-;
-    g.append("svg:text")
        .attr("x", -89.77)
        .attr("y", 66.44)
        .attr("text-anchor", "middle")
@@ -1632,20 +655,6 @@ function draw_with_data(data, parent_id) {
         .attr("baseline-shift", "super")
       .call(function(text) {
         text.text("-6");
-      })
-      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 119.32)
-       .attr("y", 66.44)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("10")
-      .append("tspan")
-        .attr("baseline-shift", "super")
-      .call(function(text) {
-        text.text("5");
       })
       ;
 })
@@ -1693,7 +702,7 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", -70.77)
+       .attr("x", 5.27)
        .attr("y", 66.44)
        .attr("text-anchor", "middle")
     .call(function(text) {
@@ -1701,7 +710,49 @@ function draw_with_data(data, parent_id) {
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("-5");
+        text.text("-1");
+      })
+      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 195.36)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("9");
+      })
+      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 138.33)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("6");
+      })
+      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 100.31)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("4");
       })
       ;
 })
@@ -1721,6 +772,20 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
+       .attr("x", 157.34)
+       .attr("y", 66.44)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("7");
+      })
+      ;
+})
+;
+    g.append("svg:text")
        .attr("x", -13.74)
        .attr("y", 66.44)
        .attr("text-anchor", "middle")
@@ -1735,7 +800,7 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 157.34)
+       .attr("x", -51.76)
        .attr("y", 66.44)
        .attr("text-anchor", "middle")
     .call(function(text) {
@@ -1743,7 +808,7 @@ function draw_with_data(data, parent_id) {
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("7");
+        text.text("-4");
       })
       ;
 })
@@ -1763,7 +828,7 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", -51.76)
+       .attr("x", -70.77)
        .attr("y", 66.44)
        .attr("text-anchor", "middle")
     .call(function(text) {
@@ -1771,7 +836,7 @@ function draw_with_data(data, parent_id) {
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("-4");
+        text.text("-5");
       })
       ;
 })
@@ -1944,35 +1009,35 @@ function draw_with_data(data, parent_id) {
       g.append("svg:path")
          .attr("d", "M21.43,6.6 L 122.17 6.6");
       g.append("svg:path")
-         .attr("d", "M21.43,-14.71 L 122.17 -14.71");
-      g.append("svg:path")
-         .attr("d", "M21.43,17.25 L 122.17 17.25");
-      g.append("svg:path")
-         .attr("d", "M21.43,27.9 L 122.17 27.9");
-      g.append("svg:path")
-         .attr("d", "M21.43,-4.05 L 122.17 -4.05");
-      g.append("svg:path")
-         .attr("d", "M21.43,102.47 L 122.17 102.47");
-      g.append("svg:path")
-         .attr("d", "M21.43,59.86 L 122.17 59.86");
+         .attr("d", "M21.43,113.12 L 122.17 113.12");
       g.append("svg:path")
          .attr("d", "M21.43,38.55 L 122.17 38.55");
       g.append("svg:path")
          .attr("d", "M21.43,-46.66 L 122.17 -46.66");
       g.append("svg:path")
+         .attr("d", "M21.43,49.21 L 122.17 49.21");
+      g.append("svg:path")
+         .attr("d", "M21.43,-4.05 L 122.17 -4.05");
+      g.append("svg:path")
          .attr("d", "M21.43,123.77 L 122.17 123.77");
       g.append("svg:path")
-         .attr("d", "M21.43,-57.32 L 122.17 -57.32");
+         .attr("d", "M21.43,59.86 L 122.17 59.86");
       g.append("svg:path")
          .attr("d", "M21.43,81.16 L 122.17 81.16");
       g.append("svg:path")
-         .attr("d", "M21.43,70.51 L 122.17 70.51");
-      g.append("svg:path")
-         .attr("d", "M21.43,49.21 L 122.17 49.21");
+         .attr("d", "M21.43,-57.32 L 122.17 -57.32");
       g.append("svg:path")
          .attr("d", "M21.43,-25.36 L 122.17 -25.36");
       g.append("svg:path")
-         .attr("d", "M21.43,113.12 L 122.17 113.12");
+         .attr("d", "M21.43,70.51 L 122.17 70.51");
+      g.append("svg:path")
+         .attr("d", "M21.43,102.47 L 122.17 102.47");
+      g.append("svg:path")
+         .attr("d", "M21.43,27.9 L 122.17 27.9");
+      g.append("svg:path")
+         .attr("d", "M21.43,17.25 L 122.17 17.25");
+      g.append("svg:path")
+         .attr("d", "M21.43,-14.71 L 122.17 -14.71");
       g.append("svg:path")
          .attr("d", "M21.43,91.82 L 122.17 91.82");
       g.append("svg:path")
@@ -1983,23 +1048,15 @@ function draw_with_data(data, parent_id) {
        .attr("stroke-width", "0.2")
        .attr("class", "guide xgridlines");
       g.append("svg:path")
-         .attr("d", "M214.37,5 L 214.37 61.46");
+         .attr("d", "M43.29,5 L 43.29 61.46");
       g.append("svg:path")
-         .attr("d", "M100.31,5 L 100.31 61.46");
+         .attr("d", "M119.32,5 L 119.32 61.46");
+      g.append("svg:path")
+         .attr("d", "M214.37,5 L 214.37 61.46");
       g.append("svg:path")
          .attr("d", "M81.31,5 L 81.31 61.46");
       g.append("svg:path")
-         .attr("d", "M195.36,5 L 195.36 61.46");
-      g.append("svg:path")
-         .attr("d", "M5.27,5 L 5.27 61.46");
-      g.append("svg:path")
-         .attr("d", "M138.33,5 L 138.33 61.46");
-      g.append("svg:path")
-         .attr("d", "M43.29,5 L 43.29 61.46");
-      g.append("svg:path")
          .attr("d", "M-89.77,5 L -89.77 61.46");
-      g.append("svg:path")
-         .attr("d", "M119.32,5 L 119.32 61.46");
       g.append("svg:path")
          .attr("d", "M-32.75,5 L -32.75 61.46");
       g.append("svg:path")
@@ -2007,17 +1064,25 @@ function draw_with_data(data, parent_id) {
       g.append("svg:path")
          .attr("d", "M24.28,5 L 24.28 61.46");
       g.append("svg:path")
-         .attr("d", "M-70.77,5 L -70.77 61.46");
+         .attr("d", "M5.27,5 L 5.27 61.46");
+      g.append("svg:path")
+         .attr("d", "M195.36,5 L 195.36 61.46");
+      g.append("svg:path")
+         .attr("d", "M138.33,5 L 138.33 61.46");
+      g.append("svg:path")
+         .attr("d", "M100.31,5 L 100.31 61.46");
       g.append("svg:path")
          .attr("d", "M233.38,5 L 233.38 61.46");
       g.append("svg:path")
+         .attr("d", "M157.34,5 L 157.34 61.46");
+      g.append("svg:path")
          .attr("d", "M-13.74,5 L -13.74 61.46");
       g.append("svg:path")
-         .attr("d", "M157.34,5 L 157.34 61.46");
+         .attr("d", "M-51.76,5 L -51.76 61.46");
       g.append("svg:path")
          .attr("d", "M62.3,5 L 62.3 61.46");
       g.append("svg:path")
-         .attr("d", "M-51.76,5 L -51.76 61.46");
+         .attr("d", "M-70.77,5 L -70.77 61.46");
     }(g.append("g")));
   }(g.append("g")));
   (function (g) {
@@ -2197,7 +1262,7 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-PwrEOzRdt1C1IQJrlceu");
+draw("#gadflyplot-3eJdrjvPXhkP1eA55EWh");
 </script>
 
         <hr>
@@ -2215,7 +1280,7 @@ draw("#gadflyplot-PwrEOzRdt1C1IQJrlceu");
             <li><a href="#aesthetics">Aesthetics</a/></li>
             <li><a href="#examples">Examples</a/></li>
             </ul>
-            </li><li><a href="geom_label.html">Geom.label</a></li><li><a href="geom_rectbin.html">Geom.rectbin</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li></ul>
+            </li><li><a href="geom_label.html">Geom.label</a></li><li><a href="geom_rectbin.html">Geom.rectbin</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li></ul>
           </div>
         </div>
       </div>
