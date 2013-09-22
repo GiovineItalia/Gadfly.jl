@@ -68,13 +68,13 @@ type Aesthetics
         for i in 1:length(Aesthetics.names)-7
             setfield(aes, Aesthetics.names[i], nothing)
         end
-        aes.x_label = fmt_float
-        aes.y_label = fmt_float
-        aes.xtick_label = string
-        aes.ytick_label = string
-        aes.color_label = string
-        aes.xgroup_label = fmt_float
-        aes.ygroup_label = fmt_float
+        aes.x_label = default_formatter
+        aes.y_label = default_formatter
+        aes.xtick_label = default_formatter
+        aes.ytick_label = default_formatter
+        aes.color_label = default_formatter
+        aes.xgroup_label = default_formatter
+        aes.ygroup_label = default_formatter
 
         aes
     end
@@ -238,7 +238,7 @@ end
 cat_aes_var!(a::Nothing, b::Nothing) = a
 cat_aes_var!(a::Nothing, b) = copy(b)
 cat_aes_var!(a, b::Nothing) = a
-cat_aes_var!(a::Function, b::Function) = a === string || a === fmt_float ? b : a
+cat_aes_var!(a::Function, b::Function) = a === string || a == default_formatter ? b : a
 
 
 function cat_aes_var!(a::Dict, b::Dict)

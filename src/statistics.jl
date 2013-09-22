@@ -147,6 +147,8 @@ function apply_statistic(stat::HistogramStatistic,
 
         aes.color = PooledDataArray(colors)
     end
+
+    aes.y_label = Scale.identity_formatter
 end
 
 
@@ -201,6 +203,7 @@ function apply_statistic(stat::DensityStatistic,
         end
         aes.color = PooledDataArray(colors)
     end
+    aes.y_label = Gadfly.Scale.identity_formatter
 end
 
 

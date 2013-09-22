@@ -10,6 +10,7 @@ import Gadfly.element_aesthetics, Gadfly.isconcrete, Gadfly.concrete_length,
        Gadfly.nonzero_length
 
 include("color.jl")
+include("format.jl")
 
 # Apply some scales to data in the given order.
 #
@@ -54,25 +55,63 @@ end
 immutable ContinuousScaleTransform
     f::Function     # transform function
     finv::Function  # f's inverse
-    label::Function # produce a string given some value f(x)
+
+    # A function taking one or more values and returning an array of
+    # strings.
+    label::Function
+end
+
+
+function identity_formatter(xs...)
+    fmt = formatter(xs...)
+    [fmt(x) for x in xs]
 end
 
 const identity_transform =
-    ContinuousScaleTransform(identity, identity, Gadfly.fmt_float)
+    ContinuousScaleTransform(identity, identity, identity_formatter)
+
+function log10_formatter(xs...)
+    fmt = formatter(xs..., fmt=:plain)
+    [@sprintf("10<sup>%s</sup>", fmt(x)) for x in xs]
+end
+
 const log10_transform =
-    ContinuousScaleTransform(log10, x -> 10^x,
-                             x -> @sprintf("10<sup>%s</sup>", Gadfly.fmt_float(x)))
+    ContinuousScaleTransform(log10, x -> 10^x, log10_formatter)
+
+
+function log2_formatter(xs...)
+    fmt = formatter(xs..., fmt=:plain)
+    [@sprintf("2<sup>%s</sup>", fmt(x)) for x in xs]
+end
+
 const log2_transform =
-    ContinuousScaleTransform(log10, x -> 2^x,
-                             x -> @sprintf("2<sup>%s</sup>", Gadfly.fmt_float(x)))
+    ContinuousScaleTransform(log10, x -> 2^x, log2_formatter)
+
+
+function ln_formatter(xs...)
+    fmt = formatter(xs..., fmt=:plain)
+    [@sprintf("e<sup>%s</sup>", fmt(x)) for x in xs]
+end
+
 const ln_transform =
-    ContinuousScaleTransform(log, exp,
-                             x -> @sprintf("e<sup>%s</sup>", Gadfly.fmt_float(x)))
+    ContinuousScaleTransform(log, exp, ln_formatter)
+
+
+function asinh_formatter(xs)
+    fmt = formatter(xs..., fmt=:plain)
+    [@sprintf("asinh(%s)", fmt(x)) for x in xs]
+end
+
 const asinh_transform =
-    ContinuousScaleTransform(asinh, sinh, x -> Gadfly.fmt_float(sinh(x)))
-const sqrt_transform =
-    ContinuousScaleTransform(sqrt, x -> x^2,
-                             x -> @sprintf("√%s", Gadfly.fmt_float(x)))
+    ContinuousScaleTransform(asinh, sinh, asinh_formatter)
+
+
+function sqrt_formatter(xs)
+    fmt = formatter(xs...)
+    [@sprintf("√%s", fmt(x)) for x in xs]
+end
+
+const sqrt_transform = ContinuousScaleTransform(sqrt, x -> x^2, sqrt_formatter)
 
 
 # Continuous scale maps data on a continuous scale simple by calling
@@ -180,17 +219,14 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
             disc_data = discretize(getfield(data, var))
             setfield(aes, var, PooledDataArray(int64(disc_data.refs)))
 
-            # The labeler for discrete scales is a closure over the discretized data.
-            function labeler(i)
-                if 0 < i <= length(levels(disc_data))
-                    d = levels(disc_data)[int(i)]
-                    if typeof(d) <: FloatingPoint
-                        Gadfly.fmt_float(d)
-                    else
-                        string(d)
-                    end
+            # The leveler for discrete scales is a closure over the discretized data.
+            function labeler(xs...)
+                lvls = levels(disc_data)
+                vals = {1 <= x <= length(lvls) ? lvls[x] : "" for x in xs}
+                if all([isa(val, FloatingPoint) for val in vals])
+                    format(vals...)
                 else
-                    ""
+                    [string(val) for val in vals]
                 end
             end
 
@@ -244,7 +280,11 @@ function apply_scale(scale::DiscreteColorScale,
 
         color_map = {color => string(label)
                      for (label, color) in zip(levels(ds), colors)}
-        aes.color_label = c -> color_map[c]
+        function labeler(xs...)
+            [color_map[x] for x in xs]
+        end
+
+        aes.color_label = labeler
         aes.color_key_colors = colors
     end
 end
@@ -323,9 +363,10 @@ function apply_scale(scale::ContinuousColorScale,
         aes.color = PooledDataArray(cs, nas)
 
         color_labels = Dict{ColorValue, String}()
-        for tick in ticks
+        tick_labels = identity_formatter(ticks...)
+        for (tick, label) in zip(ticks, tick_labels)
             r = (tick - cmin) / cspan
-            color_labels[scale.f(r)] = Gadfly.fmt_float(tick)
+            color_labels[scale.f(r)] = label
         end
 
         # Add a gradient of steps between labeled colors.
@@ -339,7 +380,11 @@ function apply_scale(scale::ContinuousColorScale,
             end
         end
 
-        aes.color_label = c -> color_labels[c]
+        function labeler(xs...)
+            [color_labels[x] for x in xs]
+        end
+
+        aes.color_label = labeler
         aes.color_key_colors = [k for k in keys(color_labels)]
         sort!(aes.color_key_colors, rev=true)
         aes.color_key_continuous = true

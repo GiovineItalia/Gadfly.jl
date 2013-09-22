@@ -161,6 +161,9 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         end
     end
 
+    xlabels = superplot_aes.xgroup_label((1.0:m)...)
+    ylabels = superplot_aes.ygroup_label((1.0:n)...)
+
     for i in 1:n, j in 1:m
         p = Plot()
         p.theme = theme
@@ -178,7 +181,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         if i == n
             push!(guides, Guide.xticks())
             if !is(superplot_aes.xgroup, nothing)
-                push!(guides, Guide.xlabel(superplot_aes.xgroup_label(j)))
+                push!(guides, Guide.xlabel(xlabels[j]))
             end
         else
             push!(guides, Guide.xticks(false))
@@ -187,7 +190,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         if j == 1
             push!(guides, Guide.yticks())
             if !is(superplot_aes.ygroup, nothing)
-                push!(guides, Guide.ylabel(superplot_aes.ygroup_label(i)))
+                push!(guides, Guide.ylabel(ylabels[i]))
             end
         else
             push!(guides, Guide.yticks(false))

@@ -31,6 +31,11 @@ function nonzero_length(xs)
 end
 
 
+function default_formatter(xs...)
+    [string(x) for x in xs]
+end
+
+
 # Create a new object of type T from a with missing values (i.e., those set to
 # nothing) inherited from b.
 function inherit{T}(a::T, b::T)
@@ -45,7 +50,7 @@ function inherit!{T}(a::T, b::T)
         aval = getfield(a, field)
         bval = getfield(b, field)
         # TODO: this is a hack to let non-default labelers overide the defaults
-        if aval === nothing || aval === string || aval === fmt_float
+        if aval === nothing || aval === string || aval == default_formatter
             setfield(a, field, bval)
         elseif typeof(aval) <: Dict && typeof(bval) <: Dict
             merge!(aval, getfield(b, field))
@@ -79,28 +84,6 @@ end
 
 
 Maybe(T) = Union(T, Nothing)
-
-
-# Float64 -> String, trimming trailing zeros when appropriate.
-# This is largely taken from cairo's function _cairo_dtostr.
-function fmt_float(x::Float64)
-    if x < 0.1
-        a = @sprintf("%0.4f", x)
-    else
-        a = @sprintf("%f", x)
-    end
-
-    n = length(a)
-    while a[n] == '0'
-        n -= 1
-    end
-
-    if a[n] == '.'
-        n -= 1
-    end
-
-    a[1:n]
-end
 
 
 function lerp(x::Float64, a::Float64, b::Float64)
