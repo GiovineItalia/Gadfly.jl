@@ -17,7 +17,7 @@
     <div class="container">
       <div class="row">
         <ul>
-          <li><div id="pkgname">Gadfly 0.1.11+</div></li>
+          <li><div id="pkgname">Gadfly 0.1.12+</div></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl">Code</a></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl/issues">Issues</a></li>
         </ul>
@@ -176,14 +176,14 @@ var set_geometry_transform = function(parent_id, t, old_scale) {
 
     // transform gridlines
     d3.select(parent_id)
-      .selectAll(".xgridlines")
+      .selectAll(".yfixed")
       .attr("transform", function() {
         return "translate(" + [t.x, 0.0] + ") " +
                "scale(" + [t.scale, 1.0] + ")";
       });
 
       d3.select(parent_id)
-        .selectAll(".ygridlines")
+        .selectAll(".xfixed")
         .attr("transform", function() {
           return "translate(" + [0.0, t.y] + ") " +
                  "scale(" + [1.0, t.scale] + ")";
@@ -316,7 +316,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("1");
+  text.text("1.0");
 })
 ;
     g.append("svg:text")
@@ -334,7 +334,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("-2");
+  text.text("-2.0");
 })
 ;
     g.append("svg:text")
@@ -352,7 +352,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("-1");
+  text.text("-1.0");
 })
 ;
     g.append("svg:text")
@@ -361,7 +361,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("0");
+  text.text("0.0");
 })
 ;
     g.append("svg:text")
@@ -370,7 +370,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("3");
+  text.text("3.0");
 })
 ;
     g.append("svg:text")
@@ -388,7 +388,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("2");
+  text.text("2.0");
 })
 ;
     g.append("svg:text")
@@ -523,7 +523,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide ygridlines");
+       .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
          .attr("d", "M46.23,53.54 L 135 53.54");
       g.append("svg:path")
@@ -552,7 +552,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide xgridlines");
+       .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
          .attr("d", "M104.57,5 L 104.57 35.32");
       g.append("svg:path")
@@ -632,6 +632,13 @@ g.selectAll("form0")
          .attr("d", "M124.01,25.28 L 127.01 25.28");
     }(g.append("g")));
   }(g.append("g")));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath4")
+    .append("svg:path")
+      .attr("d", " M46.23,5 L 135 5 135 35.32 46.23 35.32 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+  }(g.append("g")));
 }(g.append("g")));
 }
 
@@ -661,7 +668,7 @@ draw("#gadflyplot-JMFM2Ytxhibpbd4LYaRB");
             <li><a href="#asthetics">Asthetics</a/></li>
             <li><a href="#examples">Examples</a/></li>
             </ul>
-            </li><li><a href="geom_smooth.html">Geom.smooth</a></li></ul>
+            </li><li><a href="geom_smooth.html">Geom.smooth</a></li><li><a href="geom_hline.html">Geom.hline</a></li><li><a href="geom_vline.html">Geom.vline</a></li></ul>
           </div>
         </div>
       </div>

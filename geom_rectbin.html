@@ -17,7 +17,7 @@
     <div class="container">
       <div class="row">
         <ul>
-          <li><div id="pkgname">Gadfly 0.1.11+</div></li>
+          <li><div id="pkgname">Gadfly 0.1.12+</div></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl">Code</a></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl/issues">Issues</a></li>
         </ul>
@@ -186,14 +186,14 @@ var set_geometry_transform = function(parent_id, t, old_scale) {
 
     // transform gridlines
     d3.select(parent_id)
-      .selectAll(".xgridlines")
+      .selectAll(".yfixed")
       .attr("transform", function() {
         return "translate(" + [t.x, 0.0] + ") " +
                "scale(" + [t.scale, 1.0] + ")";
       });
 
       d3.select(parent_id)
-        .selectAll(".ygridlines")
+        .selectAll(".xfixed")
         .attr("transform", function() {
           return "translate(" + [0.0, t.y] + ") " +
                  "scale(" + [1.0, t.scale] + ")";
@@ -278,7 +278,7 @@ var zoom_behavior = function(parent_id, t) {
 
 </script>
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;Zelig&quot;</span>, <span class="st">&quot;macro&quot;</span>), x=<span class="st">&quot;year&quot;</span>, y=<span class="st">&quot;country&quot;</span>, color=<span class="st">&quot;gdp&quot;</span>, Geom.rectbin)</code></pre>
-<div id="gadflyplot-xpCobgO1lg7ZL4bPUwmN"></div>
+<div id="gadflyplot-7yQ1PSyUsonti0ChDtkg"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -766,7 +766,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide ygridlines");
+       .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
          .attr("d", "M35.68,53.29 L 124.81 53.29");
       g.append("svg:path")
@@ -797,7 +797,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide xgridlines");
+       .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
          .attr("d", "M-12.24,5 L -12.24 62.7");
       g.append("svg:path")
@@ -2947,6 +2947,13 @@ function draw_with_data(data, parent_id) {
       }(g.append("g")));
     }(g.append("g")));
   }(g.append("g")));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath4")
+    .append("svg:path")
+      .attr("d", " M35.68,5 L 124.81 5 124.81 62.7 35.68 62.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+  }(g.append("g")));
 }(g.append("g")));
 }
 
@@ -2957,7 +2964,7 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-xpCobgO1lg7ZL4bPUwmN");
+draw("#gadflyplot-7yQ1PSyUsonti0ChDtkg");
 </script>
 
         <hr>
@@ -2976,7 +2983,7 @@ draw("#gadflyplot-xpCobgO1lg7ZL4bPUwmN");
             <li><a href="#see-also">See Also</a/></li>
             <li><a href="#examples">Examples</a/></li>
             </ul>
-            </li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li></ul>
+            </li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li><li><a href="geom_hline.html">Geom.hline</a></li><li><a href="geom_vline.html">Geom.vline</a></li></ul>
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@
     <div class="container">
       <div class="row">
         <ul>
-          <li><div id="pkgname">Gadfly 0.1.11+</div></li>
+          <li><div id="pkgname">Gadfly 0.1.12+</div></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl">Code</a></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl/issues">Issues</a></li>
         </ul>
@@ -178,14 +178,14 @@ var set_geometry_transform = function(parent_id, t, old_scale) {
 
     // transform gridlines
     d3.select(parent_id)
-      .selectAll(".xgridlines")
+      .selectAll(".yfixed")
       .attr("transform", function() {
         return "translate(" + [t.x, 0.0] + ") " +
                "scale(" + [t.scale, 1.0] + ")";
       });
 
       d3.select(parent_id)
-        .selectAll(".ygridlines")
+        .selectAll(".xfixed")
         .attr("transform", function() {
           return "translate(" + [0.0, t.y] + ") " +
                  "scale(" + [1.0, t.scale] + ")";
@@ -270,7 +270,7 @@ var zoom_behavior = function(parent_id, t) {
 
 </script>
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;mpg&quot;</span>), x=<span class="st">&quot;cty&quot;</span>, y=<span class="st">&quot;hwy&quot;</span>, label=<span class="st">&quot;model&quot;</span>, Geom.point, Geom.label)</code></pre>
-<div id="gadflyplot-APolS3qRKjJr7t5oOBdN"></div>
+<div id="gadflyplot-j2xyNwAr1JM9ixxbapap"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -642,7 +642,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide ygridlines");
+       .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
          .attr("d", "M18.75,168.47 L 135 168.47");
       g.append("svg:path")
@@ -683,7 +683,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide xgridlines");
+       .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
          .attr("d", "M241.38,5 L 241.38 82.7");
       g.append("svg:path")
@@ -749,7 +749,7 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 95.43)
+           .attr("x", 95.62)
            .attr("y", 17.23)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
@@ -762,7 +762,7 @@ g.selectAll("form0")
         g.attr("class", "geometry");
         g.append("svg:text")
            .attr("x", 126.21)
-           .attr("y", 14.68)
+           .attr("y", 17.46)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -774,7 +774,7 @@ g.selectAll("form0")
         g.attr("class", "geometry");
         g.append("svg:text")
            .attr("x", 108.27)
-           .attr("y", 14.82)
+           .attr("y", 16.6)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -786,7 +786,7 @@ g.selectAll("form0")
         g.attr("class", "geometry");
         g.append("svg:text")
            .attr("x", 104.46)
-           .attr("y", 25.48)
+           .attr("y", 25)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -797,7 +797,7 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 63.04)
+           .attr("x", 63.11)
            .attr("y", 37.76)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
@@ -810,7 +810,7 @@ g.selectAll("form0")
         g.attr("class", "geometry");
         g.append("svg:text")
            .attr("x", 83.63)
-           .attr("y", 27.58)
+           .attr("y", 26.72)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -821,7 +821,7 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 93.37)
+           .attr("x", 92.87)
            .attr("y", 24.56)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
@@ -833,7 +833,7 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 87.35)
+           .attr("x", 87.87)
            .attr("y", 41.15)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
@@ -845,8 +845,8 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 103.02)
-           .attr("y", 33.4)
+           .attr("x", 96.33)
+           .attr("y", 35.28)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -857,7 +857,7 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 74.89)
+           .attr("x", 74.69)
            .attr("y", 31.9)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
@@ -867,6 +867,13 @@ g.selectAll("form0")
 ;
       }(g.append("g")));
     }(g.append("g")));
+  }(g.append("g")));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath4")
+    .append("svg:path")
+      .attr("d", " M18.75,5 L 135 5 135 82.7 18.75 82.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
   }(g.append("g")));
 }(g.append("g")));
 }
@@ -879,13 +886,13 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-APolS3qRKjJr7t5oOBdN");
+draw("#gadflyplot-j2xyNwAr1JM9ixxbapap");
 </script>
 
 
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;MASS&quot;</span>, <span class="st">&quot;mammals&quot;</span>), x=<span class="st">&quot;body&quot;</span>, y=<span class="st">&quot;brain&quot;</span>, label=<span class="fl">1</span>,
      Scale.x_log10, Scale.y_log10, Geom.point, Geom.label)</code></pre>
-<div id="gadflyplot-P3aUWZfsFZgBgkyvHokX"></div>
+<div id="gadflyplot-i2m6AcNIq1HWGjSkzjaM"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -1455,7 +1462,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide ygridlines");
+       .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
          .attr("d", "M19.91,50.44 L 135 50.44");
       g.append("svg:path")
@@ -1496,7 +1503,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide xgridlines");
+       .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
          .attr("d", "M23.17,5 L 23.17 81.46");
       g.append("svg:path")
@@ -1562,8 +1569,20 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 65.65)
-           .attr("y", 74.97)
+           .attr("x", 111.87)
+           .attr("y", 32)
+           .attr("text-anchor", "middle")
+           .style("dominant-baseline", "central")
+        .call(function(text) {
+  text.text("Pig");
+})
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("class", "geometry");
+        g.append("svg:text")
+           .attr("x", 68.18)
+           .attr("y", 71.16)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -1574,8 +1593,20 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
+           .attr("x", 71.85)
+           .attr("y", 64.01)
+           .attr("text-anchor", "middle")
+           .style("dominant-baseline", "central")
+        .call(function(text) {
+  text.text("Rat");
+})
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("class", "geometry");
+        g.append("svg:text")
            .attr("x", 91.86)
-           .attr("y", 25.89)
+           .attr("y", 26.27)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -1586,7 +1617,7 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 107.47)
+           .attr("x", 107.45)
            .attr("y", 22.9)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
@@ -1599,7 +1630,7 @@ g.selectAll("form0")
         g.attr("class", "geometry");
         g.append("svg:text")
            .attr("x", 39.12)
-           .attr("y", 73.22)
+           .attr("y", 72.91)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -1610,32 +1641,8 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 73.22)
-           .attr("y", 68.03)
-           .attr("text-anchor", "middle")
-           .style("dominant-baseline", "central")
-        .call(function(text) {
-  text.text("Golden hamster");
-})
-;
-      }(g.append("g")));
-      (function (g) {
-        g.attr("class", "geometry");
-        g.append("svg:text")
-           .attr("x", 101.07)
-           .attr("y", 47.79)
-           .attr("text-anchor", "middle")
-           .style("dominant-baseline", "central")
-        .call(function(text) {
-  text.text("Yellow-bellied marmot");
-})
-;
-      }(g.append("g")));
-      (function (g) {
-        g.attr("class", "geometry");
-        g.append("svg:text")
-           .attr("x", 105.69)
-           .attr("y", 41.14)
+           .attr("x", 102.37)
+           .attr("y", 42.81)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -1646,7 +1653,19 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 91.53)
+           .attr("x", 77.87)
+           .attr("y", 32.9)
+           .attr("text-anchor", "middle")
+           .style("dominant-baseline", "central")
+        .call(function(text) {
+  text.text("Rhesus monkey");
+})
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("class", "geometry");
+        g.append("svg:text")
+           .attr("x", 90.38)
            .attr("y", 59.5)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
@@ -1659,7 +1678,7 @@ g.selectAll("form0")
         g.attr("class", "geometry");
         g.append("svg:text")
            .attr("x", 95.95)
-           .attr("y", 18.54)
+           .attr("y", 19.12)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -1670,19 +1689,7 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 64.14)
-           .attr("y", 51.62)
-           .attr("text-anchor", "middle")
-           .style("dominant-baseline", "central")
-        .call(function(text) {
-  text.text("Galago");
-})
-;
-      }(g.append("g")));
-      (function (g) {
-        g.attr("class", "geometry");
-        g.append("svg:text")
-           .attr("x", 118.32)
+           .attr("x", 116.07)
            .attr("y", 15.18)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
@@ -1694,8 +1701,20 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
+           .attr("x", 100.25)
+           .attr("y", 51.49)
+           .attr("text-anchor", "middle")
+           .style("dominant-baseline", "central")
+        .call(function(text) {
+  text.text("Nine-banded armadillo");
+})
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("class", "geometry");
+        g.append("svg:text")
            .attr("x", 49.45)
-           .attr("y", 64.98)
+           .attr("y", 64.59)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -1706,7 +1725,7 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 37.58)
+           .attr("x", 54.6)
            .attr("y", 80.34)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
@@ -1718,32 +1737,20 @@ g.selectAll("form0")
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 82.52)
-           .attr("y", 36.27)
+           .attr("x", 53.09)
+           .attr("y", 54.84)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
-  text.text("Verbet");
+  text.text("Ground squirrel");
 })
 ;
       }(g.append("g")));
       (function (g) {
         g.attr("class", "geometry");
         g.append("svg:text")
-           .attr("x", 117.76)
-           .attr("y", 28.06)
-           .attr("text-anchor", "middle")
-           .style("dominant-baseline", "central")
-        .call(function(text) {
-  text.text("Cow");
-})
-;
-      }(g.append("g")));
-      (function (g) {
-        g.attr("class", "geometry");
-        g.append("svg:text")
-           .attr("x", 67.6)
-           .attr("y", 44.54)
+           .attr("x", 64.11)
+           .attr("y", 46.35)
            .attr("text-anchor", "middle")
            .style("dominant-baseline", "central")
         .call(function(text) {
@@ -1751,7 +1758,26 @@ g.selectAll("form0")
 })
 ;
       }(g.append("g")));
+      (function (g) {
+        g.attr("class", "geometry");
+        g.append("svg:text")
+           .attr("x", 77.4)
+           .attr("y", 39.74)
+           .attr("text-anchor", "middle")
+           .style("dominant-baseline", "central")
+        .call(function(text) {
+  text.text("Arctic fox");
+})
+;
+      }(g.append("g")));
     }(g.append("g")));
+  }(g.append("g")));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath4")
+    .append("svg:path")
+      .attr("d", " M19.91,5 L 135 5 135 81.46 19.91 81.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
   }(g.append("g")));
 }(g.append("g")));
 }
@@ -1764,7 +1790,7 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-P3aUWZfsFZgBgkyvHokX");
+draw("#gadflyplot-i2m6AcNIq1HWGjSkzjaM");
 </script>
 
         <hr>
@@ -1783,7 +1809,7 @@ draw("#gadflyplot-P3aUWZfsFZgBgkyvHokX");
             <li><a href="#arguments">Arguments</a/></li>
             <li><a href="#examples">Examples</a/></li>
             </ul>
-            </li><li><a href="geom_rectbin.html">Geom.rectbin</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li></ul>
+            </li><li><a href="geom_rectbin.html">Geom.rectbin</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li><li><a href="geom_hline.html">Geom.hline</a></li><li><a href="geom_vline.html">Geom.vline</a></li></ul>
           </div>
         </div>
       </div>

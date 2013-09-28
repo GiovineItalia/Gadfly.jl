@@ -17,7 +17,7 @@
     <div class="container">
       <div class="row">
         <ul>
-          <li><div id="pkgname">Gadfly 0.1.11+</div></li>
+          <li><div id="pkgname">Gadfly 0.1.12+</div></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl">Code</a></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl/issues">Issues</a></li>
         </ul>
@@ -171,14 +171,14 @@ var set_geometry_transform = function(parent_id, t, old_scale) {
 
     // transform gridlines
     d3.select(parent_id)
-      .selectAll(".xgridlines")
+      .selectAll(".yfixed")
       .attr("transform", function() {
         return "translate(" + [t.x, 0.0] + ") " +
                "scale(" + [t.scale, 1.0] + ")";
       });
 
       d3.select(parent_id)
-        .selectAll(".ygridlines")
+        .selectAll(".xfixed")
         .attr("transform", function() {
           return "translate(" + [0.0, t.y] + ") " +
                  "scale(" + [1.0, t.scale] + ")";
@@ -393,14 +393,14 @@ var set_geometry_transform = function(parent_id, t, old_scale) {
 
     // transform gridlines
     d3.select(parent_id)
-      .selectAll(".xgridlines")
+      .selectAll(".yfixed")
       .attr("transform", function() {
         return "translate(" + [t.x, 0.0] + ") " +
                "scale(" + [t.scale, 1.0] + ")";
       });
 
       d3.select(parent_id)
-        .selectAll(".ygridlines")
+        .selectAll(".xfixed")
         .attr("transform", function() {
           return "translate(" + [0.0, t.y] + ") " +
                  "scale(" + [1.0, t.scale] + ")";
@@ -485,7 +485,7 @@ var zoom_behavior = function(parent_id, t) {
 
 </script>
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;datasets&quot;</span>, <span class="st">&quot;iris&quot;</span>), x=<span class="st">&quot;Sepal.Length&quot;</span>, y=<span class="st">&quot;Sepal.Width&quot;</span>, Geom.point)</code></pre>
-<div id="gadflyplot-PQadiFXJ50uxxwZecvJp"></div>
+<div id="gadflyplot-y6WnlC71LHIUfl7ZjqvK"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -533,7 +533,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("2");
+  text.text("2.0");
 })
 ;
     g.append("svg:text")
@@ -560,7 +560,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("7");
+  text.text("7.0");
 })
 ;
     g.append("svg:text")
@@ -569,7 +569,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("4");
+  text.text("4.0");
 })
 ;
     g.append("svg:text")
@@ -578,7 +578,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("0");
+  text.text("0.0");
 })
 ;
     g.append("svg:text")
@@ -587,7 +587,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("-1");
+  text.text("-1.0");
 })
 ;
     g.append("svg:text")
@@ -605,7 +605,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("6");
+  text.text("6.0");
 })
 ;
     g.append("svg:text")
@@ -623,7 +623,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("3");
+  text.text("3.0");
 })
 ;
     g.append("svg:text")
@@ -641,7 +641,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("5");
+  text.text("5.0");
 })
 ;
     g.append("svg:text")
@@ -650,7 +650,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("1");
+  text.text("1.0");
 })
 ;
     g.append("svg:text")
@@ -857,7 +857,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide ygridlines");
+       .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
          .attr("d", "M18.85,50.18 L 135 50.18");
       g.append("svg:path")
@@ -898,7 +898,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide xgridlines");
+       .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
          .attr("d", "M-32.66,5 L -32.66 62.7");
       g.append("svg:path")
@@ -957,6 +957,13 @@ g.selectAll("form0")
       }(g.append("g")));
     }(g.append("g")));
   }(g.append("g")));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath4")
+    .append("svg:path")
+      .attr("d", " M18.85,5 L 135 5 135 62.7 18.85 62.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+  }(g.append("g")));
 }(g.append("g")));
 }
 
@@ -968,14 +975,14 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-PQadiFXJ50uxxwZecvJp");
+draw("#gadflyplot-y6WnlC71LHIUfl7ZjqvK");
 </script>
 
 
 <pre class="sourceCode julia julia"><code class="sourceCode julia"><span class="co"># Binding categorial data to the color aesthetic</span>
 plot(data(<span class="st">&quot;datasets&quot;</span>, <span class="st">&quot;iris&quot;</span>), x=<span class="st">&quot;Sepal.Length&quot;</span>, y=<span class="st">&quot;Sepal.Width&quot;</span>,
      color=<span class="st">&quot;Species&quot;</span>, Geom.point)</code></pre>
-<div id="gadflyplot-x0rDbIw2u5tCBs8egtYE"></div>
+<div id="gadflyplot-K0TqhZOZwuUQl9YYkXOp"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -1023,7 +1030,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("2");
+  text.text("2.0");
 })
 ;
     g.append("svg:text")
@@ -1050,7 +1057,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("7");
+  text.text("7.0");
 })
 ;
     g.append("svg:text")
@@ -1059,7 +1066,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("4");
+  text.text("4.0");
 })
 ;
     g.append("svg:text")
@@ -1068,7 +1075,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("0");
+  text.text("0.0");
 })
 ;
     g.append("svg:text")
@@ -1077,7 +1084,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("-1");
+  text.text("-1.0");
 })
 ;
     g.append("svg:text")
@@ -1095,7 +1102,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("6");
+  text.text("6.0");
 })
 ;
     g.append("svg:text")
@@ -1113,7 +1120,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("3");
+  text.text("3.0");
 })
 ;
     g.append("svg:text")
@@ -1131,7 +1138,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("5");
+  text.text("5.0");
 })
 ;
     g.append("svg:text")
@@ -1140,7 +1147,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("1");
+  text.text("1.0");
 })
 ;
     g.append("svg:text")
@@ -1434,7 +1441,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide ygridlines");
+       .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
          .attr("d", "M18.85,50.18 L 115.01 50.18");
       g.append("svg:path")
@@ -1475,7 +1482,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide xgridlines");
+       .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
          .attr("d", "M-23.79,5 L -23.79 62.7");
       g.append("svg:path")
@@ -1534,6 +1541,13 @@ g.selectAll("form0")
       }(g.append("g")));
     }(g.append("g")));
   }(g.append("g")));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath4")
+    .append("svg:path")
+      .attr("d", " M18.85,5 L 115.01 5 115.01 62.7 18.85 62.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+  }(g.append("g")));
 }(g.append("g")));
 }
 
@@ -1548,14 +1562,14 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-x0rDbIw2u5tCBs8egtYE");
+draw("#gadflyplot-K0TqhZOZwuUQl9YYkXOp");
 </script>
 
 
 <pre class="sourceCode julia julia"><code class="sourceCode julia"><span class="co"># Binding continuous data to the color aesthetic</span>
 plot(data(<span class="st">&quot;datasets&quot;</span>, <span class="st">&quot;iris&quot;</span>), x=<span class="st">&quot;Sepal.Length&quot;</span>, y=<span class="st">&quot;Sepal.Width&quot;</span>,
      color=<span class="st">&quot;Petal.Length&quot;</span>, Geom.point)</code></pre>
-<div id="gadflyplot-H1QNaabEPp3y3YIFMH24"></div>
+<div id="gadflyplot-B8C738WasVqPj3nXGNXu"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -1603,7 +1617,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("2");
+  text.text("2.0");
 })
 ;
     g.append("svg:text")
@@ -1630,7 +1644,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("7");
+  text.text("7.0");
 })
 ;
     g.append("svg:text")
@@ -1639,7 +1653,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("4");
+  text.text("4.0");
 })
 ;
     g.append("svg:text")
@@ -1648,7 +1662,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("0");
+  text.text("0.0");
 })
 ;
     g.append("svg:text")
@@ -1657,7 +1671,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("-1");
+  text.text("-1.0");
 })
 ;
     g.append("svg:text")
@@ -1675,7 +1689,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("6");
+  text.text("6.0");
 })
 ;
     g.append("svg:text")
@@ -1693,7 +1707,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("3");
+  text.text("3.0");
 })
 ;
     g.append("svg:text")
@@ -1711,7 +1725,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("5");
+  text.text("5.0");
 })
 ;
     g.append("svg:text")
@@ -1720,7 +1734,7 @@ function draw_with_data(data, parent_id) {
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("1");
+  text.text("1.0");
 })
 ;
     g.append("svg:text")
@@ -2055,7 +2069,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide ygridlines");
+       .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
          .attr("d", "M18.85,50.18 L 111.03 50.18");
       g.append("svg:path")
@@ -2096,7 +2110,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide xgridlines");
+       .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
          .attr("d", "M-22.03,5 L -22.03 62.7");
       g.append("svg:path")
@@ -2156,6 +2170,13 @@ g.selectAll("form0")
       }(g.append("g")));
     }(g.append("g")));
   }(g.append("g")));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath4")
+    .append("svg:path")
+      .attr("d", " M18.85,5 L 111.03 5 111.03 62.7 18.85 62.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+  }(g.append("g")));
 }(g.append("g")));
 }
 
@@ -2169,13 +2190,13 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-H1QNaabEPp3y3YIFMH24");
+draw("#gadflyplot-B8C738WasVqPj3nXGNXu");
 </script>
 
 
 <pre class="sourceCode julia julia"><code class="sourceCode julia"><span class="co"># Binding categorial data to x</span>
 plot(data(<span class="st">&quot;lattice&quot;</span>, <span class="st">&quot;singer&quot;</span>), x=<span class="st">&quot;voice.part&quot;</span>, y=<span class="st">&quot;height&quot;</span>, Geom.point)</code></pre>
-<div id="gadflyplot-Gmo6TCnzHTKtnZEfsn5X"></div>
+<div id="gadflyplot-MRpbTJxHNmhErVtD1BJD"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -2464,7 +2485,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide ygridlines");
+       .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
          .attr("d", "M18.75,74.68 L 135 74.68");
       g.append("svg:path")
@@ -2499,7 +2520,7 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("stroke", "#F0F0F3")
        .attr("stroke-width", "0.2")
-       .attr("class", "guide xgridlines");
+       .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
          .attr("d", "M76.88,5 L 76.88 62.7");
       g.append("svg:path")
@@ -2542,6 +2563,13 @@ g.selectAll("form0")
       }(g.append("g")));
     }(g.append("g")));
   }(g.append("g")));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath4")
+    .append("svg:path")
+      .attr("d", " M18.75,5 L 135 5 135 62.7 18.75 62.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+  }(g.append("g")));
 }(g.append("g")));
 }
 
@@ -2553,7 +2581,7 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-Gmo6TCnzHTKtnZEfsn5X");
+draw("#gadflyplot-MRpbTJxHNmhErVtD1BJD");
 </script>
 
 
@@ -2577,7 +2605,7 @@ draw("#gadflyplot-Gmo6TCnzHTKtnZEfsn5X");
             <li><a href="#aesthetics">Aesthetics</a/></li>
             <li><a href="#examples">Examples</a/></li>
             </ul>
-            </li><li><a href="geom_line.html">Geom.line</a></li><li><a href="geom_boxplot.html">Geom.boxplot</a></li><li><a href="geom_histogram.html">Geom.histogram</a></li><li><a href="geom_density.html">Geom.density</a></li><li><a href="geom_histogram2d.html">Geom.histogram2d</a></li><li><a href="geom_label.html">Geom.label</a></li><li><a href="geom_rectbin.html">Geom.rectbin</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li></ul>
+            </li><li><a href="geom_line.html">Geom.line</a></li><li><a href="geom_boxplot.html">Geom.boxplot</a></li><li><a href="geom_histogram.html">Geom.histogram</a></li><li><a href="geom_density.html">Geom.density</a></li><li><a href="geom_histogram2d.html">Geom.histogram2d</a></li><li><a href="geom_label.html">Geom.label</a></li><li><a href="geom_rectbin.html">Geom.rectbin</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li><li><a href="geom_hline.html">Geom.hline</a></li><li><a href="geom_vline.html">Geom.vline</a></li></ul>
           </div>
         </div>
       </div>
