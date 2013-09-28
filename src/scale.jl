@@ -121,8 +121,8 @@ immutable ContinuousScale <: Gadfly.ScaleElement
     trans::ContinuousScaleTransform
 end
 
-const x_vars = [:x, :xmin, :xmax]
-const y_vars = [:y, :ymin, :ymax]
+const x_vars = [:x, :xmin, :xmax, :xintercept]
+const y_vars = [:y, :ymin, :ymax, :yintercept]
 
 # Commonly used scales.
 const x_continuous = ContinuousScale(x_vars, identity_transform)

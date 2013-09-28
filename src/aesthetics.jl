@@ -13,6 +13,10 @@ type Aesthetics
     ymin::Union(Nothing, Vector{Float64}, Vector{Int64})
     ymax::Union(Nothing, Vector{Float64}, Vector{Int64})
 
+    # For fixed lines
+    xintercept::Union(Nothing, Vector{Float64}, Vector{Int64})
+    yintercept::Union(Nothing, Vector{Float64}, Vector{Int64})
+
     # Boxplot aesthetics
     middle::Maybe(Vector{Float64})
     lower_hinge::Maybe(Vector{Float64})

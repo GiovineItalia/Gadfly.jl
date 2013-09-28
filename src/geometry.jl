@@ -36,6 +36,8 @@ include("geom/line.jl")
 include("geom/point.jl")
 include("geom/rectbin.jl")
 include("geom/subplot.jl")
+include("geom/hline.jl")
+include("geom/vline.jl")
 
 end # module Geom
 

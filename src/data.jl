@@ -8,6 +8,8 @@ type Data
     xmax
     ymin
     ymax
+    xintercept
+    yintercept
     xgroup
     ygroup
     xtick
