@@ -278,7 +278,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                          [lines((t, 0h), (t, 1h)) for t in grids]...,
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width),
-                         svgclass("guide xgridlines"))
+                         svgclass("guide xgridlines yfixed"))
 
     if !guide.label
         return {(grid_lines, under_guide_position)}
@@ -338,7 +338,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                          [lines((0w, t), (1w, t)) for t in grids]...,
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width),
-                         svgclass("guide ygridlines"))
+                         svgclass("guide ygridlines xfixed"))
 
     if !guide.label
         return {(grid_lines, under_guide_position)}
