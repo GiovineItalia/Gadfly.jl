@@ -1,96 +1,76 @@
 
-# Aesthetics is a set of bindings of typed values to symbols (Wilkinson calls
-# this a Varset). Each variable controls how geometries are realized.
-type Aesthetics
-    x::Union(Nothing, Vector{Float64}, Vector{Int64}, PooledDataArray)
-    y::Union(Nothing, Vector{Float64}, Vector{Int64}, PooledDataArray)
-    size::Maybe(Vector{Measure})
-    color::Maybe(AbstractDataVector{ColorValue})
-    label::Maybe(PooledDataVector)
 
-    xmin::Union(Nothing, Vector{Float64}, Vector{Int64})
-    xmax::Union(Nothing, Vector{Float64}, Vector{Int64})
-    ymin::Union(Nothing, Vector{Float64}, Vector{Int64})
-    ymax::Union(Nothing, Vector{Float64}, Vector{Int64})
+typealias NumericalOrCategoricalAesthetic
+    Union(Nothing, Vector{Float64}, Vector{Int64}, PooledDataArray)
 
-    # For fixed lines
-    xintercept::Union(Nothing, Vector{Float64}, Vector{Int64})
-    yintercept::Union(Nothing, Vector{Float64}, Vector{Int64})
+typealias CategoricalAesthetic
+    Union(Nothing, PooledDataArray)
 
-    # Boxplot aesthetics
-    middle::Maybe(Vector{Float64})
-    lower_hinge::Maybe(Vector{Float64})
-    upper_hinge::Maybe(Vector{Float64})
-    lower_fence::Maybe(Vector{Float64})
-    upper_fence::Maybe(Vector{Float64})
-    outliers::Maybe(Vector{Vector{Float64}})
+typealias NumericalAesthetic
+    Union(Nothing, Vector{Float64}, Vector{Int64})
 
-    # Subplot aesthetics
-    xgroup::Maybe(PooledDataArray)
-    ygroup::Maybe(PooledDataArray)
+typealias FloatAesthetic Union(Nothing, Vector{Float64})
 
-    # Aesthetics pertaining to guides
-    xtick::Maybe(Vector{Float64})
-    ytick::Maybe(Vector{Float64})
-    xgrid::Maybe(Vector{Float64})
-    ygrid::Maybe(Vector{Float64})
 
-    # Pesudo-aesthetics used to indicate that drawing might
+@varset Aesthetics begin
+    x,            NumericalOrCategoricalAesthetic
+    y,            NumericalOrCategoricalAesthetic
+    size,         Maybe(Vector{Measure})
+    color,        Maybe(AbstractDataVector{ColorValue})
+    label,        CategoricalAesthetic
+
+    xmin,         NumericalAesthetic
+    xmax,         NumericalAesthetic
+    ymin,         NumericalAesthetic
+    ymax,         NumericalAesthetic
+
+    # fixed lines
+    xintercept,   NumericalAesthetic
+    yintercept,   NumericalAesthetic
+
+    # boxplots
+    middle,       FloatAesthetic
+    lower_hinge,  FloatAesthetic
+    upper_hinge,  FloatAesthetic
+    lower_fence,  FloatAesthetic
+    upper_fence,  FloatAesthetic
+    outliers,     FloatAesthetic
+
+    # subplots
+    xgroup,       CategoricalAesthetic
+    ygroup,       CategoricalAesthetic
+
+    # guides
+    xtick,        FloatAesthetic
+    ytick,        FloatAesthetic
+    xgrid,        FloatAesthetic
+    ygrid,        FloatAesthetic
+    color_key_colors,     Maybe(Vector{ColorValue})
+    color_key_title,      Maybe(String)
+    color_key_continuous, Maybe(Bool)
+    titles,               Maybe(Dict{Symbol, String})
+
+    # pesudo-aesthetics used to indicate that drawing might
     # occur beyond any x/y value.
-    xdrawmin::Maybe(Float64)
-    xdrawmax::Maybe(Float64)
-    ydrawmin::Maybe(Float64)
-    ydrawmax::Maybe(Float64)
+    xdrawmin,     Maybe(Float64)
+    xdrawmax,     Maybe(Float64)
+    ydrawmin,     Maybe(Float64)
+    ydrawmax,     Maybe(Float64)
 
-    # Plot viewport extents
-    xviewmin::Maybe(Float64)
-    xviewmax::Maybe(Float64)
-    yviewmin::Maybe(Float64)
-    yviewmax::Maybe(Float64)
+    # plot viewport extents
+    xviewmin,     Maybe(Float64)
+    xviewmax,     Maybe(Float64)
+    yviewmin,     Maybe(Float64)
+    yviewmax,     Maybe(Float64)
 
-    color_key_colors::Maybe(Vector{ColorValue})
-    color_key_title::Maybe(String)
-    color_key_continuous::Maybe(Bool)
-
-    # Human readable titles of aesthetics, used for labeling. This is (maybe) a
-    # dict mapping aesthetics names to suitable string.s
-    titles::Maybe(Dict{Symbol, String})
-
-    # Labels. These are not aesthetics per se, but functions that assign lables
-    # to values taken by aesthetics. Often this means simply inverting the
-    # application of a scale to arrive at the original value.
-    x_label::Function
-    y_label::Function
-    xtick_label::Function
-    ytick_label::Function
-    color_label::Function
-    xgroup_label::Function
-    ygroup_label::Function
-
-    function Aesthetics()
-        aes = new()
-        for i in 1:length(Aesthetics.names)-7
-            setfield(aes, Aesthetics.names[i], nothing)
-        end
-        aes.x_label = default_formatter
-        aes.y_label = default_formatter
-        aes.xtick_label = default_formatter
-        aes.ytick_label = default_formatter
-        aes.color_label = default_formatter
-        aes.xgroup_label = default_formatter
-        aes.ygroup_label = default_formatter
-
-        aes
-    end
-
-    # shallow copy constructor
-    function Aesthetics(a::Aesthetics)
-        b = new()
-        for name in Aesthetics.names
-            setfield(b, name, getfield(a, name))
-        end
-        b
-    end
+    # labeling functions
+    x_label,      Function, default_formatter
+    y_label,      Function, default_formatter
+    xtick_label,  Function, default_formatter
+    ytick_label,  Function, default_formatter
+    color_label,  Function, default_formatter
+    xgroup_label, Function, default_formatter
+    ygroup_label, Function, default_formatter
 end
 
 

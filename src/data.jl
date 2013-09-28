@@ -1,7 +1,7 @@
 
-# Data binds untyped values to a aesthetic variables.
-# TODO: generate this from Aesthetics with a macro
-type Data
+
+
+@varset Data begin
     x
     y
     xmin
@@ -23,37 +23,9 @@ type Data
     size
     color
     label
-
-    titles::Dict{Symbol, String}
-
-    function Data()
-        data = new()
-        for i in 1:length(Data.names)-1
-            setfield(data, Data.names[i], nothing)
-        end
-        data.titles = Dict{Symbol, String}()
-        data
-    end
-
-    # shallow copy constructor
-    function Data(a::Data)
-        b = new()
-        for name in Data.names
-            setfield(b, name, getfield(a, name))
-        end
-        b
-    end
+    titles, Dict{Symbol, String}, Dict{Symbol, String}()
 end
 
-# Make a shallow copy of a Data instance.
-#
-# Args:
-#   a: source
-#
-# Returns:
-#   A copy of a
-#
-copy(a::Data) = Data(a)
 
 
 # Produce a new Data instance chaining the values of one or more others.
