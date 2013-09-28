@@ -16,12 +16,14 @@ immutable RightGuidePosition  <: GuidePosition end
 immutable BottomGuidePosition <: GuidePosition end
 immutable LeftGuidePosition   <: GuidePosition end
 immutable UnderGuidePosition  <: GuidePosition end
+immutable OverGuidePosition   <: GuidePosition end
 
 const top_guide_position    = TopGuidePosition()
 const right_guide_position  = RightGuidePosition()
 const bottom_guide_position = BottomGuidePosition()
 const left_guide_position   = LeftGuidePosition()
 const under_guide_position  = UnderGuidePosition()
+const over_guide_position   = OverGuidePosition()
 
 
 immutable PanelBackground <: Gadfly.GuideElement
@@ -438,6 +440,7 @@ function layout_guides(plot_canvas::Canvas,
     bottom_guides = Canvas[]
     left_guides   = Canvas[]
     under_guides  = Canvas[]
+    over_guides   = Canvas[]
     for (guide, pos) in guides
         if pos === top_guide_position
             push!(top_guides, guide)
@@ -499,6 +502,7 @@ function layout_guides(plot_canvas::Canvas,
     compose(root_canvas,
             (canvas(l, t, pw, ph),
                 {canvas(units_inherited=true, order=-1, clip=true), under_guides...},
+                {canvas(units_inherited=true, order=1000, clip=true), over_guides...},
                 (canvas(units_inherited=true, order=1, clip=true),  plot_canvas),
                 d3embed(@sprintf(
                     ".on(\"mouseover\", guide_background_mouseover(parent_id, %s))",

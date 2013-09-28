@@ -491,11 +491,12 @@ function render(plot::Plot)
         end
     end
 
-    # There can be at most one instance of each guide. This is primarily to
-    # prevent default guides being applied over user-supplied guides.
-    guides = Dict{Type, GuideElement}()
-    for guide in plot.guides
-        guides[typeof(guide)] = guide
+    # Avoid clobbering user-defined guides with default guides (e.g.
+    # in the case of labels.)
+    guides = copy(plot.guides)
+    explicit_guide_types = Set()
+    for guide in guides
+        push!(explicit_guide_types, typeof(guide))
     end
 
     statistics = copy(plot.statistics)
@@ -510,9 +511,17 @@ function render(plot::Plot)
     end
 
     if !facet_plot
-        guides[Guide.PanelBackground] = Guide.background()
-        guides[Guide.XTicks] = Guide.xticks()
-        guides[Guide.YTicks] = Guide.yticks()
+        if !in(Guide.PanelBackground, explicit_guide_types)
+            push!(guides, Guide.background())
+        end
+
+        if !in(Guide.XTicks, explicit_guide_types)
+            push!(guides, Guide.xticks())
+        end
+
+        if !in(Guide.YTicks, explicit_guide_types)
+            push!(guides, Guide.yticks())
+        end
 
         push!(statistics, Stat.xticks)
         push!(statistics, Stat.yticks)
@@ -528,23 +537,29 @@ function render(plot::Plot)
                 return plot.data.titles[v]
             end
         end
+        # TODO: this can be a fucking disaster if vs[1]
+        # is a large array. Don't do this.
         string(vs[1])
     end
 
-    if mapped_and_used(x_axis_label_aesthetics) && !haskey(guides, Guide.XLabel)
+    if mapped_and_used(x_axis_label_aesthetics) &&
+        !in(Guide.XLabel, explicit_guide_types)
         label = choose_name(x_axis_label_aesthetics)
         if facet_plot && haskey(plot.data.titles, :xgroup)
             label = string(label, " <i><b>by</b></i> ", plot.data.titles[:xgroup])
         end
-        guides[Guide.XLabel] = Guide.xlabel(label)
+
+        push!(guides, Guide.xlabel(label))
     end
 
-    if mapped_and_used(y_axis_label_aesthetics) && !haskey(guides, Guide.YLabel)
+    if mapped_and_used(y_axis_label_aesthetics) &&
+       !in(Guide.YLabel, explicit_guide_types)
         label = choose_name(y_axis_label_aesthetics)
         if facet_plot && haskey(plot.data.titles, :ygroup)
             label = string(label, " <i><b>by</b></i> ", plot.data.titles[:ygroup])
         end
-        guides[Guide.YLabel] = Guide.ylabel(label)
+
+        push!(guides, Guide.ylabel(label))
     end
 
     # I. Scales
@@ -566,12 +581,12 @@ function render(plot::Plot)
 
     # Add some default guides determined by defined aesthetics
     if !all([aes.color === nothing for aes in [plot_aes, layer_aess...]]) &&
-       !haskey(guides, Guide.ColorKey)
-        guides[Guide.ColorKey] = Guide.colorkey()
+       !in(Guide.ColorKey, explicit_guide_types)
+        push!(guides, Guide.colorkey())
     end
 
     canvas = render_prepared(plot, plot_aes, layer_aess, layer_stats, scales,
-                             statistics, collect(values(guides)))
+                             statistics, guides)
 
     pad_inner(canvas, 5mm)
 end
