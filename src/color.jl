@@ -50,7 +50,7 @@ end
 # Helpful for Experimenting
 function plot_color_scale{T <: ColorValue}(colors::Vector{T})
     println(colors)
-    canvas(Units(length(colors), 1)) <<
+    canvas(UnitBox(length(colors), 1)) <<
             (compose([rectangle(i-1, 0, 1, 1) << fill(c)
                       for (i, c) in enumerate(colors)]...) << stroke(nothing))
 end

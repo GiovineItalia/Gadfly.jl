@@ -140,7 +140,7 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     width  = xmax - xmin + 2xpadding
     height = ymax - ymin + 2ypadding
 
-    canvas(unit_box=Units(xmin - xpadding, ymax + ypadding, width, -height))
+    canvas(unit_box=UnitBox(xmin - xpadding, ymax + ypadding, width, -height))
 end
 
 end # module Coord

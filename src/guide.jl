@@ -71,7 +71,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
     swatch_size = 1cy - swatch_padding
     swatch_canvas = canvas(0w, 0h + title_canvas.box.height,
                            1w, n * (entry_height + swatch_padding),
-                           unit_box=Units(0, 0, 1, n))
+                           unit_box=UnitBox(0, 0, 1, n))
     for (i, c) in enumerate(colors)
         swatch_square = compose(rectangle(0, i - 1, swatch_size, swatch_size),
                                 fill(c),
@@ -429,7 +429,6 @@ function layout_guides(plot_canvas::Canvas,
                        theme::Gadfly.Theme,
                        guides::(Canvas, GuidePosition)...;
                        preserve_plot_canvas_size=false)
-
     # Every guide is updated to use the plot's unit box.
     guides = [(set_unit_box(guide, plot_canvas.unit_box), pos)
               for (guide, pos) in guides]
@@ -488,13 +487,15 @@ function layout_guides(plot_canvas::Canvas,
 
     clippad = 5mm
 
-    bottom_guides = set_box(bottom_guides, BoundingBox(l, t + ph, pw, b)) <<
-                      clip((0cx - clippad, 1cy - b), (1cx + clippad, 1cy - b),
-                           (1cx + clippad, 1cy), (0cx - clippad, 1cy))
+    bottom_guides =
+        compose(set_box(bottom_guides, BoundingBox(l, t + ph, pw, b)),
+              clip((0cx - clippad, 1cy - b), (1cx + clippad, 1cy - b),
+                   (1cx + clippad, 1cy), (0cx - clippad, 1cy)))
 
-    left_guides   = set_box(left_guides,   BoundingBox(0, t, l, ph)) <<
-                      clip((0cx, 0cy - clippad), (0cx + l, 0cy - clippad),
-                           (0cx + l, 1cy + clippad), (0cx, 1cy + clippad))
+    left_guides =
+        compose(set_box(left_guides, BoundingBox(0, t, l, ph)),
+                clip((0cx, 0cy - clippad), (0cx + l, 0cy - clippad),
+                     (0cx + l, 1cy + clippad), (0cx, 1cy + clippad)))
 
     root_canvas = preserve_plot_canvas_size ?
         canvas(0, 0, 1.0w + l + r, 1.0h + t + b) : canvas()
