@@ -1,6 +1,5 @@
 
 using Gadfly
-using RDatasets
 
 import Base: show, +, -, /, *, isless, one, zero, isfinite
 
@@ -23,7 +22,7 @@ isless(a::Percent, b::Percent) = isless(a.value, b.value)
 one(::Type{Percent}) = Percent(0.01)
 zero(::Type{Percent}) = Percent(0.0)
 isfinite(a::Percent) = isfinite(a.value)
-show(io::IO, p::Percent) = print(io, round(p.value, 4), "%")
+show(io::IO, p::Percent) = print(io, round(100 * p.value, 4), "%")
 
 y=[Percent(0.1), Percent(0.2), Percent(0.3)]
 plot(x=collect(1:length(y)), y=y)

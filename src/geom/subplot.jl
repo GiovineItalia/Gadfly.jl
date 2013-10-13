@@ -123,6 +123,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     layer_aes_grid = Array(Array{Gadfly.Aesthetics, 1}, n, m)
     for i in 1:n, j in 1:m
         layer_aes = fill(copy(aes_grid[i, j]), length(geom.layers))
+
         for (layer_stat, aes) in zip(layer_stats, layer_aes)
             Stat.apply_statistics(Gadfly.StatisticElement[layer_stat],
                                   scales, coord, aes)
@@ -137,6 +138,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     # apply geom-wide statistics
     geom_aes = cat(aes_grid...)
+
     Stat.apply_statistics(geom_stats, scales, coord, geom_aes)
 
     for i in 1:n, j in 1:m

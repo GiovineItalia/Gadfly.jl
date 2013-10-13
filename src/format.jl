@@ -91,7 +91,7 @@ function format_fixed_scientific(x::FloatingPoint, precision::Integer)
         push!(ss, '0')
     end
 
-    string(bytestring(ss), "×10<sup>$(point)</sup>")
+    string(bytestring(ss), "×10<sup>$(point - 1)</sup>")
 end
 
 
