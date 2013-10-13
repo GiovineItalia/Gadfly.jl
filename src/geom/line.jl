@@ -54,9 +54,9 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     if length(aes.color) == 1
         points = {(x, y) for (x, y) in zip(aes.x, aes.y)}
         sort!(points)
-        form = lines(points...) <<
-               stroke(aes.color[1]) <<
-               svgclass("geometry")
+        form = compose(lines(points...),
+                       stroke(aes.color[1]),
+                       svgclass("geometry"))
     else
         # group points by color
         points = Dict{ColorValue, Array{(Float64, Float64),1}}()
@@ -70,14 +70,16 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         forms = Array(Any, length(points))
         for (i, (c, c_points)) in enumerate(points)
             sort!(c_points)
-            forms[i] = lines({(x, y) for (x, y) in c_points}...) <<
-                            stroke(c) <<
-                            svgclass(@sprintf("geometry color_%s", escape_id(aes.color_label(c)[1])))
+            forms[i] =
+                compose(lines({(x, y) for (x, y) in c_points}...),
+                        stroke(c),
+                        svgclass(@sprintf("geometry color_%s",
+                                          escape_id(aes.color_label(c)[1]))))
         end
         form = combine(forms...)
     end
 
-    form << fill(nothing) << linewidth(theme.line_width)
+    compose(form, fill(nothing), linewidth(theme.line_width))
 end
 
 

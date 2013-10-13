@@ -41,9 +41,10 @@ function render_colorless_bar(geom::BarGeometry,
     bar_form = empty_form
     for (x_min, x_max, y) in zip(aes.xmin, aes.xmax, aes.y)
         geometry_id = Gadfly.unique_svg_id()
-        bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
-                                      (x_max - x_min)*cx - theme.bar_spacing, y),
-                            svgid(geometry_id), svgclass("geometry"))
+        bar_form = combine(bar_form,
+            compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
+                              (x_max - x_min)*cx - theme.bar_spacing, y),
+                    svgid(geometry_id), svgclass("geometry")))
     end
     bar_form
 end
@@ -63,13 +64,13 @@ function render_colorful_stacked_bar(geom::BarGeometry,
     for i in sortperm(aes.color.refs, rev=true)
         x_min, x_max, y, c = aes.xmin[i], aes.xmax[i], aes.y[i], aes.color[i]
         geometry_id = Gadfly.unique_svg_id()
-        bar_form |= compose(rectangle(x_min*cx + theme.bar_spacing/2,
-                                      stack_height[x_min],
-                                      (x_max - x_min)*cx - theme.bar_spacing,
-                                      y),
-                            fill(c),
-                            svgid(geometry_id),
-                            svgclass("geometry"))
+        bar_form = combine(bar_form,
+            compose(rectangle(x_min*cx + theme.bar_spacing/2,
+                              stack_height[x_min],
+                              (x_max - x_min)*cx - theme.bar_spacing, y),
+                    fill(c),
+                    svgid(geometry_id),
+                    svgclass("geometry")))
         stack_height[x_min] += y
     end
     bar_form
@@ -92,13 +93,12 @@ function render_colorful_dodged_bar(geom::BarGeometry,
         x_min, x_max, y, c = aes.xmin[i], aes.xmax[i], aes.y[i], aes.color[i]
         geometry_id = Gadfly.unique_svg_id()
         barwidth = ((x_max - x_min)*cx - theme.bar_spacing) / dodge_count[x_min]
-        bar_form |= compose(rectangle(x_min*cx + dodge_width[x_min] + theme.bar_spacing/2,
-                                      0.0,
-                                      barwidth,
-                                      y),
-                            fill(c),
-                            svgid(geometry_id),
-                            svgclass("geometry"))
+        bar_form = combine(bar_form,
+            compose(rectangle(x_min*cx + dodge_width[x_min] + theme.bar_spacing/2,
+                              0.0, barwidth, y),
+                    fill(c),
+                    svgid(geometry_id),
+                    svgclass("geometry")))
         dodge_width[x_min] += barwidth
     end
     bar_form

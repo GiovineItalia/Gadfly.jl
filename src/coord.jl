@@ -49,8 +49,8 @@ const cartesian = Cartesian
 #   A compose Canvas.
 #
 function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
-    xmin = Inf
-    xmax = -Inf
+    xmin = nothing
+    xmax = nothing
     for var in coord.xvars
         for aes in aess
             if getfield(aes, var) === nothing
@@ -58,19 +58,19 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
             end
 
             for val in getfield(aes, var)
-                if val < xmin
+                if xmin === nothing || val < xmin
                     xmin = val
                 end
 
-                if val > xmax
+                if xmax === nothing || val > xmax
                     xmax = val
                 end
             end
         end
     end
 
-    ymin = Inf
-    ymax = -Inf
+    ymin = nothing
+    ymax = nothing
     for var in coord.yvars
         for aes in aess
             if getfield(aes, var) === nothing
@@ -81,11 +81,11 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
             if var == :outliers
                 for vals in aes.outliers
                     for val in vals
-                        if val < ymin
+                        if ymin === nothing || val < ymin
                             ymin = val
                         end
 
-                        if val > ymax
+                        if ymax === nothing || val > ymax
                             ymax = val
                         end
                     end
@@ -94,12 +94,17 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
                 continue
             end
 
-            for val in getfield(aes, var)
-                if val < ymin
+            vals = getfield(aes, var)
+            if !isa(vals, AbstractArray)
+                vals = {vals}
+            end
+
+            for val in vals
+                if ymin === nothing || val < ymin
                     ymin = val
                 end
 
-                if val > ymax
+                if ymax === nothing || val > ymax
                     ymax = val
                 end
             end
@@ -111,12 +116,12 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     ymin = coord.ymin === nothing ? ymin : coord.ymin
     ymax = coord.ymax === nothing ? ymax : coord.ymax
 
-    if !isfinite(xmin)
+    if ymax === nothing || !isfinite(xmin)
         xmin = 0.0
         xmax = 1.0
     end
 
-    if !isfinite(ymin)
+    if ymin === nothing || !isfinite(ymin)
         ymin = 0.0
         ymax = 1.0
     end
@@ -137,8 +142,8 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     end
     ypadding = 0.03 * (ymax - ymin)
 
-    width  = xmax - xmin + 2xpadding
-    height = ymax - ymin + 2ypadding
+    width  = xmax - xmin + 2.0 * xpadding
+    height = ymax - ymin + 2.0 * ypadding
 
     canvas(unit_box=UnitBox(xmin - xpadding, ymax + ypadding, width, -height))
 end

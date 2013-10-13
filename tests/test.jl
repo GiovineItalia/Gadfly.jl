@@ -15,7 +15,8 @@ tests = [
     ("array_aesthetics",           6inch, 3inch),
     ("subplot_grid",               6inch, 3inch),
     ("subplot_grid_histogram",     6inch, 3inch),
-    ("labels",                     6inch, 6inch)
+    ("labels",                     6inch, 6inch),
+    ("percent",                    6inch, 6inch)
 ]
 
 

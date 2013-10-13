@@ -130,3 +130,14 @@ function formatter(xs::FloatingPoint...; fmt=:auto)
 end
 
 
+# Catchall
+function formatter(xs...)
+    function format(x)
+        buf = IOBuffer()
+        print(buf, x)
+        takebuf_string(buf)
+    end
+
+    format
+end
+

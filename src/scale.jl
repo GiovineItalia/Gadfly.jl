@@ -163,11 +163,11 @@ function apply_scale(scale::ContinuousScale,
                 continue
             end
 
-            ds = Array(Float64, concrete_length(getfield(data, var)))
+            ds = Array(Any, concrete_length(getfield(data, var)))
             i = 1
             for d in getfield(data, var)
                 if isconcrete(d)
-                    ds[i] = scale.trans.f(convert(Float64, d))
+                    ds[i] = scale.trans.f(d)
                     i += 1
                 end
             end

@@ -372,17 +372,17 @@ function apply_statistic(stat::TickStatistic,
 
     # TODO: handle the outliers aesthetic
 
-    minval = Inf
-    maxval = -Inf
+    minval = first(in_values)
+    maxval = first(in_values)
 
     n = 0
     for val in in_values
         if val < minval
-            minval = float64(val)
+            minval = val
         end
 
         if val > maxval
-            maxval = float64(val)
+            maxval = val
         end
 
         n += 1
@@ -392,26 +392,26 @@ function apply_statistic(stat::TickStatistic,
     if typeof(coord) == Coord.Cartesian
         if stat.out_var == "x"
             if !is(coord.xmin, nothing)
-                minval == min(minval, float64(coord.xmin))
+                minval == min(minval, coord.xmin)
             end
             if !is(coord.xmax, nothing)
-                maxval == max(maxval, float64(coord.xmax))
+                maxval == max(maxval, coord.xmax)
             end
         elseif stat.out_var == "y"
             if !is(coord.ymin, nothing)
-                minval == min(minval, float64(coord.ymin))
+                minval == min(minval, coord.ymin)
             end
             if !is(coord.ymax, nothing)
-                maxval == min(maxval, float64(coord.ymax))
+                maxval == min(maxval, coord.ymax)
             end
         end
     end
 
     # all the input values in order.
     if categorical
-        ticks = Set{Float64}()
+        ticks = Set()
         for in_value in in_values
-            push!(ticks, float64(in_value))
+            push!(ticks, in_value)
         end
         ticks = Float64[t for t in ticks]
         sort!(ticks)
@@ -435,14 +435,19 @@ function apply_statistic(stat::TickStatistic,
         viewmin = min(ticks)
         viewmax = max(ticks)
     else
+        minval, maxval = promote(minval, maxval)
         ticks = Gadfly.optimize_ticks(minval, maxval)
         viewmin = min(ticks)
         viewmax = max(ticks)
 
         # Extend ticks
         d = ticks[2] - ticks[1]
-        lowerticks = ticks - (ticks[end] - ticks[1]) - d
-        upperticks = ticks + (ticks[end] - ticks[1]) + d
+        lowerticks = copy(ticks)
+        upperticks = copy(ticks)
+        for i in 1:length(ticks)
+            lowerticks[i] -= (ticks[end] - ticks[1]) + d
+            upperticks[i] += (ticks[end] - ticks[1]) + d
+        end
         grids = ticks = vcat(lowerticks, ticks, upperticks)
     end
 

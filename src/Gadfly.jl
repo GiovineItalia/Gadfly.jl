@@ -229,9 +229,7 @@ end
 function set_mapped_data!(data::Data, data_source::AbstractDataFrame, k::Symbol, v)
     setfield(data, k, eval_plot_mapping(data_source, v))
 
-    if typeof(v) <: AbstractArray
-        data.titles[k] = string(v)
-    elseif typeof(v) <: String
+    if typeof(v) <: String
         data.titles[k] = v
     else
         data.titles[k] = string(k)
@@ -256,7 +254,7 @@ function clean_mapping(mapping)
 
         if !(typeof(val) <: AestheticValue)
             error(
-            """Aesthetic $(k) is mapped to a value of type $(typeof(v)).
+            """Aesthetic $(val) is mapped to a value of type $(typeof(v)).
                It must be mapped to a string, symbol, array, or expression.""")
         end
 
@@ -532,20 +530,18 @@ function render(plot::Plot)
         any([haskey(plot.mapping, v) && in(v, used_aesthetics) for v in vs])
     end
 
-    function choose_name(vs)
+    function choose_name(vs, fallback)
         for v in vs
             if haskey(plot.data.titles, v)
                 return plot.data.titles[v]
             end
         end
-        # TODO: this can be a fucking disaster if vs[1]
-        # is a large array. Don't do this.
-        string(vs[1])
+        fallback
     end
 
     if mapped_and_used(x_axis_label_aesthetics) &&
         !in(Guide.XLabel, explicit_guide_types)
-        label = choose_name(x_axis_label_aesthetics)
+        label = choose_name(x_axis_label_aesthetics, "x")
         if facet_plot && haskey(plot.data.titles, :xgroup)
             label = string(label, " <i><b>by</b></i> ", plot.data.titles[:xgroup])
         end
@@ -555,7 +551,7 @@ function render(plot::Plot)
 
     if mapped_and_used(y_axis_label_aesthetics) &&
        !in(Guide.YLabel, explicit_guide_types)
-        label = choose_name(y_axis_label_aesthetics)
+        label = choose_name(y_axis_label_aesthetics, "y")
         if facet_plot && haskey(plot.data.titles, :ygroup)
             label = string(label, " <i><b>by</b></i> ", plot.data.titles[:ygroup])
         end
@@ -718,20 +714,16 @@ const default_aes_scales = {
 
 # Determine whether the input is categorical or numerical
 
-function classify_data{N, T <: Integer}(data::AbstractArray{T, N})
-    length(Set(data...)) <= 10 ? :categorical : :numerical
+typealias CategoricalTypes Union(String, Bool)
+
+
+function classify_data{N, T <: CategoricalTypes}(data::AbstractArray{T, N})
+    :categorical
 end
 
-
-function classify_data{N, T <: FloatingPoint}(data::AbstractArray{T, N})
-    if all(map(is_int_compatable, data)) && length(Set([int(x) for x in data]...)) <= 10
-        :categorical
-    else
-        :numerical
-    end
+function classify_data(data::AbstractArray)
+    :numerical
 end
-
-classify_data(data::AbstractArray)   = :categorical
 
 # Axis labels are taken whatever is mapped to these aesthetics, in order of
 # preference.

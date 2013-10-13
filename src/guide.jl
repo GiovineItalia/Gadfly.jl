@@ -83,23 +83,23 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                                     label, hleft, vcenter),
                                stroke(nothing),
                                fill(theme.minor_label_color))
-        swatch = swatch_square | swatch_label
 
         color_class = @sprintf("color_%s", escape_id(label))
-        swatch <<= svgclass(@sprintf("guide %s", color_class))
-
-        swatch <<= d3embed(
-            @sprintf(".on(\"click\", guide_toggle_color(parent_id, \"%s\"))",
-                     color_class))
-
-        swatch_canvas <<= swatch
+        swatch = compose(combine(swatch_square, swatch_label),
+                         svgclass(@sprintf("guide %s", color_class)),
+                         d3embed(@sprintf(
+                            ".on(\"click\", guide_toggle_color(parent_id, \"%s\"))",
+                            color_class)))
+        swatch_canvas = compose(swatch_canvas, swatch)
     end
-    swatch_canvas <<= font(theme.minor_label_font) |
-                      fontsize(theme.minor_label_font_size)
-    c = canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
-               swatch_canvas.box.height + title_canvas.box.height) <<
-        pad(canvas() << swatch_canvas << title_canvas, 2mm)
-    c
+
+    swatch_canvas = compose(swatch_canvas,
+                            font(theme.minor_label_font),
+                            fontsize(theme.minor_label_font_size))
+
+    compose(canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
+                   swatch_canvas.box.height + title_canvas.box.height),
+            pad(compose(canvas(), swatch_canvas, title_canvas), 2mm))
 end
 
 
@@ -317,7 +317,7 @@ const yticks = YTicks
 
 function render(guide::YTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    ticks = Dict{Float64, String}()
+    ticks = Dict()
     grids = Set()
     for aes in aess
         if Gadfly.issomething(aes.ytick)

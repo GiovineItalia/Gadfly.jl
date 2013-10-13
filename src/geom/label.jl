@@ -21,7 +21,10 @@ const label = LabelGeometry
 # placement depends on knowing the absolute size of the containing canvas.
 function deferred_label_canvas(geom::LabelGeometry,
                                aes::Gadfly.Aesthetics,
-                               theme::Gadfly.Theme, box, unit_box)
+                               theme::Gadfly.Theme,
+                               parent_transform,
+                               unit_box,
+                               parent_box)
 
     # Label layout is non-trivial problem. Quite a few papers and at least one
     # Phd thesis has been written on the topic. The approach here is pretty
@@ -33,15 +36,21 @@ function deferred_label_canvas(geom::LabelGeometry,
     # TODO:
     # Penalize to prefer certain label positions over others.
 
-    canvas_width, canvas_height = box.width, box.height
+    canvas_width, canvas_height = parent_box.width, parent_box.height
 
     # This should maybe go in theme? Or should we be using Aesthetics.size?
     padding = 3mm
 
     point_positions = Array(Tuple, 0)
     for (x, y) in zip(aes.x, aes.y)
-        x = absolute_measure(x*cx, unit_box, box)
-        y = absolute_measure(y*cy, unit_box, box)
+        x = absolute_x_position(x*cx, parent_transform, unit_box,
+                                parent_box)
+                                # AbsoluteBoundingBox())
+        y = absolute_y_position(y*cy, parent_transform, unit_box,
+                                parent_box)
+                                # AbsoluteBoundingBox())
+        x -= parent_box.x0
+        y -= parent_box.y0
         push!(point_positions, (x, y))
     end
 
@@ -53,15 +62,16 @@ function deferred_label_canvas(geom::LabelGeometry,
     extents = [(width + padding, height + padding)
                for (width, height) in extents]
 
-    positions = Gadfly.Maybe(BoundingBox)[]
+    positions = Gadfly.Maybe(AbsoluteBoundingBox)[]
     for (i, (text_width, text_height)) in enumerate(extents)
         x, y = point_positions[i]
-        push!(positions, BoundingBox(x, y, text_width, text_height))
+        push!(positions, AbsoluteBoundingBox(
+                x, y, text_width.abs, text_height.abs))
     end
 
     # TODO: use Aesthetics.size and/or theme.default_point_size
     for (x, y) in point_positions
-        push!(positions, BoundingBox(x - 0.5mm, y - 0.5mm, 1mm, 1mm))
+        push!(positions, AbsoluteBoundingBox(x - 0.5, y - 0.5, 1.0, 1.0))
         push!(extents, (1mm, 1mm))
     end
 
@@ -69,10 +79,10 @@ function deferred_label_canvas(geom::LabelGeometry,
 
     # Return a box containing every point that the label could possibly overlap.
     function max_extents(i)
-        BoundingBox(positions[i].x0 - extents[i][1],
-                    positions[i].y0 - extents[i][2],
-                    2*extents[i][1],
-                    2*extents[i][2])
+        AbsoluteBoundingBox(positions[i].x0 - extents[i][1].abs,
+                            positions[i].y0 - extents[i][2].abs,
+                            2*extents[i][1].abs,
+                            2*extents[i][2].abs)
     end
 
     # True if two boxes overlap
@@ -91,8 +101,8 @@ function deferred_label_canvas(geom::LabelGeometry,
             return true
         end
 
-        0mm < a.x0 && a.x0 + a.width < box.width &&
-        0mm < a.y0 - a.height && a.y0 < box.height
+        0 < a.x0 && a.x0 + a.width < parent_box.width &&
+        0 < a.y0 - a.height && a.y0 < parent_box.height
     end
 
     # Checking for label overlaps is O(n^2). To mitigate these costs, we build a
@@ -164,36 +174,36 @@ function deferred_label_canvas(geom::LabelGeometry,
 
             r = rand()
             point_x, point_y = point_positions[j]
-            xspan = extents[j][1]
-            yspan = extents[j][2]
+            xspan = extents[j][1].abs
+            yspan = extents[j][2].abs
 
             if rand() < 0.5
                 xpos = Gadfly.lerp(rand(),
-                                   (point_x - 7xspan/8).value,
-                                   (point_x - 6xspan/8).value) * mm
+                                   (point_x - 7xspan/8),
+                                   (point_x - 6xspan/8))
             else
                 xpos = Gadfly.lerp(rand(),
-                                   (point_x - 2xspan/8).value,
-                                   (point_x - 1xspan/8).value) * mm
+                                   (point_x - 2xspan/8),
+                                   (point_x - 1xspan/8))
             end
 
             ypos = Gadfly.lerp(rand(),
-                               (point_y - 3yspan/4).value,
-                               (point_y - 1yspan/4).value) * mm
+                               (point_y - 3yspan/4),
+                               (point_y - 1yspan/4))
 
             # choose a side
             if r < 0.25 # top
-                pos = BoundingBox(xpos, point_y - extents[j][2],
-                                  extents[j][1], extents[j][2])
+                pos = AbsoluteBoundingBox(xpos, point_y - extents[j][2].abs,
+                                          extents[j][1].abs, extents[j][2].abs)
             elseif 0.25 <= r < 0.5 # right
-                pos = BoundingBox(point_x, ypos,
-                                  extents[j][1], extents[j][2])
+                pos = AbsoluteBoundingBox(point_x, ypos,
+                                          extents[j][1].abs, extents[j][2].abs)
             elseif 0.5 <= r < 0.75 # bottom
-                pos = BoundingBox(xpos, point_y,
-                                  extents[j][1], extents[j][2])
+                pos = AbsoluteBoundingBox(xpos, point_y,
+                                          extents[j][1].abs, extents[j][2].abs)
             else # left
-                pos = BoundingBox(point_x - extents[j][1], ypos,
-                                  extents[j][1], extents[j][2])
+                pos = AbsoluteBoundingBox(point_x - extents[j][1].abs, ypos,
+                                          extents[j][1].abs, extents[j][2].abs)
             end
         end
 
@@ -242,18 +252,16 @@ function deferred_label_canvas(geom::LabelGeometry,
             point_x, point_y = point_positions[i]
             x, y = positions[i].x0, positions[i].y0
 
-            x += extents[i][1] / 2
-            y += extents[i][2] / 2
+            x += extents[i][1].abs / 2
+            y += extents[i][2].abs / 2
 
-            push!(forms, text(x, y, aes.label[i], hcenter, vcenter) <<
-                    svgclass("geometry"))
+            push!(forms, compose(text(x*mm, y*mm, aes.label[i], hcenter, vcenter),
+                                 svgclass("geometry")))
         end
     end
 
-    #println("total_penalty = ", total_penalty)
-
-    compose(canvas(unit_box=convert(Units, unit_box)),
-            combine(forms...),
+    compose(canvas(unit_box=unit_box),
+            combine(empty_form, forms...),
             font(theme.point_label_font),
             fontsize(theme.point_label_font_size),
             fill(theme.point_label_color),
@@ -263,6 +271,7 @@ end
 
 function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.Label", aes, :label, :x, :y)
-    deferredcanvas((box, unit_box) -> deferred_label_canvas(geom, aes, theme, box, unit_box))
+    deferredcanvas((parent_t, unit_box, parent_box) ->
+                deferred_label_canvas(geom, aes, theme, parent_t, unit_box, parent_box))
 end
 

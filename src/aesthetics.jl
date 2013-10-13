@@ -1,15 +1,13 @@
 
 
 typealias NumericalOrCategoricalAesthetic
-    Union(Nothing, Vector{Float64}, Vector{Int64}, PooledDataArray)
+    Union(Nothing, Vector, PooledDataArray)
 
 typealias CategoricalAesthetic
     Union(Nothing, PooledDataArray)
 
 typealias NumericalAesthetic
-    Union(Nothing, Vector{Float64}, Vector{Int64})
-
-typealias FloatAesthetic Union(Nothing, Vector{Float64})
+    Union(Nothing, Vector)
 
 
 @varset Aesthetics begin
@@ -29,22 +27,22 @@ typealias FloatAesthetic Union(Nothing, Vector{Float64})
     yintercept,   NumericalAesthetic
 
     # boxplots
-    middle,       FloatAesthetic
-    lower_hinge,  FloatAesthetic
-    upper_hinge,  FloatAesthetic
-    lower_fence,  FloatAesthetic
-    upper_fence,  FloatAesthetic
-    outliers,     FloatAesthetic
+    middle,       NumericalAesthetic
+    lower_hinge,  NumericalAesthetic
+    upper_hinge,  NumericalAesthetic
+    lower_fence,  NumericalAesthetic
+    upper_fence,  NumericalAesthetic
+    outliers,     NumericalAesthetic
 
     # subplots
     xgroup,       CategoricalAesthetic
     ygroup,       CategoricalAesthetic
 
     # guides
-    xtick,        FloatAesthetic
-    ytick,        FloatAesthetic
-    xgrid,        FloatAesthetic
-    ygrid,        FloatAesthetic
+    xtick,        NumericalAesthetic
+    ytick,        NumericalAesthetic
+    xgrid,        NumericalAesthetic
+    ygrid,        NumericalAesthetic
     color_key_colors,     Maybe(Vector{ColorValue})
     color_key_title,      Maybe(String)
     color_key_continuous, Maybe(Bool)
@@ -52,16 +50,16 @@ typealias FloatAesthetic Union(Nothing, Vector{Float64})
 
     # pesudo-aesthetics used to indicate that drawing might
     # occur beyond any x/y value.
-    xdrawmin,     Maybe(Float64)
-    xdrawmax,     Maybe(Float64)
-    ydrawmin,     Maybe(Float64)
-    ydrawmax,     Maybe(Float64)
+    xdrawmin,     Any
+    xdrawmax,     Any
+    ydrawmin,     Any
+    ydrawmax,     Any
 
     # plot viewport extents
-    xviewmin,     Maybe(Float64)
-    xviewmax,     Maybe(Float64)
-    yviewmin,     Maybe(Float64)
-    yviewmax,     Maybe(Float64)
+    xviewmin,     Any
+    xviewmax,     Any
+    yviewmin,     Any
+    yviewmax,     Any
 
     # labeling functions
     x_label,      Function, default_formatter
