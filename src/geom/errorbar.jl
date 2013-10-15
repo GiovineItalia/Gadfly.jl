@@ -48,7 +48,7 @@ function render(geom::ErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
     else
         yform = empty_form
     end
-    xform | yform
+    combine(xform,  yform)
 end
 
 function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)

@@ -143,7 +143,7 @@ function render_continuous_color_key(colors::Vector{ColorValue},
                                     fill(c),
                                     linewidth(theme.highlight_width))
 
-            swatch_canvas <<= swatch_square
+            swatch_canvas = compose(swatch_canvas, swatch_square)
 
             y += unlabeled_swatch_height
         else
@@ -158,20 +158,19 @@ function render_continuous_color_key(colors::Vector{ColorValue},
                                         hleft, vcenter),
                                    fill(theme.minor_label_color))
 
-            swatch_canvas <<= swatch_square | swatch_label
+            swatch_canvas = compose(swatch_canvas, swatch_square, swatch_label)
 
             y += entry_height
         end
     end
 
-    swatch_canvas <<= font(theme.minor_label_font) |
-                      fontsize(theme.minor_label_font_size) |
-                      stroke(nothing)
-
-    c = canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
-               swatch_canvas.box.height + title_canvas.box.height) <<
-        pad(canvas() << swatch_canvas << title_canvas, 2mm)
-    c
+    swatch_canvas = compose(swatch_canvas,
+                            font(theme.minor_label_font),
+                            fontsize(theme.minor_label_font_size),
+                            stroke(nothing))
+    compose(canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
+                   swatch_canvas.box.height + title_canvas.box.height),
+            pad(compose(canvas(), swatch_canvas, title_canvas), 2mm))
 end
 
 

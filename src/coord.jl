@@ -116,7 +116,7 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     ymin = coord.ymin === nothing ? ymin : coord.ymin
     ymax = coord.ymax === nothing ? ymax : coord.ymax
 
-    if ymax === nothing || !isfinite(xmin)
+    if xmin === nothing || !isfinite(xmin)
         xmin = 0.0
         xmax = 1.0
     end
