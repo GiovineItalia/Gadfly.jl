@@ -721,6 +721,10 @@ function classify_data{N, T <: CategoricalTypes}(data::AbstractArray{T, N})
     :categorical
 end
 
+function classify_data(data::AbstractArray{Any})
+    :categorical
+end
+
 function classify_data(data::AbstractArray)
     :numerical
 end
