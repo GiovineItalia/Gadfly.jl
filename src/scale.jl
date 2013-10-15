@@ -224,7 +224,8 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                 lvls = levels(disc_data)
                 vals = {1 <= x <= length(lvls) ? lvls[x] : "" for x in xs}
                 if all([isa(val, FloatingPoint) for val in vals])
-                    format(vals...)
+                    format = formatter(vals...)
+                    [format(val) for val in vals]
                 else
                     [string(val) for val in vals]
                 end

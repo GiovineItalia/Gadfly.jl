@@ -481,8 +481,17 @@ function render(plot::Plot)
             continue
         end
 
-        if haskey(default_aes_scales[:categorical], var)
-            scale = default_aes_scales[:categorical][var]
+        t = :categorical
+        for data in datas
+            val = getfield(data, var)
+            if val != nothing
+                t = classify_data(val)
+                break
+            end
+        end
+
+        if haskey(default_aes_scales[t], var)
+            scale = default_aes_scales[t][var]
             scale_aes = Set(element_aesthetics(scale)...)
             for var in scale_aes
                 scales[var] = scale
