@@ -207,7 +207,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                             guides,
                             preserve_plot_canvas_size=true)
 
-        canvas_grid[i, j] = pad(canvas_grid[i, j], 2.5mm)
+        canvas_grid[i, j] = pad(canvas_grid[i, j], 3.0mm)
     end
 
     gridstack(canvas_grid, 0w, 0h, halign=hright)

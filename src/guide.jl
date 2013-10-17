@@ -484,17 +484,20 @@ function layout_guides(plot_canvas::Canvas,
     right_guides  = set_box(right_guides,  BoundingBox(l + pw, t, r, ph))
         # TODO: clip path
 
-    clippad = 5mm
+    clippad_top    = 4mm
+    clippad_bottom = 1mm
+    clippad_left   = 0.1w
+    clippad_right  = 0.1w
 
     bottom_guides =
         compose(set_box(bottom_guides, BoundingBox(l, t + ph, pw, b)),
-              clip((0cx - clippad, 1cy - b), (1cx + clippad, 1cy - b),
-                   (1cx + clippad, 1cy), (0cx - clippad, 1cy)))
+              clip((0cx - clippad_left, 1cy - b), (1cx + clippad_right, 1cy - b),
+                   (1cx + clippad_right, 1cy), (0cx - clippad_left, 1cy)))
 
     left_guides =
         compose(set_box(left_guides, BoundingBox(0, t, l, ph)),
-                clip((0cx, 0cy - clippad), (0cx + l, 0cy - clippad),
-                     (0cx + l, 1cy + clippad), (0cx, 1cy + clippad)))
+                clip((0cx, 0cy - clippad_top), (0cx + l, 0cy - clippad_top),
+                     (0cx + l, 1cy + clippad_bottom), (0cx, 1cy + clippad_bottom)))
 
     root_canvas = preserve_plot_canvas_size ?
         canvas(0, 0, 1.0w + l + r, 1.0h + t + b) : canvas()
