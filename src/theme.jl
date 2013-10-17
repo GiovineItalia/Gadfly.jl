@@ -1,82 +1,7 @@
 
 # Parameters controlling how a plot appears
 
-type Theme
-    # If the color aesthetic is not mapped to anything, this is the color that
-    # is used.
-    default_color::ColorOrNothing
-
-    # Default size when the size aesthetic is not mapped.
-    default_point_size::Measure
-
-    # Width of lines in the line geometry.
-    line_width::Measure
-
-    # Background color of the plot.
-    panel_fill::ColorOrNothing
-
-    # Border color of the plot panel.
-    panel_stroke::ColorOrNothing
-
-    # Grid line color.
-    grid_color::ColorOrNothing
-
-    # Grid lines for focused item.
-    grid_color_focused::ColorOrNothing
-
-    # Width of grid lines
-    grid_line_width::Measure
-
-    # Font name, size, and color used for tick labels, entries in keys, etc.
-    minor_label_font::String
-    minor_label_font_size::Measure
-    minor_label_color::ColorOrNothing
-
-    # Font name, size and color used for axis labels, key title, etc.
-    major_label_font::String
-    major_label_font_size::Measure
-    major_label_color::ColorOrNothing
-
-    # Font name, size and color used for labels on plot elements.
-    point_label_font::String
-    point_label_font_size::Measure
-    point_label_color::ColorOrNothing
-
-    # Spacing between bars for Geom.bar.
-    bar_spacing::Maybe(Measure)
-
-    # Spacing between boxplots in Geom.boxplot.
-    boxplot_spacing::Maybe(Measure)
-
-    # Length of caps on error bars
-    errorbar_cap_length::Maybe(Measure)
-
-    # Points, etc, are highlighted by stroking in slightly different color. This
-    # is the stroke width.
-    highlight_width::Maybe(Measure)
-
-    # A function mapping fill color to stoke color for highlights.
-    highlight_color::Maybe(Function)
-
-    # A function mapping base fill color to the color of the median marker in a
-    # boxplot.
-    middle_color::Maybe(Function)
-
-    # Width of the middle line in a boxplot.
-    middle_width::Maybe(Measure)
-
-    # Number of annealing iterations.
-    label_placement_iterations::Maybe(Int)
-
-    # Penalty for a label not being contained within the plot frame.
-    label_out_of_bounds_penalty::Maybe(Float64)
-
-    # Penalty for making a label hidden to avoid overlaps.
-    label_hidden_penalty::Maybe(Float64)
-
-    # Probability of proposing a visibility flip during label layout.
-    label_visibility_flip_pr::Maybe(Float64)
-end
+const default_font_desc = "PT Sans,Helvetica Neue,Helvetica,sans"
 
 
 # Choose highlight color by darkening the fill color
@@ -94,35 +19,84 @@ function default_middle_color(fill_color::ColorValue)
 end
 
 
-const default_font_desc = "PT Sans,Helvetica Neue,Helvetica,sans"
+@varset Theme begin
+    # If the color aesthetic is not mapped to anything, this is the color that
+    # is used.
+    default_color,         ColorOrNothing,  LCHab(70, 60, 240)
 
-const default_theme =
-    Theme(LCHab(70, 60, 240),       # default_color
-          0.6mm,                    # default_point_size
-          0.3mm,                    # line_width
-          color("#fafafa"),         # panel_fill
-          color("#f1f1f5"),         # panel_stroke
-          color("#f0f0f3"),         # grid_color
-          color("#f0f0f0"),         # grid_color_focused
-          0.2mm,                    # grid line width
-          default_font_desc,        # minor_label_font
-          9pt,                      # minor_label_font_size
-          color("#4c404b"),         # minor_label_color
-          default_font_desc,        # major_label_font
-          11pt,                     # major_label_font_size
-          color("#362a35"),         # major_label_color
-          default_font_desc,        # point_label_font
-          8pt,                      # point_label_font_size
-          color("#4c404b"),         # point_label_color
-          0.0mm,                    # bar_spacing
-          1mm,                      # boxplot_spacing
-          3mm,                      # errorbar_cap_length
-          0.3mm,                    # highlight_width
-          default_highlight_color,  # highlight_color
-          default_middle_color,     # middle_color
-          0.6mm,                    # middle_width
-          1000,                     # label_placement_iterations
-          10.0,                     # label_out_of_bounds_penalty
-          0.5,                      # label_hidden_penalty
-          0.2)                      # label_visibility_flip_pr
+    # Default size when the size aesthetic is not mapped.
+    default_point_size,    Measure,         0.6mm
+
+    # Width of lines in the line geometry.
+    line_width,            Measure,         0.3mm
+
+    # Background color of the plot.
+    panel_fill,            ColorOrNothing,  color("#fafafa")
+
+    # Border color of the plot panel.
+    panel_stroke,          ColorOrNothing,  color("#f1f1f5")
+
+    # Grid line color.
+    grid_color,            ColorOrNothing,  color("#f0f0f3")
+
+    # Grid lines for focused item.
+    grid_color_focused,    ColorOrNothing,  color("#f0f0f0")
+
+    # Width of grid lines
+    grid_line_width,       Measure,         0.2mm
+
+    # Font name, size, and color used for tick labels, entries in keys, etc.
+    minor_label_font,      String,          default_font_desc
+    minor_label_font_size, Measure,         9pt
+    minor_label_color,     ColorOrNothing,  color("#4c404b")
+
+    # Font name, size and color used for axis labels, key title, etc.
+    major_label_font,      String,          default_font_desc
+    major_label_font_size, Measure,         11pt
+    major_label_color,     ColorOrNothing,  color("#362a35")
+
+    # Font name, size and color used for labels on plot elements.
+    point_label_font,      String,          default_font_desc
+    point_label_font_size, Measure,         8pt
+    point_label_color,     ColorOrNothing,  color("#4c404b")
+
+    # Spacing between bars for Geom.bar.
+    bar_spacing,           Measure,         0.0mm
+
+    # Spacing between boxplots in Geom.boxplot.
+    boxplot_spacing,       Measure,         1mm
+
+    # Length of caps on error bars
+    errorbar_cap_length,   Measure,         3mm
+
+    # Points, etc, are highlighted by stroking in slightly different color. This
+    # is the stroke width.
+    highlight_width,       Measure,         0.3mm
+
+    # A function mapping fill color to stoke color for highlights.
+    highlight_color,       Function,        default_highlight_color
+
+    # A function mapping base fill color to the color of the median marker in a
+    # boxplot.
+    middle_color,          Function,        default_middle_color
+
+    # Width of the middle line in a boxplot.
+    middle_width,          Measure,         0.6mm
+
+    # Number of annealing iterations.
+    label_placement_iterations,  Int,       1000
+
+    # Penalty for a label not being contained within the plot frame.
+    label_out_of_bounds_penalty, Float64,   10.0
+
+    # Penalty for making a label hidden to avoid overlaps.
+    label_hidden_penalty,        Float64,   0.5
+
+    # Probability of proposing a visibility flip during label layout.
+    label_visibility_flip_pr,    Float64,   0.2
+
+end
+
+
+const default_theme = Theme()
 
