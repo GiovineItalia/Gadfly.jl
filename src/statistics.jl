@@ -442,13 +442,18 @@ function apply_statistic(stat::TickStatistic,
 
         # Extend ticks
         d = ticks[2] - ticks[1]
-        lowerticks = copy(ticks)
-        upperticks = copy(ticks)
+        # lowerticks = copy(ticks)
+        # upperticks = copy(ticks)
+        # TODO: this is a workaround
+        lowerticks = eltype(ticks)[t for t in ticks]
+        upperticks = eltype(ticks)[t for t in ticks]
         for i in 1:length(ticks)
             lowerticks[i] -= (ticks[end] - ticks[1]) + d
             upperticks[i] += (ticks[end] - ticks[1]) + d
         end
-        grids = ticks = vcat(lowerticks, ticks, upperticks)
+        # TODO: workaround
+        # grids = ticks = vcat(lowerticks, ticks, upperticks)
+        grids = ticks = collect(chain(lowerticks, ticks, upperticks))
     end
 
     # We use the first label function we find for any of the aesthetics. I'm not

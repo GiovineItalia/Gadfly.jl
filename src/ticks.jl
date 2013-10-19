@@ -118,3 +118,12 @@ function optimize_ticks{T}(x_min::T, x_max::T)
     S
 end
 
+
+
+function optimize_ticks(x_min::Date, x_max::Date)
+    # TODO
+    Date[x_min, x_max]
+end
+
+
+

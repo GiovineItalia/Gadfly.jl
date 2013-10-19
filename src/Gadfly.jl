@@ -2,6 +2,7 @@
 require("Codecs")
 require("Compose")
 require("DataFrames")
+require("Datetime")
 require("Distributions")
 require("Iterators")
 require("JSON")
@@ -13,13 +14,14 @@ using Codecs
 using Color
 using Compose
 using DataFrames
+using Datetime
 using JSON
 
 import Iterators
 import Iterators.distinct
 import Compose.draw, Compose.hstack, Compose.vstack
-import Base.copy, Base.push!, Base.start, Base.next, Base.done, Base.has,
-       Base.show, Base.getindex, Base.cat, Base.writemime
+import Base: copy, push!, start, next, done, has, show, getindex, cat,
+             writemime, isfinite
 
 export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, layer, @plot,
        spy, set_default_plot_size, prepare_display

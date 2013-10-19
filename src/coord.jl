@@ -57,7 +57,12 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
                 continue
             end
 
-            for val in getfield(aes, var)
+            vals = getfield(aes, var)
+            if !isa(vals, AbstractArray)
+                vals = {vals}
+            end
+
+            for val in vals
                 if xmin === nothing || val < xmin
                     xmin = val
                 end

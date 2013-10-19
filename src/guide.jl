@@ -256,7 +256,7 @@ const xticks = XTicks
 function render(guide::XTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
 
-    ticks = Dict{Float64, String}()
+    ticks = Dict()
     grids = Set()
     for aes in aess
         if Gadfly.issomething(aes.xtick)
@@ -464,6 +464,7 @@ function layout_guides(plot_canvas::Canvas,
     sort!(by=rev_canvas_order, left_guides)
 
     # Stack the guides on edge edge of the plot
+
     top_guides    = vstack(0, 0, 1, [(g, hcenter) for g in top_guides]...)
     right_guides  = hstack(0, 0, 1, [(g, vcenter) for g in right_guides]...)
     bottom_guides = vstack(0, 0, 1, [(g, hcenter) for g in bottom_guides]...)
