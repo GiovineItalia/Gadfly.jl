@@ -102,9 +102,9 @@ function formatter(xs::FloatingPoint...; fmt=:auto)
     for (x0, x1) in zip(xs, xs[2:end])
         delta = min(delta, abs(x1 - x0))
     end
-    x_min, x_max = min(xs), max(xs)
+    x_min, x_max = minimum(xs), maximum(xs)
 
-    if fmt == :auto && abs(log10(x_max - x_min)) > 3
+    if fmt == :auto && abs(log10(x_max - x_min)) > 4
         fmt = :scientific
     else
         fmt = :plain
@@ -126,6 +126,59 @@ function formatter(xs::FloatingPoint...; fmt=:auto)
         precision = 1 + max(0, x_max_magnitude - delta_magnitude)
 
         return x -> format_fixed_scientific(x, precision)
+    end
+end
+
+
+# Print dates
+function formatter(ds::Date...)
+    const month_names = [
+        "January", "February", "March", "April", "May", "June", "July",
+        "August", "September", "October", "November", "December"
+    ]
+
+    const month_abbrevs = [
+        "Jan", "Feb", "Mar", "Apr", "May", "June",
+        "July", "Aug", "Sept", "Oct", "Nev", "Dec"
+    ]
+
+    day_all_1   = all(map(d -> day(d) == 1, ds))
+    month_all_1 = all(map(d -> month(d) == 1, ds))
+    years = Set()
+    for d in ds
+        push!(years, year(d))
+    end
+
+    if day_all_1 && month_all_1
+        # only label years
+        function format(d)
+            buf = IOBuffer()
+            print(buf, year(d))
+            takebuf_string(buf)
+        end
+    elseif day_all_1
+        # label months and years
+        function format(d)
+            buf = IOBuffer()
+            if d == ds[1] || month(d) == 1
+                print(buf, month_abbrevs[month(d)], " ", year(d))
+            else
+                print(buf, month_abbrevs[month(d)])
+            end
+            takebuf_string(buf)
+        end
+    else
+        function format(d)
+            buf = IOBuffer()
+            if d == ds[1] || (month(d) == 1 && day(d) == 1)
+                print(buf, month_abbrevs[month(d)], " ", day(d), " ", year(d))
+            elseif day(d) == 1
+                print(buf, month_abbrevs[month(d)], " ", day(d))
+            else
+                print(buf, day(d))
+            end
+            takebuf_string(buf)
+        end
     end
 end
 

@@ -32,6 +32,11 @@ function bounding_order_of_magnitude(xspan)
 end
 
 
+# Empty catchall
+optimize_ticks() = {}
+
+
+
 # Find some reasonable values for tick marks.
 #
 # This is basically Wilkinson's ad-hoc scoring method that tries to balance
@@ -44,9 +49,9 @@ end
 # Returns:
 #   A Float64 vector containing tick marks.
 #
-function optimize_ticks{T}(x_min::T, x_max::T)
+function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false)
     if x_min == x_max
-        return [x_min]
+        return [x_min], viewmin, viewmax
     end
 
     # tick intervals and scores
@@ -109,20 +114,69 @@ function optimize_ticks{T}(x_min::T, x_max::T)
         z -= 1
     end
 
-    S = Array(typeof(1.0 * one_t), int(k_best))
-    for i in 0:(k_best - 1)
-        v = (r_best + i) * q_best * 10.0^z_best
-        S[i+1] = (r_best + i) * q_best * 10.0^z_best * one_t
+    span = q_best * 10.0^z_best * one_t
+    if extend_ticks
+        S = Array(typeof(1.0 * one_t), int(3 * k_best))
+        for i in 0:(3*k_best - 1)
+            S[i+1] = (r_best + i - k_best) * span
+        end
+        viewmin, viewmax = S[k_best + 1], S[2 * k_best]
+    else
+        S = Array(typeof(1.0 * one_t), int(k_best))
+        for i in 0:(k_best - 1)
+            S[i+1] = (r_best + i) * span
+        end
+        viewmin, viewmax = S[1], S[end]
     end
 
-    S
+    S, viewmin, viewmax
 end
 
 
 
-function optimize_ticks(x_min::Date, x_max::Date)
-    # TODO
-    Date[x_min, x_max]
+function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false)
+    # This can be pretty simple. We are choosing ticks on one of three
+    # scales: years, months, days.
+    if year(x_max) - year(x_min) <= 1
+        if year(x_max) == year(x_min) && month(x_max) - month(x_min) <= 1
+            ticks = Date[]
+            if x_max - x_min > days(7)
+                # This will probably need to be smarter
+                push!(ticks, x_min)
+                while true
+                    next_month = date(year(ticks[end]), month(ticks[end])) + month(1)
+                    while ticks[end] + week(1) < next_month - days(2)
+                        push!(ticks, ticks[end] + week(1))
+                    end
+                    push!(ticks, next_month)
+                    if next_month >= x_max
+                        break
+                    end
+                end
+            else
+                push!(ticks, x_min)
+                while ticks[end] < x_max
+                    push!(ticks, ticks[end] + day(1))
+                end
+            end
+
+            viewmin, viewmax = ticks[1], ticks[end]
+            ticks, viewmin, viewmax
+        else
+            ticks = Date[]
+            push!(ticks, date(year(x_min), month(x_min)))
+            while ticks[end] < x_max
+                push!(ticks, ticks[end] + month(1))
+            end
+            viewmin, viewmax = ticks[1], ticks[end]
+
+            ticks, x_min, x_max
+        end
+    else
+        ticks, viewmin, viewmax =
+            optimize_ticks(year(x_min), year(x_max), extend_ticks=extend_ticks)
+        Date[date(y) for y in ticks], date(viewmin), date(viewmax)
+    end
 end
 
 

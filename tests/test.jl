@@ -16,7 +16,12 @@ tests = [
     ("subplot_grid",               6inch, 3inch),
     ("subplot_grid_histogram",     6inch, 3inch),
     ("labels",                     6inch, 6inch),
-    ("percent",                    6inch, 6inch)
+    ("percent",                    6inch, 6inch),
+    ("timeseries_day",             6inch, 3inch),
+    ("timeseries_month",           6inch, 3inch),
+    ("timeseries_year_1",          6inch, 3inch),
+    ("timeseries_year_2",          6inch, 3inch),
+    ("timeseries_year_3",          6inch, 3inch),
 ]
 
 

@@ -51,6 +51,7 @@ typealias ElementOrFunction{T <: Element} Union(Element, Type{T}, Function)
 
 
 include("misc.jl")
+include("format.jl")
 include("ticks.jl")
 include("color.jl")
 include("varset.jl")

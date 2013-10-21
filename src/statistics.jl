@@ -424,7 +424,7 @@ function apply_statistic(stat::TickStatistic,
         end
 
         if length(ticks) > 20 || maxgap > 1
-            grids = ticks = Gadfly.optimize_ticks(minval, maxval)
+            ticks, viewmin, viewmax = Gadfly.optimize_ticks(minval, maxval)
             if ticks[1] == 0
                 ticks[1] = 1
             end
@@ -436,24 +436,9 @@ function apply_statistic(stat::TickStatistic,
         viewmax = max(ticks)
     else
         minval, maxval = promote(minval, maxval)
-        ticks = Gadfly.optimize_ticks(minval, maxval)
-        viewmin = min(ticks)
-        viewmax = max(ticks)
-
-        # Extend ticks
-        d = ticks[2] - ticks[1]
-        # lowerticks = copy(ticks)
-        # upperticks = copy(ticks)
-        # TODO: this is a workaround
-        lowerticks = eltype(ticks)[t for t in ticks]
-        upperticks = eltype(ticks)[t for t in ticks]
-        for i in 1:length(ticks)
-            lowerticks[i] -= (ticks[end] - ticks[1]) + d
-            upperticks[i] += (ticks[end] - ticks[1]) + d
-        end
-        # TODO: workaround
-        # grids = ticks = vcat(lowerticks, ticks, upperticks)
-        grids = ticks = collect(chain(lowerticks, ticks, upperticks))
+        ticks, viewmin, viewmax =
+            Gadfly.optimize_ticks(minval, maxval, extend_ticks=true)
+        grids = ticks
     end
 
     # We use the first label function we find for any of the aesthetics. I'm not

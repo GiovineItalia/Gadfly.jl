@@ -6,11 +6,10 @@ using Compose
 using DataFrames
 using Gadfly
 
-import Gadfly.element_aesthetics, Gadfly.isconcrete, Gadfly.concrete_length,
-       Gadfly.nonzero_length
+import Gadfly: element_aesthetics, isconcrete, concrete_length,
+               nonzero_length, formatter
 
 include("color.jl")
-include("format.jl")
 
 # Apply some scales to data in the given order.
 #
