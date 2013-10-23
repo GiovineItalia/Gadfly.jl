@@ -432,8 +432,8 @@ function apply_statistic(stat::TickStatistic,
         else
             grids = (ticks - 0.5)[2:end]
         end
-        viewmin = min(ticks)
-        viewmax = max(ticks)
+        viewmin = minimum(ticks)
+        viewmax = maximum(ticks)
     else
         minval, maxval = promote(minval, maxval)
         ticks, viewmin, viewmax =
