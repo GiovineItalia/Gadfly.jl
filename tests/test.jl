@@ -6,6 +6,7 @@ using RDatasets
 tests = [
     ("points",                     6inch, 3inch),
     ("function_plots",             6inch, 3inch),
+    ("function_layers",            6inch, 3inch),
     ("colored_points",             6inch, 3inch),
     ("vstack",                     6inch, 6inch),
     ("hstack",                     6inch, 3inch),

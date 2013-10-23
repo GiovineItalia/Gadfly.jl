@@ -23,19 +23,8 @@ end
 evalfunc(f::Expr, a, b, n) = evalfunc(eval(:(x -> $f)), a, b, n)
 
 
-# A convenience plot function for quickly plotting functions are expressions.
-#
-# Args:
-#   fs: An array in which each object is either a single argument function or an
-#       expression computing some value on x.
-#   a: Lower bound on x.
-#   b: Upper bound on x.
-#   elements: One ore more grammar elements.
-#
-# Returns:
-#   A plot objects.
-#
-function plot(fs::Array, a, b, elements::Element...)
+# Create a dataframe and mapping from a list of functions or expressions.
+function datafy(fs::Array, a, b)
     df = DataFrame()
     for (i, f) in enumerate(fs)
         df_i = evalfunc(f, a, b, 250)
@@ -50,6 +39,24 @@ function plot(fs::Array, a, b, elements::Element...)
         mapping[:color] = "f"
     end
 
+    df, mapping
+end
+
+
+# A convenience plot function for quickly plotting functions or expressions.
+#
+# Args:
+#   fs: An array in which each object is either a single argument function or an
+#       expression computing some value on x.
+#   a: Lower bound on x.
+#   b: Upper bound on x.
+#   elements: One ore more grammar elements.
+#
+# Returns:
+#   A plot objects.
+#
+function plot(fs::Array, a, b, elements::Element...)
+    df, mapping = datafy(fs, a, b)
     plot(df, mapping, Geom.line, elements...)
 end
 
@@ -66,11 +73,22 @@ function plot(f::Expr, a, b, elements::Element...)
 end
 
 
-# Plot an expression from a to b.
-macro plot(expr, a, b)
-    quote
-        plot(x -> $(expr), $(a), $(b))
-    end
+# Create a layer from a list of functions or expressions.
+function layer(fs::Array, a, b)
+    df, mapping = datafy(fs, a, b)
+    layer(df, Stat.nil(), Geom.line; mapping...)
+end
+
+
+# Create a layer from a single function.
+function layer(f::Function, a, b)
+    layer([f], a, b)
+end
+
+
+# Create a layer from a single expression.
+function layer(f::Expr, a, b)
+    layer([f], a, b)
 end
 
 
