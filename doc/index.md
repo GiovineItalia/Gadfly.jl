@@ -127,6 +127,28 @@ plot([sin, cos], 0, 25)
 @plot(cos(x)/x, 5, 25)
 ```
 
+# Layers
+
+Gadfly can draw multiple layers to the same plot:
+
+```julia
+plot(layer(x=rand(10), y=rand(10), Geom.point),
+     layer(x=rand(10), y=rand(10), Geom.line))
+```
+
+
+Or if you're data is in a DataFrame:
+
+```julia
+plot(my_data, layer(x="some_column1", y="some_column2", Geom.point),
+              layer(x="some_column3", y="some_column4", Geom.line))
+```
+
+You can also pass different data frames to each layers:
+```julia
+layer(another_dataframe, x="col1", y="col2", Geom.point)
+```
+
 # Drawing to backends
 
 Gadfly plots can be rendered to number of formats. Without cairo, or any
