@@ -127,7 +127,7 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         aes2.xmax = Array(Float64, length(aes.x))
 
         span = length(aes.x) > 1 ?
-            (max(aes.x) - min(aes.x)) / (length(Set(aes.x...)) - 1) : 1.0
+            (maximum(aes.x) - minimum(aes.x)) / (length(Set(aes.x...)) - 1) : 1.0
         for (i, x) in enumerate(aes.x)
             aes2.xmin[i] = x - span/2
             aes2.xmax[i] = x + span/2
