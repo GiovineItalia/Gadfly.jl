@@ -73,6 +73,14 @@ function plot(f::Expr, a, b, elements::Element...)
 end
 
 
+# Plot an expression from a to b.
+macro plot(expr, a, b)
+    quote
+        plot(x -> $(expr), $(a), $(b))
+    end
+end
+
+
 # Create a layer from a list of functions or expressions.
 function layer(fs::Array, a, b)
     df, mapping = datafy(fs, a, b)
@@ -89,6 +97,14 @@ end
 # Create a layer from a single expression.
 function layer(f::Expr, a, b)
     layer([f], a, b)
+end
+
+
+# Create a layer from an expression from a to b.
+macro layer(expr, a, b)
+    quote
+        layer(x -> $(expr), $(a), $(b))
+    end
 end
 
 
