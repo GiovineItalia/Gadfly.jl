@@ -95,6 +95,9 @@ function format_fixed_scientific(x::FloatingPoint, precision::Integer)
 end
 
 
+formatter() = string
+
+
 # Nicely format an print some numbers.
 function formatter(xs::FloatingPoint...; fmt=:auto)
     # figure out the lowest suitable precision

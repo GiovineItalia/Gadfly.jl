@@ -92,7 +92,7 @@ function apply_statistic(stat::HistogramStatistic,
         d, bincounts = choose_bin_count_1d(aes.x)
     end
 
-    x_min, x_max = min(aes.x), max(aes.x)
+    x_min, x_max = minimum(aes.x), maximum(aes.x)
     binwidth = (x_max - x_min) / d
 
     if aes.color === nothing
@@ -120,8 +120,8 @@ function apply_statistic(stat::HistogramStatistic,
         aes.y = Array(Float64, d * length(groups))
         colors = Array(ColorValue, d * length(groups))
 
-        x_min = min(aes.x)
-        x_max = max(aes.x)
+        x_min = minimum(aes.x)
+        x_max = maximum(aes.x)
         stack_height = zeros(Int, d)
         for (i, (c, xs)) in enumerate(groups)
             fill!(bincounts, 0)
@@ -140,7 +140,7 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
 
-        y_drawmax = float64(max(stack_height))
+        y_drawmax = float64(maximum(stack_height))
         if aes.ydrawmax === nothing || aes.ydrawmax < y_drawmax
             aes.ydrawmax = y_drawmax
         end

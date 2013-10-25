@@ -266,8 +266,8 @@ function aes_by_xy_group(aes::Aesthetics)
     @assert aes.xgroup === nothing || aes.ygroup === nothing ||
             length(aes.xgroup) == length(aes.ygroup)
 
-    n = aes.ygroup === nothing ? 1 : max(aes.ygroup)
-    m = aes.xgroup === nothing ? 1 : max(aes.xgroup)
+    n = aes.ygroup === nothing ? 1 : maximum(aes.ygroup)
+    m = aes.xgroup === nothing ? 1 : maximum(aes.xgroup)
 
     xrefs = aes.xgroup === nothing ? [1] : aes.xgroup
     yrefs = aes.ygroup === nothing ? [1] : aes.ygroup

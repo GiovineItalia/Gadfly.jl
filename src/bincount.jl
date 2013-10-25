@@ -55,7 +55,7 @@ function choose_bin_count_1d(xs::Vector, max_bin_count=150)
         return 1, Int[0]
     end
 
-    x_min, x_max = min(xs), max(xs)
+    x_min, x_max = minimum(xs), maximum(xs)
     span = x_max - x_min
 
     d_min = 3
