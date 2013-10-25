@@ -22,6 +22,7 @@ tests = [
     ("timeseries_year_1",          6inch, 3inch),
     ("timeseries_year_2",          6inch, 3inch),
     ("timeseries_year_3",          6inch, 3inch),
+    ("custom_themes",              6inch, 3inch)
 ]
 
 
@@ -34,7 +35,7 @@ backends = {
 }
 
 
-function run_tests()
+function run_tests(output_filename)
     for (name, width, height) in tests
         for (backend_name, backend) in backends
             println(STDERR, "Rendering $(name) on $(backend_name) backend.")
@@ -47,7 +48,34 @@ function run_tests()
             end
         end
     end
+
+    output = open(output_filename, "w")
+    print(output,
+        """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Gadfly Test Plots</title>
+        </head>
+        <body>
+        <div style="width:900px; margin:auto">
+        """)
+
+    for (name, width, height) in tests
+        print(output, """<img width="450px" src="$(name).svg">""")
+        print(output, """<img width="450px" src="$(name).png">\n""")
+    end
+
+    print(output,
+        """
+        </div>
+        </body>
+        """)
+
+    close(output)
 end
 
-run_tests()
+
+run_tests("test.html")
+
 

@@ -23,8 +23,8 @@ import Compose.draw, Compose.hstack, Compose.vstack
 import Base: copy, push!, start, next, done, has, show, getindex, cat,
              writemime, isfinite
 
-export Plot, Layer, Scale, Coord, Geom, Guide, Stat, render, plot, layer, @plot,
-       spy, set_default_plot_size, prepare_display
+export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
+       layer, @plot, spy, set_default_plot_size, prepare_display
 
 
 # Re-export some essentials from Compose
@@ -45,11 +45,6 @@ abstract GuideElement       <: Element
 abstract StatisticElement   <: Element
 
 
-# The layer and plot functions can also take functions that are evaluated with
-# no arguments and are expected to produce an element.
-typealias ElementOrFunction{T <: Element} Union(Element, Type{T}, Function)
-
-
 include("misc.jl")
 include("format.jl")
 include("ticks.jl")
@@ -60,6 +55,11 @@ include("aesthetics.jl")
 include("data.jl")
 include("weave.jl")
 include("poetry.jl")
+
+
+# The layer and plot functions can also take functions that are evaluated with
+# no arguments and are expected to produce an element.
+typealias ElementOrFunction{T <: Element} Union(Element, Base.Callable, Theme)
 
 
 # Prepare the display backend (ijuila, in particular) to show plots rendered on
@@ -215,6 +215,11 @@ end
 
 function add_plot_element{T <: Element}(p::Plot, data::AbstractDataFrame, f::Type{T})
     add_plot_element(p, data, f())
+end
+
+
+function add_plot_element(p::Plot, ::AbstractDataFrame, theme::Theme)
+    p.theme = theme
 end
 
 

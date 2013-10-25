@@ -44,7 +44,7 @@ end
 #   A vector of Aesthetics of the same length as datas containing scaled data.
 #
 function apply_scales(scales, datas::Gadfly.Data...)
-    aess = [Gadfly.Aesthetics() for _ in datas]
+    aess = Gadfly.Aesthetics[Gadfly.Aesthetics() for _ in datas]
     apply_scales(scales, aess, datas...)
     aess
 end

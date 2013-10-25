@@ -7,8 +7,11 @@ macro varset(name::Symbol, table)
     @assert table.head == :block
     table = table.args
 
+    names = {}
     vars = {}
     defaults = {}
+    parameters = {}
+    parameters_expr = Expr(:parameters)
 
     for row in table
         if typeof(row) == Expr && row.head == :line
@@ -28,9 +31,14 @@ macro varset(name::Symbol, table)
             error("Bad varset systax")
         end
 
+        push!(names, var)
         push!(vars, :($(var)::$(typ)))
         push!(defaults, default)
+        push!(parameters, Expr(:kw, var, default))
+        parameters_expr = Expr(:parameters, parameters...)
     end
+
+    new_with_defaults = Expr(:call, :new, names...)
 
     ex =
     quote
@@ -39,6 +47,10 @@ macro varset(name::Symbol, table)
 
             function $(name)()
                 new($(defaults...))
+            end
+
+            function $(name)($(parameters_expr))
+                $(new_with_defaults)
             end
 
             # shallow copy constructor
