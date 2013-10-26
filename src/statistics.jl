@@ -175,8 +175,13 @@ function apply_statistic(stat::DensityStatistic,
     Gadfly.assert_aesthetics_defined("DensityStatistic", aes, :x)
 
     if aes.color === nothing
-        window = length(stat.n) > 1 ? bandwidth(aes.x) : 0.1
-        f = kde(aes.x, window, stat.n)
+        if !isa(aes.x[1], Real)
+            error("Kernel density estimation only works on Real types.")
+        end
+
+        x_f64 = convert(Vector{Float64}, aes.x)
+        window = length(stat.n) > 1 ? bandwidth(x_f64) : 0.1
+        f = kde(x_f64, window, stat.n)
         aes.x = f.x
         aes.y = f.density
     else
@@ -230,8 +235,8 @@ function apply_statistic(stat::Histogram2DStatistic,
 
     dx, dy, bincounts = choose_bin_count_2d(aes.x, aes.y)
 
-    x_min, x_max = min(aes.x), max(aes.x)
-    y_min, y_max = min(aes.y), max(aes.y)
+    x_min, x_max = minimum(aes.x), maximum(aes.x)
+    y_min, y_max = minimum(aes.y), maximum(aes.y)
 
     # should we tread x/y as categorical data
     if typeof(aes.x) <: Array{Int} && dx == x_max - x_min + 1 <= 20

@@ -337,7 +337,7 @@ function apply_scale(scale::ContinuousColorScale,
         return nothing
     end
 
-    ticks = Gadfly.optimize_ticks(cmin, cmax)
+    ticks, viewmin, viewmax = Gadfly.optimize_ticks(cmin, cmax)
     if ticks[1] == 0 && cmin >= 1
         ticks[1] = 1
     end

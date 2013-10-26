@@ -25,7 +25,11 @@ tests = [
     ("timeseries_year_3",          6inch, 3inch),
     ("custom_themes",              6inch, 3inch),
     ("issue98",                    6inch, 3inch),
-    ("issue82",                    6inch, 3inch)
+    ("issue82",                    6inch, 3inch),
+    ("histogram2d",                6inch, 3inch),
+    ("rectbin",                    6inch, 3inch),
+    ("density",                    6inch, 3inch),
+    ("colorful_density",           6inch, 3inch)
 ]
 
 
