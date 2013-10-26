@@ -37,11 +37,13 @@ backends = {
 
 
 function run_tests(output_filename)
+    testdir = joinpath(Pkg.dir("Gadfly"), "tests")
+
     for (name, width, height) in tests
         for (backend_name, backend) in backends
             println(STDERR, "Rendering $(name) on $(backend_name) backend.")
             try
-                p = evalfile("$(name).jl")
+                p = evalfile(joinpath(testdir, "$(name).jl"))
                 draw(backend(name, width, height), p)
             catch
                 println(STDERR, "FAILED!")
