@@ -23,7 +23,8 @@ tests = [
     ("timeseries_year_1",          6inch, 3inch),
     ("timeseries_year_2",          6inch, 3inch),
     ("timeseries_year_3",          6inch, 3inch),
-    ("custom_themes",              6inch, 3inch)
+    ("custom_themes",              6inch, 3inch),
+    ("issue98",                    6inch, 3inch)
 ]
 
 
@@ -38,8 +39,17 @@ backends = {
 
 function run_tests(output_filename)
     testdir = joinpath(Pkg.dir("Gadfly"), "tests")
+    if !isempty(ARGS)
+        whitelist = Set(ARGS...)
+    else
+        whitelist = Set([name for (name, width, height) in tests]...)
+    end
 
     for (name, width, height) in tests
+        if !in(name, whitelist)
+            continue
+        end
+
         for (backend_name, backend) in backends
             println(STDERR, "Rendering $(name) on $(backend_name) backend.")
             try
@@ -65,6 +75,10 @@ function run_tests(output_filename)
         """)
 
     for (name, width, height) in tests
+        if !in(name, whitelist)
+            continue
+        end
+
         print(output, """<img width="450px" src="$(name).svg">""")
         print(output, """<img width="450px" src="$(name).png">\n""")
     end

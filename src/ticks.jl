@@ -51,7 +51,7 @@ optimize_ticks() = {}
 #
 function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false)
     if x_min == x_max
-        return [x_min], viewmin, viewmax
+        return [x_min], x_min - one(T), x_min + one(T)
     end
 
     # tick intervals and scores
