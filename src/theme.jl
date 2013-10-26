@@ -1,7 +1,7 @@
 
 # Parameters controlling how a plot appears
 
-const default_font_desc = "PT Sans,Helvetica Neue,Helvetica,sans"
+const default_font_desc = "'PT Sans','Helvetica Neue','Helvetica',sans-serif"
 
 
 # Choose highlight color by darkening the fill color
