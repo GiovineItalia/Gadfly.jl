@@ -1,4 +1,3 @@
-
 module Stat
 
 import Gadfly
@@ -77,8 +76,8 @@ function apply_statistic(stat::HistogramStatistic,
     end
 
     if typeof(aes.x) <: Array{Int}
-        x_min = min(aes.x)
-        x_max = max(aes.x)
+        x_min = minimum(aes.x)
+        x_max = maximum(aes.x)
         if x_max - x_min + 1 <= 20
             d = x_max - x_min + 1
             bincounts = zeros(Int, d)
@@ -561,7 +560,7 @@ function apply_statistic(stat::SmoothStatistic,
     num_steps = 750
 
     if aes.color === nothing
-        x_min, x_max = min(aes.x), max(aes.x)
+        x_min, x_max = minimum(aes.x), maximum(aes.x)
 
         if x_min == x_max
             error("Stat.smooth requires more than one distinct x value")
@@ -591,7 +590,7 @@ function apply_statistic(stat::SmoothStatistic,
         colors = Array(ColorValue, length(groups) * num_steps)
 
         for (i, (c, (xs, ys))) in enumerate(groups)
-            x_min, x_max = min(xs), max(xs)
+            x_min, x_max = minimum(xs), maximum(xs)
             if x_min == x_max
                 error("Stat.smooth requires more than one distinct x value")
             end
