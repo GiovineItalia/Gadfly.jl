@@ -731,15 +731,20 @@ const default_aes_scales = {
 
 # Determine whether the input is categorical or numerical
 
-typealias CategoricalTypes Union(String, Bool)
+typealias CategoricalType Union(String, Bool, Symbol)
 
 
-function classify_data{N, T <: CategoricalTypes}(data::AbstractArray{T, N})
+function classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N})
     :categorical
 end
 
 function classify_data(data::AbstractArray{Any})
-    :categorical
+    for val in data
+        if isa(val, CategoricalType)
+            return :categorical
+        end
+    end
+    :numerical
 end
 
 function classify_data(data::AbstractArray)
