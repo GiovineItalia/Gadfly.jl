@@ -1,6 +1,7 @@
 ---
 title: Geom.errorbar
 author: Daniel Jones
+part: Geometry
 order: 10
 ...
 

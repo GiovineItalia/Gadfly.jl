@@ -1,6 +1,7 @@
 ---
 title: Geom.line
 author: Daniel Jones
+part: Geometry
 order: 3
 ...
 

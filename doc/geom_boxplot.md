@@ -1,6 +1,7 @@
 ---
 title: Geom.boxplot
 author: Daniel Jones
+part: Geometry
 order: 4
 ...
 

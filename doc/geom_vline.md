@@ -1,6 +1,7 @@
 ---
 title: Geom.vline
 author: Daniel Jones
+part: Geometry
 order: 15
 ...
 

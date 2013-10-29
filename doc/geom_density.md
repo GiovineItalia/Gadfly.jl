@@ -1,6 +1,7 @@
 ---
 title: Geom.density
 author: Daniel Jones
+part: Geometry
 order: 7
 ...
 

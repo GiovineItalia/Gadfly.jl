@@ -1,6 +1,7 @@
 ---
 title: Geom.subplot_grid
 author: Daniel Jones
+part: Geometry
 order: 9
 ...
 

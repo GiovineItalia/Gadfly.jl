@@ -1,6 +1,7 @@
 ---
 title: Geom.label
 author: Daniel Jones
+part: Geometry
 order: 8
 ...
 

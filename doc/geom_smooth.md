@@ -1,6 +1,7 @@
 ---
 title: Geom.smooth
 author: Daniel Jones
+part: Geometry
 order: 10
 ...
 

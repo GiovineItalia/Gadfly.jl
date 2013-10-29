@@ -1,6 +1,7 @@
 ---
 title: Geom.hline
 author: Daniel Jones
+part: Geometry
 order: 14
 ...
 

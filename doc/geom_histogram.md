@@ -1,6 +1,7 @@
 ---
 title: Geom.histogram
 author: Daniel Jones
+part: Geometry
 order: 6
 ...
 

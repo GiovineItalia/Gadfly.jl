@@ -131,7 +131,7 @@ plot([sin, cos], 0, 25)
 
 Gadfly can draw multiple layers to the same plot:
 
-```julia
+```{.julia execute="false"}
 plot(layer(x=rand(10), y=rand(10), Geom.point),
      layer(x=rand(10), y=rand(10), Geom.line))
 ```
@@ -139,13 +139,13 @@ plot(layer(x=rand(10), y=rand(10), Geom.point),
 
 Or if you're data is in a DataFrame:
 
-```julia
+```{.julia execute="false"}
 plot(my_data, layer(x="some_column1", y="some_column2", Geom.point),
               layer(x="some_column3", y="some_column4", Geom.line))
 ```
 
 You can also pass different data frames to each layers:
-```julia
+```{.julia execute="false"}
 layer(another_dataframe, x="col1", y="col2", Geom.point)
 ```
 

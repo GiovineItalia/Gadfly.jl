@@ -1,6 +1,7 @@
 ---
 title: Geom.point
 author: Daniel Jones
+part: Geometry
 order: 2
 ...
 

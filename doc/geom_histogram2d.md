@@ -1,6 +1,7 @@
 ---
 title: Geom.histogram2d
 author: Daniel Jones
+part: Geometry
 order: 8
 ...
 

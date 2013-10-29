@@ -1,6 +1,7 @@
 ---
 title: Geom.rectbin
 author: Daniel Jones
+part: Geometry
 order: 8
 ...
 

@@ -510,11 +510,18 @@ function apply_statistic(stat::BoxplotStatistic,
     aes.outliers = Vector{Float64}[]
 
     for (i, ((x, c), ys)) in enumerate(groups)
+        sort!(ys)
         aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
-                quantile(ys, [0.25, 0.5, 0.75])
+                quantile!(ys, [0.25, 0.5, 0.75])
         iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
-        aes.lower_fence[i] = aes.lower_hinge[i] - 1.5iqr
-        aes.upper_fence[i] = aes.upper_hinge[i] + 1.5iqr
+
+        idx = searchsortedfirst(ys, aes.lower_hinge[i] - 1.5iqr)
+        aes.lower_fence[i] = ys[idx]
+
+
+        idx = searchsortedlast(ys, aes.upper_hinge[i] + 1.5iqr)
+        aes.upper_fence[i] = ys[idx]
+
         push!(aes.outliers,
              filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
     end
