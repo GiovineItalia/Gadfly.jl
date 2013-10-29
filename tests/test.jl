@@ -34,7 +34,8 @@ tests = [
     ("colorful_density",             6inch, 3inch),
     ("explicit_colorkey_title",      6inch, 3inch),
     ("explicit_subplot_titles",      6inch, 3inch),
-    ("subplot_grid_smooth",          6inch, 8inch)
+    ("subplot_grid_smooth",          6inch, 8inch),
+    ("histogram_errorbar",           6inch, 3inch)
 ]
 
 

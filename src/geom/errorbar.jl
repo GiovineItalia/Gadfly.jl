@@ -48,7 +48,7 @@ function render(geom::ErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
     else
         yform = empty_form
     end
-    combine(xform,  yform)
+    compose(canvas(units_inherited=true, order=2), xform, yform)
 end
 
 function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
@@ -65,6 +65,7 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
     caplen = theme.errorbar_cap_length/2
 
     compose(
+        canvas(units_inherited=true, order=2),
         combine(
             # top cap
             lines([[(x*cx - caplen, ymax), (x*cx + caplen, ymax)]
@@ -100,6 +101,7 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
     caplen = theme.errorbar_cap_length/2
 
     compose(
+        canvas(units_inherited=true, order=2),
         combine(
             # left cap
             lines([[(xmin, y*cy - caplen), (xmin, y*cy + caplen)]
