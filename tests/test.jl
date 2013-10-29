@@ -32,6 +32,7 @@ tests = [
     ("density",                      6inch, 3inch),
     ("colorful_density",             6inch, 3inch),
     ("explicit_colorkey_title",      6inch, 3inch),
+    ("explicit_subplot_titles",      6inch, 3inch)
 ]
 
 
