@@ -127,7 +127,11 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         aes2.xmin = Array(T, length(aes.x))
         aes2.xmax = Array(T, length(aes.x))
 
-        span = (maximum(aes.x) - minimum(aes.x))
+        span = zero(T)
+        if !isempty(aes.x)
+            span = (maximum(aes.x) - minimum(aes.x)) / (length(Set(aes.x...)) - 1)
+        end
+
         if span == zero(T)
             span = one(T)
         end

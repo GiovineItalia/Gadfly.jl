@@ -11,6 +11,7 @@ tests = [
     ("vstack",                       6inch, 6inch),
     ("hstack",                       6inch, 3inch),
     ("colorful_hist",                6inch, 3inch),
+    ("discrete_histogram",           6inch, 3inch),
     ("stacked_discrete_histogram",   6inch, 3inch),
     ("stacked_continuous_histogram", 6inch, 3inch),
     ("dodged_discrete_histogram",    6inch, 3inch),
