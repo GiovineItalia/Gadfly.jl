@@ -366,6 +366,9 @@ function apply_statistic(stat::TickStatistic,
     if getfield(aes, in_group_var) === nothing
         in_values = [getfield(aes, var) for var in stat.in_vars]
         in_values = filter(val -> !(val === nothing), in_values)
+        if isempty(in_values)
+            return
+        end
         in_values = chain(in_values...)
         categorical = all([getfield(aes, var) === nothing || typeof(getfield(aes, var)) <: PooledDataArray
                            for var in stat.in_vars])
@@ -373,6 +376,7 @@ function apply_statistic(stat::TickStatistic,
         in_values = getfield(aes, in_group_var)
         categorical = true
     end
+
 
     # TODO: handle the outliers aesthetic
 

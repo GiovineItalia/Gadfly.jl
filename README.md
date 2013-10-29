@@ -84,7 +84,7 @@ plot(data("datasets", "iris"),x="Sepal.Length", y="Sepal.Width", Geom.point)
 
 ```julia
 # E.g.
-plot(data("car", "SLID"), x="wages", color="language", Geom.bar)
+plot(data("car", "SLID"), x="wages", color="language", Geom.histogram)
 ```
 
 ![Car](http://homes.cs.washington.edu/~dcjones/gadfly/car.svg)
