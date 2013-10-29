@@ -20,7 +20,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
 
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
-    default_aes.x = Float64[1]
+    default_aes.x = Float64[0.5]
     aes = inherit(aes, default_aes)
 
     aes_iter = zip(aes.lower_fence,

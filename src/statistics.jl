@@ -493,21 +493,21 @@ function apply_statistic(stat::BoxplotStatistic,
     aes_x = aes.x === nothing ? [nothing] : aes.x
     aes_color = aes.color === nothing ? [nothing] : aes.color
 
+    T = eltype(aes.y)
     for (x, y, c) in zip(cycle(aes_x), aes.y, cycle(aes_color))
         if !haskey(groups, (x, c))
-            groups[(x, c)] = Float64[y]
-        else
-            push!(groups[(x, c)], y)
+            groups[(x, c)] = Array(T, 0)
         end
+        push!(groups[(x, c)], y)
     end
 
     m = length(groups)
-    aes.middle = Array(Float64, m)
-    aes.lower_hinge = Array(Float64, m)
-    aes.upper_hinge = Array(Float64, m)
-    aes.lower_fence = Array(Float64, m)
-    aes.upper_fence = Array(Float64, m)
-    aes.outliers = Vector{Float64}[]
+    aes.middle = Array(T, m)
+    aes.lower_hinge = Array(T, m)
+    aes.upper_hinge = Array(T, m)
+    aes.lower_fence = Array(T, m)
+    aes.upper_fence = Array(T, m)
+    aes.outliers = Vector{T}[]
 
     for (i, ((x, c), ys)) in enumerate(groups)
         sort!(ys)
@@ -517,7 +517,6 @@ function apply_statistic(stat::BoxplotStatistic,
 
         idx = searchsortedfirst(ys, aes.lower_hinge[i] - 1.5iqr)
         aes.lower_fence[i] = ys[idx]
-
 
         idx = searchsortedlast(ys, aes.upper_hinge[i] + 1.5iqr)
         aes.upper_fence[i] = ys[idx]
