@@ -580,7 +580,14 @@ function apply_statistic(stat::SmoothStatistic,
         # happen through a floating point fluke
         nudge = 1e-5 * (x_max - x_min)
 
-        xs, ys = aes.x, aes.y
+        local xs, ys
+        try
+            xs = convert(Vector{Float64}, aes.x)
+            ys = convert(Vector{Float64}, aes.y)
+        catch
+            error("Stat.loess requires that x and y be bound to arrays of plain numbers.")
+        end
+
         aes.x = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
         aes.y = predict(loess(xs, ys, span=stat.smoothing), aes.x)
     else
@@ -588,10 +595,14 @@ function apply_statistic(stat::SmoothStatistic,
         aes_color = aes.color === nothing ? [nothing] : aes.color
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes_color))
             if !haskey(groups, c)
-                groups[c] = (Float64[x], Float64[y])
-            else
+                groups[c] = (Float64[], Float64[])
+            end
+
+            try
                 push!(groups[c][1], x)
                 push!(groups[c][2], y)
+            catch
+                error("Stat.loess requires that x and y be bound to arrays of plain numbers.")
             end
         end
 
