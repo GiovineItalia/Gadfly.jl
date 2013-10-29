@@ -45,6 +45,11 @@ end
 
 
 immutable ColorKey <: Gadfly.GuideElement
+    title::Union(String, Nothing)
+
+    function ColorKey(title=nothing)
+        new(title)
+    end
 end
 
 
@@ -181,7 +186,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     labels = Dict{ColorValue, Set{String}}()
 
     continuous_guide = false
-    guide_title = nothing
+    guide_title = guide.title
 
     for aes in aess
         if guide_title === nothing && !is(aes.color_key_title, nothing)
