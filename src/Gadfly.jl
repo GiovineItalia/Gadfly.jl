@@ -580,7 +580,8 @@ function render(plot::Plot)
     layer_aess = Scale.apply_scales(Iterators.distinct(values(scales)), datas...)
 
     # set default labels
-    if haskey(plot.mapping, :color)
+    if haskey(plot.mapping, :color) && !isa(plot.mapping[:color], AbstractArray)
+        println(STDERR, "HERE: ", typeof(plot.mapping[:color]))
         layer_aess[1].color_key_title = string(plot.mapping[:color])
     end
 

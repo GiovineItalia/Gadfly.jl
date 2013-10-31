@@ -214,7 +214,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     end
 
     if guide_title === nothing
-        guide_title = ""
+        guide_title = "Color"
     end
 
     pretty_labels = Dict{ColorValue, String}()
