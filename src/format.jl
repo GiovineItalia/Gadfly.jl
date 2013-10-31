@@ -100,6 +100,10 @@ formatter() = string
 
 # Nicely format an print some numbers.
 function formatter(xs::FloatingPoint...; fmt=:auto)
+    if length(xs) <= 1
+        return string
+    end
+
     # figure out the lowest suitable precision
     delta = Inf
     for (x0, x1) in zip(xs, xs[2:end])
