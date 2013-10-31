@@ -581,7 +581,6 @@ function render(plot::Plot)
 
     # set default labels
     if haskey(plot.mapping, :color) && !isa(plot.mapping[:color], AbstractArray)
-        println(STDERR, "HERE: ", typeof(plot.mapping[:color]))
         layer_aess[1].color_key_title = string(plot.mapping[:color])
     end
 
