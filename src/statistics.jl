@@ -400,17 +400,17 @@ function apply_statistic(stat::TickStatistic,
     if typeof(coord) == Coord.Cartesian
         if stat.out_var == "x"
             if !is(coord.xmin, nothing)
-                minval == min(minval, coord.xmin)
+                minval = min(minval, coord.xmin)
             end
             if !is(coord.xmax, nothing)
-                maxval == max(maxval, coord.xmax)
+                maxval = max(maxval, coord.xmax)
             end
         elseif stat.out_var == "y"
             if !is(coord.ymin, nothing)
-                minval == min(minval, coord.ymin)
+                minval = min(minval, coord.ymin)
             end
             if !is(coord.ymax, nothing)
-                maxval == min(maxval, coord.ymax)
+                maxval = max(maxval, coord.ymax)
             end
         end
     end
