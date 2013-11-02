@@ -10,8 +10,8 @@ immutable BarGeometry <: Gadfly.GeometryElement
 
     default_statistic::Gadfly.StatisticElement
 
-    function BarGeometry(position=:stack,
-                         default_statistic=Gadfly.Stat.identity())
+    function BarGeometry(default_statistic=Gadfly.Stat.identity();
+                         position=:stacked)
         new(position, default_statistic)
     end
 end
@@ -19,8 +19,12 @@ end
 
 const bar = BarGeometry
 
-function histogram(position=:stack)
-    BarGeometry(position, Gadfly.Stat.histogram())
+function histogram(; position=:stack, bincount=nothing,
+                   minbincount=3, maxbincount=150)
+    BarGeometry(Gadfly.Stat.histogram(bincount=bincount,
+                                      minbincount=minbincount,
+                                      maxbincount=maxbincount),
+                position=position)
 end
 
 
@@ -128,8 +132,9 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         aes2.xmax = Array(T, length(aes.x))
 
         span = zero(T)
-        if !isempty(aes.x)
-            span = (maximum(aes.x) - minimum(aes.x)) / (length(Set(aes.x...)) - 1)
+        unique_count = length(Set(aes.x...))
+        if unique_count > 1
+            span = (maximum(aes.x) - minimum(aes.x)) / (unique_count - 1)
         end
 
         if span == zero(T)

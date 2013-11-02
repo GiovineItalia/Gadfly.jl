@@ -53,6 +53,18 @@ const identity = Identity
 
 
 immutable HistogramStatistic <: Gadfly.StatisticElement
+    minbincount::Int
+    maxbincount::Int
+
+    function HistogramStatistic(; bincount=nothing,
+                                  minbincount=3,
+                                  maxbincount=150)
+        if bincount != nothing
+            new(bincount, bincount)
+        else
+            new(minbincount, maxbincount)
+        end
+    end
 end
 
 
@@ -67,6 +79,10 @@ function apply_statistic(stat::HistogramStatistic,
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("HistogramStatistic", aes, :x)
+
+    if stat.minbincount > stat.maxbincount
+        error("Histogram minbincount > maxbincount")
+    end
 
     if isempty(aes.x)
         aes.xmin = Float64[1.0]
@@ -85,10 +101,15 @@ function apply_statistic(stat::HistogramStatistic,
                 bincounts[x - x_min + 1] += 1
             end
         else
-            d, bincounts = choose_bin_count_1d(aes.x, x_max - x_min + 1)
+            d, bincounts = choose_bin_count_1d(aes.x,
+                                               stat.minbincount,
+                                               min(stat.maxbincount,
+                                                    x_max - x_min + 1))
         end
     else
-        d, bincounts = choose_bin_count_1d(aes.x)
+        d, bincounts = choose_bin_count_1d(aes.x,
+                                           stat.minbincount,
+                                           stat.maxbincount)
     end
 
     x_min, x_max = minimum(aes.x), maximum(aes.x)

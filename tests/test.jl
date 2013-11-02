@@ -39,7 +39,8 @@ tests = [
     ("issue106",                     6inch, 3inch),
     ("continuous_color_scale_range", 6inch, 3inch),
     ("continuous_scale_range",       6inch, 3inch),
-    ("log10_scale_range",            6inch, 3inch)
+    ("log10_scale_range",            6inch, 3inch),
+    ("histogram_explicit_bins",      6inch, 3inch)
 ]
 
 
@@ -94,6 +95,7 @@ function run_tests(output_filename)
             continue
         end
 
+        println(output, "<p>", name, "</p>")
         print(output, """<img width="450px" src="$(name).svg">""")
         print(output, """<img width="450px" src="$(name).png">\n""")
     end

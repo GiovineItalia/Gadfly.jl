@@ -178,9 +178,13 @@ end
 
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement)
-    layer = Layer()
-    layer.geom = arg
-    push!(p.layers, layer)
+    if !isempty(p.layers) && isa(p.layers[end].geom, Geom.Nil)
+        p.layers[end].geom = arg
+    else
+        layer = Layer()
+        layer.geom = arg
+        push!(p.layers, layer)
+    end
 end
 
 
