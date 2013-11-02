@@ -249,13 +249,16 @@ end
 
 
 # Common discrete color scales
-const color_hue = DiscreteColorScale(
+const discrete_color_hue = DiscreteColorScale(
     h -> convert(Vector{ColorValue},
          distinguishable_colors(h, ColorValue[LCHab(70, 60, 240)],
                                 lchoices=Float64[65, 70, 75, 80],
                                 cchoices=Float64[0, 50, 60, 70],
                                 hchoices=linspace(0, 330, 24),
                                 transform=c -> deuteranopic(c, 0.5))))
+
+
+const discrete_color = discrete_color_hue
 
 
 function apply_scale(scale::DiscreteColorScale,
@@ -293,16 +296,26 @@ end
 immutable ContinuousColorScale <: Gadfly.ScaleElement
     # A function of the form f(p) where 0 <= p <= 1, that returns a color.
     f::Function
+
+    minvalue
+    maxvalue
+
+    function ContinuousColorScale(f::Function; minvalue=nothing, maxvalue=nothing)
+        new(f, minvalue, maxvalue)
+    end
 end
 
 
 element_aesthetics(::ContinuousColorScale) = [:color]
 
 
-# Common continuous color scales
-# TODO: find a good color combo
-const color_gradient = ContinuousColorScale(
-        lab_gradient(LCHab(20, 44, 262), LCHab(100, 44, 262)))
+function continuous_color_gradient(;minvalue=nothing, maxvalue=nothing)
+    ContinuousColorScale(
+        lab_gradient(LCHab(20, 44, 262), LCHab(100, 44, 262)),
+        minvalue=minvalue, maxvalue=maxvalue)
+end
+
+const continuous_color = continuous_color_gradient
 
 
 function apply_scale(scale::ContinuousColorScale,
@@ -330,12 +343,19 @@ function apply_scale(scale::ContinuousColorScale,
         end
     end
 
-    # It's a little weird to be doing this here. If a more elegant solution
-    # arises, it's worth reorganizing.
-
     if cmin == Inf || cmax == -Inf
         return nothing
     end
+
+    if scale.minvalue != nothing
+        cmin = scale.minvalue
+    end
+
+    if scale.maxvalue  != nothing
+        cmax = scale.maxvalue
+    end
+
+    cmin, cmax = promote(cmin, cmax)
 
     ticks, viewmin, viewmax = Gadfly.optimize_ticks(cmin, cmax)
     if ticks[1] == 0 && cmin >= 1

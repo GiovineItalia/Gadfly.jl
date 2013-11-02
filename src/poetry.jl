@@ -120,7 +120,7 @@ function spy(M)
     is, js, values = findn_nzs(M)
     df = DataFrame({"i" => is, "j" => js, "value" => values})
     plot(df, x="j", y="i", color="value",
-         Scale.color_gradient,
+         Scale.continuous_color,
          Geom.rectbin, Stat.identity)
 end
 

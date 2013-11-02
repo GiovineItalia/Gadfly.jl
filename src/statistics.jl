@@ -219,7 +219,7 @@ end
 element_aesthetics(::Histogram2DStatistic) = [:x, :y, :color]
 
 
-default_scales(::Histogram2DStatistic) = [Gadfly.Scale.color_gradient]
+default_scales(::Histogram2DStatistic) = [Gadfly.Scale.continuous_color()]
 
 
 const histogram2d = Histogram2DStatistic
@@ -330,9 +330,6 @@ function apply_statistic(stat::Histogram2DStatistic,
 end
 
 
-default_statistic(stat::Histogram2DStatistic) = [Scale.color_gradient]
-
-
 # Find reasonable places to put tick marks and grid lines.
 immutable TickStatistic <: Gadfly.StatisticElement
     in_vars::Vector{Symbol}
@@ -376,7 +373,6 @@ function apply_statistic(stat::TickStatistic,
         in_values = getfield(aes, in_group_var)
         categorical = true
     end
-
 
     # TODO: handle the outliers aesthetic
 
