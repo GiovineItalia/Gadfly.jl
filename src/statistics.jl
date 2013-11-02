@@ -91,20 +91,13 @@ function apply_statistic(stat::HistogramStatistic,
         return
     end
 
-    if typeof(aes.x) <: Array{Int}
+    if haskey(scales, :x) && isa(scales[:x], Scale.DiscreteScale)
         x_min = minimum(aes.x)
         x_max = maximum(aes.x)
-        if x_max - x_min + 1 <= 20
-            d = x_max - x_min + 1
-            bincounts = zeros(Int, d)
-            for x in aes.x
-                bincounts[x - x_min + 1] += 1
-            end
-        else
-            d, bincounts = choose_bin_count_1d(aes.x,
-                                               stat.minbincount,
-                                               min(stat.maxbincount,
-                                                    x_max - x_min + 1))
+        d = x_max - x_min + 1
+        bincounts = zeros(Int, d)
+        for x in aes.x
+            bincounts[x - x_min + 1] += 1
         end
     else
         d, bincounts = choose_bin_count_1d(aes.x,
@@ -234,6 +227,29 @@ end
 
 
 immutable Histogram2DStatistic <: Gadfly.StatisticElement
+    xminbincount::Int
+    xmaxbincount::Int
+    yminbincount::Int
+    ymaxbincount::Int
+
+    function Histogram2DStatistic(; xbincount=nothing,
+                                    xminbincount=3,
+                                    xmaxbincount=150,
+                                    ybincount=nothing,
+                                    yminbincount=3,
+                                    ymaxbincount=150)
+        if xbincount != nothing
+            xminbincount = xbincount
+            xmaxbincount = xbincount
+        end
+
+        if ybincount != nothing
+            yminbincount = ybincount
+            ymaxbincount = ybincount
+        end
+
+        new(xminbincount, xmaxbincount, yminbincount, ymaxbincount)
+    end
 end
 
 
@@ -253,13 +269,14 @@ function apply_statistic(stat::Histogram2DStatistic,
 
     Gadfly.assert_aesthetics_defined("Histogram2DStatistic", aes, :x, :y)
 
-    dx, dy, bincounts = choose_bin_count_2d(aes.x, aes.y)
-
+    dx, dy, bincounts = choose_bin_count_2d(aes.x, aes.y,
+                                            stat.xminbincount, stat.xmaxbincount,
+                                            stat.yminbincount, stat.ymaxbincount)
     x_min, x_max = minimum(aes.x), maximum(aes.x)
     y_min, y_max = minimum(aes.y), maximum(aes.y)
 
     # should we tread x/y as categorical data
-    if typeof(aes.x) <: Array{Int} && dx == x_max - x_min + 1 <= 20
+    if haskey(scales, :x) && isa(scales[:x], Scale.DiscreteScale)
         wx = 1
         x_categorial = true
     else
@@ -267,7 +284,7 @@ function apply_statistic(stat::Histogram2DStatistic,
         x_categorial = false
     end
 
-    if typeof(aes.y) <: Array{Int} && dy == y_max - y_min + 1
+    if haskey(scales, :x) && isa(scales[:y], Scale.DiscreteScale)
         wy = 1
         y_categorial = true
     else

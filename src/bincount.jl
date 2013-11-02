@@ -59,7 +59,7 @@ function choose_bin_count_1d(xs::Vector, min_bin_count=1, max_bin_count=150)
     span = x_max - x_min
 
     d_min = min_bin_count
-    d_max = min(max_bin_count, int(ceil(n / log(n))))
+    d_max = max_bin_count
     bincounts = zeros(Int, d_max)
 
     d_best = d_min
@@ -110,32 +110,18 @@ end
 #   bins in each respective dimension and bincounts is a dx by dy matrix giving
 #   the count in each bin.
 #
-function choose_bin_count_2d(xs::Vector, ys::Vector)
+function choose_bin_count_2d(xs::Vector, ys::Vector,
+                             xminbincount::Int, xmaxbincount::Int,
+                             yminbincount::Int, ymaxbincount::Int)
+
     # For two demensions, I'm just going to optimize the marginal bin counts.
     # This might not be optimal, but its simple and fast.
 
     x_min, x_max = minimum(xs), maximum(xs)
     y_min, y_max = minimum(ys), maximum(ys)
 
-    if typeof(xs) <: Array{Int}
-        if x_max - x_min + 1 <= 20
-            dx = x_max - x_min + 1
-        else
-            dx, _ = choose_bin_count_1d(xs, x_max + x_min + 1)
-        end
-    else
-        dx, _ = choose_bin_count_1d(xs)
-    end
-
-    if typeof(ys) <: Array{Int}
-        if y_max - y_min + 1 <= 20
-            dy = y_max - y_min + 1
-        else
-            dy, _ = choose_bin_count_1d(ys, y_max + y_min + 1)
-        end
-    else
-        dy, _ = choose_bin_count_1d(ys)
-    end
+    dx, _ = choose_bin_count_1d(xs, xminbincount, xmaxbincount)
+    dy, _ = choose_bin_count_1d(ys, yminbincount, ymaxbincount)
 
     # bin widths
     wx = (x_max - x_min) / dx

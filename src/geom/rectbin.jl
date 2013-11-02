@@ -12,8 +12,15 @@ end
 const rectbin = RectangularBinGeometry
 
 
-function histogram2d()
-    RectangularBinGeometry(Gadfly.Stat.histogram2d())
+function histogram2d(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
+                       ybincount=nothing, yminbincount=3, ymaxbincount=150)
+    RectangularBinGeometry(
+        Gadfly.Stat.histogram2d(xbincount=xbincount,
+                                xminbincount=xminbincount,
+                                xmaxbincount=xmaxbincount,
+                                ybincount=ybincount,
+                                yminbincount=yminbincount,
+                                ymaxbincount=ymaxbincount))
 end
 
 

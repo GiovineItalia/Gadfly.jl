@@ -40,7 +40,8 @@ tests = [
     ("continuous_color_scale_range", 6inch, 3inch),
     ("continuous_scale_range",       6inch, 3inch),
     ("log10_scale_range",            6inch, 3inch),
-    ("histogram_explicit_bins",      6inch, 3inch)
+    ("histogram_explicit_bins",      6inch, 3inch),
+    ("histogram2d_explicit_bins",    6inch, 3inch)
 ]
 
 
