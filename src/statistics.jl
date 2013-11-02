@@ -392,7 +392,7 @@ function apply_statistic(stat::TickStatistic,
         n += 1
     end
 
-    # Take into account a forced viewport in cartesian coordinates.
+    # take into account a forced viewport in cartesian coordinates.
     if typeof(coord) == Coord.Cartesian
         if stat.out_var == "x"
             if !is(coord.xmin, nothing)
@@ -408,6 +408,23 @@ function apply_statistic(stat::TickStatistic,
             if !is(coord.ymax, nothing)
                 maxval = max(maxval, coord.ymax)
             end
+        end
+    end
+
+    # check the x/yviewmin/max pesudo-aesthetics
+    if stat.out_var == "x"
+        if aes.xviewmin != nothing
+            minval = aes.xviewmin
+        end
+        if aes.xviewmax != nothing
+            maxval = aes.xviewmax
+        end
+    elseif stat.out_var == "y"
+        if aes.yviewmin != nothing
+            minval = aes.yviewmin
+        end
+        if aes.yviewmax != nothing
+            maxval = aes.yviewmax
         end
     end
 

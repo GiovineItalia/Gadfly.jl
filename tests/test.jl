@@ -37,7 +37,9 @@ tests = [
     ("subplot_grid_smooth",          6inch, 8inch),
     ("histogram_errorbar",           6inch, 3inch),
     ("issue106",                     6inch, 3inch),
-    ("continuous_color_scale_range", 6inch, 3inch)
+    ("continuous_color_scale_range", 6inch, 3inch),
+    ("continuous_scale_range",       6inch, 3inch),
+    ("log10_scale_range",            6inch, 3inch)
 ]
 
 

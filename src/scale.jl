@@ -118,24 +118,40 @@ const sqrt_transform = ContinuousScaleTransform(sqrt, x -> x^2, sqrt_formatter)
 immutable ContinuousScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
     trans::ContinuousScaleTransform
+    minvalue
+    maxvalue
+
+    function ContinuousScale(vars::Vector{Symbol},
+                             trans::ContinuousScaleTransform;
+                             minvalue=nothing, maxvalue=nothing)
+        new(vars, trans, minvalue, maxvalue)
+    end
 end
 
 const x_vars = [:x, :xmin, :xmax, :xintercept]
 const y_vars = [:y, :ymin, :ymax, :yintercept]
 
+function continuous_scale_partial(vars::Vector{Symbol},
+                                  trans::ContinuousScaleTransform)
+    function f(;minvalue=nothing, maxvalue=nothing)
+        ContinuousScale(vars, trans, minvalue=minvalue, maxvalue=maxvalue)
+    end
+end
+
+
 # Commonly used scales.
-const x_continuous = ContinuousScale(x_vars, identity_transform)
-const y_continuous = ContinuousScale(y_vars, identity_transform)
-const x_log10      = ContinuousScale(x_vars, log10_transform)
-const y_log10      = ContinuousScale(y_vars, log10_transform)
-const x_log2       = ContinuousScale(x_vars, log2_transform)
-const y_log2       = ContinuousScale(y_vars, log2_transform)
-const x_log        = ContinuousScale(x_vars, ln_transform)
-const y_log        = ContinuousScale(y_vars, ln_transform)
-const x_asinh      = ContinuousScale(x_vars, asinh_transform)
-const y_asinh      = ContinuousScale(y_vars, asinh_transform)
-const x_sqrt       = ContinuousScale(x_vars, sqrt_transform)
-const y_sqrt       = ContinuousScale(y_vars, sqrt_transform)
+const x_continuous = continuous_scale_partial(x_vars, identity_transform)
+const y_continuous = continuous_scale_partial(y_vars, identity_transform)
+const x_log10      = continuous_scale_partial(x_vars, log10_transform)
+const y_log10      = continuous_scale_partial(y_vars, log10_transform)
+const x_log2       = continuous_scale_partial(x_vars, log2_transform)
+const y_log2       = continuous_scale_partial(y_vars, log2_transform)
+const x_log        = continuous_scale_partial(x_vars, ln_transform)
+const y_log        = continuous_scale_partial(y_vars, ln_transform)
+const x_asinh      = continuous_scale_partial(x_vars, asinh_transform)
+const y_asinh      = continuous_scale_partial(y_vars, asinh_transform)
+const x_sqrt       = continuous_scale_partial(x_vars, sqrt_transform)
+const y_sqrt       = continuous_scale_partial(y_vars, sqrt_transform)
 
 
 function element_aesthetics(scale::ContinuousScale)
@@ -174,6 +190,22 @@ function apply_scale(scale::ContinuousScale,
             setfield(aes, var, ds)
             if in(label_var, Set(names(aes)...))
                 setfield(aes, label_var, scale.trans.label)
+            end
+        end
+
+        if scale.minvalue != nothing
+            if scale.vars === x_vars
+                aes.xviewmin = scale.trans.f(scale.minvalue)
+            elseif scale.vars === y_vars
+                aes.yviewmin = scale.trans.f(scale.minvalue)
+            end
+        end
+
+        if scale.maxvalue != nothing
+            if scale.vars === x_vars
+                aes.xviewmax = scale.trans.f(scale.maxvalue)
+            elseif scale.vars === y_vars
+                aes.yviewmax = scale.trans.f(scale.maxvalue)
             end
         end
     end
