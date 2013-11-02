@@ -61,16 +61,16 @@ immutable ContinuousScaleTransform
 end
 
 
-function identity_formatter(xs...)
-    fmt = formatter(xs...)
+function identity_formatter(xs...; format=:auto)
+    fmt = formatter(xs..., fmt=format)
     [fmt(x) for x in xs]
 end
 
 const identity_transform =
     ContinuousScaleTransform(identity, identity, identity_formatter)
 
-function log10_formatter(xs...)
-    fmt = formatter(xs..., fmt=:plain)
+function log10_formatter(xs...; format=:plain)
+    fmt = formatter(xs..., fmt=format)
     [@sprintf("10<sup>%s</sup>", fmt(x)) for x in xs]
 end
 
@@ -78,8 +78,8 @@ const log10_transform =
     ContinuousScaleTransform(log10, x -> 10^x, log10_formatter)
 
 
-function log2_formatter(xs...)
-    fmt = formatter(xs..., fmt=:plain)
+function log2_formatter(xs...; format=:plain)
+    fmt = formatter(xs..., fmt=format)
     [@sprintf("2<sup>%s</sup>", fmt(x)) for x in xs]
 end
 
@@ -87,8 +87,8 @@ const log2_transform =
     ContinuousScaleTransform(log10, x -> 2^x, log2_formatter)
 
 
-function ln_formatter(xs...)
-    fmt = formatter(xs..., fmt=:plain)
+function ln_formatter(xs...; format=:plain)
+    fmt = formatter(xs..., fmt=format)
     [@sprintf("e<sup>%s</sup>", fmt(x)) for x in xs]
 end
 
@@ -96,8 +96,8 @@ const ln_transform =
     ContinuousScaleTransform(log, exp, ln_formatter)
 
 
-function asinh_formatter(xs)
-    fmt = formatter(xs..., fmt=:plain)
+function asinh_formatter(xs...; format=:plain)
+    fmt = formatter(xs..., fmt=format)
     [@sprintf("asinh(%s)", fmt(x)) for x in xs]
 end
 
@@ -105,8 +105,8 @@ const asinh_transform =
     ContinuousScaleTransform(asinh, sinh, asinh_formatter)
 
 
-function sqrt_formatter(xs)
-    fmt = formatter(xs...)
+function sqrt_formatter(xs...; format=:plain)
+    fmt = formatter(xs..., fmt=format)
     [@sprintf("√%s", fmt(x)) for x in xs]
 end
 
@@ -120,21 +120,36 @@ immutable ContinuousScale <: Gadfly.ScaleElement
     trans::ContinuousScaleTransform
     minvalue
     maxvalue
+    format
 
     function ContinuousScale(vars::Vector{Symbol},
                              trans::ContinuousScaleTransform;
-                             minvalue=nothing, maxvalue=nothing)
-        new(vars, trans, minvalue, maxvalue)
+                             minvalue=nothing, maxvalue=nothing,
+                             format=nothing)
+        new(vars, trans, minvalue, maxvalue, format)
     end
 end
+
+
+function make_labeler(scale::ContinuousScale)
+    if scale.format == nothing
+        scale.trans.label
+    else
+        function f(xs...)
+            scale.trans.label(xs..., format=scale.format)
+        end
+    end
+end
+
 
 const x_vars = [:x, :xmin, :xmax, :xintercept]
 const y_vars = [:y, :ymin, :ymax, :yintercept]
 
 function continuous_scale_partial(vars::Vector{Symbol},
                                   trans::ContinuousScaleTransform)
-    function f(;minvalue=nothing, maxvalue=nothing)
-        ContinuousScale(vars, trans, minvalue=minvalue, maxvalue=maxvalue)
+    function f(;minvalue=nothing, maxvalue=nothing, format=nothing)
+        ContinuousScale(vars, trans, minvalue=minvalue, maxvalue=maxvalue,
+                        format=format)
     end
 end
 
@@ -189,7 +204,7 @@ function apply_scale(scale::ContinuousScale,
 
             setfield(aes, var, ds)
             if in(label_var, Set(names(aes)...))
-                setfield(aes, label_var, scale.trans.label)
+                setfield(aes, label_var, make_labeler(scale))
             end
         end
 

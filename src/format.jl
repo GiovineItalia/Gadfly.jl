@@ -113,8 +113,6 @@ function formatter(xs::FloatingPoint...; fmt=:auto)
 
     if fmt == :auto && abs(log10(x_max - x_min)) > 4
         fmt = :scientific
-    else
-        fmt = :plain
     end
 
     if fmt == :plain
