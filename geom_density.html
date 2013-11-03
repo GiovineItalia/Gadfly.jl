@@ -3,7 +3,7 @@
 <head>
   <meta name="author" content="Daniel Jones">
   <meta charset="utf-8">
-  <title>Geom.density</title>
+  <title>density</title>
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|PT+Sans:700|Source+Code+Pro'
         rel='stylesheet' type='text/css'>
   <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all">
@@ -17,7 +17,7 @@
     <div class="container">
       <div class="row">
         <ul>
-          <li><div id="pkgname">Gadfly 0.1.12+</div></li>
+          <li><div id="pkgname">Gadfly 0.1.22</div></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl">Code</a></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl/issues">Issues</a></li>
         </ul>
@@ -29,8 +29,8 @@
     <div class="row">
       <div class="col-sm-7">
       <div id="title-block">
-        <h1>Geom.density</h1>
-      </div>
+        <h1>density</h1>
+      </div id="body-content">
 
 <p>Draw a kernel density estimate from data. An alias for <code>Geom.line</code> with <code>Stat.density</code>.</p>
 <h1 id="aesthetics"><a href="#TOC">Aesthetics</a></h1>
@@ -261,7 +261,7 @@ var zoom_behavior = function(parent_id, t) {
 
 </script>
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;diamonds&quot;</span>), x=<span class="st">&quot;price&quot;</span>, Geom.density)</code></pre>
-<div id="gadflyplot-UiETXpzJYltjEw9TX89M"></div>
+<div id="gadflyplot-jFh2DocZ1rs4dFnE8Wml"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -278,16 +278,16 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath0")
     .append("svg:path")
-      .attr("d", " M5,0 L 17.47 0 17.47 66.46 5 66.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
+      .attr("d", " M5,1 L 17.77 1 17.77 63.63 5 63.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#4C404B")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.18")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.18)
      .attr("class", "guide ylabels");
     g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 24.35)
+       .attr("x", 16.77)
+       .attr("y", 24.75)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -295,8 +295,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 42.1)
+       .attr("x", 16.77)
+       .attr("y", 42.88)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -304,152 +304,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -2.28)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0007");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -46.66)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0012");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 122)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("-0.0007");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -28.91)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0010");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -20.03)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0009");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 33.23)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0003");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 77.61)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("-0.0002");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -37.79)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0011");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 113.12)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("-0.0006");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 15.47)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0005");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 6.6)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0006");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 59.86)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0000");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 95.37)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("-0.0004");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -55.54)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0013");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 50.98)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0001");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 86.49)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("-0.0003");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 68.74)
+       .attr("x", 16.77)
+       .attr("y", 70.06)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -457,8 +313,62 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -11.16)
+       .attr("x", 16.77)
+       .attr("y", -47.74)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0012");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", -56.8)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0013");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", -20.55)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0009");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 79.12)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("-0.0002");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 33.81)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0003");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 15.69)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0005");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", -11.49)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -466,12 +376,102 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 104.24)
+       .attr("x", 16.77)
+       .attr("y", 115.37)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("-0.0006");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", -38.68)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0011");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 6.63)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0006");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 61)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0000");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 97.24)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("-0.0004");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", -29.61)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0010");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 51.94)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0001");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 88.18)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("-0.0003");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 124.43)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("-0.0007");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 106.3)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
   text.text("-0.0005");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", -2.43)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0007");
 })
 ;
   }(g.append("g")));
@@ -481,225 +481,225 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath1")
     .append("svg:path")
-      .attr("d", " M12.47,61.46 L 140 61.46 140 75 12.47 75 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
+      .attr("d", " M6.05,62.63 L 146.72 62.63 146.72 75 6.05 75 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#4C404B")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.18")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.18)
      .attr("class", "guide xlabels");
     g.append("svg:text")
-       .attr("x", 187.11)
-       .attr("y", 66.44)
+       .attr("x", 186.98)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("3.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 76.24)
-       .attr("y", 66.44)
+       .attr("x", 76.38)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("1.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -90.07)
-       .attr("y", 66.44)
+       .attr("x", -89.51)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("-2.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 242.55)
-       .attr("y", 66.44)
+       .attr("x", 242.28)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("4.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 131.67)
-       .attr("y", 66.44)
+       .attr("x", 131.68)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("2.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 270.26)
-       .attr("y", 66.44)
+       .attr("x", 269.93)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("4.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.8)
-       .attr("y", 66.44)
+       .attr("x", 21.09)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("0");
 })
 ;
     g.append("svg:text")
-       .attr("x", -117.79)
-       .attr("y", 66.44)
+       .attr("x", -117.16)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("-2.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -6.92)
-       .attr("y", 66.44)
+       .attr("x", -6.56)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("-5.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("4");
+        text.text("3");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 214.83)
-       .attr("y", 66.44)
+       .attr("x", 214.63)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("3.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -62.35)
-       .attr("y", 66.44)
+       .attr("x", -61.86)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("-1.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -34.64)
-       .attr("y", 66.44)
+       .attr("x", -34.21)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("-1.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 48.52)
-       .attr("y", 66.44)
+       .attr("x", 48.74)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("5.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("4");
+        text.text("3");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 159.39)
-       .attr("y", 66.44)
+       .attr("x", 159.33)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("2.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 103.96)
-       .attr("y", 66.44)
+       .attr("x", 104.03)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("1.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
   }(g.append("g")));
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#362A35")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.88");
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.88);
     g.append("svg:text")
-       .attr("x", 76.24)
+       .attr("x", 76.38)
        .attr("y", 73)
        .attr("text-anchor", "middle")
     .call(function(text) {
@@ -717,95 +717,95 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath2")
     .append("svg:path")
-      .attr("d", " M17.47,5 L 135 5 135 61.46 17.47 61.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
+      .attr("d", " M17.77,5 L 135 5 135 62.63 17.77 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
     (function (g) {
       g.attr("class", "guide background")
        .attr("stroke", "#F1F1F5")
        .attr("fill", "#FAFAFA");
       g.append("svg:path")
-         .attr("d", "M17.47,5 L 135 5 135 61.46 17.47 61.46 z");
+         .attr("d", "M17.77,5 L 135 5 135 62.63 17.77 62.63 z");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "#F0F0F3")
-       .attr("stroke-width", "0.2")
+       .attr("stroke-width", 0.2)
        .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
-         .attr("d", "M17.47,24.35 L 135 24.35");
+         .attr("d", "M17.77,24.75 L 135 24.75");
       g.append("svg:path")
-         .attr("d", "M17.47,42.1 L 135 42.1");
+         .attr("d", "M17.77,42.88 L 135 42.88");
       g.append("svg:path")
-         .attr("d", "M17.47,-2.28 L 135 -2.28");
+         .attr("d", "M17.77,70.06 L 135 70.06");
       g.append("svg:path")
-         .attr("d", "M17.47,-46.66 L 135 -46.66");
+         .attr("d", "M17.77,-47.74 L 135 -47.74");
       g.append("svg:path")
-         .attr("d", "M17.47,122 L 135 122");
+         .attr("d", "M17.77,-56.8 L 135 -56.8");
       g.append("svg:path")
-         .attr("d", "M17.47,-28.91 L 135 -28.91");
+         .attr("d", "M17.77,-20.55 L 135 -20.55");
       g.append("svg:path")
-         .attr("d", "M17.47,-20.03 L 135 -20.03");
+         .attr("d", "M17.77,79.12 L 135 79.12");
       g.append("svg:path")
-         .attr("d", "M17.47,33.23 L 135 33.23");
+         .attr("d", "M17.77,33.81 L 135 33.81");
       g.append("svg:path")
-         .attr("d", "M17.47,77.61 L 135 77.61");
+         .attr("d", "M17.77,15.69 L 135 15.69");
       g.append("svg:path")
-         .attr("d", "M17.47,-37.79 L 135 -37.79");
+         .attr("d", "M17.77,-11.49 L 135 -11.49");
       g.append("svg:path")
-         .attr("d", "M17.47,113.12 L 135 113.12");
+         .attr("d", "M17.77,115.37 L 135 115.37");
       g.append("svg:path")
-         .attr("d", "M17.47,15.47 L 135 15.47");
+         .attr("d", "M17.77,-38.68 L 135 -38.68");
       g.append("svg:path")
-         .attr("d", "M17.47,6.6 L 135 6.6");
+         .attr("d", "M17.77,6.63 L 135 6.63");
       g.append("svg:path")
-         .attr("d", "M17.47,59.86 L 135 59.86");
+         .attr("d", "M17.77,61 L 135 61");
       g.append("svg:path")
-         .attr("d", "M17.47,95.37 L 135 95.37");
+         .attr("d", "M17.77,97.24 L 135 97.24");
       g.append("svg:path")
-         .attr("d", "M17.47,-55.54 L 135 -55.54");
+         .attr("d", "M17.77,-29.61 L 135 -29.61");
       g.append("svg:path")
-         .attr("d", "M17.47,50.98 L 135 50.98");
+         .attr("d", "M17.77,51.94 L 135 51.94");
       g.append("svg:path")
-         .attr("d", "M17.47,86.49 L 135 86.49");
+         .attr("d", "M17.77,88.18 L 135 88.18");
       g.append("svg:path")
-         .attr("d", "M17.47,68.74 L 135 68.74");
+         .attr("d", "M17.77,124.43 L 135 124.43");
       g.append("svg:path")
-         .attr("d", "M17.47,-11.16 L 135 -11.16");
+         .attr("d", "M17.77,106.3 L 135 106.3");
       g.append("svg:path")
-         .attr("d", "M17.47,104.24 L 135 104.24");
+         .attr("d", "M17.77,-2.43 L 135 -2.43");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "#F0F0F3")
-       .attr("stroke-width", "0.2")
+       .attr("stroke-width", 0.2)
        .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
-         .attr("d", "M187.11,5 L 187.11 61.46");
+         .attr("d", "M186.98,5 L 186.98 62.63");
       g.append("svg:path")
-         .attr("d", "M76.24,5 L 76.24 61.46");
+         .attr("d", "M76.38,5 L 76.38 62.63");
       g.append("svg:path")
-         .attr("d", "M-90.07,5 L -90.07 61.46");
+         .attr("d", "M-89.51,5 L -89.51 62.63");
       g.append("svg:path")
-         .attr("d", "M242.55,5 L 242.55 61.46");
+         .attr("d", "M242.28,5 L 242.28 62.63");
       g.append("svg:path")
-         .attr("d", "M131.67,5 L 131.67 61.46");
+         .attr("d", "M131.68,5 L 131.68 62.63");
       g.append("svg:path")
-         .attr("d", "M270.26,5 L 270.26 61.46");
+         .attr("d", "M269.93,5 L 269.93 62.63");
       g.append("svg:path")
-         .attr("d", "M20.8,5 L 20.8 61.46");
+         .attr("d", "M21.09,5 L 21.09 62.63");
       g.append("svg:path")
-         .attr("d", "M-117.79,5 L -117.79 61.46");
+         .attr("d", "M-117.16,5 L -117.16 62.63");
       g.append("svg:path")
-         .attr("d", "M-6.92,5 L -6.92 61.46");
+         .attr("d", "M-6.56,5 L -6.56 62.63");
       g.append("svg:path")
-         .attr("d", "M214.83,5 L 214.83 61.46");
+         .attr("d", "M214.63,5 L 214.63 62.63");
       g.append("svg:path")
-         .attr("d", "M-62.35,5 L -62.35 61.46");
+         .attr("d", "M-61.86,5 L -61.86 62.63");
       g.append("svg:path")
-         .attr("d", "M-34.64,5 L -34.64 61.46");
+         .attr("d", "M-34.21,5 L -34.21 62.63");
       g.append("svg:path")
-         .attr("d", "M48.52,5 L 48.52 61.46");
+         .attr("d", "M48.74,5 L 48.74 62.63");
       g.append("svg:path")
-         .attr("d", "M159.39,5 L 159.39 61.46");
+         .attr("d", "M159.33,5 L 159.33 62.63");
       g.append("svg:path")
-         .attr("d", "M103.96,5 L 103.96 61.46");
+         .attr("d", "M104.03,5 L 104.03 62.63");
     }(g.append("g")));
   }(g.append("g")));
   (function (g) {
@@ -813,14 +813,14 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath3")
     .append("svg:path")
-      .attr("d", " M17.47,5 L 135 5 135 61.46 17.47 61.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath3)");
+      .attr("d", " M17.77,5 L 135 5 135 62.63 17.77 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath3)");
     (function (g) {
       g.attr("stroke", "#00BFFF")
        .attr("class", "geometry")
        .attr("fill", "none")
-       .attr("stroke-width", "0.3");
+       .attr("stroke-width", 0.3);
       g.append("svg:path")
-         .attr("d", "M22.61,55.86 L 22.95 40.88 23.29 29.73 23.63 22.79 23.97 13.39 24.32 15.37 24.66 10.72 25 13.68 25.34 17.42 25.68 23.56 26.02 25.72 26.37 27.96 26.71 33.2 27.05 42.19 27.39 41.68 27.73 45.34 28.08 45.34 28.42 44.75 28.76 53.67 29.1 57.06 29.44 44.3 29.78 41.26 30.13 45.23 30.47 43.79 30.81 42.62 31.15 46.86 31.49 47.58 31.84 48.97 32.18 48.78 32.52 49.88 32.86 50.25 33.2 49.05 33.54 46.43 33.89 46.86 34.23 50.46 34.57 50.25 34.91 49.53 35.25 51.34 35.6 50.33 35.94 51.18 36.28 49.21 36.62 50.36 36.96 51.61 37.3 52.92 37.65 53 37.99 52.76 38.33 52.17 38.67 52.63 39.01 52.84 39.36 52.79 39.7 52.97 40.04 53.67 40.38 53.83 40.72 53.11 41.06 52.92 41.41 52.28 41.75 53 42.09 52.73 42.43 53.56 42.77 52.76 43.12 52.17 43.46 52.6 43.8 50.7 44.14 51.77 44.48 50.94 44.82 52.52 45.17 51.56 45.51 51.02 45.85 52.65 46.19 52.36 46.53 51.96 46.88 52.09 47.22 53.19 47.56 52.63 47.9 53.61 48.24 52.84 48.58 53.24 48.93 54.15 49.27 53.72 49.61 53.03 49.95 54.04 50.29 55.13 50.64 54.39 50.98 55 51.32 54.57 51.66 54.97 52 55.53 52.34 55.32 52.69 55.08 53.03 55.64 53.37 55.4 53.71 55.59 54.05 56.04 54.4 55.32 54.74 55.24 55.08 56.63 55.42 55.27 55.76 55.69 56.1 56.34 56.45 56.1 56.79 55.8 57.13 55.99 57.47 55.91 57.81 56.63 58.16 56.07 58.5 56.5 58.84 57.14 59.18 56.9 59.52 57.48 59.86 56.39 60.21 56.79 60.55 56.79 60.89 56.47 61.23 57.56 61.57 56.87 61.92 56.95 62.26 57.03 62.6 56.68 62.94 57.38 63.28 57.32 63.62 57.22 63.97 57.14 64.31 57.91 64.65 57.56 64.99 57.4 65.33 57.48 65.68 57.8 66.02 57.96 66.36 57.78 66.7 57.96 67.04 58.02 67.38 57.83 67.73 58.12 68.07 57.67 68.41 57.38 68.75 57.7 69.09 57.64 69.44 57.43 69.78 57.48 70.12 57.56 70.46 57.83 70.8 57.72 71.14 57.94 71.49 58.44 71.83 57.72 72.17 58.02 72.51 57.86 72.85 58.31 73.19 58.15 73.54 57.62 73.88 58.31 74.22 58.28 74.56 58.07 74.9 58.12 75.25 58.39 75.59 58.15 75.93 58.36 76.27 58.07 76.61 57.88 76.95 58.55 77.3 58.44 77.64 58.28 77.98 58.1 78.32 58.39 78.66 58.23 79.01 58.6 79.35 58.55 79.69 58.28 80.03 58.07 80.37 58.31 80.71 58.5 81.06 58.42 81.4 58.42 81.74 58.39 82.08 58.12 82.42 58.04 82.77 57.94 83.11 58.74 83.45 58.71 83.79 58.44 84.13 58.52 84.47 58.36 84.82 58.42 85.16 58.47 85.5 58.92 85.84 58.9 86.18 58.47 86.53 58.82 86.87 58.55 87.21 59 87.55 58.47 87.89 59.06 88.23 58.5 88.58 58.68 88.92 58.52 89.26 58.66 89.6 58.82 89.94 59.03 90.29 58.71 90.63 58.39 90.97 58.82 91.31 58.63 91.65 58.5 91.99 58.87 92.34 58.82 92.68 58.68 93.02 58.84 93.36 58.84 93.7 58.71 94.05 58.9 94.39 58.66 94.73 58.9 95.07 59.16 95.41 58.98 95.75 58.95 96.1 58.66 96.44 58.98 96.78 58.76 97.12 58.58 97.46 59.06 97.81 58.87 98.15 59.22 98.49 58.87 98.83 59.22 99.17 59.06 99.51 58.74 99.86 58.95 100.2 58.92 100.54 58.71 100.88 58.79 101.22 59.24 101.57 59.06 101.91 58.98 102.25 59.03 102.59 59.11 102.93 59.16 103.27 59.22 103.62 59.22 103.96 59.06 104.3 58.9 104.64 59 104.98 58.95 105.33 59 105.67 59.14 106.01 58.98 106.35 59.16 106.69 59.14 107.03 59.16 107.38 59.27 107.72 59.11 108.06 58.9 108.4 58.63 108.74 59.14 109.09 58.79 109.43 59.22 109.77 59.11 110.11 59.22 110.45 59.16 110.79 58.95 111.14 59.16 111.48 59.03 111.82 59.22 112.16 59.3 112.5 59.14 112.85 59.14 113.19 59.08 113.53 58.95 113.87 59.16 114.21 59.4 114.55 59.08 114.9 59.14 115.24 58.9 115.58 59.19 115.92 58.87 116.26 59.11 116.61 59.32 116.95 59.16 117.29 59.32 117.63 59.22 117.97 59.32 118.31 59.27 118.66 59.27 119 59.14 119.34 59.38 119.68 59.08 120.02 59.24 120.37 59.35 120.71 59 121.05 59.14 121.39 59.16 121.73 59.22 122.07 59.16 122.42 59.38 122.76 59.06 123.1 59.22 123.44 59.22 123.78 59.54 124.13 59.4 124.47 59.22 124.81 59.35");
+         .attr("d", "M22.89,56.91 L 23.23 41.63 23.57 30.24 23.91 23.16 24.25 13.57 24.59 15.58 24.93 10.84 25.27 13.87 25.62 17.68 25.96 23.95 26.3 26.15 26.64 28.44 26.98 33.78 27.32 42.96 27.66 42.44 28 46.18 28.34 46.18 28.68 45.58 29.03 54.68 29.37 58.14 29.71 45.11 30.05 42.01 30.39 46.07 30.73 44.6 31.07 43.4 31.41 47.73 31.75 48.47 32.09 49.88 32.44 49.69 32.78 50.81 33.12 51.19 33.46 49.96 33.8 47.29 34.14 47.73 34.48 51.41 34.82 51.19 35.16 50.45 35.5 52.31 35.84 51.27 36.19 52.14 36.53 50.13 36.87 51.3 37.21 52.58 37.55 53.91 37.89 54 38.23 53.75 38.57 53.15 38.91 53.62 39.25 53.83 39.6 53.78 39.94 53.97 40.28 54.68 40.62 54.84 40.96 54.11 41.3 53.91 41.64 53.26 41.98 54 42.32 53.72 42.66 54.57 43 53.75 43.35 53.15 43.69 53.59 44.03 51.65 44.37 52.74 44.71 51.9 45.05 53.51 45.39 52.53 45.73 51.98 46.07 53.64 46.41 53.34 46.76 52.93 47.1 53.07 47.44 54.19 47.78 53.62 48.12 54.62 48.46 53.83 48.8 54.24 49.14 55.17 49.48 54.73 49.82 54.02 50.16 55.06 50.51 56.18 50.85 55.41 51.19 56.04 51.53 55.6 51.87 56.01 52.21 56.58 52.55 56.37 52.89 56.12 53.23 56.69 53.57 56.45 53.92 56.64 54.26 57.1 54.6 56.37 54.94 56.29 55.28 57.7 55.62 56.31 55.96 56.75 56.3 57.4 56.64 57.16 56.98 56.86 57.32 57.05 57.67 56.97 58.01 57.7 58.35 57.13 58.69 57.57 59.03 58.22 59.37 57.97 59.71 58.57 60.05 57.46 60.39 57.87 60.73 57.87 61.08 57.54 61.42 58.66 61.76 57.95 62.1 58.03 62.44 58.11 62.78 57.76 63.12 58.46 63.46 58.41 63.8 58.3 64.14 58.22 64.48 59.01 64.83 58.66 65.17 58.49 65.51 58.57 65.85 58.9 66.19 59.06 66.53 58.87 66.87 59.06 67.21 59.12 67.55 58.93 67.89 59.23 68.24 58.76 68.58 58.46 68.92 58.79 69.26 58.74 69.6 58.52 69.94 58.57 70.28 58.66 70.62 58.93 70.96 58.82 71.3 59.04 71.65 59.55 71.99 58.82 72.33 59.12 72.67 58.96 73.01 59.42 73.35 59.25 73.69 58.71 74.03 59.42 74.37 59.39 74.71 59.17 75.05 59.23 75.4 59.5 75.74 59.25 76.08 59.47 76.42 59.17 76.76 58.98 77.1 59.66 77.44 59.55 77.78 59.39 78.12 59.2 78.46 59.5 78.81 59.34 79.15 59.72 79.49 59.66 79.83 59.39 80.17 59.17 80.51 59.42 80.85 59.61 81.19 59.53 81.53 59.53 81.87 59.5 82.21 59.23 82.56 59.15 82.9 59.04 83.24 59.85 83.58 59.83 83.92 59.55 84.26 59.64 84.6 59.47 84.94 59.53 85.28 59.58 85.62 60.04 85.97 60.02 86.31 59.58 86.65 59.94 86.99 59.66 87.33 60.13 87.67 59.58 88.01 60.18 88.35 59.61 88.69 59.8 89.03 59.64 89.37 59.77 89.72 59.94 90.06 60.15 90.4 59.83 90.74 59.5 91.08 59.94 91.42 59.75 91.76 59.61 92.1 59.99 92.44 59.94 92.78 59.8 93.13 59.96 93.47 59.96 93.81 59.83 94.15 60.02 94.49 59.77 94.83 60.02 95.17 60.29 95.51 60.1 95.85 60.07 96.19 59.77 96.53 60.1 96.88 59.88 97.22 59.69 97.56 60.18 97.9 59.99 98.24 60.34 98.58 59.99 98.92 60.34 99.26 60.18 99.6 59.85 99.94 60.07 100.29 60.04 100.63 59.83 100.97 59.91 101.31 60.37 101.65 60.18 101.99 60.1 102.33 60.15 102.67 60.24 103.01 60.29 103.35 60.34 103.7 60.34 104.04 60.18 104.38 60.02 104.72 60.13 105.06 60.07 105.4 60.13 105.74 60.26 106.08 60.1 106.42 60.29 106.76 60.26 107.1 60.29 107.45 60.4 107.79 60.24 108.13 60.02 108.47 59.75 108.81 60.26 109.15 59.91 109.49 60.34 109.83 60.24 110.17 60.34 110.51 60.29 110.86 60.07 111.2 60.29 111.54 60.15 111.88 60.34 112.22 60.43 112.56 60.26 112.9 60.26 113.24 60.21 113.58 60.07 113.92 60.29 114.26 60.54 114.61 60.21 114.95 60.26 115.29 60.02 115.63 60.32 115.97 59.99 116.31 60.24 116.65 60.45 116.99 60.29 117.33 60.45 117.67 60.34 118.02 60.45 118.36 60.4 118.7 60.4 119.04 60.26 119.38 60.51 119.72 60.21 120.06 60.37 120.4 60.48 120.74 60.13 121.08 60.26 121.42 60.29 121.77 60.34 122.11 60.29 122.45 60.51 122.79 60.18 123.13 60.34 123.47 60.34 123.81 60.67 124.15 60.54 124.49 60.34 124.83 60.48");
     }(g.append("g")));
   }(g.append("g")));
   (function (g) {
@@ -828,7 +828,7 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath4")
     .append("svg:path")
-      .attr("d", " M17.47,5 L 135 5 135 61.46 17.47 61.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+      .attr("d", " M17.77,5 L 135 5 135 62.63 17.77 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
   }(g.append("g")));
 }(g.append("g")));
 }
@@ -840,12 +840,12 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-UiETXpzJYltjEw9TX89M");
+draw("#gadflyplot-jFh2DocZ1rs4dFnE8Wml");
 </script>
 
 
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;ggplot2&quot;</span>, <span class="st">&quot;diamonds&quot;</span>), x=<span class="st">&quot;price&quot;</span>, color=<span class="st">&quot;cut&quot;</span>, Geom.density)</code></pre>
-<div id="gadflyplot-KrDmFHFv4FMHvhxWU5sl"></div>
+<div id="gadflyplot-a9oHX1htmL5guf4103WK"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -862,133 +862,25 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath0")
     .append("svg:path")
-      .attr("d", " M5,0 L 17.47 0 17.47 66.46 5 66.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
+      .attr("d", " M5,1 L 17.77 1 17.77 63.63 5 63.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#4C404B")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.18")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.18)
      .attr("class", "guide ylabels");
     g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 46.54)
+       .attr("x", 16.77)
+       .attr("y", 33.81)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("0.0002");
+  text.text("0.0004");
 })
 ;
     g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 113.12)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("-0.0008");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -59.98)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0018");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 126.43)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("-0.0010");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 19.91)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0006");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 86.49)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("-0.0004");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 6.6)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0008");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 99.8)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("-0.0006");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -46.66)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0016");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -33.35)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0014");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 59.86)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0000");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 73.17)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("-0.0002");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -6.72)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0010");
-})
-;
-    g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", -20.03)
+       .attr("x", 16.77)
+       .attr("y", -20.55)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -996,12 +888,120 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 16.47)
-       .attr("y", 33.23)
+       .attr("x", 16.77)
+       .attr("y", -61.33)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
-  text.text("0.0004");
+  text.text("0.0018");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", -6.96)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0010");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 74.59)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("-0.0002");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 61)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0000");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 6.63)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0008");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 101.77)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("-0.0006");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 20.22)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0006");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 128.96)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("-0.0010");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 88.18)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("-0.0004");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", -47.74)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0016");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 115.37)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("-0.0008");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", 47.41)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0002");
+})
+;
+    g.append("svg:text")
+       .attr("x", 16.77)
+       .attr("y", -34.14)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("0.0014");
 })
 ;
   }(g.append("g")));
@@ -1011,225 +1011,225 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath1")
     .append("svg:path")
-      .attr("d", " M12.47,61.46 L 119.39 61.46 119.39 75 12.47 75 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
+      .attr("d", " M8.18,62.63 L 123.23 62.63 123.23 75 8.18 75 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#4C404B")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.18")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.18)
      .attr("class", "guide xlabels");
     g.append("svg:text")
-       .attr("x", 157.36)
-       .attr("y", 66.44)
+       .attr("x", 156.16)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("3.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 65.93)
-       .attr("y", 66.44)
+       .attr("x", 65.71)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("1.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -71.21)
-       .attr("y", 66.44)
+       .attr("x", -69.97)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("-2.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 203.07)
-       .attr("y", 66.44)
+       .attr("x", 201.38)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("4.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 111.65)
-       .attr("y", 66.44)
+       .attr("x", 110.93)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("2.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 225.93)
-       .attr("y", 66.44)
+       .attr("x", 224)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("4.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.22)
-       .attr("y", 66.44)
+       .attr("x", 20.48)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("0");
 })
 ;
     g.append("svg:text")
-       .attr("x", -94.07)
-       .attr("y", 66.44)
+       .attr("x", -92.58)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("-2.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -2.64)
-       .attr("y", 66.44)
+       .attr("x", -2.13)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("-5.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("4");
+        text.text("3");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 180.22)
-       .attr("y", 66.44)
+       .attr("x", 178.77)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("3.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -48.35)
-       .attr("y", 66.44)
+       .attr("x", -47.35)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("-1.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -25.5)
-       .attr("y", 66.44)
+       .attr("x", -24.74)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("-1.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 43.07)
-       .attr("y", 66.44)
+       .attr("x", 43.1)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("5.0×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("4");
+        text.text("3");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 134.5)
-       .attr("y", 66.44)
+       .attr("x", 133.55)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("2.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 88.79)
-       .attr("y", 66.44)
+       .attr("x", 88.32)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("1.5×10")
       .append("tspan")
         .attr("baseline-shift", "super")
       .call(function(text) {
-        text.text("5");
+        text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
   }(g.append("g")));
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#362A35")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.88");
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.88);
     g.append("svg:text")
-       .attr("x", 65.93)
+       .attr("x", 65.71)
        .attr("y", 73)
        .attr("text-anchor", "middle")
     .call(function(text) {
@@ -1240,12 +1240,12 @@ function draw_with_data(data, parent_id) {
 }(g.append("g")));
 (function (g) {
   g.attr("stroke", "none")
-   .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-   .attr("font-size", "3.88")
+   .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+   .style("font-size", 3.88)
    .attr("fill", "#362A35");
   g.append("svg:text")
-     .attr("x", 126.69)
-     .attr("y", 24.68)
+     .attr("x", 126.32)
+     .attr("y", 26.32)
      .attr("text-anchor", "middle")
   .call(function(text) {
   text.text("cut");
@@ -1253,24 +1253,24 @@ function draw_with_data(data, parent_id) {
 ;
 }(g.append("g")));
 (function (g) {
-  g.attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-   .attr("font-size", "3.18");
+  g.attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+   .style("font-size", 3.18);
   (function (g) {
     g.attr("class", "guide color_Premium")
      .on("click", guide_toggle_color(parent_id, "color_Premium"));
     (function (g) {
       g.attr("fill", "#00E5B2")
        .attr("stroke", "#00BA8B")
-       .attr("stroke-width", "0.3");
+       .attr("stroke-width", 0.3);
       g.append("svg:path")
-         .attr("d", "M116.39,40.88 L 120.12 40.88 120.12 44.61 116.39 44.61 z");
+         .attr("d", "M115.65,40.84 L 118.82 40.84 118.82 44.02 115.65 44.02 z");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "none")
        .attr("fill", "#4C404B");
       g.append("svg:text")
-         .attr("x", 121.12)
-         .attr("y", 42.74)
+         .attr("x", 119.82)
+         .attr("y", 42.43)
          .style("dominant-baseline", "central")
       .call(function(text) {
   text.text("Premium");
@@ -1284,16 +1284,16 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("fill", "#D4CA3A")
        .attr("stroke", "#A8A200")
-       .attr("stroke-width", "0.3");
+       .attr("stroke-width", 0.3);
       g.append("svg:path")
-         .attr("d", "M116.39,31.41 L 120.12 31.41 120.12 35.14 116.39 35.14 z");
+         .attr("d", "M115.65,32.49 L 118.82 32.49 118.82 35.67 115.65 35.67 z");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "none")
        .attr("fill", "#4C404B");
       g.append("svg:text")
-         .attr("x", 121.12)
-         .attr("y", 33.28)
+         .attr("x", 119.82)
+         .attr("y", 34.08)
          .style("dominant-baseline", "central")
       .call(function(text) {
   text.text("Good");
@@ -1307,16 +1307,16 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("fill", "#00BFFF")
        .attr("stroke", "#0096DD")
-       .attr("stroke-width", "0.3");
+       .attr("stroke-width", 0.3);
       g.append("svg:path")
-         .attr("d", "M116.39,26.68 L 120.12 26.68 120.12 30.41 116.39 30.41 z");
+         .attr("d", "M115.65,28.32 L 118.82 28.32 118.82 31.49 115.65 31.49 z");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "none")
        .attr("fill", "#4C404B");
       g.append("svg:text")
-         .attr("x", 121.12)
-         .attr("y", 28.54)
+         .attr("x", 119.82)
+         .attr("y", 29.91)
          .style("dominant-baseline", "central")
       .call(function(text) {
   text.text("Fair");
@@ -1330,16 +1330,16 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("fill", "#FF5EA0")
        .attr("stroke", "#DC2C7A")
-       .attr("stroke-width", "0.3");
+       .attr("stroke-width", 0.3);
       g.append("svg:path")
-         .attr("d", "M116.39,36.14 L 120.12 36.14 120.12 39.88 116.39 39.88 z");
+         .attr("d", "M115.65,36.67 L 118.82 36.67 118.82 39.84 115.65 39.84 z");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "none")
        .attr("fill", "#4C404B");
       g.append("svg:text")
-         .attr("x", 121.12)
-         .attr("y", 38.01)
+         .attr("x", 119.82)
+         .attr("y", 38.26)
          .style("dominant-baseline", "central")
       .call(function(text) {
   text.text("Very Good");
@@ -1353,16 +1353,16 @@ function draw_with_data(data, parent_id) {
     (function (g) {
       g.attr("fill", "#F6A6FF")
        .attr("stroke", "#CA7EF6")
-       .attr("stroke-width", "0.3");
+       .attr("stroke-width", 0.3);
       g.append("svg:path")
-         .attr("d", "M116.39,45.61 L 120.12 45.61 120.12 49.34 116.39 49.34 z");
+         .attr("d", "M115.65,45.02 L 118.82 45.02 118.82 48.19 115.65 48.19 z");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "none")
        .attr("fill", "#4C404B");
       g.append("svg:text")
-         .attr("x", 121.12)
-         .attr("y", 47.48)
+         .attr("x", 119.82)
+         .attr("y", 46.61)
          .style("dominant-baseline", "central")
       .call(function(text) {
   text.text("Ideal");
@@ -1380,83 +1380,83 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath2")
     .append("svg:path")
-      .attr("d", " M17.47,5 L 114.39 5 114.39 61.46 17.47 61.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
+      .attr("d", " M17.77,5 L 113.65 5 113.65 62.63 17.77 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
     (function (g) {
       g.attr("class", "guide background")
        .attr("stroke", "#F1F1F5")
        .attr("fill", "#FAFAFA");
       g.append("svg:path")
-         .attr("d", "M17.47,5 L 114.39 5 114.39 61.46 17.47 61.46 z");
+         .attr("d", "M17.77,5 L 113.65 5 113.65 62.63 17.77 62.63 z");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "#F0F0F3")
-       .attr("stroke-width", "0.2")
+       .attr("stroke-width", 0.2)
        .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
-         .attr("d", "M17.47,46.54 L 114.39 46.54");
+         .attr("d", "M17.77,33.81 L 113.65 33.81");
       g.append("svg:path")
-         .attr("d", "M17.47,113.12 L 114.39 113.12");
+         .attr("d", "M17.77,-20.55 L 113.65 -20.55");
       g.append("svg:path")
-         .attr("d", "M17.47,-59.98 L 114.39 -59.98");
+         .attr("d", "M17.77,-61.33 L 113.65 -61.33");
       g.append("svg:path")
-         .attr("d", "M17.47,126.43 L 114.39 126.43");
+         .attr("d", "M17.77,-6.96 L 113.65 -6.96");
       g.append("svg:path")
-         .attr("d", "M17.47,19.91 L 114.39 19.91");
+         .attr("d", "M17.77,74.59 L 113.65 74.59");
       g.append("svg:path")
-         .attr("d", "M17.47,86.49 L 114.39 86.49");
+         .attr("d", "M17.77,61 L 113.65 61");
       g.append("svg:path")
-         .attr("d", "M17.47,6.6 L 114.39 6.6");
+         .attr("d", "M17.77,6.63 L 113.65 6.63");
       g.append("svg:path")
-         .attr("d", "M17.47,99.8 L 114.39 99.8");
+         .attr("d", "M17.77,101.77 L 113.65 101.77");
       g.append("svg:path")
-         .attr("d", "M17.47,-46.66 L 114.39 -46.66");
+         .attr("d", "M17.77,20.22 L 113.65 20.22");
       g.append("svg:path")
-         .attr("d", "M17.47,-33.35 L 114.39 -33.35");
+         .attr("d", "M17.77,128.96 L 113.65 128.96");
       g.append("svg:path")
-         .attr("d", "M17.47,59.86 L 114.39 59.86");
+         .attr("d", "M17.77,88.18 L 113.65 88.18");
       g.append("svg:path")
-         .attr("d", "M17.47,73.17 L 114.39 73.17");
+         .attr("d", "M17.77,-47.74 L 113.65 -47.74");
       g.append("svg:path")
-         .attr("d", "M17.47,-6.72 L 114.39 -6.72");
+         .attr("d", "M17.77,115.37 L 113.65 115.37");
       g.append("svg:path")
-         .attr("d", "M17.47,-20.03 L 114.39 -20.03");
+         .attr("d", "M17.77,47.41 L 113.65 47.41");
       g.append("svg:path")
-         .attr("d", "M17.47,33.23 L 114.39 33.23");
+         .attr("d", "M17.77,-34.14 L 113.65 -34.14");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "#F0F0F3")
-       .attr("stroke-width", "0.2")
+       .attr("stroke-width", 0.2)
        .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
-         .attr("d", "M157.36,5 L 157.36 61.46");
+         .attr("d", "M156.16,5 L 156.16 62.63");
       g.append("svg:path")
-         .attr("d", "M65.93,5 L 65.93 61.46");
+         .attr("d", "M65.71,5 L 65.71 62.63");
       g.append("svg:path")
-         .attr("d", "M-71.21,5 L -71.21 61.46");
+         .attr("d", "M-69.97,5 L -69.97 62.63");
       g.append("svg:path")
-         .attr("d", "M203.07,5 L 203.07 61.46");
+         .attr("d", "M201.38,5 L 201.38 62.63");
       g.append("svg:path")
-         .attr("d", "M111.65,5 L 111.65 61.46");
+         .attr("d", "M110.93,5 L 110.93 62.63");
       g.append("svg:path")
-         .attr("d", "M225.93,5 L 225.93 61.46");
+         .attr("d", "M224,5 L 224 62.63");
       g.append("svg:path")
-         .attr("d", "M20.22,5 L 20.22 61.46");
+         .attr("d", "M20.48,5 L 20.48 62.63");
       g.append("svg:path")
-         .attr("d", "M-94.07,5 L -94.07 61.46");
+         .attr("d", "M-92.58,5 L -92.58 62.63");
       g.append("svg:path")
-         .attr("d", "M-2.64,5 L -2.64 61.46");
+         .attr("d", "M-2.13,5 L -2.13 62.63");
       g.append("svg:path")
-         .attr("d", "M180.22,5 L 180.22 61.46");
+         .attr("d", "M178.77,5 L 178.77 62.63");
       g.append("svg:path")
-         .attr("d", "M-48.35,5 L -48.35 61.46");
+         .attr("d", "M-47.35,5 L -47.35 62.63");
       g.append("svg:path")
-         .attr("d", "M-25.5,5 L -25.5 61.46");
+         .attr("d", "M-24.74,5 L -24.74 62.63");
       g.append("svg:path")
-         .attr("d", "M43.07,5 L 43.07 61.46");
+         .attr("d", "M43.1,5 L 43.1 62.63");
       g.append("svg:path")
-         .attr("d", "M134.5,5 L 134.5 61.46");
+         .attr("d", "M133.55,5 L 133.55 62.63");
       g.append("svg:path")
-         .attr("d", "M88.79,5 L 88.79 61.46");
+         .attr("d", "M88.32,5 L 88.32 62.63");
     }(g.append("g")));
   }(g.append("g")));
   (function (g) {
@@ -1464,39 +1464,39 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath3")
     .append("svg:path")
-      .attr("d", " M17.47,5 L 114.39 5 114.39 61.46 17.47 61.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath3)");
+      .attr("d", " M17.77,5 L 113.65 5 113.65 62.63 17.77 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath3)");
     (function (g) {
       g.attr("fill", "none")
-       .attr("stroke-width", "0.3");
+       .attr("stroke-width", 0.3);
+      (function (g) {
+        g.attr("stroke", "#D4CA3A")
+         .attr("class", "geometry color_Good");
+        g.append("svg:path")
+           .attr("d", "M21.96,59.05 L 21.96 58.68 21.96 54.47 22 52.96 22.01 58.22 23.35 21.22 23.35 33.83 23.35 30.16 23.38 55.44 23.39 20.83 24.74 23.48 24.74 45.24 24.74 32.31 24.75 39.47 24.79 46.94 26.13 50.58 26.13 48.05 26.14 46.59 26.14 52.13 26.18 50.04 27.5 58.22 27.53 52.44 27.53 46.56 27.53 50.77 27.57 46.76 28.88 51.97 28.92 54.47 28.92 47.48 28.93 53.17 28.97 53.79 30.25 47.81 30.31 51.99 30.31 54.19 30.32 54.44 30.36 52.14 31.63 53.36 31.7 55.15 31.71 53.88 31.72 53.81 31.75 52.23 33 46.42 33.09 53.35 33.1 54.29 33.11 50.85 33.15 53.15 34.38 51.28 34.48 52.89 34.49 55.98 34.5 57.56 34.54 55.43 35.75 53.36 35.88 51.77 35.89 56.08 35.9 57.32 35.93 55.06 37.13 49.89 37.27 49.74 37.28 56.75 37.29 56.12 37.33 56.07 38.5 51.97 38.66 53.35 38.67 57.31 38.69 53.49 38.72 54.52 39.88 51.28 40.05 54.25 40.06 57.26 40.08 53.33 40.11 54.52 41.25 54.75 41.44 54.47 41.46 56.8 41.48 53.49 41.5 52.96 42.63 53.36 42.83 55.15 42.85 57.01 42.87 53.89 42.9 54.52 44 56.83 44.23 56.72 44.24 57.67 44.26 53.65 44.29 57.35 45.37 57.53 45.62 55.37 45.64 58.69 45.66 56.52 45.68 56.8 46.75 57.53 47.01 57.4 47.03 58.34 47.05 56.84 47.08 57.62 48.12 57.53 48.4 55.6 48.42 59.41 48.45 57.8 48.47 57.8 49.5 59.61 49.79 58.52 49.82 58.59 49.84 57.08 49.86 57.53 50.87 58.22 51.18 57.85 51.21 58.95 51.24 58.84 51.26 57.62 52.25 56.83 52.57 58.3 52.6 59 52.63 58.52 52.65 57.8 53.62 57.53 53.97 59.42 53.99 58.8 54.02 59 54.04 58.53 55 60.3 55.36 59.2 55.39 59.57 55.42 58.2 55.44 58.72 56.37 58.22 56.75 59.65 56.78 59.05 56.81 59.64 56.83 58.99 57.75 58.22 58.14 59.2 58.17 59.82 58.21 59.56 58.22 59.63 59.12 60.3 59.53 60.55 59.57 59.21 59.6 59.16 59.62 59.26 60.5 59.61 60.92 58.52 60.96 59.05 61 59.48 61.01 59.72 61.87 61 62.32 59.2 62.35 59.46 62.39 59.32 62.4 59.99 63.25 61 63.71 60.32 63.75 59.31 63.78 59.96 63.79 60.18 64.62 60.3 65.1 59.42 65.14 59.57 65.18 59.48 65.19 59.72 65.99 59.61 66.49 60.1 66.53 59.77 66.57 59.8 66.58 60.09 67.37 60.3 67.88 60.55 67.92 60.13 67.97 59.8 67.97 60.27 68.74 60.3 69.27 60.32 69.32 59.82 69.36 59.56 69.37 60.45 70.12 60.3 70.66 60.55 70.71 59.31 70.75 59.08 70.76 59.81 71.49 60.3 72.06 60.77 72.1 59.82 72.15 59.56 72.15 59.81 72.87 60.3 73.45 59.87 73.5 60.74 73.54 60.12 73.55 59.54 74.24 58.92 74.84 60.77 74.89 60.03 74.94 59.32 74.94 60.09 75.62 60.3 76.23 60.77 76.28 60.33 76.33 59.72 76.33 59.54 76.99 58.92 77.62 60.32 77.67 60.18 77.73 60.54 77.73 59.88 78.37 59.61 79.01 59.87 79.07 60.23 79.12 59.99 79.12 59.72 79.74 61 80.41 60.1 80.46 60.64 80.51 60.36 80.51 59.4 81.12 60.3 81.8 60.32 81.85 60.44 81.91 59.81 81.91 59.96 82.49 58.22 83.19 60.32 83.25 60.33 83.3 60.36 83.3 59.8 83.87 61 84.58 60.55 84.64 60.54 84.69 60.27 84.7 59.48 85.24 61 85.97 61 86.03 60.23 86.09 60.45 86.09 60.44 86.61 59.61 87.36 61 87.43 60.64 87.48 60.54 87.49 60.04 87.99 59.61 88.75 60.55 88.82 60.49 88.87 60.45 88.88 59.88 89.36 60.3 90.15 60.77 90.21 60.44 90.26 60.36 90.27 60.36 90.74 58.22 91.54 60.55 91.6 60.44 91.66 60.27 91.67 60.2 92.11 60.3 92.93 60.55 93 60.74 93.05 59.99 93.06 60.2 93.49 61 94.32 61 94.39 60.69 94.44 60.09 94.46 60.28 94.86 60.3 95.71 60.55 95.78 60.44 95.84 60.36 95.85 60.44 96.24 61 97.1 61 97.18 60.64 97.23 60.27 97.25 60.04 97.61 60.3 98.5 61 98.57 60.84 98.62 60.54 98.64 60.52 98.99 59.61 99.89 60.32 99.96 60.69 100.02 60.82 100.03 60.12 100.36 60.3 101.28 60.1 101.36 60.59 101.41 60.36 101.43 60.44 101.74 58.92 102.67 61 102.75 60.9 102.8 60.36 102.82 60.2 103.11 60.3 104.06 60.55 104.14 60.69 104.2 60.45 104.22 60.52");
+      }(g.append("g")));
       (function (g) {
         g.attr("stroke", "#F6A6FF")
          .attr("class", "geometry color_Ideal");
         g.append("svg:path")
-           .attr("d", "M21.71,57.95 L 21.71 57.59 21.71 53.46 21.75 51.99 21.76 57.14 23.11 20.89 23.12 33.24 23.12 29.65 23.15 54.42 23.16 20.5 24.52 23.1 24.52 44.42 24.53 31.75 24.54 38.77 24.57 46.08 25.93 49.66 25.93 47.17 25.93 45.75 25.93 51.17 25.98 49.13 27.31 57.14 27.34 51.48 27.34 45.72 27.34 49.84 27.38 45.91 28.7 51.02 28.74 53.46 28.75 46.62 28.75 52.19 28.79 52.79 30.09 46.93 30.15 51.04 30.15 53.19 30.16 53.44 30.2 51.18 31.48 52.38 31.56 54.13 31.56 52.89 31.57 52.81 31.61 51.27 32.87 45.57 32.96 52.36 32.97 53.29 32.98 49.92 33.02 52.17 34.26 50.34 34.37 51.92 34.38 54.94 34.39 56.49 34.43 54.4 35.65 52.38 35.78 50.82 35.79 55.04 35.8 56.26 35.83 54.04 37.04 48.98 37.18 48.83 37.19 55.7 37.21 55.08 37.24 55.03 38.43 51.02 38.59 52.36 38.6 56.25 38.62 52.5 38.65 53.51 39.82 50.34 40 53.24 40.01 56.2 40.03 52.34 40.06 53.51 41.21 53.74 41.4 53.46 41.42 55.75 41.44 52.5 41.47 51.99 42.6 52.38 42.81 54.13 42.83 55.95 42.85 52.89 42.87 53.51 43.99 55.78 44.22 55.67 44.24 56.6 44.26 52.66 44.28 56.28 45.38 56.46 45.62 54.35 45.64 57.6 45.67 55.47 45.69 55.74 46.77 56.46 47.03 56.33 47.05 57.25 47.07 55.79 47.1 56.55 48.16 56.46 48.44 54.57 48.46 58.3 48.48 56.73 48.51 56.73 49.55 58.5 49.84 57.43 49.87 57.5 49.89 56.02 49.92 56.46 50.94 57.14 51.25 56.77 51.28 57.85 51.3 57.74 51.32 56.55 52.33 55.78 52.66 57.21 52.68 57.9 52.71 57.43 52.73 56.73 53.72 56.46 54.06 58.31 54.09 57.7 54.12 57.9 54.14 57.44 55.11 59.18 55.47 58.09 55.5 58.45 55.53 57.12 55.55 57.62 56.49 57.14 56.88 58.54 56.91 57.95 56.94 58.53 56.96 57.89 57.88 57.14 58.28 58.09 58.32 58.71 58.35 58.45 58.36 58.52 59.27 59.18 59.69 59.42 59.72 58.1 59.76 58.06 59.77 58.16 60.66 58.5 61.1 57.43 61.13 57.95 61.17 58.37 61.18 58.61 62.05 59.86 62.5 58.09 62.54 58.35 62.58 58.21 62.59 58.87 63.44 59.86 63.91 59.2 63.95 58.2 63.99 58.84 64 59.05 64.83 59.18 65.32 58.31 65.36 58.45 65.4 58.37 65.41 58.61 66.22 58.5 66.72 58.98 66.76 58.66 66.8 58.68 66.81 58.96 67.61 59.18 68.13 59.42 68.17 59.01 68.21 58.68 68.22 59.14 69 59.18 69.53 59.2 69.58 58.71 69.62 58.45 69.63 59.32 70.39 59.18 70.94 59.42 70.99 58.2 71.03 57.98 71.04 58.7 71.78 59.18 72.35 59.64 72.4 58.71 72.44 58.45 72.45 58.7 73.17 59.18 73.75 58.76 73.8 59.61 73.85 59 73.85 58.43 74.56 57.82 75.16 59.64 75.21 58.91 75.26 58.21 75.26 58.96 75.95 59.18 76.57 59.64 76.62 59.21 76.67 58.61 76.67 58.43 77.34 57.82 77.97 59.2 78.03 59.06 78.08 59.41 78.08 58.76 78.73 58.5 79.38 58.76 79.44 59.11 79.49 58.87 79.49 58.61 80.12 59.86 80.79 58.98 80.84 59.51 80.9 59.23 80.9 58.29 81.51 59.18 82.19 59.2 82.25 59.31 82.3 58.7 82.31 58.84 82.9 57.14 83.6 59.2 83.66 59.21 83.71 59.23 83.72 58.68 84.29 59.86 85.01 59.42 85.07 59.41 85.12 59.14 85.13 58.37 85.67 59.86 86.41 59.86 86.48 59.11 86.53 59.32 86.54 59.31 87.06 58.5 87.82 59.86 87.88 59.51 87.94 59.41 87.94 58.92 88.45 58.5 89.23 59.42 89.29 59.36 89.34 59.32 89.35 58.76 89.84 59.18 90.63 59.64 90.7 59.31 90.75 59.23 90.76 59.23 91.23 57.14 92.04 59.42 92.11 59.31 92.16 59.14 92.17 59.08 92.62 59.18 93.45 59.42 93.52 59.61 93.57 58.87 93.58 59.08 94.01 59.86 94.85 59.86 94.92 59.56 94.98 58.96 94.99 59.15 95.4 59.18 96.26 59.42 96.33 59.31 96.39 59.23 96.4 59.31 96.79 59.86 97.67 59.86 97.74 59.51 97.79 59.14 97.81 58.92 98.18 59.18 99.07 59.86 99.15 59.71 99.2 59.41 99.22 59.39 99.57 58.5 100.48 59.2 100.56 59.56 100.61 59.68 100.63 59 100.96 59.18 101.89 58.98 101.96 59.46 102.02 59.23 102.04 59.31 102.35 57.82 103.29 59.86 103.37 59.76 103.43 59.23 103.45 59.08 103.74 59.18 104.7 59.42 104.78 59.56 104.83 59.32 104.86 59.39");
+           .attr("d", "M22.23,49.43 L 22.23 54.44 22.24 39.61 22.28 35.07 22.28 60.3 23.63 17.44 23.63 25.19 23.63 29.93 23.66 51.28 23.67 30.32 25.02 28.95 25.02 52.44 25.02 32.55 25.03 45.72 25.07 48.95 26.4 47.11 26.41 47.04 26.41 47.84 26.42 53.41 26.46 50.77 27.78 51.97 27.8 51.09 27.81 44.26 27.81 48.69 27.85 49.86 29.15 51.28 29.2 53.8 29.2 49.33 29.21 53.73 29.25 52.14 30.53 53.36 30.59 49.97 30.59 53.01 30.6 55.24 30.64 51.5 31.9 47.81 31.98 54.47 31.99 53.93 31.99 54.84 32.03 51.5 33.28 38.09 33.37 55.6 33.38 54.5 33.39 53.25 33.42 53.51 34.65 42.25 34.76 54.47 34.77 54.14 34.78 57.32 34.82 55.43 36.03 55.44 36.15 54.92 36.16 56.34 36.18 57.24 36.21 55.34 37.4 45.03 37.55 53.57 37.56 57.36 37.57 55.32 37.6 55.34 38.78 54.05 38.94 51.54 38.95 57.31 38.97 54.6 39 54.7 40.15 51.97 40.33 50.42 40.34 57.42 40.36 54.21 40.39 53.42 41.53 51.28 41.72 54.25 41.74 57.42 41.75 53.57 41.78 54.79 42.9 58.22 43.11 54.47 43.13 57.01 43.15 56.28 43.18 54.42 44.28 58.22 44.5 58.3 44.52 57.36 44.54 57 44.57 56.98 45.65 57.53 45.89 57.85 45.92 58.44 45.94 56.84 45.96 57.07 47.02 56.14 47.29 57.4 47.31 58.49 47.33 56.28 47.36 57.8 48.4 58.22 48.68 56.72 48.7 58.44 48.73 57 48.75 57.44 49.77 58.92 50.07 59.42 50.09 58.44 50.12 57.32 50.14 57.44 51.15 56.83 51.46 58.97 51.49 59.26 51.51 58.6 51.54 58.26 52.52 58.22 52.85 57.17 52.88 58.64 52.91 59.4 52.93 58.72 53.9 59.61 54.24 58.3 54.27 59.1 54.3 58.04 54.32 58.9 55.27 58.22 55.64 59.87 55.67 59.21 55.7 58.12 55.71 59.17 56.65 57.53 57.03 58.52 57.06 59.41 57.09 58.76 57.11 59.99 58.02 60.3 58.42 59.87 58.45 59.21 58.49 59.16 58.5 59.26 59.4 60.3 59.81 57.4 59.84 59.41 59.88 58.68 59.89 60.18 60.77 59.61 61.2 60.1 61.24 59.62 61.27 59.24 61.29 59.17 62.15 61 62.59 60.1 62.63 59.41 62.67 59.24 62.68 59.26 63.52 59.61 63.99 59.87 64.02 60.18 64.06 59.48 64.07 59.36 64.9 59.61 65.38 60.32 65.42 60.33 65.46 59.8 65.47 59.45 66.27 59.61 66.77 59.87 66.81 59.92 66.85 59.64 66.86 60.09 67.64 58.92 68.16 60.77 68.2 59.92 68.25 59.8 68.25 60.18 69.02 57.53 69.55 59.87 69.6 60.13 69.64 59.24 69.65 59.99 70.39 61 70.94 60.1 70.99 59.62 71.03 59.16 71.04 60.18 71.77 60.3 72.33 59.2 72.38 59.97 72.43 59.64 72.43 60.18 73.14 59.61 73.73 59.87 73.77 60.38 73.82 59.4 73.83 59.99 74.52 60.3 75.12 60.32 75.17 60.18 75.22 60.36 75.22 60.63 75.89 61 76.51 60.55 76.56 60.18 76.61 60.12 76.61 60.63 77.27 58.22 77.9 59.87 77.95 59.92 78 60.18 78.01 59.96 78.64 60.3 79.29 60.55 79.35 60.44 79.4 60.27 79.4 59.64 80.02 61 80.68 60.32 80.74 60.28 80.79 60.36 80.79 59.96 81.39 60.3 82.08 60.1 82.13 60.44 82.18 60.36 82.19 60.12 82.77 60.3 83.47 60.1 83.53 60.59 83.58 60.54 83.58 60.36 84.14 60.3 84.86 60.1 84.92 60.33 84.97 60.45 84.98 60.04 85.52 59.61 86.25 60.55 86.31 60.44 86.36 60.54 86.37 60.2 86.89 60.3 87.64 60.55 87.7 60.84 87.76 60.54 87.76 60.12 88.26 60.3 89.03 60.77 89.1 60.44 89.15 60.54 89.16 59.96 89.64 59.61 90.42 60.77 90.49 60.54 90.54 60.54 90.55 59.96 91.01 60.3 91.82 60.32 91.88 59.97 91.94 59.81 91.95 60.12 92.39 61 93.21 60.77 93.28 60.69 93.33 60.36 93.34 60.44 93.76 61 94.6 59.87 94.67 60.64 94.72 60.45 94.74 60.44 95.14 61 95.99 60.32 96.06 60.64 96.12 60.72 96.13 59.24 96.51 61 97.38 60.77 97.46 60.33 97.51 60.18 97.52 60.12 97.89 61 98.77 60.1 98.85 60.49 98.9 60.72 98.92 60.36 99.26 61 100.17 61 100.24 60.74 100.29 60.36 100.31 60.36 100.64 61 101.56 60.77 101.63 60.59 101.69 60.72 101.71 60.36 102.01 61 102.95 60.32 103.03 60.28 103.08 60.91 103.1 60.28 103.39 61 104.34 60.32 104.42 60.69 104.47 60.91 104.5 60.68");
       }(g.append("g")));
       (function (g) {
         g.attr("stroke", "#00E5B2")
          .attr("class", "geometry color_Premium");
         g.append("svg:path")
-           .attr("d", "M21.99,48.53 L 21.99 53.44 21.99 38.91 22.03 34.46 22.03 59.18 23.4 17.18 23.4 24.78 23.4 29.43 23.42 50.34 23.44 29.81 24.8 28.47 24.81 51.48 24.81 31.99 24.81 44.89 24.85 48.05 26.2 46.25 26.21 46.19 26.21 46.97 26.22 52.42 26.26 49.84 27.59 51.02 27.62 50.16 27.62 43.46 27.63 47.8 27.67 48.95 28.98 50.34 29.03 52.8 29.03 48.42 29.04 52.73 29.07 51.18 30.37 52.38 30.43 49.05 30.44 52.04 30.44 54.22 30.48 50.56 31.76 46.93 31.84 53.46 31.84 52.94 31.85 53.83 31.89 50.56 33.15 37.41 33.25 54.57 33.25 53.49 33.26 52.26 33.3 52.52 34.54 41.49 34.65 53.46 34.66 53.14 34.67 56.26 34.71 54.4 35.93 54.42 36.06 53.9 36.07 55.3 36.08 56.18 36.12 54.31 37.32 44.21 37.46 52.58 37.48 56.3 37.49 54.3 37.52 54.31 38.71 53.06 38.87 50.6 38.88 56.25 38.9 53.6 38.93 53.69 40.1 51.02 40.28 49.49 40.29 56.35 40.31 53.2 40.34 52.43 41.49 50.34 41.68 53.24 41.7 56.35 41.72 52.58 41.75 53.78 42.88 57.14 43.09 53.46 43.11 55.95 43.13 55.24 43.16 53.42 44.27 57.14 44.5 57.21 44.52 56.3 44.54 55.94 44.56 55.92 45.66 56.46 45.9 56.77 45.92 57.35 45.95 55.79 45.97 56.01 47.05 55.1 47.31 56.33 47.33 57.4 47.36 55.24 47.38 56.73 48.44 57.14 48.72 55.67 48.74 57.35 48.77 55.94 48.79 56.37 49.83 57.82 50.12 58.31 50.15 57.35 50.17 56.26 50.2 56.37 51.21 55.78 51.53 57.87 51.56 58.15 51.58 57.51 51.61 57.18 52.6 57.14 52.94 56.11 52.96 57.55 52.99 58.29 53.01 57.62 53.99 58.5 54.34 57.21 54.37 58 54.4 56.96 54.42 57.8 55.38 57.14 55.75 58.76 55.78 58.1 55.81 57.04 55.83 58.07 56.77 56.46 57.16 57.43 57.19 58.3 57.22 57.67 57.24 58.87 58.16 59.18 58.56 58.76 58.6 58.1 58.63 58.06 58.65 58.16 59.55 59.18 59.97 56.33 60 58.3 60.04 57.59 60.05 59.05 60.94 58.5 61.38 58.98 61.41 58.5 61.45 58.14 61.46 58.07 62.33 59.86 62.78 58.98 62.82 58.3 62.86 58.14 62.87 58.16 63.72 58.5 64.19 58.76 64.23 59.06 64.27 58.37 64.28 58.25 65.11 58.5 65.6 59.2 65.64 59.21 65.68 58.68 65.69 58.34 66.5 58.5 67 58.76 67.05 58.81 67.09 58.53 67.1 58.96 67.89 57.82 68.41 59.64 68.45 58.81 68.5 58.68 68.5 59.05 69.28 56.46 69.82 58.76 69.86 59.01 69.91 58.14 69.91 58.87 70.67 59.86 71.22 58.98 71.27 58.5 71.31 58.06 71.32 59.05 72.06 59.18 72.63 58.09 72.68 58.86 72.72 58.53 72.73 59.05 73.45 58.5 74.04 58.76 74.09 59.26 74.13 58.29 74.14 58.87 74.84 59.18 75.44 59.2 75.49 59.06 75.54 59.23 75.54 59.5 76.23 59.86 76.85 59.42 76.9 59.06 76.95 59 76.95 59.5 77.62 57.14 78.26 58.76 78.31 58.81 78.36 59.05 78.36 58.84 79 59.18 79.66 59.42 79.72 59.31 79.77 59.14 79.77 58.53 80.39 59.86 81.07 59.2 81.13 59.16 81.18 59.23 81.18 58.84 81.78 59.18 82.48 58.98 82.53 59.31 82.59 59.23 82.59 59 83.17 59.18 83.88 58.98 83.94 59.46 83.99 59.41 84 59.23 84.56 59.18 85.29 58.98 85.35 59.21 85.4 59.32 85.41 58.92 85.95 58.5 86.7 59.42 86.76 59.31 86.81 59.41 86.82 59.08 87.34 59.18 88.1 59.42 88.17 59.71 88.22 59.41 88.23 59 88.73 59.18 89.51 59.64 89.57 59.31 89.63 59.41 89.64 58.84 90.12 58.5 90.91 59.64 90.98 59.41 91.03 59.41 91.05 58.84 91.51 59.18 92.32 59.2 92.39 58.86 92.44 58.7 92.45 59 92.9 59.86 93.73 59.64 93.8 59.56 93.85 59.23 93.86 59.31 94.29 59.86 95.13 58.76 95.21 59.51 95.26 59.32 95.27 59.31 95.68 59.86 96.54 59.2 96.61 59.51 96.67 59.59 96.68 58.14 97.07 59.86 97.95 59.64 98.02 59.21 98.08 59.05 98.09 59 98.46 59.86 99.35 58.98 99.43 59.36 99.48 59.59 99.5 59.23 99.85 59.86 100.76 59.86 100.84 59.61 100.89 59.23 100.91 59.23 101.24 59.86 102.17 59.64 102.25 59.46 102.3 59.59 102.32 59.23 102.63 59.86 103.57 59.2 103.65 59.16 103.71 59.77 103.73 59.15 104.02 59.86 104.98 59.2 105.06 59.56 105.12 59.77 105.14 59.55");
+           .attr("d", "M22.51,37.96 L 22.51 48.29 22.52 32.41 22.56 59.61 22.56 25.3 23.91 11.5 23.91 28.39 23.91 43.67 23.93 51.97 23.95 36.16 25.3 35.2 25.3 50.64 25.3 37.18 25.3 41.56 25.34 50.41 26.68 50.58 26.69 47.94 26.69 48.2 26.7 52.37 26.74 46.3 28.05 47.11 28.08 52.89 28.08 46.31 28.09 52.13 28.13 52.32 29.43 43.64 29.47 52.22 29.48 53.37 29.48 53.81 29.52 52.05 30.8 40.17 30.87 49.07 30.87 52.45 30.88 50.53 30.92 50.23 32.18 53.36 32.26 53.8 32.26 53.12 32.27 55.8 32.31 54.24 33.55 51.28 33.65 55.6 33.66 54.75 33.67 56.76 33.7 54.42 34.93 50.58 35.04 53.35 35.05 55.67 35.06 57.64 35.1 55.25 36.3 50.58 36.43 54.25 36.44 57.26 36.46 56.36 36.49 56.43 37.68 45.72 37.82 49.07 37.84 57.93 37.85 55.4 37.88 54.42 39.05 46.42 39.22 47.72 39.23 57.36 39.24 53.09 39.28 52.42 40.43 53.36 40.61 48.17 40.62 56.95 40.64 52.61 40.67 53.06 41.8 51.97 42 55.37 42.01 56.39 42.03 55.4 42.06 55.79 43.18 54.75 43.39 57.62 43.41 57.62 43.43 54.68 43.46 56.89 44.55 58.22 44.78 56.72 44.8 57.57 44.82 55.8 44.85 57.44 45.92 56.14 46.17 57.85 46.19 58.69 46.22 55.72 46.24 57.35 47.3 60.3 47.56 56.95 47.59 58.8 47.61 57.32 47.63 57.53 48.67 54.75 48.96 58.07 48.98 58.23 49 57.08 49.03 57.89 50.05 57.53 50.35 58.75 50.37 58.29 50.4 57.4 50.42 57.71 51.42 58.22 51.74 58.3 51.77 58.95 51.79 58.36 51.81 58.72 52.8 58.22 53.13 58.97 53.16 59.05 53.19 57.8 53.21 58.44 54.17 57.53 54.52 58.97 54.55 58.9 54.58 58.04 54.6 58.35 55.55 61 55.91 59.2 55.94 59.72 55.98 59 55.99 59.26 56.92 60.3 57.31 59.42 57.34 59.97 57.37 59.16 57.39 59.45 58.3 59.61 58.7 60.1 58.73 59.87 58.76 59.24 58.78 59.81 59.67 56.83 60.09 60.1 60.12 59.46 60.16 58.6 60.17 59.45 61.05 60.3 61.48 58.75 61.52 59.46 61.55 59.48 61.57 59.45 62.42 59.61 62.87 60.32 62.91 59.67 62.95 59.88 62.96 60.09 63.8 60.3 64.26 59.65 64.3 59.97 64.34 59 64.35 59.63 65.17 61 65.65 60.32 65.7 60.03 65.74 58.52 65.75 59.26 66.54 59.61 67.05 60.55 67.09 59.31 67.13 59.72 67.14 59.45 67.92 61 68.44 59.87 68.48 59.92 68.52 59.88 68.53 59.26 69.29 60.3 69.83 60.77 69.87 59.87 69.92 59.64 69.92 59.9 70.67 57.53 71.22 60.32 71.27 60.28 71.31 59.48 71.32 60.09 72.04 61 72.61 59.65 72.66 60.18 72.71 59.96 72.71 59.63 73.42 60.3 74 60.32 74.05 60.28 74.1 59.64 74.1 60.27 74.79 61 75.4 60.77 75.45 59.67 75.5 60.04 75.5 59.9 76.17 61 76.79 60.32 76.84 60.44 76.89 59.72 76.89 60.54 77.54 58.92 78.18 60.32 78.23 60.18 78.28 60.18 78.28 59.64 78.92 59.61 79.57 60.55 79.63 60.49 79.68 60.36 79.68 59.48 80.29 59.61 80.96 61 81.02 60.33 81.07 60.91 81.07 60.04 81.67 58.92 82.35 60.55 82.41 60.69 82.46 60.36 82.47 59.32 83.04 59.61 83.75 59.87 83.8 60.28 83.86 60.45 83.86 60.12 84.42 60.3 85.14 60.77 85.2 60.69 85.25 60.45 85.26 59.64 85.79 61 86.53 60.55 86.59 60.38 86.64 60.54 86.65 60.04 87.16 59.61 87.92 59.87 87.98 60.74 88.04 60.82 88.04 60.12 88.54 61 89.31 60.32 89.38 60.18 89.43 60.36 89.44 60.36 89.91 61 90.7 60.77 90.77 60.64 90.82 60.63 90.83 60.36 91.29 60.3 92.09 60.55 92.16 60.64 92.21 60.45 92.23 60.04 92.66 60.3 93.49 60.55 93.55 60.69 93.61 60.45 93.62 60.04 94.04 60.3 94.88 61 94.95 60.54 95 60.72 95.02 60.36 95.41 61 96.27 60.55 96.34 60.38 96.39 60.27 96.41 60.52 96.79 61 97.66 60.32 97.73 60.54 97.79 60.54 97.8 60.28 98.16 61 99.05 60.55 99.13 60.54 99.18 60.63 99.2 60.52 99.54 61 100.44 60.77 100.52 60.69 100.57 60.36 100.59 60.2 100.91 61 101.84 60.32 101.91 60.49 101.97 60.27 101.99 60.44 102.29 61 103.23 60.55 103.31 60.54 103.36 60.82 103.38 60.52 103.66 61 104.62 60.55 104.7 60.74 104.75 60.63 104.77 60.6");
       }(g.append("g")));
       (function (g) {
         g.attr("stroke", "#FF5EA0")
          .attr("class", "geometry color_Very_Good");
         g.append("svg:path")
-           .attr("d", "M22.27,37.29 L 22.27 47.41 22.27 31.85 22.31 58.5 22.32 24.89 23.68 11.37 23.68 27.91 23.68 42.88 23.7 51.02 23.72 35.53 25.09 34.58 25.09 49.71 25.09 36.53 25.09 40.81 25.13 49.48 26.48 49.66 26.49 47.07 26.49 47.32 26.5 51.4 26.54 45.46 27.87 46.25 27.9 51.92 27.9 45.47 27.91 51.17 27.95 51.36 29.26 42.85 29.31 51.26 29.31 52.39 29.32 52.81 29.36 51.09 30.65 39.45 30.71 48.17 30.72 51.48 30.73 49.6 30.76 49.3 32.04 52.38 32.12 52.8 32.13 52.14 32.14 54.77 32.17 53.24 33.43 50.34 33.53 54.57 33.53 53.74 33.54 55.71 33.58 53.42 34.82 49.66 34.93 52.36 34.94 54.64 34.95 56.57 34.99 54.22 36.21 49.66 36.34 53.24 36.35 56.2 36.36 55.32 36.4 55.39 37.6 44.89 37.75 48.17 37.76 56.85 37.77 54.38 37.81 53.42 38.99 45.57 39.15 46.85 39.17 56.3 39.18 52.11 39.21 51.45 40.38 52.38 40.56 47.29 40.57 55.9 40.59 51.64 40.62 52.08 41.77 51.02 41.97 54.35 41.98 55.35 42 54.38 42.03 54.76 43.16 53.74 43.37 56.55 43.39 56.55 43.41 53.67 43.44 55.83 44.54 57.14 44.78 55.67 44.8 56.5 44.82 54.77 44.85 56.37 45.93 55.1 46.19 56.77 46.21 57.6 46.23 54.69 46.25 56.28 47.32 59.18 47.59 55.89 47.61 57.7 47.64 56.26 47.66 56.46 48.71 53.74 49 56.99 49.02 57.15 49.05 56.02 49.07 56.82 50.1 56.46 50.41 57.65 50.43 57.2 50.46 56.34 50.48 56.64 51.49 57.14 51.81 57.21 51.84 57.85 51.87 57.27 51.89 57.62 52.88 57.14 53.22 57.87 53.25 57.95 53.28 56.73 53.3 57.35 54.27 56.46 54.63 57.87 54.65 57.8 54.68 56.96 54.7 57.26 55.66 59.86 56.03 58.09 56.06 58.6 56.09 57.9 56.11 58.16 57.05 59.18 57.44 58.31 57.47 58.86 57.5 58.06 57.52 58.34 58.44 58.5 58.84 58.98 58.88 58.76 58.91 58.14 58.93 58.7 59.83 55.78 60.25 58.98 60.29 58.35 60.32 57.51 60.34 58.34 61.22 59.18 61.66 57.65 61.69 58.35 61.73 58.37 61.74 58.34 62.61 58.5 63.06 59.2 63.1 58.55 63.14 58.76 63.15 58.96 64 59.18 64.47 58.54 64.51 58.86 64.55 57.9 64.56 58.52 65.39 59.86 65.88 59.2 65.92 58.91 65.96 57.43 65.97 58.16 66.78 58.5 67.28 59.42 67.33 58.2 67.37 58.61 67.38 58.34 68.17 59.86 68.69 58.76 68.73 58.81 68.78 58.76 68.79 58.16 69.56 59.18 70.1 59.64 70.14 58.76 70.19 58.53 70.19 58.79 70.95 56.46 71.5 59.2 71.55 59.16 71.6 58.37 71.6 58.96 72.34 59.86 72.91 58.54 72.96 59.06 73.01 58.84 73.01 58.52 73.72 59.18 74.32 59.2 74.37 59.16 74.42 58.53 74.42 59.14 75.11 59.86 75.72 59.64 75.77 58.55 75.82 58.92 75.83 58.79 76.5 59.86 77.13 59.2 77.18 59.31 77.23 58.61 77.23 59.41 77.89 57.82 78.54 59.2 78.59 59.06 78.64 59.05 78.64 58.53 79.28 58.5 79.94 59.42 80 59.36 80.05 59.23 80.05 58.37 80.67 58.5 81.35 59.86 81.41 59.21 81.46 59.77 81.46 58.92 82.06 57.82 82.76 59.42 82.82 59.56 82.87 59.23 82.87 58.21 83.45 58.5 84.16 58.76 84.22 59.16 84.28 59.32 84.28 59 84.84 59.18 85.57 59.64 85.63 59.56 85.68 59.32 85.69 58.53 86.23 59.86 86.98 59.42 87.04 59.26 87.09 59.41 87.1 58.92 87.62 58.5 88.38 58.76 88.45 59.61 88.5 59.68 88.51 59 89.01 59.86 89.79 59.2 89.86 59.06 89.91 59.23 89.92 59.23 90.4 59.86 91.2 59.64 91.26 59.51 91.32 59.5 91.33 59.23 91.79 59.18 92.6 59.42 92.67 59.51 92.72 59.32 92.74 58.92 93.18 59.18 94.01 59.42 94.08 59.56 94.13 59.32 94.15 58.92 94.57 59.18 95.42 59.86 95.49 59.41 95.54 59.59 95.56 59.23 95.96 59.86 96.82 59.42 96.9 59.26 96.95 59.14 96.96 59.39 97.35 59.86 98.23 59.2 98.3 59.41 98.36 59.41 98.37 59.15 98.74 59.86 99.64 59.42 99.71 59.41 99.77 59.5 99.78 59.39 100.13 59.86 101.04 59.64 101.12 59.56 101.17 59.23 101.19 59.08 101.52 59.86 102.45 59.2 102.53 59.36 102.58 59.14 102.6 59.31 102.9 59.86 103.86 59.42 103.94 59.41 103.99 59.68 104.01 59.39 104.29 59.86 105.26 59.42 105.34 59.61 105.4 59.5 105.42 59.47");
+           .attr("d", "M22.79,33.97 L 22.79 39.5 22.8 22.73 22.83 58.22 22.84 16.9 24.18 15.49 24.19 28.23 24.19 48.84 24.21 53.36 24.23 40.18 25.58 44.62 25.58 44.57 25.58 42.25 25.58 50.37 25.62 49.49 26.95 55.44 26.97 54.92 26.97 55.73 26.98 58.44 27.02 59.26 28.33 46.42 28.36 49.74 28.36 45.59 28.37 50.45 28.41 51.59 29.7 47.11 29.75 50.87 29.76 50.97 29.76 56.28 29.8 51.59 31.08 29.75 31.14 49.07 31.15 52.45 31.16 51.01 31.2 51.05 32.45 49.19 32.54 54.02 32.54 53.47 32.55 55.08 32.59 53.97 33.83 44.33 33.93 55.6 33.94 55.11 33.95 57.32 33.98 54.7 35.2 47.81 35.32 51.99 35.33 55.32 35.34 57.16 35.38 55.79 36.58 52.67 36.71 52.22 36.72 57.26 36.74 56.04 36.77 55.52 37.95 50.58 38.1 49.74 38.11 58.13 38.13 56.04 38.16 55.16 39.33 53.36 39.49 47.94 39.51 57.57 39.52 53.89 39.55 53.97 40.7 54.05 40.89 51.77 40.9 57.42 40.92 55.32 40.95 54.15 42.08 54.05 42.28 53.57 42.29 56.6 42.31 54.84 42.34 54.97 43.45 55.44 43.67 57.17 43.69 57.16 43.71 54.29 43.73 56.62 44.83 56.14 45.06 56.95 45.08 58.49 45.1 56.76 45.13 56.8 46.2 57.53 46.45 57.62 46.47 57.93 46.49 56.6 46.52 56.71 47.57 56.83 47.84 57.62 47.87 58.44 47.89 56.52 47.91 57.35 48.95 56.83 49.23 57.62 49.26 58.29 49.28 58.12 49.31 58.99 50.32 58.22 50.63 58.52 50.65 59.05 50.68 57.64 50.7 58.62 51.7 59.61 52.02 58.3 52.04 59.36 52.07 59 52.09 59.08 53.07 58.22 53.41 58.3 53.44 59.57 53.47 58.52 53.49 59.45 54.45 58.92 54.8 60.1 54.83 58.95 54.86 58.44 54.88 59.17 55.82 58.22 56.19 59.2 56.22 59.46 56.25 59.32 56.27 59.26 57.2 60.3 57.58 58.75 57.62 59.31 57.65 59.88 57.67 59.54 58.57 61 58.98 59.2 59.01 59.72 59.04 59 59.06 59.08 59.95 59.61 60.37 59.42 60.4 59.51 60.44 58.12 60.45 59.54 61.32 60.3 61.76 59.87 61.8 59.87 61.83 60.04 61.84 59.26 62.7 60.3 63.15 60.32 63.19 59.51 63.23 59.48 63.24 59.08 64.07 59.61 64.54 59.65 64.58 59.97 64.62 59.88 64.63 58.9 65.44 60.3 65.93 59.42 65.97 59.72 66.01 59.32 66.02 59.45 66.82 61 67.32 60.55 67.37 59.97 67.41 59.08 67.42 60.18 68.19 58.92 68.72 59.87 68.76 59.62 68.8 59.48 68.81 59.72 69.57 58.92 70.11 60.32 70.15 59.87 70.2 59.56 70.2 60.27 70.94 58.92 71.5 59.87 71.55 60.33 71.59 59.64 71.6 60.27 72.32 60.3 72.89 60.77 72.94 59.92 72.99 59.32 72.99 59.99 73.69 61 74.28 60.32 74.33 60.23 74.38 59.88 74.38 59.99 75.07 61 75.67 60.1 75.72 60.33 75.77 59.8 75.78 59.99 76.44 61 77.07 60.1 77.12 60.13 77.17 60.2 77.17 60.45 77.82 61 78.46 60.55 78.51 60.28 78.56 59.9 78.56 59.96 79.19 59.61 79.85 60.1 79.9 60.18 79.96 60.18 79.96 59.8 80.57 61 81.24 60.55 81.3 60.49 81.35 60.27 81.35 60.28 81.94 60.3 82.63 60.77 82.69 60.23 82.74 59.99 82.75 59.64 83.32 61 84.02 60.77 84.08 60.49 84.13 60.63 84.14 60.28 84.69 59.61 85.41 60.77 85.48 60.08 85.53 60.09 85.53 59.8 86.06 61 86.81 60.55 86.87 60.64 86.92 60.09 86.93 60.12 87.44 60.3 88.2 60.55 88.26 60.44 88.31 60.18 88.32 60.28 88.81 60.3 89.59 60.55 89.65 60.64 89.71 60.36 89.72 60.04 90.19 61 90.98 60.32 91.05 60.64 91.1 60.36 91.11 60.36 91.56 58.92 92.37 60.32 92.44 60.59 92.49 59.9 92.51 59.72 92.94 61 93.76 59.42 93.83 60.49 93.89 60.72 93.9 60.04 94.31 60.3 95.16 60.1 95.23 60.49 95.28 60.63 95.29 60.44 95.69 61 96.55 60.77 96.62 61 96.67 60.63 96.69 60.2 97.06 60.3 97.94 60.77 98.01 60.64 98.07 60.54 98.08 59.48 98.44 61 99.33 60.32 99.41 60.69 99.46 60.54 99.48 60.2 99.81 61 100.72 60.55 100.8 60.69 100.85 60.63 100.87 60.36 101.19 61 102.11 60.55 102.19 60.54 102.25 59.9 102.27 60.36 102.56 61 103.51 60.55 103.58 60.69 103.64 60.27 103.66 60.04 103.94 61 104.9 60.55 104.98 60.69 105.03 60.72 105.05 60.12");
       }(g.append("g")));
       (function (g) {
         g.attr("stroke", "#00BFFF")
          .attr("class", "geometry color_Fair");
         g.append("svg:path")
-           .attr("d", "M22.55,33.38 L 22.55 38.8 22.56 22.37 22.59 57.14 22.6 16.66 23.96 15.28 23.96 27.76 23.96 47.95 23.98 52.38 24.01 39.47 25.37 43.81 25.37 43.76 25.37 41.49 25.37 49.45 25.41 48.59 26.76 54.42 26.77 53.9 26.78 54.69 26.78 57.35 26.82 58.16 28.15 45.57 28.18 48.83 28.18 44.76 28.19 49.52 28.23 50.65 29.54 46.25 29.59 49.94 29.59 50.03 29.6 55.24 29.64 50.65 30.93 29.25 30.99 48.17 31 51.48 31.01 50.07 31.05 50.11 32.32 48.29 32.4 53.02 32.41 52.49 32.42 54.06 32.45 52.97 33.71 43.53 33.81 54.57 33.82 54.09 33.83 56.26 33.86 53.69 35.1 46.93 35.21 51.04 35.22 54.29 35.24 56.1 35.27 54.76 36.49 51.7 36.62 51.26 36.63 56.2 36.65 55 36.68 54.49 37.88 49.66 38.03 48.83 38.04 57.05 38.05 55 38.09 54.13 39.26 52.38 39.43 47.07 39.45 56.5 39.46 52.89 39.5 52.97 40.65 53.06 40.84 50.82 40.86 56.35 40.87 54.3 40.9 53.15 42.04 53.06 42.25 52.58 42.26 55.55 42.28 53.83 42.31 53.96 43.43 54.42 43.65 56.11 43.67 56.1 43.69 53.28 43.72 55.57 44.82 55.1 45.06 55.89 45.08 57.4 45.1 55.71 45.13 55.74 46.21 56.46 46.47 56.55 46.49 56.85 46.51 55.55 46.54 55.65 47.6 55.78 47.87 56.55 47.9 57.35 47.92 55.47 47.94 56.28 48.99 55.78 49.28 56.55 49.3 57.2 49.33 57.04 49.35 57.89 50.38 57.14 50.69 57.43 50.71 57.95 50.74 56.57 50.76 57.53 51.77 58.5 52.09 57.21 52.12 58.25 52.15 57.9 52.17 57.98 53.16 57.14 53.5 57.21 53.53 58.45 53.56 57.43 53.58 58.34 54.55 57.82 54.91 58.98 54.94 57.85 54.97 57.35 54.99 58.07 55.94 57.14 56.31 58.09 56.34 58.35 56.38 58.21 56.39 58.16 57.33 59.18 57.72 57.65 57.75 58.2 57.79 58.76 57.8 58.43 58.72 59.86 59.13 58.09 59.16 58.6 59.19 57.9 59.21 57.98 60.11 58.5 60.53 58.31 60.57 58.4 60.6 57.04 60.62 58.43 61.5 59.18 61.94 58.76 61.98 58.76 62.01 58.92 62.03 58.16 62.89 59.18 63.35 59.2 63.38 58.4 63.42 58.37 63.43 57.98 64.28 58.5 64.75 58.54 64.79 58.86 64.83 58.76 64.84 57.8 65.67 59.18 66.16 58.31 66.2 58.6 66.24 58.21 66.25 58.34 67.06 59.86 67.57 59.42 67.61 58.86 67.65 57.98 67.66 59.05 68.44 57.82 68.97 58.76 69.02 58.5 69.06 58.37 69.07 58.61 69.83 57.82 70.38 59.2 70.42 58.76 70.47 58.45 70.48 59.14 71.22 57.82 71.79 58.76 71.83 59.21 71.88 58.53 71.88 59.14 72.61 59.18 73.19 59.64 73.24 58.81 73.29 58.21 73.29 58.87 74 59.86 74.6 59.2 74.65 59.11 74.7 58.76 74.7 58.87 75.39 59.86 76.01 58.98 76.06 59.21 76.11 58.68 76.11 58.87 76.78 59.86 77.41 58.98 77.46 59.01 77.52 59.08 77.52 59.32 78.17 59.86 78.82 59.42 78.87 59.16 78.92 58.79 78.93 58.84 79.56 58.5 80.22 58.98 80.28 59.06 80.33 59.05 80.33 58.68 80.95 59.86 81.63 59.42 81.69 59.36 81.74 59.14 81.74 59.15 82.34 59.18 83.04 59.64 83.1 59.11 83.15 58.87 83.15 58.53 83.73 59.86 84.44 59.64 84.5 59.36 84.56 59.5 84.56 59.15 85.12 58.5 85.85 59.64 85.91 58.96 85.97 58.96 85.97 58.68 86.51 59.86 87.26 59.42 87.32 59.51 87.37 58.96 87.38 59 87.9 59.18 88.66 59.42 88.73 59.31 88.78 59.05 88.79 59.15 89.29 59.18 90.07 59.42 90.14 59.51 90.19 59.23 90.2 58.92 90.68 59.86 91.48 59.2 91.54 59.51 91.6 59.23 91.61 59.23 92.07 57.82 92.88 59.2 92.95 59.46 93.01 58.79 93.02 58.61 93.46 59.86 94.29 58.31 94.36 59.36 94.41 59.59 94.43 58.92 94.85 59.18 95.7 58.98 95.77 59.36 95.82 59.5 95.84 59.31 96.23 59.86 97.1 59.64 97.18 59.86 97.23 59.5 97.25 59.08 97.62 59.18 98.51 59.64 98.58 59.51 98.64 59.41 98.66 58.37 99.01 59.86 99.92 59.2 99.99 59.56 100.05 59.41 100.06 59.08 100.4 59.86 101.32 59.42 101.4 59.56 101.46 59.5 101.47 59.23 101.79 59.86 102.73 59.42 102.81 59.41 102.86 58.79 102.88 59.23 103.18 59.86 104.14 59.42 104.22 59.56 104.27 59.14 104.29 58.92 104.57 59.86 105.54 59.42 105.63 59.56 105.68 59.59 105.7 59");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("stroke", "#D4CA3A")
-         .attr("class", "geometry color_Good");
-        g.append("svg:path")
-           .attr("d", "M22.83,24.4 L 22.83 28.31 22.84 24.13 22.87 48.29 22.88 22.11 24.24 23.3 24.24 47.51 24.24 35.82 24.26 53.74 24.29 43.13 25.65 48.29 25.65 44.31 25.65 45.52 25.65 48.51 25.7 49.57 27.04 59.18 27.06 58.31 27.06 57.75 27.06 57.98 27.1 55.65 28.43 45.57 28.46 49.71 28.47 43.66 28.47 47.96 28.51 51.18 29.82 41.49 29.87 49.94 29.87 52.54 29.88 55.4 29.92 51.54 31.21 53.06 31.28 50.16 31.28 53.19 31.29 54.38 31.33 50.83 32.6 48.29 32.68 53.9 32.69 54.14 32.7 52.73 32.74 52.79 33.98 51.02 34.09 54.35 34.1 55.19 34.11 56.02 34.14 53.06 35.37 52.38 35.5 52.58 35.51 55.24 35.52 54.3 35.55 54.49 36.76 50.34 36.9 52.14 36.91 55.95 36.93 54.06 36.96 53.96 38.15 51.02 38.31 50.6 38.32 56.75 38.34 54.61 38.37 53.51 39.54 48.29 39.72 50.82 39.73 56.25 39.75 52.11 39.78 50.83 40.93 52.38 41.12 50.16 41.14 55.9 41.16 53.75 41.19 53.15 42.32 49.66 42.53 54.13 42.55 56.4 42.56 54.69 42.59 54.76 43.71 54.42 43.94 54.35 43.95 56 43.97 54.22 44 53.78 45.1 53.06 45.34 55.45 45.36 56.3 45.38 55 45.41 55.21 46.49 56.46 46.75 55.67 46.77 57.3 46.79 56.02 46.82 57.09 47.88 56.46 48.15 56.99 48.18 57.9 48.2 54.93 48.23 56.19 49.27 54.42 49.56 56.55 49.59 57.2 49.61 56.57 49.63 57.26 50.66 59.18 50.97 57.21 50.99 57.55 51.02 56.88 51.04 56.1 52.05 58.5 52.37 57.43 52.4 57.35 52.43 57.12 52.45 57.8 53.44 56.46 53.78 57.65 53.81 58.2 53.84 57.27 53.86 57.26 54.83 59.86 55.19 58.09 55.22 58.5 55.25 57.67 55.27 57.35 56.22 57.14 56.59 58.31 56.63 58.05 56.66 57.67 56.68 58.52 57.61 58.5 58 58.54 58.03 58.25 58.07 58.14 58.08 58.79 59 59.18 59.41 59.42 59.44 58.05 59.48 57.51 59.49 58.07 60.39 56.46 60.81 58.09 60.85 58.55 60.89 58.29 60.9 57.8 61.77 58.5 62.22 59.2 62.26 58.15 62.3 57.98 62.31 58.7 63.16 59.18 63.63 58.98 63.67 58.25 63.7 58.06 63.72 58.61 64.55 59.18 65.03 59.2 65.07 58.71 65.11 58.45 65.12 58.96 65.94 59.18 66.44 59.2 66.48 59.01 66.52 58.84 66.53 58.7 67.33 59.18 67.85 58.98 67.89 58.91 67.93 58.45 67.94 58.07 68.72 57.82 69.25 59.2 69.3 58.66 69.34 58.84 69.35 58.87 70.11 59.18 70.66 58.98 70.71 58.86 70.75 57.9 70.76 58.87 71.5 59.18 72.07 58.98 72.11 59.01 72.16 58.61 72.17 58.87 72.89 59.86 73.47 59.42 73.52 59.31 73.57 59.15 73.57 58.87 74.28 59.86 74.88 59.64 74.93 59.16 74.98 59.39 74.98 58.87 75.67 59.86 76.29 58.98 76.34 59.31 76.39 58.06 76.39 58.79 77.06 58.5 77.69 59.42 77.75 58.86 77.8 59.08 77.8 58.34 78.45 57.82 79.1 59.2 79.15 59.21 79.21 59.32 79.21 59.23 79.84 59.86 80.51 59.2 80.56 59.21 80.61 59.32 80.62 58.76 81.23 57.82 81.91 58.54 81.97 59.41 82.02 59.14 82.03 58.84 82.62 59.18 83.32 58.98 83.38 59.31 83.43 59.5 83.43 59 84.01 59.86 84.73 59.42 84.79 59.46 84.84 59.14 84.84 58.84 85.4 59.86 86.13 58.76 86.19 59.41 86.25 59.41 86.25 58.53 86.79 59.86 87.54 59.2 87.6 59.36 87.66 58.96 87.66 59.39 88.18 59.86 88.95 58.54 89.01 59.51 89.06 59.05 89.07 58.92 89.57 59.86 90.35 58.98 90.42 59.46 90.47 59.59 90.48 58.68 90.95 59.86 91.76 59.64 91.83 59.36 91.88 59.41 91.89 59.47 92.34 58.5 93.17 58.98 93.23 59.46 93.29 59.5 93.3 59.15 93.73 59.18 94.57 58.98 94.64 59.11 94.7 59.41 94.71 59.31 95.12 59.18 95.98 59.2 96.05 59.31 96.1 59.23 96.12 59.08 96.51 59.86 97.39 59.86 97.46 59.31 97.51 59.41 97.53 58.84 97.9 59.18 98.79 59.86 98.87 59.11 98.92 59.32 98.94 58.92 99.29 59.18 100.2 59.2 100.27 59.41 100.33 59.41 100.35 59.39 100.68 59.86 101.6 59.64 101.68 59.46 101.74 59.23 101.76 59.23 102.07 59.18 103.01 59.86 103.09 59.26 103.15 59.5 103.17 59.23 103.46 58.5 104.42 59.2 104.5 59.41 104.55 59.14 104.57 59.47 104.85 57.14 105.82 59.64 105.91 59.36 105.96 59.41 105.98 59.31");
+           .attr("d", "M23.07,24.81 L 23.07 28.79 23.07 24.53 23.11 49.19 23.12 22.47 24.46 23.68 24.47 48.39 24.47 36.46 24.48 54.75 24.51 43.93 25.85 49.19 25.86 45.13 25.86 46.37 25.86 49.41 25.9 50.5 27.23 60.3 27.25 59.42 27.25 58.85 27.25 59.08 27.29 56.71 28.6 46.42 28.64 50.64 28.64 44.46 28.65 48.85 28.69 52.14 29.98 42.25 30.03 50.87 30.04 53.52 30.04 56.44 30.08 52.51 31.35 54.05 31.42 51.09 31.43 54.19 31.44 55.4 31.47 51.78 32.73 49.19 32.81 54.92 32.82 55.16 32.83 53.73 32.87 53.79 34.1 51.97 34.21 55.37 34.21 56.24 34.23 57.08 34.26 54.06 35.48 53.36 35.6 53.57 35.61 56.29 35.62 55.32 35.65 55.52 36.85 51.28 36.99 53.12 37 57.01 37.01 55.08 37.05 54.97 38.23 51.97 38.38 51.54 38.39 57.82 38.41 55.64 38.44 54.52 39.6 49.19 39.77 51.77 39.79 57.31 39.8 53.09 39.83 51.78 40.98 53.36 41.16 51.09 41.18 56.95 41.2 54.76 41.23 54.15 42.35 50.58 42.56 55.15 42.57 57.47 42.59 55.72 42.62 55.79 43.73 55.44 43.95 55.37 43.96 57.06 43.99 55.24 44.01 54.79 45.1 54.05 45.34 56.5 45.36 57.36 45.38 56.04 45.41 56.25 46.47 57.53 46.73 56.72 46.75 58.39 46.77 57.08 46.8 58.17 47.85 57.53 48.12 58.07 48.14 59 48.17 55.96 48.19 57.26 49.22 55.44 49.51 57.62 49.54 58.29 49.56 57.64 49.59 58.35 50.6 60.3 50.9 58.3 50.93 58.64 50.96 57.96 50.98 57.16 51.97 59.61 52.3 58.52 52.32 58.44 52.35 58.2 52.37 58.9 53.35 57.53 53.69 58.75 53.72 59.31 53.74 58.36 53.76 58.35 54.72 61 55.08 59.2 55.11 59.62 55.14 58.76 55.16 58.44 56.1 58.22 56.47 59.42 56.5 59.16 56.53 58.76 56.55 59.63 57.47 59.61 57.86 59.65 57.89 59.36 57.93 59.24 57.94 59.9 58.85 60.3 59.25 60.55 59.29 59.16 59.32 58.6 59.34 59.17 60.22 57.53 60.65 59.2 60.68 59.67 60.72 59.4 60.73 58.9 61.6 59.61 62.04 60.32 62.07 59.26 62.11 59.08 62.12 59.81 62.97 60.3 63.43 60.1 63.47 59.36 63.5 59.16 63.52 59.72 64.35 60.3 64.82 60.32 64.86 59.82 64.9 59.56 64.91 60.09 65.72 60.3 66.21 60.32 66.25 60.13 66.29 59.96 66.3 59.81 67.09 60.3 67.6 60.1 67.65 60.03 67.69 59.56 67.7 59.17 68.47 58.92 68.99 60.32 69.04 59.77 69.08 59.96 69.09 59.99 69.84 60.3 70.39 60.1 70.43 59.97 70.48 59 70.48 59.99 71.22 60.3 71.78 60.1 71.82 60.13 71.87 59.72 71.88 59.99 72.59 61 73.17 60.55 73.22 60.44 73.26 60.28 73.27 59.99 73.97 61 74.56 60.77 74.61 60.28 74.66 60.52 74.66 59.99 75.34 61 75.95 60.1 76 60.44 76.05 59.16 76.05 59.9 76.72 59.61 77.34 60.55 77.4 59.97 77.45 60.2 77.45 59.45 78.09 58.92 78.74 60.32 78.79 60.33 78.84 60.45 78.84 60.36 79.47 61 80.13 60.32 80.18 60.33 80.23 60.45 80.24 59.88 80.84 58.92 81.52 59.65 81.58 60.54 81.63 60.27 81.63 59.96 82.22 60.3 82.91 60.1 82.97 60.44 83.02 60.63 83.02 60.12 83.59 61 84.3 60.55 84.36 60.59 84.41 60.27 84.42 59.96 84.97 61 85.69 59.87 85.75 60.54 85.81 60.54 85.81 59.64 86.34 61 87.08 60.32 87.15 60.49 87.2 60.09 87.21 60.52 87.71 61 88.48 59.65 88.54 60.64 88.59 60.18 88.6 60.04 89.09 61 89.87 60.1 89.93 60.59 89.99 60.72 90 59.8 90.46 61 91.26 60.77 91.33 60.49 91.38 60.54 91.39 60.6 91.84 59.61 92.65 60.1 92.72 60.59 92.77 60.63 92.78 60.28 93.21 60.3 94.04 60.1 94.11 60.23 94.17 60.54 94.18 60.44 94.59 60.3 95.43 60.32 95.51 60.44 95.56 60.36 95.57 60.2 95.96 61 96.83 61 96.9 60.44 96.95 60.54 96.97 59.96 97.34 60.3 98.22 61 98.29 60.23 98.34 60.45 98.36 60.04 98.71 60.3 99.61 60.32 99.68 60.54 99.74 60.54 99.76 60.52 100.09 61 101 60.77 101.08 60.59 101.13 60.36 101.15 60.36 101.46 60.3 102.39 61 102.47 60.38 102.52 60.63 102.54 60.36 102.84 59.61 103.78 60.32 103.86 60.54 103.92 60.27 103.94 60.6 104.21 58.22 105.17 60.77 105.26 60.49 105.31 60.54 105.33 60.44");
       }(g.append("g")));
     }(g.append("g")));
   }(g.append("g")));
@@ -1505,7 +1505,7 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath4")
     .append("svg:path")
-      .attr("d", " M17.47,5 L 114.39 5 114.39 61.46 17.47 61.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+      .attr("d", " M17.77,5 L 113.65 5 113.65 62.63 17.77 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
   }(g.append("g")));
 }(g.append("g")));
 }
@@ -1517,7 +1517,7 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-KrDmFHFv4FMHvhxWU5sl");
+draw("#gadflyplot-a9oHX1htmL5guf4103WK");
 </script>
 
         <hr>
@@ -1527,15 +1527,21 @@ draw("#gadflyplot-KrDmFHFv4FMHvhxWU5sl");
         <div id="table-of-contents">
           <div id="table-of-contents-content">
             <ul>
-            <li><a href="index.html">Introduction</a></li><li><a href="geom_point.html">Geom.point</a></li><li><a href="geom_line.html">Geom.line</a></li><li><a href="geom_boxplot.html">Geom.boxplot</a></li><li><a href="geom_histogram.html">Geom.histogram</a></li><li><div class="toc-current-doc">
-                 <a href="#topbar">Geom.density</a>
+            <li><a href="index.html">Introduction</a></li><li><a href="themes.html">Themes</a></li></ul>
+            <hr><div class="toc-part">Geometry</div>
+            <ul>
+            <li><a href="geom_boxplot.html">boxplot</a></li><li><div class="toc-current-doc">
+                 <a href="#topbar">density</a>
                </div>
             
             <ul>
             <li><a href="#aesthetics">Aesthetics</a/></li>
             <li><a href="#examples">Examples</a/></li>
             </ul>
-            </li><li><a href="geom_histogram2d.html">Geom.histogram2d</a></li><li><a href="geom_label.html">Geom.label</a></li><li><a href="geom_rectbin.html">Geom.rectbin</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li><li><a href="geom_hline.html">Geom.hline</a></li><li><a href="geom_vline.html">Geom.vline</a></li></ul>
+            </li><li><a href="geom_errorbar.html">errorbar</a></li><li><a href="geom_bar.html">bar</a></li><li><a href="geom_histogram.html">histogram</a></li><li><a href="geom_histogram2d.html">histogram2d</a></li><li><a href="geom_hline.html">hline</a></li><li><a href="geom_label.html">label</a></li><li><a href="geom_line.html">line</a></li><li><a href="geom_point.html">point</a></li><li><a href="geom_rectbin.html">rectbin</a></li><li><a href="geom_smooth.html">smooth</a></li><li><a href="geom_subplot_grid.html">subplot_grid</a></li><li><a href="geom_vline.html">vline</a></li></ul>
+            <hr><div class="toc-part">Scale</div>
+            <ul>
+            <li><a href="scale_x_continuous.html">x_continuous</a></li><li><a href="scale_y_continuous.html">y_continuous</a></li><li><a href="scale_x_discrete.html">x_discrete</a></li><li><a href="scale_y_discrete.html">y_discrete</a></li></ul>
           </div>
         </div>
       </div>

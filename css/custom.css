@@ -16,7 +16,7 @@
 
 #topbar ul {
     padding: 0;
-    margin: 0;
+    margin: 8px;
 }
 
 #topbar li {
@@ -100,6 +100,7 @@ h1 a, h2 a, h3 a, h4 a, h5 a {
 body {
     font-family: "Source Sans Pro", "sans-serif";
     font-size: 10.5pt;
+    background-color: #fff;
 }
 
 a:hover {
@@ -116,19 +117,25 @@ a {
     font-size: 9pt;
 }
 
+#body-content {
+    background-color: #fff;
+}
+
 #table-of-contents {
     position: fixed;
-    width: 300px;
+    background-color: #f6f6f8;
+    width: 100%;
     height: 100%;
     top: 0;
-    background-color: #fff;
-    border-left: 1px solid #f3f3f3;
+    border-left: 1px solid #f0f0f0;
     overflow-y: scroll;
     overflow-x: hidden;
     z-index: 2;
 }
 
 #table-of-contents-content {
+    width: 300px;
+    height: 100%;
     position: fixed;
     padding-left: 35px;
     padding-right: 35px;
@@ -160,7 +167,7 @@ a {
 #table-of-contents li > a {
     font-weight: normal;
     display: block;
-    color: #333;
+    color: #435C71;
 }
 
 #table-of-contents li a:hover,
@@ -169,10 +176,15 @@ a {
   background-color: #eeeeee;
 }
 
+.toc-part {
+    font-size: 14pt;
+    color: #4F7C9C;
+}
+
 .toc-current-doc a {
     font-weight: bolder;
     display: block;
-    color: #333;
+    color: #435C71;
 }
 
 #pkgname {

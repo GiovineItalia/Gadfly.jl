@@ -3,7 +3,7 @@
 <head>
   <meta name="author" content="Daniel Jones">
   <meta charset="utf-8">
-  <title>Geom.histogram2d</title>
+  <title>histogram2d</title>
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|PT+Sans:700|Source+Code+Pro'
         rel='stylesheet' type='text/css'>
   <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all">
@@ -17,7 +17,7 @@
     <div class="container">
       <div class="row">
         <ul>
-          <li><div id="pkgname">Gadfly 0.1.12+</div></li>
+          <li><div id="pkgname">Gadfly 0.1.22</div></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl">Code</a></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl/issues">Issues</a></li>
         </ul>
@@ -29,15 +29,24 @@
     <div class="row">
       <div class="col-sm-7">
       <div id="title-block">
-        <h1>Geom.histogram2d</h1>
-      </div>
+        <h1>histogram2d</h1>
+      </div id="body-content">
 
 <p>Bin data in rectangles and indicate density with color. As in heatmaps, etc.</p>
 <p>An alias for <code>Geom.rectbin</code> with <code>Stat.histogram2d</code>.</p>
 <h1 id="aesthetics"><a href="#TOC">Aesthetics</a></h1>
 <ul>
-<li>x</li>
-<li>y</li>
+<li><code>x</code>: Observations to be binned and plotted on the x coordinate.</li>
+<li><code>y</code>: Observations to binned and plotted on the y coordinate.</li>
+</ul>
+<h1 id="arguments"><a href="#TOC">Arguments</a></h1>
+<ul>
+<li><code>xbincount</code>: Fix the number of bins in the x coordinate.</li>
+<li><code>xminbincount</code>: Set the minimum x coordinate bincount when automatically determining the number of bins.</li>
+<li><code>xmaxbincount</code>: Set the maximum x coordinate bincount when automatically determining the number of bins.</li>
+<li><code>ybincount</code>: Fix the number of bins in the y coordinate.</li>
+<li><code>yminbincount</code>: Set the minimum y coordinate bincount when automatically determining the number of bins.</li>
+<li><code>ymaxbincount</code>: Set the maximum y coordinate bincount when automatically determining the number of bin.</li>
 </ul>
 <h1 id="examples"><a href="#TOC">Examples</a></h1>
 <script charset="utf-8">d3=function(){function n(n){return null!=n&&!isNaN(n)}function t(n){return n.length}function e(n){for(var t=1;n*t%1;)t*=10;return t}function r(n,t){try{for(var e in t)Object.defineProperty(n.prototype,e,{value:t[e],enumerable:!1})}catch(r){n.prototype=t}}function u(){}function i(){}function a(n,t,e){return function(){var r=e.apply(t,arguments);return r===t?n:r}}function o(){}function c(n){function t(){for(var t,r=e,u=-1,i=r.length;++u<i;)(t=r[u].on)&&t.apply(this,arguments);return n}var e=[],r=new u;return t.on=function(t,u){var i,a=r.get(t);return arguments.length<2?a&&a.on:(a&&(a.on=null,e=e.slice(0,i=e.indexOf(a)).concat(e.slice(i+1)),r.remove(t)),u&&e.push(r.set(t,{on:u})),n)},t}function l(){oa.event.stopPropagation(),oa.event.preventDefault()}function f(){for(var n,t=oa.event;n=t.sourceEvent;)t=n;return t}function s(n){for(var t=new o,e=0,r=arguments.length;++e<r;)t[arguments[e]]=c(t);return t.of=function(e,r){return function(u){try{var i=u.sourceEvent=oa.event;u.target=n,oa.event=u,t[u.type].apply(e,r)}finally{oa.event=i}}},t}function h(n,t){var e=n.ownerSVGElement||n;if(e.createSVGPoint){var r=e.createSVGPoint();if(0>ma&&(la.scrollX||la.scrollY)){e=oa.select(ca.body).append("svg").style("position","absolute").style("top",0).style("left",0);var u=e[0][0].getScreenCTM();ma=!(u.f||u.e),e.remove()}return ma?(r.x=t.pageX,r.y=t.pageY):(r.x=t.clientX,r.y=t.clientY),r=r.matrixTransform(n.getScreenCTM().inverse()),[r.x,r.y]}var i=n.getBoundingClientRect();return[t.clientX-i.left-n.clientLeft,t.clientY-i.top-n.clientTop]}function g(n){for(var t=-1,e=n.length,r=[];++t<e;)r.push(n[t]);return r}function p(n){return Array.prototype.slice.call(n)}function d(n){return Ma(n,Ea),n}function m(n){return function(){return xa(n,this)}}function v(n){return function(){return ba(n,this)}}function y(n,t){function e(){this.removeAttribute(n)}function r(){this.removeAttributeNS(n.space,n.local)}function u(){this.setAttribute(n,t)}function i(){this.setAttributeNS(n.space,n.local,t)}function a(){var e=t.apply(this,arguments);null==e?this.removeAttribute(n):this.setAttribute(n,e)}function o(){var e=t.apply(this,arguments);null==e?this.removeAttributeNS(n.space,n.local):this.setAttributeNS(n.space,n.local,e)}return n=oa.ns.qualify(n),null==t?n.local?r:e:"function"==typeof t?n.local?o:a:n.local?i:u}function M(n){return n.trim().replace(/\s+/g," ")}function x(n){return RegExp("(?:^|\\s+)"+oa.requote(n)+"(?:\\s+|$)","g")}function _(n,t){function e(){for(var e=-1;++e<u;)n[e](this,t)}function r(){for(var e=-1,r=t.apply(this,arguments);++e<u;)n[e](this,r)}n=n.trim().split(/\s+/).map(w);var u=n.length;return"function"==typeof t?r:e}function w(n){var t=x(n);return function(e,r){if(u=e.classList)return r?u.add(n):u.remove(n);var u=e.getAttribute("class")||"";r?(t.lastIndex=0,t.test(u)||e.setAttribute("class",M(u+" "+n))):e.setAttribute("class",M(u.replace(t," ")))}}function S(n,t,e){function r(){this.style.removeProperty(n)}function u(){this.style.setProperty(n,t,e)}function i(){var r=t.apply(this,arguments);null==r?this.style.removeProperty(n):this.style.setProperty(n,r,e)}return null==t?r:"function"==typeof t?i:u}function E(n,t){function e(){delete this[n]}function r(){this[n]=t}function u(){var e=t.apply(this,arguments);null==e?delete this[n]:this[n]=e}return null==t?e:"function"==typeof t?u:r}function k(n){return{__data__:n}}function A(n){return function(){return Sa(this,n)}}function q(n){return arguments.length||(n=oa.ascending),function(t,e){return!t-!e||n(t.__data__,e.__data__)}}function N(){}function T(n,t,e){function r(){var t=this[a];t&&(this.removeEventListener(n,t,t.$),delete this[a])}function u(){var u=c(t,va(arguments));r.call(this),this.addEventListener(n,this[a]=u,u.$=e),u._=t}function i(){var t,e=RegExp("^__on([^.]+)"+oa.requote(n)+"$");for(var r in this)if(t=r.match(e)){var u=this[r];this.removeEventListener(t[1],u,u.$),delete this[r]}}var a="__on"+n,o=n.indexOf("."),c=C;o>0&&(n=n.substring(0,o));var l=qa.get(n);return l&&(n=l,c=z),o?t?u:r:t?N:i}function C(n,t){return function(e){var r=oa.event;oa.event=e,t[0]=this.__data__;try{n.apply(this,t)}finally{oa.event=r}}}function z(n,t){var e=C(n,t);return function(n){var t=this,r=n.relatedTarget;r&&(r===t||r.compareDocumentPosition(t)&8)||e.call(t,n)}}function D(n,t){for(var e=0,r=n.length;r>e;e++)for(var u,i=n[e],a=0,o=i.length;o>a;a++)(u=i[a])&&t(u,a,e);return n}function j(n){return Ma(n,Na),n}function L(){}function F(n,t,e){return new H(n,t,e)}function H(n,t,e){this.h=n,this.s=t,this.l=e}function P(n,t,e){function r(n){return n>360?n-=360:0>n&&(n+=360),60>n?i+(a-i)*n/60:180>n?a:240>n?i+(a-i)*(240-n)/60:i}function u(n){return Math.round(r(n)*255)}var i,a;return n%=360,0>n&&(n+=360),t=0>t?0:t>1?1:t,e=0>e?0:e>1?1:e,a=.5>=e?e*(1+t):e+t-e*t,i=2*e-a,tt(u(n+120),u(n),u(n-120))}function R(n){return n>0?1:0>n?-1:0}function O(n){return Math.acos(Math.max(-1,Math.min(1,n)))}function Y(n){return n>1?La/2:-1>n?-La/2:Math.asin(n)}function U(n){return(Math.exp(n)-Math.exp(-n))/2}function I(n){return(Math.exp(n)+Math.exp(-n))/2}function V(n){return(n=Math.sin(n/2))*n}function X(n,t,e){return new Z(n,t,e)}function Z(n,t,e){this.h=n,this.c=t,this.l=e}function B(n,t,e){return $(e,Math.cos(n*=Ha)*t,Math.sin(n)*t)}function $(n,t,e){return new J(n,t,e)}function J(n,t,e){this.l=n,this.a=t,this.b=e}function G(n,t,e){var r=(n+16)/116,u=r+t/500,i=r-e/200;return u=W(u)*Ya,r=W(r)*Ua,i=W(i)*Ia,tt(nt(3.2404542*u-1.5371385*r-.4985314*i),nt(-.969266*u+1.8760108*r+.041556*i),nt(.0556434*u-.2040259*r+1.0572252*i))}function K(n,t,e){return X(Math.atan2(e,t)*Pa,Math.sqrt(t*t+e*e),n)}function W(n){return n>.206893034?n*n*n:(n-4/29)/7.787037}function Q(n){return n>.008856?Math.pow(n,1/3):7.787037*n+4/29}function nt(n){return Math.round(255*(.00304>=n?12.92*n:1.055*Math.pow(n,1/2.4)-.055))}function tt(n,t,e){return new et(n,t,e)}function et(n,t,e){this.r=n,this.g=t,this.b=e}function rt(n){return 16>n?"0"+Math.max(0,n).toString(16):Math.min(255,n).toString(16)}function ut(n,t,e){var r,u,i,a=0,o=0,c=0;if(r=/([a-z]+)\((.*)\)/i.exec(n))switch(u=r[2].split(","),r[1]){case"hsl":return e(parseFloat(u[0]),parseFloat(u[1])/100,parseFloat(u[2])/100);case"rgb":return t(ct(u[0]),ct(u[1]),ct(u[2]))}return(i=Za.get(n))?t(i.r,i.g,i.b):(null!=n&&n.charAt(0)==="#"&&(n.length===4?(a=n.charAt(1),a+=a,o=n.charAt(2),o+=o,c=n.charAt(3),c+=c):n.length===7&&(a=n.substring(1,3),o=n.substring(3,5),c=n.substring(5,7)),a=parseInt(a,16),o=parseInt(o,16),c=parseInt(c,16)),t(a,o,c))}function it(n,t,e){var r,u,i=Math.min(n/=255,t/=255,e/=255),a=Math.max(n,t,e),o=a-i,c=(a+i)/2;return o?(u=.5>c?o/(a+i):o/(2-a-i),r=n==a?(t-e)/o+(e>t?6:0):t==a?(e-n)/o+2:(n-t)/o+4,r*=60):u=r=0,F(r,u,c)}function at(n,t,e){n=ot(n),t=ot(t),e=ot(e);var r=Q((.4124564*n+.3575761*t+.1804375*e)/Ya),u=Q((.2126729*n+.7151522*t+.072175*e)/Ua),i=Q((.0193339*n+.119192*t+.9503041*e)/Ia);return $(116*u-16,500*(r-u),200*(u-i))}function ot(n){return(n/=255)<=.04045?n/12.92:Math.pow((n+.055)/1.055,2.4)}function ct(n){var t=parseFloat(n);return n.charAt(n.length-1)==="%"?Math.round(2.55*t):t}function lt(n){return"function"==typeof n?n:function(){return n}}function ft(n){return n}function st(n){return n.length===1?function(t,e){n(null==t?e:null)}:n}function ht(n,t){function e(n,e,i){arguments.length<3&&(i=e,e=null);var a=oa.xhr(n,t,i);return a.row=function(n){return arguments.length?a.response((e=n)==null?r:u(n)):e},a.row(e)}function r(n){return e.parse(n.responseText)}function u(n){return function(t){return e.parse(t.responseText,n)}}function a(t){return t.map(o).join(n)}function o(n){return c.test(n)?'"'+n.replace(/\"/g,'""')+'"':n}var c=RegExp('["'+n+"\n]"),l=n.charCodeAt(0);return e.parse=function(n,t){var r;return e.parseRows(n,function(n,e){if(r)return r(n,e-1);var u=Function("d","return {"+n.map(function(n,t){return JSON.stringify(n)+": d["+t+"]"}).join(",")+"}");r=t?function(n,e){return t(u(n),e)}:u})},e.parseRows=function(n,t){function e(){if(f>=c)return a;if(u)return u=!1,i;var t=f;if(n.charCodeAt(t)===34){for(var e=t;e++<c;)if(n.charCodeAt(e)===34){if(n.charCodeAt(e+1)!==34)break;++e}f=e+2;var r=n.charCodeAt(e+1);return 13===r?(u=!0,n.charCodeAt(e+2)===10&&++f):10===r&&(u=!0),n.substring(t+1,e).replace(/""/g,'"')}for(;c>f;){var r=n.charCodeAt(f++),o=1;if(10===r)u=!0;else if(13===r)u=!0,n.charCodeAt(f)===10&&(++f,++o);else if(r!==l)continue;return n.substring(t,f-o)}return n.substring(t)}for(var r,u,i={},a={},o=[],c=n.length,f=0,s=0;(r=e())!==a;){for(var h=[];r!==i&&r!==a;)h.push(r),r=e();(!t||(h=t(h,s++)))&&o.push(h)}return o},e.format=function(t){if(Array.isArray(t[0]))return e.formatRows(t);var r=new i,u=[];return t.forEach(function(n){for(var t in n)r.has(t)||u.push(r.add(t))}),[u.map(o).join(n)].concat(t.map(function(t){return u.map(function(n){return o(t[n])}).join(n)})).join("\n")},e.formatRows=function(n){return n.map(a).join("\n")},e}function gt(){for(var n,t=Date.now(),e=Ka;e;)n=t-e.then,n>=e.delay&&(e.flush=e.callback(n)),e=e.next;var r=pt()-t;r>24?(isFinite(r)&&(clearTimeout($a),$a=setTimeout(gt,r)),Ba=0):(Ba=1,Wa(gt))}function pt(){for(var n=null,t=Ka,e=1/0;t;)t.flush?(delete Ga[t.callback.id],t=n?n.next=t.next:Ka=t.next):(e=Math.min(e,t.then+t.delay),t=(n=t).next);return e}function dt(n,t){var e=Math.pow(10,Math.abs(8-t)*3);return{scale:t>8?function(n){return n/e}:function(n){return n*e},symbol:n}}function mt(n,t){return t-(n?Math.ceil(Math.log(n)/Math.LN10):1)}function vt(n){return n+""}function yt(n,t){co.hasOwnProperty(n.type)&&co[n.type](n,t)}function Mt(n,t,e){var r,u=-1,i=n.length-e;for(t.lineStart();++u<i;)r=n[u],t.point(r[0],r[1]);t.lineEnd()}function xt(n,t){var e=-1,r=n.length;for(t.polygonStart();++e<r;)Mt(n[e],t,1);t.polygonEnd()}function bt(){function n(n,t){n*=Ha,t=t*Ha/2+La/4;var e=n-r,a=Math.cos(t),o=Math.sin(t),c=i*o,l=fo,f=so,s=u*a+c*Math.cos(e),h=c*Math.sin(e);fo=l*s-f*h,so=f*s+l*h,r=n,u=a,i=o}var t,e,r,u,i;ho.point=function(a,o){ho.point=n,r=(t=a)*Ha,u=Math.cos(o=(e=o)*Ha/2+La/4),i=Math.sin(o)},ho.lineEnd=function(){n(t,e)}}function _t(n){function t(n,t){r>n&&(r=n),n>i&&(i=n),u>t&&(u=t),t>a&&(a=t)}function e(){o.point=o.lineEnd=N}var r,u,i,a,o={point:t,lineStart:N,lineEnd:N,polygonStart:function(){o.lineEnd=e},polygonEnd:function(){o.point=t}};return function(t){return a=i=-(r=u=1/0),oa.geo.stream(t,n(o)),[[r,u],[i,a]]}}function wt(n,t){if(!go){++po,n*=Ha;var e=Math.cos(t*=Ha);mo+=(e*Math.cos(n)-mo)/po,vo+=(e*Math.sin(n)-vo)/po,yo+=(Math.sin(t)-yo)/po}}function St(){var n,t;go=1,Et(),go=2;var e=Mo.point;Mo.point=function(r,u){e(n=r,t=u)},Mo.lineEnd=function(){Mo.point(n,t),kt(),Mo.lineEnd=kt}}function Et(){function n(n,u){n*=Ha;var i=Math.cos(u*=Ha),a=i*Math.cos(n),o=i*Math.sin(n),c=Math.sin(u),l=Math.atan2(Math.sqrt((l=e*c-r*o)*l+(l=r*a-t*c)*l+(l=t*o-e*a)*l),t*a+e*o+r*c);po+=l,mo+=l*(t+(t=a)),vo+=l*(e+(e=o)),yo+=l*(r+(r=c))}var t,e,r;go>1||(1>go&&(go=1,po=mo=vo=yo=0),Mo.point=function(u,i){u*=Ha;var a=Math.cos(i*=Ha);t=a*Math.cos(u),e=a*Math.sin(u),r=Math.sin(i),Mo.point=n})}function kt(){Mo.point=wt}function At(n){var t=n[0],e=n[1],r=Math.cos(e);return[r*Math.cos(t),r*Math.sin(t),Math.sin(e)]}function qt(n,t){return n[0]*t[0]+n[1]*t[1]+n[2]*t[2]}function Nt(n,t){return[n[1]*t[2]-n[2]*t[1],n[2]*t[0]-n[0]*t[2],n[0]*t[1]-n[1]*t[0]]}function Tt(n,t){n[0]+=t[0],n[1]+=t[1],n[2]+=t[2]}function Ct(n,t){return[n[0]*t,n[1]*t,n[2]*t]}function zt(n){var t=Math.sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2]);n[0]/=t,n[1]/=t,n[2]/=t}function Dt(){return!0}function jt(n){return[Math.atan2(n[1],n[0]),Math.asin(Math.max(-1,Math.min(1,n[2])))]}function Lt(n,t){return Math.abs(n[0]-t[0])<Fa&&Math.abs(n[1]-t[1])<Fa}function Ft(n,t,e,r,u){var i=[],a=[];if(n.forEach(function(n){if(!((t=n.length)<=1)){var t,e=n[0],r=n[t-1];if(Lt(e,r)){u.lineStart();for(var o=0;t>o;++o)u.point((e=n[o])[0],e[1]);return u.lineEnd(),void 0}var c={point:e,points:n,other:null,visited:!1,entry:!0,subject:!0},l={point:e,points:[e],other:c,visited:!1,entry:!1,subject:!1};c.other=l,i.push(c),a.push(l),c={point:r,points:[r],other:null,visited:!1,entry:!1,subject:!0},l={point:r,points:[r],other:c,visited:!1,entry:!0,subject:!1},c.other=l,i.push(c),a.push(l)}}),a.sort(t),Ht(i),Ht(a),i.length){if(e)for(var o=1,c=!e(a[0].point),l=a.length;l>o;++o)a[o].entry=c=!c;for(var f,s,h,g=i[0];;){for(f=g;f.visited;)if((f=f.next)===g)return;s=f.points,u.lineStart();do{if(f.visited=f.other.visited=!0,f.entry){if(f.subject)for(var o=0;o<s.length;o++)u.point((h=s[o])[0],h[1]);else r(f.point,f.next.point,1,u);f=f.next}else{if(f.subject){s=f.prev.points;for(var o=s.length;--o>=0;)u.point((h=s[o])[0],h[1])}else r(f.point,f.prev.point,-1,u);f=f.prev}f=f.other,s=f.points}while(!f.visited);u.lineEnd()}}}function Ht(n){if(t=n.length){for(var t,e,r=0,u=n[0];++r<t;)u.next=e=n[r],e.prev=u,u=e;u.next=e=n[0],e.prev=u}}function Pt(n,t,e){return function(r){function u(t,e){n(t,e)&&r.point(t,e)}function i(n,t){m.point(n,t)}function a(){v.point=i,m.lineStart()}function o(){v.point=u,m.lineEnd()}function c(n,t){M.point(n,t),d.push([n,t])}function l(){M.lineStart(),d=[]}function f(){c(d[0][0],d[0][1]),M.lineEnd();var n,t=M.clean(),e=y.buffer(),u=e.length;if(!u)return p=!0,g+=Yt(d,-1),d=null,void 0;if(d=null,1&t){n=e[0],h+=Yt(n,1);var i,u=n.length-1,a=-1;for(r.lineStart();++a<u;)r.point((i=n[a])[0],i[1]);return r.lineEnd(),void 0}u>1&&2&t&&e.push(e.pop().concat(e.shift())),s.push(e.filter(Rt))}var s,h,g,p,d,m=t(r),v={point:u,lineStart:a,lineEnd:o,polygonStart:function(){v.point=c,v.lineStart=l,v.lineEnd=f,p=!1,g=h=0,s=[],r.polygonStart()},polygonEnd:function(){v.point=u,v.lineStart=a,v.lineEnd=o,s=oa.merge(s),s.length?Ft(s,Ut,null,e,r):(-Fa>h||p&&-Fa>g)&&(r.lineStart(),e(null,null,1,r),r.lineEnd()),r.polygonEnd(),s=null},sphere:function(){r.polygonStart(),r.lineStart(),e(null,null,1,r),r.lineEnd(),r.polygonEnd()}},y=Ot(),M=t(y);return v}}function Rt(n){return n.length>1}function Ot(){var n,t=[];return{lineStart:function(){t.push(n=[])},point:function(t,e){n.push([t,e])},lineEnd:N,buffer:function(){var e=t;return t=[],n=null,e},rejoin:function(){t.length>1&&t.push(t.pop().concat(t.shift()))}}}function Yt(n,t){if(!(e=n.length))return 0;for(var e,r,u,i=0,a=0,o=n[0],c=o[0],l=o[1],f=Math.cos(l),s=Math.atan2(t*Math.sin(c)*f,Math.sin(l)),h=1-t*Math.cos(c)*f,g=s;++i<e;)o=n[i],f=Math.cos(l=o[1]),r=Math.atan2(t*Math.sin(c=o[0])*f,Math.sin(l)),u=1-t*Math.cos(c)*f,Math.abs(h-2)<Fa&&Math.abs(u-2)<Fa||(Math.abs(u)<Fa||Math.abs(h)<Fa||(Math.abs(Math.abs(r-s)-La)<Fa?u+h>2&&(a+=4*(r-s)):a+=Math.abs(h-2)<Fa?4*(r-g):((3*La+r-s)%(2*La)-La)*(h+u)),g=s,s=r,h=u);return a}function Ut(n,t){return((n=n.point)[0]<0?n[1]-La/2-Fa:La/2-n[1])-((t=t.point)[0]<0?t[1]-La/2-Fa:La/2-t[1])}function It(n){var t,e=0/0,r=0/0,u=0/0;return{lineStart:function(){n.lineStart(),t=1},point:function(i,a){var o=i>0?La:-La,c=Math.abs(i-e);Math.abs(c-La)<Fa?(n.point(e,r=(r+a)/2>0?La/2:-La/2),n.point(u,r),n.lineEnd(),n.lineStart(),n.point(o,r),n.point(i,r),t=0):u!==o&&c>=La&&(Math.abs(e-u)<Fa&&(e-=u*Fa),Math.abs(i-o)<Fa&&(i-=o*Fa),r=Vt(e,r,i,a),n.point(u,r),n.lineEnd(),n.lineStart(),n.point(o,r),t=0),n.point(e=i,r=a),u=o},lineEnd:function(){n.lineEnd(),e=r=0/0},clean:function(){return 2-t}}}function Vt(n,t,e,r){var u,i,a=Math.sin(n-e);return Math.abs(a)>Fa?Math.atan((Math.sin(t)*(i=Math.cos(r))*Math.sin(e)-Math.sin(r)*(u=Math.cos(t))*Math.sin(n))/(u*i*a)):(t+r)/2}function Xt(n,t,e,r){var u;if(null==n)u=e*La/2,r.point(-La,u),r.point(0,u),r.point(La,u),r.point(La,0),r.point(La,-u),r.point(0,-u),r.point(-La,-u),r.point(-La,0),r.point(-La,u);else if(Math.abs(n[0]-t[0])>Fa){var i=(n[0]<t[0]?1:-1)*La;u=e*i/2,r.point(-i,u),r.point(0,u),r.point(i,u)}else r.point(t[0],t[1])}function Zt(n){function t(n,t){return Math.cos(n)*Math.cos(t)>i}function e(n){var e,i,c,l,f;return{lineStart:function(){l=c=!1,f=1},point:function(s,h){var g,p=[s,h],d=t(s,h),m=a?d?0:u(s,h):d?u(s+(0>s?La:-La),h):0;if(!e&&(l=c=d)&&n.lineStart(),d!==c&&(g=r(e,p),(Lt(e,g)||Lt(p,g))&&(p[0]+=Fa,p[1]+=Fa,d=t(p[0],p[1]))),d!==c)f=0,d?(n.lineStart(),g=r(p,e),n.point(g[0],g[1])):(g=r(e,p),n.point(g[0],g[1]),n.lineEnd()),e=g;else if(o&&e&&a^d){var v;m&i||!(v=r(p,e,!0))||(f=0,a?(n.lineStart(),n.point(v[0][0],v[0][1]),n.point(v[1][0],v[1][1]),n.lineEnd()):(n.point(v[1][0],v[1][1]),n.lineEnd(),n.lineStart(),n.point(v[0][0],v[0][1])))}!d||e&&Lt(e,p)||n.point(p[0],p[1]),e=p,c=d,i=m},lineEnd:function(){c&&n.lineEnd(),e=null},clean:function(){return f|(l&&c)<<1}}}function r(n,t,e){var r=At(n),u=At(t),a=[1,0,0],o=Nt(r,u),c=qt(o,o),l=o[0],f=c-l*l;if(!f)return!e&&n;var s=i*c/f,h=-i*l/f,g=Nt(a,o),p=Ct(a,s),d=Ct(o,h);Tt(p,d);var m=g,v=qt(p,m),y=qt(m,m),M=v*v-y*(qt(p,p)-1);if(!(0>M)){var x=Math.sqrt(M),b=Ct(m,(-v-x)/y);if(Tt(b,p),b=jt(b),!e)return b;var _,w=n[0],S=t[0],E=n[1],k=t[1];w>S&&(_=w,w=S,S=_);var A=S-w,q=Math.abs(A-La)<Fa,N=q||Fa>A;if(!q&&E>k&&(_=E,E=k,k=_),N?q?E+k>0^b[1]<(Math.abs(b[0]-w)<Fa?E:k):E<=b[1]&&b[1]<=k:A>La^(w<=b[0]&&b[0]<=S)){var T=Ct(m,(-v+x)/y);return Tt(T,p),[b,jt(T)]}}}function u(t,e){var r=a?n:La-n,u=0;return-r>t?u|=1:t>r&&(u|=2),-r>e?u|=4:e>r&&(u|=8),u}var i=Math.cos(n),a=i>0,o=Math.abs(i)>Fa,c=ie(n,6*Ha);return Pt(t,e,c)}function Bt(n,t,e,r){function u(r,u){return Math.abs(r[0]-n)<Fa?u>0?0:3:Math.abs(r[0]-e)<Fa?u>0?2:1:Math.abs(r[1]-t)<Fa?u>0?1:0:u>0?3:2}function i(n,t){return a(n.point,t.point)}function a(n,t){var e=u(n,1),r=u(t,1);return e!==r?e-r:0===e?t[1]-n[1]:1===e?n[0]-t[0]:2===e?n[1]-t[1]:t[0]-n[0]}function o(u,i){var a=i[0]-u[0],o=i[1]-u[1],c=[0,1];return Math.abs(a)<Fa&&Math.abs(o)<Fa?n<=u[0]&&u[0]<=e&&t<=u[1]&&u[1]<=r:$t(n-u[0],a,c)&&$t(u[0]-e,-a,c)&&$t(t-u[1],o,c)&&$t(u[1]-r,-o,c)?(c[1]<1&&(i[0]=u[0]+c[1]*a,i[1]=u[1]+c[1]*o),c[0]>0&&(u[0]+=c[0]*a,u[1]+=c[0]*o),!0):!1}return function(c){function l(i){var a=u(i,-1),o=f([0===a||3===a?n:e,a>1?r:t]);return o}function f(n){for(var t=0,e=M.length,r=n[1],u=0;e>u;++u)for(var i=1,a=M[u],o=a.length,c=a[0];o>i;++i)b=a[i],c[1]<=r?b[1]>r&&s(c,b,n)>0&&++t:b[1]<=r&&s(c,b,n)<0&&--t,c=b;return 0!==t}function s(n,t,e){return(t[0]-n[0])*(e[1]-n[1])-(e[0]-n[0])*(t[1]-n[1])}function h(i,o,c,l){var f=0,s=0;if(null==i||(f=u(i,c))!==(s=u(o,c))||a(i,o)<0^c>0){do l.point(0===f||3===f?n:e,f>1?r:t);while((f=(f+c+4)%4)!==s)}else l.point(o[0],o[1])}function g(u,i){return u>=n&&e>=u&&i>=t&&r>=i}function p(n,t){g(n,t)&&c.point(n,t)}function d(){C.point=v,M&&M.push(x=[]),q=!0,A=!1,E=k=0/0}function m(){y&&(v(_,w),S&&A&&T.rejoin(),y.push(T.buffer())),C.point=p,A&&c.lineEnd()}function v(n,t){n=Math.max(-bo,Math.min(bo,n)),t=Math.max(-bo,Math.min(bo,t));var e=g(n,t);if(M&&x.push([n,t]),q)_=n,w=t,S=e,q=!1,e&&(c.lineStart(),c.point(n,t));else if(e&&A)c.point(n,t);else{var r=[E,k],u=[n,t];o(r,u)?(A||(c.lineStart(),c.point(r[0],r[1])),c.point(u[0],u[1]),e||c.lineEnd()):(c.lineStart(),c.point(n,t))}E=n,k=t,A=e}var y,M,x,_,w,S,E,k,A,q,N=c,T=Ot(),C={point:p,lineStart:d,lineEnd:m,polygonStart:function(){c=T,y=[],M=[]},polygonEnd:function(){c=N,(y=oa.merge(y)).length?(c.polygonStart(),Ft(y,i,l,h,c),c.polygonEnd()):f([n,t])&&(c.polygonStart(),c.lineStart(),h(null,null,1,c),c.lineEnd(),c.polygonEnd()),y=M=x=null}};return C}}function $t(n,t,e){if(Math.abs(t)<Fa)return 0>=n;var r=n/t;if(t>0){if(r>e[1])return!1;r>e[0]&&(e[0]=r)}else{if(r<e[0])return!1;r<e[1]&&(e[1]=r)}return!0}function Jt(n,t){function e(e,r){return e=n(e,r),t(e[0],e[1])}return n.invert&&t.invert&&(e.invert=function(e,r){return e=t.invert(e,r),e&&n.invert(e[0],e[1])}),e}function Gt(n){function t(t){function r(e,r){e=n(e,r),t.point(e[0],e[1])}function i(){f=0/0,d.point=a,t.lineStart()}function a(r,i){var a=At([r,i]),o=n(r,i);e(f,s,l,h,g,p,f=o[0],s=o[1],l=r,h=a[0],g=a[1],p=a[2],u,t),t.point(f,s)}function o(){d.point=r,t.lineEnd()}function c(){var n,r,c,m,v,y,M;i(),d.point=function(t,e){a(n=t,r=e),c=f,m=s,v=h,y=g,M=p,d.point=a},d.lineEnd=function(){e(f,s,l,h,g,p,c,m,n,v,y,M,u,t),d.lineEnd=o,o()}}var l,f,s,h,g,p,d={point:r,lineStart:i,lineEnd:o,polygonStart:function(){t.polygonStart(),d.lineStart=c},polygonEnd:function(){t.polygonEnd(),d.lineStart=i}};return d}function e(t,u,i,a,o,c,l,f,s,h,g,p,d,m){var v=l-t,y=f-u,M=v*v+y*y;if(M>4*r&&d--){var x=a+h,b=o+g,_=c+p,w=Math.sqrt(x*x+b*b+_*_),S=Math.asin(_/=w),E=Math.abs(Math.abs(_)-1)<Fa?(i+s)/2:Math.atan2(b,x),k=n(E,S),A=k[0],q=k[1],N=A-t,T=q-u,C=y*N-v*T;(C*C/M>r||Math.abs((v*N+y*T)/M-.5)>.3)&&(e(t,u,i,a,o,c,A,q,E,x/=w,b/=w,_,d,m),m.point(A,q),e(A,q,E,x,b,_,l,f,s,h,g,p,d,m))}}var r=.5,u=16;return t.precision=function(n){return arguments.length?(u=(r=n*n)>0&&16,t):Math.sqrt(r)},t}function Kt(n){return Wt(function(){return n})()}function Wt(n){function t(n){return n=a(n[0]*Ha,n[1]*Ha),[n[0]*f+o,c-n[1]*f]}function e(n){return n=a.invert((n[0]-o)/f,(c-n[1])/f),n&&[n[0]*Pa,n[1]*Pa]}function r(){a=Jt(i=te(d,m,v),u);var n=u(g,p);return o=s-n[0]*f,c=h+n[1]*f,t}var u,i,a,o,c,l=Gt(function(n,t){return n=u(n,t),[n[0]*f+o,c-n[1]*f]}),f=150,s=480,h=250,g=0,p=0,d=0,m=0,v=0,y=xo,M=ft,x=null,b=null;return t.stream=function(n){return Qt(i,y(l(M(n))))},t.clipAngle=function(n){return arguments.length?(y=null==n?(x=n,xo):Zt((x=+n)*Ha),t):x},t.clipExtent=function(n){return arguments.length?(b=n,M=null==n?ft:Bt(n[0][0],n[0][1],n[1][0],n[1][1]),t):b},t.scale=function(n){return arguments.length?(f=+n,r()):f},t.translate=function(n){return arguments.length?(s=+n[0],h=+n[1],r()):[s,h]},t.center=function(n){return arguments.length?(g=n[0]%360*Ha,p=n[1]%360*Ha,r()):[g*Pa,p*Pa]},t.rotate=function(n){return arguments.length?(d=n[0]%360*Ha,m=n[1]%360*Ha,v=n.length>2?n[2]%360*Ha:0,r()):[d*Pa,m*Pa,v*Pa]},oa.rebind(t,l,"precision"),function(){return u=n.apply(this,arguments),t.invert=u.invert&&e,r()}}function Qt(n,t){return{point:function(e,r){r=n(e*Ha,r*Ha),e=r[0],t.point(e>La?e-2*La:-La>e?e+2*La:e,r[1])},sphere:function(){t.sphere()},lineStart:function(){t.lineStart()},lineEnd:function(){t.lineEnd()},polygonStart:function(){t.polygonStart()},polygonEnd:function(){t.polygonEnd()}}}function ne(n,t){return[n,t]}function te(n,t,e){return n?t||e?Jt(re(n),ue(t,e)):re(n):t||e?ue(t,e):ne}function ee(n){return function(t,e){return t+=n,[t>La?t-2*La:-La>t?t+2*La:t,e]}}function re(n){var t=ee(n);return t.invert=ee(-n),t}function ue(n,t){function e(n,t){var e=Math.cos(t),o=Math.cos(n)*e,c=Math.sin(n)*e,l=Math.sin(t),f=l*r+o*u;return[Math.atan2(c*i-f*a,o*r-l*u),Math.asin(Math.max(-1,Math.min(1,f*i+c*a)))]}var r=Math.cos(n),u=Math.sin(n),i=Math.cos(t),a=Math.sin(t);return e.invert=function(n,t){var e=Math.cos(t),o=Math.cos(n)*e,c=Math.sin(n)*e,l=Math.sin(t),f=l*i-c*a;return[Math.atan2(c*i+l*a,o*r+f*u),Math.asin(Math.max(-1,Math.min(1,f*r-o*u)))]},e}function ie(n,t){var e=Math.cos(n),r=Math.sin(n);return function(u,i,a,o){null!=u?(u=ae(e,u),i=ae(e,i),(a>0?i>u:u>i)&&(u+=2*a*La)):(u=n+2*a*La,i=n);for(var c,l=a*t,f=u;a>0?f>i:i>f;f-=l)o.point((c=jt([e,-r*Math.cos(f),-r*Math.sin(f)]))[0],c[1])}}function ae(n,t){var e=At(t);e[0]-=n,zt(e);var r=O(-e[1]);return((-e[2]<0?-r:r)+2*Math.PI-Fa)%(2*Math.PI)}function oe(n,t,e){var r=oa.range(n,t-Fa,e).concat(t);return function(n){return r.map(function(t){return[n,t]})}}function ce(n,t,e){var r=oa.range(n,t-Fa,e).concat(t);return function(n){return r.map(function(t){return[t,n]})}}function le(n){return n.source}function fe(n){return n.target}function se(n,t,e,r){var u=Math.cos(t),i=Math.sin(t),a=Math.cos(r),o=Math.sin(r),c=u*Math.cos(n),l=u*Math.sin(n),f=a*Math.cos(e),s=a*Math.sin(e),h=2*Math.asin(Math.sqrt(V(r-t)+u*a*V(e-n))),g=1/Math.sin(h),p=h?function(n){var t=Math.sin(n*=h)*g,e=Math.sin(h-n)*g,r=e*c+t*f,u=e*l+t*s,a=e*i+t*o;return[Math.atan2(u,r)*Pa,Math.atan2(a,Math.sqrt(r*r+u*u))*Pa]}:function(){return[n*Pa,t*Pa]};return p.distance=h,p}function he(){function n(n,u){var i=Math.sin(u*=Ha),a=Math.cos(u),o=Math.abs((n*=Ha)-t),c=Math.cos(o);_o+=Math.atan2(Math.sqrt((o=a*Math.sin(o))*o+(o=r*i-e*a*c)*o),e*i+r*a*c),t=n,e=i,r=a}var t,e,r;wo.point=function(u,i){t=u*Ha,e=Math.sin(i*=Ha),r=Math.cos(i),wo.point=n},wo.lineEnd=function(){wo.point=wo.lineEnd=N}}function ge(n){var t=0,e=La/3,r=Wt(n),u=r(t,e);return u.parallels=function(n){return arguments.length?r(t=n[0]*La/180,e=n[1]*La/180):[180*(t/La),180*(e/La)]},u}function pe(n,t){function e(n,t){var e=Math.sqrt(i-2*u*Math.sin(t))/u;return[e*Math.sin(n*=u),a-e*Math.cos(n)]}var r=Math.sin(n),u=(r+Math.sin(t))/2,i=1+r*(2*u-r),a=Math.sqrt(i)/u;return e.invert=function(n,t){var e=a-t;return[Math.atan2(n,e)/u,Math.asin((i-(n*n+e*e)*u*u)/(2*u))]},e}function de(n,t){var e=n(t[0]),r=n([.5*(t[0][0]+t[1][0]),t[0][1]]),u=n([t[1][0],t[0][1]]),i=n(t[1]),a=r[1]-e[1],o=r[0]-e[0],c=u[1]-r[1],l=u[0]-r[0],f=a/o,s=c/l,h=.5*(f*s*(e[1]-u[1])+s*(e[0]+r[0])-f*(r[0]+u[0]))/(s-f),g=(.5*(e[0]+r[0])-h)/f+.5*(e[1]+r[1]),p=i[0]-h,d=i[1]-g,m=e[0]-h,v=e[1]-g,y=p*p+d*d,M=m*m+v*v,x=Math.atan2(d,p),b=Math.atan2(v,m);return function(t){var e=t[0]-h,r=t[1]-g,u=e*e+r*r,i=Math.atan2(r,e);return u>y&&M>u&&i>x&&b>i?n.invert(t):void 0}}function me(){function n(n,t){Eo+=u*n-r*t,r=n,u=t}var t,e,r,u;ko.point=function(i,a){ko.point=n,t=r=i,e=u=a},ko.lineEnd=function(){n(t,e)}}function ve(){function n(n,t){a.push("M",n,",",t,i)}function t(n,t){a.push("M",n,",",t),o.point=e}function e(n,t){a.push("L",n,",",t)}function r(){o.point=n}function u(){a.push("Z")}var i=we(4.5),a=[],o={point:n,lineStart:function(){o.point=t},lineEnd:r,polygonStart:function(){o.lineEnd=u},polygonEnd:function(){o.lineEnd=r,o.point=n},pointRadius:function(n){return i=we(n),o},result:function(){if(a.length){var n=a.join("");return a=[],n}}};return o}function ye(n,t){go||(mo+=n,vo+=t,++yo)}function Me(){function n(n,r){var u=n-t,i=r-e,a=Math.sqrt(u*u+i*i);mo+=a*(t+n)/2,vo+=a*(e+r)/2,yo+=a,t=n,e=r}var t,e;if(1!==go){if(!(1>go))return;go=1,mo=vo=yo=0}Ao.point=function(r,u){Ao.point=n,t=r,e=u}}function xe(){Ao.point=ye}function be(){function n(n,t){var e=u*n-r*t;mo+=e*(r+n),vo+=e*(u+t),yo+=3*e,r=n,u=t}var t,e,r,u;2>go&&(go=2,mo=vo=yo=0),Ao.point=function(i,a){Ao.point=n,t=r=i,e=u=a},Ao.lineEnd=function(){n(t,e)}}function _e(n){function t(t,e){n.moveTo(t,e),n.arc(t,e,a,0,2*La)}function e(t,e){n.moveTo(t,e),o.point=r}function r(t,e){n.lineTo(t,e)}function u(){o.point=t}function i(){n.closePath()}var a=4.5,o={point:t,lineStart:function(){o.point=e},lineEnd:u,polygonStart:function(){o.lineEnd=i},polygonEnd:function(){o.lineEnd=u,o.point=t},pointRadius:function(n){return a=n,o},result:N};return o}function we(n){return"m0,"+n+"a"+n+","+n+" 0 1,1 0,"+-2*n+"a"+n+","+n+" 0 1,1 0,"+2*n+"z"}function Se(n){var t=Gt(function(t,e){return n([t*Pa,e*Pa])});return function(n){return n=t(n),{point:function(t,e){n.point(t*Ha,e*Ha)},sphere:function(){n.sphere()},lineStart:function(){n.lineStart()},lineEnd:function(){n.lineEnd()},polygonStart:function(){n.polygonStart()},polygonEnd:function(){n.polygonEnd()}}}}function Ee(n,t){function e(t,e){var r=Math.cos(t),u=Math.cos(e),i=n(r*u);return[i*u*Math.sin(t),i*Math.sin(e)]}return e.invert=function(n,e){var r=Math.sqrt(n*n+e*e),u=t(r),i=Math.sin(u),a=Math.cos(u);return[Math.atan2(n*i,r*a),Math.asin(r&&e*i/r)]},e}function ke(n,t){function e(n,t){var e=Math.abs(Math.abs(t)-La/2)<Fa?0:a/Math.pow(u(t),i);return[e*Math.sin(i*n),a-e*Math.cos(i*n)]}var r=Math.cos(n),u=function(n){return Math.tan(La/4+n/2)},i=n===t?Math.sin(n):Math.log(r/Math.cos(t))/Math.log(u(t)/u(n)),a=r*Math.pow(u(n),i)/i;return i?(e.invert=function(n,t){var e=a-t,r=R(i)*Math.sqrt(n*n+e*e);return[Math.atan2(n,e)/i,2*Math.atan(Math.pow(a/r,1/i))-La/2]},e):qe}function Ae(n,t){function e(n,t){var e=i-t;return[e*Math.sin(u*n),i-e*Math.cos(u*n)]}var r=Math.cos(n),u=n===t?Math.sin(n):(r-Math.cos(t))/(t-n),i=r/u+n;return Math.abs(u)<Fa?ne:(e.invert=function(n,t){var e=i-t;return[Math.atan2(n,e)/u,i-R(u)*Math.sqrt(n*n+e*e)]},e)}function qe(n,t){return[n,Math.log(Math.tan(La/4+t/2))]}function Ne(n){var t,e=Kt(n),r=e.scale,u=e.translate,i=e.clipExtent;return e.scale=function(){var n=r.apply(e,arguments);return n===e?t?e.clipExtent(null):e:n},e.translate=function(){var n=u.apply(e,arguments);return n===e?t?e.clipExtent(null):e:n},e.clipExtent=function(n){var a=i.apply(e,arguments);if(a===e){if(t=null==n){var o=La*r(),c=u();i([[c[0]-o,c[1]-o],[c[0]+o,c[1]+o]])}}else t&&(a=null);return a},e.clipExtent(null)}function Te(n,t){var e=Math.cos(t)*Math.sin(n);return[Math.log((1+e)/(1-e))/2,Math.atan2(Math.tan(t),Math.cos(n))]}function Ce(n){function t(t){function a(){l.push("M",i(n(f),o))}for(var c,l=[],f=[],s=-1,h=t.length,g=lt(e),p=lt(r);++s<h;)u.call(this,c=t[s],s)?f.push([+g.call(this,c,s),+p.call(this,c,s)]):f.length&&(a(),f=[]);return f.length&&a(),l.length?l.join(""):null}var e=ze,r=De,u=Dt,i=je,a=i.key,o=.7;return t.x=function(n){return arguments.length?(e=n,t):e},t.y=function(n){return arguments.length?(r=n,t):r},t.defined=function(n){return arguments.length?(u=n,t):u},t.interpolate=function(n){return arguments.length?(a="function"==typeof n?i=n:(i=Do.get(n)||je).key,t):a},t.tension=function(n){return arguments.length?(o=n,t):o},t}function ze(n){return n[0]}function De(n){return n[1]}function je(n){return n.join("L")}function Le(n){return je(n)+"Z"}function Fe(n){for(var t=0,e=n.length,r=n[0],u=[r[0],",",r[1]];++t<e;)u.push("V",(r=n[t])[1],"H",r[0]);return u.join("")}function He(n){for(var t=0,e=n.length,r=n[0],u=[r[0],",",r[1]];++t<e;)u.push("H",(r=n[t])[0],"V",r[1]);return u.join("")}function Pe(n,t){return n.length<4?je(n):n[1]+Ye(n.slice(1,n.length-1),Ue(n,t))}function Re(n,t){return n.length<3?je(n):n[0]+Ye((n.push(n[0]),n),Ue([n[n.length-2]].concat(n,[n[1]]),t))}function Oe(n,t){return n.length<3?je(n):n[0]+Ye(n,Ue(n,t))}function Ye(n,t){if(t.length<1||n.length!=t.length&&n.length!=t.length+2)return je(n);var e=n.length!=t.length,r="",u=n[0],i=n[1],a=t[0],o=a,c=1;if(e&&(r+="Q"+(i[0]-a[0]*2/3)+","+(i[1]-a[1]*2/3)+","+i[0]+","+i[1],u=n[1],c=2),t.length>1){o=t[1],i=n[c],c++,r+="C"+(u[0]+a[0])+","+(u[1]+a[1])+","+(i[0]-o[0])+","+(i[1]-o[1])+","+i[0]+","+i[1];for(var l=2;l<t.length;l++,c++)i=n[c],o=t[l],r+="S"+(i[0]-o[0])+","+(i[1]-o[1])+","+i[0]+","+i[1]}if(e){var f=n[c];r+="Q"+(i[0]+o[0]*2/3)+","+(i[1]+o[1]*2/3)+","+f[0]+","+f[1]}return r}function Ue(n,t){for(var e,r=[],u=(1-t)/2,i=n[0],a=n[1],o=1,c=n.length;++o<c;)e=i,i=a,a=n[o],r.push([u*(a[0]-e[0]),u*(a[1]-e[1])]);return r}function Ie(n){if(n.length<3)return je(n);var t=1,e=n.length,r=n[0],u=r[0],i=r[1],a=[u,u,u,(r=n[1])[0]],o=[i,i,i,r[1]],c=[u,",",i];for($e(c,a,o);++t<e;)r=n[t],a.shift(),a.push(r[0]),o.shift(),o.push(r[1]),$e(c,a,o);for(t=-1;++t<2;)a.shift(),a.push(r[0]),o.shift(),o.push(r[1]),$e(c,a,o);return c.join("")}function Ve(n){if(n.length<4)return je(n);for(var t,e=[],r=-1,u=n.length,i=[0],a=[0];++r<3;)t=n[r],i.push(t[0]),a.push(t[1]);for(e.push(Be(Fo,i)+","+Be(Fo,a)),--r;++r<u;)t=n[r],i.shift(),i.push(t[0]),a.shift(),a.push(t[1]),$e(e,i,a);return e.join("")}function Xe(n){for(var t,e,r=-1,u=n.length,i=u+4,a=[],o=[];++r<4;)e=n[r%u],a.push(e[0]),o.push(e[1]);for(t=[Be(Fo,a),",",Be(Fo,o)],--r;++r<i;)e=n[r%u],a.shift(),a.push(e[0]),o.shift(),o.push(e[1]),$e(t,a,o);return t.join("")}function Ze(n,t){var e=n.length-1;if(e)for(var r,u,i=n[0][0],a=n[0][1],o=n[e][0]-i,c=n[e][1]-a,l=-1;++l<=e;)r=n[l],u=l/e,r[0]=t*r[0]+(1-t)*(i+u*o),r[1]=t*r[1]+(1-t)*(a+u*c);return Ie(n)}function Be(n,t){return n[0]*t[0]+n[1]*t[1]+n[2]*t[2]+n[3]*t[3]}function $e(n,t,e){n.push("C",Be(jo,t),",",Be(jo,e),",",Be(Lo,t),",",Be(Lo,e),",",Be(Fo,t),",",Be(Fo,e))}function Je(n,t){return(t[1]-n[1])/(t[0]-n[0])}function Ge(n){for(var t=0,e=n.length-1,r=[],u=n[0],i=n[1],a=r[0]=Je(u,i);++t<e;)r[t]=(a+(a=Je(u=i,i=n[t+1])))/2;return r[t]=a,r}function Ke(n){for(var t,e,r,u,i=[],a=Ge(n),o=-1,c=n.length-1;++o<c;)t=Je(n[o],n[o+1]),Math.abs(t)<1e-6?a[o]=a[o+1]=0:(e=a[o]/t,r=a[o+1]/t,u=e*e+r*r,u>9&&(u=3*t/Math.sqrt(u),a[o]=u*e,a[o+1]=u*r));for(o=-1;++o<=c;)u=(n[Math.min(c,o+1)][0]-n[Math.max(0,o-1)][0])/(6*(1+a[o]*a[o])),i.push([u||0,a[o]*u||0]);return i}function We(n){return n.length<3?je(n):n[0]+Ye(n,Ke(n))}function Qe(n,t,e,r){var u,i,a,o,c,l,f;return u=r[n],i=u[0],a=u[1],u=r[t],o=u[0],c=u[1],u=r[e],l=u[0],f=u[1],(f-a)*(o-i)-(c-a)*(l-i)>0}function nr(n,t,e){return(e[0]-t[0])*(n[1]-t[1])<(e[1]-t[1])*(n[0]-t[0])}function tr(n,t,e,r){var u=n[0],i=e[0],a=t[0]-u,o=r[0]-i,c=n[1],l=e[1],f=t[1]-c,s=r[1]-l,h=(o*(c-l)-s*(u-i))/(s*a-o*f);
@@ -265,7 +274,7 @@ var zoom_behavior = function(parent_id, t) {
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;Womenlf&quot;</span>), x=<span class="st">&quot;hincome&quot;</span>, y=<span class="st">&quot;region&quot;</span>, Geom.histogram2d)</code></pre>
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;UN&quot;</span>), x=<span class="st">&quot;gdp&quot;</span>, y=<span class="st">&quot;infant.mortality&quot;</span>,
      Scale.x_log10, Scale.y_log10, Geom.histogram2d)</code></pre>
-<div id="gadflyplot-bOyr1nW2YTkMnrf1Yzgt"></div>
+<div id="gadflyplot-TEOYa3qOrMmb2ieoBcgZ"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -282,16 +291,16 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath0")
     .append("svg:path")
-      .attr("d", " M5,0 L 21.43 0 21.43 66.46 5 66.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
+      .attr("d", " M5,1 L 20.97 1 20.97 63.63 5 63.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#4C404B")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.18")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.18)
      .attr("class", "guide ylabels");
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 6.6)
+       .attr("x", 19.97)
+       .attr("y", 6.63)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -301,12 +310,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("2.5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 113.12)
+       .attr("x", 19.97)
+       .attr("y", 115.37)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -316,12 +325,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-2.5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 38.55)
+       .attr("x", 19.97)
+       .attr("y", 39.25)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -331,12 +340,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("1.0");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", -46.66)
+       .attr("x", 19.97)
+       .attr("y", -47.74)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -346,12 +355,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("5.0");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 49.21)
+       .attr("x", 19.97)
+       .attr("y", 50.12)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -361,12 +370,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("0.5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", -4.05)
+       .attr("x", 19.97)
+       .attr("y", -4.24)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -376,12 +385,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("3.0");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 123.77)
+       .attr("x", 19.97)
+       .attr("y", 126.24)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -391,12 +400,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-3.0");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 59.86)
+       .attr("x", 19.97)
+       .attr("y", 61)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -406,12 +415,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("0.0");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 81.16)
+       .attr("x", 19.97)
+       .attr("y", 82.75)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -421,12 +430,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-1.0");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", -57.32)
+       .attr("x", 19.97)
+       .attr("y", -58.61)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -436,12 +445,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("5.5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", -25.36)
+       .attr("x", 19.97)
+       .attr("y", -25.99)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -451,12 +460,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("4.0");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 70.51)
+       .attr("x", 19.97)
+       .attr("y", 71.87)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -466,12 +475,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-0.5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 102.47)
+       .attr("x", 19.97)
+       .attr("y", 104.49)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -481,12 +490,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-2.0");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 27.9)
+       .attr("x", 19.97)
+       .attr("y", 28.38)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -496,12 +505,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("1.5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 17.25)
+       .attr("x", 19.97)
+       .attr("y", 17.5)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -511,12 +520,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("2.0");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", -14.71)
+       .attr("x", 19.97)
+       .attr("y", -15.12)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -526,12 +535,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("3.5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", 91.82)
+       .attr("x", 19.97)
+       .attr("y", 93.62)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -541,12 +550,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-1.5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 20.43)
-       .attr("y", -36.01)
+       .attr("x", 19.97)
+       .attr("y", -36.86)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -556,21 +565,21 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("4.5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
   }(g.append("g")));
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#362A35")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.88");
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.88);
     g.append("svg:text")
-       .attr("x", 8.28)
-       .attr("y", 33.23)
+       .attr("x", 7.94)
+       .attr("y", 33.81)
        .attr("text-anchor", "middle")
        .style("dominant-baseline", "central")
-       .attr("transform", "rotate(-90, 8.28, 33.23)")
+       .attr("transform", "rotate(-90, 7.94, 33.81)")
     .call(function(text) {
   text.text("infant.mortality");
 })
@@ -582,16 +591,16 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath1")
     .append("svg:path")
-      .attr("d", " M16.43,61.46 L 127.17 61.46 127.17 75 16.43 75 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
+      .attr("d", " M10.9,62.63 L 131.71 62.63 131.71 75 10.9 75 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#4C404B")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.18")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.18)
      .attr("class", "guide xlabels");
     g.append("svg:text")
-       .attr("x", 43.29)
-       .attr("y", 66.44)
+       .attr("x", 42.82)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -600,12 +609,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("1");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 119.32)
-       .attr("y", 66.44)
+       .attr("x", 118.79)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -614,12 +623,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 214.37)
-       .attr("y", 66.44)
+       .attr("x", 213.77)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -628,12 +637,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("10");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 81.31)
-       .attr("y", 66.44)
+       .attr("x", 80.81)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -642,12 +651,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("3");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -89.77)
-       .attr("y", 66.44)
+       .attr("x", -90.15)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -656,12 +665,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-6");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -32.75)
-       .attr("y", 66.44)
+       .attr("x", -33.16)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -670,12 +679,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-3");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 176.35)
-       .attr("y", 66.44)
+       .attr("x", 175.78)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -684,12 +693,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("8");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 24.28)
-       .attr("y", 66.44)
+       .attr("x", 23.82)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -698,12 +707,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("0");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 5.27)
-       .attr("y", 66.44)
+       .attr("x", 4.83)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -712,12 +721,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-1");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 195.36)
-       .attr("y", 66.44)
+       .attr("x", 194.77)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -726,12 +735,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("9");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 138.33)
-       .attr("y", 66.44)
+       .attr("x", 137.79)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -740,12 +749,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("6");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 100.31)
-       .attr("y", 66.44)
+       .attr("x", 99.8)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -754,12 +763,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 233.38)
-       .attr("y", 66.44)
+       .attr("x", 232.76)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -768,12 +777,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("11");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 157.34)
-       .attr("y", 66.44)
+       .attr("x", 156.78)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -782,12 +791,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("7");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -13.74)
-       .attr("y", 66.44)
+       .attr("x", -14.17)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -796,12 +805,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-2");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -51.76)
-       .attr("y", 66.44)
+       .attr("x", -52.16)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -810,12 +819,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-4");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", 62.3)
-       .attr("y", 66.44)
+       .attr("x", 61.81)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -824,12 +833,12 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("2");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
     g.append("svg:text")
-       .attr("x", -70.77)
-       .attr("y", 66.44)
+       .attr("x", -71.15)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.append("tspan").text("10")
@@ -838,17 +847,17 @@ function draw_with_data(data, parent_id) {
       .call(function(text) {
         text.text("-5");
       })
-      ;
+.append("tspan").attr("font-style", "normal")      ;
 })
 ;
   }(g.append("g")));
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#362A35")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.88");
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.88);
     g.append("svg:text")
-       .attr("x", 71.8)
+       .attr("x", 71.31)
        .attr("y", 73)
        .attr("text-anchor", "middle")
     .call(function(text) {
@@ -859,12 +868,12 @@ function draw_with_data(data, parent_id) {
 }(g.append("g")));
 (function (g) {
   g.attr("stroke", "none")
-   .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-   .attr("font-size", "3.88")
+   .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+   .style("font-size", 3.88)
    .attr("fill", "#362A35");
   g.append("svg:text")
-     .attr("x", 130.59)
-     .attr("y", 25.18)
+     .attr("x", 130.32)
+     .attr("y", 26.82)
      .attr("text-anchor", "middle")
   .call(function(text) {
   text.text("Count");
@@ -872,89 +881,20 @@ function draw_with_data(data, parent_id) {
 ;
 }(g.append("g")));
 (function (g) {
-  g.attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-   .attr("font-size", "3.18")
+  g.attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+   .style("font-size", 3.18)
    .attr("stroke", "none");
   (function (g) {
-    g.attr("fill", "#004A87")
-     .attr("stroke-width", "0.3");
+    g.attr("fill", "#003771")
+     .attr("stroke-width", 0.3);
     g.append("svg:path")
-       .attr("d", "M124.17,45.11 L 127.91 45.11 127.91 46.21 124.17 46.21 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#0077BA")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,40.38 L 127.91 40.38 127.91 41.48 124.17 41.48 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4EAEF5")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,35.64 L 127.91 35.64 127.91 36.74 124.17 36.74 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#93E8FF")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,30.91 L 127.91 30.91 127.91 32.01 124.17 32.01 z");
+       .attr("d", "M123.64,45.52 L 126.82 45.52 126.82 48.79 123.64 48.79 z");
   }(g.append("g")));
   (function (g) {
     g.attr("fill", "#4C404B");
     g.append("svg:text")
-       .attr("x", 128.91)
-       .attr("y", 29.04)
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("20");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#B3FFFF")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,27.18 L 127.91 27.18 127.91 31.01 124.17 31.01 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4C404B");
-    g.append("svg:text")
-       .attr("x", 128.91)
-       .attr("y", 33.78)
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("15");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#72CBFF")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,31.91 L 127.91 31.91 127.91 35.74 124.17 35.74 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4C404B");
-    g.append("svg:text")
-       .attr("x", 128.91)
-       .attr("y", 38.51)
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("10");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#2092D7")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,36.64 L 127.91 36.64 127.91 40.48 124.17 40.48 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4C404B");
-    g.append("svg:text")
-       .attr("x", 128.91)
-       .attr("y", 43.24)
+       .attr("x", 127.82)
+       .attr("y", 42.93)
        .style("dominant-baseline", "central")
     .call(function(text) {
   text.text("5");
@@ -962,27 +902,96 @@ function draw_with_data(data, parent_id) {
 ;
   }(g.append("g")));
   (function (g) {
-    g.attr("fill", "#005E9D")
-     .attr("stroke-width", "0.3");
+    g.attr("fill", "#0077BA")
+     .attr("stroke-width", 0.3);
     g.append("svg:path")
-       .attr("d", "M124.17,41.38 L 127.91 41.38 127.91 45.21 124.17 45.21 z");
+       .attr("d", "M123.64,40.34 L 126.82 40.34 126.82 41.44 123.64 41.44 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#2092D7")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,37.17 L 126.82 37.17 126.82 40.44 123.64 40.44 z");
   }(g.append("g")));
   (function (g) {
     g.attr("fill", "#4C404B");
     g.append("svg:text")
-       .attr("x", 128.91)
-       .attr("y", 47.98)
+       .attr("x", 127.82)
+       .attr("y", 34.58)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("15");
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#93E8FF")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,31.99 L 126.82 31.99 126.82 33.09 123.64 33.09 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#B3FFFF")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,28.82 L 126.82 28.82 126.82 32.09 123.64 32.09 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 127.82)
+       .attr("y", 30.41)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("20");
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#72CBFF")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,32.99 L 126.82 32.99 126.82 36.27 123.64 36.27 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4EAEF5")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,36.17 L 126.82 36.17 126.82 37.27 123.64 37.27 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 127.82)
+       .attr("y", 38.76)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("10");
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#005E9D")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,41.34 L 126.82 41.34 126.82 44.62 123.64 44.62 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#004A87")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,44.52 L 126.82 44.52 126.82 45.62 123.64 45.62 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 127.82)
+       .attr("y", 47.11)
        .style("dominant-baseline", "central")
     .call(function(text) {
   text.text("1");
 })
 ;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#003771")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M124.17,46.11 L 127.91 46.11 127.91 49.94 124.17 49.94 z");
   }(g.append("g")));
 }(g.append("g")));
 (function (g) {
@@ -994,95 +1003,95 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath2")
     .append("svg:path")
-      .attr("d", " M21.43,5 L 122.17 5 122.17 61.46 21.43 61.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
+      .attr("d", " M20.97,5 L 121.64 5 121.64 62.63 20.97 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
     (function (g) {
       g.attr("class", "guide background")
        .attr("stroke", "#F1F1F5")
        .attr("fill", "#FAFAFA");
       g.append("svg:path")
-         .attr("d", "M21.43,5 L 122.17 5 122.17 61.46 21.43 61.46 z");
+         .attr("d", "M20.97,5 L 121.64 5 121.64 62.63 20.97 62.63 z");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "#F0F0F3")
-       .attr("stroke-width", "0.2")
+       .attr("stroke-width", 0.2)
        .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
-         .attr("d", "M21.43,6.6 L 122.17 6.6");
+         .attr("d", "M20.97,6.63 L 121.64 6.63");
       g.append("svg:path")
-         .attr("d", "M21.43,113.12 L 122.17 113.12");
+         .attr("d", "M20.97,115.37 L 121.64 115.37");
       g.append("svg:path")
-         .attr("d", "M21.43,38.55 L 122.17 38.55");
+         .attr("d", "M20.97,39.25 L 121.64 39.25");
       g.append("svg:path")
-         .attr("d", "M21.43,-46.66 L 122.17 -46.66");
+         .attr("d", "M20.97,-47.74 L 121.64 -47.74");
       g.append("svg:path")
-         .attr("d", "M21.43,49.21 L 122.17 49.21");
+         .attr("d", "M20.97,50.12 L 121.64 50.12");
       g.append("svg:path")
-         .attr("d", "M21.43,-4.05 L 122.17 -4.05");
+         .attr("d", "M20.97,-4.24 L 121.64 -4.24");
       g.append("svg:path")
-         .attr("d", "M21.43,123.77 L 122.17 123.77");
+         .attr("d", "M20.97,126.24 L 121.64 126.24");
       g.append("svg:path")
-         .attr("d", "M21.43,59.86 L 122.17 59.86");
+         .attr("d", "M20.97,61 L 121.64 61");
       g.append("svg:path")
-         .attr("d", "M21.43,81.16 L 122.17 81.16");
+         .attr("d", "M20.97,82.75 L 121.64 82.75");
       g.append("svg:path")
-         .attr("d", "M21.43,-57.32 L 122.17 -57.32");
+         .attr("d", "M20.97,-58.61 L 121.64 -58.61");
       g.append("svg:path")
-         .attr("d", "M21.43,-25.36 L 122.17 -25.36");
+         .attr("d", "M20.97,-25.99 L 121.64 -25.99");
       g.append("svg:path")
-         .attr("d", "M21.43,70.51 L 122.17 70.51");
+         .attr("d", "M20.97,71.87 L 121.64 71.87");
       g.append("svg:path")
-         .attr("d", "M21.43,102.47 L 122.17 102.47");
+         .attr("d", "M20.97,104.49 L 121.64 104.49");
       g.append("svg:path")
-         .attr("d", "M21.43,27.9 L 122.17 27.9");
+         .attr("d", "M20.97,28.38 L 121.64 28.38");
       g.append("svg:path")
-         .attr("d", "M21.43,17.25 L 122.17 17.25");
+         .attr("d", "M20.97,17.5 L 121.64 17.5");
       g.append("svg:path")
-         .attr("d", "M21.43,-14.71 L 122.17 -14.71");
+         .attr("d", "M20.97,-15.12 L 121.64 -15.12");
       g.append("svg:path")
-         .attr("d", "M21.43,91.82 L 122.17 91.82");
+         .attr("d", "M20.97,93.62 L 121.64 93.62");
       g.append("svg:path")
-         .attr("d", "M21.43,-36.01 L 122.17 -36.01");
+         .attr("d", "M20.97,-36.86 L 121.64 -36.86");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "#F0F0F3")
-       .attr("stroke-width", "0.2")
+       .attr("stroke-width", 0.2)
        .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
-         .attr("d", "M43.29,5 L 43.29 61.46");
+         .attr("d", "M42.82,5 L 42.82 62.63");
       g.append("svg:path")
-         .attr("d", "M119.32,5 L 119.32 61.46");
+         .attr("d", "M118.79,5 L 118.79 62.63");
       g.append("svg:path")
-         .attr("d", "M214.37,5 L 214.37 61.46");
+         .attr("d", "M213.77,5 L 213.77 62.63");
       g.append("svg:path")
-         .attr("d", "M81.31,5 L 81.31 61.46");
+         .attr("d", "M80.81,5 L 80.81 62.63");
       g.append("svg:path")
-         .attr("d", "M-89.77,5 L -89.77 61.46");
+         .attr("d", "M-90.15,5 L -90.15 62.63");
       g.append("svg:path")
-         .attr("d", "M-32.75,5 L -32.75 61.46");
+         .attr("d", "M-33.16,5 L -33.16 62.63");
       g.append("svg:path")
-         .attr("d", "M176.35,5 L 176.35 61.46");
+         .attr("d", "M175.78,5 L 175.78 62.63");
       g.append("svg:path")
-         .attr("d", "M24.28,5 L 24.28 61.46");
+         .attr("d", "M23.82,5 L 23.82 62.63");
       g.append("svg:path")
-         .attr("d", "M5.27,5 L 5.27 61.46");
+         .attr("d", "M4.83,5 L 4.83 62.63");
       g.append("svg:path")
-         .attr("d", "M195.36,5 L 195.36 61.46");
+         .attr("d", "M194.77,5 L 194.77 62.63");
       g.append("svg:path")
-         .attr("d", "M138.33,5 L 138.33 61.46");
+         .attr("d", "M137.79,5 L 137.79 62.63");
       g.append("svg:path")
-         .attr("d", "M100.31,5 L 100.31 61.46");
+         .attr("d", "M99.8,5 L 99.8 62.63");
       g.append("svg:path")
-         .attr("d", "M233.38,5 L 233.38 61.46");
+         .attr("d", "M232.76,5 L 232.76 62.63");
       g.append("svg:path")
-         .attr("d", "M157.34,5 L 157.34 61.46");
+         .attr("d", "M156.78,5 L 156.78 62.63");
       g.append("svg:path")
-         .attr("d", "M-13.74,5 L -13.74 61.46");
+         .attr("d", "M-14.17,5 L -14.17 62.63");
       g.append("svg:path")
-         .attr("d", "M-51.76,5 L -51.76 61.46");
+         .attr("d", "M-52.16,5 L -52.16 62.63");
       g.append("svg:path")
-         .attr("d", "M62.3,5 L 62.3 61.46");
+         .attr("d", "M61.81,5 L 61.81 62.63");
       g.append("svg:path")
-         .attr("d", "M-70.77,5 L -70.77 61.46");
+         .attr("d", "M-71.15,5 L -71.15 62.63");
     }(g.append("g")));
   }(g.append("g")));
   (function (g) {
@@ -1090,7 +1099,7 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath3")
     .append("svg:path")
-      .attr("d", " M21.43,5 L 122.17 5 122.17 61.46 21.43 61.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath3)");
+      .attr("d", " M20.97,5 L 121.64 5 121.64 62.63 20.97 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath3)");
     (function (g) {
       g.attr("stroke", "none")
        .attr("shape-rendering", "crispEdges");
@@ -1098,157 +1107,157 @@ function draw_with_data(data, parent_id) {
         g.attr("fill", "#004A87")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.32,53.45 L 83.05 53.45 83.05 45.24 73.32 45.24 z");
+           .attr("d", "M72.83,54.45 L 82.55 54.45 82.55 46.07 72.83 46.07 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#003771")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.05,53.45 L 92.78 53.45 92.78 45.24 83.05 45.24 z");
+           .attr("d", "M82.55,54.45 L 92.27 54.45 92.27 46.07 82.55 46.07 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#003771")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M92.78,53.45 L 102.51 53.45 102.51 45.24 92.78 45.24 z");
+           .attr("d", "M92.27,54.45 L 102 54.45 102 46.07 92.27 46.07 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#003771")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M102.51,53.45 L 112.24 53.45 112.24 45.24 102.51 45.24 z");
+           .attr("d", "M102,54.45 L 111.72 54.45 111.72 46.07 102 46.07 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#47A8EF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.86,45.24 L 63.59 45.24 63.59 37.03 53.86 37.03 z");
+           .attr("d", "M53.38,46.07 L 63.11 46.07 63.11 37.69 53.38 37.69 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005E9D")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.59,45.24 L 73.32 45.24 73.32 37.03 63.59 37.03 z");
+           .attr("d", "M63.11,46.07 L 72.83 46.07 72.83 37.69 63.11 37.69 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007DBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.32,45.24 L 83.05 45.24 83.05 37.03 73.32 37.03 z");
+           .attr("d", "M72.83,46.07 L 82.55 46.07 82.55 37.69 72.83 37.69 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0087CB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.05,45.24 L 92.78 45.24 92.78 37.03 83.05 37.03 z");
+           .attr("d", "M82.55,46.07 L 92.27 46.07 92.27 37.69 82.55 37.69 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#003771")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M92.78,45.24 L 102.51 45.24 102.51 37.03 92.78 37.03 z");
+           .attr("d", "M92.27,46.07 L 102 46.07 102 37.69 92.27 37.69 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0072B4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M102.51,45.24 L 112.24 45.24 112.24 37.03 102.51 37.03 z");
+           .attr("d", "M102,46.07 L 111.72 46.07 111.72 37.69 102 37.69 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#47A8EF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.86,37.03 L 63.59 37.03 63.59 28.82 53.86 28.82 z");
+           .attr("d", "M53.38,37.69 L 63.11 37.69 63.11 29.31 53.38 29.31 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#47A8EF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.59,37.03 L 73.32 37.03 73.32 28.82 63.59 28.82 z");
+           .attr("d", "M63.11,37.69 L 72.83 37.69 72.83 29.31 63.11 29.31 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2092D7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.32,37.03 L 83.05 37.03 83.05 28.82 73.32 28.82 z");
+           .attr("d", "M72.83,37.69 L 82.55 37.69 82.55 29.31 72.83 29.31 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#003771")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.05,37.03 L 92.78 37.03 92.78 28.82 83.05 28.82 z");
+           .attr("d", "M82.55,37.69 L 92.27 37.69 92.27 29.31 82.55 29.31 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0087CB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M92.78,37.03 L 102.51 37.03 102.51 28.82 92.78 28.82 z");
+           .attr("d", "M92.27,37.69 L 102 37.69 102 29.31 92.27 29.31 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#7FD7FF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M102.51,37.03 L 112.24 37.03 112.24 28.82 102.51 28.82 z");
+           .attr("d", "M102,37.69 L 111.72 37.69 111.72 29.31 102 29.31 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#47A8EF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.86,28.82 L 63.59 28.82 63.59 20.61 53.86 20.61 z");
+           .attr("d", "M53.38,29.31 L 63.11 29.31 63.11 20.93 53.38 20.93 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#369DE3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.59,28.82 L 73.32 28.82 73.32 20.61 63.59 20.61 z");
+           .attr("d", "M63.11,29.31 L 72.83 29.31 72.83 20.93 63.11 20.93 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2092D7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.05,28.82 L 92.78 28.82 92.78 20.61 83.05 20.61 z");
+           .attr("d", "M82.55,29.31 L 92.27 29.31 92.27 20.93 82.55 20.93 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005E9D")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M92.78,28.82 L 102.51 28.82 102.51 20.61 92.78 20.61 z");
+           .attr("d", "M92.27,29.31 L 102 29.31 102 20.93 92.27 20.93 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0072B4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M102.51,28.82 L 112.24 28.82 112.24 20.61 102.51 20.61 z");
+           .attr("d", "M102,29.31 L 111.72 29.31 111.72 20.93 102 20.93 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2092D7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.86,20.61 L 63.59 20.61 63.59 12.4 53.86 12.4 z");
+           .attr("d", "M53.38,20.93 L 63.11 20.93 63.11 12.55 53.38 12.55 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0068A8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.32,20.61 L 83.05 20.61 83.05 12.4 73.32 12.4 z");
+           .attr("d", "M72.83,20.93 L 82.55 20.93 82.55 12.55 72.83 12.55 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2092D7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.05,20.61 L 92.78 20.61 92.78 12.4 83.05 12.4 z");
+           .attr("d", "M82.55,20.93 L 92.27 20.93 92.27 12.55 82.55 12.55 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#47A8EF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M92.78,20.61 L 102.51 20.61 102.51 12.4 92.78 12.4 z");
+           .attr("d", "M92.27,20.93 L 102 20.93 102 12.55 92.27 12.55 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0068A8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M102.51,20.61 L 112.24 20.61 112.24 12.4 102.51 12.4 z");
+           .attr("d", "M102,20.93 L 111.72 20.93 111.72 12.55 102 12.55 z");
       }(g.append("g")));
     }(g.append("g")));
   }(g.append("g")));
@@ -1257,7 +1266,7 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath4")
     .append("svg:path")
-      .attr("d", " M21.43,5 L 122.17 5 122.17 61.46 21.43 61.46 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+      .attr("d", " M20.97,5 L 121.64 5 121.64 62.63 20.97 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
   }(g.append("g")));
 }(g.append("g")));
 }
@@ -1269,7 +1278,1918 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-bOyr1nW2YTkMnrf1Yzgt");
+draw("#gadflyplot-TEOYa3qOrMmb2ieoBcgZ");
+</script>
+
+
+<pre class="sourceCode julia julia"><code class="sourceCode julia"><span class="co"># Explicitly setting the number of bins</span>
+plot(data(<span class="st">&quot;car&quot;</span>, <span class="st">&quot;UN&quot;</span>), x=<span class="st">&quot;gdp&quot;</span>, y=<span class="st">&quot;infant.mortality&quot;</span>,
+     Scale.x_log10, Scale.y_log10, Geom.histogram2d(xbincount=<span class="fl">30</span>, ybincount=<span class="fl">30</span>))</code></pre>
+<div id="gadflyplot-DP6hTiBMACiVuQNCfzRx"></div>
+<script>
+function draw_with_data(data, parent_id) {
+  var g = d3.select(parent_id)
+            .append("svg")
+              .attr("width", "140mm")
+              .attr("height", "80mm")
+              .attr("viewBox", "0 0 140 80")
+              .attr("stroke-width", "0.5")
+              .attr("style", "stroke:black;fill:black");
+  g.append("defs");
+  var t = {"scale": 1.0};
+(function (g) {
+  d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath0")
+    .append("svg:path")
+      .attr("d", " M5,1 L 20.97 1 20.97 63.63 5 63.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
+  (function (g) {
+    g.attr("stroke", "none")
+     .attr("fill", "#4C404B")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.18)
+     .attr("class", "guide ylabels");
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 6.63)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("2.5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 115.37)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-2.5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 39.25)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("1.0");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", -47.74)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("5.0");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 50.12)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("0.5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", -4.24)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("3.0");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 126.24)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-3.0");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 61)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("0.0");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 82.75)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-1.0");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", -58.61)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("5.5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", -25.99)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("4.0");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 71.87)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-0.5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 104.49)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-2.0");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 28.38)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("1.5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 17.5)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("2.0");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", -15.12)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("3.5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", 93.62)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-1.5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 19.97)
+       .attr("y", -36.86)
+       .attr("text-anchor", "end")
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("4.5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("stroke", "none")
+     .attr("fill", "#362A35")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.88);
+    g.append("svg:text")
+       .attr("x", 7.94)
+       .attr("y", 33.81)
+       .attr("text-anchor", "middle")
+       .style("dominant-baseline", "central")
+       .attr("transform", "rotate(-90, 7.94, 33.81)")
+    .call(function(text) {
+  text.text("infant.mortality");
+})
+;
+  }(g.append("g")));
+}(g.append("g")));
+(function (g) {
+  d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath1")
+    .append("svg:path")
+      .attr("d", " M10.9,62.63 L 131.71 62.63 131.71 75 10.9 75 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
+  (function (g) {
+    g.attr("stroke", "none")
+     .attr("fill", "#4C404B")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.18)
+     .attr("class", "guide xlabels");
+    g.append("svg:text")
+       .attr("x", 42.82)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("1");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 118.79)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 213.77)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("10");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 80.81)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("3");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", -90.15)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-6");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", -33.16)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-3");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 175.78)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("8");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 23.82)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("0");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 4.83)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-1");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 194.77)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("9");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 137.79)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("6");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 99.8)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("4");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 232.76)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("11");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 156.78)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("7");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", -14.17)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-2");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", -52.16)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-4");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", 61.81)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("2");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+    g.append("svg:text")
+       .attr("x", -71.15)
+       .attr("y", 67.12)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.append("tspan").text("10")
+      .append("tspan")
+        .attr("baseline-shift", "super")
+      .call(function(text) {
+        text.text("-5");
+      })
+.append("tspan").attr("font-style", "normal")      ;
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("stroke", "none")
+     .attr("fill", "#362A35")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.88);
+    g.append("svg:text")
+       .attr("x", 71.31)
+       .attr("y", 73)
+       .attr("text-anchor", "middle")
+    .call(function(text) {
+  text.text("gdp");
+})
+;
+  }(g.append("g")));
+}(g.append("g")));
+(function (g) {
+  g.attr("stroke", "none")
+   .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+   .style("font-size", 3.88)
+   .attr("fill", "#362A35");
+  g.append("svg:text")
+     .attr("x", 130.32)
+     .attr("y", 26.82)
+     .attr("text-anchor", "middle")
+  .call(function(text) {
+  text.text("Count");
+})
+;
+}(g.append("g")));
+(function (g) {
+  g.attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+   .style("font-size", 3.18)
+   .attr("stroke", "none");
+  (function (g) {
+    g.attr("fill", "#003771")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,45.52 L 126.82 45.52 126.82 48.79 123.64 48.79 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 127.82)
+       .attr("y", 42.93)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("1.5");
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#007EC1")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,40.34 L 126.82 40.34 126.82 41.44 123.64 41.44 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#2C98DD")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,37.17 L 126.82 37.17 126.82 40.44 123.64 40.44 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 127.82)
+       .attr("y", 34.58)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("2.5");
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#94EAFF")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,31.99 L 126.82 31.99 126.82 33.09 123.64 33.09 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#B3FFFF")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,28.82 L 126.82 28.82 126.82 32.09 123.64 32.09 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 127.82)
+       .attr("y", 30.41)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("3.0");
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#75CEFF")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,32.99 L 126.82 32.99 126.82 36.27 123.64 36.27 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#54B2FA")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,36.17 L 126.82 36.17 126.82 37.27 123.64 37.27 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 127.82)
+       .attr("y", 38.76)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("2.0");
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#0065A5")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,41.34 L 126.82 41.34 126.82 44.62 123.64 44.62 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#004D8B")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M123.64,44.52 L 126.82 44.52 126.82 45.62 123.64 45.62 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 127.82)
+       .attr("y", 47.11)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("1.0");
+})
+;
+  }(g.append("g")));
+}(g.append("g")));
+(function (g) {
+  g.on("mouseover", guide_background_mouseover(parent_id, "#C6C6C9"))
+   .on("mouseout", guide_background_mouseout(parent_id, "#F0F0F3"))
+   .call(zoom_behavior(parent_id, t));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath2")
+    .append("svg:path")
+      .attr("d", " M20.97,5 L 121.64 5 121.64 62.63 20.97 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
+    (function (g) {
+      g.attr("class", "guide background")
+       .attr("stroke", "#F1F1F5")
+       .attr("fill", "#FAFAFA");
+      g.append("svg:path")
+         .attr("d", "M20.97,5 L 121.64 5 121.64 62.63 20.97 62.63 z");
+    }(g.append("g")));
+    (function (g) {
+      g.attr("stroke", "#F0F0F3")
+       .attr("stroke-width", 0.2)
+       .attr("class", "guide ygridlines xfixed");
+      g.append("svg:path")
+         .attr("d", "M20.97,6.63 L 121.64 6.63");
+      g.append("svg:path")
+         .attr("d", "M20.97,115.37 L 121.64 115.37");
+      g.append("svg:path")
+         .attr("d", "M20.97,39.25 L 121.64 39.25");
+      g.append("svg:path")
+         .attr("d", "M20.97,-47.74 L 121.64 -47.74");
+      g.append("svg:path")
+         .attr("d", "M20.97,50.12 L 121.64 50.12");
+      g.append("svg:path")
+         .attr("d", "M20.97,-4.24 L 121.64 -4.24");
+      g.append("svg:path")
+         .attr("d", "M20.97,126.24 L 121.64 126.24");
+      g.append("svg:path")
+         .attr("d", "M20.97,61 L 121.64 61");
+      g.append("svg:path")
+         .attr("d", "M20.97,82.75 L 121.64 82.75");
+      g.append("svg:path")
+         .attr("d", "M20.97,-58.61 L 121.64 -58.61");
+      g.append("svg:path")
+         .attr("d", "M20.97,-25.99 L 121.64 -25.99");
+      g.append("svg:path")
+         .attr("d", "M20.97,71.87 L 121.64 71.87");
+      g.append("svg:path")
+         .attr("d", "M20.97,104.49 L 121.64 104.49");
+      g.append("svg:path")
+         .attr("d", "M20.97,28.38 L 121.64 28.38");
+      g.append("svg:path")
+         .attr("d", "M20.97,17.5 L 121.64 17.5");
+      g.append("svg:path")
+         .attr("d", "M20.97,-15.12 L 121.64 -15.12");
+      g.append("svg:path")
+         .attr("d", "M20.97,93.62 L 121.64 93.62");
+      g.append("svg:path")
+         .attr("d", "M20.97,-36.86 L 121.64 -36.86");
+    }(g.append("g")));
+    (function (g) {
+      g.attr("stroke", "#F0F0F3")
+       .attr("stroke-width", 0.2)
+       .attr("class", "guide xgridlines yfixed");
+      g.append("svg:path")
+         .attr("d", "M42.82,5 L 42.82 62.63");
+      g.append("svg:path")
+         .attr("d", "M118.79,5 L 118.79 62.63");
+      g.append("svg:path")
+         .attr("d", "M213.77,5 L 213.77 62.63");
+      g.append("svg:path")
+         .attr("d", "M80.81,5 L 80.81 62.63");
+      g.append("svg:path")
+         .attr("d", "M-90.15,5 L -90.15 62.63");
+      g.append("svg:path")
+         .attr("d", "M-33.16,5 L -33.16 62.63");
+      g.append("svg:path")
+         .attr("d", "M175.78,5 L 175.78 62.63");
+      g.append("svg:path")
+         .attr("d", "M23.82,5 L 23.82 62.63");
+      g.append("svg:path")
+         .attr("d", "M4.83,5 L 4.83 62.63");
+      g.append("svg:path")
+         .attr("d", "M194.77,5 L 194.77 62.63");
+      g.append("svg:path")
+         .attr("d", "M137.79,5 L 137.79 62.63");
+      g.append("svg:path")
+         .attr("d", "M99.8,5 L 99.8 62.63");
+      g.append("svg:path")
+         .attr("d", "M232.76,5 L 232.76 62.63");
+      g.append("svg:path")
+         .attr("d", "M156.78,5 L 156.78 62.63");
+      g.append("svg:path")
+         .attr("d", "M-14.17,5 L -14.17 62.63");
+      g.append("svg:path")
+         .attr("d", "M-52.16,5 L -52.16 62.63");
+      g.append("svg:path")
+         .attr("d", "M61.81,5 L 61.81 62.63");
+      g.append("svg:path")
+         .attr("d", "M-71.15,5 L -71.15 62.63");
+    }(g.append("g")));
+  }(g.append("g")));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath3")
+    .append("svg:path")
+      .attr("d", " M20.97,5 L 121.64 5 121.64 62.63 20.97 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath3)");
+    (function (g) {
+      g.attr("stroke", "none")
+       .attr("shape-rendering", "crispEdges");
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M78.66,54.45 L 80.61 54.45 80.61 53.06 78.66 53.06 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M80.61,53.06 L 82.55 53.06 82.55 51.66 80.61 51.66 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M96.16,50.26 L 98.11 50.26 98.11 48.86 96.16 48.86 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M76.72,48.86 L 78.66 48.86 78.66 47.47 76.72 47.47 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M103.94,48.86 L 105.89 48.86 105.89 47.47 103.94 47.47 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M65.05,47.47 L 66.99 47.47 66.99 46.07 65.05 46.07 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,47.47 L 70.88 47.47 70.88 46.07 68.94 46.07 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M70.88,47.47 L 72.83 47.47 72.83 46.07 70.88 46.07 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M72.83,47.47 L 74.77 47.47 74.77 46.07 72.83 46.07 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M88.38,47.47 L 90.33 47.47 90.33 46.07 88.38 46.07 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M105.89,47.47 L 107.83 47.47 107.83 46.07 105.89 46.07 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M80.61,46.07 L 82.55 46.07 82.55 44.67 80.61 44.67 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M102,46.07 L 103.94 46.07 103.94 44.67 102 44.67 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M103.94,46.07 L 105.89 46.07 105.89 44.67 103.94 44.67 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M66.99,44.67 L 68.94 44.67 68.94 43.28 66.99 43.28 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,44.67 L 70.88 44.67 70.88 43.28 68.94 43.28 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M100.05,44.67 L 102 44.67 102 43.28 100.05 43.28 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M103.94,44.67 L 105.89 44.67 105.89 43.28 103.94 43.28 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M107.83,44.67 L 109.78 44.67 109.78 43.28 107.83 43.28 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,43.28 L 70.88 43.28 70.88 41.88 68.94 41.88 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M80.61,43.28 L 82.55 43.28 82.55 41.88 80.61 41.88 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M90.33,43.28 L 92.27 43.28 92.27 41.88 90.33 41.88 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M98.11,43.28 L 100.05 43.28 100.05 41.88 98.11 41.88 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M61.16,41.88 L 63.11 41.88 63.11 40.48 61.16 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M65.05,41.88 L 66.99 41.88 66.99 40.48 65.05 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M66.99,41.88 L 68.94 41.88 68.94 40.48 66.99 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M72.83,41.88 L 74.77 41.88 74.77 40.48 72.83 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M74.77,41.88 L 76.72 41.88 76.72 40.48 74.77 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#B3FFFF")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M84.5,41.88 L 86.44 41.88 86.44 40.48 84.5 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M90.33,41.88 L 92.27 41.88 92.27 40.48 90.33 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M92.27,41.88 L 94.22 41.88 94.22 40.48 92.27 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M100.05,41.88 L 102 41.88 102 40.48 100.05 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M102,41.88 L 103.94 41.88 103.94 40.48 102 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M105.89,41.88 L 107.83 41.88 107.83 40.48 105.89 40.48 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,40.48 L 70.88 40.48 70.88 39.09 68.94 39.09 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M70.88,40.48 L 72.83 40.48 72.83 39.09 70.88 39.09 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M76.72,40.48 L 78.66 40.48 78.66 39.09 76.72 39.09 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M78.66,40.48 L 80.61 40.48 80.61 39.09 78.66 39.09 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M80.61,40.48 L 82.55 40.48 82.55 39.09 80.61 39.09 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M82.55,40.48 L 84.5 40.48 84.5 39.09 82.55 39.09 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M84.5,40.48 L 86.44 40.48 86.44 39.09 84.5 39.09 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M88.38,40.48 L 90.33 40.48 90.33 39.09 88.38 39.09 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M92.27,40.48 L 94.22 40.48 94.22 39.09 92.27 39.09 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M105.89,40.48 L 107.83 40.48 107.83 39.09 105.89 39.09 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M53.38,39.09 L 55.33 39.09 55.33 37.69 53.38 37.69 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M76.72,39.09 L 78.66 39.09 78.66 37.69 76.72 37.69 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M92.27,39.09 L 94.22 39.09 94.22 37.69 92.27 37.69 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M94.22,39.09 L 96.16 39.09 96.16 37.69 94.22 37.69 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M102,39.09 L 103.94 39.09 103.94 37.69 102 37.69 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M66.99,37.69 L 68.94 37.69 68.94 36.29 66.99 36.29 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M76.72,37.69 L 78.66 37.69 78.66 36.29 76.72 36.29 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M82.55,37.69 L 84.5 37.69 84.5 36.29 82.55 36.29 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M88.38,37.69 L 90.33 37.69 90.33 36.29 88.38 36.29 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M92.27,37.69 L 94.22 37.69 94.22 36.29 92.27 36.29 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M94.22,37.69 L 96.16 37.69 96.16 36.29 94.22 36.29 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M96.16,37.69 L 98.11 37.69 98.11 36.29 96.16 36.29 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M103.94,37.69 L 105.89 37.69 105.89 36.29 103.94 36.29 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M107.83,37.69 L 109.78 37.69 109.78 36.29 107.83 36.29 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,36.29 L 70.88 36.29 70.88 34.9 68.94 34.9 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M82.55,36.29 L 84.5 36.29 84.5 34.9 82.55 34.9 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M88.38,36.29 L 90.33 36.29 90.33 34.9 88.38 34.9 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M94.22,36.29 L 96.16 36.29 96.16 34.9 94.22 34.9 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M98.11,36.29 L 100.05 36.29 100.05 34.9 98.11 34.9 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M103.94,36.29 L 105.89 36.29 105.89 34.9 103.94 34.9 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M66.99,34.9 L 68.94 34.9 68.94 33.5 66.99 33.5 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M72.83,34.9 L 74.77 34.9 74.77 33.5 72.83 33.5 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M76.72,34.9 L 78.66 34.9 78.66 33.5 76.72 33.5 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M78.66,34.9 L 80.61 34.9 80.61 33.5 78.66 33.5 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M80.61,34.9 L 82.55 34.9 82.55 33.5 80.61 33.5 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M98.11,34.9 L 100.05 34.9 100.05 33.5 98.11 33.5 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M100.05,34.9 L 102 34.9 102 33.5 100.05 33.5 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M102,34.9 L 103.94 34.9 103.94 33.5 102 33.5 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M105.89,34.9 L 107.83 34.9 107.83 33.5 105.89 33.5 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M65.05,33.5 L 66.99 33.5 66.99 32.1 65.05 32.1 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M72.83,33.5 L 74.77 33.5 74.77 32.1 72.83 32.1 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M78.66,33.5 L 80.61 33.5 80.61 32.1 78.66 32.1 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M80.61,33.5 L 82.55 33.5 82.55 32.1 80.61 32.1 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M86.44,33.5 L 88.38 33.5 88.38 32.1 86.44 32.1 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M90.33,33.5 L 92.27 33.5 92.27 32.1 90.33 32.1 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M92.27,33.5 L 94.22 33.5 94.22 32.1 92.27 32.1 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M100.05,33.5 L 102 33.5 102 32.1 100.05 32.1 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,32.1 L 70.88 32.1 70.88 30.71 68.94 30.71 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M72.83,32.1 L 74.77 32.1 74.77 30.71 72.83 30.71 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M76.72,32.1 L 78.66 32.1 78.66 30.71 76.72 30.71 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M78.66,32.1 L 80.61 32.1 80.61 30.71 78.66 30.71 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M86.44,32.1 L 88.38 32.1 88.38 30.71 86.44 30.71 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M88.38,32.1 L 90.33 32.1 90.33 30.71 88.38 30.71 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M94.22,32.1 L 96.16 32.1 96.16 30.71 94.22 30.71 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M96.16,32.1 L 98.11 32.1 98.11 30.71 96.16 30.71 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M107.83,32.1 L 109.78 32.1 109.78 30.71 107.83 30.71 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M109.78,32.1 L 111.72 32.1 111.72 30.71 109.78 30.71 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M57.27,30.71 L 59.22 30.71 59.22 29.31 57.27 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,30.71 L 70.88 30.71 70.88 29.31 68.94 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M72.83,30.71 L 74.77 30.71 74.77 29.31 72.83 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M80.61,30.71 L 82.55 30.71 82.55 29.31 80.61 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M82.55,30.71 L 84.5 30.71 84.5 29.31 82.55 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M90.33,30.71 L 92.27 30.71 92.27 29.31 90.33 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M94.22,30.71 L 96.16 30.71 96.16 29.31 94.22 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M100.05,30.71 L 102 30.71 102 29.31 100.05 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M102,30.71 L 103.94 30.71 103.94 29.31 102 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M103.94,30.71 L 105.89 30.71 105.89 29.31 103.94 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M105.89,30.71 L 107.83 30.71 107.83 29.31 105.89 29.31 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,29.31 L 70.88 29.31 70.88 27.91 68.94 27.91 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M78.66,29.31 L 80.61 29.31 80.61 27.91 78.66 27.91 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M86.44,29.31 L 88.38 29.31 88.38 27.91 86.44 27.91 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M92.27,29.31 L 94.22 29.31 94.22 27.91 92.27 27.91 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M96.16,29.31 L 98.11 29.31 98.11 27.91 96.16 27.91 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M103.94,29.31 L 105.89 29.31 105.89 27.91 103.94 27.91 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M109.78,29.31 L 111.72 29.31 111.72 27.91 109.78 27.91 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M65.05,27.91 L 66.99 27.91 66.99 26.52 65.05 26.52 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M76.72,27.91 L 78.66 27.91 78.66 26.52 76.72 26.52 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M82.55,27.91 L 84.5 27.91 84.5 26.52 82.55 26.52 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M84.5,27.91 L 86.44 27.91 86.44 26.52 84.5 26.52 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M86.44,27.91 L 88.38 27.91 88.38 26.52 86.44 26.52 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M92.27,27.91 L 94.22 27.91 94.22 26.52 92.27 26.52 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M109.78,27.91 L 111.72 27.91 111.72 26.52 109.78 26.52 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,26.52 L 70.88 26.52 70.88 25.12 68.94 25.12 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M72.83,26.52 L 74.77 26.52 74.77 25.12 72.83 25.12 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M84.5,26.52 L 86.44 26.52 86.44 25.12 84.5 25.12 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M96.16,26.52 L 98.11 26.52 98.11 25.12 96.16 25.12 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M102,26.52 L 103.94 26.52 103.94 25.12 102 25.12 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M105.89,26.52 L 107.83 26.52 107.83 25.12 105.89 25.12 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M65.05,25.12 L 66.99 25.12 66.99 23.72 65.05 23.72 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M66.99,25.12 L 68.94 25.12 68.94 23.72 66.99 23.72 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M88.38,25.12 L 90.33 25.12 90.33 23.72 88.38 23.72 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M100.05,25.12 L 102 25.12 102 23.72 100.05 23.72 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M102,25.12 L 103.94 25.12 103.94 23.72 102 23.72 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M84.5,23.72 L 86.44 23.72 86.44 22.33 84.5 22.33 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M96.16,23.72 L 98.11 23.72 98.11 22.33 96.16 22.33 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M100.05,23.72 L 102 23.72 102 22.33 100.05 22.33 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M105.89,23.72 L 107.83 23.72 107.83 22.33 105.89 22.33 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M65.05,22.33 L 66.99 22.33 66.99 20.93 65.05 20.93 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M66.99,22.33 L 68.94 22.33 68.94 20.93 66.99 20.93 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M70.88,22.33 L 72.83 22.33 72.83 20.93 70.88 20.93 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M74.77,22.33 L 76.72 22.33 76.72 20.93 74.77 20.93 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M78.66,22.33 L 80.61 22.33 80.61 20.93 78.66 20.93 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M98.11,22.33 L 100.05 22.33 100.05 20.93 98.11 20.93 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M102,22.33 L 103.94 22.33 103.94 20.93 102 20.93 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M70.88,20.93 L 72.83 20.93 72.83 19.53 70.88 19.53 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M72.83,20.93 L 74.77 20.93 74.77 19.53 72.83 19.53 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M88.38,20.93 L 90.33 20.93 90.33 19.53 88.38 19.53 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M90.33,20.93 L 92.27 20.93 92.27 19.53 90.33 19.53 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M94.22,20.93 L 96.16 20.93 96.16 19.53 94.22 19.53 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M100.05,20.93 L 102 20.93 102 19.53 100.05 19.53 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M109.78,20.93 L 111.72 20.93 111.72 19.53 109.78 19.53 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M76.72,19.53 L 78.66 19.53 78.66 18.14 76.72 18.14 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M98.11,19.53 L 100.05 19.53 100.05 18.14 98.11 18.14 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M105.89,19.53 L 107.83 19.53 107.83 18.14 105.89 18.14 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M66.99,18.14 L 68.94 18.14 68.94 16.74 66.99 16.74 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M72.83,18.14 L 74.77 18.14 74.77 16.74 72.83 16.74 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M80.61,18.14 L 82.55 18.14 82.55 16.74 80.61 16.74 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M84.5,18.14 L 86.44 18.14 86.44 16.74 84.5 16.74 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M86.44,18.14 L 88.38 18.14 88.38 16.74 86.44 16.74 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M92.27,18.14 L 94.22 18.14 94.22 16.74 92.27 16.74 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M94.22,18.14 L 96.16 18.14 96.16 16.74 94.22 16.74 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M96.16,18.14 L 98.11 18.14 98.11 16.74 96.16 16.74 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M103.94,18.14 L 105.89 18.14 105.89 16.74 103.94 16.74 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M105.89,18.14 L 107.83 18.14 107.83 16.74 105.89 16.74 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M65.05,16.74 L 66.99 16.74 66.99 15.34 65.05 15.34 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,16.74 L 70.88 16.74 70.88 15.34 68.94 15.34 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M76.72,16.74 L 78.66 16.74 78.66 15.34 76.72 15.34 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M78.66,16.74 L 80.61 16.74 80.61 15.34 78.66 15.34 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M82.55,16.74 L 84.5 16.74 84.5 15.34 82.55 15.34 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M84.5,16.74 L 86.44 16.74 86.44 15.34 84.5 15.34 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M88.38,16.74 L 90.33 16.74 90.33 15.34 88.38 15.34 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M90.33,16.74 L 92.27 16.74 92.27 15.34 90.33 15.34 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#2C98DD")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M96.16,16.74 L 98.11 16.74 98.11 15.34 96.16 15.34 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M66.99,15.34 L 68.94 15.34 68.94 13.95 66.99 13.95 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M78.66,15.34 L 80.61 15.34 80.61 13.95 78.66 13.95 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M90.33,15.34 L 92.27 15.34 92.27 13.95 90.33 13.95 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M102,15.34 L 103.94 15.34 103.94 13.95 102 13.95 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M68.94,13.95 L 70.88 13.95 70.88 12.55 68.94 12.55 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M96.16,13.95 L 98.11 13.95 98.11 12.55 96.16 12.55 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M98.11,13.95 L 100.05 13.95 100.05 12.55 98.11 12.55 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M100.05,13.95 L 102 13.95 102 12.55 100.05 12.55 z");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("fill", "#003771")
+         .attr("class", "geometry");
+        g.append("svg:path")
+           .attr("d", "M105.89,13.95 L 107.83 13.95 107.83 12.55 105.89 12.55 z");
+      }(g.append("g")));
+    }(g.append("g")));
+  }(g.append("g")));
+  (function (g) {
+    d3.select("defs")
+  .append("svg:clipPath")
+    .attr("id", parent_id + "_clippath4")
+    .append("svg:path")
+      .attr("d", " M20.97,5 L 121.64 5 121.64 62.63 20.97 62.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+  }(g.append("g")));
+}(g.append("g")));
+}
+
+var data = [
+];
+
+var draw = function(parent_id) {
+    draw_with_data(data, parent_id);
+};
+
+draw("#gadflyplot-DP6hTiBMACiVuQNCfzRx");
 </script>
 
         <hr>
@@ -1279,15 +3199,22 @@ draw("#gadflyplot-bOyr1nW2YTkMnrf1Yzgt");
         <div id="table-of-contents">
           <div id="table-of-contents-content">
             <ul>
-            <li><a href="index.html">Introduction</a></li><li><a href="geom_point.html">Geom.point</a></li><li><a href="geom_line.html">Geom.line</a></li><li><a href="geom_boxplot.html">Geom.boxplot</a></li><li><a href="geom_histogram.html">Geom.histogram</a></li><li><a href="geom_density.html">Geom.density</a></li><li><div class="toc-current-doc">
-                 <a href="#topbar">Geom.histogram2d</a>
+            <li><a href="index.html">Introduction</a></li><li><a href="themes.html">Themes</a></li></ul>
+            <hr><div class="toc-part">Geometry</div>
+            <ul>
+            <li><a href="geom_boxplot.html">boxplot</a></li><li><a href="geom_density.html">density</a></li><li><a href="geom_errorbar.html">errorbar</a></li><li><a href="geom_bar.html">bar</a></li><li><a href="geom_histogram.html">histogram</a></li><li><div class="toc-current-doc">
+                 <a href="#topbar">histogram2d</a>
                </div>
             
             <ul>
             <li><a href="#aesthetics">Aesthetics</a/></li>
+            <li><a href="#arguments">Arguments</a/></li>
             <li><a href="#examples">Examples</a/></li>
             </ul>
-            </li><li><a href="geom_label.html">Geom.label</a></li><li><a href="geom_rectbin.html">Geom.rectbin</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li><li><a href="geom_hline.html">Geom.hline</a></li><li><a href="geom_vline.html">Geom.vline</a></li></ul>
+            </li><li><a href="geom_hline.html">hline</a></li><li><a href="geom_label.html">label</a></li><li><a href="geom_line.html">line</a></li><li><a href="geom_point.html">point</a></li><li><a href="geom_rectbin.html">rectbin</a></li><li><a href="geom_smooth.html">smooth</a></li><li><a href="geom_subplot_grid.html">subplot_grid</a></li><li><a href="geom_vline.html">vline</a></li></ul>
+            <hr><div class="toc-part">Scale</div>
+            <ul>
+            <li><a href="scale_x_continuous.html">x_continuous</a></li><li><a href="scale_y_continuous.html">y_continuous</a></li><li><a href="scale_x_discrete.html">x_discrete</a></li><li><a href="scale_y_discrete.html">y_discrete</a></li></ul>
           </div>
         </div>
       </div>

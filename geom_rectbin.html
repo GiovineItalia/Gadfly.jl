@@ -3,7 +3,7 @@
 <head>
   <meta name="author" content="Daniel Jones">
   <meta charset="utf-8">
-  <title>Geom.rectbin</title>
+  <title>rectbin</title>
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|PT+Sans:700|Source+Code+Pro'
         rel='stylesheet' type='text/css'>
   <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all">
@@ -17,7 +17,7 @@
     <div class="container">
       <div class="row">
         <ul>
-          <li><div id="pkgname">Gadfly 0.1.12+</div></li>
+          <li><div id="pkgname">Gadfly 0.1.22</div></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl">Code</a></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl/issues">Issues</a></li>
         </ul>
@@ -29,8 +29,8 @@
     <div class="row">
       <div class="col-sm-7">
       <div id="title-block">
-        <h1>Geom.rectbin</h1>
-      </div>
+        <h1>rectbin</h1>
+      </div id="body-content">
 
 <p>Draw colored rectangles.</p>
 <h1 id="aesthetics"><a href="#TOC">Aesthetics</a></h1>
@@ -278,7 +278,7 @@ var zoom_behavior = function(parent_id, t) {
 
 </script>
 <pre class="sourceCode julia julia"><code class="sourceCode julia">plot(data(<span class="st">&quot;Zelig&quot;</span>, <span class="st">&quot;macro&quot;</span>), x=<span class="st">&quot;year&quot;</span>, y=<span class="st">&quot;country&quot;</span>, color=<span class="st">&quot;gdp&quot;</span>, Geom.rectbin)</code></pre>
-<div id="gadflyplot-7yQ1PSyUsonti0ChDtkg"></div>
+<div id="gadflyplot-S4nZBJHfvU9wHAkkvTgl"></div>
 <script>
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
@@ -295,16 +295,16 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath0")
     .append("svg:path")
-      .attr("d", " M5,0 L 35.68 0 35.68 67.7 5 67.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
+      .attr("d", " M5,1 L 35.47 1 35.47 64.94 5 64.94 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#4C404B")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.18")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.18)
      .attr("class", "guide ylabels");
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 55.24)
+       .attr("x", 34.47)
+       .attr("y", 56.32)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -312,8 +312,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 24.13)
+       .attr("x", 34.47)
+       .attr("y", 24.54)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -321,8 +321,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 35.8)
+       .attr("x", 34.47)
+       .attr("y", 36.46)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -330,8 +330,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 8.58)
+       .attr("x", 34.47)
+       .attr("y", 8.65)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -339,8 +339,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 31.91)
+       .attr("x", 34.47)
+       .attr("y", 32.49)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -348,8 +348,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 28.02)
+       .attr("x", 34.47)
+       .attr("y", 28.51)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -357,8 +357,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 12.47)
+       .attr("x", 34.47)
+       .attr("y", 12.63)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -366,8 +366,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 16.35)
+       .attr("x", 34.47)
+       .attr("y", 16.6)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -375,8 +375,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 39.68)
+       .attr("x", 34.47)
+       .attr("y", 40.43)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -384,8 +384,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 47.46)
+       .attr("x", 34.47)
+       .attr("y", 48.37)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -393,8 +393,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 20.24)
+       .attr("x", 34.47)
+       .attr("y", 20.57)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -402,8 +402,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 51.35)
+       .attr("x", 34.47)
+       .attr("y", 52.35)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -411,8 +411,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 43.57)
+       .attr("x", 34.47)
+       .attr("y", 44.4)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -420,8 +420,8 @@ function draw_with_data(data, parent_id) {
 })
 ;
     g.append("svg:text")
-       .attr("x", 34.68)
-       .attr("y", 59.13)
+       .attr("x", 34.47)
+       .attr("y", 60.29)
        .attr("text-anchor", "end")
        .style("dominant-baseline", "central")
     .call(function(text) {
@@ -432,14 +432,14 @@ function draw_with_data(data, parent_id) {
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#362A35")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.88");
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.88);
     g.append("svg:text")
-       .attr("x", 8.28)
-       .attr("y", 33.85)
+       .attr("x", 7.94)
+       .attr("y", 34.47)
        .attr("text-anchor", "middle")
        .style("dominant-baseline", "central")
-       .attr("transform", "rotate(-90, 8.28, 33.85)")
+       .attr("transform", "rotate(-90, 7.94, 34.47)")
     .call(function(text) {
   text.text("country");
 })
@@ -451,152 +451,152 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath1")
     .append("svg:path")
-      .attr("d", " M30.68,62.7 L 129.81 62.7 129.81 75 30.68 75 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
+      .attr("d", " M26.49,63.94 L 134.28 63.94 134.28 75 26.49 75 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#4C404B")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.18")
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.18)
      .attr("class", "guide xlabels");
     g.append("svg:text")
-       .attr("x", -12.24)
-       .attr("y", 66.44)
+       .attr("x", -12.83)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1950");
 })
 ;
     g.append("svg:text")
-       .attr("x", 189.54)
-       .attr("y", 66.44)
+       .attr("x", 190.54)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("2010");
 })
 ;
     g.append("svg:text")
-       .attr("x", 38.21)
-       .attr("y", 66.44)
+       .attr("x", 38.02)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1965");
 })
 ;
     g.append("svg:text")
-       .attr("x", 172.73)
-       .attr("y", 66.44)
+       .attr("x", 173.59)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("2005");
 })
 ;
     g.append("svg:text")
-       .attr("x", 206.36)
-       .attr("y", 66.44)
+       .attr("x", 207.49)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("2015");
 })
 ;
     g.append("svg:text")
-       .attr("x", 4.58)
-       .attr("y", 66.44)
+       .attr("x", 4.12)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1955");
 })
 ;
     g.append("svg:text")
-       .attr("x", 105.47)
-       .attr("y", 66.44)
+       .attr("x", 105.8)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1985");
 })
 ;
     g.append("svg:text")
-       .attr("x", 88.65)
-       .attr("y", 66.44)
+       .attr("x", 88.86)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1980");
 })
 ;
     g.append("svg:text")
-       .attr("x", 155.91)
-       .attr("y", 66.44)
+       .attr("x", 156.65)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("2000");
 })
 ;
     g.append("svg:text")
-       .attr("x", -29.06)
-       .attr("y", 66.44)
+       .attr("x", -29.77)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1945");
 })
 ;
     g.append("svg:text")
-       .attr("x", 223.18)
-       .attr("y", 66.44)
+       .attr("x", 224.43)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("2020");
 })
 ;
     g.append("svg:text")
-       .attr("x", 21.39)
-       .attr("y", 66.44)
+       .attr("x", 21.07)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1960");
 })
 ;
     g.append("svg:text")
-       .attr("x", -62.69)
-       .attr("y", 66.44)
+       .attr("x", -63.67)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1935");
 })
 ;
     g.append("svg:text")
-       .attr("x", 139.1)
-       .attr("y", 66.44)
+       .attr("x", 139.7)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1995");
 })
 ;
     g.append("svg:text")
-       .attr("x", 122.28)
-       .attr("y", 66.44)
+       .attr("x", 122.75)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1990");
 })
 ;
     g.append("svg:text")
-       .attr("x", 55.02)
-       .attr("y", 66.44)
+       .attr("x", 54.96)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1970");
 })
 ;
     g.append("svg:text")
-       .attr("x", 71.84)
-       .attr("y", 66.44)
+       .attr("x", 71.91)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1975");
 })
 ;
     g.append("svg:text")
-       .attr("x", -45.87)
-       .attr("y", 66.44)
+       .attr("x", -46.72)
+       .attr("y", 67.12)
        .attr("text-anchor", "middle")
     .call(function(text) {
   text.text("1940");
@@ -606,10 +606,10 @@ function draw_with_data(data, parent_id) {
   (function (g) {
     g.attr("stroke", "none")
      .attr("fill", "#362A35")
-     .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-     .attr("font-size", "3.88");
+     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+     .style("font-size", 3.88);
     g.append("svg:text")
-       .attr("x", 80.24)
+       .attr("x", 80.38)
        .attr("y", 73)
        .attr("text-anchor", "middle")
     .call(function(text) {
@@ -620,12 +620,12 @@ function draw_with_data(data, parent_id) {
 }(g.append("g")));
 (function (g) {
   g.attr("stroke", "none")
-   .attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-   .attr("font-size", "3.88")
+   .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+   .style("font-size", 3.88)
    .attr("fill", "#362A35");
   g.append("svg:text")
-     .attr("x", 131.9)
-     .attr("y", 25.8)
+     .attr("x", 132.15)
+     .attr("y", 27.48)
      .attr("text-anchor", "middle")
   .call(function(text) {
   text.text("gdp");
@@ -633,89 +633,20 @@ function draw_with_data(data, parent_id) {
 ;
 }(g.append("g")));
 (function (g) {
-  g.attr("font-family", "PT Sans,Helvetica Neue,Helvetica,sans")
-   .attr("font-size", "3.18")
+  g.attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+   .style("font-size", 3.18)
    .attr("stroke", "none");
   (function (g) {
-    g.attr("fill", "#004D8B")
-     .attr("stroke-width", "0.3");
+    g.attr("fill", "#003771")
+     .attr("stroke-width", 0.3);
     g.append("svg:path")
-       .attr("d", "M126.81,45.73 L 130.54 45.73 130.54 46.83 126.81 46.83 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#007EC1")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M126.81,41 L 130.54 41 130.54 42.1 126.81 42.1 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#54B2FA")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M126.81,36.27 L 130.54 36.27 130.54 37.37 126.81 37.37 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#94EAFF")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M126.81,31.53 L 130.54 31.53 130.54 32.63 126.81 32.63 z");
+       .attr("d", "M127.29,46.18 L 130.47 46.18 130.47 49.45 127.29 49.45 z");
   }(g.append("g")));
   (function (g) {
     g.attr("fill", "#4C404B");
     g.append("svg:text")
-       .attr("x", 131.54)
-       .attr("y", 29.67)
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("15");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#B3FFFF")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M126.81,27.8 L 130.54 27.8 130.54 31.63 126.81 31.63 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4C404B");
-    g.append("svg:text")
-       .attr("x", 131.54)
-       .attr("y", 34.4)
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("10");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#75CEFF")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M126.81,32.53 L 130.54 32.53 130.54 36.37 126.81 36.37 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4C404B");
-    g.append("svg:text")
-       .attr("x", 131.54)
-       .attr("y", 39.13)
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("5");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#2C98DD")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M126.81,37.27 L 130.54 37.27 130.54 41.1 126.81 41.1 z");
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#4C404B");
-    g.append("svg:text")
-       .attr("x", 131.54)
-       .attr("y", 43.87)
+       .attr("x", 131.47)
+       .attr("y", 43.59)
        .style("dominant-baseline", "central")
     .call(function(text) {
   text.text("0");
@@ -723,27 +654,96 @@ function draw_with_data(data, parent_id) {
 ;
   }(g.append("g")));
   (function (g) {
-    g.attr("fill", "#0065A5")
-     .attr("stroke-width", "0.3");
+    g.attr("fill", "#007EC1")
+     .attr("stroke-width", 0.3);
     g.append("svg:path")
-       .attr("d", "M126.81,42 L 130.54 42 130.54 45.83 126.81 45.83 z");
+       .attr("d", "M127.29,41 L 130.47 41 130.47 42.1 127.29 42.1 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#2C98DD")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M127.29,37.83 L 130.47 37.83 130.47 41.1 127.29 41.1 z");
   }(g.append("g")));
   (function (g) {
     g.attr("fill", "#4C404B");
     g.append("svg:text")
-       .attr("x", 131.54)
-       .attr("y", 48.6)
+       .attr("x", 131.47)
+       .attr("y", 35.24)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("10");
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#94EAFF")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M127.29,32.65 L 130.47 32.65 130.47 33.75 127.29 33.75 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#B3FFFF")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M127.29,29.48 L 130.47 29.48 130.47 32.75 127.29 32.75 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 131.47)
+       .attr("y", 31.06)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("15");
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#75CEFF")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M127.29,33.65 L 130.47 33.65 130.47 36.92 127.29 36.92 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#54B2FA")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M127.29,36.83 L 130.47 36.83 130.47 37.92 127.29 37.92 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 131.47)
+       .attr("y", 39.41)
+       .style("dominant-baseline", "central")
+    .call(function(text) {
+  text.text("5");
+})
+;
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#0065A5")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M127.29,42 L 130.47 42 130.47 45.28 127.29 45.28 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#004D8B")
+     .attr("stroke-width", 0.3);
+    g.append("svg:path")
+       .attr("d", "M127.29,45.18 L 130.47 45.18 130.47 46.28 127.29 46.28 z");
+  }(g.append("g")));
+  (function (g) {
+    g.attr("fill", "#4C404B");
+    g.append("svg:text")
+       .attr("x", 131.47)
+       .attr("y", 47.76)
        .style("dominant-baseline", "central")
     .call(function(text) {
   text.text("-5");
 })
 ;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("fill", "#003771")
-     .attr("stroke-width", "0.3");
-    g.append("svg:path")
-       .attr("d", "M126.81,46.73 L 130.54 46.73 130.54 50.57 126.81 50.57 z");
   }(g.append("g")));
 }(g.append("g")));
 (function (g) {
@@ -755,85 +755,85 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath2")
     .append("svg:path")
-      .attr("d", " M35.68,5 L 124.81 5 124.81 62.7 35.68 62.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
+      .attr("d", " M35.47,5 L 125.29 5 125.29 63.94 35.47 63.94 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
     (function (g) {
       g.attr("class", "guide background")
        .attr("stroke", "#F1F1F5")
        .attr("fill", "#FAFAFA");
       g.append("svg:path")
-         .attr("d", "M35.68,5 L 124.81 5 124.81 62.7 35.68 62.7 z");
+         .attr("d", "M35.47,5 L 125.29 5 125.29 63.94 35.47 63.94 z");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "#F0F0F3")
-       .attr("stroke-width", "0.2")
+       .attr("stroke-width", 0.2)
        .attr("class", "guide ygridlines xfixed");
       g.append("svg:path")
-         .attr("d", "M35.68,53.29 L 124.81 53.29");
+         .attr("d", "M35.47,54.33 L 125.29 54.33");
       g.append("svg:path")
-         .attr("d", "M35.68,18.3 L 124.81 18.3");
+         .attr("d", "M35.47,18.58 L 125.29 18.58");
       g.append("svg:path")
-         .attr("d", "M35.68,49.4 L 124.81 49.4");
+         .attr("d", "M35.47,50.36 L 125.29 50.36");
       g.append("svg:path")
-         .attr("d", "M35.68,57.18 L 124.81 57.18");
+         .attr("d", "M35.47,58.3 L 125.29 58.3");
       g.append("svg:path")
-         .attr("d", "M35.68,26.07 L 124.81 26.07");
+         .attr("d", "M35.47,26.53 L 125.29 26.53");
       g.append("svg:path")
-         .attr("d", "M35.68,41.63 L 124.81 41.63");
+         .attr("d", "M35.47,42.42 L 125.29 42.42");
       g.append("svg:path")
-         .attr("d", "M35.68,10.52 L 124.81 10.52");
+         .attr("d", "M35.47,10.64 L 125.29 10.64");
       g.append("svg:path")
-         .attr("d", "M35.68,14.41 L 124.81 14.41");
+         .attr("d", "M35.47,14.61 L 125.29 14.61");
       g.append("svg:path")
-         .attr("d", "M35.68,33.85 L 124.81 33.85");
+         .attr("d", "M35.47,34.47 L 125.29 34.47");
       g.append("svg:path")
-         .attr("d", "M35.68,29.96 L 124.81 29.96");
+         .attr("d", "M35.47,30.5 L 125.29 30.5");
       g.append("svg:path")
-         .attr("d", "M35.68,37.74 L 124.81 37.74");
+         .attr("d", "M35.47,38.44 L 125.29 38.44");
       g.append("svg:path")
-         .attr("d", "M35.68,22.19 L 124.81 22.19");
+         .attr("d", "M35.47,22.56 L 125.29 22.56");
       g.append("svg:path")
-         .attr("d", "M35.68,45.52 L 124.81 45.52");
+         .attr("d", "M35.47,46.39 L 125.29 46.39");
     }(g.append("g")));
     (function (g) {
       g.attr("stroke", "#F0F0F3")
-       .attr("stroke-width", "0.2")
+       .attr("stroke-width", 0.2)
        .attr("class", "guide xgridlines yfixed");
       g.append("svg:path")
-         .attr("d", "M-12.24,5 L -12.24 62.7");
+         .attr("d", "M-12.83,5 L -12.83 63.94");
       g.append("svg:path")
-         .attr("d", "M189.54,5 L 189.54 62.7");
+         .attr("d", "M190.54,5 L 190.54 63.94");
       g.append("svg:path")
-         .attr("d", "M38.21,5 L 38.21 62.7");
+         .attr("d", "M38.02,5 L 38.02 63.94");
       g.append("svg:path")
-         .attr("d", "M172.73,5 L 172.73 62.7");
+         .attr("d", "M173.59,5 L 173.59 63.94");
       g.append("svg:path")
-         .attr("d", "M206.36,5 L 206.36 62.7");
+         .attr("d", "M207.49,5 L 207.49 63.94");
       g.append("svg:path")
-         .attr("d", "M4.58,5 L 4.58 62.7");
+         .attr("d", "M4.12,5 L 4.12 63.94");
       g.append("svg:path")
-         .attr("d", "M105.47,5 L 105.47 62.7");
+         .attr("d", "M105.8,5 L 105.8 63.94");
       g.append("svg:path")
-         .attr("d", "M88.65,5 L 88.65 62.7");
+         .attr("d", "M88.86,5 L 88.86 63.94");
       g.append("svg:path")
-         .attr("d", "M155.91,5 L 155.91 62.7");
+         .attr("d", "M156.65,5 L 156.65 63.94");
       g.append("svg:path")
-         .attr("d", "M-29.06,5 L -29.06 62.7");
+         .attr("d", "M-29.77,5 L -29.77 63.94");
       g.append("svg:path")
-         .attr("d", "M223.18,5 L 223.18 62.7");
+         .attr("d", "M224.43,5 L 224.43 63.94");
       g.append("svg:path")
-         .attr("d", "M21.39,5 L 21.39 62.7");
+         .attr("d", "M21.07,5 L 21.07 63.94");
       g.append("svg:path")
-         .attr("d", "M-62.69,5 L -62.69 62.7");
+         .attr("d", "M-63.67,5 L -63.67 63.94");
       g.append("svg:path")
-         .attr("d", "M139.1,5 L 139.1 62.7");
+         .attr("d", "M139.7,5 L 139.7 63.94");
       g.append("svg:path")
-         .attr("d", "M122.28,5 L 122.28 62.7");
+         .attr("d", "M122.75,5 L 122.75 63.94");
       g.append("svg:path")
-         .attr("d", "M55.02,5 L 55.02 62.7");
+         .attr("d", "M54.96,5 L 54.96 63.94");
       g.append("svg:path")
-         .attr("d", "M71.84,5 L 71.84 62.7");
+         .attr("d", "M71.91,5 L 71.91 63.94");
       g.append("svg:path")
-         .attr("d", "M-45.87,5 L -45.87 62.7");
+         .attr("d", "M-46.72,5 L -46.72 63.94");
     }(g.append("g")));
   }(g.append("g")));
   (function (g) {
@@ -841,7 +841,7 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath3")
     .append("svg:path")
-      .attr("d", " M35.68,5 L 124.81 5 124.81 62.7 35.68 62.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath3)");
+      .attr("d", " M35.47,5 L 125.29 5 125.29 63.94 35.47 63.94 z");g.attr("clip-path", "url(#" + parent_id + "_clippath3)");
     (function (g) {
       g.attr("stroke", "none")
        .attr("shape-rendering", "crispEdges");
@@ -849,2101 +849,2101 @@ function draw_with_data(data, parent_id) {
         g.attr("fill", "#2E99DE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,14.41 L 43.25 14.41 43.25 10.52 39.89 10.52 z");
+           .attr("d", "M39.71,14.61 L 43.1 14.61 43.1 10.64 39.71 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,14.41 L 46.61 14.41 46.61 10.52 43.25 10.52 z");
+           .attr("d", "M43.1,14.61 L 46.49 14.61 46.49 10.64 43.1 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,14.41 L 49.98 14.41 49.98 10.52 46.61 10.52 z");
+           .attr("d", "M46.49,14.61 L 49.88 14.61 49.88 10.64 46.49 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0081C4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,14.41 L 53.34 14.41 53.34 10.52 49.98 10.52 z");
+           .attr("d", "M49.88,14.61 L 53.27 14.61 53.27 10.64 49.88 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0063A3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,14.41 L 56.7 14.41 56.7 10.52 53.34 10.52 z");
+           .attr("d", "M53.27,14.61 L 56.66 14.61 56.66 10.64 53.27 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0084C8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,14.41 L 60.07 14.41 60.07 10.52 56.7 10.52 z");
+           .attr("d", "M56.66,14.61 L 60.05 14.61 60.05 10.64 56.66 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#339CE2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,14.41 L 63.43 14.41 63.43 10.52 60.07 10.52 z");
+           .attr("d", "M60.05,14.61 L 63.44 14.61 63.44 10.64 60.05 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#399FE5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,14.41 L 66.79 14.41 66.79 10.52 63.43 10.52 z");
+           .attr("d", "M63.44,14.61 L 66.83 14.61 66.83 10.64 63.44 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005D9C")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,14.41 L 70.16 14.41 70.16 10.52 66.79 10.52 z");
+           .attr("d", "M66.83,14.61 L 70.22 14.61 70.22 10.64 66.83 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005D9D")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,14.41 L 73.52 14.41 73.52 10.52 70.16 10.52 z");
+           .attr("d", "M70.22,14.61 L 73.6 14.61 73.6 10.64 70.22 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,14.41 L 76.88 14.41 76.88 10.52 73.52 10.52 z");
+           .attr("d", "M73.6,14.61 L 76.99 14.61 76.99 10.64 73.6 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#359DE3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,14.41 L 80.24 14.41 80.24 10.52 76.88 10.52 z");
+           .attr("d", "M76.99,14.61 L 80.38 14.61 80.38 10.64 76.99 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,14.41 L 83.61 14.41 83.61 10.52 80.24 10.52 z");
+           .attr("d", "M80.38,14.61 L 83.77 14.61 83.77 10.64 80.38 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007FC2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,14.41 L 86.97 14.41 86.97 10.52 83.61 10.52 z");
+           .attr("d", "M83.77,14.61 L 87.16 14.61 87.16 10.64 83.77 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0061A1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,14.41 L 90.33 14.41 90.33 10.52 86.97 10.52 z");
+           .attr("d", "M87.16,14.61 L 90.55 14.61 90.55 10.64 87.16 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0087CB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,14.41 L 93.7 14.41 93.7 10.52 90.33 10.52 z");
+           .attr("d", "M90.55,14.61 L 93.94 14.61 93.94 10.64 90.55 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#004986")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,14.41 L 97.06 14.41 97.06 10.52 93.7 10.52 z");
+           .attr("d", "M93.94,14.61 L 97.33 14.61 97.33 10.64 93.94 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0082C5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,14.41 L 100.42 14.41 100.42 10.52 97.06 10.52 z");
+           .attr("d", "M97.33,14.61 L 100.72 14.61 100.72 10.64 97.33 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#50AFF6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,14.41 L 103.79 14.41 103.79 10.52 100.42 10.52 z");
+           .attr("d", "M100.72,14.61 L 104.11 14.61 104.11 10.64 100.72 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#098BCF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,14.41 L 107.15 14.41 107.15 10.52 103.79 10.52 z");
+           .attr("d", "M104.11,14.61 L 107.5 14.61 107.5 10.64 104.11 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0081C4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,14.41 L 110.51 14.41 110.51 10.52 107.15 10.52 z");
+           .attr("d", "M107.5,14.61 L 110.89 14.61 110.89 10.64 107.5 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#048ACE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,14.41 L 113.88 14.41 113.88 10.52 110.51 10.52 z");
+           .attr("d", "M110.89,14.61 L 114.28 14.61 114.28 10.64 110.89 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2394D8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,14.41 L 117.24 14.41 117.24 10.52 113.88 10.52 z");
+           .attr("d", "M114.28,14.61 L 117.67 14.61 117.67 10.64 114.28 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0081C4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,14.41 L 120.6 14.41 120.6 10.52 117.24 10.52 z");
+           .attr("d", "M117.67,14.61 L 121.06 14.61 121.06 10.64 117.67 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006EAF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,14.41 L 123.96 14.41 123.96 10.52 120.6 10.52 z");
+           .attr("d", "M121.06,14.61 L 124.45 14.61 124.45 10.64 121.06 10.64 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#4AABF2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,53.29 L 43.25 53.29 43.25 49.4 39.89 49.4 z");
+           .attr("d", "M39.71,54.33 L 43.1 54.33 43.1 50.36 39.71 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0082C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,53.29 L 46.61 53.29 46.61 49.4 43.25 49.4 z");
+           .attr("d", "M43.1,54.33 L 46.49 54.33 46.49 50.36 43.1 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#379EE4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,53.29 L 49.98 53.29 49.98 49.4 46.61 49.4 z");
+           .attr("d", "M46.49,54.33 L 49.88 54.33 49.88 50.36 46.49 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#309ADF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,53.29 L 53.34 53.29 53.34 49.4 49.98 49.4 z");
+           .attr("d", "M49.88,54.33 L 53.27 54.33 53.27 50.36 49.88 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007FC2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,53.29 L 56.7 53.29 56.7 49.4 53.34 49.4 z");
+           .attr("d", "M53.27,54.33 L 56.66 54.33 56.66 50.36 53.27 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#4DADF4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,53.29 L 60.07 53.29 60.07 49.4 56.7 49.4 z");
+           .attr("d", "M56.66,54.33 L 60.05 54.33 60.05 50.36 56.66 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#3AA0E6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,53.29 L 63.43 53.29 63.43 49.4 60.07 49.4 z");
+           .attr("d", "M60.05,54.33 L 63.44 54.33 63.44 50.36 60.05 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#54B2FA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,53.29 L 66.79 53.29 66.79 49.4 63.43 49.4 z");
+           .attr("d", "M63.44,54.33 L 66.83 54.33 66.83 50.36 63.44 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0088CC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,53.29 L 70.16 53.29 70.16 49.4 66.79 49.4 z");
+           .attr("d", "M66.83,54.33 L 70.22 54.33 70.22 50.36 66.83 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0070B1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,53.29 L 73.52 53.29 73.52 49.4 70.16 49.4 z");
+           .attr("d", "M70.22,54.33 L 73.6 54.33 73.6 50.36 70.22 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#3FA3EA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,53.29 L 76.88 53.29 76.88 49.4 73.52 49.4 z");
+           .attr("d", "M73.6,54.33 L 76.99 54.33 76.99 50.36 73.6 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007BBE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,53.29 L 80.24 53.29 80.24 49.4 76.88 49.4 z");
+           .attr("d", "M76.99,54.33 L 80.38 54.33 80.38 50.36 76.99 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0E8CD0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,53.29 L 83.61 53.29 83.61 49.4 80.24 49.4 z");
+           .attr("d", "M80.38,54.33 L 83.77 54.33 83.77 50.36 80.38 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0087CB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,53.29 L 86.97 53.29 86.97 49.4 83.61 49.4 z");
+           .attr("d", "M83.77,54.33 L 87.16 54.33 87.16 50.36 83.77 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006FB0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,53.29 L 90.33 53.29 90.33 49.4 86.97 49.4 z");
+           .attr("d", "M87.16,54.33 L 90.55 54.33 90.55 50.36 87.16 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#128DD2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,53.29 L 93.7 53.29 93.7 49.4 90.33 49.4 z");
+           .attr("d", "M90.55,54.33 L 93.94 54.33 93.94 50.36 90.55 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#003D78")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,53.29 L 97.06 53.29 97.06 49.4 93.7 49.4 z");
+           .attr("d", "M93.94,54.33 L 97.33 54.33 97.33 50.36 93.94 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0081C4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,53.29 L 100.42 53.29 100.42 49.4 97.06 49.4 z");
+           .attr("d", "M97.33,54.33 L 100.72 54.33 100.72 50.36 97.33 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#339CE2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,53.29 L 103.79 53.29 103.79 49.4 100.42 49.4 z");
+           .attr("d", "M100.72,54.33 L 104.11 54.33 104.11 50.36 100.72 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,53.29 L 107.15 53.29 107.15 49.4 103.79 49.4 z");
+           .attr("d", "M104.11,54.33 L 107.5 54.33 107.5 50.36 104.11 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0084C8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,53.29 L 110.51 53.29 110.51 49.4 107.15 49.4 z");
+           .attr("d", "M107.5,54.33 L 110.89 54.33 110.89 50.36 107.5 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2193D7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,53.29 L 113.88 53.29 113.88 49.4 110.51 49.4 z");
+           .attr("d", "M110.89,54.33 L 114.28 54.33 114.28 50.36 110.89 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2C98DD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,53.29 L 117.24 53.29 117.24 49.4 113.88 49.4 z");
+           .attr("d", "M114.28,54.33 L 117.67 54.33 117.67 50.36 114.28 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007DC0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,53.29 L 120.6 53.29 120.6 49.4 117.24 49.4 z");
+           .attr("d", "M117.67,54.33 L 121.06 54.33 121.06 50.36 117.67 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0069AA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,53.29 L 123.96 53.29 123.96 49.4 120.6 49.4 z");
+           .attr("d", "M121.06,54.33 L 124.45 54.33 124.45 50.36 121.06 50.36 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0078BA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,18.3 L 43.25 18.3 43.25 14.41 39.89 14.41 z");
+           .attr("d", "M39.71,18.58 L 43.1 18.58 43.1 14.61 39.71 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,18.3 L 46.61 18.3 46.61 14.41 43.25 14.41 z");
+           .attr("d", "M43.1,18.58 L 46.49 18.58 46.49 14.61 43.1 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#168ED3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,18.3 L 49.98 18.3 49.98 14.41 46.61 14.41 z");
+           .attr("d", "M46.49,18.58 L 49.88 18.58 49.88 14.61 46.49 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0074B6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,18.3 L 53.34 18.3 53.34 14.41 49.98 14.41 z");
+           .attr("d", "M49.88,18.58 L 53.27 18.58 53.27 14.61 49.88 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007BBE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,18.3 L 56.7 18.3 56.7 14.41 53.34 14.41 z");
+           .attr("d", "M53.27,18.58 L 56.66 18.58 56.66 14.61 53.27 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0080C3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,18.3 L 60.07 18.3 60.07 14.41 56.7 14.41 z");
+           .attr("d", "M56.66,18.58 L 60.05 18.58 60.05 14.61 56.66 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,18.3 L 63.43 18.3 63.43 14.41 60.07 14.41 z");
+           .attr("d", "M60.05,18.58 L 63.44 18.58 63.44 14.61 60.05 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#55B3FB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,18.3 L 66.79 18.3 66.79 14.41 63.43 14.41 z");
+           .attr("d", "M63.44,18.58 L 66.83 18.58 66.83 14.61 63.44 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005C9B")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,18.3 L 70.16 18.3 70.16 14.41 66.79 14.41 z");
+           .attr("d", "M66.83,18.58 L 70.22 18.58 70.22 14.61 66.83 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005E9E")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,18.3 L 73.52 18.3 73.52 14.41 70.16 14.41 z");
+           .attr("d", "M70.22,18.58 L 73.6 18.58 73.6 14.61 70.22 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#098BCF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,18.3 L 76.88 18.3 76.88 14.41 73.52 14.41 z");
+           .attr("d", "M73.6,18.58 L 76.99 18.58 76.99 14.61 73.6 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006FB0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,18.3 L 80.24 18.3 80.24 14.41 76.88 14.41 z");
+           .attr("d", "M76.99,18.58 L 80.38 18.58 80.38 14.61 76.99 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0089CD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,18.3 L 83.61 18.3 83.61 14.41 80.24 14.41 z");
+           .attr("d", "M80.38,18.58 L 83.77 18.58 83.77 14.61 80.38 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007BBE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,18.3 L 86.97 18.3 86.97 14.41 83.61 14.41 z");
+           .attr("d", "M83.77,18.58 L 87.16 18.58 87.16 14.61 83.77 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#004F8D")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,18.3 L 90.33 18.3 90.33 14.41 86.97 14.41 z");
+           .attr("d", "M87.16,18.58 L 90.55 18.58 90.55 14.61 87.16 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005896")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,18.3 L 93.7 18.3 93.7 14.41 90.33 14.41 z");
+           .attr("d", "M90.55,18.58 L 93.94 18.58 93.94 14.61 90.55 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0074B6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,18.3 L 97.06 18.3 97.06 14.41 93.7 14.41 z");
+           .attr("d", "M93.94,18.58 L 97.33 18.58 97.33 14.61 93.94 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0087CB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,18.3 L 100.42 18.3 100.42 14.41 97.06 14.41 z");
+           .attr("d", "M97.33,18.58 L 100.72 18.58 100.72 14.61 97.33 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0077B9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,18.3 L 103.79 18.3 103.79 14.41 100.42 14.41 z");
+           .attr("d", "M100.72,18.58 L 104.11 18.58 104.11 14.61 100.72 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#048ACE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,18.3 L 107.15 18.3 107.15 14.41 103.79 14.41 z");
+           .attr("d", "M104.11,18.58 L 107.5 18.58 107.5 14.61 104.11 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0088CC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,18.3 L 110.51 18.3 110.51 14.41 107.15 14.41 z");
+           .attr("d", "M107.5,18.58 L 110.89 18.58 110.89 14.61 107.5 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,18.3 L 113.88 18.3 113.88 14.41 110.51 14.41 z");
+           .attr("d", "M110.89,18.58 L 114.28 18.58 114.28 14.61 110.89 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#168ED3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,18.3 L 117.24 18.3 117.24 14.41 113.88 14.41 z");
+           .attr("d", "M114.28,18.58 L 117.67 18.58 117.67 14.61 114.28 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,18.3 L 120.6 18.3 120.6 14.41 117.24 14.41 z");
+           .attr("d", "M117.67,18.58 L 121.06 18.58 121.06 14.61 117.67 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006DAE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,18.3 L 123.96 18.3 123.96 14.41 120.6 14.41 z");
+           .attr("d", "M121.06,18.58 L 124.45 18.58 124.45 14.61 121.06 14.61 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0078BA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,29.96 L 43.25 29.96 43.25 26.07 39.89 26.07 z");
+           .attr("d", "M39.71,30.5 L 43.1 30.5 43.1 26.53 39.71 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,29.96 L 46.61 29.96 46.61 26.07 43.25 26.07 z");
+           .attr("d", "M43.1,30.5 L 46.49 30.5 46.49 26.53 43.1 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,29.96 L 49.98 29.96 49.98 26.07 46.61 26.07 z");
+           .attr("d", "M46.49,30.5 L 49.88 30.5 49.88 26.53 46.49 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#44A7ED")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,29.96 L 53.34 29.96 53.34 26.07 49.98 26.07 z");
+           .attr("d", "M49.88,30.5 L 53.27 30.5 53.27 26.53 49.88 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#48AAF0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,29.96 L 56.7 29.96 56.7 26.07 53.34 26.07 z");
+           .attr("d", "M53.27,30.5 L 56.66 30.5 56.66 26.53 53.27 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#198FD4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,29.96 L 60.07 29.96 60.07 26.07 56.7 26.07 z");
+           .attr("d", "M56.66,30.5 L 60.05 30.5 60.05 26.53 56.66 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0086CA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,29.96 L 63.43 29.96 63.43 26.07 60.07 26.07 z");
+           .attr("d", "M60.05,30.5 L 63.44 30.5 63.44 26.53 60.05 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,29.96 L 66.79 29.96 66.79 26.07 63.43 26.07 z");
+           .attr("d", "M63.44,30.5 L 66.83 30.5 66.83 26.53 63.44 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#128DD2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,29.96 L 70.16 29.96 70.16 26.07 66.79 26.07 z");
+           .attr("d", "M66.83,30.5 L 70.22 30.5 70.22 26.53 66.83 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0064A4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,29.96 L 73.52 29.96 73.52 26.07 70.16 26.07 z");
+           .attr("d", "M70.22,30.5 L 73.6 30.5 73.6 26.53 70.22 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2E99DE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,29.96 L 76.88 29.96 76.88 26.07 73.52 26.07 z");
+           .attr("d", "M73.6,30.5 L 76.99 30.5 76.99 26.53 73.6 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,29.96 L 80.24 29.96 80.24 26.07 76.88 26.07 z");
+           .attr("d", "M76.99,30.5 L 80.38 30.5 80.38 26.53 76.99 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007EC1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,29.96 L 83.61 29.96 83.61 26.07 80.24 26.07 z");
+           .attr("d", "M80.38,30.5 L 83.77 30.5 83.77 26.53 80.38 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007DC0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,29.96 L 86.97 29.96 86.97 26.07 83.61 26.07 z");
+           .attr("d", "M83.77,30.5 L 87.16 30.5 87.16 26.53 83.77 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006EAF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,29.96 L 90.33 29.96 90.33 26.07 86.97 26.07 z");
+           .attr("d", "M87.16,30.5 L 90.55 30.5 90.55 26.53 87.16 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005E9E")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,29.96 L 93.7 29.96 93.7 26.07 90.33 26.07 z");
+           .attr("d", "M90.55,30.5 L 93.94 30.5 93.94 26.53 90.55 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005896")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,29.96 L 97.06 29.96 97.06 26.07 93.7 26.07 z");
+           .attr("d", "M93.94,30.5 L 97.33 30.5 97.33 26.53 93.94 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006EAF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,29.96 L 100.42 29.96 100.42 26.07 97.06 26.07 z");
+           .attr("d", "M97.33,30.5 L 100.72 30.5 100.72 26.53 97.33 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0076B8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,29.96 L 103.79 29.96 103.79 26.07 100.42 26.07 z");
+           .attr("d", "M100.72,30.5 L 104.11 30.5 104.11 26.53 100.72 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007FC2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,29.96 L 107.15 29.96 107.15 26.07 103.79 26.07 z");
+           .attr("d", "M104.11,30.5 L 107.5 30.5 107.5 26.53 104.11 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0079BB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,29.96 L 110.51 29.96 110.51 26.07 107.15 26.07 z");
+           .attr("d", "M107.5,30.5 L 110.89 30.5 110.89 26.53 107.5 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0070B1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,29.96 L 113.88 29.96 113.88 26.07 110.51 26.07 z");
+           .attr("d", "M110.89,30.5 L 114.28 30.5 114.28 26.53 110.89 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0080C3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,29.96 L 117.24 29.96 117.24 26.07 113.88 26.07 z");
+           .attr("d", "M114.28,30.5 L 117.67 30.5 117.67 26.53 114.28 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#128DD2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,29.96 L 120.6 29.96 120.6 26.07 117.24 26.07 z");
+           .attr("d", "M117.67,30.5 L 121.06 30.5 121.06 26.53 117.67 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0E8CD0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,29.96 L 123.96 29.96 123.96 26.07 120.6 26.07 z");
+           .attr("d", "M121.06,30.5 L 124.45 30.5 124.45 26.53 121.06 26.53 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0085C8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,57.18 L 43.25 57.18 43.25 53.29 39.89 53.29 z");
+           .attr("d", "M39.71,58.3 L 43.1 58.3 43.1 54.33 39.71 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0D8CD0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,57.18 L 46.61 57.18 46.61 53.29 43.25 53.29 z");
+           .attr("d", "M43.1,58.3 L 46.49 58.3 46.49 54.33 43.1 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#198FD4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,57.18 L 49.98 57.18 49.98 53.29 46.61 53.29 z");
+           .attr("d", "M46.49,58.3 L 49.88 58.3 49.88 54.33 46.49 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#47A9EF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,57.18 L 53.34 57.18 53.34 53.29 49.98 53.29 z");
+           .attr("d", "M49.88,58.3 L 53.27 58.3 53.27 54.33 49.88 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#44A7ED")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,57.18 L 56.7 57.18 56.7 53.29 53.34 53.29 z");
+           .attr("d", "M53.27,58.3 L 56.66 58.3 56.66 54.33 53.27 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#048ACE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,57.18 L 60.07 57.18 60.07 53.29 56.7 53.29 z");
+           .attr("d", "M56.66,58.3 L 60.05 58.3 60.05 54.33 56.66 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#329BE0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,57.18 L 63.43 57.18 63.43 53.29 60.07 53.29 z");
+           .attr("d", "M60.05,58.3 L 63.44 58.3 63.44 54.33 60.05 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#3CA1E7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,57.18 L 66.79 57.18 66.79 53.29 63.43 53.29 z");
+           .attr("d", "M63.44,58.3 L 66.83 58.3 66.83 54.33 63.44 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#168ED3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,57.18 L 70.16 57.18 70.16 53.29 66.79 53.29 z");
+           .attr("d", "M66.83,58.3 L 70.22 58.3 70.22 54.33 66.83 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005795")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,57.18 L 73.52 57.18 73.52 53.29 70.16 53.29 z");
+           .attr("d", "M70.22,58.3 L 73.6 58.3 73.6 54.33 70.22 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#329BE0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,57.18 L 76.88 57.18 76.88 53.29 73.52 53.29 z");
+           .attr("d", "M73.6,58.3 L 76.99 58.3 76.99 54.33 73.6 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0069AA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,57.18 L 80.24 57.18 80.24 53.29 76.88 53.29 z");
+           .attr("d", "M76.99,58.3 L 80.38 58.3 80.38 54.33 76.99 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0083C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,57.18 L 83.61 57.18 83.61 53.29 80.24 53.29 z");
+           .attr("d", "M80.38,58.3 L 83.77 58.3 83.77 54.33 80.38 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007ABC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,57.18 L 86.97 57.18 86.97 53.29 83.61 53.29 z");
+           .attr("d", "M83.77,58.3 L 87.16 58.3 87.16 54.33 83.77 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#128DD2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,57.18 L 90.33 57.18 90.33 53.29 86.97 53.29 z");
+           .attr("d", "M87.16,58.3 L 90.55 58.3 90.55 54.33 87.16 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005795")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,57.18 L 93.7 57.18 93.7 53.29 90.33 53.29 z");
+           .attr("d", "M90.55,58.3 L 93.94 58.3 93.94 54.33 90.55 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0074B6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,57.18 L 97.06 57.18 97.06 53.29 93.7 53.29 z");
+           .attr("d", "M93.94,58.3 L 97.33 58.3 97.33 54.33 93.94 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0064A4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,57.18 L 100.42 57.18 100.42 53.29 97.06 53.29 z");
+           .attr("d", "M97.33,58.3 L 100.72 58.3 100.72 54.33 97.33 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0073B5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,57.18 L 103.79 57.18 103.79 53.29 100.42 53.29 z");
+           .attr("d", "M100.72,58.3 L 104.11 58.3 104.11 54.33 100.72 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006EAF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,57.18 L 107.15 57.18 107.15 53.29 103.79 53.29 z");
+           .attr("d", "M104.11,58.3 L 107.5 58.3 107.5 54.33 104.11 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0075B7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,57.18 L 110.51 57.18 110.51 53.29 107.15 53.29 z");
+           .attr("d", "M107.5,58.3 L 110.89 58.3 110.89 54.33 107.5 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0078BA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,57.18 L 113.88 57.18 113.88 53.29 110.51 53.29 z");
+           .attr("d", "M110.89,58.3 L 114.28 58.3 114.28 54.33 110.89 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#1C90D5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,57.18 L 117.24 57.18 117.24 53.29 113.88 53.29 z");
+           .attr("d", "M114.28,58.3 L 117.67 58.3 117.67 54.33 114.28 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0089CD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,57.18 L 120.6 57.18 120.6 53.29 117.24 53.29 z");
+           .attr("d", "M117.67,58.3 L 121.06 58.3 121.06 54.33 117.67 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#098BCF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,57.18 L 123.96 57.18 123.96 53.29 120.6 53.29 z");
+           .attr("d", "M121.06,58.3 L 124.45 58.3 124.45 54.33 121.06 54.33 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#309ADF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,41.63 L 43.25 41.63 43.25 37.74 39.89 37.74 z");
+           .attr("d", "M39.71,42.42 L 43.1 42.42 43.1 38.44 39.71 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2594D9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,41.63 L 46.61 41.63 46.61 37.74 43.25 37.74 z");
+           .attr("d", "M43.1,42.42 L 46.49 42.42 46.49 38.44 43.1 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#1C90D5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,41.63 L 49.98 41.63 49.98 37.74 46.61 37.74 z");
+           .attr("d", "M46.49,42.42 L 49.88 42.42 49.88 38.44 46.49 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#4DADF4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,41.63 L 53.34 41.63 53.34 37.74 49.98 37.74 z");
+           .attr("d", "M49.88,42.42 L 53.27 42.42 53.27 38.44 49.88 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#399FE5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,41.63 L 56.7 41.63 56.7 37.74 53.34 37.74 z");
+           .attr("d", "M53.27,42.42 L 56.66 42.42 56.66 38.44 53.27 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#339CE2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,41.63 L 60.07 41.63 60.07 37.74 56.7 37.74 z");
+           .attr("d", "M56.66,42.42 L 60.05 42.42 60.05 38.44 56.66 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#3CA1E7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,41.63 L 63.43 41.63 63.43 37.74 60.07 37.74 z");
+           .attr("d", "M60.05,42.42 L 63.44 42.42 63.44 38.44 60.05 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#339CE2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,41.63 L 66.79 41.63 66.79 37.74 63.43 37.74 z");
+           .attr("d", "M63.44,42.42 L 66.83 42.42 66.83 38.44 63.44 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0085C9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,41.63 L 70.16 41.63 70.16 37.74 66.79 37.74 z");
+           .attr("d", "M66.83,42.42 L 70.22 42.42 70.22 38.44 66.83 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0067A8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,41.63 L 73.52 41.63 73.52 37.74 70.16 37.74 z");
+           .attr("d", "M70.22,42.42 L 73.6 42.42 73.6 38.44 70.22 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#309ADF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,41.63 L 76.88 41.63 76.88 37.74 73.52 37.74 z");
+           .attr("d", "M73.6,42.42 L 76.99 42.42 76.99 38.44 73.6 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0084C8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,41.63 L 80.24 41.63 80.24 37.74 76.88 37.74 z");
+           .attr("d", "M76.99,42.42 L 80.38 42.42 80.38 38.44 76.99 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#098BCF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,41.63 L 83.61 41.63 83.61 37.74 80.24 37.74 z");
+           .attr("d", "M80.38,42.42 L 83.77 42.42 83.77 38.44 80.38 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0086CA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,41.63 L 86.97 41.63 86.97 37.74 83.61 37.74 z");
+           .attr("d", "M83.77,42.42 L 87.16 42.42 87.16 38.44 83.77 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0070B1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,41.63 L 90.33 41.63 90.33 37.74 86.97 37.74 z");
+           .attr("d", "M87.16,42.42 L 90.55 42.42 90.55 38.44 87.16 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006AAB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,41.63 L 93.7 41.63 93.7 37.74 90.33 37.74 z");
+           .attr("d", "M90.55,42.42 L 93.94 42.42 93.94 38.44 90.55 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0077B9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,41.63 L 97.06 41.63 97.06 37.74 93.7 37.74 z");
+           .attr("d", "M93.94,42.42 L 97.33 42.42 97.33 38.44 93.94 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006CAD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,41.63 L 100.42 41.63 100.42 37.74 97.06 37.74 z");
+           .attr("d", "M97.33,42.42 L 100.72 42.42 100.72 38.44 97.33 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0072B4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,41.63 L 103.79 41.63 103.79 37.74 100.42 37.74 z");
+           .attr("d", "M100.72,42.42 L 104.11 42.42 104.11 38.44 100.72 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0078BA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,41.63 L 107.15 41.63 107.15 37.74 103.79 37.74 z");
+           .attr("d", "M104.11,42.42 L 107.5 42.42 107.5 38.44 104.11 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,41.63 L 110.51 41.63 110.51 37.74 107.15 37.74 z");
+           .attr("d", "M107.5,42.42 L 110.89 42.42 110.89 38.44 107.5 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0078BA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,41.63 L 113.88 41.63 113.88 37.74 110.51 37.74 z");
+           .attr("d", "M110.89,42.42 L 114.28 42.42 114.28 38.44 110.89 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0088CC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,41.63 L 117.24 41.63 117.24 37.74 113.88 37.74 z");
+           .attr("d", "M114.28,42.42 L 117.67 42.42 117.67 38.44 114.28 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0089CD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,41.63 L 120.6 41.63 120.6 37.74 117.24 37.74 z");
+           .attr("d", "M117.67,42.42 L 121.06 42.42 121.06 38.44 117.67 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007FC2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,41.63 L 123.96 41.63 123.96 37.74 120.6 37.74 z");
+           .attr("d", "M121.06,42.42 L 124.45 42.42 124.45 38.44 121.06 38.44 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0082C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,10.52 L 43.25 10.52 43.25 6.63 39.89 6.63 z");
+           .attr("d", "M39.71,10.64 L 43.1 10.64 43.1 6.67 39.71 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0064A4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,10.52 L 46.61 10.52 46.61 6.63 43.25 6.63 z");
+           .attr("d", "M43.1,10.64 L 46.49 10.64 46.49 6.67 43.1 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#42A5EC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,10.52 L 49.98 10.52 49.98 6.63 46.61 6.63 z");
+           .attr("d", "M46.49,10.64 L 49.88 10.64 49.88 6.67 46.49 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#58B6FD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,10.52 L 53.34 10.52 53.34 6.63 49.98 6.63 z");
+           .attr("d", "M49.88,10.64 L 53.27 10.64 53.27 6.67 49.88 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#3EA2E8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,10.52 L 56.7 10.52 56.7 6.63 53.34 6.63 z");
+           .attr("d", "M53.27,10.64 L 56.66 10.64 56.66 6.67 53.27 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0082C5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,10.52 L 60.07 10.52 60.07 6.63 56.7 6.63 z");
+           .attr("d", "M56.66,10.64 L 60.05 10.64 60.05 6.67 56.66 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#198FD4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,10.52 L 63.43 10.52 63.43 6.63 60.07 6.63 z");
+           .attr("d", "M60.05,10.64 L 63.44 10.64 63.44 6.67 60.05 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,10.52 L 66.79 10.52 66.79 6.63 63.43 6.63 z");
+           .attr("d", "M63.44,10.64 L 66.83 10.64 66.83 6.67 63.44 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0068A9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,10.52 L 70.16 10.52 70.16 6.63 66.79 6.63 z");
+           .attr("d", "M66.83,10.64 L 70.22 10.64 70.22 6.67 66.83 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005694")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,10.52 L 73.52 10.52 73.52 6.63 70.16 6.63 z");
+           .attr("d", "M70.22,10.64 L 73.6 10.64 73.6 6.67 70.22 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#339CE2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,10.52 L 76.88 10.52 76.88 6.63 73.52 6.63 z");
+           .attr("d", "M73.6,10.64 L 76.99 10.64 76.99 6.67 73.6 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0083C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,10.52 L 80.24 10.52 80.24 6.63 76.88 6.63 z");
+           .attr("d", "M76.99,10.64 L 80.38 10.64 80.38 6.67 76.99 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0082C5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,10.52 L 83.61 10.52 83.61 6.63 80.24 6.63 z");
+           .attr("d", "M80.38,10.64 L 83.77 10.64 83.77 6.67 80.38 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#198FD4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,10.52 L 86.97 10.52 86.97 6.63 83.61 6.63 z");
+           .attr("d", "M83.77,10.64 L 87.16 10.64 87.16 6.67 83.77 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0073B5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,10.52 L 90.33 10.52 90.33 6.63 86.97 6.63 z");
+           .attr("d", "M87.16,10.64 L 90.55 10.64 90.55 6.67 87.16 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0067A8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,10.52 L 93.7 10.52 93.7 6.63 90.33 6.63 z");
+           .attr("d", "M90.55,10.64 L 93.94 10.64 93.94 6.67 90.55 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005F9F")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,10.52 L 97.06 10.52 97.06 6.63 93.7 6.63 z");
+           .attr("d", "M93.94,10.64 L 97.33 10.64 97.33 6.67 93.94 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0071B2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,10.52 L 100.42 10.52 100.42 6.63 97.06 6.63 z");
+           .attr("d", "M97.33,10.64 L 100.72 10.64 100.72 6.67 97.33 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007FC2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,10.52 L 103.79 10.52 103.79 6.63 100.42 6.63 z");
+           .attr("d", "M100.72,10.64 L 104.11 10.64 104.11 6.67 100.72 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0079BB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,10.52 L 107.15 10.52 107.15 6.63 103.79 6.63 z");
+           .attr("d", "M104.11,10.64 L 107.5 10.64 107.5 6.67 104.11 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,10.52 L 110.51 10.52 110.51 6.63 107.15 6.63 z");
+           .attr("d", "M107.5,10.64 L 110.89 10.64 110.89 6.67 107.5 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0077B9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,10.52 L 113.88 10.52 113.88 6.63 110.51 6.63 z");
+           .attr("d", "M110.89,10.64 L 114.28 10.64 114.28 6.67 110.89 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#048ACE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,10.52 L 117.24 10.52 117.24 6.63 113.88 6.63 z");
+           .attr("d", "M114.28,10.64 L 117.67 10.64 117.67 6.67 114.28 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0085C9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,10.52 L 120.6 10.52 120.6 6.63 117.24 6.63 z");
+           .attr("d", "M117.67,10.64 L 121.06 10.64 121.06 6.67 117.67 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,10.52 L 123.96 10.52 123.96 6.63 120.6 6.63 z");
+           .attr("d", "M121.06,10.64 L 124.45 10.64 124.45 6.67 121.06 6.67 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#389FE4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,61.07 L 43.25 61.07 43.25 57.18 39.89 57.18 z");
+           .attr("d", "M39.71,62.28 L 43.1 62.28 43.1 58.3 39.71 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0083C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,61.07 L 46.61 61.07 46.61 57.18 43.25 57.18 z");
+           .attr("d", "M43.1,62.28 L 46.49 62.28 46.49 58.3 43.1 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2193D7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,61.07 L 49.98 61.07 49.98 57.18 46.61 57.18 z");
+           .attr("d", "M46.49,62.28 L 49.88 62.28 49.88 58.3 46.49 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#42A5EC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,61.07 L 53.34 61.07 53.34 57.18 49.98 57.18 z");
+           .attr("d", "M49.88,62.28 L 53.27 62.28 53.27 58.3 49.88 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#4EAEF5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,61.07 L 56.7 61.07 56.7 57.18 53.34 57.18 z");
+           .attr("d", "M53.27,62.28 L 56.66 62.28 56.66 58.3 53.27 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2E99DE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,61.07 L 60.07 61.07 60.07 57.18 56.7 57.18 z");
+           .attr("d", "M56.66,62.28 L 60.05 62.28 60.05 58.3 56.66 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#41A4EB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,61.07 L 63.43 61.07 63.43 57.18 60.07 57.18 z");
+           .attr("d", "M60.05,62.28 L 63.44 62.28 63.44 58.3 60.05 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2A97DC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,61.07 L 66.79 61.07 66.79 57.18 63.43 57.18 z");
+           .attr("d", "M63.44,62.28 L 66.83 62.28 66.83 58.3 63.44 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0E8CD0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,61.07 L 70.16 61.07 70.16 57.18 66.79 57.18 z");
+           .attr("d", "M66.83,62.28 L 70.22 62.28 70.22 58.3 66.83 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0061A1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,61.07 L 73.52 61.07 73.52 57.18 70.16 57.18 z");
+           .attr("d", "M70.22,62.28 L 73.6 62.28 73.6 58.3 70.22 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2394D8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,61.07 L 76.88 61.07 76.88 57.18 73.52 57.18 z");
+           .attr("d", "M73.6,62.28 L 76.99 62.28 76.99 58.3 73.6 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#1E91D6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,61.07 L 80.24 61.07 80.24 57.18 76.88 57.18 z");
+           .attr("d", "M76.99,62.28 L 80.38 62.28 80.38 58.3 76.99 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006AAB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,61.07 L 83.61 61.07 83.61 57.18 80.24 57.18 z");
+           .attr("d", "M80.38,62.28 L 83.77 62.28 83.77 58.3 80.38 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,61.07 L 86.97 61.07 86.97 57.18 83.61 57.18 z");
+           .attr("d", "M83.77,62.28 L 87.16 62.28 87.16 58.3 83.77 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0083C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,61.07 L 90.33 61.07 90.33 57.18 86.97 57.18 z");
+           .attr("d", "M87.16,62.28 L 90.55 62.28 90.55 58.3 87.16 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0064A4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,61.07 L 93.7 61.07 93.7 57.18 90.33 57.18 z");
+           .attr("d", "M90.55,62.28 L 93.94 62.28 93.94 58.3 90.55 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0071B2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,61.07 L 97.06 61.07 97.06 57.18 93.7 57.18 z");
+           .attr("d", "M93.94,62.28 L 97.33 62.28 97.33 58.3 93.94 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007ABC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,61.07 L 100.42 61.07 100.42 57.18 97.06 57.18 z");
+           .attr("d", "M97.33,62.28 L 100.72 62.28 100.72 58.3 97.33 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0079BB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,61.07 L 103.79 61.07 103.79 57.18 100.42 57.18 z");
+           .attr("d", "M100.72,62.28 L 104.11 62.28 104.11 58.3 100.72 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007EC1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,61.07 L 107.15 61.07 107.15 57.18 103.79 57.18 z");
+           .attr("d", "M104.11,62.28 L 107.5 62.28 107.5 58.3 104.11 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0070B1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,61.07 L 110.51 61.07 110.51 57.18 107.15 57.18 z");
+           .attr("d", "M107.5,62.28 L 110.89 62.28 110.89 58.3 107.5 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0078BA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,61.07 L 113.88 61.07 113.88 57.18 110.51 57.18 z");
+           .attr("d", "M110.89,62.28 L 114.28 62.28 114.28 58.3 110.89 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#198FD4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,61.07 L 117.24 61.07 117.24 57.18 113.88 57.18 z");
+           .attr("d", "M114.28,62.28 L 117.67 62.28 117.67 58.3 114.28 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#048ACE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,61.07 L 120.6 61.07 120.6 57.18 117.24 57.18 z");
+           .attr("d", "M117.67,62.28 L 121.06 62.28 121.06 58.3 117.67 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2A97DC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,61.07 L 123.96 61.07 123.96 57.18 120.6 57.18 z");
+           .attr("d", "M121.06,62.28 L 124.45 62.28 124.45 58.3 121.06 58.3 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#3DA2E8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,37.74 L 43.25 37.74 43.25 33.85 39.89 33.85 z");
+           .attr("d", "M39.71,38.44 L 43.1 38.44 43.1 34.47 39.71 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#4FAFF6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,37.74 L 46.61 37.74 46.61 33.85 43.25 33.85 z");
+           .attr("d", "M43.1,38.44 L 46.49 38.44 46.49 34.47 43.1 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#45A8EE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,37.74 L 49.98 37.74 49.98 33.85 46.61 33.85 z");
+           .attr("d", "M46.49,38.44 L 49.88 38.44 49.88 34.47 46.49 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#3FA3EA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,37.74 L 53.34 37.74 53.34 33.85 49.98 33.85 z");
+           .attr("d", "M49.88,38.44 L 53.27 38.44 53.27 34.47 49.88 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#329BE0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,37.74 L 56.7 37.74 56.7 33.85 53.34 33.85 z");
+           .attr("d", "M53.27,38.44 L 56.66 38.44 56.66 34.47 53.27 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0075B7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,37.74 L 60.07 37.74 60.07 33.85 56.7 33.85 z");
+           .attr("d", "M56.66,38.44 L 60.05 38.44 60.05 34.47 56.66 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0085C9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,37.74 L 63.43 37.74 63.43 33.85 60.07 33.85 z");
+           .attr("d", "M60.05,38.44 L 63.44 38.44 63.44 34.47 60.05 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#4DADF4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,37.74 L 66.79 37.74 66.79 33.85 63.43 33.85 z");
+           .attr("d", "M63.44,38.44 L 66.83 38.44 66.83 34.47 63.44 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#168ED3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,37.74 L 70.16 37.74 70.16 33.85 66.79 33.85 z");
+           .attr("d", "M66.83,38.44 L 70.22 38.44 70.22 34.47 66.83 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#00437F")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,37.74 L 73.52 37.74 73.52 33.85 70.16 33.85 z");
+           .attr("d", "M70.22,38.44 L 73.6 38.44 73.6 34.47 70.22 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#3CA1E7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,37.74 L 76.88 37.74 76.88 33.85 73.52 33.85 z");
+           .attr("d", "M73.6,38.44 L 76.99 38.44 76.99 34.47 73.6 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0078BA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,37.74 L 80.24 37.74 80.24 33.85 76.88 33.85 z");
+           .attr("d", "M76.99,38.44 L 80.38 38.44 80.38 34.47 76.99 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0080C3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,37.74 L 83.61 37.74 83.61 33.85 80.24 33.85 z");
+           .attr("d", "M80.38,38.44 L 83.77 38.44 83.77 34.47 80.38 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2A97DC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,37.74 L 86.97 37.74 86.97 33.85 83.61 33.85 z");
+           .attr("d", "M83.77,38.44 L 87.16 38.44 87.16 34.47 83.77 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0E8CD0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,37.74 L 90.33 37.74 90.33 33.85 86.97 33.85 z");
+           .attr("d", "M87.16,38.44 L 90.55 38.44 90.55 34.47 87.16 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0067A8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,37.74 L 93.7 37.74 93.7 33.85 90.33 33.85 z");
+           .attr("d", "M90.55,38.44 L 93.94 38.44 93.94 34.47 90.55 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0060A0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,37.74 L 97.06 37.74 97.06 33.85 93.7 33.85 z");
+           .attr("d", "M93.94,38.44 L 97.33 38.44 97.33 34.47 93.94 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0063A3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,37.74 L 100.42 37.74 100.42 33.85 97.06 33.85 z");
+           .attr("d", "M97.33,38.44 L 100.72 38.44 100.72 34.47 97.33 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0081C4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,37.74 L 103.79 37.74 103.79 33.85 100.42 33.85 z");
+           .attr("d", "M100.72,38.44 L 104.11 38.44 104.11 34.47 100.72 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007FC2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,37.74 L 107.15 37.74 107.15 33.85 103.79 33.85 z");
+           .attr("d", "M104.11,38.44 L 107.5 38.44 107.5 34.47 104.11 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007EC1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,37.74 L 110.51 37.74 110.51 33.85 107.15 33.85 z");
+           .attr("d", "M107.5,38.44 L 110.89 38.44 110.89 34.47 107.5 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0083C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,37.74 L 113.88 37.74 113.88 33.85 110.51 33.85 z");
+           .attr("d", "M110.89,38.44 L 114.28 38.44 114.28 34.47 110.89 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0E8CD0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,37.74 L 117.24 37.74 117.24 33.85 113.88 33.85 z");
+           .attr("d", "M114.28,38.44 L 117.67 38.44 117.67 34.47 114.28 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0083C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,37.74 L 120.6 37.74 120.6 33.85 117.24 33.85 z");
+           .attr("d", "M117.67,38.44 L 121.06 38.44 121.06 34.47 117.67 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0079BB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,37.74 L 123.96 37.74 123.96 33.85 120.6 33.85 z");
+           .attr("d", "M121.06,38.44 L 124.45 38.44 124.45 34.47 121.06 34.47 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007DBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,45.52 L 43.25 45.52 43.25 41.63 39.89 41.63 z");
+           .attr("d", "M39.71,46.39 L 43.1 46.39 43.1 42.42 39.71 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007BBD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,45.52 L 46.61 45.52 46.61 41.63 43.25 41.63 z");
+           .attr("d", "M43.1,46.39 L 46.49 46.39 46.49 42.42 43.1 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007EC1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,45.52 L 49.98 45.52 49.98 41.63 46.61 41.63 z");
+           .attr("d", "M46.49,46.39 L 49.88 46.39 49.88 42.42 46.49 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#70C9FF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,45.52 L 53.34 45.52 53.34 41.63 49.98 41.63 z");
+           .attr("d", "M49.88,46.39 L 53.27 46.39 53.27 42.42 49.88 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#59B7FE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,45.52 L 56.7 45.52 56.7 41.63 53.34 41.63 z");
+           .attr("d", "M53.27,46.39 L 56.66 46.39 56.66 42.42 53.27 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007ABC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,45.52 L 60.07 45.52 60.07 41.63 56.7 41.63 z");
+           .attr("d", "M56.66,46.39 L 60.05 46.39 60.05 42.42 56.66 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#55B3FB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,45.52 L 63.43 45.52 63.43 41.63 60.07 41.63 z");
+           .attr("d", "M60.05,46.39 L 63.44 46.39 63.44 42.42 60.05 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#48AAF0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,45.52 L 66.79 45.52 66.79 41.63 63.43 41.63 z");
+           .attr("d", "M63.44,46.39 L 66.83 46.39 66.83 42.42 63.44 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0083C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,45.52 L 70.16 45.52 70.16 41.63 66.79 41.63 z");
+           .attr("d", "M66.83,46.39 L 70.22 46.39 70.22 42.42 66.83 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0071B2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,45.52 L 73.52 45.52 73.52 41.63 70.16 41.63 z");
+           .attr("d", "M70.22,46.39 L 73.6 46.39 73.6 42.42 70.22 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0068A9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,45.52 L 76.88 45.52 76.88 41.63 73.52 41.63 z");
+           .attr("d", "M73.6,46.39 L 76.99 46.39 76.99 42.42 73.6 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0067A8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,45.52 L 80.24 45.52 80.24 41.63 76.88 41.63 z");
+           .attr("d", "M76.99,46.39 L 80.38 46.39 80.38 42.42 76.99 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007FC2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,45.52 L 83.61 45.52 83.61 41.63 80.24 41.63 z");
+           .attr("d", "M80.38,46.39 L 83.77 46.39 83.77 42.42 80.38 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#52B1F9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,45.52 L 86.97 45.52 86.97 41.63 83.61 41.63 z");
+           .attr("d", "M83.77,46.39 L 87.16 46.39 87.16 42.42 83.77 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#379EE4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,45.52 L 90.33 45.52 90.33 41.63 86.97 41.63 z");
+           .attr("d", "M87.16,46.39 L 90.55 46.39 90.55 42.42 87.16 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0077B9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,45.52 L 93.7 45.52 93.7 41.63 90.33 41.63 z");
+           .attr("d", "M90.55,46.39 L 93.94 46.39 93.94 42.42 90.55 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0083C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,45.52 L 97.06 45.52 97.06 41.63 93.7 41.63 z");
+           .attr("d", "M93.94,46.39 L 97.33 46.39 97.33 42.42 93.94 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0082C5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,45.52 L 100.42 45.52 100.42 41.63 97.06 41.63 z");
+           .attr("d", "M97.33,46.39 L 100.72 46.39 100.72 42.42 97.33 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0083C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,45.52 L 103.79 45.52 103.79 41.63 100.42 41.63 z");
+           .attr("d", "M100.72,46.39 L 104.11 46.39 104.11 42.42 100.72 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0086CA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,45.52 L 107.15 45.52 107.15 41.63 103.79 41.63 z");
+           .attr("d", "M104.11,46.39 L 107.5 46.39 107.5 42.42 104.11 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007ABC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,45.52 L 110.51 45.52 110.51 41.63 107.15 41.63 z");
+           .attr("d", "M107.5,46.39 L 110.89 46.39 110.89 42.42 107.5 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#128DD2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,45.52 L 113.88 45.52 113.88 41.63 110.51 41.63 z");
+           .attr("d", "M110.89,46.39 L 114.28 46.39 114.28 42.42 110.89 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#309ADF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,45.52 L 117.24 45.52 117.24 41.63 113.88 41.63 z");
+           .attr("d", "M114.28,46.39 L 117.67 46.39 117.67 42.42 114.28 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#339CE2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,45.52 L 120.6 45.52 120.6 41.63 117.24 41.63 z");
+           .attr("d", "M117.67,46.39 L 121.06 46.39 121.06 42.42 117.67 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0069AA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,45.52 L 123.96 45.52 123.96 41.63 120.6 41.63 z");
+           .attr("d", "M121.06,46.39 L 124.45 46.39 124.45 42.42 121.06 42.42 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007ABC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,22.19 L 43.25 22.19 43.25 18.3 39.89 18.3 z");
+           .attr("d", "M39.71,22.56 L 43.1 22.56 43.1 18.58 39.71 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0087CA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,22.19 L 46.61 22.19 46.61 18.3 43.25 18.3 z");
+           .attr("d", "M43.1,22.56 L 46.49 22.56 46.49 18.58 43.1 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0089CD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,22.19 L 49.98 22.19 49.98 18.3 46.61 18.3 z");
+           .attr("d", "M46.49,22.56 L 49.88 22.56 49.88 18.58 46.49 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2C98DD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,22.19 L 53.34 22.19 53.34 18.3 49.98 18.3 z");
+           .attr("d", "M49.88,22.56 L 53.27 22.56 53.27 18.58 49.88 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#45A8EE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,22.19 L 56.7 22.19 56.7 18.3 53.34 18.3 z");
+           .attr("d", "M53.27,22.56 L 56.66 22.56 56.66 18.58 53.27 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006EAF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,22.19 L 60.07 22.19 60.07 18.3 56.7 18.3 z");
+           .attr("d", "M56.66,22.56 L 60.05 22.56 60.05 18.58 56.66 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,22.19 L 63.43 22.19 63.43 18.3 60.07 18.3 z");
+           .attr("d", "M60.05,22.56 L 63.44 22.56 63.44 18.58 60.05 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#128DD2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,22.19 L 66.79 22.19 66.79 18.3 63.43 18.3 z");
+           .attr("d", "M63.44,22.56 L 66.83 22.56 66.83 18.58 63.44 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0085C9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,22.19 L 70.16 22.19 70.16 18.3 66.79 18.3 z");
+           .attr("d", "M66.83,22.56 L 70.22 22.56 70.22 18.58 66.83 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007FC2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,22.19 L 73.52 22.19 73.52 18.3 70.16 18.3 z");
+           .attr("d", "M70.22,22.56 L 73.6 22.56 73.6 18.58 70.22 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0070B1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,22.19 L 76.88 22.19 76.88 18.3 73.52 18.3 z");
+           .attr("d", "M73.6,22.56 L 76.99 22.56 76.99 18.58 73.6 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005694")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,22.19 L 80.24 22.19 80.24 18.3 76.88 18.3 z");
+           .attr("d", "M76.99,22.56 L 80.38 22.56 80.38 18.58 76.99 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0077B9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,22.19 L 83.61 22.19 83.61 18.3 80.24 18.3 z");
+           .attr("d", "M80.38,22.56 L 83.77 22.56 83.77 18.58 80.38 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#098BCF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,22.19 L 86.97 22.19 86.97 18.3 83.61 18.3 z");
+           .attr("d", "M83.77,22.56 L 87.16 22.56 87.16 18.58 83.77 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0076B8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,22.19 L 90.33 22.19 90.33 18.3 86.97 18.3 z");
+           .attr("d", "M87.16,22.56 L 90.55 22.56 90.55 18.58 87.16 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0062A2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,22.19 L 93.7 22.19 93.7 18.3 90.33 18.3 z");
+           .attr("d", "M90.55,22.56 L 93.94 22.56 93.94 18.58 90.55 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006DAE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,22.19 L 97.06 22.19 97.06 18.3 93.7 18.3 z");
+           .attr("d", "M93.94,22.56 L 97.33 22.56 97.33 18.58 93.94 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007DC0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,22.19 L 100.42 22.19 100.42 18.3 97.06 18.3 z");
+           .attr("d", "M97.33,22.56 L 100.72 22.56 100.72 18.58 97.33 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0087CB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,22.19 L 103.79 22.19 103.79 18.3 100.42 18.3 z");
+           .attr("d", "M100.72,22.56 L 104.11 22.56 104.11 18.58 100.72 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007BBE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,22.19 L 107.15 22.19 107.15 18.3 103.79 18.3 z");
+           .attr("d", "M104.11,22.56 L 107.5 22.56 107.5 18.58 104.11 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,22.19 L 110.51 22.19 110.51 18.3 107.15 18.3 z");
+           .attr("d", "M107.5,22.56 L 110.89 22.56 110.89 18.58 107.5 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0082C5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,22.19 L 113.88 22.19 113.88 18.3 110.51 18.3 z");
+           .attr("d", "M110.89,22.56 L 114.28 22.56 114.28 18.58 110.89 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,22.19 L 117.24 22.19 117.24 18.3 113.88 18.3 z");
+           .attr("d", "M114.28,22.56 L 117.67 22.56 117.67 18.58 114.28 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007DC0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,22.19 L 120.6 22.19 120.6 18.3 117.24 18.3 z");
+           .attr("d", "M117.67,22.56 L 121.06 22.56 121.06 18.58 117.67 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006BAC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,22.19 L 123.96 22.19 123.96 18.3 120.6 18.3 z");
+           .attr("d", "M121.06,22.56 L 124.45 22.56 124.45 18.58 121.06 18.58 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#088BCF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,26.07 L 43.25 26.07 43.25 22.19 39.89 22.19 z");
+           .attr("d", "M39.71,26.53 L 43.1 26.53 43.1 22.56 39.71 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#42A5EB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,26.07 L 46.61 26.07 46.61 22.19 43.25 22.19 z");
+           .attr("d", "M43.1,26.53 L 46.49 26.53 46.49 22.56 43.1 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,26.07 L 49.98 26.07 49.98 22.19 46.61 22.19 z");
+           .attr("d", "M46.49,26.53 L 49.88 26.53 49.88 22.56 46.49 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#44A7ED")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,26.07 L 53.34 26.07 53.34 22.19 49.98 22.19 z");
+           .attr("d", "M49.88,26.53 L 53.27 26.53 53.27 22.56 49.88 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#48AAF0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,26.07 L 56.7 26.07 56.7 22.19 53.34 22.19 z");
+           .attr("d", "M53.27,26.53 L 56.66 26.53 56.66 22.56 53.27 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2394D8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,26.07 L 60.07 26.07 60.07 22.19 56.7 22.19 z");
+           .attr("d", "M56.66,26.53 L 60.05 26.53 60.05 22.56 56.66 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#309ADF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,26.07 L 63.43 26.07 63.43 22.19 60.07 22.19 z");
+           .attr("d", "M60.05,26.53 L 63.44 26.53 63.44 22.56 60.05 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#168ED3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,26.07 L 66.79 26.07 66.79 22.19 63.43 22.19 z");
+           .attr("d", "M63.44,26.53 L 66.83 26.53 66.83 22.56 63.44 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#309ADF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,26.07 L 70.16 26.07 70.16 22.19 66.79 22.19 z");
+           .attr("d", "M66.83,26.53 L 70.22 26.53 70.22 22.56 66.83 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#198FD4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,26.07 L 73.52 26.07 73.52 22.19 70.16 22.19 z");
+           .attr("d", "M70.22,26.53 L 73.6 26.53 73.6 22.56 70.22 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#4AABF2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,26.07 L 76.88 26.07 76.88 22.19 73.52 22.19 z");
+           .attr("d", "M73.6,26.53 L 76.99 26.53 76.99 22.56 73.6 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0089CD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,26.07 L 80.24 26.07 80.24 22.19 76.88 22.19 z");
+           .attr("d", "M76.99,26.53 L 80.38 26.53 80.38 22.56 76.99 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2193D7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,26.07 L 83.61 26.07 83.61 22.19 80.24 22.19 z");
+           .attr("d", "M80.38,26.53 L 83.77 26.53 83.77 22.56 80.38 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2E99DE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,26.07 L 86.97 26.07 86.97 22.19 83.61 22.19 z");
+           .attr("d", "M83.77,26.53 L 87.16 26.53 87.16 22.56 83.77 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#198FD4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,26.07 L 90.33 26.07 90.33 22.19 86.97 22.19 z");
+           .attr("d", "M87.16,26.53 L 90.55 26.53 90.55 22.56 87.16 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006EAF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,26.07 L 93.7 26.07 93.7 22.19 90.33 22.19 z");
+           .attr("d", "M90.55,26.53 L 93.94 26.53 93.94 22.56 90.55 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0068A9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,26.07 L 97.06 26.07 97.06 22.19 93.7 22.19 z");
+           .attr("d", "M93.94,26.53 L 97.33 26.53 97.33 22.56 93.94 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0E8CD0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,26.07 L 100.42 26.07 100.42 22.19 97.06 22.19 z");
+           .attr("d", "M97.33,26.53 L 100.72 26.53 100.72 22.56 97.33 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#098BCF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,26.07 L 103.79 26.07 103.79 22.19 100.42 22.19 z");
+           .attr("d", "M100.72,26.53 L 104.11 26.53 104.11 22.56 100.72 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#329BE0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,26.07 L 107.15 26.07 107.15 22.19 103.79 22.19 z");
+           .attr("d", "M104.11,26.53 L 107.5 26.53 107.5 22.56 104.11 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#198FD4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,26.07 L 110.51 26.07 110.51 22.19 107.15 22.19 z");
+           .attr("d", "M107.5,26.53 L 110.89 26.53 110.89 22.56 107.5 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0087CB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,26.07 L 113.88 26.07 113.88 22.19 110.51 22.19 z");
+           .attr("d", "M110.89,26.53 L 114.28 26.53 114.28 22.56 110.89 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0070B1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,26.07 L 117.24 26.07 117.24 22.19 113.88 22.19 z");
+           .attr("d", "M114.28,26.53 L 117.67 26.53 117.67 22.56 114.28 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0069AA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,26.07 L 120.6 26.07 120.6 22.19 117.24 22.19 z");
+           .attr("d", "M117.67,26.53 L 121.06 26.53 121.06 22.56 117.67 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0077B9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,26.07 L 123.96 26.07 123.96 22.19 120.6 22.19 z");
+           .attr("d", "M121.06,26.53 L 124.45 26.53 124.45 22.56 121.06 22.56 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0080C4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,49.4 L 43.25 49.4 43.25 45.52 39.89 45.52 z");
+           .attr("d", "M39.71,50.36 L 43.1 50.36 43.1 46.39 39.71 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0087CB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,49.4 L 46.61 49.4 46.61 45.52 43.25 45.52 z");
+           .attr("d", "M43.1,50.36 L 46.49 50.36 46.49 46.39 43.1 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#098BCF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,49.4 L 49.98 49.4 49.98 45.52 46.61 45.52 z");
+           .attr("d", "M46.49,50.36 L 49.88 50.36 49.88 46.39 46.49 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#45A8EE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,49.4 L 53.34 49.4 53.34 45.52 49.98 45.52 z");
+           .attr("d", "M49.88,50.36 L 53.27 50.36 53.27 46.39 49.88 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007CBF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,49.4 L 56.7 49.4 56.7 45.52 53.34 45.52 z");
+           .attr("d", "M53.27,50.36 L 56.66 50.36 56.66 46.39 53.27 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0080C3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,49.4 L 60.07 49.4 60.07 45.52 56.7 45.52 z");
+           .attr("d", "M56.66,50.36 L 60.05 50.36 60.05 46.39 56.66 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#329BE0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,49.4 L 63.43 49.4 63.43 45.52 60.07 45.52 z");
+           .attr("d", "M60.05,50.36 L 63.44 50.36 63.44 46.39 60.05 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0089CD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,49.4 L 66.79 49.4 66.79 45.52 63.43 45.52 z");
+           .attr("d", "M63.44,50.36 L 66.83 50.36 66.83 46.39 63.44 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005D9C")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,49.4 L 70.16 49.4 70.16 45.52 66.79 45.52 z");
+           .attr("d", "M66.83,50.36 L 70.22 50.36 70.22 46.39 66.83 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005E9E")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,49.4 L 73.52 49.4 73.52 45.52 70.16 45.52 z");
+           .attr("d", "M70.22,50.36 L 73.6 50.36 73.6 46.39 70.22 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#45A8EE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,49.4 L 76.88 49.4 76.88 45.52 73.52 45.52 z");
+           .attr("d", "M73.6,50.36 L 76.99 50.36 76.99 46.39 73.6 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0075B7")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,49.4 L 80.24 49.4 80.24 45.52 76.88 45.52 z");
+           .attr("d", "M76.99,50.36 L 80.38 50.36 80.38 46.39 76.99 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0074B6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,49.4 L 83.61 49.4 83.61 45.52 80.24 45.52 z");
+           .attr("d", "M80.38,50.36 L 83.77 50.36 83.77 46.39 80.38 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0088CC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,49.4 L 86.97 49.4 86.97 45.52 83.61 45.52 z");
+           .attr("d", "M83.77,50.36 L 87.16 50.36 87.16 46.39 83.77 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0061A1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,49.4 L 90.33 49.4 90.33 45.52 86.97 45.52 z");
+           .attr("d", "M87.16,50.36 L 90.55 50.36 90.55 46.39 87.16 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005D9C")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,49.4 L 93.7 49.4 93.7 45.52 90.33 45.52 z");
+           .attr("d", "M90.55,50.36 L 93.94 50.36 93.94 46.39 90.55 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0083C6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,49.4 L 97.06 49.4 97.06 45.52 93.7 45.52 z");
+           .attr("d", "M93.94,50.36 L 97.33 50.36 97.33 46.39 93.94 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007ABC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,49.4 L 100.42 49.4 100.42 45.52 97.06 45.52 z");
+           .attr("d", "M97.33,50.36 L 100.72 50.36 100.72 46.39 97.33 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0088CC")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,49.4 L 103.79 49.4 103.79 45.52 100.42 45.52 z");
+           .attr("d", "M100.72,50.36 L 104.11 50.36 104.11 46.39 100.72 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#1C90D5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,49.4 L 107.15 49.4 107.15 45.52 103.79 45.52 z");
+           .attr("d", "M104.11,50.36 L 107.5 50.36 107.5 46.39 104.11 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0089CD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,49.4 L 110.51 49.4 110.51 45.52 107.15 45.52 z");
+           .attr("d", "M107.5,50.36 L 110.89 50.36 110.89 46.39 107.5 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005F9F")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,49.4 L 113.88 49.4 113.88 45.52 110.51 45.52 z");
+           .attr("d", "M110.89,50.36 L 114.28 50.36 114.28 46.39 110.89 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0063A3")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,49.4 L 117.24 49.4 117.24 45.52 113.88 45.52 z");
+           .attr("d", "M114.28,50.36 L 117.67 50.36 117.67 46.39 114.28 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#006DAE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,49.4 L 120.6 49.4 120.6 45.52 117.24 45.52 z");
+           .attr("d", "M117.67,50.36 L 121.06 50.36 121.06 46.39 117.67 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0076B8")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,49.4 L 123.96 49.4 123.96 45.52 120.6 45.52 z");
+           .attr("d", "M121.06,50.36 L 124.45 50.36 124.45 46.39 121.06 46.39 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#7DD5FF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M39.89,33.85 L 43.25 33.85 43.25 29.96 39.89 29.96 z");
+           .attr("d", "M39.71,34.47 L 43.1 34.47 43.1 30.5 39.71 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#83DAFF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M43.25,33.85 L 46.61 33.85 46.61 29.96 43.25 29.96 z");
+           .attr("d", "M43.1,34.47 L 46.49 34.47 46.49 30.5 43.1 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#98EDFF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M46.61,33.85 L 49.98 33.85 49.98 29.96 46.61 29.96 z");
+           .attr("d", "M46.49,34.47 L 49.88 34.47 49.88 30.5 46.49 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#92E8FF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M49.98,33.85 L 53.34 33.85 53.34 29.96 49.98 29.96 z");
+           .attr("d", "M49.88,34.47 L 53.27 34.47 53.27 30.5 49.88 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#72CCFF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M53.34,33.85 L 56.7 33.85 56.7 29.96 53.34 29.96 z");
+           .attr("d", "M53.27,34.47 L 56.66 34.47 56.66 30.5 53.27 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#198FD4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M56.7,33.85 L 60.07 33.85 60.07 29.96 56.7 29.96 z");
+           .attr("d", "M56.66,34.47 L 60.05 34.47 60.05 30.5 56.66 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#60BCFF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M60.07,33.85 L 63.43 33.85 63.43 29.96 60.07 29.96 z");
+           .attr("d", "M60.05,34.47 L 63.44 34.47 63.44 30.5 60.05 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#59B7FE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M63.43,33.85 L 66.79 33.85 66.79 29.96 63.43 29.96 z");
+           .attr("d", "M63.44,34.47 L 66.83 34.47 66.83 30.5 63.44 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#005A99")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M66.79,33.85 L 70.16 33.85 70.16 29.96 66.79 29.96 z");
+           .attr("d", "M66.83,34.47 L 70.22 34.47 70.22 30.5 66.83 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007FC2")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M70.16,33.85 L 73.52 33.85 73.52 29.96 70.16 29.96 z");
+           .attr("d", "M70.22,34.47 L 73.6 34.47 73.6 30.5 70.22 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2896DB")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M73.52,33.85 L 76.88 33.85 76.88 29.96 73.52 29.96 z");
+           .attr("d", "M73.6,34.47 L 76.99 34.47 76.99 30.5 73.6 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#329BE0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M76.88,33.85 L 80.24 33.85 80.24 29.96 76.88 29.96 z");
+           .attr("d", "M76.99,34.47 L 80.38 34.47 80.38 30.5 76.99 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2E99DE")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M80.24,33.85 L 83.61 33.85 83.61 29.96 80.24 29.96 z");
+           .attr("d", "M80.38,34.47 L 83.77 34.47 83.77 30.5 80.38 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#309ADF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M83.61,33.85 L 86.97 33.85 86.97 29.96 83.61 29.96 z");
+           .attr("d", "M83.77,34.47 L 87.16 34.47 87.16 30.5 83.77 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#1E91D6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M86.97,33.85 L 90.33 33.85 90.33 29.96 86.97 29.96 z");
+           .attr("d", "M87.16,34.47 L 90.55 34.47 90.55 30.5 87.16 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0E8CD0")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M90.33,33.85 L 93.7 33.85 93.7 29.96 90.33 29.96 z");
+           .attr("d", "M90.55,34.47 L 93.94 34.47 93.94 30.5 90.55 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0081C4")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M93.7,33.85 L 97.06 33.85 97.06 29.96 93.7 29.96 z");
+           .attr("d", "M93.94,34.47 L 97.33 34.47 97.33 30.5 93.94 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#0085C9")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M97.06,33.85 L 100.42 33.85 100.42 29.96 97.06 29.96 z");
+           .attr("d", "M97.33,34.47 L 100.72 34.47 100.72 30.5 97.33 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2C98DD")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M100.42,33.85 L 103.79 33.85 103.79 29.96 100.42 29.96 z");
+           .attr("d", "M100.72,34.47 L 104.11 34.47 104.11 30.5 100.72 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M103.79,33.85 L 107.15 33.85 107.15 29.96 103.79 29.96 z");
+           .attr("d", "M104.11,34.47 L 107.5 34.47 107.5 30.5 104.11 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#007EC1")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M107.15,33.85 L 110.51 33.85 110.51 29.96 107.15 29.96 z");
+           .attr("d", "M107.5,34.47 L 110.89 34.47 110.89 30.5 107.5 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#1E91D6")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M110.51,33.85 L 113.88 33.85 113.88 29.96 110.51 29.96 z");
+           .attr("d", "M110.89,34.47 L 114.28 34.47 114.28 30.5 110.89 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#399FE5")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M113.88,33.85 L 117.24 33.85 117.24 29.96 113.88 29.96 z");
+           .attr("d", "M114.28,34.47 L 117.67 34.47 117.67 30.5 114.28 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#2695DA")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M117.24,33.85 L 120.6 33.85 120.6 29.96 117.24 29.96 z");
+           .attr("d", "M117.67,34.47 L 121.06 34.47 121.06 30.5 117.67 30.5 z");
       }(g.append("g")));
       (function (g) {
         g.attr("fill", "#309ADF")
          .attr("class", "geometry");
         g.append("svg:path")
-           .attr("d", "M120.6,33.85 L 123.96 33.85 123.96 29.96 120.6 29.96 z");
+           .attr("d", "M121.06,34.47 L 124.45 34.47 124.45 30.5 121.06 30.5 z");
       }(g.append("g")));
     }(g.append("g")));
   }(g.append("g")));
@@ -2952,7 +2952,7 @@ function draw_with_data(data, parent_id) {
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath4")
     .append("svg:path")
-      .attr("d", " M35.68,5 L 124.81 5 124.81 62.7 35.68 62.7 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
+      .attr("d", " M35.47,5 L 125.29 5 125.29 63.94 35.47 63.94 z");g.attr("clip-path", "url(#" + parent_id + "_clippath4)");
   }(g.append("g")));
 }(g.append("g")));
 }
@@ -2964,7 +2964,7 @@ var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-7yQ1PSyUsonti0ChDtkg");
+draw("#gadflyplot-S4nZBJHfvU9wHAkkvTgl");
 </script>
 
         <hr>
@@ -2974,8 +2974,11 @@ draw("#gadflyplot-7yQ1PSyUsonti0ChDtkg");
         <div id="table-of-contents">
           <div id="table-of-contents-content">
             <ul>
-            <li><a href="index.html">Introduction</a></li><li><a href="geom_point.html">Geom.point</a></li><li><a href="geom_line.html">Geom.line</a></li><li><a href="geom_boxplot.html">Geom.boxplot</a></li><li><a href="geom_histogram.html">Geom.histogram</a></li><li><a href="geom_density.html">Geom.density</a></li><li><a href="geom_histogram2d.html">Geom.histogram2d</a></li><li><a href="geom_label.html">Geom.label</a></li><li><div class="toc-current-doc">
-                 <a href="#topbar">Geom.rectbin</a>
+            <li><a href="index.html">Introduction</a></li><li><a href="themes.html">Themes</a></li></ul>
+            <hr><div class="toc-part">Geometry</div>
+            <ul>
+            <li><a href="geom_boxplot.html">boxplot</a></li><li><a href="geom_density.html">density</a></li><li><a href="geom_errorbar.html">errorbar</a></li><li><a href="geom_bar.html">bar</a></li><li><a href="geom_histogram.html">histogram</a></li><li><a href="geom_histogram2d.html">histogram2d</a></li><li><a href="geom_hline.html">hline</a></li><li><a href="geom_label.html">label</a></li><li><a href="geom_line.html">line</a></li><li><a href="geom_point.html">point</a></li><li><div class="toc-current-doc">
+                 <a href="#topbar">rectbin</a>
                </div>
             
             <ul>
@@ -2983,7 +2986,10 @@ draw("#gadflyplot-7yQ1PSyUsonti0ChDtkg");
             <li><a href="#see-also">See Also</a/></li>
             <li><a href="#examples">Examples</a/></li>
             </ul>
-            </li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li><li><a href="geom_smooth.html">Geom.smooth</a></li><li><a href="geom_hline.html">Geom.hline</a></li><li><a href="geom_vline.html">Geom.vline</a></li></ul>
+            </li><li><a href="geom_smooth.html">smooth</a></li><li><a href="geom_subplot_grid.html">subplot_grid</a></li><li><a href="geom_vline.html">vline</a></li></ul>
+            <hr><div class="toc-part">Scale</div>
+            <ul>
+            <li><a href="scale_x_continuous.html">x_continuous</a></li><li><a href="scale_y_continuous.html">y_continuous</a></li><li><a href="scale_x_discrete.html">x_discrete</a></li><li><a href="scale_y_discrete.html">y_discrete</a></li></ul>
           </div>
         </div>
       </div>
