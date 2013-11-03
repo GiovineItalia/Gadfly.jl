@@ -35,6 +35,7 @@ typealias ColorOrNothing Union(ColorValue, Nothing)
 
 element_aesthetics(::Any) = []
 default_scales(::Any) = []
+default_statistic(::Any) = Stat.identity()
 
 
 abstract Element
@@ -422,7 +423,7 @@ function render(plot::Plot)
     layer_stats = Array(StatisticElement, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
         layer_stats[i] = typeof(layer.statistic) == Stat.nil ?
-            Geom.default_statistic(layer.geom) : layer.statistic
+            default_statistic(layer.geom) : layer.statistic
     end
 
     used_aesthetics = Set{Symbol}()
@@ -519,7 +520,10 @@ function render(plot::Plot)
         push!(explicit_guide_types, typeof(guide))
     end
 
-    statistics = copy(plot.statistics)
+    statistics = Set{StatisticElement}()
+    for statistic in plot.statistics
+        push!(statistic)
+    end
 
     # Default guides and statistics
     facet_plot = true
@@ -542,9 +546,10 @@ function render(plot::Plot)
         if !in(Guide.YTicks, explicit_guide_types)
             push!(guides, Guide.yticks())
         end
+    end
 
-        push!(statistics, Stat.xticks)
-        push!(statistics, Stat.yticks)
+    for guide in guides
+        push!(statistics, default_statistic(guide))
     end
 
     function mapped_and_used(vs)
@@ -595,6 +600,7 @@ function render(plot::Plot)
 
     # IIb. Plot-wise Statistics
     plot_aes = cat(layer_aess...)
+    statistics = collect(statistics)
     Stat.apply_statistics(statistics, scales, plot.coord, plot_aes)
 
     # Add some default guides determined by defined aesthetics

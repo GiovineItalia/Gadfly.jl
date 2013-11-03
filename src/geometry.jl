@@ -7,7 +7,7 @@ using DataFrames
 using Gadfly
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
-import Gadfly: render, element_aesthetics, inherit, escape_id
+import Gadfly: render, element_aesthetics, inherit, escape_id, default_statistic
 import Iterators
 import Iterators: cycle, product, distinct, take
 

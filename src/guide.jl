@@ -6,7 +6,7 @@ using Compose
 using Gadfly
 using JSON
 
-import Gadfly.render, Gadfly.escape_id
+import Gadfly: render, escape_id, default_statistic
 
 
 # Where the guide should be placed in relation to the plot.
@@ -24,6 +24,7 @@ const bottom_guide_position = BottomGuidePosition()
 const left_guide_position   = LeftGuidePosition()
 const under_guide_position  = UnderGuidePosition()
 const over_guide_position   = OverGuidePosition()
+
 
 
 immutable PanelBackground <: Gadfly.GuideElement
@@ -249,13 +250,24 @@ end
 
 immutable XTicks <: Gadfly.GuideElement
     label::Bool
+    ticks::Union(Nothing, AbstractArray)
 
-    function XTicks(label::Bool=true)
-        new(label)
+    function XTicks(; label::Bool=true,
+                      ticks::Union(Nothing, AbstractArray)=nothing)
+        new(label, ticks)
     end
 end
 
 const xticks = XTicks
+
+
+function default_statistic(guide::XTicks)
+    if guide.ticks === nothing
+        Stat.xticks
+    else
+        Stat.identity()
+    end
+end
 
 
 function render(guide::XTicks, theme::Gadfly.Theme,
@@ -263,15 +275,35 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
     ticks = Dict()
     grids = Set()
-    for aes in aess
-        if Gadfly.issomething(aes.xtick)
-            for (val, label) in zip(aes.xtick, aes.xtick_label(aes.xtick...))
-                ticks[val] = label
+
+    if guide.ticks === nothing
+        for aes in aess
+            if Gadfly.issomething(aes.xtick)
+                for (val, label) in zip(aes.xtick, aes.xtick_label(aes.xtick...))
+                    ticks[val] = label
+                end
+            end
+
+            if Gadfly.issomething(aes.xgrid)
+                for val in aes.xgrid
+                    push!(grids, val)
+                end
             end
         end
+    else
+        xtick_label = nothing
+        for aes in aess
+            if aes.xtick_label != nothing
+                xtick_label = aes.xtick_label
+            end
+        end
+        if xtick_label === nothing
+            xtick_label = (xs...) -> [string(x) for x in xs]
+        end
 
-        if Gadfly.issomething(aes.xgrid)
-            for val in aes.xgrid
+        for tick in guide.ticks
+            for (val, label) in zip(guide.ticks, xtick_label(guide.ticks...))
+                ticks[val] = label
                 push!(grids, val)
             end
         end
@@ -311,27 +343,56 @@ end
 
 immutable YTicks <: Gadfly.GuideElement
     label::Bool
+    ticks::Union(Nothing, AbstractArray)
 
-    function YTicks(label::Bool=true)
-        new(label)
+    function YTicks(; label::Bool=true,
+                      ticks::Union(Nothing, AbstractArray)=nothing)
+        new(label, ticks)
     end
 end
 
+
 const yticks = YTicks
+
+
+function default_statistic(guide::YTicks)
+    Stat.yticks
+end
+
 
 function render(guide::YTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
     ticks = Dict()
     grids = Set()
-    for aes in aess
-        if Gadfly.issomething(aes.ytick)
-            for (val, label) in zip(aes.ytick, aes.ytick_label(aes.ytick...))
-                ticks[val] = label
+
+    if guide.ticks === nothing
+        for aes in aess
+            if Gadfly.issomething(aes.ytick)
+                for (val, label) in zip(aes.ytick, aes.ytick_label(aes.ytick...))
+                    ticks[val] = label
+                end
+            end
+
+            if Gadfly.issomething(aes.ygrid)
+                for val in aes.ygrid
+                    push!(grids, val)
+                end
             end
         end
+    else
+        ytick_label = nothing
+        for aes in aess
+            if aes.ytick_label != nothing
+                ytick_label = aes.ytick_label
+            end
+        end
+        if ytick_label === nothing
+            ytick_label = (ys...) -> [string(y) for y in ys]
+        end
 
-        if Gadfly.issomething(aes.ygrid)
-            for val in aes.ygrid
+        for tick in guide.ticks
+            for (val, label) in zip(guide.ticks, ytick_label(guide.ticks...))
+                ticks[val] = label
                 push!(grids, val)
             end
         end

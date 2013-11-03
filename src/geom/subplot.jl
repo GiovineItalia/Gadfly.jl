@@ -186,7 +186,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                 push!(guides, Guide.xlabel(xlabels[j]))
             end
         else
-            push!(guides, Guide.xticks(false))
+            push!(guides, Guide.xticks(label=false))
         end
 
         if j == 1
@@ -195,7 +195,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                 push!(guides, Guide.ylabel(ylabels[i]))
             end
         else
-            push!(guides, Guide.yticks(false))
+            push!(guides, Guide.yticks(label=false))
         end
 
         canvas_grid[i, j] =

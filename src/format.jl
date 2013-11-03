@@ -111,8 +111,12 @@ function formatter(xs::FloatingPoint...; fmt=:auto)
     end
     x_min, x_max = minimum(xs), maximum(xs)
 
-    if fmt == :auto && abs(log10(x_max - x_min)) > 4
-        fmt = :scientific
+    if fmt == :auto
+        if abs(log10(x_max - x_min)) > 4
+            fmt = :scientific
+        else
+            fmt = :plain
+        end
     end
 
     if fmt == :plain
@@ -136,7 +140,7 @@ end
 
 
 # Print dates
-function formatter(ds::Date...)
+function formatter(ds::Date...; fmt=nothing)
     const month_names = [
         "January", "February", "March", "April", "May", "June", "July",
         "August", "September", "October", "November", "December"
@@ -189,7 +193,7 @@ end
 
 
 # Catchall
-function formatter(xs...)
+function formatter(xs...; fmt=nothing)
     function format(x)
         buf = IOBuffer()
         print(buf, x)
