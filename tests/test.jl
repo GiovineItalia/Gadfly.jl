@@ -81,6 +81,9 @@ function run_tests(output_filename)
         end
     end
 
+    d3src = joinpath(Pkg.dir("Compose"), "data", "d3.min.js")
+    gadflysrc = joinpath(Pkg.dir("Gadfly"), "src", "gadfly.js")
+
     output = open(output_filename, "w")
     print(output,
         """
@@ -90,7 +93,9 @@ function run_tests(output_filename)
             <title>Gadfly Test Plots</title>
         </head>
         <body>
-        <div style="width:900px; margin:auto">
+        <script src="$(d3src)"></script>
+        <script src="$(gadflysrc)"></script>
+        <div style="width:900; margin:auto; text-align: center; font-family: sans-serif; font-size: 20pt;">
         """)
 
     for (name, width, height) in tests
@@ -99,6 +104,9 @@ function run_tests(output_filename)
         end
 
         println(output, "<p>", name, "</p>")
+        print(output, """<div id="$(name)"></div>""")
+        print(output, """<script src="$(name).js"></script>""")
+        print(output, """<script>draw("#$(name)")</script>""")
         print(output, """<img width="450px" src="$(name).svg">""")
         print(output, """<img width="450px" src="$(name).png">\n""")
     end

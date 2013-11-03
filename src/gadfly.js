@@ -85,7 +85,6 @@ var geom_point_mouseover = function(lw) {
 };
 
 
-
 // Translate and scale geometry while trying to maintain scale invariance for
 // certain ellements.
 //
@@ -109,10 +108,21 @@ var set_geometry_transform = function(parent_id, t, old_scale) {
       .selectAll(".geometry")
       .each(function() {
           this_selection = d3.select(this);
+          console.info(this_selection);
           for (var i in size_attribs) {
               var attrib = size_attribs[i];
               this_selection.attr(attrib,
                   old_scale / t.scale * this_selection.attr(attrib));
+          }
+      });
+
+    // all stroke-widths should be invariant
+    d3.select(parent_id)
+      .selectAll("g")
+      .each(function() {
+          var sw = d3.select(this).attr("stroke-width");
+          if (sw) {
+              d3.select(this).attr("stroke-width", old_scale / t.scale * sw);
           }
       });
 
@@ -135,14 +145,6 @@ var set_geometry_transform = function(parent_id, t, old_scale) {
         .attr("transform", function() {
           return "translate(" + [0.0, t.y] + ") " +
                  "scale(" + [1.0, t.scale] + ")";
-      });
-
-    // unscale gridline widths
-    d3.select(parent_id)
-      .selectAll(".xgridlines,.ygridlines")
-      .each(function() {
-          d3.select(this).attr("stroke-width",
-              old_scale / t.scale * d3.select(this).attr("stroke-width"));
       });
 
     // move labels around
