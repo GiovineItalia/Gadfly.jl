@@ -1,8 +1,8 @@
 ---
-title: Geom.line
+title: line
 author: Daniel Jones
 part: Geometry
-order: 3
+order: 1007
 ...
 
 

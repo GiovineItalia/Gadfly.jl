@@ -1,8 +1,8 @@
 ---
-title: Geom.label
+title: label
 author: Daniel Jones
 part: Geometry
-order: 8
+order: 1006
 ...
 
 Label positions on the plot frame.

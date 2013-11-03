@@ -1,8 +1,8 @@
 ---
-title: Geom.vline
+title: vline
 author: Daniel Jones
 part: Geometry
-order: 15
+order: 1012
 ...
 
 Draw vertical lines across the plot canvas.

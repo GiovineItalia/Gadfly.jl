@@ -74,7 +74,8 @@ end
 
 # Alternate aesthetic names
 const aesthetic_aliases =
-    [:x_min         => :xmin,
+    [:colour        => :color,
+     :x_min         => :xmin,
      :x_max         => :xmax,
      :y_min         => :ymin,
      :y_max         => :ymax,

@@ -83,6 +83,10 @@ end
     # Width of the middle line in a boxplot.
     middle_width,          Measure,         0.6mm
 
+
+    # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
+    # somewhere else.
+
     # Number of annealing iterations.
     label_placement_iterations,  Int,       1000
 

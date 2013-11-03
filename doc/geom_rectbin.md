@@ -1,8 +1,8 @@
 ---
-title: Geom.rectbin
+title: rectbin
 author: Daniel Jones
 part: Geometry
-order: 8
+order: 1009
 ...
 
 Draw colored rectangles.

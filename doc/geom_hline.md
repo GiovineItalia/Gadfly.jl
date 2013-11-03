@@ -1,8 +1,8 @@
 ---
-title: Geom.hline
+title: hline
 author: Daniel Jones
 part: Geometry
-order: 14
+order: 1005
 ...
 
 Draw horizontal lines across the plot canvas.

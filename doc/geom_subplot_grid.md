@@ -1,8 +1,8 @@
 ---
-title: Geom.subplot_grid
+title: subplot_grid
 author: Daniel Jones
 part: Geometry
-order: 9
+order: 1011
 ...
 
 Draw multiple subplots in a grid orginized by one or two categorial vectors.

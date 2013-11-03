@@ -1,8 +1,8 @@
 ---
-title: Geom.point
+title: point
 author: Daniel Jones
 part: Geometry
-order: 2
+order: 1008
 ...
 
 The point geometry is used to draw various types of scatterplots.

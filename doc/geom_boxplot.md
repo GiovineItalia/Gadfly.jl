@@ -1,8 +1,8 @@
 ---
-title: Geom.boxplot
+title: boxplot
 author: Daniel Jones
 part: Geometry
-order: 4
+order: 1000
 ...
 
 Draw boxplots.

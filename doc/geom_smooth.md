@@ -1,8 +1,8 @@
 ---
-title: Geom.smooth
+title: smooth
 author: Daniel Jones
 part: Geometry
-order: 10
+order: 1010
 ...
 
 Plot a smooth function estimated from data. An alias for `Geom.line` with `Stat.smooth`.

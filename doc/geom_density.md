@@ -1,8 +1,8 @@
 ---
-title: Geom.density
+title: density
 author: Daniel Jones
 part: Geometry
-order: 7
+order: 1001
 ...
 
 Draw a kernel density estimate from data. An alias for `Geom.line` with

@@ -1,8 +1,8 @@
 ---
-title: Geom.errorbar
+title: errorbar
 author: Daniel Jones
 part: Geometry
-order: 10
+order: 1002
 ...
 
 Draw an vertical and/or horizontal error bars.
