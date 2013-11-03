@@ -150,7 +150,9 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     width  = xmax - xmin + 2.0 * xpadding
     height = ymax - ymin + 2.0 * ypadding
 
-    canvas(unit_box=UnitBox(xmin - xpadding, ymax + ypadding, width, -height))
+    compose(
+        canvas(unit_box=UnitBox(xmin - xpadding, ymax + ypadding, width, -height)),
+        svgclass("plotpanel"))
 end
 
 end # module Coord
