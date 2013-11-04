@@ -570,7 +570,6 @@ function layout_guides(plot_canvas::Canvas,
         canvas(0, 0, 1.0w + l + r, 1.0h + t + b) : canvas()
 
     compose(root_canvas,
-            svgclass("plotroot"),
             (canvas(l, t, pw, ph),
                 {canvas(units_inherited=true, order=-1, clip=true), under_guides...},
                 {canvas(units_inherited=true, order=1000, clip=true), over_guides...},

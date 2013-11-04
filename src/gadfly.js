@@ -105,11 +105,27 @@ var geom_point_mouseover = function(lw) {
 //   old_scale: The scaling factor applied prior to t.scale.
 //
 var set_geometry_transform = function(root, t, old_scale) {
-    // transform geometries
+    var xscalable = root.node().classList.contains("xscalable");
+    var yscalable = root.node().classList.contains("yscalable");
+
+    var xscale = 1.0;
+    var tx = 0.0;
+    if (xscalable) {
+        xscale = t.scale;
+        tx = t.x;
+    }
+
+    var yscale = 1.0;
+    var ty = 0.0;
+    if (yscalable) {
+        yscale = t.scale;
+        ty = t.y;
+    }
+
     root.selectAll(".geometry")
         .attr("transform", function() {
-          return "translate(" + [t.x, t.y] + ") " +
-                 "scale(" + t.scale + ")";
+          return "translate(" + [tx, ty] + ") " +
+                 "scale(" + xscale + "," + yscale + ")";
       });
 
     var unscale_factor = old_scale / t.scale;
@@ -130,7 +146,7 @@ var set_geometry_transform = function(root, t, old_scale) {
               if (val !== null) {
                   // For some reason d3 rounds things like font-sizes to the
                   // nearest integer, so we are setting styles directly instead.
-                  val = parseFloat(sel.node().style.getPropertyValue(key));
+                  val = parseFloat(val);
                   sel.node().style.setProperty(key, unscale_factor * val + "px", "important");
               }
           }
@@ -144,54 +160,48 @@ var set_geometry_transform = function(root, t, old_scale) {
           }
       });
 
-    // all stroke-widths should be invariant
-    root.selectAll("g")
-         .each(function() {
-              var sw = d3.select(this).attr("stroke-width");
-              if (sw) {
-                  d3.select(this).attr("stroke-width", old_scale / t.scale * sw);
-              }
-      });
-
     // TODO:
     // Is this going to work when we do things other than circles. Suppose we
     // have plots where we have a path drawing some sort of symbol which we want
     // to remain size-invariant. Should we be trying to place things using
     // translate?
 
-    // transform gridlines
-    root.selectAll(".yfixed")
-        .attr("transform", function() {
-            return "translate(" + [t.x, 0.0] + ") " +
-                   "scale(" + [t.scale, 1.0] + ")";
-      });
+    // move axis labels and grid lines around
+    if (xscalable) {
+        root.selectAll(".yfixed")
+            .attr("transform", function() {
+                return "translate(" + [t.x, 0.0] + ") " +
+                       "scale(" + [t.scale, 1.0] + ")";
+          });
 
-    root.selectAll(".xfixed")
-        .attr("transform", function() {
-          return "translate(" + [0.0, t.y] + ") " +
-                 "scale(" + [1.0, t.scale] + ")";
-        });
+        root.selectAll(".xlabels")
+            .attr("transform", function() {
+              return "translate(" + [t.x, 0.0] + ")";
+          })
+          .selectAll("text")
+            .each(function() {
+                d3.select(this).attr("x",
+                    t.scale / old_scale * d3.select(this).attr("x"));
+            });
+    }
 
-    // move axis labels around
-    root.selectAll(".xlabels")
-        .attr("transform", function() {
-          return "translate(" + [t.x, 0.0] + ")";
-      })
-      .selectAll("text")
-        .each(function() {
-            d3.select(this).attr("x",
-                t.scale / old_scale * d3.select(this).attr("x"));
-        });
+    if (yscalable) {
+        root.selectAll(".xfixed")
+            .attr("transform", function() {
+              return "translate(" + [0.0, t.y] + ") " +
+                     "scale(" + [1.0, t.scale] + ")";
+            });
 
-    root.selectAll(".ylabels")
-        .attr("transform", function() {
-          return "translate(" + [0.0, t.y] + ")";
-        })
-        .selectAll("text")
-          .each(function() {
-              d3.select(this).attr("y",
-                  t.scale / old_scale * d3.select(this).attr("y"));
-        });
+        root.selectAll(".ylabels")
+            .attr("transform", function() {
+              return "translate(" + [0.0, t.y] + ")";
+            })
+            .selectAll("text")
+              .each(function() {
+                  d3.select(this).attr("y",
+                      t.scale / old_scale * d3.select(this).attr("y"));
+            });
+    }
 };
 
 

@@ -668,6 +668,16 @@ function render_prepared(plot::Plot,
 
     canvas = Guide.layout_guides(plot_canvas, plot.theme, guide_canvases...,
                                  preserve_plot_canvas_size=preserve_plot_canvas_size)
+
+    class = "plotroot"
+    if haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale)
+        class = string(class, " xscalable")
+    end
+    if haskey(scales, :y) && isa(scales[:y], Scale.ContinuousScale)
+        class = string(class, " yscalable")
+    end
+
+    compose(canvas, svgclass(class))
 end
 
 

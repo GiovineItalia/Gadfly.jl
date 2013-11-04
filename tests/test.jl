@@ -43,7 +43,8 @@ tests = [
     ("histogram_explicit_bins",      6inch, 3inch),
     ("histogram2d_explicit_bins",    6inch, 3inch),
     ("explicit_number_format",       6inch, 3inch),
-    ("explicit_xy_ticks",            6inch, 3inch)
+    ("explicit_xy_ticks",            6inch, 3inch),
+    ("boxplot",                      6inch, 3inch)
 ]
 
 
