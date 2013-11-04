@@ -84,7 +84,7 @@ function log2_formatter(xs...; format=:plain)
 end
 
 const log2_transform =
-    ContinuousScaleTransform(log10, x -> 2^x, log2_formatter)
+    ContinuousScaleTransform(log2, x -> 2^x, log2_formatter)
 
 
 function ln_formatter(xs...; format=:plain)
