@@ -128,8 +128,6 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     if aes.xmin === nothing
         aes2 = Gadfly.Aesthetics()
         T = eltype(aes.x)
-        aes2.xmin = Array(T, length(aes.x))
-        aes2.xmax = Array(T, length(aes.x))
 
         span = zero(T)
         unique_count = length(Set(aes.x...))
@@ -140,6 +138,10 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         if span == zero(T)
             span = one(T)
         end
+
+        T = promote_type(eltype(aes.x), typeof(span/2))
+        aes2.xmin = Array(T, length(aes.x))
+        aes2.xmax = Array(T, length(aes.x))
 
         for (i, x) in enumerate(aes.x)
             aes2.xmin[i] = x - span/2
