@@ -11,7 +11,7 @@ immutable BarGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
 
     function BarGeometry(default_statistic=Gadfly.Stat.identity();
-                         position=:stacked)
+                         position=:stack)
         new(position, default_statistic)
     end
 end
