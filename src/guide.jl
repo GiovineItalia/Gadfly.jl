@@ -358,9 +358,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     (_, height) = text_extents(theme.minor_label_font,
                                theme.minor_label_font_size,
                                values(ticks)...)
-    #padding = 1mm
-    padding = 0mm
-
+    padding = 1mm
     tick_labels = compose(canvas(0, 0, 1w, height + 2padding, order=-1),
                           [text(tick, 1h - padding, label, hcenter, vbottom)
                            for (tick, label) in ticks]...,
