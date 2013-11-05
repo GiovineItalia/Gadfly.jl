@@ -103,6 +103,12 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                             font(theme.minor_label_font),
                             fontsize(theme.minor_label_font_size))
 
+    title_canvas_pos = theme.guide_title_position == :left ?
+        entry_height + swatch_padding : 0
+    title_canvas = compose(canvas(title_canvas_pos, 0h, 1w,
+                                  title_canvas.box.height),
+                           title_canvas)
+
     compose(canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
                    swatch_canvas.box.height + title_canvas.box.height),
             pad(compose(canvas(), swatch_canvas, title_canvas), 2mm))
@@ -174,6 +180,13 @@ function render_continuous_color_key(colors::Vector{ColorValue},
                             font(theme.minor_label_font),
                             fontsize(theme.minor_label_font_size),
                             stroke(nothing))
+
+    title_canvas_pos = theme.guide_title_position == :left ?
+        entry_height + swatch_padding : 0
+    title_canvas = compose(canvas(title_canvas_pos, 0h, 1w,
+                                  title_canvas.box.height),
+                           title_canvas)
+
     compose(canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
                    swatch_canvas.box.height + title_canvas.box.height),
             pad(compose(canvas(), swatch_canvas, title_canvas), 2mm))
@@ -228,9 +241,19 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
                                              theme.major_label_font_size,
                                              guide_title)
 
+    if theme.guide_title_position == :left
+        title_form = text(0.0w, title_height, guide_title, hleft, vbottom)
+    elseif theme.guide_title_position == :center
+        title_form = text(0.5w, title_height, guide_title, hcenter, vbottom)
+    elseif theme.guide_title_position == :right
+        title_form = text(1.0w, title_height, guide_title, hright, vbottom)
+    else
+        error("$(theme.guide_title_position) is not a valid guide title position")
+    end
+
     title_padding = 2mm
     title_canvas = compose(canvas(0w, 0h, 1w, title_height + title_padding),
-                           text(0.5w, title_height, guide_title, hcenter, vbottom),
+                           title_form,
                            stroke(nothing),
                            font(theme.major_label_font),
                            fontsize(theme.major_label_font_size),

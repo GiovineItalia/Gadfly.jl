@@ -83,6 +83,9 @@ end
     # Width of the middle line in a boxplot.
     middle_width,          Measure,         0.6mm
 
+    # Horizontal position of the title of color key guides. One of :left,
+    # :right, :center.
+    guide_title_position,  Symbol,          :center
 
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.
