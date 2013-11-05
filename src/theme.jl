@@ -87,6 +87,9 @@ end
     # :right, :center.
     guide_title_position,  Symbol,          :center
 
+    # Shape used in color keys for color swatches. Either :square or :circle.
+    colorkey_swatch_shape, Symbol,          :square
+
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.
 

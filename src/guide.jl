@@ -79,10 +79,16 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                            1w, n * (entry_height + swatch_padding),
                            unit_box=UnitBox(0, 0, 1, n))
     for (i, c) in enumerate(colors)
-        swatch_square = compose(rectangle(0, i - 1, swatch_size, swatch_size),
-                                fill(c),
-                                stroke(theme.highlight_color(c)),
-                                linewidth(theme.highlight_width))
+        if theme.colorkey_swatch_shape == :square
+            swatch_shape = rectangle(0, i - 1, swatch_size, swatch_size)
+        elseif theme.colorkey_swatch_shape == :circle
+            swatch_shape = circle(0.5cy, (i - 1)cy + entry_height/2, swatch_size/2)
+        end
+
+        swatch_shape = compose(swatch_shape,
+                               fill(c),
+                               stroke(theme.highlight_color(c)),
+                               linewidth(theme.highlight_width))
 
         label = labels[c]
         swatch_label = compose(text(1cy, (i - 1)cy + entry_height/2,
@@ -91,7 +97,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                                fill(theme.minor_label_color))
 
         color_class = @sprintf("color_%s", escape_id(label))
-        swatch = compose(combine(swatch_square, swatch_label),
+        swatch = compose(combine(swatch_shape, swatch_label),
                          svgclass(@sprintf("guide %s", color_class)),
                          d3embed(@sprintf(
                             ".on(\"click\", guide_toggle_color(\"%s\"))",
@@ -258,6 +264,11 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
                            font(theme.major_label_font),
                            fontsize(theme.major_label_font_size),
                            fill(theme.major_label_color))
+
+    if theme.colorkey_swatch_shape != :circle &&
+       theme.colorkey_swatch_shape != :square
+        error("$(theme.colorkey_swatch_shape) is not a valid color key swatch shape")
+    end
 
     if continuous_guide
         c = render_continuous_color_key(colors, pretty_labels, title_canvas,
