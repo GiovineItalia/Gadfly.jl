@@ -138,14 +138,18 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     if all([aes.x === nothing || typeof(aes.x) <: PooledDataArray for aes in aess])
         xmin -= 0.5
         xmax += 0.5
+        xpadding = 0.0
+    else
+        xpadding = 0.03 * (xmax - xmin)
     end
-    xpadding = 0.03 * (xmax - xmin)
 
     if all([aes.y === nothing || typeof(aes.y) <: PooledDataArray for aes in aess])
         ymin -= 0.5
         ymax += 0.5
+        ypadding = 0.0
+    else
+        ypadding = 0.03 * (ymax - ymin)
     end
-    ypadding = 0.03 * (ymax - ymin)
 
     width  = xmax - xmin + 2.0 * xpadding
     height = ymax - ymin + 2.0 * ypadding
