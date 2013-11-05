@@ -663,7 +663,10 @@ function render_prepared(plot::Plot,
     # V. Guides
     guide_canvases = {}
     for guide in guides
-        append!(guide_canvases, render(guide, plot.theme, layer_aess))
+        guide_canvas = render(guide, plot.theme, layer_aess)
+        if guide_canvas != nothing
+            append!(guide_canvases, guide_canvas)
+        end
     end
 
     canvas = Guide.layout_guides(plot_canvas, plot.theme, guide_canvases...,

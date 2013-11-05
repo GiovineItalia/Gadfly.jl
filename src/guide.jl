@@ -432,7 +432,7 @@ end
 
 # X-axis label Guide
 immutable XLabel <: Gadfly.GuideElement
-    label::String
+    label::Union(Nothing, String)
 end
 
 const xlabel = XLabel
@@ -440,6 +440,10 @@ const xlabel = XLabel
 
 function render(guide::XLabel, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
+    if guide.label === nothing || isempty(guide.label)
+        return nothing
+    end
+
     (_, text_height) = text_extents(theme.major_label_font,
                                     theme.major_label_font_size,
                                     guide.label)
@@ -458,12 +462,16 @@ end
 
 # Y-axis label Guide
 immutable YLabel <: Gadfly.GuideElement
-    label::String
+    label::Union(Nothing, String)
 end
 
 const ylabel = YLabel
 
 function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aesthetics})
+    if guide.label === nothing || isempty(guide.label)
+        return nothing
+    end
+
     (text_width, text_height) = text_extents(theme.major_label_font,
                                              theme.major_label_font_size,
                                              guide.label)
