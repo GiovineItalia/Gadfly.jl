@@ -56,7 +56,7 @@ major forms.
 plot(data::AbstractDataFrame, elements::Element...; mapping...)
 ```
 
-This form is the standard "grammar of graphics" method of plotting. data is
+This form is the standard "grammar of graphics" method of plotting. Data is
 supplied in the form of a
 [dataframe](https://github.com/juliastats/dataframes.jl), columns of the data
 are bound to *aesthetics*, and plot elements including **scales**,
@@ -181,7 +181,7 @@ aesthetics, the `Geom.lines` geometry draws lines, and so on.
 ### Guides
 
 Very similar to geometries are guides, which draw graphics supported the actual
-visualization, such al axis ticks and labels and color keys. The major
+visualization, such as axis ticks and labels and color keys. The major
 distinction is that geometries always draw within the rectangular plot frame,
 while guides have some special layout considerations.
 
@@ -199,7 +199,7 @@ draw(PNG("myplot.png", 6inch, 3inch), some_plot)
 
 ## Using the d3 backend
 
-The `D3` backend writes javascript. Making use of it's output is slightly more
+The `D3` backend writes javascript. Making use of its output is slightly more
 involved than with the image backends.
 
 Rendering to Javascript is easy enough:
