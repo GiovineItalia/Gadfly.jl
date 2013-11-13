@@ -3,7 +3,7 @@ module Scale
 
 using Color
 using Compose
-using DataFrames
+using DataArrays
 using Gadfly
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length,
