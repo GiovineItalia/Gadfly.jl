@@ -99,7 +99,7 @@ formatter() = string
 
 
 # Nicely format an print some numbers.
-function formatter(xs::FloatingPoint...; fmt=:auto)
+function formatter{T<:FloatingPoint}(xs::AbstractArray{T}; fmt=:auto)
     if length(xs) <= 1
         return string
     end
@@ -140,7 +140,7 @@ end
 
 
 # Print dates
-function formatter(ds::Date...; fmt=nothing)
+function formatter{T<:Date}(ds::AbstractArray{T}; fmt=nothing)
     const month_names = [
         "January", "February", "March", "April", "May", "June", "July",
         "August", "September", "October", "November", "December"
@@ -193,7 +193,7 @@ end
 
 
 # Catchall
-function formatter(xs...; fmt=nothing)
+function formatter(xs::AbstractArray; fmt=nothing)
     function format(x)
         buf = IOBuffer()
         print(buf, x)

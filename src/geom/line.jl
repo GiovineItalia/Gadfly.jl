@@ -74,7 +74,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                 compose(lines({(x, y) for (x, y) in c_points}...),
                         stroke(c),
                         svgclass(@sprintf("geometry color_%s",
-                                          escape_id(aes.color_label(c)[1]))))
+                                          escape_id(aes.color_label([c])[1]))))
         end
         form = combine(forms...)
     end

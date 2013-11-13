@@ -221,7 +221,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
             continuous_guide = true
         end
 
-        color_key_labels = aes.color_label(aes.color_key_colors...)
+        color_key_labels = aes.color_label(aes.color_key_colors)
         for (color, label) in zip(aes.color_key_colors, color_key_labels)
             if !in(color, used_colors)
                 push!(used_colors, color)
@@ -313,7 +313,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     if guide.ticks === nothing
         for aes in aess
             if Gadfly.issomething(aes.xtick)
-                for (val, label) in zip(aes.xtick, aes.xtick_label(aes.xtick...))
+                for (val, label) in zip(aes.xtick, aes.xtick_label(aes.xtick))
                     ticks[val] = label
                 end
             end
@@ -336,7 +336,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         end
 
         for tick in guide.ticks
-            for (val, label) in zip(guide.ticks, xtick_label(guide.ticks...))
+            for (val, label) in zip(guide.ticks, xtick_label(guide.ticks))
                 ticks[val] = label
                 push!(grids, val)
             end
@@ -400,7 +400,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     if guide.ticks === nothing
         for aes in aess
             if Gadfly.issomething(aes.ytick)
-                for (val, label) in zip(aes.ytick, aes.ytick_label(aes.ytick...))
+                for (val, label) in zip(aes.ytick, aes.ytick_label(aes.ytick))
                     ticks[val] = label
                 end
             end
@@ -423,7 +423,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         end
 
         for tick in guide.ticks
-            for (val, label) in zip(guide.ticks, ytick_label(guide.ticks...))
+            for (val, label) in zip(guide.ticks, ytick_label(guide.ticks))
                 ticks[val] = label
                 push!(grids, val)
             end

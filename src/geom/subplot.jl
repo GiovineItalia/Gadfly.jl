@@ -163,8 +163,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         end
     end
 
-    xlabels = superplot_aes.xgroup_label((1.0:m)...)
-    ylabels = superplot_aes.ygroup_label((1.0:n)...)
+    xlabels = superplot_aes.xgroup_label(1.0:m)
+    ylabels = superplot_aes.ygroup_label(1.0:n)
 
     for i in 1:n, j in 1:m
         p = Plot()

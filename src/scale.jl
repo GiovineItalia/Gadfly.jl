@@ -61,16 +61,16 @@ immutable ContinuousScaleTransform
 end
 
 
-function identity_formatter(xs...; format=:auto)
-    fmt = formatter(xs..., fmt=format)
+function identity_formatter(xs::AbstractArray; format=:auto)
+    fmt = formatter(xs, fmt=format)
     [fmt(x) for x in xs]
 end
 
 const identity_transform =
     ContinuousScaleTransform(identity, identity, identity_formatter)
 
-function log10_formatter(xs...; format=:plain)
-    fmt = formatter(xs..., fmt=format)
+function log10_formatter(xs::AbstractArray; format=:plain)
+    fmt = formatter(xs, fmt=format)
     [@sprintf("10<sup>%s</sup>", fmt(x)) for x in xs]
 end
 
@@ -78,8 +78,8 @@ const log10_transform =
     ContinuousScaleTransform(log10, x -> 10^x, log10_formatter)
 
 
-function log2_formatter(xs...; format=:plain)
-    fmt = formatter(xs..., fmt=format)
+function log2_formatter(xs::AbstractArray; format=:plain)
+    fmt = formatter(xs, fmt=format)
     [@sprintf("2<sup>%s</sup>", fmt(x)) for x in xs]
 end
 
@@ -87,8 +87,8 @@ const log2_transform =
     ContinuousScaleTransform(log2, x -> 2^x, log2_formatter)
 
 
-function ln_formatter(xs...; format=:plain)
-    fmt = formatter(xs..., fmt=format)
+function ln_formatter(xs::AbstractArray; format=:plain)
+    fmt = formatter(xs, fmt=format)
     [@sprintf("e<sup>%s</sup>", fmt(x)) for x in xs]
 end
 
@@ -96,8 +96,8 @@ const ln_transform =
     ContinuousScaleTransform(log, exp, ln_formatter)
 
 
-function asinh_formatter(xs...; format=:plain)
-    fmt = formatter(xs..., fmt=format)
+function asinh_formatter(xs::AbstractArray; format=:plain)
+    fmt = formatter(xs, fmt=format)
     [@sprintf("asinh(%s)", fmt(x)) for x in xs]
 end
 
@@ -105,8 +105,8 @@ const asinh_transform =
     ContinuousScaleTransform(asinh, sinh, asinh_formatter)
 
 
-function sqrt_formatter(xs...; format=:plain)
-    fmt = formatter(xs..., fmt=format)
+function sqrt_formatter(xs::AbstractArray; format=:plain)
+    fmt = formatter(xs, fmt=format)
     [@sprintf("√%s", fmt(x)) for x in xs]
 end
 
@@ -135,8 +135,8 @@ function make_labeler(scale::ContinuousScale)
     if scale.format == nothing
         scale.trans.label
     else
-        function f(xs...)
-            scale.trans.label(xs..., format=scale.format)
+        function f(xs)
+            scale.trans.label(xs, format=scale.format)
         end
     end
 end
@@ -266,11 +266,11 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
             setfield(aes, var, PooledDataArray(int64(disc_data.refs)))
 
             # The leveler for discrete scales is a closure over the discretized data.
-            function labeler(xs...)
+            function labeler(xs)
                 lvls = levels(disc_data)
                 vals = {1 <= x <= length(lvls) ? lvls[x] : "" for x in xs}
                 if all([isa(val, FloatingPoint) for val in vals])
-                    format = formatter(vals...)
+                    format = formatter(vals)
                     [format(val) for val in vals]
                 else
                     [string(val) for val in vals]
@@ -330,7 +330,7 @@ function apply_scale(scale::DiscreteColorScale,
 
         color_map = {color => string(label)
                      for (label, color) in zip(levels(ds), colors)}
-        function labeler(xs...)
+        function labeler(xs)
             [color_map[x] for x in xs]
         end
 
@@ -430,7 +430,7 @@ function apply_scale(scale::ContinuousColorScale,
         aes.color = PooledDataArray(cs, nas)
 
         color_labels = Dict{ColorValue, String}()
-        tick_labels = identity_formatter(ticks...)
+        tick_labels = identity_formatter(ticks)
         for (tick, label) in zip(ticks, tick_labels)
             r = (tick - cmin) / cspan
             color_labels[scale.f(r)] = label
@@ -447,7 +447,7 @@ function apply_scale(scale::ContinuousColorScale,
             end
         end
 
-        function labeler(xs...)
+        function labeler(xs)
             [color_labels[x] for x in xs]
         end
 
