@@ -1,7 +1,7 @@
 module Stat
 
 import Gadfly
-using DataFrames
+using DataArrays
 using Compose
 using Color
 using Loess
