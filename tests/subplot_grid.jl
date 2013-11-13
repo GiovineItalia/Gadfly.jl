@@ -1,7 +1,5 @@
 
-using RDatasets
-using DataFrames
-using Gadfly
+using RDatasets, DataArrays, DataFrames, Gadfly
 
 barley = data("lattice", "barley")
 set_levels!(barley["year"], ["1931", "1932"])

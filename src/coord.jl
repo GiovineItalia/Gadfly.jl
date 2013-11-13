@@ -3,7 +3,7 @@ module Coord
 
 using Gadfly
 using Compose
-using DataFrames
+using DataArrays
 
 import Gadfly.Maybe
 export cartesian
