@@ -45,7 +45,8 @@ tests = [
     ("explicit_number_format",       6inch, 3inch),
     ("explicit_xy_ticks",            6inch, 3inch),
     ("boxplot",                      6inch, 3inch),
-    ("subplot_categorical_bar",      6inch, 3inch)
+    ("subplot_categorical_bar",      6inch, 3inch),
+    ("errorbar",                     6inch, 3inch)
 ]
 
 
