@@ -269,7 +269,7 @@ function apply_statistic(stat::Histogram2DStatistic,
 
     Gadfly.assert_aesthetics_defined("Histogram2DStatistic", aes, :x, :y)
 
-    dx, dy, bincounts = choose_bin_count_2d(aes.x, aes.y,
+    dy, dx, bincounts = choose_bin_count_2d(aes.x, aes.y,
                                             stat.xminbincount, stat.xmaxbincount,
                                             stat.yminbincount, stat.ymaxbincount)
     x_min, x_max = minimum(aes.x), maximum(aes.x)
@@ -316,24 +316,26 @@ function apply_statistic(stat::Histogram2DStatistic,
     end
 
     k = 1
-    for ((i, j), cnt) in zip(product(1:dx, 1:dy), bincounts)
+    for i in 1:dy, j in 1:dx
+        cnt = bincounts[i, j]
         if cnt > 0
             if x_categorial
-                aes.x[k] = x_min + (i - 1)
+                aes.x[k] = x_min + (j - 1)
             else
-                aes.xmin[k] = x_min + (i - 1) * wx
-                aes.xmax[k] = x_min + i * wx
+                aes.xmin[k] = x_min + (j - 1) * wx
+                aes.xmax[k] = x_min + j * wx
             end
 
             if y_categorial
-                aes.y[k] = y_min + (j - 1)
+                aes.y[k] = y_min + (i - 1)
             else
-                aes.ymin[k] = y_min + (j - 1) * wy
-                aes.ymax[k] = y_min + j * wy
+                aes.ymin[k] = y_min + (i - 1) * wy
+                aes.ymax[k] = y_min + i * wy
             end
             k += 1
         end
     end
+    @assert k - 1 == n
 
     if !haskey(scales, :color)
         error("Histogram2DStatistic requires a color scale.")

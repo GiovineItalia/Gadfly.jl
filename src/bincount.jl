@@ -134,7 +134,7 @@ function choose_bin_count_2d(xs::Vector, ys::Vector,
         bincounts[j, i] += 1
     end
 
-    (dx, dy, bincounts)
+    (dy, dx, bincounts)
 end
 
 
