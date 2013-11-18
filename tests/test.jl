@@ -46,7 +46,8 @@ tests = [
     ("explicit_xy_ticks",            6inch, 3inch),
     ("boxplot",                      6inch, 3inch),
     ("subplot_categorical_bar",      6inch, 3inch),
-    ("errorbar",                     6inch, 3inch)
+    ("errorbar",                     6inch, 3inch),
+    ("issue120",                     6inch, 3inch)
 ]
 
 
@@ -92,6 +93,7 @@ function run_tests(output_filename)
         """
         <!DOCTYPE html>
         <html>
+        <meta charset="utf-8" />
         <head>
             <title>Gadfly Test Plots</title>
         </head>

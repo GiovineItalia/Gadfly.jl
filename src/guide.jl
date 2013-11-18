@@ -306,7 +306,6 @@ end
 
 function render(guide::XTicks, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-
     ticks = Dict()
     grids = Set()
 

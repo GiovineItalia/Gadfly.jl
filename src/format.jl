@@ -10,7 +10,7 @@ function format_fixed(x::FloatingPoint, precision::Integer)
         return "∞"
     elseif x == -Inf
         return "-∞"
-    elseif x == NaN
+    elseif isnan(x)
         return "NaN"
     end
 
@@ -64,16 +64,23 @@ function format_fixed_scientific(x::FloatingPoint, precision::Integer)
         return "∞"
     elseif x == -Inf
         return "-∞"
-    elseif x == NaN
+    elseif isnan(x)
         return "NaN"
     end
 
-    Base.Grisu.@grisu_ccall x Base.Grisu.FIXED precision
+    mag = log10(abs(x))
+    if mag < 0
+        grisu_precision = precision + abs(iround(mag))
+    else
+        grisu_precision = precision
+    end
+
+    Base.Grisu.@grisu_ccall x Base.Grisu.FIXED grisu_precision
     point, len, digits = (Base.Grisu.POINT[1], Base.Grisu.LEN[1], Base.Grisu.DIGITS)
 
     @assert len > 0
 
-    ss = Uint8[]
+    ss = Char[]
     if x < 0
         push!(ss, '-')
     end
@@ -91,7 +98,7 @@ function format_fixed_scientific(x::FloatingPoint, precision::Integer)
         push!(ss, '0')
     end
 
-    string(bytestring(ss), "×10<sup>$(point - 1)</sup>")
+    string(utf8(ss), "×10<sup>$(point - 1)</sup>")
 end
 
 
