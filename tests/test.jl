@@ -61,7 +61,7 @@ backends = {
 
 
 function run_tests(output_filename)
-    testdir = joinpath(Pkg.dir("Gadfly"), "tests")
+    testdir = Pkg.dir("Gadfly", "tests")
     if !isempty(ARGS)
         whitelist = Set(ARGS...)
     else
@@ -85,8 +85,8 @@ function run_tests(output_filename)
         end
     end
 
-    d3src = joinpath(Pkg.dir("Compose"), "data", "d3.min.js")
-    gadflysrc = joinpath(Pkg.dir("Gadfly"), "src", "gadfly.js")
+    d3src = Pkg.dir("Compose", "data", "d3.min.js")
+    gadflysrc = Pkg.dir("Gadfly", "src", "gadfly.js")
 
     output = open(output_filename, "w")
     print(output,
