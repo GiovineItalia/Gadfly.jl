@@ -193,7 +193,7 @@ cairo gives you access to the `PNG`, `PDF`, and `PS` backends. Rendering to a
 backend works the same for any of these.
 
 ```julia
-some_plot = plot(x=[1,2,3], y[4,5,6])
+some_plot = plot(x=[1,2,3], y=[4,5,6])
 draw(PNG("myplot.png", 6inch, 3inch), some_plot)
 ```
 
