@@ -105,7 +105,7 @@ end
 # Remove any markup or whitespace from a string.
 function escape_id(s::String)
     s = replace(s, r"<[^>]*>", "")
-    s = replace(s, r" ", "_")
+    s = replace(s, r"\s", "_")
     s
 end
 
