@@ -49,7 +49,7 @@ end
 #   A tuple of the form (d, bincounts), where d gives the optimal number of
 #   bins, and bincounts is an array giving the number of occurances in each bin.
 #
-function choose_bin_count_1d(xs::Vector, min_bin_count=1, max_bin_count=150)
+function choose_bin_count_1d(xs::AbstractVector, min_bin_count=1, max_bin_count=150)
     n = length(xs)
     if n <= 1
         return 1, Int[0]
@@ -110,7 +110,7 @@ end
 #   bins in each respective dimension and bincounts is a dx by dy matrix giving
 #   the count in each bin.
 #
-function choose_bin_count_2d(xs::Vector, ys::Vector,
+function choose_bin_count_2d(xs::AbstractVector, ys::AbstractVector,
                              xminbincount::Int, xmaxbincount::Int,
                              yminbincount::Int, ymaxbincount::Int)
 

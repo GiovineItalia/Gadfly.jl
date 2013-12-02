@@ -269,28 +269,35 @@ function apply_statistic(stat::Histogram2DStatistic,
 
     Gadfly.assert_aesthetics_defined("Histogram2DStatistic", aes, :x, :y)
 
-    dy, dx, bincounts = choose_bin_count_2d(aes.x, aes.y,
-                                            stat.xminbincount, stat.xmaxbincount,
-                                            stat.yminbincount, stat.ymaxbincount)
     x_min, x_max = minimum(aes.x), maximum(aes.x)
     y_min, y_max = minimum(aes.y), maximum(aes.y)
 
-    # should we tread x/y as categorical data
     if haskey(scales, :x) && isa(scales[:x], Scale.DiscreteScale)
-        wx = 1
         x_categorial = true
+        xminbincount = x_max - x_min + 1
+        xmaxbincount = xminbincount
     else
-        wx = (x_max - x_min) / dx
         x_categorial = false
+        xminbincount = stat.xminbincount
+        xmaxbincount = stat.xmaxbincount
     end
 
-    if haskey(scales, :x) && isa(scales[:y], Scale.DiscreteScale)
-        wy = 1
+    if haskey(scales, :y) && isa(scales[:y], Scale.DiscreteScale)
         y_categorial = true
+        yminbincount = y_max - y_min + 1
+        ymaxbincount = yminbincount
     else
-        wy = (y_max - y_min) / dy
         y_categorial = false
+        yminbincount = stat.yminbincount
+        ymaxbincount = stat.ymaxbincount
     end
+
+    dy, dx, bincounts = choose_bin_count_2d(aes.x, aes.y,
+                                            xminbincount, xmaxbincount,
+                                            yminbincount, ymaxbincount)
+
+    wx = x_categorial ? 1 : (x_max - x_min) / dx
+    wy = y_categorial ? 1 : (y_max - y_min) / dx
 
     n = 0
     for cnt in bincounts
@@ -301,14 +308,12 @@ function apply_statistic(stat::Histogram2DStatistic,
 
     if x_categorial
         aes.x = Array(Int64, n)
-        aes.x = Array(Int64, n)
     else
         aes.xmin = Array(Float64, n)
         aes.xmax = Array(Float64, n)
     end
 
     if y_categorial
-        aes.y = Array(Int64, n)
         aes.y = Array(Int64, n)
     else
         aes.ymin = Array(Float64, n)

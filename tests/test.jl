@@ -47,7 +47,8 @@ tests = [
     ("boxplot",                      6inch, 3inch),
     ("subplot_categorical_bar",      6inch, 3inch),
     ("errorbar",                     6inch, 3inch),
-    ("issue120",                     6inch, 3inch)
+    ("issue120",                     6inch, 3inch),
+    ("histogram2d_discrete",         6inch, 3inch)
 ]
 
 
