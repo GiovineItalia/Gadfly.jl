@@ -48,7 +48,8 @@ tests = [
     ("subplot_categorical_bar",      6inch, 3inch),
     ("errorbar",                     6inch, 3inch),
     ("issue120",                     6inch, 3inch),
-    ("histogram2d_discrete",         6inch, 3inch)
+    ("histogram2d_discrete",         6inch, 3inch),
+    ("layer_themes",                 6inch, 3inch)
 ]
 
 

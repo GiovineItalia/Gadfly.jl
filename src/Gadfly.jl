@@ -109,50 +109,58 @@ type Layer <: Element
     mapping::Dict
     statistic::StatisticElement
     geom::GeometryElement
+    theme::Union(Nothing, Theme)
 
     function Layer()
-        new(nothing, Dict(), Stat.nil(), Geom.nil())
-    end
-
-    function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
-                   statistic::StatisticElement, geom::GeometryElement)
-        new(data, mapping, statistic, geom)
-    end
-
-    function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
-                   statistic::Union(Function, Type), geom::GeometryElement)
-        new(data, mapping, statistic(), geom)
-    end
-
-    function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
-                   statistic::StatisticElement, geom::Union(Function, Type))
-        new(data, mapping, statistic, geom())
-    end
-
-    function Layer(data::Union(Nothing, AbstractDataFrame), mapping::Dict,
-                   statistic::Union(Function, Type), geom::Union(Function, Type))
-        new(data, mapping, statistic(), geom())
+        new(nothing, Dict(), Stat.nil(), Geom.nil(), nothing)
     end
 end
 
 
-function layer(data::Union(AbstractDataFrame, Nothing),
-               statistic::Union(Function, Type, StatisticElement)=Stat.nil(),
-               geom::Union(Function, Type, GeometryElement)=Geom.nil;
+function layer(data_source::AbstractDataFrame, elements::ElementOrFunction...;
                mapping...)
-    Layer(data, clean_mapping(mapping), statistic, geom)
+    lyr = Layer()
+    lyr.data_source = data_source
+    lyr.mapping = clean_mapping(mapping)
+    for element in elements
+        add_plot_element(lyr, element)
+    end
+    lyr
 end
 
 
-function layer(statistic::Union(Function, Type, StatisticElement),
-               geom::Union(Function, Type, GeometryElement);
-               mapping...)
-    layer(nothing, statistic, geom; mapping...)
+function layer(elements::ElementOrFunction...; mapping...)
+    lyr = Layer()
+    lyr.mapping = clean_mapping(mapping)
+    for element in elements
+        add_plot_element(lyr, element)
+    end
+    lyr
 end
 
 
-function layer(geom::Union(Function, Type, GeometryElement); mapping...)
-    layer(nothing, Stat.nil(), geom; mapping...)
+function add_plot_element{T<:Element}(lyr::Layer, arg::T)
+    error("Layers can be used with elements of type $(typeof(arg))")
+end
+
+
+function add_plot_element(lyr::Layer, arg::Base.Callable)
+    add_plot_element(lyr, arg())
+end
+
+
+function add_plot_element(lyr::Layer, arg::GeometryElement)
+    lyr.geom = arg
+end
+
+
+function add_plot_element(lyr::Layer, arg::StatisticElement)
+    lyr.statistic = arg
+end
+
+
+function add_plot_element(lyr::Layer, arg::Theme)
+    lyr.theme = arg
 end
 
 
@@ -358,11 +366,6 @@ function plot(data_source::AbstractDataFrame, mapping::Dict, elements::ElementOr
     p.data_source = data_source
 
     p
-end
-
-
-function plot(mapping::Dict, elements::ElementOrFunction...)
-    plot(DataFrame, mapping, elements...)
 end
 
 
@@ -658,9 +661,11 @@ function render_prepared(plot::Plot,
     end
 
     # IV. Geometries
+    themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
+                   for layer in plot.layers]
     plot_canvas = compose(plot_canvas,
-                          [render(layer.geom, plot.theme, aes)
-                           for (layer, aes) in zip(plot.layers, layer_aess)]...)
+                          [render(layer.geom, theme, aes)
+                           for (layer, aes, theme) in zip(plot.layers, layer_aess, themes)]...)
 
     # V. Guides
     guide_canvases = {}
