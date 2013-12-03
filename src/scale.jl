@@ -308,6 +308,15 @@ const discrete_color_hue = DiscreteColorScale(
 const discrete_color = discrete_color_hue
 
 
+function discrete_color_manual(colors...)
+    cs = ColorValue[color(c) for c in colors]
+    function f(n)
+        distinguishable_colors(n, cs)
+    end
+    DiscreteColorScale(f)
+end
+
+
 function apply_scale(scale::DiscreteColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
