@@ -3,8 +3,12 @@
 immutable LineGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
 
-    function LineGeometry(default_statistic=Gadfly.Stat.identity())
-        new(default_statistic)
+    # Do not reorder points along the x-axis.
+    preserve_order::Bool
+
+    function LineGeometry(default_statistic=Gadfly.Stat.identity();
+                          preserve_order=false)
+        new(default_statistic, preserve_order)
     end
 end
 
@@ -53,7 +57,9 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     if length(aes.color) == 1
         points = {(x, y) for (x, y) in zip(aes.x, aes.y)}
-        sort!(points)
+        if !geom.preserve_order
+            sort!(points)
+        end
         form = compose(lines(points...),
                        stroke(aes.color[1]),
                        svgclass("geometry"))
@@ -69,7 +75,9 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
         forms = Array(Any, length(points))
         for (i, (c, c_points)) in enumerate(points)
-            sort!(c_points)
+            if !geom.preserve_order
+                sort!(c_points)
+            end
             forms[i] =
                 compose(lines({(x, y) for (x, y) in c_points}...),
                         stroke(c),

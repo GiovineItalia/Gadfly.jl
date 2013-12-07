@@ -50,7 +50,8 @@ tests = [
     ("issue120",                     6inch, 3inch),
     ("histogram2d_discrete",         6inch, 3inch),
     ("layer_themes",                 6inch, 3inch),
-    ("discrete_color_manual",        6inch, 3inch)
+    ("discrete_color_manual",        6inch, 3inch),
+    ("ordered_line",                 6inch, 3inch)
 ]
 
 

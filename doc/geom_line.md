@@ -12,6 +12,14 @@ order: 1007
   * `y`: Y-axis position.
   * `color` (optional): Group categorically by color.
 
+
+# Arguments
+
+  * `preserve_order`: Default behavior for `Geom.line` is to draw lines between
+    points in order along the x-axis. If this option is true, lines will be
+    drawn between points in the order they appear in the data.
+
+
 # Examples
 
 ```{.julia hide="true" results="none"}
