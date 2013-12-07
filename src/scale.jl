@@ -436,7 +436,7 @@ function apply_scale(scale::ContinuousColorScale,
             cs[i] = scale.f((convert(Float64, c) - cmin) / cspan)
         end
 
-        aes.color = PooledDataArray(cs, nas)
+        aes.color = DataArray(cs, nas)
 
         color_labels = Dict{ColorValue, String}()
         tick_labels = identity_formatter(ticks)
