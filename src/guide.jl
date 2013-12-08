@@ -45,6 +45,101 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
 end
 
 
+immutable ZoomSlider <: Gadfly.GuideElement
+end
+
+const zoomslider = ZoomSlider
+
+
+function render(guide::ZoomSlider, theme::Gadfly.Theme,
+                aess::Vector{Gadfly.Aesthetics})
+
+    edge_pad = 3mm
+    slide_pad = 0.5mm
+    button_size = 4mm
+    slider_size = 20mm
+    background_color = "#eaeaea"
+    foreground_color = "#6a6a6a"
+    #highlight_color = string("#", hex(theme.highlight_color(color(foreground_color))))
+    highlight_color = "#cd5c5c";
+
+    minus_button = compose(canvas(1w - edge_pad - 2*button_size - slider_size,
+                                  edge_pad, button_size, button_size),
+                           rectangle(),
+                             stroke(foreground_color),
+                             strokeopacity(0.0),
+                             linewidth(0.3mm),
+                           (polygon((0.2, 0.4), (0.8, 0.4),
+                                    (0.8, 0.6), (0.2, 0.6)),
+                            fill(foreground_color),
+                            svgclass("button_logo")),
+                           fill(background_color),
+                           d3embed(
+                               """
+                               .on("click", zoomout_behavior(ctx))
+                               .on("dblclick", function() { d3.event.stopPropagation(); })
+                               .on("mouseover", zoomslider_button_mouseover("$(highlight_color)"))
+                               .on("mouseout", zoomslider_button_mouseover("$(foreground_color)"))
+                               """))
+
+    slider_width = 2mm
+    slider_xpos = 1w - edge_pad - button_size - slider_size + slide_pad
+
+    slider_min_pos = slider_xpos + slider_width/2
+    slider_max_pos = slider_xpos + slider_size - 2*slide_pad - slider_width/2
+
+    slider = compose(canvas(slider_xpos,
+                            edge_pad, slider_size - 2 * slide_pad, button_size),
+                     (rectangle(),
+                      fill(background_color),
+                      d3embed(".on(\"click\", zoomslider_track_behavior(ctx, %x, %x))",
+                              slider_min_pos, slider_max_pos)),
+                     (rectangle(0.5cx - slider_width/2, 0.0, slider_width, 1h),
+                      fill(foreground_color),
+                      svgclass("zoomslider_thumb"),
+                      d3embed(
+                        """
+                        .call(zoomslider_behavior(ctx, %x, %x))
+                        .on("mouseover", zoomslider_thumb_mouseover("$(highlight_color)"))
+                        .on("mouseout", zoomslider_thumb_mouseover("$(foreground_color)"))
+                        """,
+                        slider_min_pos, slider_max_pos)))
+
+
+    plus_button = compose(canvas(1w - edge_pad - button_size, edge_pad,
+                                    button_size, button_size),
+                          rectangle(),
+                            stroke(foreground_color),
+                            strokeopacity(0.0),
+                            linewidth(0.3mm),
+                          (polygon((0.2, 0.4), (0.4, 0.4), (0.4, 0.2),
+                                   (0.6, 0.2), (0.6, 0.4), (0.8, 0.4),
+                                   (0.8, 0.6), (0.6, 0.6), (0.6, 0.8),
+                                   (0.4, 0.8), (0.4, 0.6), (0.2, 0.6)),
+                           fill(foreground_color),
+                           svgclass("button_logo")),
+                          fill(background_color),
+                          d3embed(
+                              """
+                              .on("click", zoomin_behavior(ctx))
+                              .on("dblclick", function() { d3.event.stopPropagation(); })
+                              .on("mouseover", zoomslider_button_mouseover("$(highlight_color)"))
+                              .on("mouseout", zoomslider_button_mouseover("$(foreground_color)"))
+                              """))
+
+    root = compose(canvas(d3only=true),
+                   minus_button,
+                   slider,
+                   plus_button,
+                   stroke(nothing),
+                   #stroke(foreground_color),
+                   svgclass("guide zoomslider"),
+                   opacity(0.0))
+
+    {(root, over_guide_position)}
+end
+
+
 immutable ColorKey <: Gadfly.GuideElement
     title::Union(String, Nothing)
 
@@ -555,6 +650,8 @@ function layout_guides(plot_canvas::Canvas,
             push!(left_guides, guide)
         elseif pos === under_guide_position
             push!(under_guides, guide)
+        elseif pos === over_guide_position
+            push!(over_guides, guide)
         end
     end
 
@@ -620,7 +717,10 @@ function layout_guides(plot_canvas::Canvas,
                     ".on(\"mouseout\", guide_background_mouseout(%s))",
                     json(theme.grid_color))),
                 isempty(under_guides) ?
-                    nothing : d3embed(".call(zoom_behavior(t))")),
+                    nothing : d3embed(
+                        """
+                        .call(zoom_behavior(ctx))
+                        """)),
             top_guides, right_guides, bottom_guides, left_guides)
 end
 

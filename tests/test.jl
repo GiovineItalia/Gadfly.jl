@@ -89,7 +89,7 @@ function run_tests(output_filename)
         end
     end
 
-    d3src = Pkg.dir("Compose", "data", "d3.min.js")
+    d3src = Pkg.dir("Compose", "data", "d3.v3.min.js")
     gadflysrc = Pkg.dir("Gadfly", "src", "gadfly.js")
 
     output = open(output_filename, "w")
