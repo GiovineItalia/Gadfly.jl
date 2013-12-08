@@ -263,7 +263,7 @@ var zoom_behavior = function(ctx) {
              "scale": ctx.scale}, old_scale);
         zm.translate([tx, ty]);
 
-        ctx.update_zoomslider();
+        update_zoomslider(root, ctx);
       });
 
 
@@ -296,6 +296,8 @@ var slider_position_from_scale = function(scale) {
 var zoomslider_behavior = function(ctx, min_extent, max_extent) {
     var drag = d3.behavior.drag();
     ctx.zoomslider_behavior = drag;
+    ctx.min_zoomslider_extent = min_extent;
+    ctx.max_zoomslider_extent = max_extent;
 
     drag.on("drag", function() {
         var xmid = (min_extent + max_extent) / 2;
@@ -330,14 +332,18 @@ var zoomslider_behavior = function(ctx, min_extent, max_extent) {
         d3.event.sourceEvent.stopPropagation();
     });
 
-    ctx.update_zoomslider = function() {
-        var xmid = (min_extent + max_extent) / 2;
-        var xpos = min_extent + ((max_extent - min_extent) * slider_position_from_scale(ctx.scale));
-        d3.select(".zoomslider_thumb")
-          .attr("transform", "translate(" + (xpos - xmid) + " " + 0 + ")");
-    };
-
     return drag;
+};
+
+
+// Reposition the zoom slider thumb based on the current scale
+var update_zoomslider = function(root, ctx) {
+    var xmid = (ctx.min_zoomslider_extent + ctx.max_zoomslider_extent) / 2;
+    var xpos = ctx.min_zoomslider_extent +
+        ((ctx.max_zoomslider_extent - ctx.min_zoomslider_extent) *
+            slider_position_from_scale(ctx.scale));
+    root.select(".zoomslider_thumb")
+        .attr("transform", "translate(" + (xpos - xmid) + " " + 0 + ")");
 };
 
 
