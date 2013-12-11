@@ -216,6 +216,24 @@ var set_geometry_transform = function(root, ctx, old_scale) {
                       ctx.scale / old_scale * d3.select(this).attr("y"));
             });
     }
+
+    var bbox = root.select(".guide.background")
+                   .select("path").node().getBBox();
+
+    // hide/show ticks labels based on their position
+    root.selectAll(".xlabels")
+        .selectAll("text")
+        .attr("visibility", function() {
+            var x = parseInt(d3.select(this).attr("x"), 10) + ctx.tx;
+            return bbox.x <= x && x <= bbox.x + bbox.width ? "visible" : "hidden";
+        });
+
+    root.selectAll(".ylabels")
+        .selectAll("text")
+        .attr("visibility", function() {
+            var y = parseInt(d3.select(this).attr("y"), 10) + ctx.ty;
+            return bbox.y <= y && y <= bbox.y + bbox.height ? "visible" : "hidden";
+        });
 };
 
 

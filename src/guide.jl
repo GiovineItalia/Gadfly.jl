@@ -437,6 +437,18 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         end
     end
 
+    viewmin, viewmax = nothing, nothing
+    for aes in aess
+        if (viewmin != nothing && aes.xviewmin != nothing && aes.xviewmin < viewmin) ||
+           (viewmin == nothing && aes.xviewmin != nothing)
+            viewmin = aes.xviewmin
+        end
+        if (viewmax != nothing && aes.xviewmax != nothing && aes.xviewmax > viewmax) ||
+           (viewmax == nothing && aes.xviewmax != nothing)
+            viewmax = aes.xviewmax
+        end
+    end
+
     # grid lines
     grid_lines = compose(canvas(),
                          [lines((t, 0h), (t, 1h)) for t in grids]...,
@@ -453,9 +465,20 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                                theme.minor_label_font_size,
                                values(ticks)...)
     padding = 1mm
+
+    texts = Array(Canvas, length(ticks))
+    for (i, (tick, label)) in enumerate(ticks)
+        txt = text(tick, 1h - padding, label, hcenter, vbottom)
+        if viewmin <= tick <= viewmax
+            texts[i] = compose(canvas(units_inherited=true), txt)
+        else
+            texts[i] = compose(canvas(units_inherited=true, d3only=true), txt,
+                               d3embed(""".attr("visibility", "hidden")"""))
+        end
+    end
+
     tick_labels = compose(canvas(0, 0, 1w, height + 2padding, order=-1),
-                          [text(tick, 1h - padding, label, hcenter, vbottom)
-                           for (tick, label) in ticks]...,
+                          texts...,
                           stroke(nothing),
                           fill(theme.minor_label_color),
                           font(theme.minor_label_font),
@@ -524,6 +547,18 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         end
     end
 
+    viewmin, viewmax = nothing, nothing
+    for aes in aess
+        if (viewmin != nothing && aes.yviewmin != nothing && aes.yviewmin < viewmin) ||
+           (viewmin == nothing && aes.yviewmin != nothing)
+            viewmin = aes.yviewmin
+        end
+        if (viewmax != nothing && aes.yviewmax != nothing && aes.yviewmax > viewmax) ||
+           (viewmax == nothing && aes.yviewmax != nothing)
+            viewmax = aes.yviewmax
+        end
+    end
+
     # grid lines
     grid_lines = compose(canvas(),
                          [lines((0w, t), (1w, t)) for t in grids]...,
@@ -542,9 +577,19 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     padding = 1mm
     width += 2padding
 
+    texts = Array(Canvas, length(ticks))
+    for (i, (tick, label)) in enumerate(ticks)
+        txt = text(width - padding, tick, label, hright, vcenter)
+        if viewmin <= tick <= viewmax
+            texts[i] = compose(canvas(units_inherited=true), txt)
+        else
+            texts[i] = compose(canvas(units_inherited=true, d3only=true), txt,
+                               d3embed(""".attr("visibility", "hidden")"""))
+        end
+    end
+
     tick_labels = compose(canvas(0, 0, width, 1cy, order=-1),
-                          [text(width - padding, t, label, hright, vcenter)
-                           for (t, label) in ticks]...,
+                          texts...,
                           stroke(nothing),
                           fill(theme.minor_label_color),
                           font(theme.minor_label_font),
@@ -692,15 +737,8 @@ function layout_guides(plot_canvas::Canvas,
     clippad_left   = 0.1w
     clippad_right  = 0.1w
 
-    bottom_guides =
-        compose(set_box(bottom_guides, BoundingBox(l, t + ph, pw, b)),
-              clip((0cx - clippad_left, 1cy - b), (1cx + clippad_right, 1cy - b),
-                   (1cx + clippad_right, 1cy), (0cx - clippad_left, 1cy)))
-
-    left_guides =
-        compose(set_box(left_guides, BoundingBox(0, t, l, ph)),
-                clip((0cx, 0cy - clippad_top), (0cx + l, 0cy - clippad_top),
-                     (0cx + l, 1cy + clippad_bottom), (0cx, 1cy + clippad_bottom)))
+    bottom_guides = compose(set_box(bottom_guides, BoundingBox(l, t + ph, pw, b)))
+    left_guides = compose(set_box(left_guides, BoundingBox(0, t, l, ph)))
 
     root_canvas = preserve_plot_canvas_size ?
         canvas(0, 0, 1.0w + l + r, 1.0h + t + b) : canvas()
