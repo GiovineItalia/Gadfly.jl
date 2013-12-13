@@ -15,7 +15,7 @@ Draw histograms. An alias for `Geom.bar` with `Stat.histogram`.
 
 # Arguments
 
-  * `position`: Either `:stacked` or `:dodged`. If the `color` aesthetic is
+  * `position`: Either `:stack` or `:dodge`. If the `color` aesthetic is
     bound this determines how bars of different colors should be arranged:
     stacked on top of each other, or placed side by side.
   * `bincount`: Number of bins to use. If unspecified, an optimization method

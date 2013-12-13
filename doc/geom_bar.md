@@ -28,7 +28,7 @@ If `x` is given, a bar will be drawn at each x value, specifying both `xmin` and
 
 # Arguments
 
-  * `position`: Either `:stacked` or `:dodged`. If the `color` aesthetic is
+  * `position`: Either `:stack` or `:dodge`. If the `color` aesthetic is
     bound this determines how bars of different colors should be arranged:
     stacked on top of each other, or placed side by side.
 
