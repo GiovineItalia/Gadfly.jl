@@ -218,7 +218,7 @@ D3 can be downloaded from [here](http://d3js.org/d3.v3.zip).
 Now the output can be included in an HTML like.
 
 ```html
-<script src="d3.min.js"></script>
+<script src="d3.v3.min.js"></script>
 <script src="gadfly.js"></script>
 
 <!-- Placed whereever you want the graphic to be rendered. -->
