@@ -45,7 +45,6 @@ function render_colorless_bar(geom::BarGeometry,
     bar_form = empty_form
     for (x_min, x_max, y) in zip(aes.xmin, aes.xmax, aes.y)
         geometry_id = Gadfly.unique_svg_id()
-        println(STDERR, "bar_spacing = ", theme.bar_spacing)
         bar_form = combine(bar_form,
             compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
                               (x_max - x_min)*cx - theme.bar_spacing, y),

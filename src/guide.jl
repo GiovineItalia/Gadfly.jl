@@ -469,7 +469,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     texts = Array(Canvas, length(ticks))
     for (i, (tick, label)) in enumerate(ticks)
         txt = text(tick, 1h - padding, label, hcenter, vbottom)
-        if viewmin <= tick <= viewmax
+        if (viewmin != nothing && viewmax != nothing) && viewmin <= tick <= viewmax
             texts[i] = compose(canvas(units_inherited=true), txt)
         else
             texts[i] = compose(canvas(units_inherited=true, d3only=true), txt,
