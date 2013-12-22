@@ -658,6 +658,34 @@ function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aestheti
     {(c, left_guide_position)}
 end
 
+# Title Guide
+immutable Title <: Gadfly.GuideElement
+    label::Union(Nothing, String)
+end
+
+const title = Title
+
+function render(guide::Title, theme::Gadfly.Theme,
+                aess::Vector{Gadfly.Aesthetics})
+    if guide.label === nothing || isempty(guide.label)
+        return nothing
+    end
+
+    (_, text_height) = text_extents(theme.major_label_font,
+                                    theme.major_label_font_size,
+                                    guide.label)
+
+    padding = 2mm
+    c = compose(canvas(0, 0, 1w, text_height + 2padding),
+                text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
+                stroke(nothing),
+                fill(theme.major_label_color),
+                font(theme.major_label_font),
+                fontsize(theme.major_label_font_size))
+
+    {(c, top_guide_position)}
+end
+
 
 # Arrange a plot with its guides
 #
@@ -726,10 +754,10 @@ function layout_guides(plot_canvas::Canvas,
     pw = 1cx - l - r # plot width
     ph = 1cy - t - b # plot height
 
-    top_guides    = set_box(top_guides,    BoundingBox(l, 0, pw, t))
+    top_guides    = compose(set_box(top_guides,    BoundingBox(l, 0, pw, t)))
         # TODO: clip path
 
-    right_guides  = set_box(right_guides,  BoundingBox(l + pw, t, r, ph))
+    right_guides  = compose(set_box(right_guides,  BoundingBox(l + pw, t, r, ph)))
         # TODO: clip path
 
     clippad_top    = 4mm
