@@ -193,7 +193,9 @@ function apply_statistic(stat::DensityStatistic,
         end
 
         x_f64 = convert(Vector{Float64}, aes.x)
-        window = length(stat.n) > 1 ? bandwidth(x_f64) : 0.1
+        # When will stat.n ever be <= 1? Seems pointless
+        # certainly its length will always be 1
+        window = stat.n > 1 ? bandwidth(x_f64) : 0.1
         f = kde(x_f64, window, stat.n)
         aes.x = f.x
         aes.y = f.density
@@ -211,11 +213,11 @@ function apply_statistic(stat::DensityStatistic,
         aes.x = Array(Float64, 0)
         aes.y = Array(Float64, 0)
         for (c, xs) in groups
-            window = length(stat.n) > 1 ? bandwidth(aes.x) : 0.1
+            window = stat.n > 1 ? bandwidth(xs) : 0.1
             f = kde(xs, window, stat.n)
             append!(aes.x, f.x)
             append!(aes.y, f.density)
-            for _ in length(f.x)
+            for _ in 1:length(f.x)
                 push!(colors, c)
             end
         end
