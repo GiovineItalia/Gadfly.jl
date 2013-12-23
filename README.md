@@ -1,7 +1,7 @@
 !["Alice looked up at the Rocking-horse-fly with great interest, and made up her
 mind that it must have been just repainted, it looked so bright and sticky."](http://dcjones.github.com/Gadfly.jl/rockinghorsefly.png)
 
-[![Build Status](https://api.travis-ci.org/gitfoxi/Gadfly.jl.png)](https://travis-ci.org/gitfoxi/Gadfly.jl)
+[![Build Status](https://api.travis-ci.org/dcjones/Gadfly.jl.png)](https://travis-ci.org/dcjones/Gadfly.jl)
 
 **Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
