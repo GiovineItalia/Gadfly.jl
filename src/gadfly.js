@@ -289,7 +289,7 @@ var zoom_behavior = function(ctx) {
         zm(g);
         default_handler = g.on("wheel.zoom");
         function wheelhandler() {
-            if (d3.event.ctrlKey) {
+            if (d3.event.shiftKey) {
                 default_handler.call(this);
             }
         }
