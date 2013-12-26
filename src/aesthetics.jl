@@ -13,7 +13,7 @@ typealias NumericalAesthetic
 @varset Aesthetics begin
     x,            NumericalOrCategoricalAesthetic
     y,            NumericalOrCategoricalAesthetic
-    size,         Maybe(Vector{Measure})
+    size,         NumericalAesthetic
     color,        Maybe(AbstractDataVector{ColorValue})
     label,        CategoricalAesthetic
 

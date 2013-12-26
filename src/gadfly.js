@@ -289,8 +289,11 @@ var zoom_behavior = function(ctx) {
         zm(g);
         default_handler = g.on("wheel.zoom");
         function wheelhandler() {
+            console.info("WHEEL ZOOM");
             if (d3.event.ctrlKey) {
+                console.info("CTRL KEY WHEEL ZOOM");
                 default_handler.call(this);
+                d3.event.stopPropagation();
             }
         }
         g.on("wheel.zoom", wheelhandler)

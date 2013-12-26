@@ -36,7 +36,6 @@ end
 optimize_ticks() = {}
 
 
-
 # Find some reasonable values for tick marks.
 #
 # This is basically Wilkinson's ad-hoc scoring method that tries to balance
@@ -133,7 +132,6 @@ function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false)
 end
 
 
-
 function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false)
     # This can be pretty simple. We are choosing ticks on one of three
     # scales: years, months, days.
@@ -178,6 +176,5 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false)
         Date[date(y) for y in ticks], date(viewmin), date(viewmax)
     end
 end
-
 
 
