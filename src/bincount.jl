@@ -55,7 +55,7 @@ function choose_bin_count_1d(xs::AbstractVector, min_bin_count=1, max_bin_count=
         return 1, Int[0]
     end
 
-    x_min, x_max = minimum(xs), maximum(xs)
+    x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)
     span = x_max - x_min
 
     d_min = min_bin_count
@@ -117,8 +117,8 @@ function choose_bin_count_2d(xs::AbstractVector, ys::AbstractVector,
     # For two demensions, I'm just going to optimize the marginal bin counts.
     # This might not be optimal, but its simple and fast.
 
-    x_min, x_max = minimum(xs), maximum(xs)
-    y_min, y_max = minimum(ys), maximum(ys)
+    x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)
+    y_min, y_max = Gadfly.concrete_minimum(ys), Gadfly.concrete_maximum(ys)
 
     dx, _ = choose_bin_count_1d(xs, xminbincount, xmaxbincount)
     dy, _ = choose_bin_count_1d(ys, yminbincount, ymaxbincount)
@@ -129,6 +129,10 @@ function choose_bin_count_2d(xs::AbstractVector, ys::AbstractVector,
 
     bincounts = zeros(Int, (dy, dx))
     for (x, y) in zip(xs, ys)
+        if !Gadfly.isconcrete(x) || !Gadfly.isconcrete(y)
+            continue
+        end
+
         i = max(1, min(dx, int(ceil((x - x_min) / wx))))
         j = max(1, min(dy, int(ceil((y - y_min) / wy))))
         bincounts[j, i] += 1

@@ -105,7 +105,7 @@ function apply_statistic(stat::HistogramStatistic,
                                            stat.maxbincount)
     end
 
-    x_min, x_max = minimum(aes.x), maximum(aes.x)
+    x_min, x_max = Gadfly.concrete_minimum(aes.x), Gadfly.concrete_maximum(aes.x)
     binwidth = (x_max - x_min) / d
 
     if aes.color === nothing
@@ -121,6 +121,10 @@ function apply_statistic(stat::HistogramStatistic,
     else
         groups = Dict()
         for (x, c) in zip(aes.x, cycle(aes.color))
+            if !Gadfly.isconcrete(x)
+                continue
+            end
+
             if !haskey(groups, c)
                 groups[c] = Float64[x]
             else
@@ -133,12 +137,15 @@ function apply_statistic(stat::HistogramStatistic,
         aes.y = Array(Float64, d * length(groups))
         colors = Array(ColorValue, d * length(groups))
 
-        x_min = minimum(aes.x)
-        x_max = maximum(aes.x)
+        x_min = Gadfly.concrete_minimum(aes.x)
+        x_max = Gadfly.concrete_maximum(aes.x)
         stack_height = zeros(Int, d)
         for (i, (c, xs)) in enumerate(groups)
             fill!(bincounts, 0)
             for x in xs
+                if !Gadfly.isconcrete(x)
+                    continue
+                end
                 bin = max(1, min(d, int(ceil((x - x_min) / binwidth))))
                 bincounts[bin] += 1
             end
@@ -271,8 +278,8 @@ function apply_statistic(stat::Histogram2DStatistic,
 
     Gadfly.assert_aesthetics_defined("Histogram2DStatistic", aes, :x, :y)
 
-    x_min, x_max = minimum(aes.x), maximum(aes.x)
-    y_min, y_max = minimum(aes.y), maximum(aes.y)
+    x_min, x_max = Gadfly.concrete_minimum(aes.x), Gadfly.concrete_maximum(aes.x)
+    y_min, y_max = Gadfly.concrete_minimum(aes.y), Gadfly.concrete_maximum(aes.y)
 
     if haskey(scales, :x) && isa(scales[:x], Scale.DiscreteScale)
         x_categorial = true
@@ -428,6 +435,10 @@ function apply_statistic(stat::TickStatistic,
 
     n = 0
     for val in in_values
+        if !Gadfly.isconcrete(val)
+            continue
+        end
+
         if val < minval
             minval = val
         end

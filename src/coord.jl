@@ -63,6 +63,10 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
             end
 
             for val in vals
+                if !Gadfly.isconcrete(val)
+                    continue
+                end
+
                 if xmin === nothing || val < xmin
                     xmin = val
                 end
@@ -86,6 +90,10 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
             if var == :outliers
                 for vals in aes.outliers
                     for val in vals
+                        if !Gadfly.isconcrete(val)
+                            continue
+                        end
+
                         if ymin === nothing || val < ymin
                             ymin = val
                         end
@@ -105,6 +113,10 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
             end
 
             for val in vals
+                if !Gadfly.isconcrete(val)
+                    continue
+                end
+
                 if ymin === nothing || val < ymin
                     ymin = val
                 end

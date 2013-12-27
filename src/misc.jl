@@ -20,6 +20,50 @@ function concrete_length(xs)
     n
 end
 
+
+function concrete_minimum(xs)
+    if isempty(xs)
+        error("argument must not be empty")
+    end
+
+    x_min = xs[1]
+    for x in xs
+        if Gadfly.isconcrete(x)
+            x_min = x
+            break
+        end
+    end
+
+    for x in xs
+        if Gadfly.isconcrete(x) && x < x_min
+            x_min = x
+        end
+    end
+    return x_min
+end
+
+
+function concrete_maximum(xs)
+    if isempty(xs)
+        error("argument must not be empty")
+    end
+
+    x_max = xs[1]
+    for x in xs
+        if Gadfly.isconcrete(x)
+            x_max = x
+            break
+        end
+    end
+
+    for x in xs
+        if Gadfly.isconcrete(x) && x > x_max
+            x_max = x
+        end
+    end
+    return x_max
+end
+
 function nonzero_length(xs)
     n = 0
     for x in xs
