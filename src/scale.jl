@@ -193,12 +193,13 @@ function apply_scale(scale::ContinuousScale,
                 continue
             end
 
-            ds = Array(Any, concrete_length(getfield(data, var)))
-            i = 1
-            for d in getfield(data, var)
+            ds = Array(Any, length(getfield(data, var)))
+            for (i, d) in enumerate(getfield(data, var))
                 if isconcrete(d)
                     ds[i] = scale.trans.f(d)
                     i += 1
+                else
+                    ds[i] = d
                 end
             end
 
