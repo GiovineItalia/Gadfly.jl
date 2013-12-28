@@ -22,11 +22,11 @@ end
 
 
 function concrete_minimum(xs)
-    if isempty(xs)
+    if done(xs, start(xs))
         error("argument must not be empty")
     end
 
-    x_min = xs[1]
+    x_min = first(xs)
     for x in xs
         if Gadfly.isconcrete(x)
             x_min = x
@@ -44,11 +44,11 @@ end
 
 
 function concrete_maximum(xs)
-    if isempty(xs)
+    if done(xs, start(xs))
         error("argument must not be empty")
     end
 
-    x_max = xs[1]
+    x_max = first(xs)
     for x in xs
         if Gadfly.isconcrete(x)
             x_max = x

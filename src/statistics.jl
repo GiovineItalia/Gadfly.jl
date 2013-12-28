@@ -430,25 +430,9 @@ function apply_statistic(stat::TickStatistic,
 
     # TODO: handle the outliers aesthetic
 
-    minval = first(in_values)
-    maxval = first(in_values)
-
-    n = 0
-    for val in in_values
-        if !Gadfly.isconcrete(val)
-            continue
-        end
-
-        if val < minval
-            minval = val
-        end
-
-        if val > maxval
-            maxval = val
-        end
-
-        n += 1
-    end
+    minval = Gadfly.concrete_minimum(in_values)
+    maxval = Gadfly.concrete_maximum(in_values)
+    n = Gadfly.concrete_length(in_values)
 
     # take into account a forced viewport in cartesian coordinates.
     if typeof(coord) == Coord.Cartesian
