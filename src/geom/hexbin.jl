@@ -9,8 +9,8 @@ immutable HexagonalBinGeometry <: Gadfly.GeometryElement
         new(default_statistic)
     end
 
-    function HexagonalBinGeometry()
-        new(Gadfly.Stat.hexbin())
+    function HexagonalBinGeometry(; xbincount=50, ybincount=50)
+        new(Gadfly.Stat.hexbin(xbincount=xbincount, ybincount=ybincount))
     end
 end
 

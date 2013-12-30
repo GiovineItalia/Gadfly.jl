@@ -735,10 +735,11 @@ end
 
 
 immutable HexBinStatistic <: Gadfly.StatisticElement
-    bincount::Int
+    xbincount::Int
+    ybincount::Int
 
-    function HexBinStatistic()
-        new(10000)
+    function HexBinStatistic(; xbincount=50, ybincount=50)
+        new(xbincount, ybincount)
     end
 end
 
@@ -754,14 +755,8 @@ function apply_statistic(stat::HexBinStatistic,
     ymin, ymax = minimum(aes.y), maximum(aes.y)
     xspan, yspan = xmax - xmin, ymax - ymin
 
-    # bincount = m * n
-    # m = yspan / size
-    # n = xspan / size
-    #
-    # So...
-    #size = sqrt((xspan * yspan) / stat.bincount)
-    xsize = xspan / sqrt(stat.bincount)
-    ysize = yspan / sqrt(stat.bincount)
+    xsize = xspan / stat.xbincount
+    ysize = yspan / stat.ybincount
 
     counts = Dict{(Any, Any), Int}()
     for (x, y) in zip(aes.x, aes.y)
