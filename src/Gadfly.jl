@@ -277,7 +277,7 @@ function clean_mapping(mapping)
 
         if !(typeof(val) <: AestheticValue)
             error(
-            """Aesthetic $(val) is mapped to a value of type $(typeof(v)).
+            """Aesthetic $(key) is mapped to a value of type $(typeof(val)).
                It must be mapped to a string, symbol, array, or expression.""")
         end
 
@@ -749,7 +749,8 @@ const default_aes_scales = {
                        :xgroup     => Scale.xgroup,
                        :ygroup     => Scale.ygroup,
                        :color      => Scale.continuous_color(),
-                       :label      => Scale.label()},
+                       :label      => Scale.label(),
+                       :size       => Scale.size_continuous()},
         :categorical => {:x          => Scale.x_discrete,
                          :xmin       => Scale.x_discrete,
                          :xmax       => Scale.x_discrete,

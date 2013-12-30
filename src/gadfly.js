@@ -289,8 +289,9 @@ var zoom_behavior = function(ctx) {
         zm(g);
         default_handler = g.on("wheel.zoom");
         function wheelhandler() {
-            if (d3.event.shiftKey) {
+        if (d3.event.shiftKey) {
                 default_handler.call(this);
+                d3.event.stopPropagation();
             }
         }
         g.on("wheel.zoom", wheelhandler)

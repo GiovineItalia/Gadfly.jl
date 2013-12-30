@@ -21,6 +21,8 @@
     yviewmin
     yviewmax
     size
+    xsize
+    ysize
     color
     label
     titles, Dict{Symbol, String}, Dict{Symbol, String}()

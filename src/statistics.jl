@@ -5,6 +5,7 @@ using DataArrays
 using Compose
 using Color
 using Loess
+using Hexagons
 
 import Gadfly.Scale, Gadfly.Coord, Gadfly.element_aesthetics,
        Gadfly.default_scales, Gadfly.isconcrete, Gadfly.nonzero_length
@@ -414,24 +415,73 @@ function apply_statistic(stat::TickStatistic,
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     in_group_var = symbol(string(stat.out_var, "group"))
+    minval, maxval = nothing, nothing
     if getfield(aes, in_group_var) === nothing
-        in_values = [getfield(aes, var) for var in stat.in_vars]
-        in_values = filter(val -> !(val === nothing), in_values)
+        in_values = {}
+        categorical = true
+        for var in stat.in_vars
+            vals = getfield(aes, var)
+            if vals != nothing && !isa(vals, PooledDataArray)
+                categorical = false
+            end
+
+            if vals != nothing
+                if minval == nothing
+                    minval = first(vals)
+                end
+                if maxval == nothing
+                    maxval = first(vals)
+                end
+
+                T = isempty(vals) ? eltype(vals) : typeof(first(vals))
+                if stat.out_var == "x"
+                    dsize = aes.xsize === nothing ? [nothing] : aes.xsize
+                elseif stat.out_var == "y"
+                    dsize = aes.ysize === nothing ? [nothing] : aes.ysize
+                else
+                    dsize = [nothing]
+                end
+
+                size = aes.size === nothing ? [nothing] : aes.size
+
+                for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
+                    if !Gadfly.isconcrete(val)
+                        continue
+                    end
+
+                    minval = min(minval, val)
+                    maxval = max(maxval, val)
+
+                    if s != nothing
+                        minval = min(minval, val - s)
+                        maxval = max(maxval, val + s)
+                    end
+
+                    if ds != nothing
+                        minval = min(minval, val - ds)
+                        maxval = max(maxval, val + ds)
+                    end
+                end
+
+                push!(in_values, vals)
+            end
+        end
+
         if isempty(in_values)
             return
         end
+
         in_values = chain(in_values...)
-        categorical = all([getfield(aes, var) === nothing || typeof(getfield(aes, var)) <: PooledDataArray
-                           for var in stat.in_vars])
     else
-        in_values = getfield(aes, in_group_var)
+        vals = getfield(aes. in_group_var)
+        in_values = vals
+        minval = Gadfly.concrete_minimum(in_values)
+        maxval = Gadfly.concrete_maximum(in_values)
         categorical = true
     end
 
     # TODO: handle the outliers aesthetic
 
-    minval = Gadfly.concrete_minimum(in_values)
-    maxval = Gadfly.concrete_maximum(in_values)
     n = Gadfly.concrete_length(in_values)
 
     # take into account a forced viewport in cartesian coordinates.
@@ -473,8 +523,8 @@ function apply_statistic(stat::TickStatistic,
     # all the input values in order.
     if categorical
         ticks = Set()
-        for in_value in in_values
-            push!(ticks, in_value)
+        for val in in_values
+            push!(ticks, val)
         end
         ticks = Float64[t for t in ticks]
         sort!(ticks)
@@ -682,6 +732,80 @@ function apply_statistic(stat::SmoothStatistic,
         aes.color = PooledDataArray(colors)
     end
 end
+
+
+immutable HexBinStatistic <: Gadfly.StatisticElement
+    bincount::Int
+
+    function HexBinStatistic()
+        new(10000)
+    end
+end
+
+
+const hexbin = HexBinStatistic
+
+
+function apply_statistic(stat::HexBinStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    xmin, xmax = minimum(aes.x), maximum(aes.x)
+    ymin, ymax = minimum(aes.y), maximum(aes.y)
+    xspan, yspan = xmax - xmin, ymax - ymin
+
+    # bincount = m * n
+    # m = yspan / size
+    # n = xspan / size
+    #
+    # So...
+    #size = sqrt((xspan * yspan) / stat.bincount)
+    xsize = xspan / sqrt(stat.bincount)
+    ysize = yspan / sqrt(stat.bincount)
+
+    counts = Dict{(Any, Any), Int}()
+    for (x, y) in zip(aes.x, aes.y)
+        h = convert(HexagonOffsetOddR, pointhex(x - xmin + xspan/2,
+                                                y - ymin + yspan/2,
+                                                xsize, ysize))
+        idx = (h.q, h.r)
+        if !haskey(counts, idx)
+            counts[idx] = 1
+        else
+            counts[idx] += 1
+        end
+    end
+
+    N = length(counts)
+    aes.x = Array(Float64, N)
+    aes.y = Array(Float64, N)
+    data = Gadfly.Data()
+    data.color = Array(Int, N)
+    k = 1
+    for (idx, cnt) in counts
+        x, y = center(HexagonOffsetOddR(idx[1], idx[2]), xsize, ysize,
+                      xmin - xspan/2, ymin - yspan/2)
+        aes.x[k] = x
+        aes.y[k] = y
+        data.color[k] = cnt
+        k += 1
+    end
+    aes.xsize = [xsize]
+    aes.ysize = [ysize]
+
+    color_scale = scales[:color]
+    if !(typeof(color_scale) <: Scale.ContinuousColorScale)
+        error("HexBinGeometry requires a continuous color scale.")
+    end
+
+    Scale.apply_scale(color_scale, [aes], data)
+end
+
+
+function default_scales(::HexBinStatistic)
+    return [Gadfly.Scale.continuous_color()]
+end
+
 
 end # module Stat
 

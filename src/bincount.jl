@@ -142,5 +142,18 @@ function choose_bin_count_2d(xs::AbstractVector, ys::AbstractVector,
 end
 
 
-
+# Optimize the number of bins for hexagonal 2d histograms.
+#
+# Args:
+#   xs: Dimension one data.
+#   ys: Dimension two data.
+#
+# Returns:
+#   A tuple of the form (size, bincounts), where 'size' is the hexagon size and
+#   bincounts is an arrays storing the count for each hexagon, using axial
+#   coordinates.
+#
+function choose_hex_bin_count(xs::AbstractVector, ys::AbstractVector)
+    # TODO: this should probably be a thing
+end
 

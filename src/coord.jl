@@ -4,8 +4,9 @@ module Coord
 using Gadfly
 using Compose
 using DataArrays
-
 import Gadfly.Maybe
+import Iterators: cycle
+
 export cartesian
 
 # Cartesian coordinates with position given by the x and y (and similar)
@@ -137,6 +138,7 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
         xmin = 0.0
         xmax = 1.0
     end
+
 
     if ymin === nothing || !isfinite(ymin)
         ymin = 0.0

@@ -31,12 +31,13 @@ end
 include("geom/bar.jl")
 include("geom/boxplot.jl")
 include("geom/errorbar.jl")
+include("geom/hexbin.jl")
+include("geom/hline.jl")
 include("geom/label.jl")
 include("geom/line.jl")
 include("geom/point.jl")
 include("geom/rectbin.jl")
 include("geom/subplot.jl")
-include("geom/hline.jl")
 include("geom/vline.jl")
 
 end # module Geom
