@@ -1,16 +1,18 @@
 module Stat
 
 import Gadfly
+import Stats
 using DataArrays
 using Compose
 using Color
 using Loess
 using Hexagons
 
-import Gadfly.Scale, Gadfly.Coord, Gadfly.element_aesthetics,
-       Gadfly.default_scales, Gadfly.isconcrete, Gadfly.nonzero_length
-import Distributions.Uniform, Distributions.kde, Distributions.bandwidth
-import Iterators.chain, Iterators.cycle, Iterators.product, Iterators.partition
+import Gadfly: Scale, Coord, element_aesthetics, default_scales, isconcrete,
+               nonzero_length
+import Stats: bandwidth, kde
+import Distributions: Uniform
+import Iterators: chain, cycle, product, partition
 
 include("bincount.jl")
 
@@ -204,7 +206,7 @@ function apply_statistic(stat::DensityStatistic,
         # When will stat.n ever be <= 1? Seems pointless
         # certainly its length will always be 1
         window = stat.n > 1 ? bandwidth(x_f64) : 0.1
-        f = kde(x_f64, window, stat.n)
+        f = kde(x_f64, width=window, npoints=stat.n)
         aes.x = f.x
         aes.y = f.density
     else
@@ -222,7 +224,7 @@ function apply_statistic(stat::DensityStatistic,
         aes.y = Array(Float64, 0)
         for (c, xs) in groups
             window = stat.n > 1 ? bandwidth(xs) : 0.1
-            f = kde(xs, window, stat.n)
+            f = kde(xs, width=window, npoints=stat.n)
             append!(aes.x, f.x)
             append!(aes.y, f.density)
             for _ in 1:length(f.x)

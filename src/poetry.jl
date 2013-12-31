@@ -29,9 +29,9 @@ function datafy(fs::Array, a, b)
     for (i, f) in enumerate(fs)
         df_i = evalfunc(f, a, b, 250)
         name = typeof(f) == Expr ? string(f) : @sprintf("f<sub>%d</sub>", i)
-        df_i = cbind(df_i, [name for _ in 1:size(df_i)[1]])
+        df_i = hcat(df_i, [name for _ in 1:size(df_i)[1]])
         colnames!(df_i, ["x", "f(x)", "f"])
-        df = rbind(df, df_i)
+        df = vcat(df, df_i)
     end
 
     mapping = {:x => "x", :y => "f(x)"}
