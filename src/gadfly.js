@@ -96,7 +96,7 @@ var guide_background_mouseout = function(color) {
 // Construct a call back used for mouseover effects in the point geometry.
 //
 // Args:
-//   scale: Scale to expand or contract
+//   scale: Scale for expanded width
 //   ratio: radius / line-width. This is necessary to maintain relative width
 //          at arbitraty levels of zoom
 //
@@ -113,6 +113,16 @@ var geom_point_mouseover = function(scale, ratio) {
     });
 };
 
+// Construct a call back used for mouseout effects in the point geometry.
+//
+// Args:
+//   scale: Scale for expanded width
+//   ratio: radius / line-width. This is necessary to maintain relative width
+//          at arbitraty levels of zoom
+//
+// Returns:
+//  Callback function.
+//
 var geom_point_mouseout = function(scale, ratio) {
     return (function() {
         var lw = this.getAttribute('r') * ratio
