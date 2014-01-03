@@ -12,7 +12,7 @@ Wickhams's [ggplot2](http://ggplot2.org/) for R, and Leland Wilkinson's book
 
 # Getting Started
 
-From the Julia REPL a reasonably up to data version can be installed with
+From the Julia REPL a reasonably up to date version can be installed with
 
 ```{.julia execute="false"}
 Pkg.add("Gadfly")
