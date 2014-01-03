@@ -32,16 +32,16 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     default_aes.size = Measure[theme.default_point_size]
     aes = inherit(aes, default_aes)
 
-    lw0 = theme.line_width
-    lw1 = 10 * lw0
+    lw_hover_scale = 10
+    lw_ratio = theme.line_width / aes.size.abs
     compose(circle(aes.x, aes.y, aes.size),
             fill(aes.color),
             stroke([theme.highlight_color(c) for c in aes.color]),
             linewidth(theme.line_width),
-            d3embed(@sprintf(".on(\"mouseover\", geom_point_mouseover(%0.2f), false)",
-                             lw1.abs)),
-            d3embed(@sprintf(".on(\"mouseout\", geom_point_mouseover(%0.2f), false)",
-                             lw0.abs)),
+            d3embed(@sprintf(".on(\"mouseover\", geom_point_mouseover(%0.2f, %0.2f), false)",
+                             lw_hover_scale, lw_ratio)),
+            d3embed(@sprintf(".on(\"mouseout\", geom_point_mouseout(%0.2f, %0.2f), false)",
+                             lw_hover_scale, lw_ratio)),
             aes.color_key_continuous == true ?
                 svgclass("geometry") :
                 svgclass([@sprintf("geometry color_%s", escape_id(aes.color_label([c])[1]))

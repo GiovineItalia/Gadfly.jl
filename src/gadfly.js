@@ -96,20 +96,42 @@ var guide_background_mouseout = function(color) {
 // Construct a call back used for mouseover effects in the point geometry.
 //
 // Args:
-//   lw: Stroke width to transition to.
+//   scale: Scale for expanded width
+//   ratio: radius / line-width. This is necessary to maintain relative width
+//          at arbitraty levels of zoom
 //
 // Returns:
 //  Callback function.
 //
-var geom_point_mouseover = function(lw) {
+var geom_point_mouseover = function(scale, ratio) {
     return (function() {
+        var lw = this.getAttribute('r') * ratio * scale
         d3.select(this)
           .transition()
           .duration(100)
-          .attr("stroke-width", lw);
+          .style("stroke-width", lw + 'px', 'important');
     });
 };
 
+// Construct a call back used for mouseout effects in the point geometry.
+//
+// Args:
+//   scale: Scale for expanded width
+//   ratio: radius / line-width. This is necessary to maintain relative width
+//          at arbitraty levels of zoom
+//
+// Returns:
+//  Callback function.
+//
+var geom_point_mouseout = function(scale, ratio) {
+    return (function() {
+        var lw = this.getAttribute('r') * ratio
+        d3.select(this)
+          .transition()
+          .duration(100)
+          .style("stroke-width", lw + 'px', 'important');
+    });
+};
 
 // Translate and scale geometry while trying to maintain scale invariance for
 // certain ellements.
@@ -146,7 +168,7 @@ var set_geometry_transform = function(root, ctx, old_scale) {
 
     // unscale geometry widths, radiuses, etc.
     var size_attribs = ["r"];
-    var size_styles = ["font-size"];
+    var size_styles = ["font-size", "stroke-width"];
     root.select(".plotpanel")
         .selectAll("g, .geometry")
         .each(function() {
@@ -474,4 +496,4 @@ var zoomslider_thumb_mouseover = function(destcolor) {
     });
 };
 
-
+//@ sourceURL=gadfly.js
