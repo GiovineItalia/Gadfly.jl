@@ -33,7 +33,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     aes = inherit(aes, default_aes)
 
     lw_hover_scale = 10
-    lw_ratio = theme.line_width / aes.size.abs
+    lw_ratio = theme.line_width / aes.size[1]
     compose(circle(aes.x, aes.y, aes.size),
             fill(aes.color),
             stroke([theme.highlight_color(c) for c in aes.color]),
