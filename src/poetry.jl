@@ -15,7 +15,7 @@
 function evalfunc(f::Function, a, b, n)
     xs = [x for x in a:(b - a)/n:b]
     df = DataFrame(xs, map(f, xs))
-    colnames!(df, ["x", "f(x)"])
+    names!(df, ["x", "f(x)"])
     df
 end
 
@@ -30,7 +30,7 @@ function datafy(fs::Array, a, b)
         df_i = evalfunc(f, a, b, 250)
         name = typeof(f) == Expr ? string(f) : @sprintf("f<sub>%d</sub>", i)
         df_i = hcat(df_i, [name for _ in 1:size(df_i)[1]])
-        colnames!(df_i, ["x", "f(x)", "f"])
+        names!(df_i, ["x", "f(x)", "f"])
         df = vcat(df, df_i)
     end
 
