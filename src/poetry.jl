@@ -26,13 +26,16 @@ evalfunc(f::Expr, a, b, n) = evalfunc(eval(:(x -> $f)), a, b, n)
 # Create a dataframe and mapping from a list of functions or expressions.
 function datafy(fs::Array, a, b)
     df = DataFrame()
+    name_levels = ASCIIString[]
     for (i, f) in enumerate(fs)
         df_i = evalfunc(f, a, b, 250)
         name = typeof(f) == Expr ? string(f) : @sprintf("f<sub>%d</sub>", i)
-        df_i = hcat(df_i, [name for _ in 1:size(df_i)[1]])
+        df_i = hcat(df_i, fill(name, size(df_i, 1)))
         names!(df_i, ["x", "f(x)", "f"])
+        push!(name_levels, name)
         df = vcat(df, df_i)
     end
+    df["f"] = PooledDataArray(df["f"], name_levels)
 
     mapping = {:x => "x", :y => "f(x)"}
     if length(fs) > 1
