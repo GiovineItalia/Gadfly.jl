@@ -31,10 +31,10 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```julia
-plot(data("lattice", "melanoma"), x="year", y="incidence", Geom.line)
+plot(data("lattice", "melanoma"), x="Year", y="Incidence", Geom.line)
 ```
 
 ```julia
-plot(data("Zelig", "approval"), x="month",  y="approve", color="year", Geom.line)
+plot(data("Zelig", "approval"), x="Month",  y="Approve", color="Year", Geom.line)
 ```
 

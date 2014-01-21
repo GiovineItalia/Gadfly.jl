@@ -27,14 +27,14 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```julia
-plot(data("datasets", "iris"), x="Sepal.Length", y="Sepal.Width",
+plot(data("datasets", "iris"), x="SepalLength", y="SepalWidth",
 	 xintercept=[5.0, 7.0], Geom.point, Geom.vline)
 ```
 
 ```julia
 # Colors and widths of lines can be changed. This works separately from the
 # `color` and `size` aesthetics.
-plot(data("datasets", "iris"), x="Sepal.Length", y="Sepal.Width",
+plot(data("datasets", "iris"), x="SepalLength", y="SepalWidth",
 	 xintercept=[5.0, 7.0], Geom.point,
 	 Geom.vline(color="orange", size=2mm))
 ```

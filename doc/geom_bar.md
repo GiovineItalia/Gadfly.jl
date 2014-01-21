@@ -43,7 +43,7 @@ Gadfly.set_default_plot_size(12cm, 8cm)
 ```
 
 ```julia
-plot(data("HistData", "ChestSizes"), x="chest", y="count", Geom.bar)
+plot(data("HistData", "ChestSizes"), x="Chest", y="Count", Geom.bar)
 ```
 
 

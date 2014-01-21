@@ -41,7 +41,7 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```julia
-plot(data("lattice", "singer"), x="voice.part", y="height", Geom.boxplot)
+plot(data("lattice", "singer"), x="VoicePart", y="Height", Geom.boxplot)
 ```
 
 

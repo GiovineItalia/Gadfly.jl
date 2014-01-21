@@ -140,7 +140,7 @@ end
 
 
 function add_plot_element{T<:Element}(lyr::Layer, arg::T)
-    error("Layers can be used with elements of type $(typeof(arg))")
+    error("Layers can't be used with elements of type $(typeof(arg))")
 end
 
 
