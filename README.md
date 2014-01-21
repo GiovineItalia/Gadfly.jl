@@ -77,14 +77,14 @@ A few examples now.
 
 ```julia
 # E.g.
-plot(data("datasets", "iris"),x="Sepal.Length", y="Sepal.Width", Geom.point)
+plot(data("datasets", "iris"),x="SepalLength", y="SepalWidth", Geom.point)
 ```
 
 ![Iris](http://homes.cs.washington.edu/~dcjones/gadfly/iris.svg)
 
 ```julia
 # E.g.
-plot(data("car", "SLID"), x="wages", color="language", Geom.histogram)
+plot(data("car", "SLID"), x="Wages", color="Language", Geom.histogram)
 ```
 
 ![Car](http://homes.cs.washington.edu/~dcjones/gadfly/car.svg)
