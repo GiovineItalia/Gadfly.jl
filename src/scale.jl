@@ -230,10 +230,75 @@ function apply_scale(scale::ContinuousScale,
 end
 
 
-discretize(values::Vector) = PooledDataArray(values)
-discretize(values::DataArray) = PooledDataArray(values)
-discretize(values::Range1) = PooledDataArray(collect(values))
-discretize(values::PooledDataArray) = values
+# Reorder the levels of a pooled data array
+function reorder_levels(da::PooledDataArray, order::AbstractVector)
+    level_values = levels(da)
+    if length(order) != length(level_values)
+        error("Discrete scale order is not of the same length as the data's levels.")
+    end
+    permute!(level_values, order)
+    return PooledDataArray(da, level_values)
+end
+
+
+function discretize(values::Vector, levels=nothing, order=nothing)
+    if levels == nothing
+        da = PooledDataArray(values)
+    else
+        da = PooledDataArray(values, levels)
+    end
+
+    if order != nothing
+        return reorder_levels(da, order)
+    else
+        return da
+    end
+end
+
+
+function discretize(values::DataArray, levels=nothing, order=nothing)
+    if levels == nothing
+        da = PooledDataArray(values)
+    else
+        da = PooledDataArray(values, levels)
+    end
+
+    if order != nothing
+        return reorder_levels(da, order)
+    else
+        return da
+    end
+end
+
+
+function discretize(values::Range1, levels=nothing, order=nothing)
+    if levels == nothing
+        da = PooledDataArray(collect(values))
+    else
+        da = PooledDataArray(collect(values), levels)
+    end
+
+    if order != nothing
+        return reorder_levels(da, order)
+    else
+        return da
+    end
+end
+
+
+function discretize(values::PooledDataArray, levels=nothing, order=nothing)
+    if levels == nothing
+        da = values
+    else
+        da = PooledDataArray(values, levels)
+    end
+
+    if order != nothing
+        return reorder_levels(da, order)
+    else
+        return da
+    end
+end
 
 
 immutable DiscreteScaleTransform
@@ -290,6 +355,17 @@ end
 
 immutable DiscreteColorScale <: Gadfly.ScaleElement
     f::Function # A function f(n) that produces a vector of n colors.
+
+    # If non-nothing, give values for the scale. Order will be respected and
+    # anything in the data that's not represented in values will be set to NA.
+    levels::Union(Nothing, AbstractVector)
+
+    # If non-nothing, a permutation of the pool of values.
+    order::Union(Nothing, AbstractVector)
+
+    function DiscreteColorScale(f::Function; levels=nothing, order=nothing)
+        new(f, levels, order)
+    end
 end
 
 
@@ -299,24 +375,27 @@ end
 
 
 # Common discrete color scales
-const discrete_color_hue = DiscreteColorScale(
-    h -> convert(Vector{ColorValue},
-         distinguishable_colors(h, ColorValue[LCHab(70, 60, 240)],
-                                lchoices=Float64[65, 70, 75, 80],
-                                cchoices=Float64[0, 50, 60, 70],
-                                hchoices=linspace(0, 330, 24),
-                                transform=c -> deuteranopic(c, 0.5))))
+function discrete_color_hue(; levels=nothing, order=nothing)
+    DiscreteColorScale(
+        h -> convert(Vector{ColorValue},
+             distinguishable_colors(h, ColorValue[LCHab(70, 60, 240)],
+                                    lchoices=Float64[65, 70, 75, 80],
+                                    cchoices=Float64[0, 50, 60, 70],
+                                    hchoices=linspace(0, 330, 24),
+                                    transform=c -> deuteranopic(c, 0.5))),
+        levels=levels, order=order)
+end
 
 
 const discrete_color = discrete_color_hue
 
 
-function discrete_color_manual(colors...)
+function discrete_color_manual(colors...; levels=nothing, order=nothing)
     cs = ColorValue[color(c) for c in colors]
     function f(n)
         distinguishable_colors(n, cs)
     end
-    DiscreteColorScale(f)
+    DiscreteColorScale(f, levels=levels, order=order)
 end
 
 
@@ -326,7 +405,7 @@ function apply_scale(scale::DiscreteColorScale,
         if data.color === nothing
             continue
         end
-        ds = discretize(data.color)
+        ds = discretize(data.color, scale.levels, scale.order)
         colors = convert(Vector{ColorValue}, scale.f(length(levels(ds))))
         colorvals = Array(ColorValue, nonzero_length(ds.refs))
         i = 1

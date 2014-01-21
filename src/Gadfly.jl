@@ -769,7 +769,7 @@ const default_aes_scales = {
                          :yintercept => Scale.y_discrete,
                          :xgroup     => Scale.xgroup,
                          :ygroup     => Scale.ygroup,
-                         :color      => Scale.discrete_color,
+                         :color      => Scale.discrete_color(),
                          :label      => Scale.label()}}
 
 # Determine whether the input is categorical or numerical
