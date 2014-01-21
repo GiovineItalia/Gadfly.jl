@@ -308,6 +308,17 @@ end
 
 immutable DiscreteScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
+
+    # If non-nothing, give values for the scale. Order will be respected and
+    # anything in the data that's not represented in values will be set to NA.
+    levels::Union(Nothing, AbstractVector)
+
+    # If non-nothing, a permutation of the pool of values.
+    order::Union(Nothing, AbstractVector)
+
+    function DiscreteScale(vals::Vector{Symbol}; levels=nothing, order=nothing)
+        new(vals, levels, order)
+    end
 end
 
 const discrete = DiscreteScale
@@ -316,8 +327,14 @@ const discrete = DiscreteScale
 element_aesthetics(scale::DiscreteScale) = scale.vars
 
 
-const x_discrete = DiscreteScale(x_vars)
-const y_discrete = DiscreteScale(y_vars)
+function x_discrete(; levels=nothing, order=nothing)
+    return DiscreteScale(x_vars, levels=levels, order=order)
+end
+
+
+function y_discrete(; levels=nothing, order=nothing)
+    return DiscreteScale(y_vars, levels=levels, order=order)
+end
 
 
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
@@ -330,7 +347,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                 continue
             end
 
-            disc_data = discretize(getfield(data, var))
+            disc_data = discretize(getfield(data, var), scale.levels, scale.order)
             setfield(aes, var, PooledDataArray(int64(disc_data.refs)))
 
             # The leveler for discrete scales is a closure over the discretized data.
@@ -580,8 +597,14 @@ immutable GroupingScale <: Gadfly.ScaleElement
 end
 
 
-const xgroup = DiscreteScale([:xgroup])
-const ygroup = DiscreteScale([:ygroup])
+function xgroup(; levels=nothing, order=nothing)
+    return DiscreteScale([:xgroup], levels=levels, order=order)
+end
+
+
+function ygroup(; levels=nothing, order=nothing)
+    return DiscreteScale([:ygroup], levels=levels, order=order)
+end
 
 
 end # module Scale
