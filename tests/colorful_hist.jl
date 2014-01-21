@@ -1,8 +1,7 @@
 
-using Gadfly
-using RDatasets
+using Gadfly, DataArrays, RDatasets
 
 plot(data("ggplot2", "diamonds"),
-     x="price", color="cut",
+     x="Price", color="Cut",
      Geom.histogram)
 

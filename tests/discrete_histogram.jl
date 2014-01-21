@@ -1,6 +1,5 @@
 
-using RDatasets
-using Gadfly
+using RDatasets, DataArrays, Gadfly
 
-plot(data("plm", "Cigar"), x="year", y="sales", Geom.bar)
+plot(data("plm", "Cigar"), x="Year", y="Sales", Geom.bar)
 

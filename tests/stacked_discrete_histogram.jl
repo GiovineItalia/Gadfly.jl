@@ -1,8 +1,7 @@
 
-using RDatasets
-using Gadfly
+using RDatasets, DataArrays, Gadfly
 
-plot(data("car", "SLID"), x="wages", color="language",
+plot(data("car", "SLID"), x="Wages", color="Language",
      Geom.histogram(position=:stack))
 
 

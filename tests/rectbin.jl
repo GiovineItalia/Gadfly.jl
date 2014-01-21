@@ -1,4 +1,4 @@
 
-using Gadfly, RDatasets
+using Gadfly, DataArrays, RDatasets
 
-plot(data("Zelig", "macro"), x="year", y="country", color="gdp", Geom.rectbin)
+plot(data("Zelig", "macro"), x="Year", y="Country", color="GDP", Geom.rectbin)

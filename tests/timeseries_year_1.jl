@@ -1,9 +1,8 @@
 
-using Gadfly, Datetime, RDatasets
+using Gadfly, DataArrays, Datetime, RDatasets
 
 economics = data("ggplot2", "economics")
-economics["date"] = Date[date(d) for d in economics["date"]]
+economics["Date"] = Date[date(d) for d in economics["Date"]]
 
-
-p = plot(economics, x="date", y="unemploy", Geom.line)
+p = plot(economics, x="Date", y="Unemploy", Geom.line)
 

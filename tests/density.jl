@@ -1,5 +1,5 @@
 
-using Gadfly, RDatasets
+using Gadfly, DataArrays, RDatasets
 
- plot(data("ggplot2", "diamonds"), x="price", Geom.density)
+ plot(data("ggplot2", "diamonds"), x="Price", Geom.density)
 

@@ -1,6 +1,5 @@
 
-using Gadfly
-using RDatasets
+using Gadfly, DataArrays, RDatasets
 
-plot(data("datasets", "iris"), x="Sepal.Length", y="Sepal.Width", Geom.point)
+plot(data("datasets", "iris"), x="SepalLength", y="SepalWidth", Geom.point)
 

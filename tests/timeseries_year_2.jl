@@ -1,8 +1,8 @@
 
-using Gadfly, Datetime, RDatasets
+using Gadfly, DataArrays, Datetime, RDatasets
 
 economics = data("HistData", "Prostitutes")
-economics["date"] = Date[date(d) for d in economics["date"]]
+economics["Date"] = Date[date(d) for d in economics["Date"]]
 
-p = plot(economics, x="date", y="count", Geom.line)
+p = plot(economics, x="Date", y="Count", Geom.line)
 

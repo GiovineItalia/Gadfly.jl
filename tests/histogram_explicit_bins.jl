@@ -1,7 +1,7 @@
 
-using Gadfly, RDatasets
+using Gadfly, DataArrays, RDatasets
 
-plot(data("ggplot2", "diamonds"), x="price", Geom.histogram(bincount=30))
+plot(data("ggplot2", "diamonds"), x="Price", Geom.histogram(bincount=30))
 
 
 

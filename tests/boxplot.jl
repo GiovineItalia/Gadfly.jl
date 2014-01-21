@@ -1,5 +1,4 @@
 
-using Gadfly
-using RDatasets
+using Gadfly, DataArrays, RDatasets
 
- plot(data("lattice", "singer"), x="voice.part", y="height", Geom.boxplot)
+ plot(data("lattice", "singer"), x="VoicePart", y="Height", Geom.boxplot)

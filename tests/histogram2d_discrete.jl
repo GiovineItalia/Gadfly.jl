@@ -1,5 +1,5 @@
 
-using RDatasets, Gadfly
+using RDatasets, DataArrays, Gadfly
 
-plot(data("car", "Womenlf"), x="hincome", y="region", Geom.histogram2d)
+plot(data("car", "Womenlf"), x="HIncome", y="Region", Geom.histogram2d)
 

@@ -1,8 +1,7 @@
 
-using RDatasets
-using Gadfly
+using RDatasets, DataArrays, Gadfly
 
 plot(data("car", "Vocab"),
-     xgroup="year", x="vocabulary",
+     xgroup="Year", x="Vocabulary",
      Geom.subplot_grid(Geom.histogram))
 

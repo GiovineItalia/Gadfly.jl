@@ -1,10 +1,10 @@
 
-using Gadfly, Datetime, RDatasets
+using Gadfly, DataArrays, Datetime, RDatasets
 
 approval = data("Zelig", "approval")
-approval["date"] = Date[date(y, m)
-                        for (y, m) in zip(approval["year"], approval["month"])]
+approval["Date"] = Date[date(y, m)
+                        for (y, m) in zip(approval["Year"], approval["Month"])]
 
-p = plot(approval, x="date", y="approve", Geom.line)
+p = plot(approval, x="Date", y="Approve", Geom.line)
 
 

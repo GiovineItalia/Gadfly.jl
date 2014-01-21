@@ -1,7 +1,6 @@
 #!/usr/bin/env julia
 
-using Gadfly
-using RDatasets
+using RDatasets, Gadfly
 
 tests = [
     ("points",                       6inch, 3inch),

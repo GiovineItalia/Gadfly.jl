@@ -1,5 +1,5 @@
 
-using Gadfly, RDatasets
+using Gadfly, DataArrays, RDatasets
 
-plot(data("car", "SLID"), x="wages", color="language", Geom.histogram)
+plot(data("car", "SLID"), x="Wages", color="Language", Geom.histogram)
 

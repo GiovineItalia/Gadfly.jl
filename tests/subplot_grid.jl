@@ -2,10 +2,10 @@
 using RDatasets, DataArrays, DataFrames, Gadfly
 
 barley = data("lattice", "barley")
-set_levels!(barley["year"], ["1931", "1932"])
+setlevels!(barley["Year"], ["1931", "1932"])
 
 plot(barley,
-     xgroup="variety", ygroup="site", x="year", y="yield",
+     xgroup="Variety", ygroup="Site", x="Year", y="Yield",
      Geom.subplot_grid(Geom.line, Geom.point))
 
 

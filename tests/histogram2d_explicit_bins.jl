@@ -1,6 +1,6 @@
 
-using Gadfly, RDatasets
+using Gadfly, DataArrays, RDatasets
 
-plot(data("car", "UN"), x="gdp", y="infant.mortality",
+plot(data("car", "UN"), x="GDP", y="InfantMortality",
      Geom.histogram2d(xbincount=20, ybincount=20),
      Scale.x_log10, Scale.y_log10)
