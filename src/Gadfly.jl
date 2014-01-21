@@ -32,6 +32,14 @@ export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
 # Re-export some essentials from Compose
 export D3, SVG, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
 
+
+# Backwards compatibility with julia-0.2 names
+if !isdefined(:rad2deg)
+    const rad2deg = radians2degrees
+    const deg2rad = degrees2radians
+end
+
+
 typealias ColorOrNothing Union(ColorValue, Nothing)
 
 

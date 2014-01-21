@@ -1,7 +1,7 @@
 module Stat
 
 import Gadfly
-import Stats
+import StatsBase
 using DataArrays
 using Compose
 using Color
@@ -10,7 +10,7 @@ using Hexagons
 
 import Gadfly: Scale, Coord, element_aesthetics, default_scales, isconcrete,
                nonzero_length
-import Stats: bandwidth, kde
+import StatsBase: bandwidth, kde
 import Distributions: Uniform
 import Iterators: chain, cycle, product, partition
 
