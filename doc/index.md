@@ -96,7 +96,7 @@ plot(x=1:10, y=2.^rand(10),
 ```
 
 To generate an image file from a plot, use the `draw` function. Gadfly supports
-a number of drawing backends. Each is used in similarly.
+a number of drawing backends. Each is used similarly.
 
 ```{.julia execute="false"}
 # define a plot
@@ -139,12 +139,12 @@ using RDatasets
 
 ```julia
 # E.g.
-plot(data("datasets", "iris"), x="Sepal.Length", y="Sepal.Width", Geom.point)
+plot(data("datasets", "iris"), x="SepalLength", y="SepalWidth", Geom.point)
 ```
 
 ```julia
 # E.g.
-plot(data("car", "SLID"), x="wages", color="language", Geom.histogram)
+plot(data("car", "SLID"), x="Wages", color="Language", Geom.histogram)
 ```
 
 Along with less typing, using data frames to generate plots allows the axis and
@@ -188,7 +188,7 @@ plot(layer(x=rand(10), y=rand(10), Geom.point),
 ```
 
 
-Or if you're data is in a DataFrame:
+Or if your data is in a DataFrame:
 
 ```{.julia execute="false"}
 plot(my_data, layer(x="some_column1", y="some_column2", Geom.point),
@@ -214,7 +214,7 @@ draw(PNG("myplot.png", 12cm, 6cm), p)
 
 ## Using the d3 backend
 
-The `D3` backend writes javascript. Making use of it's output is slightly more
+The `D3` backend writes javascript. Making use of its output is slightly more
 involved than with the image backends.
 
 Rendering to Javascript is easy enough:
@@ -230,7 +230,7 @@ src directory (which you can find by running `joinpath(Pkg.dir("Gadfly"), "src",
 
 D3 can be downloaded from [here](http://d3js.org/d3.v3.zip).
 
-Now the output can be included in an HTML like.
+Now the output can be included in an HTML page like:
 
 ```{.html execute="false"}
 <script src="d3.min.js"></script>

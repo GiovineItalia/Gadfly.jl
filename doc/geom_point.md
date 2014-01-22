@@ -24,24 +24,24 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```julia
-plot(data("datasets", "iris"), x="Sepal.Length", y="Sepal.Width", Geom.point)
+plot(data("datasets", "iris"), x="SepalLength", y="SepalWidth", Geom.point)
 ```
 
 ```julia
 # Binding categorial data to the color aesthetic
-plot(data("datasets", "iris"), x="Sepal.Length", y="Sepal.Width",
+plot(data("datasets", "iris"), x="SepalLength", y="SepalWidth",
      color="Species", Geom.point)
 ```
 
 ```julia
 # Binding continuous data to the color aesthetic
-plot(data("datasets", "iris"), x="Sepal.Length", y="Sepal.Width",
+plot(data("datasets", "iris"), x="SepalLength", y="SepalWidth",
      color="Petal.Length", Geom.point)
 ```
 
 ```julia
 # Binding categorial data to x
-plot(data("lattice", "singer"), x="voice.part", y="height", Geom.point)
+plot(data("lattice", "singer"), x="VoicePart", y="Height", Geom.point)
 ```
 
 <!-- TODO: shape aesthetic -->
