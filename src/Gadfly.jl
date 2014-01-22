@@ -720,7 +720,7 @@ hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 # size. (This is mainly a compose todo.)
 
 function writemime(io::IO, ::MIME"text/html", p::Plot)
-    draw(D3(default_plot_width, default_plot_height), p)
+    draw(D3(io, default_plot_width, default_plot_height), p)
 end
 
 
