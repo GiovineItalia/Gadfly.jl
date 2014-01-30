@@ -3,8 +3,10 @@ using Gadfly, DataArrays, RDatasets, DataFrames
 
 iris = data("datasets", "iris")
 
-hstack(
-    Plot[plot(subset(iris, :(Species .== $(species))),
-         x="SepalLength", y="SepalWidth", Geom.point)
-     for species in ["setosa", "versicolor", "virginica"]])
+plots = Plot[]
+for species in ["setosa", "versicolor", "virginica"]
+    iris_subset = iris[iris[:Species] .== species, :]
+    push!(plots, plot(iris_subset, x="SepalLength", y="SepalWidth", Geom.point))
+end
+hstack(plots)
 

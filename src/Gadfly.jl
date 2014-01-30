@@ -296,8 +296,8 @@ end
 
 
 # Evaluate a mapping.
-eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[string(arg)]
-eval_plot_mapping(data::AbstractDataFrame, arg::String) = data[arg]
+eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[arg]
+eval_plot_mapping(data::AbstractDataFrame, arg::String) = eval_plot_mapping(data, symbol(arg))
 eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
 eval_plot_mapping(data::AbstractDataFrame, arg::AbstractArray) = arg
