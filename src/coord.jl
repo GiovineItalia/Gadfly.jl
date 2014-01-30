@@ -27,13 +27,16 @@ immutable Cartesian <: Gadfly.CoordinateElement
     xmax
     ymin
     ymax
+    xflip
+    yflip
 
     function Cartesian(
             xvars=[:x, :xviewmin, :xviewmax, :xmin, :xmax],
             yvars=[:y, :yviewmin, :yviewmax, :ymin, :ymax, :middle,
                    :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers];
+            xflip::Bool=false, yflip::Bool=false,
             xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing)
-        new(xvars, yvars, xmin, xmax, ymin, ymax)
+        new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip)
     end
 end
 
@@ -169,7 +172,11 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     height = ymax - ymin + 2.0 * ypadding
 
     compose(
-        canvas(unit_box=UnitBox(xmin - xpadding, ymax + ypadding, width, -height)),
+        canvas(unit_box=UnitBox(
+            coord.xflip ? xmax + xpadding : xmin - xpadding,
+            coord.yflip ? ymin - ypadding : ymax + ypadding,
+            coord.xflip ? -width : width,
+            coord.yflip ? height : -height)),
         svgclass("plotpanel"))
 end
 
