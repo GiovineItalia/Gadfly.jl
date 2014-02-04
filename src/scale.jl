@@ -556,7 +556,7 @@ function apply_scale(scale::ContinuousColorScale,
         end
 
         function labeler(xs)
-            [color_labels[x] for x in xs]
+            [get(color_labels, x, "") for x in xs]
         end
 
         aes.color_label = labeler

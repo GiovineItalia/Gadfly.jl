@@ -65,7 +65,14 @@ function render_colorful_stacked_bar(geom::BarGeometry,
         stack_height[x_min] = 0.0
     end
 
-    for i in sortperm(aes.color.refs, rev=true)
+    # preserve factor orders of pooled data arrays
+    if isa(aes.color, PooledDataArray)
+        idxs = sortperm(aes.color.refs, rev=true)
+    else
+        idxs = 1:length(aes.color)
+    end
+
+    for i in idxs
         x_min, x_max, y, c = aes.xmin[i], aes.xmax[i], aes.y[i], aes.color[i]
         geometry_id = Gadfly.unique_svg_id()
         bar_form = combine(bar_form,
@@ -93,7 +100,14 @@ function render_colorful_dodged_bar(geom::BarGeometry,
         dodge_count[x_min] = get(dodge_count, x_min, 0) + 1
     end
 
-    for i in sortperm(aes.color.refs, rev=true)
+    # preserve factor orders of pooled data arrays
+    if isa(aes.color, PooledDataArray)
+        idxs = sortperm(aes.color.refs, rev=true)
+    else
+        idxs = 1:length(aes.color)
+    end
+
+    for i in idxs
         x_min, x_max, y, c = aes.xmin[i], aes.xmax[i], aes.y[i], aes.color[i]
         geometry_id = Gadfly.unique_svg_id()
         barwidth = ((x_max - x_min)*cx - theme.bar_spacing) / dodge_count[x_min]
