@@ -11,4 +11,4 @@ before_install:
 script:
     - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
     - julia -e 'Pkg.init(); Pkg.add("Cairo"); Pkg.add("RDatasets"); run(`ln -s $(pwd()) $(Pkg.dir("Gadfly"))`); Pkg.pin("Gadfly"); Pkg.resolve()'
-    - julia ~/.julia/Gadfly/tests/test.jl
+    - julia tests/test.jl
