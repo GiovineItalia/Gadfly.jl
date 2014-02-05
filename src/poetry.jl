@@ -15,7 +15,7 @@
 function evalfunc(f::Function, a, b, n)
     xs = [x for x in a:(b - a)/n:b]
     df = DataFrame(xs, map(f, xs))
-    names!(df, [:x, symbol("f(x)")])
+    names!(df, ["x", "f(x)"])
     df
 end
 
@@ -31,7 +31,7 @@ function datafy(fs::Array, a, b)
         df_i = evalfunc(f, a, b, 250)
         name = typeof(f) == Expr ? string(f) : @sprintf("f<sub>%d</sub>", i)
         df_i = hcat(df_i, fill(name, size(df_i, 1)))
-        names!(df_i, [:x, symbol("f(x)"), :f])
+        names!(df_i, ["x", "f(x)", "f"])
         push!(name_levels, name)
         df = vcat(df, df_i)
     end
@@ -120,8 +120,8 @@ end
 #   A plot object.
 #
 function spy(M)
-    is, js, values = findn_nzs(M)
-    df = DataFrame({:i => is, :j => js, :value => values})
+    is, js, values = findnz(M)
+    df = DataFrame(i=is, j=js, value=values)
     plot(df, x="j", y="i", color="value",
          Coord.cartesian(yflip=true),
          Scale.continuous_color,
