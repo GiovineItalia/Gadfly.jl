@@ -69,12 +69,14 @@ include("theme.jl")
 include("aesthetics.jl")
 include("data.jl")
 include("weave.jl")
-include("poetry.jl")
 
 
 # The layer and plot functions can also take functions that are evaluated with
 # no arguments and are expected to produce an element.
 typealias ElementOrFunction{T <: Element} Union(Element, Base.Callable, Theme)
+
+
+include("poetry.jl")
 
 
 # Prepare the display backend (ijuila, in particular) to show plots rendered on

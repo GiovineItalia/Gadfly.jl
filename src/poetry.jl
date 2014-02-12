@@ -63,21 +63,24 @@ end
 # Returns:
 #   A plot objects.
 #
-function plot(fs::Array, a, b, elements::Element...)
-    df, mapping = datafy(fs, a, b)
-    plot(df, mapping, Geom.line, elements...)
+function plot(fs::Array, a, b, elements::ElementOrFunction...; mapping...)
+    df, mappingdict = datafy(fs, a, b)
+    for (k, v) in mapping
+        mappingdict[k] = v
+    end
+    plot(df, mappingdict, Geom.line, elements...)
 end
 
 
 # Plot a single function.
-function plot(f::Function, a, b, elements::Element...)
-    plot([f], a, b, elements...)
+function plot(f::Function, a, b, elements::ElementOrFunction...; mapping...)
+    plot([f], a, b, elements...; mapping...)
 end
 
 
 # Plot a single expression.
-function plot(f::Expr, a, b, elements::Element...)
-    plot([f], a, b, elements...)
+function plot(f::Expr, a, b, elements::ElementOrFunction...; mapping...)
+    plot([f], a, b, elements...; mapping...)
 end
 
 
