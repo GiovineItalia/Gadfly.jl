@@ -739,6 +739,11 @@ function writemime(io::IO, ::MIME"text/html", p::Plot)
 end
 
 
+function writemime(io::IO, ::MIME"image/png", p::Plot)
+    draw(PNG(io, default_plot_width, default_plot_height), p)
+end
+
+
 # TODO: the serializeable branch has to be merged before this will work.
 #function writemime(io::IO, ::MIME"application/json", p::Plot)
     #JSON.print(io, serialize(p, with_data=true))
