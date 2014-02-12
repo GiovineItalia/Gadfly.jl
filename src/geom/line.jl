@@ -55,7 +55,8 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
 
-    if length(aes.color) == 1
+    if length(aes.color) == 1 &&
+        !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
         points = {(x, y) for (x, y) in zip(aes.x, aes.y)}
         if !geom.preserve_order
             sort!(points)

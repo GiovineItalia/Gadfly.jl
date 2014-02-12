@@ -245,7 +245,7 @@ function discretize(values::Vector, levels=nothing, order=nothing)
     if levels == nothing
         da = PooledDataArray(values)
     else
-        da = PooledDataArray(values, levels)
+        da = PooledDataArray(convert(Vector{eltype(levels)}, values), levels)
     end
 
     if order != nothing
@@ -260,7 +260,7 @@ function discretize(values::DataArray, levels=nothing, order=nothing)
     if levels == nothing
         da = PooledDataArray(values)
     else
-        da = PooledDataArray(values, levels)
+        da = PooledDataArray(convert(DataArray{eltype(levels)}, values), levels)
     end
 
     if order != nothing
@@ -418,12 +418,34 @@ end
 
 function apply_scale(scale::DiscreteColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+    levelset = Set()
     for (aes, data) in zip(aess, datas)
         if data.color === nothing
             continue
         end
-        ds = discretize(data.color, scale.levels, scale.order)
-        colors = convert(Vector{ColorValue}, scale.f(length(levels(ds))))
+        for d in data.color
+            if !isna(d)
+                push!(levelset, d)
+            end
+        end
+    end
+
+    scale_levels = scale.levels == nothing ? [levelset...] : scale.levels
+    sort!(scale_levels)
+    colors = convert(Vector{ColorValue}, scale.f(length(scale_levels)))
+
+    color_map = {color => string(label)
+                 for (label, color) in zip(scale_levels, colors)}
+    function labeler(xs)
+        [color_map[x] for x in xs]
+    end
+
+
+    for (aes, data) in zip(aess, datas)
+        if data.color === nothing
+            continue
+        end
+        ds = discretize(data.color, scale_levels, scale.order)
         colorvals = Array(ColorValue, nonzero_length(ds.refs))
         i = 1
         for k in ds.refs
@@ -435,12 +457,6 @@ function apply_scale(scale::DiscreteColorScale,
 
         colored_ds = PooledDataArray(colorvals, colors)
         aes.color = colored_ds
-
-        color_map = {color => string(label)
-                     for (label, color) in zip(levels(ds), colors)}
-        function labeler(xs)
-            [color_map[x] for x in xs]
-        end
 
         aes.color_label = labeler
         aes.color_key_colors = colors
