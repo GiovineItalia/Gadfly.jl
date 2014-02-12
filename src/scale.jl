@@ -7,7 +7,7 @@ using DataArrays
 using Gadfly
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length,
-               nonzero_length, formatter
+               nonzero_length, formatter, setfield!
 
 include("color.jl")
 

@@ -2,7 +2,11 @@
 using RDatasets, DataArrays, DataFrames, Gadfly
 
 barley = data("lattice", "barley")
-setlevels!(barley[:Year], ["1931", "1932"])
+if isdefined(:setlevels!)
+    setlevels!(barley[:Year], ["1931", "1932"])
+else
+    set_levels!(barley[:Year], ["1931", "1932"])
+end
 
 plot(barley,
      xgroup="Variety", ygroup="Site", x="Year", y="Yield",

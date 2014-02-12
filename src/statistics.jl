@@ -9,7 +9,7 @@ using Loess
 using Hexagons
 
 import Gadfly: Scale, Coord, element_aesthetics, default_scales, isconcrete,
-               nonzero_length
+               nonzero_length, setfield!
 import StatsBase: bandwidth, kde
 import Distributions: Uniform
 import Iterators: chain, cycle, product, partition
@@ -195,6 +195,9 @@ function apply_statistic(stat::DensityStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
+    if !isdefined(:kde)
+        error("KDE is currently not available for your version of Julia.")
+    end
     Gadfly.assert_aesthetics_defined("DensityStatistic", aes, :x)
 
     if aes.color === nothing

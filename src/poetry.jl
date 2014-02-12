@@ -15,7 +15,13 @@
 function evalfunc(f::Function, a, b, n)
     xs = [x for x in a:(b - a)/n:b]
     df = DataFrame(xs, map(f, xs))
-    names!(df, ["x", "f(x)"])
+    # NOTE: 'colnames!' is the older deprecated name. 'names!' was also defined
+    # but threw an error.
+    try
+        names!(df, ["x", "f(x)"])
+    catch
+        colnames!(df, ["x", "f(x)"])
+    end
     df
 end
 
@@ -30,8 +36,7 @@ function datafy(fs::Array, a, b)
     for (i, f) in enumerate(fs)
         df_i = evalfunc(f, a, b, 250)
         name = typeof(f) == Expr ? string(f) : @sprintf("f<sub>%d</sub>", i)
-        df_i = hcat(df_i, fill(name, size(df_i, 1)))
-        names!(df_i, ["x", "f(x)", "f"])
+        df_i["f"] = fill(name, size(df_i, 1))
         push!(name_levels, name)
         df = vcat(df, df_i)
     end

@@ -2,6 +2,9 @@
 
 using RDatasets, Gadfly
 
+import StatsBase
+haskde = :kde in names(StatsBase)
+
 tests = [
     ("points",                       6inch, 3inch),
     ("function_plots",               6inch, 3inch),
@@ -76,6 +79,13 @@ function run_tests(output_filename)
     end
 
     for (name, width, height) in tests
+        # 0.2 is currently in a weird state where kde is mid-migration and has
+        # just ceased to exist. Until I figure that out, I'm just going to
+        # disable density plots on 0.2. Sorry.
+        if !haskde && (name == "density" || name == "colorful_density")
+            continue
+        end
+
         if !in(name, whitelist)
             continue
         end
