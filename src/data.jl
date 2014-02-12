@@ -47,9 +47,9 @@ function chain(ds::Data...)
         vs = {getfield(d, name) for d in ds}
         vs = {v for v in filter(issomething, vs)}
         if isempty(vs)
-            setfield(chained_data, name, nothing)
+            setfield!(chained_data, name, nothing)
         else
-            setfield(chained_data, name, Iterators.chain(vs...))
+            setfield!(chained_data, name, Iterators.chain(vs...))
         end
     end
 

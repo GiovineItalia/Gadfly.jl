@@ -39,6 +39,10 @@ if !isdefined(:rad2deg)
     const deg2rad = degrees2radians
 end
 
+if !isdefined(:setfield!)
+    const setfield! = setfield
+end
+
 
 typealias ColorOrNothing Union(ColorValue, Nothing)
 
@@ -258,7 +262,7 @@ end
 #   data
 #
 function set_mapped_data!(data::Data, data_source::AbstractDataFrame, k::Symbol, v)
-    setfield(data, k, eval_plot_mapping(data_source, v))
+    setfield!(data, k, eval_plot_mapping(data_source, v))
 
     if typeof(v) <: String
         data.titles[k] = v
@@ -427,7 +431,7 @@ function render(plot::Plot)
             end
 
             for (k, v) in layer.mapping
-                setfield(datas[i], k, eval_plot_mapping(layer.data_source, v))
+                setfield!(datas[i], k, eval_plot_mapping(layer.data_source, v))
             end
         end
     end

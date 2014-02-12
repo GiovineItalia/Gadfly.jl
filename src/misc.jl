@@ -95,7 +95,7 @@ function inherit!{T}(a::T, b::T)
         bval = getfield(b, field)
         # TODO: this is a hack to let non-default labelers overide the defaults
         if aval === nothing || aval === string || aval == default_formatter
-            setfield(a, field, bval)
+            setfield!(a, field, bval)
         elseif typeof(aval) <: Dict && typeof(bval) <: Dict
             merge!(aval, getfield(b, field))
         end

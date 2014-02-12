@@ -214,8 +214,8 @@ function cat(aess::Aesthetics...)
     cataes = Aesthetics()
     for aes in aess
         for var in Aesthetics.names
-            setfield(cataes, var,
-                     cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
+            setfield!(cataes, var,
+                      cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
         end
     end
     cataes
@@ -321,16 +321,16 @@ function aes_by_xy_group(aes::Aesthetics)
 
             for i in 1:n, j in 1:m
                 if typeof(vals) <: PooledDataArray
-                    setfield(aes_grid[i, j], var,
-                             make_pooled_data_array(typeof(vals), staging[i, j]))
+                    setfield!(aes_grid[i, j], var,
+                              make_pooled_data_array(typeof(vals), staging[i, j]))
                 else
-                    setfield(aes_grid[i, j], var,
-                             convert(typeof(vals), copy(staging[i, j])))
+                    setfield!(aes_grid[i, j], var,
+                              convert(typeof(vals), copy(staging[i, j])))
                 end
             end
         else
             for i in 1:n, j in 1:m
-                setfield(aes_grid[i, j], var, vals)
+                setfield!(aes_grid[i, j], var, vals)
             end
         end
     end

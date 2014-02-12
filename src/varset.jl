@@ -57,7 +57,7 @@ macro varset(name::Symbol, table)
             function $(name)(a::$(name))
                 b = new()
                 for name in $(name).names
-                    setfield(b, name, getfield(a, name))
+                    setfield!(b, name, getfield(a, name))
                 end
                 b
             end

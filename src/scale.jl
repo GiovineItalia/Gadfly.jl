@@ -205,9 +205,9 @@ function apply_scale(scale::ContinuousScale,
                 end
             end
 
-            setfield(aes, var, ds)
+            setfield!(aes, var, ds)
             if in(label_var, Set(names(aes)...))
-                setfield(aes, label_var, make_labeler(scale))
+                setfield!(aes, label_var, make_labeler(scale))
             end
         end
 
@@ -348,7 +348,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
             end
 
             disc_data = discretize(getfield(data, var), scale.levels, scale.order)
-            setfield(aes, var, PooledDataArray(int64(disc_data.refs)))
+            setfield!(aes, var, PooledDataArray(int64(disc_data.refs)))
 
             # The leveler for discrete scales is a closure over the discretized data.
             function labeler(xs)
@@ -363,7 +363,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
             end
 
             if in(label_var, Set(names(aes)...))
-                setfield(aes, label_var, labeler)
+                setfield!(aes, label_var, labeler)
             end
         end
     end

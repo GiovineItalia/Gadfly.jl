@@ -560,20 +560,20 @@ function apply_statistic(stat::TickStatistic,
     # positive this is the right thing to do, or would would be.
     labeler = getfield(aes, symbol(string(stat.out_var, "_label")))
 
-    setfield(aes, symbol(string(stat.out_var, "tick")), ticks)
-    setfield(aes, symbol(string(stat.out_var, "grid")), grids)
-    setfield(aes, symbol(string(stat.out_var, "tick_label")), labeler)
+    setfield!(aes, symbol(string(stat.out_var, "tick")), ticks)
+    setfield!(aes, symbol(string(stat.out_var, "grid")), grids)
+    setfield!(aes, symbol(string(stat.out_var, "tick_label")), labeler)
 
     viewmin_var = symbol(string(stat.out_var, "viewmin"))
     if getfield(aes, viewmin_var) === nothing ||
        getfield(aes, viewmin_var) > viewmin
-        setfield(aes, viewmin_var, viewmin)
+        setfield!(aes, viewmin_var, viewmin)
     end
 
     viewmax_var = symbol(string(stat.out_var, "viewmax"))
     if getfield(aes, viewmax_var) === nothing ||
        getfield(aes, viewmax_var) < viewmax
-        setfield(aes, viewmax_var, viewmax)
+        setfield!(aes, viewmax_var, viewmax)
     end
 
     nothing
