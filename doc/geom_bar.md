@@ -32,6 +32,9 @@ If `x` is given, a bar will be drawn at each x value, specifying both `xmin` and
     bound this determines how bars of different colors should be arranged:
     stacked on top of each other, or placed side by side.
 
+  * `orientation`: Either `:vertical` (default) or `:horizontal`. If
+    `:horizontal`, then the required aesthetics are `y` or `ymin/ymax`.
+
 # Examples
 
 ```{.julia hide="true" results="none"}

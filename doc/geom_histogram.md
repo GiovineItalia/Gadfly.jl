@@ -18,6 +18,8 @@ Draw histograms. An alias for `Geom.bar` with `Stat.histogram`.
   * `position`: Either `:stack` or `:dodge`. If the `color` aesthetic is
     bound this determines how bars of different colors should be arranged:
     stacked on top of each other, or placed side by side.
+  * `orientation`: Either `:vertical` (default) or `:horizontal`. If
+    `:horizontal`, then the required aesthetic is `y` instead of `x`.
   * `bincount`: Number of bins to use. If unspecified, an optimization method
     be used to deterimine a reasonable value.
   * `minbincount`: Set a lower limit when automatically choosing a bin count.

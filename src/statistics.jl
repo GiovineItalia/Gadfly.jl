@@ -58,14 +58,16 @@ const identity = Identity
 immutable HistogramStatistic <: Gadfly.StatisticElement
     minbincount::Int
     maxbincount::Int
+    orientation::Symbol
 
     function HistogramStatistic(; bincount=nothing,
                                   minbincount=3,
-                                  maxbincount=150)
+                                  maxbincount=150,
+                                  orientation::Symbol=:vertical)
         if bincount != nothing
-            new(bincount, bincount)
+            new(bincount, bincount, orientation)
         else
-            new(minbincount, maxbincount)
+            new(minbincount, maxbincount, orientation)
         end
     end
 end
@@ -81,49 +83,67 @@ function apply_statistic(stat::HistogramStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    Gadfly.assert_aesthetics_defined("HistogramStatistic", aes, :x)
+    if stat.orientation == :horizontal
+        var = :y
+        othervar = :x
+        minvar = :ymin
+        maxvar = :ymax
+        drawmaxvar = :xdrawmax
+        labelvar = :x_label
+    else
+        var = :x
+        othervar = :y
+        minvar = :xmin
+        maxvar = :xmax
+        drawmaxvar = :ydrawmax
+        labelvar = :y_label
+    end
 
+    Gadfly.assert_aesthetics_defined("HistogramStatistic", aes, var)
+
+    values = getfield(aes, var)
     if stat.minbincount > stat.maxbincount
         error("Histogram minbincount > maxbincount")
     end
 
-    if isempty(aes.x)
-        aes.xmin = Float64[1.0]
-        aes.xmax = Float64[1.0]
-        aes.y = Float64[0.0]
+    if isempty(getfield(aes, var))
+        setfield!(aes, minvar, Float64[1.0])
+        setfield!(aes, maxvar, Float64[1.0])
+        setfield!(aes, othervar, Float64[0.0])
         return
     end
 
-    if haskey(scales, :x) && isa(scales[:x], Scale.DiscreteScale)
-        x_min = minimum(aes.x)
-        x_max = maximum(aes.x)
+    if haskey(scales, var) && isa(scales[var], Scale.DiscreteScale)
+        x_min = minimum(values)
+        x_max = maximum(values)
         d = x_max - x_min + 1
         bincounts = zeros(Int, d)
-        for x in aes.x
+        for x in values
             bincounts[x - x_min + 1] += 1
         end
     else
-        d, bincounts = choose_bin_count_1d(aes.x,
+        d, bincounts = choose_bin_count_1d(values,
                                            stat.minbincount,
                                            stat.maxbincount)
     end
 
-    x_min, x_max = Gadfly.concrete_minimum(aes.x), Gadfly.concrete_maximum(aes.x)
+    x_min = Gadfly.concrete_minimum(values)
+    x_max = Gadfly.concrete_maximum(values)
     binwidth = (x_max - x_min) / d
 
     if aes.color === nothing
-        aes.xmin = Array(Float64, d)
-        aes.xmax = Array(Float64, d)
-        aes.y = Array(Float64, d)
+        setfield!(aes, minvar, Array(Float64, d))
+        setfield!(aes, maxvar, Array(Float64, d))
+        setfield!(aes, othervar, Array(Float64, d))
 
         for j in 1:d
-            aes.xmin[j] = x_min + (j - 1) * binwidth
-            aes.xmax[j] = x_min + j * binwidth
-            aes.y[j] = bincounts[j]
+            getfield(aes, minvar)[j] = x_min + (j - 1) * binwidth
+            getfield(aes, maxvar)[j] = x_min + j * binwidth
+            getfield(aes, othervar)[j] = bincounts[j]
         end
     else
         groups = Dict()
-        for (x, c) in zip(aes.x, cycle(aes.color))
+        for (x, c) in zip(values, cycle(aes.color))
             if !Gadfly.isconcrete(x)
                 continue
             end
@@ -135,13 +155,13 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
 
-        aes.xmin = Array(Float64, d * length(groups))
-        aes.xmax = Array(Float64, d * length(groups))
-        aes.y = Array(Float64, d * length(groups))
+        setfield!(aes, minvar, Array(Float64, d * length(groups)))
+        setfield!(aes, maxvar, Array(Float64, d * length(groups)))
+        setfield!(aes, othervar, Array(Float64, d * length(groups)))
         colors = Array(ColorValue, d * length(groups))
 
-        x_min = Gadfly.concrete_minimum(aes.x)
-        x_max = Gadfly.concrete_maximum(aes.x)
+        x_min = Gadfly.concrete_minimum(values)
+        x_max = Gadfly.concrete_maximum(values)
         stack_height = zeros(Int, d)
         for (i, (c, xs)) in enumerate(groups)
             fill!(bincounts, 0)
@@ -156,22 +176,23 @@ function apply_statistic(stat::HistogramStatistic,
 
             for j in 1:d
                 idx = (i-1)*d + j
-                aes.xmin[idx] = x_min + (j - 1) * binwidth
-                aes.xmax[idx] = x_min + j * binwidth
-                aes.y[idx] = bincounts[j]
+                getfield(aes, minvar)[idx] = x_min + (j - 1) * binwidth
+                getfield(aes, maxvar)[idx] = x_min + j * binwidth
+                getfield(aes, othervar)[idx] = bincounts[j]
                 colors[idx] = c
             end
         end
 
-        y_drawmax = float64(maximum(stack_height))
-        if aes.ydrawmax === nothing || aes.ydrawmax < y_drawmax
-            aes.ydrawmax = y_drawmax
+        drawmax = float64(maximum(stack_height))
+        aes_drawmax = getfield(aes, drawmaxvar)
+        if aes_drawmax === nothing || aes_drawmax < drawmax
+            setfield!(aes, drawmaxvar, drawmax)
         end
 
         aes.color = PooledDataArray(colors)
     end
 
-    aes.y_label = Scale.identity_formatter
+    setfield!(aes, labelvar, Scale.identity_formatter)
 end
 
 
