@@ -76,9 +76,6 @@ include("weave.jl")
 typealias ElementOrFunction{T <: Element} Union(Element, Base.Callable, Theme)
 
 
-include("poetry.jl")
-
-
 # Prepare the display backend (ijuila, in particular) to show plots rendered on
 # the d3 backend.
 
@@ -381,6 +378,9 @@ function plot(data_source::AbstractDataFrame, mapping::Dict, elements::ElementOr
 
     p
 end
+
+
+include("poetry.jl")
 
 
 # Turn a graph specification into a graphic.

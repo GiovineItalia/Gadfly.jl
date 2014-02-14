@@ -71,7 +71,6 @@ function plot(fs::Array, a, b, elements::ElementOrFunction...; mapping...)
     plot(df, mappingdict, Geom.line, elements...)
 end
 
-
 # Plot a single function.
 function plot(f::Function, a, b, elements::ElementOrFunction...; mapping...)
     plot([f], a, b, elements...; mapping...)
