@@ -28,14 +28,14 @@ function concrete_minimum(xs)
 
     x_min = first(xs)
     for x in xs
-        if Gadfly.isconcrete(x)
+        if Gadfly.isconcrete(x) && isifinite(x)
             x_min = x
             break
         end
     end
 
     for x in xs
-        if Gadfly.isconcrete(x) && x < x_min
+        if Gadfly.isconcrete(x) && isifinite(x) && x < x_min
             x_min = x
         end
     end
@@ -50,14 +50,14 @@ function concrete_maximum(xs)
 
     x_max = first(xs)
     for x in xs
-        if Gadfly.isconcrete(x)
+        if Gadfly.isconcrete(x) && isfinite(x)
             x_max = x
             break
         end
     end
 
     for x in xs
-        if Gadfly.isconcrete(x) && x > x_max
+        if Gadfly.isconcrete(x) && isfinite(x) && x > x_max
             x_max = x
         end
     end

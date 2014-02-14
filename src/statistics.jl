@@ -450,12 +450,17 @@ function apply_statistic(stat::TickStatistic,
                 size = aes.size === nothing ? [nothing] : aes.size
 
                 for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
-                    if !Gadfly.isconcrete(val)
+                    if !Gadfly.isconcrete(val) || !isfinite(val)
                         continue
                     end
 
-                    minval = min(minval, val)
-                    maxval = max(maxval, val)
+                    if val < minval || !isfinite(minval)
+                        minval = val
+                    end
+
+                    if val > maxval || !isfinite(maxval)
+                        maxval = val
+                    end
 
                     if s != nothing
                         minval = min(minval, val - s)
@@ -484,6 +489,7 @@ function apply_statistic(stat::TickStatistic,
         maxval = Gadfly.concrete_maximum(in_values)
         categorical = true
     end
+
 
     # TODO: handle the outliers aesthetic
 
