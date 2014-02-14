@@ -813,5 +813,53 @@ function default_scales(::HexBinStatistic)
 end
 
 
+immutable StepStatistic <: Gadfly.StatisticElement
+    direction::Symbol
+
+    function StepStatistic(; direction::Symbol=:hv)
+        return new(direction)
+    end
+end
+
+const step = StepStatistic
+
+
+function element_aesthetics(::StepStatistic)
+    return [:x, :y]
+end
+
+
+function apply_statistic(stat::StepStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("StepStatistic", aes, :x)
+    Gadfly.assert_aesthetics_defined("StepStatistic", aes, :y)
+    Gadfly.assert_aesthetics_equal_length("StepStatistic", aes, :x, :y)
+
+    points = collect(zip(aes.x, aes.y))
+    sort!(points, by=first)
+    n = length(points)
+    x_step = Array(eltype(aes.x), 2n - 1)
+    y_step = Array(eltype(aes.y), 2n - 1)
+
+    for i in 1:(2n-1)
+        if isodd(i)
+            x_step[i] = points[div(i-1,2)+1][1]
+            y_step[i] = points[div(i-1,2)+1][2]
+        elseif stat.direction == :hv
+            x_step[i] = points[div(i-1,2)+2][1]
+            y_step[i] = points[div(i-1,2)+1][2]
+        else
+            x_step[i] = points[div(i-1,2)+1][1]
+            y_step[i] = points[div(i-1,2)+2][2]
+        end
+    end
+
+    aes.x = x_step
+    aes.y = y_step
+end
+
+
 end # module Stat
 

@@ -17,22 +17,27 @@ const line = LineGeometry
 
 
 function density()
-    LineGeometry(Gadfly.Stat.density())
+    return LineGeometry(Gadfly.Stat.density())
 end
 
 
 function smooth(; smoothing::Float64=0.75)
-    LineGeometry(Gadfly.Stat.smooth(smoothing=smoothing))
+    return LineGeometry(Gadfly.Stat.smooth(smoothing=smoothing))
+end
+
+
+function step(; direction::Symbol=:hv)
+    return LineGeometry(Gadfly.Stat.step(direction=direction))
 end
 
 
 function default_statistic(geom::LineGeometry)
-    geom.default_statistic
+    return geom.default_statistic
 end
 
 
 function element_aesthetics(::LineGeometry)
-    [:x, :y, :color]
+    return [:x, :y, :color]
 end
 
 
@@ -59,7 +64,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
         points = {(x, y) for (x, y) in zip(aes.x, aes.y)}
         if !geom.preserve_order
-            sort!(points)
+            sort!(points, by=first)
         end
         form = compose(lines(points...),
                        stroke(aes.color[1]),
@@ -77,7 +82,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         forms = Array(Any, length(points))
         for (i, (c, c_points)) in enumerate(points)
             if !geom.preserve_order
-                sort!(c_points)
+                sort!(c_points, by=first)
             end
             forms[i] =
                 compose(lines({(x, y) for (x, y) in c_points}...),
