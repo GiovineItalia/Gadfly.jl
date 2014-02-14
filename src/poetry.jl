@@ -126,13 +126,18 @@ end
 # Returns:
 #   A plot object.
 #
-function spy(M)
+function spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...)
     is, js, values = findnz(M)
     df = DataFrame(i=is, j=js, value=values)
     plot(df, x="j", y="i", color="value",
          Coord.cartesian(yflip=true),
          Scale.continuous_color,
-         Geom.rectbin, Stat.identity)
+         Scale.x_discrete,
+         Scale.y_discrete,
+         Geom.rectbin,
+         Stat.identity,
+         elements...;
+         mapping...)
 end
 
 
