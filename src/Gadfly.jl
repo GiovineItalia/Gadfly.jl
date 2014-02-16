@@ -739,8 +739,11 @@ function writemime(io::IO, ::MIME"text/html", p::Plot)
 end
 
 
-function writemime(io::IO, ::MIME"image/png", p::Plot)
-    draw(PNG(io, default_plot_width, default_plot_height), p)
+try
+    getfield(Compose, :Cairo) # throws if Cairo isn't being used
+    function writemime(io::IO, ::MIME"image/png", p::Plot)
+        draw(PNG(io, default_plot_width, default_plot_height), p)
+    end
 end
 
 
