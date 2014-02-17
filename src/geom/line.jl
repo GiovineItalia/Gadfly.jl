@@ -71,10 +71,10 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                        svgclass("geometry"))
     else
         # group points by color
-        points = Dict{ColorValue, Array{(Float64, Float64),1}}()
+        points = Dict{ColorValue, Array{(Any, Any),1}}()
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
             if !haskey(points, c)
-                points[c] = Array((Float64, Float64),0)
+                points[c] = Array((Any, Any),0)
             end
             push!(points[c], (x, y))
         end
