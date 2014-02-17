@@ -11,6 +11,11 @@ function default_highlight_color(fill_color::ColorValue)
     LCHab(c.l - 15, c.c, c.h)
 end
 
+function default_lowlight_color(fill_color::ColorValue)
+    fill_color = convert(LCHab, fill_color)
+    c = LCHab(fill_color.l, fill_color.c, fill_color.h)
+    LCHab(90, 20, c.h)
+end
 
 # Choose a middle color by darkening the fill color
 function default_middle_color(fill_color::ColorValue)
@@ -75,6 +80,13 @@ end
 
     # A function mapping fill color to stoke color for highlights.
     highlight_color,       Function,        default_highlight_color
+
+    # A function mapping fill color to a duller background fill color. Used for
+    # Geom.ribbon in particular so lines stand out against it.
+    lowlight_color,        Function,        default_lowlight_color
+
+    # Opacity of geometry filled with lowlight_color
+    lowlight_opacity,      Float64,         0.6
 
     # A function mapping base fill color to the color of the median marker in a
     # boxplot.

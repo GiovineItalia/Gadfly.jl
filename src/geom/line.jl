@@ -52,8 +52,8 @@ end
 #   A compose Form.
 #
 function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    Gadfly.assert_aesthetics_defined("Geom.point", aes, :x, :y)
-    Gadfly.assert_aesthetics_equal_length("Geom.point", aes,
+    Gadfly.assert_aesthetics_defined("Geom.line", aes, :x, :y)
+    Gadfly.assert_aesthetics_equal_length("Geom.line", aes,
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
@@ -93,7 +93,9 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         form = combine(forms...)
     end
 
-    compose(form, fill(nothing), linewidth(theme.line_width))
+    compose(
+        canvas(units_inherited=true, order=2),
+        form, fill(nothing), linewidth(theme.line_width))
 end
 
 
