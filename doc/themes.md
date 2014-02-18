@@ -41,10 +41,18 @@ overrides the default theme's value.
     and boxplot rectangles. (Measure)
   * `highlight_color`: Color used to outline plot geometry. This is a function
     that alters (e.g. darkens) the fill color of the geometry. (Function)
+  * `lowlight_color`: Color used to draw background geometry, such as
+    `Geom.ribbon`. This is a function tha altern the fill color of the geometry.
+    (Function)
+  * `lowlight_opacity`: Opacity of background geometry such as `Geom.ribbon`.
+    (Float64)
   * `middle_color`: Color altering function used to draw the midline in
     boxplots. (Function)
   * `middle_width`: Width of the middle line in boxplots. (Measure)
-
+  *  `guide_title_position`: One of `:left`, `:center`, `:right` indicating the
+     placement of the title of color key guides. (Symbol)
+  * `colorkey_swatch_shape`: The shape used in color swatches in the color key
+    guide. Either `:circle` or `:square`  (Symbol)
 
 # Examples
 

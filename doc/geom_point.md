@@ -36,7 +36,7 @@ plot(data("datasets", "iris"), x="SepalLength", y="SepalWidth",
 ```julia
 # Binding continuous data to the color aesthetic
 plot(data("datasets", "iris"), x="SepalLength", y="SepalWidth",
-     color="Petal.Length", Geom.point)
+     color="PetalLength", Geom.point)
 ```
 
 ```julia

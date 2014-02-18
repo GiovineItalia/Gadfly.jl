@@ -64,6 +64,7 @@ function concrete_maximum(xs)
     return x_max
 end
 
+
 function nonzero_length(xs)
     n = 0
     for x in xs
@@ -75,7 +76,7 @@ function nonzero_length(xs)
 end
 
 
-function default_formatter(xs...)
+function default_formatter(xs)
     [string(x) for x in xs]
 end
 

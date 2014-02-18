@@ -190,7 +190,6 @@ function apply_scale(scale::ContinuousScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
-            label_var = symbol(@sprintf("%s_label", string(var)))
             if getfield(data, var) === nothing
                 continue
             end
@@ -206,6 +205,15 @@ function apply_scale(scale::ContinuousScale,
             end
 
             setfield!(aes, var, ds)
+
+            if var in x_vars
+                label_var = :x_label
+            elseif var in y_vars
+                label_var = :y_label
+            else
+                label_var = symbol(@sprintf("%s_label", string(var)))
+            end
+
             if in(label_var, Set(names(aes)...))
                 setfield!(aes, label_var, make_labeler(scale))
             end
