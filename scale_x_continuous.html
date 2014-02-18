@@ -4,7 +4,7 @@
   <meta name="author" content="Daniel Jones">
   <meta charset="utf-8">
   <title>x_continuous</title>
-  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|PT+Sans:700|Source+Code+Pro'
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|PT+Sans|Source+Code+Pro'
         rel='stylesheet' type='text/css'>
   <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" media="all">
   <link href="css/custom.css" rel="stylesheet" type="text/css" media="all">
@@ -17,7 +17,7 @@
     <div class="container">
       <div class="row">
         <ul>
-          <li><div id="pkgname">Gadfly 0.1.30</div></li>
+          <li><div id="pkgname">Gadfly 0.2.2+</div></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl">Code</a></li>
           <li><a href="http://github.com/dcjones/Gadfly.jl/issues">Issues</a></li>
         </ul>
@@ -155,20 +155,42 @@ var guide_background_mouseout = function(color) {
 // Construct a call back used for mouseover effects in the point geometry.
 //
 // Args:
-//   lw: Stroke width to transition to.
+//   scale: Scale for expanded width
+//   ratio: radius / line-width. This is necessary to maintain relative width
+//          at arbitraty levels of zoom
 //
 // Returns:
 //  Callback function.
 //
-var geom_point_mouseover = function(lw) {
+var geom_point_mouseover = function(scale, ratio) {
     return (function() {
+        var lw = this.getAttribute('r') * ratio * scale
         d3.select(this)
           .transition()
           .duration(100)
-          .attr("stroke-width", lw);
+          .style("stroke-width", lw + 'px', 'important');
     });
 };
 
+// Construct a call back used for mouseout effects in the point geometry.
+//
+// Args:
+//   scale: Scale for expanded width
+//   ratio: radius / line-width. This is necessary to maintain relative width
+//          at arbitraty levels of zoom
+//
+// Returns:
+//  Callback function.
+//
+var geom_point_mouseout = function(scale, ratio) {
+    return (function() {
+        var lw = this.getAttribute('r') * ratio
+        d3.select(this)
+          .transition()
+          .duration(100)
+          .style("stroke-width", lw + 'px', 'important');
+    });
+};
 
 // Translate and scale geometry while trying to maintain scale invariance for
 // certain ellements.
@@ -205,7 +227,7 @@ var set_geometry_transform = function(root, ctx, old_scale) {
 
     // unscale geometry widths, radiuses, etc.
     var size_attribs = ["r"];
-    var size_styles = ["font-size"];
+    var size_styles = ["font-size", "stroke-width"];
     root.select(".plotpanel")
         .selectAll("g, .geometry")
         .each(function() {
@@ -533,12 +555,13 @@ var zoomslider_thumb_mouseover = function(destcolor) {
     });
 };
 
-
+//@ sourceURL=gadfly.js
 </script>
 <pre class="sourceCode julia julia"><code class="sourceCode julia"><span class="co"># Transform both dimensions</span>
 plot(x=rand(<span class="fl">10</span>), y=rand(<span class="fl">10</span>), Scale.x_log)</code></pre>
 <div id="gadflyplot-6kdsJFKKidbHZkp3lJiq"></div>
 <script>
+(function (module) {
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
             .append("svg")
@@ -554,479 +577,485 @@ function draw_with_data(data, parent_id) {
       "ty": 0.0
   };
 (function (g) {
-  g.attr("class", "plotroot xscalable yscalable");
+  g.attr("stroke", "none")
+   .attr("fill", "#000000")
+   .attr("stroke-width", 0.3)
+   .attr("font-family", "Helvetic,Arial,sans")
+   .style("font-size", "3.88px");
   (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#4C404B")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.18px")
-     .attr("class", "guide ylabels");
+    g.attr("class", "plotroot xscalable yscalable");
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#4C404B")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.18px")
+       .attr("class", "guide ylabels");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -69.07)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("2.5");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 82.1)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-0.5");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -43.88)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("2.0");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -18.68)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("1.5");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 132.49)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-1.5");
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -72.15)
+         .attr("x", 20.47)
+         .attr("y", 31.71)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("2.5");
-})
+         .call(function(text) {
+     text.text("0.5");
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 85.3)
+         .attr("x", 20.47)
+         .attr("y", 6.51)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-0.5");
-})
+         .call(function(text) {
+     text.text("1.0");
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -45.91)
+         .attr("x", 20.47)
+         .attr("y", 56.9)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("2.0");
-})
+         .call(function(text) {
+     text.text("0.0");
+   })
 ;
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 107.29)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-1.0");
+    })
+;
+      }(g.append("g")));
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#362A35")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.88px");
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -19.67)
-         .attr("text-anchor", "end")
+         .attr("x", 8.59)
+         .attr("y", 31.71)
+         .attr("text-anchor", "middle")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("1.5");
-})
+         .attr("transform", "rotate(-90, 8.59, 31.71)")
+         .call(function(text) {
+     text.text("y");
+   })
 ;
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#4C404B")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.18px")
+       .attr("class", "guide xlabels");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 265.67)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("e")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("2.5");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 137.78)
-         .attr("text-anchor", "end")
-         .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-1.5");
-})
-;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 32.81)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.5");
-})
-;
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 6.57)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("1.0");
-})
-;
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 59.06)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0");
-})
-;
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 111.54)
-         .attr("text-anchor", "end")
-         .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-1.0");
-})
-;
-    }(g.append("g")));
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#362A35")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.88px");
-    g.append("svg:text")
-       .attr("x", 7.94)
-       .attr("y", 32.81)
-       .attr("text-anchor", "middle")
-       .style("dominant-baseline", "central")
-       .attr("transform", "rotate(-90, 7.94, 32.81)")
-    .call(function(text) {
-  text.text("y");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#4C404B")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.18px")
-     .attr("class", "guide xlabels");
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 269.26)
-         .attr("y", 66.12)
+         .attr("x", 51.46)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("2.5");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.append("tspan").text("e")
+         .append("tspan")
+           .attr("dy", "-1ex")
+         .call(function(text) {
+           text.text("-1.5");
+         })
+.append("tspan").attr("font-style", "normal")         ;
+   })
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 49.16)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-1.5");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -2.09)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("e")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("-2.5");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
 ;
-    (function (g) {
-      g.attr("visibility", "hidden");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 185.34)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("e")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("1.0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -109.2)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("e")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("-4.5");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 238.89)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("e")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("2.0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -55.65)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("e")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("-3.5");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 212.12)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("e")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("1.5");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -82.42)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("e")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("-4.0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 158.56)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("e")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("0.5");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", -5.86)
-         .attr("y", 66.12)
+         .attr("x", 24.68)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-2.5");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.append("tspan").text("e")
+         .append("tspan")
+           .attr("dy", "-1ex")
+         .call(function(text) {
+           text.text("-2.0");
+         })
+.append("tspan").attr("font-style", "normal")         ;
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
       g.append("svg:text")
-         .attr("x", 186.72)
-         .attr("y", 66.12)
+         .attr("x", 105.01)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("1.0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.append("tspan").text("e")
+         .append("tspan")
+           .attr("dy", "-1ex")
+         .call(function(text) {
+           text.text("-0.5");
+         })
+.append("tspan").attr("font-style", "normal")         ;
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -28.87)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("e")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("-3.0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", -115.9)
-         .attr("y", 66.12)
+         .attr("x", 131.79)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-4.5");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.append("tspan").text("e")
+         .append("tspan")
+           .attr("dy", "-1ex")
+         .call(function(text) {
+           text.text("0.0");
+         })
+.append("tspan").attr("font-style", "normal")         ;
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
       g.append("svg:text")
-         .attr("x", 241.74)
-         .attr("y", 66.12)
+         .attr("x", 78.23)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("2.0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.append("tspan").text("e")
+         .append("tspan")
+           .attr("dy", "-1ex")
+         .call(function(text) {
+           text.text("-1.0");
+         })
+.append("tspan").attr("font-style", "normal")         ;
+   })
 ;
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#362A35")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.88px");
       g.append("svg:text")
-         .attr("x", -60.88)
-         .attr("y", 66.12)
+         .attr("x", 78.23)
+         .attr("y", 73)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-3.5");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.text("x");
+   })
 ;
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 214.23)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("1.5");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+      g.on("mouseover", guide_background_mouseover("#C6C6C9"))
+       .on("mouseout", guide_background_mouseout("#F0F0F3"))
+       .call(zoom_behavior(ctx))
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", -88.39)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-4.0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 159.21)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0.5");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 21.65)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-2.0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 104.19)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-0.5");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", -33.37)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-3.0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 131.7)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0.0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    g.append("svg:text")
-       .attr("x", 76.68)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("e")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-1.0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#362A35")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.88px");
-    g.append("svg:text")
-       .attr("x", 76.68)
-       .attr("y", 73)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("x");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.on("mouseover", guide_background_mouseover("#C6C6C9"))
-     .on("mouseout", guide_background_mouseout("#F0F0F3"))
-     .call(zoom_behavior(ctx))
-;
-    (function (g) {
-      d3.select("defs")
+      (function (g) {
+        d3.select("defs")
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath0")
     .append("svg:path")
-      .attr("d", " M18.35,5 L 135 5 135 60.63 18.35 60.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
-      (function (g) {
-        g.attr("class", "guide background")
-         .attr("stroke", "#F1F1F5")
-         .attr("fill", "#FAFAFA");
-        g.append("svg:path")
-           .attr("d", "M18.35,5 L 135 5 135 60.63 18.35 60.63 z");
+      .attr("d", " M21.47,5 L 135 5 135 58.41 21.47 58.41 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
+        (function (g) {
+          g.attr("class", "guide background")
+           .attr("stroke", "#F1F1F5")
+           .attr("fill", "#FAFAFA");
+          g.append("svg:path")
+             .attr("d", "M21.47,5 L 135 5 135 58.41 21.47 58.41 z");
+        }(g.append("g")));
+        (function (g) {
+          g.attr("stroke", "#F0F0F3")
+           .attr("stroke-width", 0.2)
+           .attr("class", "guide ygridlines xfixed");
+          g.append("svg:path")
+             .attr("d", "M21.47,82.1 L 135 82.1");
+          g.append("svg:path")
+             .attr("d", "M21.47,-18.68 L 135 -18.68");
+          g.append("svg:path")
+             .attr("d", "M21.47,31.71 L 135 31.71");
+          g.append("svg:path")
+             .attr("d", "M21.47,56.9 L 135 56.9");
+          g.append("svg:path")
+             .attr("d", "M21.47,107.29 L 135 107.29");
+          g.append("svg:path")
+             .attr("d", "M21.47,6.51 L 135 6.51");
+          g.append("svg:path")
+             .attr("d", "M21.47,132.49 L 135 132.49");
+          g.append("svg:path")
+             .attr("d", "M21.47,-43.88 L 135 -43.88");
+          g.append("svg:path")
+             .attr("d", "M21.47,-69.07 L 135 -69.07");
+        }(g.append("g")));
+        (function (g) {
+          g.attr("stroke", "#F0F0F3")
+           .attr("stroke-width", 0.2)
+           .attr("class", "guide xgridlines yfixed");
+          g.append("svg:path")
+             .attr("d", "M51.46,5 L 51.46 58.41");
+          g.append("svg:path")
+             .attr("d", "M185.34,5 L 185.34 58.41");
+          g.append("svg:path")
+             .attr("d", "M238.89,5 L 238.89 58.41");
+          g.append("svg:path")
+             .attr("d", "M212.12,5 L 212.12 58.41");
+          g.append("svg:path")
+             .attr("d", "M158.56,5 L 158.56 58.41");
+          g.append("svg:path")
+             .attr("d", "M105.01,5 L 105.01 58.41");
+          g.append("svg:path")
+             .attr("d", "M131.79,5 L 131.79 58.41");
+          g.append("svg:path")
+             .attr("d", "M78.23,5 L 78.23 58.41");
+          g.append("svg:path")
+             .attr("d", "M-28.87,5 L -28.87 58.41");
+          g.append("svg:path")
+             .attr("d", "M24.68,5 L 24.68 58.41");
+          g.append("svg:path")
+             .attr("d", "M-82.42,5 L -82.42 58.41");
+          g.append("svg:path")
+             .attr("d", "M-55.65,5 L -55.65 58.41");
+          g.append("svg:path")
+             .attr("d", "M-109.2,5 L -109.2 58.41");
+          g.append("svg:path")
+             .attr("d", "M-2.09,5 L -2.09 58.41");
+          g.append("svg:path")
+             .attr("d", "M265.67,5 L 265.67 58.41");
+        }(g.append("g")));
       }(g.append("g")));
       (function (g) {
-        g.attr("stroke", "#F0F0F3")
-         .attr("stroke-width", 0.2)
-         .attr("class", "guide ygridlines xfixed");
-        g.append("svg:path")
-           .attr("d", "M18.35,85.3 L 135 85.3");
-        g.append("svg:path")
-           .attr("d", "M18.35,-19.67 L 135 -19.67");
-        g.append("svg:path")
-           .attr("d", "M18.35,32.81 L 135 32.81");
-        g.append("svg:path")
-           .attr("d", "M18.35,59.06 L 135 59.06");
-        g.append("svg:path")
-           .attr("d", "M18.35,111.54 L 135 111.54");
-        g.append("svg:path")
-           .attr("d", "M18.35,6.57 L 135 6.57");
-        g.append("svg:path")
-           .attr("d", "M18.35,137.78 L 135 137.78");
-        g.append("svg:path")
-           .attr("d", "M18.35,-45.91 L 135 -45.91");
-        g.append("svg:path")
-           .attr("d", "M18.35,-72.15 L 135 -72.15");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("stroke", "#F0F0F3")
-         .attr("stroke-width", 0.2)
-         .attr("class", "guide xgridlines yfixed");
-        g.append("svg:path")
-           .attr("d", "M49.16,5 L 49.16 60.63");
-        g.append("svg:path")
-           .attr("d", "M186.72,5 L 186.72 60.63");
-        g.append("svg:path")
-           .attr("d", "M241.74,5 L 241.74 60.63");
-        g.append("svg:path")
-           .attr("d", "M214.23,5 L 214.23 60.63");
-        g.append("svg:path")
-           .attr("d", "M159.21,5 L 159.21 60.63");
-        g.append("svg:path")
-           .attr("d", "M104.19,5 L 104.19 60.63");
-        g.append("svg:path")
-           .attr("d", "M131.7,5 L 131.7 60.63");
-        g.append("svg:path")
-           .attr("d", "M76.68,5 L 76.68 60.63");
-        g.append("svg:path")
-           .attr("d", "M-33.37,5 L -33.37 60.63");
-        g.append("svg:path")
-           .attr("d", "M21.65,5 L 21.65 60.63");
-        g.append("svg:path")
-           .attr("d", "M-88.39,5 L -88.39 60.63");
-        g.append("svg:path")
-           .attr("d", "M-60.88,5 L -60.88 60.63");
-        g.append("svg:path")
-           .attr("d", "M-115.9,5 L -115.9 60.63");
-        g.append("svg:path")
-           .attr("d", "M-5.86,5 L -5.86 60.63");
-        g.append("svg:path")
-           .attr("d", "M269.26,5 L 269.26 60.63");
-      }(g.append("g")));
-    }(g.append("g")));
-    (function (g) {
-      d3.select("defs")
+        d3.select("defs")
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath1")
     .append("svg:path")
-      .attr("d", " M18.35,5 L 135 5 135 60.63 18.35 60.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
-      (function (g) {
-        g.attr("class", "plotpanel");
+      .attr("d", " M21.47,5 L 135 5 135 58.41 21.47 58.41 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
         (function (g) {
-          g.attr("stroke-width", 0.3);
+          g.attr("class", "plotpanel");
           (function (g) {
             g.attr("stroke-width", 0.3);
+            (function (g) {
+              g.attr("stroke-width", 0.3);
 g.selectAll("form0")
                   .data(d3.zip(data[0],data[1]))
                   .enter()
@@ -1035,77 +1064,78 @@ g.selectAll("form0")
 .attr("cy", function(d) { return d[1]; })
 .attr("r", 0.6)
 .attr("class", "geometry color_LCHab(70.0,60.0,240.0)_")
-.on("mouseout", geom_point_mouseover(0.30), false)
-.on("mouseover", geom_point_mouseover(3.00), false)
+.on("mouseout", geom_point_mouseout(10.00, 0.50), false)
+.on("mouseover", geom_point_mouseover(10.00, 0.50), false)
 .attr("stroke", "#0096DD")
 .attr("fill", "#00BFFF")
 ;
+            }(g.append("g")));
           }(g.append("g")));
         }(g.append("g")));
       }(g.append("g")));
-    }(g.append("g")));
-    (function (g) {
-      d3.select("defs")
+      (function (g) {
+        d3.select("defs")
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath2")
     .append("svg:path")
-      .attr("d", " M18.35,5 L 135 5 135 60.63 18.35 60.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
-      (function (g) {
-        g.attr("stroke", "none")
-         .attr("class", "guide zoomslider")
-         .attr("opacity", 0.00);
+      .attr("d", " M21.47,5 L 135 5 135 58.41 21.47 58.41 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
         (function (g) {
-          g.attr("stroke", "#6A6A6A")
-           .attr("stroke-opacity", 0.00)
-           .attr("stroke-width", 0.3)
-           .attr("fill", "#EAEAEA")
-           .on("click", zoomin_behavior(ctx))
+          g.attr("stroke", "none")
+           .attr("class", "guide zoomslider")
+           .attr("opacity", 0.00);
+          (function (g) {
+            g.attr("stroke", "#6A6A6A")
+             .attr("stroke-opacity", 0.00)
+             .attr("stroke-width", 0.3)
+             .attr("fill", "#EAEAEA")
+             .on("click", zoomin_behavior(ctx))
 .on("dblclick", function() { d3.event.stopPropagation(); })
 .on("mouseover", zoomslider_button_mouseover("#cd5c5c"))
 .on("mouseout", zoomslider_button_mouseover("#6a6a6a"))
 ;
-          g.append("svg:path")
-             .attr("d", "M128,8 L 132 8 132 12 128 12 z");
+            g.append("svg:path")
+               .attr("d", "M128,8 L 132 8 132 12 128 12 z");
+            (function (g) {
+              g.attr("fill", "#6A6A6A")
+               .attr("class", "button_logo");
+              g.append("svg:path")
+                 .attr("d", "M128.8,9.6 L 129.6 9.6 129.6 8.8 130.4 8.8 130.4 9.6 131.2 9.6 131.2 10.4 130.4 10.4 130.4 11.2 129.6 11.2 129.6 10.4 128.8 10.4 z");
+            }(g.append("g")));
+          }(g.append("g")));
+          (function (g) {
+            g.attr("fill", "#EAEAEA")
+             .on("click", zoomslider_track_behavior(ctx, 102, 119));
+            g.append("svg:path")
+               .attr("d", "M108.5,8 L 127.5 8 127.5 12 108.5 12 z");
+          }(g.append("g")));
           (function (g) {
             g.attr("fill", "#6A6A6A")
-             .attr("class", "button_logo");
-            g.append("svg:path")
-               .attr("d", "M128.8,9.6 L 129.6 9.6 129.6 8.8 130.4 8.8 130.4 9.6 131.2 9.6 131.2 10.4 130.4 10.4 130.4 11.2 129.6 11.2 129.6 10.4 128.8 10.4 z");
-          }(g.append("g")));
-        }(g.append("g")));
-        (function (g) {
-          g.attr("fill", "#EAEAEA")
-           .on("click", zoomslider_track_behavior(ctx, 102, 119));
-          g.append("svg:path")
-             .attr("d", "M108.5,8 L 127.5 8 127.5 12 108.5 12 z");
-        }(g.append("g")));
-        (function (g) {
-          g.attr("fill", "#6A6A6A")
-           .attr("class", "zoomslider_thumb")
-           .call(zoomslider_behavior(ctx, 102, 119))
+             .attr("class", "zoomslider_thumb")
+             .call(zoomslider_behavior(ctx, 102, 119))
 .on("mouseover", zoomslider_thumb_mouseover("#cd5c5c"))
 .on("mouseout", zoomslider_thumb_mouseover("#6a6a6a"))
 ;
-          g.append("svg:path")
-             .attr("d", "M117,8 L 119 8 119 12 117 12 z");
-        }(g.append("g")));
-        (function (g) {
-          g.attr("stroke", "#6A6A6A")
-           .attr("stroke-opacity", 0.00)
-           .attr("stroke-width", 0.3)
-           .attr("fill", "#EAEAEA")
-           .on("click", zoomout_behavior(ctx))
+            g.append("svg:path")
+               .attr("d", "M117,8 L 119 8 119 12 117 12 z");
+          }(g.append("g")));
+          (function (g) {
+            g.attr("stroke", "#6A6A6A")
+             .attr("stroke-opacity", 0.00)
+             .attr("stroke-width", 0.3)
+             .attr("fill", "#EAEAEA")
+             .on("click", zoomout_behavior(ctx))
 .on("dblclick", function() { d3.event.stopPropagation(); })
 .on("mouseover", zoomslider_button_mouseover("#cd5c5c"))
 .on("mouseout", zoomslider_button_mouseover("#6a6a6a"))
 ;
-          g.append("svg:path")
-             .attr("d", "M104,8 L 108 8 108 12 104 12 z");
-          (function (g) {
-            g.attr("fill", "#6A6A6A")
-             .attr("class", "button_logo");
             g.append("svg:path")
-               .attr("d", "M104.8,9.6 L 107.2 9.6 107.2 10.4 104.8 10.4 z");
+               .attr("d", "M104,8 L 108 8 108 12 104 12 z");
+            (function (g) {
+              g.attr("fill", "#6A6A6A")
+               .attr("class", "button_logo");
+              g.append("svg:path")
+                 .attr("d", "M104.8,9.6 L 107.2 9.6 107.2 10.4 104.8 10.4 z");
+            }(g.append("g")));
           }(g.append("g")));
         }(g.append("g")));
       }(g.append("g")));
@@ -1123,14 +1153,22 @@ g.selectAll("form0")
 }
 
 var data = [
-  [102.74562342162808,117.08831577743969,100.40498063402595,88.98220572053165,119.00825812814573,123.02419312711058,43.3041506060558,65.19816880002806,54.72055634713078,101.69522655981274],
-  [25.001309495859726,58.48268526773435,55.569111254434944,8.844028496979758,25.11629287867897,53.15170540280224,44.569283919726836,24.855294982015558,56.08240149288921,14.828904511529322]];
+  [103.60744510820166,117.56690750803948,101.32934318881243,90.21177941828901,119.43554990722454,123.34418102246471,45.75422033177096,67.06324071498243,56.86558511114964,102.58511435371973],
+  [24.20447437570232,56.35198067809347,53.55448096980172,8.690885678510126,24.314876918567865,51.23338250657545,42.992877379282824,24.064276955619327,54.047322162711296,14.437329334459971]];
 
 var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-6kdsJFKKidbHZkp3lJiq");
+if ('undefined' !== typeof module) {
+    module.exports = draw;
+} else if ('undefined' !== typeof window) {
+    window.draw = draw
+}
+
+return module;
+})({}).exports("#gadflyplot-6kdsJFKKidbHZkp3lJiq");
+//@ sourceURL=gadflyplot-6kdsJFKKidbHZkp3lJiq.js
 </script>
 
 
@@ -1138,6 +1176,7 @@ draw("#gadflyplot-6kdsJFKKidbHZkp3lJiq");
 plot(x=rand(<span class="fl">10</span>), y=rand(<span class="fl">10</span>), Scale.x_continuous(minvalue=-<span class="fl">10</span>, maxvalue=<span class="fl">10</span>))</code></pre>
 <div id="gadflyplot-bpbd4LYaRBcAERoaoOIM"></div>
 <script>
+(function (module) {
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
             .append("svg")
@@ -1153,506 +1192,512 @@ function draw_with_data(data, parent_id) {
       "ty": 0.0
   };
 (function (g) {
-  g.attr("class", "plotroot xscalable yscalable");
+  g.attr("stroke", "none")
+   .attr("fill", "#000000")
+   .attr("stroke-width", 0.3)
+   .attr("font-family", "Helvetic,Arial,sans")
+   .style("font-size", "3.88px");
   (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#4C404B")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.18px")
-     .attr("class", "guide ylabels");
+    g.attr("class", "plotroot xscalable yscalable");
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#4C404B")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.18px")
+       .attr("class", "guide ylabels");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -24.36)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("1.6");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 78.65)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-0.4");
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -25.62)
+         .attr("x", 20.47)
+         .attr("y", 6.55)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("1.6");
-})
+         .call(function(text) {
+     text.text("1.0");
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 81.82)
+         .attr("x", 20.47)
+         .attr("y", 37.45)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-0.4");
-})
+         .call(function(text) {
+     text.text("0.4");
+   })
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 6.61)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("1.0");
-})
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -44.96)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("2.0");
+    })
 ;
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 38.84)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.4");
-})
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 99.25)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-0.8");
+    })
 ;
-    (function (g) {
-      g.attr("visibility", "hidden");
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -47.11)
+         .attr("x", 20.47)
+         .attr("y", 16.85)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("2.0");
-})
+         .call(function(text) {
+     text.text("0.8");
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 88.95)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-0.6");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 119.85)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-1.2");
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 103.31)
+         .attr("x", 20.47)
+         .attr("y", 47.75)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-0.8");
-})
+         .call(function(text) {
+     text.text("0.2");
+   })
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 17.36)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.8");
-})
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -55.26)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("2.2");
+    })
 ;
-    (function (g) {
-      g.attr("visibility", "hidden");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -14.06)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("1.4");
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 92.57)
+         .attr("x", 20.47)
+         .attr("y", 27.15)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-0.6");
-})
+         .call(function(text) {
+     text.text("0.6");
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -34.66)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("1.8");
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 124.8)
+         .attr("x", 20.47)
+         .attr("y", 58.05)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-1.2");
-})
+         .call(function(text) {
+     text.text("0.0");
+   })
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 49.59)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.2");
-})
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -3.76)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("1.2");
+    })
 ;
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -57.85)
-         .attr("text-anchor", "end")
-         .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("2.2");
-})
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 68.35)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-0.2");
+    })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -14.88)
-         .attr("text-anchor", "end")
-         .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("1.4");
-})
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 109.55)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-1.0");
+    })
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 28.1)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.6");
-})
-;
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -36.37)
-         .attr("text-anchor", "end")
-         .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("1.8");
-})
-;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 60.33)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0");
-})
-;
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -4.13)
-         .attr("text-anchor", "end")
-         .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("1.2");
-})
-;
+      }(g.append("g")));
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#362A35")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.88px");
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 71.08)
-         .attr("text-anchor", "end")
-         .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-0.2");
-})
-;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 114.05)
-         .attr("text-anchor", "end")
-         .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-1.0");
-})
-;
-    }(g.append("g")));
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#362A35")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.88px");
-    g.append("svg:text")
-       .attr("x", 7.94)
-       .attr("y", 33.47)
-       .attr("text-anchor", "middle")
-       .style("dominant-baseline", "central")
-       .attr("transform", "rotate(-90, 7.94, 33.47)")
-    .call(function(text) {
-  text.text("y");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#4C404B")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.18px")
-     .attr("class", "guide xlabels");
-    g.append("svg:text")
-       .attr("x", 49.16)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("-5");
-})
-;
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", -88.39)
-         .attr("y", 66.12)
+         .attr("x", 8.59)
+         .attr("y", 32.3)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.text("-30");
-})
+         .style("dominant-baseline", "central")
+         .attr("transform", "rotate(-90, 8.59, 32.3)")
+         .call(function(text) {
+     text.text("y");
+   })
 ;
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#4C404B")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.18px")
+       .attr("class", "guide xlabels");
       g.append("svg:text")
-         .attr("x", -115.9)
-         .attr("y", 66.12)
+         .attr("x", 51.46)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.text("-35");
-})
+         .call(function(text) {
+     text.text("-5");
+   })
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 104.19)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("5");
-})
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -82.42)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.text("-30");
+    })
 ;
-    g.append("svg:text")
-       .attr("x", 131.7)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("10");
-})
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -109.2)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.text("-35");
+    })
 ;
-    (function (g) {
-      g.attr("visibility", "hidden");
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", -33.37)
-         .attr("y", 66.12)
+         .attr("x", 105.01)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.text("-20");
-})
+         .call(function(text) {
+     text.text("5");
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
       g.append("svg:text")
-         .attr("x", 214.23)
-         .attr("y", 66.12)
+         .attr("x", 131.79)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.text("25");
-})
+         .call(function(text) {
+     text.text("10");
+   })
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 21.65)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("-10");
-})
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -28.87)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.text("-20");
+    })
 ;
-    (function (g) {
-      g.attr("visibility", "hidden");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 212.12)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.text("25");
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", -5.86)
-         .attr("y", 66.12)
+         .attr("x", 24.68)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.text("-15");
-})
+         .call(function(text) {
+     text.text("-10");
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -2.09)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.text("-15");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -55.65)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.text("-25");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 158.56)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.text("15");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 185.34)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.text("20");
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", -60.88)
-         .attr("y", 66.12)
+         .attr("x", 78.23)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.text("-25");
-})
+         .call(function(text) {
+     text.text("0");
+   })
 ;
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 265.67)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.text("35");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 238.89)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.text("30");
+    })
+;
+      }(g.append("g")));
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#362A35")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.88px");
       g.append("svg:text")
-         .attr("x", 159.21)
-         .attr("y", 66.12)
+         .attr("x", 78.23)
+         .attr("y", 73)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.text("15");
-})
+         .call(function(text) {
+     text.text("x");
+   })
 ;
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 186.72)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.text("20");
-})
+      g.on("mouseover", guide_background_mouseover("#C6C6C9"))
+       .on("mouseout", guide_background_mouseout("#F0F0F3"))
+       .call(zoom_behavior(ctx))
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 76.68)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("0");
-})
-;
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 269.26)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.text("35");
-})
-;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 241.74)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.text("30");
-})
-;
-    }(g.append("g")));
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#362A35")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.88px");
-    g.append("svg:text")
-       .attr("x", 76.68)
-       .attr("y", 73)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("x");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.on("mouseover", guide_background_mouseover("#C6C6C9"))
-     .on("mouseout", guide_background_mouseout("#F0F0F3"))
-     .call(zoom_behavior(ctx))
-;
-    (function (g) {
-      d3.select("defs")
+      (function (g) {
+        d3.select("defs")
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath0")
     .append("svg:path")
-      .attr("d", " M18.35,5 L 135 5 135 61.94 18.35 61.94 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
-      (function (g) {
-        g.attr("class", "guide background")
-         .attr("stroke", "#F1F1F5")
-         .attr("fill", "#FAFAFA");
-        g.append("svg:path")
-           .attr("d", "M18.35,5 L 135 5 135 61.94 18.35 61.94 z");
+      .attr("d", " M21.47,5 L 135 5 135 59.59 21.47 59.59 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
+        (function (g) {
+          g.attr("class", "guide background")
+           .attr("stroke", "#F1F1F5")
+           .attr("fill", "#FAFAFA");
+          g.append("svg:path")
+             .attr("d", "M21.47,5 L 135 5 135 59.59 21.47 59.59 z");
+        }(g.append("g")));
+        (function (g) {
+          g.attr("stroke", "#F0F0F3")
+           .attr("stroke-width", 0.2)
+           .attr("class", "guide ygridlines xfixed");
+          g.append("svg:path")
+             .attr("d", "M21.47,78.65 L 135 78.65");
+          g.append("svg:path")
+             .attr("d", "M21.47,37.45 L 135 37.45");
+          g.append("svg:path")
+             .attr("d", "M21.47,99.25 L 135 99.25");
+          g.append("svg:path")
+             .attr("d", "M21.47,88.95 L 135 88.95");
+          g.append("svg:path")
+             .attr("d", "M21.47,47.75 L 135 47.75");
+          g.append("svg:path")
+             .attr("d", "M21.47,-14.06 L 135 -14.06");
+          g.append("svg:path")
+             .attr("d", "M21.47,-34.66 L 135 -34.66");
+          g.append("svg:path")
+             .attr("d", "M21.47,-3.76 L 135 -3.76");
+          g.append("svg:path")
+             .attr("d", "M21.47,109.55 L 135 109.55");
+          g.append("svg:path")
+             .attr("d", "M21.47,68.35 L 135 68.35");
+          g.append("svg:path")
+             .attr("d", "M21.47,58.05 L 135 58.05");
+          g.append("svg:path")
+             .attr("d", "M21.47,27.15 L 135 27.15");
+          g.append("svg:path")
+             .attr("d", "M21.47,-55.26 L 135 -55.26");
+          g.append("svg:path")
+             .attr("d", "M21.47,119.85 L 135 119.85");
+          g.append("svg:path")
+             .attr("d", "M21.47,16.85 L 135 16.85");
+          g.append("svg:path")
+             .attr("d", "M21.47,-44.96 L 135 -44.96");
+          g.append("svg:path")
+             .attr("d", "M21.47,6.55 L 135 6.55");
+          g.append("svg:path")
+             .attr("d", "M21.47,-24.36 L 135 -24.36");
+        }(g.append("g")));
+        (function (g) {
+          g.attr("stroke", "#F0F0F3")
+           .attr("stroke-width", 0.2)
+           .attr("class", "guide xgridlines yfixed");
+          g.append("svg:path")
+             .attr("d", "M-82.42,5 L -82.42 59.59");
+          g.append("svg:path")
+             .attr("d", "M105.01,5 L 105.01 59.59");
+          g.append("svg:path")
+             .attr("d", "M-28.87,5 L -28.87 59.59");
+          g.append("svg:path")
+             .attr("d", "M24.68,5 L 24.68 59.59");
+          g.append("svg:path")
+             .attr("d", "M-55.65,5 L -55.65 59.59");
+          g.append("svg:path")
+             .attr("d", "M185.34,5 L 185.34 59.59");
+          g.append("svg:path")
+             .attr("d", "M265.67,5 L 265.67 59.59");
+          g.append("svg:path")
+             .attr("d", "M238.89,5 L 238.89 59.59");
+          g.append("svg:path")
+             .attr("d", "M78.23,5 L 78.23 59.59");
+          g.append("svg:path")
+             .attr("d", "M158.56,5 L 158.56 59.59");
+          g.append("svg:path")
+             .attr("d", "M-2.09,5 L -2.09 59.59");
+          g.append("svg:path")
+             .attr("d", "M212.12,5 L 212.12 59.59");
+          g.append("svg:path")
+             .attr("d", "M131.79,5 L 131.79 59.59");
+          g.append("svg:path")
+             .attr("d", "M-109.2,5 L -109.2 59.59");
+          g.append("svg:path")
+             .attr("d", "M51.46,5 L 51.46 59.59");
+        }(g.append("g")));
       }(g.append("g")));
       (function (g) {
-        g.attr("stroke", "#F0F0F3")
-         .attr("stroke-width", 0.2)
-         .attr("class", "guide ygridlines xfixed");
-        g.append("svg:path")
-           .attr("d", "M18.35,81.82 L 135 81.82");
-        g.append("svg:path")
-           .attr("d", "M18.35,38.84 L 135 38.84");
-        g.append("svg:path")
-           .attr("d", "M18.35,103.31 L 135 103.31");
-        g.append("svg:path")
-           .attr("d", "M18.35,92.57 L 135 92.57");
-        g.append("svg:path")
-           .attr("d", "M18.35,49.59 L 135 49.59");
-        g.append("svg:path")
-           .attr("d", "M18.35,-14.88 L 135 -14.88");
-        g.append("svg:path")
-           .attr("d", "M18.35,-36.37 L 135 -36.37");
-        g.append("svg:path")
-           .attr("d", "M18.35,-4.13 L 135 -4.13");
-        g.append("svg:path")
-           .attr("d", "M18.35,114.05 L 135 114.05");
-        g.append("svg:path")
-           .attr("d", "M18.35,71.08 L 135 71.08");
-        g.append("svg:path")
-           .attr("d", "M18.35,60.33 L 135 60.33");
-        g.append("svg:path")
-           .attr("d", "M18.35,28.1 L 135 28.1");
-        g.append("svg:path")
-           .attr("d", "M18.35,-57.85 L 135 -57.85");
-        g.append("svg:path")
-           .attr("d", "M18.35,124.8 L 135 124.8");
-        g.append("svg:path")
-           .attr("d", "M18.35,17.36 L 135 17.36");
-        g.append("svg:path")
-           .attr("d", "M18.35,-47.11 L 135 -47.11");
-        g.append("svg:path")
-           .attr("d", "M18.35,6.61 L 135 6.61");
-        g.append("svg:path")
-           .attr("d", "M18.35,-25.62 L 135 -25.62");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("stroke", "#F0F0F3")
-         .attr("stroke-width", 0.2)
-         .attr("class", "guide xgridlines yfixed");
-        g.append("svg:path")
-           .attr("d", "M-88.39,5 L -88.39 61.94");
-        g.append("svg:path")
-           .attr("d", "M104.19,5 L 104.19 61.94");
-        g.append("svg:path")
-           .attr("d", "M-33.37,5 L -33.37 61.94");
-        g.append("svg:path")
-           .attr("d", "M21.65,5 L 21.65 61.94");
-        g.append("svg:path")
-           .attr("d", "M-60.88,5 L -60.88 61.94");
-        g.append("svg:path")
-           .attr("d", "M186.72,5 L 186.72 61.94");
-        g.append("svg:path")
-           .attr("d", "M269.26,5 L 269.26 61.94");
-        g.append("svg:path")
-           .attr("d", "M241.74,5 L 241.74 61.94");
-        g.append("svg:path")
-           .attr("d", "M76.68,5 L 76.68 61.94");
-        g.append("svg:path")
-           .attr("d", "M159.21,5 L 159.21 61.94");
-        g.append("svg:path")
-           .attr("d", "M-5.86,5 L -5.86 61.94");
-        g.append("svg:path")
-           .attr("d", "M214.23,5 L 214.23 61.94");
-        g.append("svg:path")
-           .attr("d", "M131.7,5 L 131.7 61.94");
-        g.append("svg:path")
-           .attr("d", "M-115.9,5 L -115.9 61.94");
-        g.append("svg:path")
-           .attr("d", "M49.16,5 L 49.16 61.94");
-      }(g.append("g")));
-    }(g.append("g")));
-    (function (g) {
-      d3.select("defs")
+        d3.select("defs")
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath1")
     .append("svg:path")
-      .attr("d", " M18.35,5 L 135 5 135 61.94 18.35 61.94 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
-      (function (g) {
-        g.attr("class", "plotpanel");
+      .attr("d", " M21.47,5 L 135 5 135 59.59 21.47 59.59 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
         (function (g) {
-          g.attr("stroke-width", 0.3);
+          g.attr("class", "plotpanel");
           (function (g) {
             g.attr("stroke-width", 0.3);
+            (function (g) {
+              g.attr("stroke-width", 0.3);
 g.selectAll("form0")
                   .data(d3.zip(data[0],data[1]))
                   .enter()
@@ -1661,77 +1706,78 @@ g.selectAll("form0")
 .attr("cy", function(d) { return d[1]; })
 .attr("r", 0.6)
 .attr("class", "geometry color_LCHab(70.0,60.0,240.0)_")
-.on("mouseout", geom_point_mouseover(0.30), false)
-.on("mouseover", geom_point_mouseover(3.00), false)
+.on("mouseout", geom_point_mouseout(10.00, 0.50), false)
+.on("mouseover", geom_point_mouseover(10.00, 0.50), false)
 .attr("stroke", "#0096DD")
 .attr("fill", "#00BFFF")
 ;
+            }(g.append("g")));
           }(g.append("g")));
         }(g.append("g")));
       }(g.append("g")));
-    }(g.append("g")));
-    (function (g) {
-      d3.select("defs")
+      (function (g) {
+        d3.select("defs")
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath2")
     .append("svg:path")
-      .attr("d", " M18.35,5 L 135 5 135 61.94 18.35 61.94 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
-      (function (g) {
-        g.attr("stroke", "none")
-         .attr("class", "guide zoomslider")
-         .attr("opacity", 0.00);
+      .attr("d", " M21.47,5 L 135 5 135 59.59 21.47 59.59 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
         (function (g) {
-          g.attr("stroke", "#6A6A6A")
-           .attr("stroke-opacity", 0.00)
-           .attr("stroke-width", 0.3)
-           .attr("fill", "#EAEAEA")
-           .on("click", zoomin_behavior(ctx))
+          g.attr("stroke", "none")
+           .attr("class", "guide zoomslider")
+           .attr("opacity", 0.00);
+          (function (g) {
+            g.attr("stroke", "#6A6A6A")
+             .attr("stroke-opacity", 0.00)
+             .attr("stroke-width", 0.3)
+             .attr("fill", "#EAEAEA")
+             .on("click", zoomin_behavior(ctx))
 .on("dblclick", function() { d3.event.stopPropagation(); })
 .on("mouseover", zoomslider_button_mouseover("#cd5c5c"))
 .on("mouseout", zoomslider_button_mouseover("#6a6a6a"))
 ;
-          g.append("svg:path")
-             .attr("d", "M128,8 L 132 8 132 12 128 12 z");
+            g.append("svg:path")
+               .attr("d", "M128,8 L 132 8 132 12 128 12 z");
+            (function (g) {
+              g.attr("fill", "#6A6A6A")
+               .attr("class", "button_logo");
+              g.append("svg:path")
+                 .attr("d", "M128.8,9.6 L 129.6 9.6 129.6 8.8 130.4 8.8 130.4 9.6 131.2 9.6 131.2 10.4 130.4 10.4 130.4 11.2 129.6 11.2 129.6 10.4 128.8 10.4 z");
+            }(g.append("g")));
+          }(g.append("g")));
+          (function (g) {
+            g.attr("fill", "#EAEAEA")
+             .on("click", zoomslider_track_behavior(ctx, 102, 119));
+            g.append("svg:path")
+               .attr("d", "M108.5,8 L 127.5 8 127.5 12 108.5 12 z");
+          }(g.append("g")));
           (function (g) {
             g.attr("fill", "#6A6A6A")
-             .attr("class", "button_logo");
-            g.append("svg:path")
-               .attr("d", "M128.8,9.6 L 129.6 9.6 129.6 8.8 130.4 8.8 130.4 9.6 131.2 9.6 131.2 10.4 130.4 10.4 130.4 11.2 129.6 11.2 129.6 10.4 128.8 10.4 z");
-          }(g.append("g")));
-        }(g.append("g")));
-        (function (g) {
-          g.attr("fill", "#EAEAEA")
-           .on("click", zoomslider_track_behavior(ctx, 102, 119));
-          g.append("svg:path")
-             .attr("d", "M108.5,8 L 127.5 8 127.5 12 108.5 12 z");
-        }(g.append("g")));
-        (function (g) {
-          g.attr("fill", "#6A6A6A")
-           .attr("class", "zoomslider_thumb")
-           .call(zoomslider_behavior(ctx, 102, 119))
+             .attr("class", "zoomslider_thumb")
+             .call(zoomslider_behavior(ctx, 102, 119))
 .on("mouseover", zoomslider_thumb_mouseover("#cd5c5c"))
 .on("mouseout", zoomslider_thumb_mouseover("#6a6a6a"))
 ;
-          g.append("svg:path")
-             .attr("d", "M117,8 L 119 8 119 12 117 12 z");
-        }(g.append("g")));
-        (function (g) {
-          g.attr("stroke", "#6A6A6A")
-           .attr("stroke-opacity", 0.00)
-           .attr("stroke-width", 0.3)
-           .attr("fill", "#EAEAEA")
-           .on("click", zoomout_behavior(ctx))
+            g.append("svg:path")
+               .attr("d", "M117,8 L 119 8 119 12 117 12 z");
+          }(g.append("g")));
+          (function (g) {
+            g.attr("stroke", "#6A6A6A")
+             .attr("stroke-opacity", 0.00)
+             .attr("stroke-width", 0.3)
+             .attr("fill", "#EAEAEA")
+             .on("click", zoomout_behavior(ctx))
 .on("dblclick", function() { d3.event.stopPropagation(); })
 .on("mouseover", zoomslider_button_mouseover("#cd5c5c"))
 .on("mouseout", zoomslider_button_mouseover("#6a6a6a"))
 ;
-          g.append("svg:path")
-             .attr("d", "M104,8 L 108 8 108 12 104 12 z");
-          (function (g) {
-            g.attr("fill", "#6A6A6A")
-             .attr("class", "button_logo");
             g.append("svg:path")
-               .attr("d", "M104.8,9.6 L 107.2 9.6 107.2 10.4 104.8 10.4 z");
+               .attr("d", "M104,8 L 108 8 108 12 104 12 z");
+            (function (g) {
+              g.attr("fill", "#6A6A6A")
+               .attr("class", "button_logo");
+              g.append("svg:path")
+                 .attr("d", "M104.8,9.6 L 107.2 9.6 107.2 10.4 104.8 10.4 z");
+            }(g.append("g")));
           }(g.append("g")));
         }(g.append("g")));
       }(g.append("g")));
@@ -1749,14 +1795,22 @@ g.selectAll("form0")
 }
 
 var data = [
-  [80.21785738683505,78.88474902513651,79.56503063857373,80.04346610452939,79.0561772890383,77.12835267284828,77.77129721903145,79.84578176432778,77.87649537349168,78.6680422406581],
-  [49.33456336610442,10.211839820702986,15.891280629137334,54.998341795189546,26.257479909878157,53.203184353251906,18.68846938441818,13.636393797090037,58.2035373321436,17.871081248698083]];
+  [81.68161032672754,80.38412198992309,81.04622680040728,81.5118786970019,80.55096977169516,78.6746557174317,79.3004210894393,81.31947638887021,79.40280839896872,80.17320550822846],
+  [47.503420447814115,9.996576088428583,15.441439920648373,52.93326880127085,25.379485838385126,51.21225644135139,18.123096865272665,13.279686295303778,56.0060806929691,17.339469172479646]];
 
 var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-bpbd4LYaRBcAERoaoOIM");
+if ('undefined' !== typeof module) {
+    module.exports = draw;
+} else if ('undefined' !== typeof window) {
+    window.draw = draw
+}
+
+return module;
+})({}).exports("#gadflyplot-bpbd4LYaRBcAERoaoOIM");
+//@ sourceURL=gadflyplot-bpbd4LYaRBcAERoaoOIM.js
 </script>
 
 
@@ -1764,6 +1818,7 @@ draw("#gadflyplot-bpbd4LYaRBcAERoaoOIM");
 plot(x=rand(<span class="fl">10</span>), y=rand(<span class="fl">10</span>), Scale.x_continuous(format=:scientific))</code></pre>
 <div id="gadflyplot-i1bS2to7X56h89Mi3ExM"></div>
 <script>
+(function (module) {
 function draw_with_data(data, parent_id) {
   var g = d3.select(parent_id)
             .append("svg")
@@ -1779,527 +1834,533 @@ function draw_with_data(data, parent_id) {
       "ty": 0.0
   };
 (function (g) {
-  g.attr("class", "plotroot xscalable yscalable");
+  g.attr("stroke", "none")
+   .attr("fill", "#000000")
+   .attr("stroke-width", 0.3)
+   .attr("font-family", "Helvetic,Arial,sans")
+   .style("font-size", "3.88px");
   (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#4C404B")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.18px")
-     .attr("class", "guide ylabels");
+    g.attr("class", "plotroot xscalable yscalable");
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#4C404B")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.18px")
+       .attr("class", "guide ylabels");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -69.07)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("2.5");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 82.1)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-0.5");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -43.88)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("2.0");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", -18.68)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("1.5");
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 132.49)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-1.5");
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -72.15)
+         .attr("x", 20.47)
+         .attr("y", 31.71)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("2.5");
-})
+         .call(function(text) {
+     text.text("0.5");
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 85.3)
+         .attr("x", 20.47)
+         .attr("y", 6.51)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-0.5");
-})
+         .call(function(text) {
+     text.text("1.0");
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -45.91)
+         .attr("x", 20.47)
+         .attr("y", 56.9)
          .attr("text-anchor", "end")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("2.0");
-})
+         .call(function(text) {
+     text.text("0.0");
+   })
 ;
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 20.47)
+           .attr("y", 107.29)
+           .attr("text-anchor", "end")
+           .style("dominant-baseline", "central")
+            .call(function(text) {
+      text.text("-1.0");
+    })
+;
+      }(g.append("g")));
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#362A35")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.88px");
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", -19.67)
-         .attr("text-anchor", "end")
+         .attr("x", 8.59)
+         .attr("y", 31.71)
+         .attr("text-anchor", "middle")
          .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("1.5");
-})
+         .attr("transform", "rotate(-90, 8.59, 31.71)")
+         .call(function(text) {
+     text.text("y");
+   })
 ;
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#4C404B")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.18px")
+       .attr("class", "guide xlabels");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 196.05)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("1.6×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -18.16)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("-4.0×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("-1");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 137.78)
-         .attr("text-anchor", "end")
-         .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-1.5");
-})
-;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 32.81)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.5");
-})
-;
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 6.57)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("1.0");
-})
-;
-    g.append("svg:text")
-       .attr("x", 17.35)
-       .attr("y", 59.06)
-       .attr("text-anchor", "end")
-       .style("dominant-baseline", "central")
-    .call(function(text) {
-  text.text("0.0");
-})
-;
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 17.35)
-         .attr("y", 111.54)
-         .attr("text-anchor", "end")
-         .style("dominant-baseline", "central")
-      .call(function(text) {
-  text.text("-1.0");
-})
-;
-    }(g.append("g")));
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#362A35")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.88px");
-    g.append("svg:text")
-       .attr("x", 7.94)
-       .attr("y", 32.81)
-       .attr("text-anchor", "middle")
-       .style("dominant-baseline", "central")
-       .attr("transform", "rotate(-90, 7.94, 32.81)")
-    .call(function(text) {
-  text.text("y");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#4C404B")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.18px")
-     .attr("class", "guide xlabels");
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 197.73)
-         .attr("y", 66.12)
+         .attr("x", 131.79)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("1.6×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.append("tspan").text("1.0×10")
+         .append("tspan")
+           .attr("dy", "-1ex")
+         .call(function(text) {
+           text.text("0");
+         })
+.append("tspan").attr("font-style", "normal")         ;
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
       g.append("svg:text")
-         .attr("x", -22.36)
-         .attr("y", 66.12)
+         .attr("x", 67.52)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("-4.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-1");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.append("tspan").text("4.0×10")
+         .append("tspan")
+           .attr("dy", "-1ex")
+         .call(function(text) {
+           text.text("-1");
+         })
+.append("tspan").attr("font-style", "normal")         ;
+   })
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 131.7)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("1.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 238.89)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("2.0×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
 ;
-    g.append("svg:text")
-       .attr("x", 65.67)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("4.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-1");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -61)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("-8.0×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("-1");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
 ;
-    (function (g) {
-      g.attr("visibility", "hidden");
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", 241.74)
-         .attr("y", 66.12)
+         .attr("x", 110.37)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("2.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.append("tspan").text("8.0×10")
+         .append("tspan")
+           .attr("dy", "-1ex")
+         .call(function(text) {
+           text.text("-1");
+         })
+.append("tspan").attr("font-style", "normal")         ;
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -39.58)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("-6.0×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("-1");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -103.84)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("-1.2×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", -66.38)
-         .attr("y", 66.12)
+         .attr("x", 46.1)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("-8.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-1");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.append("tspan").text("2.0×10")
+         .append("tspan")
+           .attr("dy", "-1ex")
+         .call(function(text) {
+           text.text("-1");
+         })
+.append("tspan").attr("font-style", "normal")         ;
+   })
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 109.69)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("8.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-1");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 260.31)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("2.2×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
 ;
-    (function (g) {
-      g.attr("visibility", "hidden");
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 174.63)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("1.4×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", -44.37)
-         .attr("y", 66.12)
+         .attr("x", 88.94)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("-6.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-1");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.append("tspan").text("6.0×10")
+         .append("tspan")
+           .attr("dy", "-1ex")
+         .call(function(text) {
+           text.text("-1");
+         })
+.append("tspan").attr("font-style", "normal")         ;
+   })
 ;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 217.47)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("1.8×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
       g.append("svg:text")
-         .attr("x", -110.4)
-         .attr("y", 66.12)
+         .attr("x", 24.68)
+         .attr("y", 64.83)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("-1.2×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.text("0");
+   })
 ;
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 153.21)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("1.2×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", 3.26)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("-2.0×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("-1");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
+      (function (g) {
+        g.attr("visibility", "hidden");
+        g.append("svg:text")
+           .attr("x", -82.42)
+           .attr("y", 64.83)
+           .attr("text-anchor", "middle")
+            .call(function(text) {
+      text.append("tspan").text("-1.0×10")
+          .append("tspan")
+            .attr("dy", "-1ex")
+          .call(function(text) {
+            text.text("0");
+          })
+.append("tspan").attr("font-style", "normal")          ;
+    })
+;
+      }(g.append("g")));
     }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 43.66)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("2.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-1");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
     (function (g) {
-      g.attr("visibility", "hidden");
+      g.attr("stroke", "none")
+       .attr("fill", "#362A35")
+       .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
+       .style("font-size", "3.88px");
       g.append("svg:text")
-         .attr("x", 263.75)
-         .attr("y", 66.12)
+         .attr("x", 78.23)
+         .attr("y", 73)
          .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("2.2×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+         .call(function(text) {
+     text.text("x");
+   })
 ;
     }(g.append("g")));
     (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 175.72)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("1.4×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
+      g.on("mouseover", guide_background_mouseover("#C6C6C9"))
+       .on("mouseout", guide_background_mouseout("#F0F0F3"))
+       .call(zoom_behavior(ctx))
 ;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 87.68)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.append("tspan").text("6.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-1");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 219.73)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("1.8×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    }(g.append("g")));
-    g.append("svg:text")
-       .attr("x", 21.65)
-       .attr("y", 66.12)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("0");
-})
-;
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", 153.71)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("1.2×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", -0.36)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("-2.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("-1");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    }(g.append("g")));
-    (function (g) {
-      g.attr("visibility", "hidden");
-      g.append("svg:text")
-         .attr("x", -88.39)
-         .attr("y", 66.12)
-         .attr("text-anchor", "middle")
-      .call(function(text) {
-  text.append("tspan").text("-1.0×10")
-      .append("tspan")
-        .attr("dy", "-1ex")
-      .call(function(text) {
-        text.text("0");
-      })
-.append("tspan").attr("font-style", "normal")      ;
-})
-;
-    }(g.append("g")));
-  }(g.append("g")));
-  (function (g) {
-    g.attr("stroke", "none")
-     .attr("fill", "#362A35")
-     .attr("font-family", "'PT Sans','Helvetica Neue','Helvetica',sans-serif")
-     .style("font-size", "3.88px");
-    g.append("svg:text")
-       .attr("x", 76.68)
-       .attr("y", 73)
-       .attr("text-anchor", "middle")
-    .call(function(text) {
-  text.text("x");
-})
-;
-  }(g.append("g")));
-  (function (g) {
-    g.on("mouseover", guide_background_mouseover("#C6C6C9"))
-     .on("mouseout", guide_background_mouseout("#F0F0F3"))
-     .call(zoom_behavior(ctx))
-;
-    (function (g) {
-      d3.select("defs")
+      (function (g) {
+        d3.select("defs")
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath0")
     .append("svg:path")
-      .attr("d", " M18.35,5 L 135 5 135 60.63 18.35 60.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
-      (function (g) {
-        g.attr("class", "guide background")
-         .attr("stroke", "#F1F1F5")
-         .attr("fill", "#FAFAFA");
-        g.append("svg:path")
-           .attr("d", "M18.35,5 L 135 5 135 60.63 18.35 60.63 z");
+      .attr("d", " M21.47,5 L 135 5 135 58.41 21.47 58.41 z");g.attr("clip-path", "url(#" + parent_id + "_clippath0)");
+        (function (g) {
+          g.attr("class", "guide background")
+           .attr("stroke", "#F1F1F5")
+           .attr("fill", "#FAFAFA");
+          g.append("svg:path")
+             .attr("d", "M21.47,5 L 135 5 135 58.41 21.47 58.41 z");
+        }(g.append("g")));
+        (function (g) {
+          g.attr("stroke", "#F0F0F3")
+           .attr("stroke-width", 0.2)
+           .attr("class", "guide ygridlines xfixed");
+          g.append("svg:path")
+             .attr("d", "M21.47,82.1 L 135 82.1");
+          g.append("svg:path")
+             .attr("d", "M21.47,-18.68 L 135 -18.68");
+          g.append("svg:path")
+             .attr("d", "M21.47,31.71 L 135 31.71");
+          g.append("svg:path")
+             .attr("d", "M21.47,56.9 L 135 56.9");
+          g.append("svg:path")
+             .attr("d", "M21.47,107.29 L 135 107.29");
+          g.append("svg:path")
+             .attr("d", "M21.47,6.51 L 135 6.51");
+          g.append("svg:path")
+             .attr("d", "M21.47,132.49 L 135 132.49");
+          g.append("svg:path")
+             .attr("d", "M21.47,-43.88 L 135 -43.88");
+          g.append("svg:path")
+             .attr("d", "M21.47,-69.07 L 135 -69.07");
+        }(g.append("g")));
+        (function (g) {
+          g.attr("stroke", "#F0F0F3")
+           .attr("stroke-width", 0.2)
+           .attr("class", "guide xgridlines yfixed");
+          g.append("svg:path")
+             .attr("d", "M-18.16,5 L -18.16 58.41");
+          g.append("svg:path")
+             .attr("d", "M67.52,5 L 67.52 58.41");
+          g.append("svg:path")
+             .attr("d", "M-61,5 L -61 58.41");
+          g.append("svg:path")
+             .attr("d", "M-39.58,5 L -39.58 58.41");
+          g.append("svg:path")
+             .attr("d", "M46.1,5 L 46.1 58.41");
+          g.append("svg:path")
+             .attr("d", "M174.63,5 L 174.63 58.41");
+          g.append("svg:path")
+             .attr("d", "M217.47,5 L 217.47 58.41");
+          g.append("svg:path")
+             .attr("d", "M153.21,5 L 153.21 58.41");
+          g.append("svg:path")
+             .attr("d", "M-82.42,5 L -82.42 58.41");
+          g.append("svg:path")
+             .attr("d", "M3.26,5 L 3.26 58.41");
+          g.append("svg:path")
+             .attr("d", "M24.68,5 L 24.68 58.41");
+          g.append("svg:path")
+             .attr("d", "M88.94,5 L 88.94 58.41");
+          g.append("svg:path")
+             .attr("d", "M260.31,5 L 260.31 58.41");
+          g.append("svg:path")
+             .attr("d", "M-103.84,5 L -103.84 58.41");
+          g.append("svg:path")
+             .attr("d", "M110.37,5 L 110.37 58.41");
+          g.append("svg:path")
+             .attr("d", "M238.89,5 L 238.89 58.41");
+          g.append("svg:path")
+             .attr("d", "M131.79,5 L 131.79 58.41");
+          g.append("svg:path")
+             .attr("d", "M196.05,5 L 196.05 58.41");
+        }(g.append("g")));
       }(g.append("g")));
       (function (g) {
-        g.attr("stroke", "#F0F0F3")
-         .attr("stroke-width", 0.2)
-         .attr("class", "guide ygridlines xfixed");
-        g.append("svg:path")
-           .attr("d", "M18.35,85.3 L 135 85.3");
-        g.append("svg:path")
-           .attr("d", "M18.35,-19.67 L 135 -19.67");
-        g.append("svg:path")
-           .attr("d", "M18.35,32.81 L 135 32.81");
-        g.append("svg:path")
-           .attr("d", "M18.35,59.06 L 135 59.06");
-        g.append("svg:path")
-           .attr("d", "M18.35,111.54 L 135 111.54");
-        g.append("svg:path")
-           .attr("d", "M18.35,6.57 L 135 6.57");
-        g.append("svg:path")
-           .attr("d", "M18.35,137.78 L 135 137.78");
-        g.append("svg:path")
-           .attr("d", "M18.35,-45.91 L 135 -45.91");
-        g.append("svg:path")
-           .attr("d", "M18.35,-72.15 L 135 -72.15");
-      }(g.append("g")));
-      (function (g) {
-        g.attr("stroke", "#F0F0F3")
-         .attr("stroke-width", 0.2)
-         .attr("class", "guide xgridlines yfixed");
-        g.append("svg:path")
-           .attr("d", "M-22.36,5 L -22.36 60.63");
-        g.append("svg:path")
-           .attr("d", "M65.67,5 L 65.67 60.63");
-        g.append("svg:path")
-           .attr("d", "M-66.38,5 L -66.38 60.63");
-        g.append("svg:path")
-           .attr("d", "M-44.37,5 L -44.37 60.63");
-        g.append("svg:path")
-           .attr("d", "M43.66,5 L 43.66 60.63");
-        g.append("svg:path")
-           .attr("d", "M175.72,5 L 175.72 60.63");
-        g.append("svg:path")
-           .attr("d", "M219.73,5 L 219.73 60.63");
-        g.append("svg:path")
-           .attr("d", "M153.71,5 L 153.71 60.63");
-        g.append("svg:path")
-           .attr("d", "M-88.39,5 L -88.39 60.63");
-        g.append("svg:path")
-           .attr("d", "M-0.36,5 L -0.36 60.63");
-        g.append("svg:path")
-           .attr("d", "M21.65,5 L 21.65 60.63");
-        g.append("svg:path")
-           .attr("d", "M87.68,5 L 87.68 60.63");
-        g.append("svg:path")
-           .attr("d", "M263.75,5 L 263.75 60.63");
-        g.append("svg:path")
-           .attr("d", "M-110.4,5 L -110.4 60.63");
-        g.append("svg:path")
-           .attr("d", "M109.69,5 L 109.69 60.63");
-        g.append("svg:path")
-           .attr("d", "M241.74,5 L 241.74 60.63");
-        g.append("svg:path")
-           .attr("d", "M131.7,5 L 131.7 60.63");
-        g.append("svg:path")
-           .attr("d", "M197.73,5 L 197.73 60.63");
-      }(g.append("g")));
-    }(g.append("g")));
-    (function (g) {
-      d3.select("defs")
+        d3.select("defs")
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath1")
     .append("svg:path")
-      .attr("d", " M18.35,5 L 135 5 135 60.63 18.35 60.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
-      (function (g) {
-        g.attr("class", "plotpanel");
+      .attr("d", " M21.47,5 L 135 5 135 58.41 21.47 58.41 z");g.attr("clip-path", "url(#" + parent_id + "_clippath1)");
         (function (g) {
-          g.attr("stroke-width", 0.3);
+          g.attr("class", "plotpanel");
           (function (g) {
             g.attr("stroke-width", 0.3);
+            (function (g) {
+              g.attr("stroke-width", 0.3);
 g.selectAll("form0")
                   .data(d3.zip(data[0],data[1]))
                   .enter()
@@ -2308,77 +2369,78 @@ g.selectAll("form0")
 .attr("cy", function(d) { return d[1]; })
 .attr("r", 0.6)
 .attr("class", "geometry color_LCHab(70.0,60.0,240.0)_")
-.on("mouseout", geom_point_mouseover(0.30), false)
-.on("mouseover", geom_point_mouseover(3.00), false)
+.on("mouseout", geom_point_mouseout(10.00, 0.50), false)
+.on("mouseover", geom_point_mouseover(10.00, 0.50), false)
 .attr("stroke", "#0096DD")
 .attr("fill", "#00BFFF")
 ;
+            }(g.append("g")));
           }(g.append("g")));
         }(g.append("g")));
       }(g.append("g")));
-    }(g.append("g")));
-    (function (g) {
-      d3.select("defs")
+      (function (g) {
+        d3.select("defs")
   .append("svg:clipPath")
     .attr("id", parent_id + "_clippath2")
     .append("svg:path")
-      .attr("d", " M18.35,5 L 135 5 135 60.63 18.35 60.63 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
-      (function (g) {
-        g.attr("stroke", "none")
-         .attr("class", "guide zoomslider")
-         .attr("opacity", 0.00);
+      .attr("d", " M21.47,5 L 135 5 135 58.41 21.47 58.41 z");g.attr("clip-path", "url(#" + parent_id + "_clippath2)");
         (function (g) {
-          g.attr("stroke", "#6A6A6A")
-           .attr("stroke-opacity", 0.00)
-           .attr("stroke-width", 0.3)
-           .attr("fill", "#EAEAEA")
-           .on("click", zoomin_behavior(ctx))
+          g.attr("stroke", "none")
+           .attr("class", "guide zoomslider")
+           .attr("opacity", 0.00);
+          (function (g) {
+            g.attr("stroke", "#6A6A6A")
+             .attr("stroke-opacity", 0.00)
+             .attr("stroke-width", 0.3)
+             .attr("fill", "#EAEAEA")
+             .on("click", zoomin_behavior(ctx))
 .on("dblclick", function() { d3.event.stopPropagation(); })
 .on("mouseover", zoomslider_button_mouseover("#cd5c5c"))
 .on("mouseout", zoomslider_button_mouseover("#6a6a6a"))
 ;
-          g.append("svg:path")
-             .attr("d", "M128,8 L 132 8 132 12 128 12 z");
+            g.append("svg:path")
+               .attr("d", "M128,8 L 132 8 132 12 128 12 z");
+            (function (g) {
+              g.attr("fill", "#6A6A6A")
+               .attr("class", "button_logo");
+              g.append("svg:path")
+                 .attr("d", "M128.8,9.6 L 129.6 9.6 129.6 8.8 130.4 8.8 130.4 9.6 131.2 9.6 131.2 10.4 130.4 10.4 130.4 11.2 129.6 11.2 129.6 10.4 128.8 10.4 z");
+            }(g.append("g")));
+          }(g.append("g")));
+          (function (g) {
+            g.attr("fill", "#EAEAEA")
+             .on("click", zoomslider_track_behavior(ctx, 102, 119));
+            g.append("svg:path")
+               .attr("d", "M108.5,8 L 127.5 8 127.5 12 108.5 12 z");
+          }(g.append("g")));
           (function (g) {
             g.attr("fill", "#6A6A6A")
-             .attr("class", "button_logo");
-            g.append("svg:path")
-               .attr("d", "M128.8,9.6 L 129.6 9.6 129.6 8.8 130.4 8.8 130.4 9.6 131.2 9.6 131.2 10.4 130.4 10.4 130.4 11.2 129.6 11.2 129.6 10.4 128.8 10.4 z");
-          }(g.append("g")));
-        }(g.append("g")));
-        (function (g) {
-          g.attr("fill", "#EAEAEA")
-           .on("click", zoomslider_track_behavior(ctx, 102, 119));
-          g.append("svg:path")
-             .attr("d", "M108.5,8 L 127.5 8 127.5 12 108.5 12 z");
-        }(g.append("g")));
-        (function (g) {
-          g.attr("fill", "#6A6A6A")
-           .attr("class", "zoomslider_thumb")
-           .call(zoomslider_behavior(ctx, 102, 119))
+             .attr("class", "zoomslider_thumb")
+             .call(zoomslider_behavior(ctx, 102, 119))
 .on("mouseover", zoomslider_thumb_mouseover("#cd5c5c"))
 .on("mouseout", zoomslider_thumb_mouseover("#6a6a6a"))
 ;
-          g.append("svg:path")
-             .attr("d", "M117,8 L 119 8 119 12 117 12 z");
-        }(g.append("g")));
-        (function (g) {
-          g.attr("stroke", "#6A6A6A")
-           .attr("stroke-opacity", 0.00)
-           .attr("stroke-width", 0.3)
-           .attr("fill", "#EAEAEA")
-           .on("click", zoomout_behavior(ctx))
+            g.append("svg:path")
+               .attr("d", "M117,8 L 119 8 119 12 117 12 z");
+          }(g.append("g")));
+          (function (g) {
+            g.attr("stroke", "#6A6A6A")
+             .attr("stroke-opacity", 0.00)
+             .attr("stroke-width", 0.3)
+             .attr("fill", "#EAEAEA")
+             .on("click", zoomout_behavior(ctx))
 .on("dblclick", function() { d3.event.stopPropagation(); })
 .on("mouseover", zoomslider_button_mouseover("#cd5c5c"))
 .on("mouseout", zoomslider_button_mouseover("#6a6a6a"))
 ;
-          g.append("svg:path")
-             .attr("d", "M104,8 L 108 8 108 12 104 12 z");
-          (function (g) {
-            g.attr("fill", "#6A6A6A")
-             .attr("class", "button_logo");
             g.append("svg:path")
-               .attr("d", "M104.8,9.6 L 107.2 9.6 107.2 10.4 104.8 10.4 z");
+               .attr("d", "M104,8 L 108 8 108 12 104 12 z");
+            (function (g) {
+              g.attr("fill", "#6A6A6A")
+               .attr("class", "button_logo");
+              g.append("svg:path")
+                 .attr("d", "M104.8,9.6 L 107.2 9.6 107.2 10.4 104.8 10.4 z");
+            }(g.append("g")));
           }(g.append("g")));
         }(g.append("g")));
       }(g.append("g")));
@@ -2396,14 +2458,22 @@ g.selectAll("form0")
 }
 
 var data = [
-  [60.63132717984294,36.278373118148565,54.749521734976014,43.0580178760715,118.90084661445866,29.114432793689897,24.826963016247575,83.78578832412697,87.55608402084772,55.06928902844487],
-  [32.77667861891509,37.53966476403557,51.37537911868709,25.095996267067658,6.6507168083894,33.05646335265605,24.71731487280246,15.23852136601596,37.24081984311537,49.46385889314261]];
+  [62.61842294287446,38.9161682953046,56.89377655753162,45.514664151916556,119.33100837837993,31.94364506793152,27.770734455064908,85.15420783692676,88.82376301589689,57.20499982016179],
+  [31.670079421024646,36.24331225834092,49.52782354738643,24.29538890666126,6.584953657900123,31.938717769476437,23.93179385633585,14.830627402642595,35.95637306431921,47.692456658148274]];
 
 var draw = function(parent_id) {
     draw_with_data(data, parent_id);
 };
 
-draw("#gadflyplot-i1bS2to7X56h89Mi3ExM");
+if ('undefined' !== typeof module) {
+    module.exports = draw;
+} else if ('undefined' !== typeof window) {
+    window.draw = draw
+}
+
+return module;
+})({}).exports("#gadflyplot-i1bS2to7X56h89Mi3ExM");
+//@ sourceURL=gadflyplot-i1bS2to7X56h89Mi3ExM.js
 </script>
 
         <hr>
@@ -2416,7 +2486,10 @@ draw("#gadflyplot-i1bS2to7X56h89Mi3ExM");
             <li><a href="index.html">Introduction</a></li><li><a href="themes.html">Themes</a></li></ul>
             <hr><div class="toc-part">Geometry</div>
             <ul>
-            <li><a href="geom_boxplot.html">boxplot</a></li><li><a href="geom_density.html">density</a></li><li><a href="geom_errorbar.html">errorbar</a></li><li><a href="geom_bar.html">bar</a></li><li><a href="geom_histogram.html">histogram</a></li><li><a href="geom_histogram2d.html">histogram2d</a></li><li><a href="geom_hline.html">hline</a></li><li><a href="geom_label.html">label</a></li><li><a href="geom_line.html">line</a></li><li><a href="geom_point.html">point</a></li><li><a href="geom_rectbin.html">rectbin</a></li><li><a href="geom_smooth.html">smooth</a></li><li><a href="geom_subplot_grid.html">subplot_grid</a></li><li><a href="geom_vline.html">vline</a></li><li><a href="geom_hexbin.html">hexbin</a></li></ul>
+            <li><a href="geom_boxplot.html">boxplot</a></li><li><a href="geom_density.html">density</a></li><li><a href="geom_errorbar.html">errorbar</a></li><li><a href="geom_bar.html">bar</a></li><li><a href="geom_histogram.html">histogram</a></li><li><a href="geom_histogram2d.html">histogram2d</a></li><li><a href="geom_hline.html">hline</a></li><li><a href="geom_label.html">label</a></li><li><a href="geom_line.html">line</a></li><li><a href="geom_point.html">point</a></li><li><a href="geom_rectbin.html">rectbin</a></li><li><a href="geom_smooth.html">smooth</a></li><li><a href="geom_subplot_grid.html">subplot_grid</a></li><li><a href="geom_vline.html">vline</a></li><li><a href="geom_hexbin.html">hexbin</a></li><li><a href="geom_step.html">step</a></li><li><a href="geom_ribbon.html">ribbon</a></li></ul>
+            <hr><div class="toc-part">Statistic</div>
+            <ul>
+            <li><a href="stat_step.html">step</a></li></ul>
             <hr><div class="toc-part">Scale</div>
             <ul>
             <li><div class="toc-current-doc">
