@@ -52,7 +52,7 @@ function render(geom::HexagonalBinGeometry, theme::Gadfly.Theme,
     end
 
 
-    compose(combine(forms...))
+    compose(combine(forms...), svgclass("geometry"))
 end
 
 
