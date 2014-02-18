@@ -23,9 +23,9 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```julia
-plot(data("ggplot2", "diamonds"), x="Price", Geom.density)
+plot(dataset("ggplot2", "diamonds"), x="Price", Geom.density)
 ```
 
 ```julia
-plot(data("ggplot2", "diamonds"), x="Price", color="Cut", Geom.density)
+plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut", Geom.density)
 ```

@@ -43,7 +43,7 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 
 ```julia
 set_default_plot_size(20cm, 7.5cm)
-plot(data("datasets", "OrchardSprays"),
+plot(dataset("datasets", "OrchardSprays"),
      xgroup="Treatment", x="ColPos", y="RowPos", color="Decrease",
      Geom.subplot_grid(Geom.point))
 ```
@@ -51,7 +51,7 @@ plot(data("datasets", "OrchardSprays"),
 
 ```julia
 set_default_plot_size(14cm, 25cm)
-plot(data("vcd", "Suicide"), xgroup="Sex", ygroup="Method", x="Age", y="Freq",
+plot(dataset("vcd", "Suicide"), xgroup="Sex", ygroup="Method", x="Age", y="Freq",
      Geom.subplot_grid(Geom.bar))
 ```
 

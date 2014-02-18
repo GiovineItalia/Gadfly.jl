@@ -39,12 +39,12 @@ Gadfly.set_default_plot_size(14cm, 10cm)
 
 
 ```julia
-plot(data("ggplot2", "mpg"), x="Cty", y="Hwy", label="Model", Geom.point, Geom.label)
+plot(dataset("ggplot2", "mpg"), x="Cty", y="Hwy", label="Model", Geom.point, Geom.label)
 ```
 
 
 ```julia
-plot(data("MASS", "mammals"), x="Body", y="Brain", label=1,
+plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
      Scale.x_log10, Scale.y_log10, Geom.point, Geom.label)
 ```
 

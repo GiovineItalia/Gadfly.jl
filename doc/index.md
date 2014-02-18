@@ -139,12 +139,12 @@ using RDatasets
 
 ```julia
 # E.g.
-plot(data("datasets", "iris"), x="SepalLength", y="SepalWidth", Geom.point)
+plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth", Geom.point)
 ```
 
 ```julia
 # E.g.
-plot(data("car", "SLID"), x="Wages", color="Language", Geom.histogram)
+plot(dataset("car", "SLID"), x="Wages", color="Language", Geom.histogram)
 ```
 
 Along with less typing, using data frames to generate plots allows the axis and

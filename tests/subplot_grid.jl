@@ -1,7 +1,7 @@
 
 using RDatasets, DataArrays, DataFrames, Gadfly
 
-barley = data("lattice", "barley")
+barley = dataset("lattice", "barley")
 if isdefined(:setlevels!)
     setlevels!(barley[:Year], ["1931", "1932"])
 else

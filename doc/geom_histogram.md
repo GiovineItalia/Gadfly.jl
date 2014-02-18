@@ -36,17 +36,17 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```julia
-plot(data("ggplot2", "diamonds"), x="Price", Geom.histogram)
+plot(dataset("ggplot2", "diamonds"), x="Price", Geom.histogram)
 ```
 
 ```julia
 # Binding categorical data to color
-plot(data("ggplot2", "diamonds"), x="Price", color="Cut", Geom.histogram)
+plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut", Geom.histogram)
 ```
 
 ```julia
 # Choosing a smaller bin count
-plot(data("ggplot2", "diamonds"), x="Price", color="Cut",
+plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut",
      Geom.histogram(bincount=30))
 ```
 

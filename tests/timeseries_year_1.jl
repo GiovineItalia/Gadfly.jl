@@ -1,8 +1,14 @@
 
 using Gadfly, DataArrays, Datetime, RDatasets
 
-economics = data("ggplot2", "economics")
-economics["Date"] = Date[date(d) for d in economics[:Date]]
+economics = dataset("ggplot2", "economics")
+dates = Date[date(d) for d in economics[:Date]]
 
-p = plot(economics, x="Date", y="Unemploy", Geom.line)
+try
+    economics[:Date] = dates
+catch
+    economics["Date"] = dates
+end
+
+p = plot(economics, x=:Date, y=:Unemploy, Geom.line)
 

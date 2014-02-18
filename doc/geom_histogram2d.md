@@ -41,17 +41,17 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 
 
 ```julia
-plot(data("car", "Womenlf"), x="HIncome", y="Region", Geom.histogram2d)
+plot(dataset("car", "Womenlf"), x="HIncome", y="Region", Geom.histogram2d)
 ```
 
 ```julia
-plot(data("car", "UN"), x="GDP", y="InfantMortality",
+plot(dataset("car", "UN"), x="GDP", y="InfantMortality",
      Scale.x_log10, Scale.y_log10, Geom.histogram2d)
 ```
 
 ```julia
 # Explicitly setting the number of bins
-plot(data("car", "UN"), x="GDP", y="InfantMortality",
+plot(dataset("car", "UN"), x="GDP", y="InfantMortality",
      Scale.x_log10, Scale.y_log10, Geom.histogram2d(xbincount=30, ybincount=30))
 ```
 

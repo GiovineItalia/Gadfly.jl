@@ -31,5 +31,5 @@ Gadfly.set_default_plot_size(16cm, 10cm)
 ```
 
 ```julia
-plot(data("Zelig", "macro"), x="Year", y="Unem", color="Country", Geom.point, Geom.smooth)
+plot(dataset("Zelig", "macro"), x="Year", y="Unem", color="Country", Geom.point, Geom.smooth)
 ```

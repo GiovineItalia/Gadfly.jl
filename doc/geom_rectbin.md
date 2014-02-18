@@ -42,6 +42,6 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 
 
 ```julia
-plot(data("Zelig", "macro"), x="Year", y="Country", color="GDP", Geom.rectbin)
+plot(dataset("Zelig", "macro"), x="Year", y="Country", color="GDP", Geom.rectbin)
 ```
 

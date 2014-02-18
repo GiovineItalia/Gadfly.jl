@@ -1,7 +1,7 @@
 
 using Gadfly, DataArrays, RDatasets, DataFrames
 
-iris = data("datasets", "iris")
+iris = dataset("datasets", "iris")
 
 plots = Plot[]
 for species in ["setosa", "versicolor", "virginica"]
