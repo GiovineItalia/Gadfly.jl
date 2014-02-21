@@ -10,8 +10,10 @@ Create a discrete color scale to be used for the plot.
 # Arguments
 
   * `colors...`: an iterable collection of things that can be converted to colors with ```Color.color``` (such as strings naming colors)
-  * `levels` (optional): 
-  * `order` (optional): 
+  * `levels` (optional): Explicitly set levels used by the scale. Order is
+    respected.
+  * `order` (optional): A vector of integers giving a permutation of the levels
+    default order.
 
 # Aesthetics Acted On
 

@@ -438,8 +438,15 @@ function apply_scale(scale::DiscreteColorScale,
         end
     end
 
-    scale_levels = scale.levels == nothing ? [levelset...] : scale.levels
-    sort!(scale_levels)
+    if scale.levels == nothing
+        scale_levels = [levelset...]
+        sort!(scale_levels)
+    else
+        scale_levels = scale.levels
+    end
+    if scale.order != nothing
+        permute!(scale_levels, scale.order)
+    end
     colors = convert(Vector{ColorValue}, scale.f(length(scale_levels)))
 
     color_map = {color => string(label)
@@ -453,7 +460,7 @@ function apply_scale(scale::DiscreteColorScale,
         if data.color === nothing
             continue
         end
-        ds = discretize(data.color, scale_levels, scale.order)
+        ds = discretize(data.color, scale_levels)
         colorvals = Array(ColorValue, nonzero_length(ds.refs))
         i = 1
         for k in ds.refs
