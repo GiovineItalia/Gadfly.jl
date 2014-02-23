@@ -219,10 +219,10 @@ end
 # A helper for render(::ColorKey) for rendering guides for continuous color
 # scales.
 function render_continuous_color_key(colors::Vector{ColorValue},
-                                   labels::Dict{ColorValue, String},
-                                   title_canvas::Canvas,
-                                   title_width::Measure,
-                                   theme::Gadfly.Theme)
+                                     labels::Dict{ColorValue, String},
+                                     title_canvas::Canvas,
+                                     title_width::Measure,
+                                     theme::Gadfly.Theme)
 
     # Key entries
     entry_width, entry_height = text_extents(theme.minor_label_font,
