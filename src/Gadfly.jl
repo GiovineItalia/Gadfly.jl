@@ -332,7 +332,7 @@ function plot(data_source::AbstractDataFrame, elements::ElementOrFunction...; ma
     p = Plot()
     p.mapping = clean_mapping(mapping)
     p.data_source = data_source
-    valid_aesthetics = Set(names(Aesthetics)...)
+    valid_aesthetics = set(names(Aesthetics))
     for (k, v) in p.mapping
         set_mapped_data!(p.data, data_source, k, v)
     end
@@ -454,7 +454,7 @@ function render(plot::Plot)
         union!(used_aesthetics, element_aesthetics(stat))
     end
 
-    defined_unused_aesthetics = setdiff(Set(keys(plot.mapping)...), used_aesthetics)
+    defined_unused_aesthetics = setdiff(set(keys(plot.mapping)), used_aesthetics)
     if !isempty(defined_unused_aesthetics)
         warn("The following aesthetics are mapped, but not used by any geometry:\n    ",
              join([string(a) for a in defined_unused_aesthetics], ", "))
@@ -481,7 +481,7 @@ function render(plot::Plot)
         for scale in default_scales(stat)
             # Use the statistics default scale only when it covers some
             # aesthetic that is not already scaled.
-            scale_aes = Set(element_aesthetics(scale)...)
+            scale_aes = set(element_aesthetics(scale))
             if !isempty(intersect(scale_aes, unscaled_aesthetics))
                 for var in scale_aes
                     scales[var] = scale
@@ -501,7 +501,7 @@ function render(plot::Plot)
 
         if haskey(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
-            scale_aes = Set(element_aesthetics(scale)...)
+            scale_aes = set(element_aesthetics(scale))
             for var in scale_aes
                 scales[var] = scale
             end
@@ -524,7 +524,7 @@ function render(plot::Plot)
 
         if haskey(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
-            scale_aes = Set(element_aesthetics(scale)...)
+            scale_aes = set(element_aesthetics(scale))
             for var in scale_aes
                 scales[var] = scale
             end

@@ -218,7 +218,7 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         T = eltype(values)
 
         span = zero(T)
-        unique_count = length(Set(values...))
+        unique_count = length(set(values))
         if unique_count > 1
             span = (maximum(values) - minimum(values)) / (unique_count - 1)
         end

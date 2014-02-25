@@ -76,10 +76,11 @@ backends = {
 
 function run_tests(output_filename)
     testdir = Pkg.dir("Gadfly", "tests")
+    whitelist = Set()
     if !isempty(ARGS)
-        whitelist = Set(ARGS...)
+        union!(whitelist, ARGS)
     else
-        whitelist = Set([name for (name, width, height) in tests]...)
+        union!(whitelist, [name for (name, width, height) in tests])
     end
 
     for (name, width, height) in tests

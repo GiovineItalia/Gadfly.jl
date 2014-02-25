@@ -1,4 +1,14 @@
 
+# Work around differences in julia 0.2 and 0.3 set constructors.
+function set(T::Type, itr)
+    S = Set{T}()
+    union!(S, itr)
+end
+
+function set(itr)
+    set(Any, itr)
+end
+
 
 # Is this usable data?
 function isconcrete{T<:Number}(x::T)

@@ -126,7 +126,7 @@ end
 #   vars: Symbol that must be defined in the aesthetics.
 #
 function undefined_aesthetics(aes::Aesthetics, vars::Symbol...)
-    setdiff(Set(vars...), defined_aesthetics(aes))
+    setdiff(set(vars), defined_aesthetics(aes))
 end
 
 function assert_aesthetics_defined(who::String, aes::Aesthetics, vars::Symbol...)
@@ -246,7 +246,7 @@ end
 
 
 function cat_aes_var!{T}(xs::PooledDataVector{T}, ys::PooledDataVector{T})
-    newpool = T[x for x in union(Set(xs.pool...), Set(ys.pool...))]
+    newpool = T[x for x in union(set(xs.pool), set(ys.pool))]
     newdata = vcat(T[x for x in xs], T[y for y in ys])
     PooledDataArray(newdata, newpool, [false for _ in newdata])
 end
