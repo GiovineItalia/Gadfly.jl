@@ -113,12 +113,13 @@ function formatter{T<:FloatingPoint}(xs::AbstractArray{T}; fmt=:auto)
 
     # figure out the lowest suitable precision
     delta = Inf
-    for (x0, x1) in zip(xs, xs[2:end])
-        delta = min(delta, abs(x1 - x0))
+    finite_xs = filter(isfinite, xs)
+    for (x0, x1) in zip(finite_xs, drop(finite_xs, 1))
+        delta = min(x1 - x0, delta)
     end
     x_min, x_max = concrete_minimum(xs), concrete_maximum(xs)
 
-    if !isfinite(x_min) || !isfinite(x_max)
+    if !isfinite(x_min) || !isfinite(x_max) || !isfinite(delta)
         error("At least one finite value must be provided to formatter.")
     end
 

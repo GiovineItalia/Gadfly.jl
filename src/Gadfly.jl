@@ -20,7 +20,7 @@ using Datetime
 using JSON
 
 import Iterators
-import Iterators.distinct
+import Iterators: distinct, drop
 import Compose.draw, Compose.hstack, Compose.vstack
 import Base: copy, push!, start, next, done, has, show, getindex, cat,
              writemime, mimewritable, isfinite
