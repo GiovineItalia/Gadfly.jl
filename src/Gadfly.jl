@@ -23,10 +23,11 @@ import Iterators
 import Iterators.distinct
 import Compose.draw, Compose.hstack, Compose.vstack
 import Base: copy, push!, start, next, done, has, show, getindex, cat,
-             writemime, isfinite
+             writemime, mimewritable, isfinite
 
 export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
-       layer, @plot, spy, set_default_plot_size, prepare_display
+       layer, @plot, spy, set_default_plot_size, set_default_plot_format,
+       prepare_display
 
 
 # Re-export some essentials from Compose
@@ -110,6 +111,17 @@ function set_default_plot_size(width::Compose.MeasureOrNumber,
     global default_plot_height
     default_plot_width = Compose.x_measure(width)
     default_plot_height = Compose.y_measure(height)
+end
+
+
+default_plot_format = :html
+
+function set_default_plot_format(fmt::Symbol)
+    if !(fmt in [:html, :png, :svg, :pdf, :ps])
+        error("$(fmt) is not a supported plot format")
+    end
+    global default_plot_format
+    default_plot_format = fmt
 end
 
 
@@ -730,12 +742,22 @@ hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 
 
 # writemime functions for all supported compose backends.
-#
-# TODO: These functions should inspect the plot to choose a reasonable default
-# size. (This is mainly a compose todo.)
+
+function mimewritable(T::MIME, ::Plot)
+    return (default_plot_format == :png && isa(T, MIME"image/png")) ||
+           (default_plot_format == :svg && isa(T, MIME"image/svg+xml")) ||
+           (default_plot_format == :html && isa(T, MIME"text/html")) ||
+           (default_plot_format == :ps && isa(T, MIME"application/postscript"))
+end
+
 
 function writemime(io::IO, ::MIME"text/html", p::Plot)
     draw(D3(io, default_plot_width, default_plot_height), p)
+end
+
+
+function writemime(io::IO, ::MIME"image/svg+xml", p::Plot)
+    draw(SVG(io, default_plot_width, default_plot_height), p)
 end
 
 
@@ -746,6 +768,13 @@ try
     end
 end
 
+try
+    getfield(Compose, :Cairo) # throws if Cairo isn't being used
+    function writemime(io::IO, ::MIME"application/postscript", p::Plot)
+        draw(PS(io, default_plot_width, default_plot_height), p)
+    end
+end
+
 
 # TODO: the serializeable branch has to be merged before this will work.
 #function writemime(io::IO, ::MIME"application/json", p::Plot)
@@ -753,9 +782,9 @@ end
 #end
 
 
-function writemime(io::IO, ::MIME"text/plain", p::Plot)
-    write(io, "Plot(...)")
-end
+#function writemime(io::IO, ::MIME"text/plain", p::Plot)
+    #write(io, "Plot(...)")
+#end
 
 
 include("scale.jl")
