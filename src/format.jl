@@ -116,7 +116,11 @@ function formatter{T<:FloatingPoint}(xs::AbstractArray{T}; fmt=:auto)
     for (x0, x1) in zip(xs, xs[2:end])
         delta = min(delta, abs(x1 - x0))
     end
-    x_min, x_max = minimum(xs), maximum(xs)
+    x_min, x_max = concrete_minimum(xs), concrete_maximum(xs)
+
+    if !isfinite(x_min) || !isfinite(x_max)
+        error("At least one finite value must be provided to formatter.")
+    end
 
     if fmt == :auto
         if abs(log10(x_max - x_min)) > 4
