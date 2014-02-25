@@ -39,7 +39,8 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
                    rectangle(),
                    svgclass("guide background"),
                    stroke(theme.panel_stroke),
-                   fill(theme.panel_fill))
+                   fill(theme.panel_fill),
+                   opacity(theme.panel_opacity))
 
     {(back, under_guide_position)}
 end
@@ -162,8 +163,8 @@ function render_discrete_color_key(colors::Vector{ColorValue},
     # Key entries
     n = length(colors)
 
-    entry_width, entry_height = text_extents(theme.minor_label_font,
-                                             theme.minor_label_font_size,
+    entry_width, entry_height = text_extents(theme.key_label_font,
+                                             theme.key_label_font_size,
                                              values(labels)...)
     entry_width += entry_height # make space for the color swatch
 
@@ -189,7 +190,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
         swatch_label = compose(text(1cy, (i - 1)cy + entry_height/2,
                                     label, hleft, vcenter),
                                stroke(nothing),
-                               fill(theme.minor_label_color))
+                               fill(theme.key_label_color))
 
         color_class = @sprintf("color_%s", escape_id(label))
         swatch = compose(combine(swatch_shape, swatch_label),
@@ -201,8 +202,8 @@ function render_discrete_color_key(colors::Vector{ColorValue},
     end
 
     swatch_canvas = compose(swatch_canvas,
-                            font(theme.minor_label_font),
-                            fontsize(theme.minor_label_font_size))
+                            font(theme.key_label_font),
+                            fontsize(theme.key_label_font_size))
 
     title_canvas_pos = theme.guide_title_position == :left ?
         entry_height + swatch_padding : 0
@@ -211,7 +212,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                            title_canvas)
 
     compose(canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
-                   swatch_canvas.box.height + title_canvas.box.height),
+                   swatch_canvas.box.height + title_canvas.box.height, order=2),
             pad(compose(canvas(), swatch_canvas, title_canvas), 2mm))
 end
 
@@ -225,8 +226,8 @@ function render_continuous_color_key(colors::Vector{ColorValue},
                                      theme::Gadfly.Theme)
 
     # Key entries
-    entry_width, entry_height = text_extents(theme.minor_label_font,
-                                             theme.minor_label_font_size,
+    entry_width, entry_height = text_extents(theme.key_label_font,
+                                             theme.key_label_font_size,
                                              values(labels)...)
     entry_width += entry_height # make space for the color swatch
 
@@ -269,7 +270,7 @@ function render_continuous_color_key(colors::Vector{ColorValue},
                                         y + entry_height / 2,
                                         labels[c],
                                         hleft, vcenter),
-                                   fill(theme.minor_label_color))
+                                   fill(theme.key_label_color))
 
             swatch_canvas = compose(swatch_canvas, swatch_square, swatch_label)
 
@@ -278,8 +279,8 @@ function render_continuous_color_key(colors::Vector{ColorValue},
     end
 
     swatch_canvas = compose(swatch_canvas,
-                            font(theme.minor_label_font),
-                            fontsize(theme.minor_label_font_size),
+                            font(theme.key_label_font),
+                            fontsize(theme.key_label_font_size),
                             stroke(nothing))
 
     title_canvas_pos = theme.guide_title_position == :left ?
@@ -289,7 +290,7 @@ function render_continuous_color_key(colors::Vector{ColorValue},
                            title_canvas)
 
     compose(canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
-                   swatch_canvas.box.height + title_canvas.box.height),
+                   swatch_canvas.box.height + title_canvas.box.height, order=2),
             pad(compose(canvas(), swatch_canvas, title_canvas), 2mm))
 end
 
@@ -338,8 +339,8 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     end
 
     # Key title
-    title_width, title_height = text_extents(theme.major_label_font,
-                                             theme.major_label_font_size,
+    title_width, title_height = text_extents(theme.key_title_font,
+                                             theme.key_title_font_size,
                                              guide_title)
 
     if theme.guide_title_position == :left
@@ -356,9 +357,9 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     title_canvas = compose(canvas(0w, 0h, 1w, title_height + title_padding),
                            title_form,
                            stroke(nothing),
-                           font(theme.major_label_font),
-                           fontsize(theme.major_label_font_size),
-                           fill(theme.major_label_color))
+                           font(theme.key_title_font),
+                           fontsize(theme.key_title_font_size),
+                           fill(theme.key_title_color))
 
     if theme.colorkey_swatch_shape != :circle &&
        theme.colorkey_swatch_shape != :square
@@ -373,7 +374,18 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
                                       title_width, theme)
     end
 
-    {(c, right_guide_position)}
+    position = right_guide_position
+    if theme.key_position == :left
+        position = left_guide_position
+    elseif theme.key_position == :right
+        position = right_guide_position
+    elseif theme.key_position == :top
+        position = top_guide_position
+    elseif theme.key_position == :bottom
+        position = bottom_guide_position
+    end
+
+    {(c, position)}
 end
 
 

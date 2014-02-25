@@ -20,6 +20,7 @@ overrides the default theme's value.
   * `line_width`: Width of lines in the line geometry. (Measure)
   * `panel_fill`: Background color used in the main plot panel. (
     ColorValue or Nothing)
+  * `panel_opacity`: Opacity of the plot background panel. (Float in [0.0, 1.0])
   * `panel_stroke`: Border color of the main plot panel. (ColorValue or
     Nothing)
   * `grid_color`: Color of grid lines. (ColorValue or Nothing)
@@ -34,6 +35,12 @@ overrides the default theme's value.
     labels. (String)
   * `major_label_font_size`: Font size used for major labels. (Measure)
   * `major_label_color`: Color used for major labels. (ColorValue)
+  * `key_title_font`: Font used for titles of keys. (String)
+  * `key_title_font_size`: Font size used for key titles. (Measure)
+  * `key_title_color`: Color used for key titles. (ColorValue)
+  * `key_label_font`: Font used for key entry labels. (String)
+  * `key_label_font_size`: Font size used for key entry labels. (Measure)
+  * `key_label_color`: Color used for key entry labels. (ColorValue)
   * `bar_spacing`: Spacing between bars in `Geom.bar`. (Measure)
   * `boxplot_spacing`: Spacing between boxplots in `Geom.boxplot`. (Measure)
   * `errorbar_cap_length`: Length of caps on error bars. (Measure)

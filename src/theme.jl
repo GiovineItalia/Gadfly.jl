@@ -41,6 +41,9 @@ end
     # Border color of the plot panel.
     panel_stroke,          ColorOrNothing,  color("#f1f1f5")
 
+    # Opacity of the plot background panel.
+    panel_opacity,         Float64,         1.0
+
     # Grid line color.
     grid_color,            ColorOrNothing,  color("#f0f0f3")
 
@@ -64,6 +67,16 @@ end
     point_label_font,      String,          default_font_desc
     point_label_font_size, Measure,         8pt
     point_label_color,     ColorOrNothing,  color("#4c404b")
+
+    # Font name, size and color used for key titles
+    key_title_font,      String,          default_font_desc
+    key_title_font_size, Measure,         11pt
+    key_title_color,     ColorOrNothing,  color("#362a35")
+
+    # Font name, size and color used for key entries.
+    key_label_font,      String,          default_font_desc
+    key_label_font_size, Measure,         9pt
+    key_label_color,     ColorOrNothing,  color("#4c404b")
 
     # Spacing between bars for Geom.bar.
     bar_spacing,           Measure,         0.0mm
@@ -101,6 +114,10 @@ end
 
     # Shape used in color keys for color swatches. Either :square or :circle.
     colorkey_swatch_shape, Symbol,          :square
+
+    # One of :left, :right, :top, :bottom, determining where color keys and the
+    # like should be placed.
+    key_position,          Symbol,          :right
 
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.
