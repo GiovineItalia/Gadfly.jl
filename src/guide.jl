@@ -322,7 +322,8 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
             if !in(color, used_colors)
                 push!(used_colors, color)
                 push!(colors, color)
-                labels[color] = Set{String}([label])
+                labels[color] = Set{String}()
+                push!(labels[color], label)
             else
                 push!(labels[color], label)
             end
