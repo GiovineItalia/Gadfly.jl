@@ -263,8 +263,8 @@ end
 function set_mapped_data!(data::Data, data_source::AbstractDataFrame, k::Symbol, v)
     setfield!(data, k, eval_plot_mapping(data_source, v))
 
-    if typeof(v) <: String
-        data.titles[k] = v
+    if isa(v, String) || isa(v, Symbol)
+        data.titles[k] = string(v)
     else
         data.titles[k] = string(k)
     end
