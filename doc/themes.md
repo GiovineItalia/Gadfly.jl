@@ -35,6 +35,9 @@ overrides the default theme's value.
     labels. (String)
   * `major_label_font_size`: Font size used for major labels. (Measure)
   * `major_label_color`: Color used for major labels. (ColorValue)
+  * `key_position`: Where key should be placed relative to the plot panel. One
+    of `:left`, `:right`, `:top`, `:bottom`, or `:none`. Setting to `:none`
+    disables the key. (Symbol)
   * `key_title_font`: Font used for titles of keys. (String)
   * `key_title_font_size`: Font size used for key titles. (Measure)
   * `key_title_color`: Color used for key titles. (ColorValue)
