@@ -115,8 +115,8 @@ end
     # Shape used in color keys for color swatches. Either :square or :circle.
     colorkey_swatch_shape, Symbol,          :square
 
-    # One of :left, :right, :top, :bottom, determining where color keys and the
-    # like should be placed.
+    # One of :left, :right, :top, :bottom, :none determining where color keys  
+    # and the like should be placed.
     key_position,          Symbol,          :right
 
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
