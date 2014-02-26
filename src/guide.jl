@@ -297,96 +297,101 @@ end
 
 function render(guide::ColorKey, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-    used_colors = Set{ColorValue}()
-    colors = Array(ColorValue, 0) # to preserve ordering
-    labels = Dict{ColorValue, Set{String}}()
+  
+    if theme.key_position == :none
+        return nothing
+    else   
+        used_colors = Set{ColorValue}()
+        colors = Array(ColorValue, 0) # to preserve ordering
+        labels = Dict{ColorValue, Set{String}}()
 
-    continuous_guide = false
-    guide_title = guide.title
+        continuous_guide = false
+        guide_title = guide.title
 
-    for aes in aess
-        if guide_title === nothing && !is(aes.color_key_title, nothing)
-            guide_title = aes.color_key_title
-        end
+        for aes in aess
+            if guide_title === nothing && !is(aes.color_key_title, nothing)
+                guide_title = aes.color_key_title
+            end
 
-        if aes.color_key_colors === nothing
-            continue
-        end
+            if aes.color_key_colors === nothing
+                continue
+            end
 
-        if !is(aes.color_key_continuous, nothing) && aes.color_key_continuous
-            continuous_guide = true
-        end
+            if !is(aes.color_key_continuous, nothing) && aes.color_key_continuous
+                continuous_guide = true
+            end
 
-        color_key_labels = aes.color_label(aes.color_key_colors)
-        for (color, label) in zip(aes.color_key_colors, color_key_labels)
-            if !in(color, used_colors)
-                push!(used_colors, color)
-                push!(colors, color)
-                labels[color] = Set{String}()
-                push!(labels[color], label)
-            else
-                push!(labels[color], label)
+            color_key_labels = aes.color_label(aes.color_key_colors)
+            for (color, label) in zip(aes.color_key_colors, color_key_labels)
+                if !in(color, used_colors)
+                    push!(used_colors, color)
+                    push!(colors, color)
+                    labels[color] = Set{String}()
+                    push!(labels[color], label)
+                else
+                    push!(labels[color], label)
+                end
             end
         end
-    end
 
-    if guide_title === nothing
-        guide_title = "Color"
-    end
+        if guide_title === nothing
+            guide_title = "Color"
+        end
 
-    pretty_labels = Dict{ColorValue, String}()
-    for (color, label) in labels
-        pretty_labels[color] = join(labels[color], ", ")
-    end
+        pretty_labels = Dict{ColorValue, String}()
+        for (color, label) in labels
+            pretty_labels[color] = join(labels[color], ", ")
+        end
 
-    # Key title
-    title_width, title_height = text_extents(theme.key_title_font,
+        # Key title
+        title_width, title_height = text_extents(theme.key_title_font,
                                              theme.key_title_font_size,
                                              guide_title)
 
-    if theme.guide_title_position == :left
-        title_form = text(0.0w, title_height, guide_title, hleft, vbottom)
-    elseif theme.guide_title_position == :center
-        title_form = text(0.5w, title_height, guide_title, hcenter, vbottom)
-    elseif theme.guide_title_position == :right
-        title_form = text(1.0w, title_height, guide_title, hright, vbottom)
-    else
-        error("$(theme.guide_title_position) is not a valid guide title position")
-    end
+        if theme.guide_title_position == :left
+            title_form = text(0.0w, title_height, guide_title, hleft, vbottom)
+        elseif theme.guide_title_position == :center
+            title_form = text(0.5w, title_height, guide_title, hcenter, vbottom)
+        elseif theme.guide_title_position == :right
+            title_form = text(1.0w, title_height, guide_title, hright, vbottom)
+        else
+            error("$(theme.guide_title_position) is not a valid guide title position")
+        end
 
-    title_padding = 2mm
-    title_canvas = compose(canvas(0w, 0h, 1w, title_height + title_padding),
+        title_padding = 2mm
+        title_canvas = compose(canvas(0w, 0h, 1w, title_height + title_padding),
                            title_form,
                            stroke(nothing),
                            font(theme.key_title_font),
                            fontsize(theme.key_title_font_size),
                            fill(theme.key_title_color))
 
-    if theme.colorkey_swatch_shape != :circle &&
-       theme.colorkey_swatch_shape != :square
-        error("$(theme.colorkey_swatch_shape) is not a valid color key swatch shape")
-    end
+        if theme.colorkey_swatch_shape != :circle &&
+        theme.colorkey_swatch_shape != :square
+            error("$(theme.colorkey_swatch_shape) is not a valid color key swatch shape")
+        end
 
-    if continuous_guide
-        c = render_continuous_color_key(colors, pretty_labels, title_canvas,
+        if continuous_guide
+            c = render_continuous_color_key(colors, pretty_labels, title_canvas,
                                         title_width, theme)
-    else
-        c = render_discrete_color_key(colors, pretty_labels, title_canvas,
+        else
+            c = render_discrete_color_key(colors, pretty_labels, title_canvas,
                                       title_width, theme)
-    end
+        end
 
-    position = right_guide_position
-    if theme.key_position == :left
-        position = left_guide_position
-    elseif theme.key_position == :right
         position = right_guide_position
-    elseif theme.key_position == :top
-        position = top_guide_position
-    elseif theme.key_position == :bottom
-        position = bottom_guide_position
-    end
+        if theme.key_position == :left
+            position = left_guide_position
+        elseif theme.key_position == :right
+            position = right_guide_position
+        elseif theme.key_position == :top
+            position = top_guide_position
+        elseif theme.key_position == :bottom
+            position = bottom_guide_position
+        end
 
-    {(c, position)}
+        return {(c, position)}
+    end
 end
 
 
