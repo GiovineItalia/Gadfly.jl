@@ -782,9 +782,9 @@ end
 #end
 
 
-#function writemime(io::IO, ::MIME"text/plain", p::Plot)
-    #write(io, "Plot(...)")
-#end
+function writemime(io::IO, ::MIME"text/plain", p::Plot)
+    write(io, "Plot(...)")
+end
 
 
 include("scale.jl")
