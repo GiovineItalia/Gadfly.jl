@@ -55,6 +55,12 @@ plot(dataset("vcd", "Suicide"), xgroup="Sex", ygroup="Method", x="Age", y="Freq"
      Geom.subplot_grid(Geom.bar))
 ```
 
+We can use ```Geom.subplot_grid``` to plot multiple variables on the same horizontal axis:
 
-
-
+```julia
+using DataFrames
+iris = dataset("datasets", "iris")
+irislong = stack(iris, [:SepalWidth, :PetalLength, :PetalWidth])
+set_default_plot_size(14cm, 25cm)
+plot(irislong, ygroup="variable", x="SepalLength", y="value", Geom.subplot_grid(Geom.point, free_y_axis=true))
+```
