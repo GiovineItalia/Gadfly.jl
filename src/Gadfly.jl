@@ -809,6 +809,7 @@ const default_aes_scales = {
                        :xgroup     => Scale.xgroup(),
                        :ygroup     => Scale.ygroup(),
                        :color      => Scale.continuous_color(),
+                       :opacity    => Scale.opacity_continuous(),
                        :label      => Scale.label(),
                        :size       => Scale.size_continuous()},
         :categorical => {:x          => Scale.x_discrete(),

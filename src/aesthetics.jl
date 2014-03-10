@@ -15,6 +15,7 @@ typealias NumericalAesthetic
     y,            NumericalOrCategoricalAesthetic
     size,         Maybe(Vector{Measure})
     color,        Maybe(AbstractDataVector{ColorValue})
+    opacity,      NumericalAesthetic
     label,        CategoricalAesthetic
 
     xmin,         NumericalAesthetic
@@ -79,6 +80,7 @@ end
 # Alternate aesthetic names
 const aesthetic_aliases =
     [:colour        => :color,
+     :alpha         => :opacity,
      :x_min         => :xmin,
      :x_max         => :xmax,
      :y_min         => :ymin,

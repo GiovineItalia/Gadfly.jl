@@ -24,6 +24,7 @@
     xsize
     ysize
     color
+    opacity
     label
     titles, Dict{Symbol, String}, Dict{Symbol, String}()
 end
