@@ -733,6 +733,7 @@ end
 # A convenience version of Compose.draw that let's you skip the call to render.
 draw(backend::Compose.Backend, p::Plot) = draw(backend, render(p))
 
+
 # Convenience stacking functions
 vstack(ps::Plot...) = vstack([render(p) for p in ps]...)
 vstack(ps::Vector{Plot}) = vstack([render(p) for p in ps]...)

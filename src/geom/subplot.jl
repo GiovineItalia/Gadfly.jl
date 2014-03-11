@@ -102,17 +102,6 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     aes_grid = Gadfly.aes_by_xy_group(superplot_aes)
     n, m = size(aes_grid)
 
-    # if we want to share any information across subplots (i.e. axisi, tick
-    # marks), we need to apply statistics on the joint aesthetics.
-    geom_stats = Gadfly.StatisticElement[]
-    if !geom.free_x_axis
-        push!(geom_stats, Stat.xticks())
-    end
-
-    if !geom.free_y_axis
-        push!(geom_stats, Stat.yticks())
-    end
-
     coord = Coord.cartesian()
     scales = Dict{Symbol, Gadfly.ScaleElement}()
     plot_stats = Gadfly.StatisticElement[stat for stat in geom.statistics]
@@ -138,8 +127,40 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     # apply geom-wide statistics
     geom_aes = cat(aes_grid...)
+    geom_stats = Gadfly.StatisticElement[]
+
+    if !geom.free_x_axis
+        push!(geom_stats, Stat.xticks())
+    end
+
+    if !geom.free_y_axis
+        push!(geom_stats, Stat.yticks())
+    end
 
     Stat.apply_statistics(geom_stats, scales, coord, geom_aes)
+
+
+    # if either axis is on a free scale, we need to apply row/column-wise
+    # tick statistics.
+    if (geom.free_x_axis)
+        for j in 1:m
+            col_aes = cat([aes_grid[i, j] for i in 1:n]...)
+            Stat.apply_statistic(Stat.xticks(), scales, coord, col_aes)
+            for i in 1:n
+                aes_grid[i, j] = cat(aes_grid[i, j], col_aes)
+            end
+        end
+    end
+
+    if (geom.free_y_axis)
+        for i in 1:n
+            row_aes = cat([aes_grid[i, j] for j in 1:m]...)
+            Stat.apply_statistic(Stat.yticks(), scales, coord, row_aes)
+            for j in 1:m
+                aes_grid[i, j] = cat(aes_grid[i, j], row_aes)
+            end
+        end
+    end
 
     for i in 1:n, j in 1:m
         Gadfly.inherit!(aes_grid[i, j], geom_aes)
