@@ -68,7 +68,7 @@ If no plot elements are defined, point geometry is added by default. The point
 geometry takes as input the `x` and `y` aesthetics. So all that's needed to draw
 a scatterplot is to bind `x` and `y`.
 
-```{.julia hide="true")
+```{.julia hide="true"}
 srand(12345)
 ```
 
