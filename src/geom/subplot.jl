@@ -106,11 +106,11 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     # marks), we need to apply statistics on the joint aesthetics.
     geom_stats = Gadfly.StatisticElement[]
     if !geom.free_x_axis
-        push!(geom_stats, Stat.xticks)
+        push!(geom_stats, Stat.xticks())
     end
 
     if !geom.free_y_axis
-        push!(geom_stats, Stat.yticks)
+        push!(geom_stats, Stat.yticks())
     end
 
     coord = Coord.cartesian()

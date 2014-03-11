@@ -297,10 +297,10 @@ end
 
 function render(guide::ColorKey, theme::Gadfly.Theme,
                 aess::Vector{Gadfly.Aesthetics})
-  
+
     if theme.key_position == :none
         return nothing
-    else   
+    else
         used_colors = Set{ColorValue}()
         colors = Array(ColorValue, 0) # to preserve ordering
         labels = Dict{ColorValue, Set{String}}()
@@ -409,11 +409,7 @@ const xticks = XTicks
 
 
 function default_statistic(guide::XTicks)
-    if guide.ticks === nothing
-        Stat.xticks
-    else
-        Stat.identity()
-    end
+    Stat.xticks(guide.ticks)
 end
 
 
@@ -422,34 +418,15 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     ticks = Dict()
     grids = Set()
 
-    if guide.ticks === nothing
-        for aes in aess
-            if Gadfly.issomething(aes.xtick)
-                for (val, label) in zip(aes.xtick, aes.xtick_label(aes.xtick))
-                    ticks[val] = label
-                end
-            end
-
-            if Gadfly.issomething(aes.xgrid)
-                for val in aes.xgrid
-                    push!(grids, val)
-                end
-            end
-        end
-    else
-        xtick_label = nothing
-        for aes in aess
-            if aes.xtick_label != nothing
-                xtick_label = aes.xtick_label
-            end
-        end
-        if xtick_label === nothing
-            xtick_label = (xs...) -> [string(x) for x in xs]
-        end
-
-        for tick in guide.ticks
-            for (val, label) in zip(guide.ticks, xtick_label(guide.ticks))
+    for aes in aess
+        if Gadfly.issomething(aes.xtick)
+            for (val, label) in zip(aes.xtick, aes.xtick_label(aes.xtick))
                 ticks[val] = label
+            end
+        end
+
+        if Gadfly.issomething(aes.xgrid)
+            for val in aes.xgrid
                 push!(grids, val)
             end
         end
@@ -523,7 +500,7 @@ const yticks = YTicks
 
 
 function default_statistic(guide::YTicks)
-    Stat.yticks
+    Stat.yticks(guide.ticks)
 end
 
 
@@ -532,34 +509,15 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     ticks = Dict()
     grids = Set()
 
-    if guide.ticks === nothing
-        for aes in aess
-            if Gadfly.issomething(aes.ytick)
-                for (val, label) in zip(aes.ytick, aes.ytick_label(aes.ytick))
-                    ticks[val] = label
-                end
-            end
-
-            if Gadfly.issomething(aes.ygrid)
-                for val in aes.ygrid
-                    push!(grids, val)
-                end
-            end
-        end
-    else
-        ytick_label = nothing
-        for aes in aess
-            if aes.ytick_label != nothing
-                ytick_label = aes.ytick_label
-            end
-        end
-        if ytick_label === nothing
-            ytick_label = (ys...) -> [string(y) for y in ys]
-        end
-
-        for tick in guide.ticks
-            for (val, label) in zip(guide.ticks, ytick_label(guide.ticks))
+    for aes in aess
+        if Gadfly.issomething(aes.ytick)
+            for (val, label) in zip(aes.ytick, aes.ytick_label(aes.ytick))
                 ticks[val] = label
+            end
+        end
+
+        if Gadfly.issomething(aes.ygrid)
+            for val in aes.ygrid
                 push!(grids, val)
             end
         end
@@ -598,7 +556,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     texts = Array(Canvas, length(ticks))
     for (i, (tick, label)) in enumerate(ticks)
         txt = text(width - padding, tick, label, hright, vcenter)
-        if viewmin <= tick <= viewmax
+        if (viewmin != nothing && viewmax != nothing) && viewmin <= tick <= viewmax
             texts[i] = compose(canvas(units_inherited=true), txt)
         else
             texts[i] = compose(canvas(units_inherited=true, d3only=true), txt,

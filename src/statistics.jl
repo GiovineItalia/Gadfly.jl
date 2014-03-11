@@ -415,13 +415,23 @@ end
 immutable TickStatistic <: Gadfly.StatisticElement
     in_vars::Vector{Symbol}
     out_var::String
+
+    # fixed ticks, or nothing
+    ticks::Union(Nothing, AbstractArray)
 end
 
 
-const xticks = TickStatistic([:x, :xmin, :xmax, :xdrawmin, :xdrawmax], "x")
-const yticks = TickStatistic(
-    [:y, :ymin, :ymax, :middle, :lower_hinge, :upper_hinge,
-     :lower_fence, :upper_fence, :ydrawmin, :ydrawmax], "y")
+function xticks(ticks::Union(Nothing, AbstractArray)=nothing)
+    TickStatistic([:x, :xmin, :xmax, :xdrawmin, :xdrawmax], "x", ticks)
+end
+
+
+function yticks(ticks::Union(Nothing, AbstractArray)=nothing)
+    TickStatistic(
+        [:y, :ymin, :ymax, :middle, :lower_hinge, :upper_hinge,
+         :lower_fence, :upper_fence, :ydrawmin, :ydrawmax], "y", ticks)
+end
+
 
 
 # Apply a tick statistic.
@@ -511,6 +521,11 @@ function apply_statistic(stat::TickStatistic,
         categorical = true
     end
 
+    # consider forced tick marks
+    if stat.ticks != nothing
+        minval = min(minval, minimum(stat.ticks))
+        maxval = max(maxval, maximum(stat.ticks))
+    end
 
     # TODO: handle the outliers aesthetic
 
@@ -553,7 +568,11 @@ function apply_statistic(stat::TickStatistic,
     end
 
     # all the input values in order.
-    if categorical
+    if stat.ticks != nothing
+        grids = ticks = stat.ticks
+        viewmin = minval
+        viewmax = maxval
+    elseif categorical
         ticks = Set()
         for val in in_values
             push!(ticks, val)
