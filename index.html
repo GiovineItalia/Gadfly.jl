@@ -8339,7 +8339,7 @@ draw(PNG(<span class="st">&quot;myplot.png&quot;</span>, <span class="fl">12</sp
 <p>Rendering to Javascript is easy enough:</p>
 <pre class="sourceCode julia julia" execute="false"><code class="sourceCode julia">draw(D3(<span class="st">&quot;plot.js&quot;</span>, <span class="fl">6</span>inch, <span class="fl">6</span>inch), p)</code></pre>
 <p>Before the output can be included, you must include the d3 and gadfly javascript libraries. The necessary include for Gadfly is &quot;gadfly.js&quot; which lives in the src directory (which you can find by running <code>joinpath(Pkg.dir(&quot;Gadfly&quot;), &quot;src&quot;, &quot;gadfly.js&quot;)</code> in julia).</p>
-<p>D3 can be downloaded from <a href="http://d3js.org/d3.v3.zip">here</a>.</p>
+<p>D3 can be downloaded from <a href="http://github.com/mbostock/d3/zipball/master">here</a>.</p>
 <p>Now the output can be included in an HTML page like:</p>
 <pre class="sourceCode julia html" execute="false"><code class="sourceCode julia">&lt;script src=<span class="st">&quot;d3.min.js&quot;</span>&gt;&lt;/script&gt;
 &lt;script src=<span class="st">&quot;gadfly.js&quot;</span>&gt;&lt;/script&gt;
