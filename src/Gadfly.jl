@@ -80,7 +80,7 @@ typealias ElementOrFunction{T <: Element} Union(Element, Base.Callable, Theme)
 # Prepare the display backend (ijuila, in particular) to show plots rendered on
 # the d3 backend.
 
-const gadfly_js = readall(joinpath(Pkg.dir("Gadfly"), "src", "gadfly.js"))
+const gadfly_js = readall(joinpath(dirname(Base.source_path()), "gadfly.js"))
 
 
 function prepare_display(d::Display)
