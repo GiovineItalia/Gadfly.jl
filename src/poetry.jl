@@ -79,6 +79,14 @@ function plot(fs::Array, a, b, elements::ElementOrFunction...; mapping...)
     for (k, v) in mapping
         mappingdict[k] = v
     end
+
+    if b < a
+        if isempty(elements)
+            elements = ElementOrFunction[]
+        end
+        push!(elements, Coord.cartesian(xflip=true))
+    end
+
     plot(df, mappingdict, Geom.line, elements...)
 end
 
