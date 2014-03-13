@@ -731,7 +731,9 @@ end
 
 
 # A convenience version of Compose.draw that let's you skip the call to render.
-draw(backend::Compose.Backend, p::Plot) = draw(backend, render(p))
+function draw(backend::Compose.Backend, p::Plot)
+    draw(backend, render(p))
+end
 
 
 # Convenience stacking functions

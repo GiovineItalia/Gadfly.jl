@@ -13,7 +13,14 @@
 #  A data frame with "x" and "f(x)" columns.
 #
 function evalfunc(f::Function, a, b, n)
-    xs = [x for x in a:(b - a)/n:b]
+    @assert n > 1
+
+    step = (b - a) / (n - 1)
+    xs = Array(typeof(a + step), n)
+    for i in 1:n
+        xs[i] = a + (i-1) * step
+    end
+
     df = DataFrame(xs, map(f, xs))
     # NOTE: 'colnames!' is the older deprecated name. 'names!' was also defined
     # but threw an error.
