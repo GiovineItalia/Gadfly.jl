@@ -12,6 +12,11 @@ Draw multiple subplots in a grid orginized by one or two categorial vectors.
 
   * `xgroup` (optional): Arrange subplots on the X-axis by categorial data.
   * `ygroup` (optional): Arrange subplots on the Y-axis by categorial data.
+  * `free_y_axis` (optional): Whether the y-axis scales can differ across 
+  the subplots. Defaults to `false`. If `true`, scales are set appropriately for individual subplots.
+  * `free_x_axis` (optional): Whether the x-axis scales can differ across 
+  the subplots. Defaults to `false`. If `true`, scales are set appropriately for individual subplots.
+
 
 One or both of `xgroup` or `ygroup` must be bound. If only one, a single column
 or row of subplots is drawn, if both, a grid.
@@ -55,6 +60,26 @@ plot(dataset("vcd", "Suicide"), xgroup="Sex", ygroup="Method", x="Age", y="Freq"
      Geom.subplot_grid(Geom.bar))
 ```
 
+## Free/fixed scales:
 
+```{.julia results="none"}
+using DataFrames
+set_default_plot_size(8cm, 12cm)
+
+widedf = DataFrame(x = [1:10], var1 = [1:10], var2 = [1:10].^2)
+longdf = stack(widedf, [:var1, :var2])
+```
+
+Default behavior is for the axes' sclaes to be fixed across the subplots:
+
+```julia
+plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point))
+```
+
+We can change this default behavior where appropriate:
+
+```julia
+plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point, free_y_axis=true))
+```
 
 
