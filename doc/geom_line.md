@@ -11,6 +11,7 @@ order: 1007
   * `x`: X-axis position.
   * `y`: Y-axis position.
   * `color` (optional): Group categorically by color.
+  * `preserve_order` (optional): If `false` (default), data points on the line are connected in the order determined by `x`. If `true`, they are connected in the order in which they are given.	
 
 
 # Arguments
@@ -36,5 +37,15 @@ plot(dataset("lattice", "melanoma"), x="Year", y="Incidence", Geom.line)
 
 ```julia
 plot(dataset("Zelig", "approval"), x="Month",  y="Approve", color="Year", Geom.line)
+```
+
+We can use `preserve_order=true` to draw paths. Here's a random walk:
+
+```julia
+n = 500
+srand(1234)
+xjumps = rand(n)-.5
+yjumps = rand(n)-.5
+plot(x=cumsum(xjumps),y=cumsum(yjumps),Geom.line(preserve_order=true))
 ```
 
