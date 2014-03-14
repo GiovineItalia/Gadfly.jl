@@ -70,7 +70,7 @@ widedf = DataFrame(x = [1:10], var1 = [1:10], var2 = [1:10].^2)
 longdf = stack(widedf, [:var1, :var2])
 ```
 
-Default behavior is for the axes' sclaes to be fixed across the subplots:
+Default behavior is for the axes' scales to be fixed across the subplots:
 
 ```julia
 plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point))
