@@ -11,8 +11,6 @@ order: 1007
   * `x`: X-axis position.
   * `y`: Y-axis position.
   * `color` (optional): Group categorically by color.
-  * `preserve_order` (optional): If `false` (default), data points on the line are connected in the order determined by `x`. If `true`, they trace out a path in the order in which they are given.	
-
 
 # Arguments
 
