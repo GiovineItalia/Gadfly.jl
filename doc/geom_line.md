@@ -39,7 +39,7 @@ plot(dataset("lattice", "melanoma"), x="Year", y="Incidence", Geom.line)
 plot(dataset("Zelig", "approval"), x="Month",  y="Approve", color="Year", Geom.line)
 ```
 
-We can use `preserve_order=true` to draw paths. Here's a random walk:
+We can use `preserve_order=true` to draw paths. Here's a random walk in 2D:
 
 ```julia
 n = 500
