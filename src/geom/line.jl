@@ -15,6 +15,11 @@ end
 
 const line = LineGeometry
 
+# Only allowing identity statistic in paths b/c I don't think any 
+# any of the others will work with `preserve_order=true` right now
+function path() 
+    return LineGeometry(preserve_order=true)
+end
 
 function density()
     return LineGeometry(Gadfly.Stat.density())
