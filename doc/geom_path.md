@@ -5,7 +5,7 @@ part: Geometry
 order: 1015
 ...
 
- Draw lines between points in the order they appear in the data.
+Draw lines between points in the order they appear in the data. This is `Geom.line(preserve_order=true)`.
 
 # Aesthetics
 
