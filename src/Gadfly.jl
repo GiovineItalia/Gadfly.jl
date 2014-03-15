@@ -643,7 +643,11 @@ function render(plot::Plot)
     end
 
     # IIb. Plot-wise Statistics
-    plot_aes = cat(layer_aess...)
+    plot_aes = Gadfly.Aesthetics()
+    for (k, v) in plot.mapping
+        setfield!(plot_aes, k, v)
+    end
+
     statistics = collect(statistics)
     Stat.apply_statistics(statistics, scales, plot.coord, plot_aes)
 
