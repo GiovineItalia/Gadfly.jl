@@ -12,12 +12,12 @@ order: 1007
   * `y`: Y-axis position.
   * `color` (optional): Group categorically by color.
 
-
 # Arguments
 
   * `preserve_order`: Default behavior for `Geom.line` is to draw lines between
     points in order along the x-axis. If this option is true, lines will be
-    drawn between points in the order they appear in the data.
+    drawn between points in the order they appear in the data. `Geom.path()` is 
+    `Geom.line(preserve_order=true)`.
 
 
 # Examples
@@ -37,4 +37,3 @@ plot(dataset("lattice", "melanoma"), x="Year", y="Incidence", Geom.line)
 ```julia
 plot(dataset("Zelig", "approval"), x="Month",  y="Approve", color="Year", Geom.line)
 ```
-
