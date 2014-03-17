@@ -344,7 +344,6 @@ function plot(data_source::AbstractDataFrame, elements::ElementOrFunction...; ma
     p = Plot()
     p.mapping = clean_mapping(mapping)
     p.data_source = data_source
-    valid_aesthetics = set(names(Aesthetics))
     for (k, v) in p.mapping
         set_mapped_data!(p.data, data_source, k, v)
     end
@@ -553,7 +552,7 @@ function render(plot::Plot)
 
     statistics = Set{StatisticElement}()
     for statistic in plot.statistics
-        push!(statistic)
+        push!(statistics, statistic)
     end
 
     # Default guides and statistics
@@ -643,11 +642,7 @@ function render(plot::Plot)
     end
 
     # IIb. Plot-wise Statistics
-    plot_aes = Gadfly.Aesthetics()
-    for (k, v) in plot.mapping
-        setfield!(plot_aes, k, v)
-    end
-
+    plot_aes = cat(layer_aess...)
     statistics = collect(statistics)
     Stat.apply_statistics(statistics, scales, plot.coord, plot_aes)
 
