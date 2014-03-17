@@ -130,14 +130,6 @@ function has{T,N}(xs::AbstractArray{T,N}, y::T)
     return false
 end
 
-
-function push!{T}(xs::Vector{T}, ys::T...)
-    for y in ys
-        push!(xs, y)
-    end
-end
-
-
 Maybe(T) = Union(T, Nothing)
 
 
