@@ -34,7 +34,7 @@ const background = PanelBackground
 
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
-                aess::Vector{Gadfly.Aesthetics})
+                aes::Gadfly.Aesthetics)
     back = compose(canvas(order=-1),
                    rectangle(),
                    svgclass("guide background"),
@@ -53,7 +53,7 @@ const zoomslider = ZoomSlider
 
 
 function render(guide::ZoomSlider, theme::Gadfly.Theme,
-                aess::Vector{Gadfly.Aesthetics})
+                aes::Gadfly.Aesthetics)
 
     edge_pad = 3mm
     slide_pad = 0.5mm
@@ -296,7 +296,7 @@ end
 
 
 function render(guide::ColorKey, theme::Gadfly.Theme,
-                aess::Vector{Gadfly.Aesthetics})
+                aes::Gadfly.Aesthetics)
 
     if theme.key_position == :none
         return nothing
@@ -308,29 +308,25 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         continuous_guide = false
         guide_title = guide.title
 
-        for aes in aess
-            if guide_title === nothing && !is(aes.color_key_title, nothing)
-                guide_title = aes.color_key_title
-            end
+        if guide_title === nothing && !is(aes.color_key_title, nothing)
+            guide_title = aes.color_key_title
+        end
 
-            if aes.color_key_colors === nothing
-                continue
-            end
+        if aes.color_key_colors != nothing &&
+           aes.color_key_continuous != nothing &&
+           aes.color_key_continuous
+            continuous_guide = true
+        end
 
-            if !is(aes.color_key_continuous, nothing) && aes.color_key_continuous
-                continuous_guide = true
-            end
-
-            color_key_labels = aes.color_label(aes.color_key_colors)
-            for (color, label) in zip(aes.color_key_colors, color_key_labels)
-                if !in(color, used_colors)
-                    push!(used_colors, color)
-                    push!(colors, color)
-                    labels[color] = Set{String}()
-                    push!(labels[color], label)
-                else
-                    push!(labels[color], label)
-                end
+        color_key_labels = aes.color_label(aes.color_key_colors)
+        for (color, label) in zip(aes.color_key_colors, color_key_labels)
+            if !in(color, used_colors)
+                push!(used_colors, color)
+                push!(colors, color)
+                labels[color] = Set{String}()
+                push!(labels[color], label)
+            else
+                push!(labels[color], label)
             end
         end
 
@@ -414,34 +410,30 @@ end
 
 
 function render(guide::XTicks, theme::Gadfly.Theme,
-                aess::Vector{Gadfly.Aesthetics})
+                aes::Gadfly.Aesthetics)
     ticks = Dict()
     grids = Set()
 
-    for aes in aess
-        if Gadfly.issomething(aes.xtick)
-            for (val, label) in zip(aes.xtick, aes.xtick_label(aes.xtick))
-                ticks[val] = label
-            end
+    if Gadfly.issomething(aes.xtick)
+        for (val, label) in zip(aes.xtick, aes.xtick_label(aes.xtick))
+            ticks[val] = label
         end
+    end
 
-        if Gadfly.issomething(aes.xgrid)
-            for val in aes.xgrid
-                push!(grids, val)
-            end
+    if Gadfly.issomething(aes.xgrid)
+        for val in aes.xgrid
+            push!(grids, val)
         end
     end
 
     viewmin, viewmax = nothing, nothing
-    for aes in aess
-        if (viewmin != nothing && aes.xviewmin != nothing && aes.xviewmin < viewmin) ||
-           (viewmin == nothing && aes.xviewmin != nothing)
-            viewmin = aes.xviewmin
-        end
-        if (viewmax != nothing && aes.xviewmax != nothing && aes.xviewmax > viewmax) ||
-           (viewmax == nothing && aes.xviewmax != nothing)
-            viewmax = aes.xviewmax
-        end
+    if (viewmin != nothing && aes.xviewmin != nothing && aes.xviewmin < viewmin) ||
+       (viewmin == nothing && aes.xviewmin != nothing)
+        viewmin = aes.xviewmin
+    end
+    if (viewmax != nothing && aes.xviewmax != nothing && aes.xviewmax > viewmax) ||
+       (viewmax == nothing && aes.xviewmax != nothing)
+        viewmax = aes.xviewmax
     end
 
     # grid lines
@@ -505,34 +497,30 @@ end
 
 
 function render(guide::YTicks, theme::Gadfly.Theme,
-                aess::Vector{Gadfly.Aesthetics})
+                aes::Gadfly.Aesthetics)
     ticks = Dict()
     grids = Set()
 
-    for aes in aess
-        if Gadfly.issomething(aes.ytick)
-            for (val, label) in zip(aes.ytick, aes.ytick_label(aes.ytick))
-                ticks[val] = label
-            end
+    if Gadfly.issomething(aes.ytick)
+        for (val, label) in zip(aes.ytick, aes.ytick_label(aes.ytick))
+            ticks[val] = label
         end
+    end
 
-        if Gadfly.issomething(aes.ygrid)
-            for val in aes.ygrid
-                push!(grids, val)
-            end
+    if Gadfly.issomething(aes.ygrid)
+        for val in aes.ygrid
+            push!(grids, val)
         end
     end
 
     viewmin, viewmax = nothing, nothing
-    for aes in aess
-        if (viewmin != nothing && aes.yviewmin != nothing && aes.yviewmin < viewmin) ||
-           (viewmin == nothing && aes.yviewmin != nothing)
-            viewmin = aes.yviewmin
-        end
-        if (viewmax != nothing && aes.yviewmax != nothing && aes.yviewmax > viewmax) ||
-           (viewmax == nothing && aes.yviewmax != nothing)
-            viewmax = aes.yviewmax
-        end
+    if (viewmin != nothing && aes.yviewmin != nothing && aes.yviewmin < viewmin) ||
+       (viewmin == nothing && aes.yviewmin != nothing)
+        viewmin = aes.yviewmin
+    end
+    if (viewmax != nothing && aes.yviewmax != nothing && aes.yviewmax > viewmax) ||
+       (viewmax == nothing && aes.yviewmax != nothing)
+        viewmax = aes.yviewmax
     end
 
     # grid lines
@@ -586,7 +574,7 @@ const xlabel = XLabel
 
 
 function render(guide::XLabel, theme::Gadfly.Theme,
-                aess::Vector{Gadfly.Aesthetics})
+                aes::Gadfly.Aesthetics)
     if guide.label === nothing || isempty(guide.label)
         return nothing
     end
@@ -614,7 +602,7 @@ end
 
 const ylabel = YLabel
 
-function render(guide::YLabel, theme::Gadfly.Theme, aess::Vector{Gadfly.Aesthetics})
+function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     if guide.label === nothing || isempty(guide.label)
         return nothing
     end
@@ -642,7 +630,7 @@ end
 const title = Title
 
 function render(guide::Title, theme::Gadfly.Theme,
-                aess::Vector{Gadfly.Aesthetics})
+                aes::Gadfly.Aesthetics)
     if guide.label === nothing || isempty(guide.label)
         return nothing
     end

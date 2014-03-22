@@ -693,11 +693,6 @@ function render_prepared(plot::Plot,
     # III. Coordinates
     plot_canvas = Coord.apply_coordinate(plot.coord, plot_aes, layer_aess...)
 
-    # Now that coordinates are set, layer aesthetics inherit plot aesthetics.
-    for aes in layer_aess
-        inherit!(aes, plot_aes)
-    end
-
     # IV. Geometries
     themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
                    for layer in plot.layers]
@@ -708,7 +703,7 @@ function render_prepared(plot::Plot,
     # V. Guides
     guide_canvases = {}
     for guide in guides
-        guide_canvas = render(guide, plot.theme, layer_aess)
+        guide_canvas = render(guide, plot.theme, plot_aes)
         if guide_canvas != nothing
             append!(guide_canvases, guide_canvas)
         end

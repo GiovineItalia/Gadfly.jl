@@ -61,7 +61,8 @@ tests = [
     ("hexbin",                                6inch, 3inch),
     ("spy",                                   6inch, 3inch),
     ("issue177",                              6inch, 3inch),
-    ("ribbon",                                6inch, 3inch)
+    ("ribbon",                                6inch, 3inch),
+    ("layer_leak",                            6inch, 3inch)
 ]
 
 
