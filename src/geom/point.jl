@@ -8,7 +8,7 @@ const point = PointGeometry
 
 
 function element_aesthetics(::PointGeometry)
-    [:x, :y, :size, :color]
+    [:x, :y, :size, :color, :opacity]
 end
 
 
@@ -29,6 +29,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
+    default_aes.opacity = Float64[theme.default_point_opacity]
     default_aes.size = Measure[theme.default_point_size]
     aes = inherit(aes, default_aes)
 
@@ -36,6 +37,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     lw_ratio = theme.line_width / aes.size[1]
     compose(circle(aes.x, aes.y, aes.size),
             fill(aes.color),
+            opacity(aes.opacity),
             stroke([theme.highlight_color(c) for c in aes.color]),
             linewidth(theme.line_width),
             d3embed(@sprintf(".on(\"mouseover\", geom_point_mouseover(%0.2f, %0.2f), false)",

@@ -29,6 +29,9 @@ end
     # is used.
     default_color,         ColorOrNothing,  LCHab(70, 60, 240)
 
+    # Default point opacity when the opacity aesthetic is not mapped.
+    default_point_opacity, Float64,         1.0
+
     # Default size when the size aesthetic is not mapped.
     default_point_size,    Measure,         0.6mm
 
