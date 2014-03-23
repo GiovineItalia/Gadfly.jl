@@ -69,7 +69,6 @@ include("varset.jl")
 include("theme.jl")
 include("aesthetics.jl")
 include("data.jl")
-include("weave.jl")
 
 
 # The layer and plot functions can also take functions that are evaluated with
