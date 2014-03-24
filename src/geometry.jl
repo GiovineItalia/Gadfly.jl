@@ -10,7 +10,7 @@ import Compose.combine # Prevent DataFrame.combine from taking over.
 import Gadfly: render, element_aesthetics, inherit, escape_id,
                default_statistic, setfield!, set
 import Iterators
-import Iterators: cycle, product, distinct, take, chain
+import Iterators: cycle, product, distinct, take, chain, repeated
 
 
 # Geometry that renders nothing.

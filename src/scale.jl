@@ -143,7 +143,8 @@ end
 
 
 const x_vars = [:x, :xmin, :xmax, :xintercept]
-const y_vars = [:y, :ymin, :ymax, :yintercept]
+const y_vars = [:y, :ymin, :ymax, :yintercept, :middle,
+                :upper_fence, :lower_fence, :upper_hinge, :lower_hinge]
 
 function continuous_scale_partial(vars::Vector{Symbol},
                                   trans::ContinuousScaleTransform)

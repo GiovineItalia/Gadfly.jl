@@ -10,6 +10,11 @@
     ymax
     xintercept
     yintercept
+    middle
+    lower_hinge
+    upper_hinge
+    lower_fence
+    upper_fence
     xgroup
     ygroup
     xtick

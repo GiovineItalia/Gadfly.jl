@@ -642,7 +642,22 @@ function apply_statistic(stat::BoxplotStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    Gadfly.assert_aesthetics_defined("BoxplotStatistic", aes, :y)
+    if aes.y === nothing
+        Gadfly.assert_aesthetics_defined("BoxplotStatistic", aes,
+            :x, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence)
+
+        aes_color = aes.color === nothing ? [nothing] : aes.color
+        groups = Set()
+        for (x, c) in zip(aes.x, cycle(aes_color))
+            push!(groups, (x, c))
+        end
+        aes.x = PooledDataArray(Int64[x for (x, c) in groups])
+        if !is(aes.color, nothing)
+            aes.color = PooledDataArray(ColorValue[c for (x, c) in groups],
+                                        levels(aes.color))
+        end
+        return
+    end
 
     groups = Dict()
 
@@ -657,28 +672,30 @@ function apply_statistic(stat::BoxplotStatistic,
         push!(groups[(x, c)], y)
     end
 
-    m = length(groups)
-    aes.middle = Array(T, m)
-    aes.lower_hinge = Array(T, m)
-    aes.upper_hinge = Array(T, m)
-    aes.lower_fence = Array(T, m)
-    aes.upper_fence = Array(T, m)
-    aes.outliers = Vector{T}[]
+    if aes.y != nothing
+        m = length(groups)
+        aes.middle = Array(T, m)
+        aes.lower_hinge = Array(T, m)
+        aes.upper_hinge = Array(T, m)
+        aes.lower_fence = Array(T, m)
+        aes.upper_fence = Array(T, m)
+        aes.outliers = Vector{T}[]
 
-    for (i, ((x, c), ys)) in enumerate(groups)
-        sort!(ys)
-        aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
-                quantile!(ys, [0.25, 0.5, 0.75])
-        iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
+        for (i, ((x, c), ys)) in enumerate(groups)
+            sort!(ys)
+            aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
+                    quantile!(ys, [0.25, 0.5, 0.75])
+            iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
 
-        idx = searchsortedfirst(ys, aes.lower_hinge[i] - 1.5iqr)
-        aes.lower_fence[i] = ys[idx]
+            idx = searchsortedfirst(ys, aes.lower_hinge[i] - 1.5iqr)
+            aes.lower_fence[i] = ys[idx]
 
-        idx = searchsortedlast(ys, aes.upper_hinge[i] + 1.5iqr)
-        aes.upper_fence[i] = ys[idx]
+            idx = searchsortedlast(ys, aes.upper_hinge[i] + 1.5iqr)
+            aes.upper_fence[i] = ys[idx]
 
-        push!(aes.outliers,
-             filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
+            push!(aes.outliers,
+                 filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
+        end
     end
 
     if !is(aes.x, nothing)

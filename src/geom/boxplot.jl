@@ -5,15 +5,18 @@ end
 
 const boxplot = BoxplotGeometry
 
-element_aesthetics(::BoxplotGeometry) = [:x, :y, :color]
+element_aesthetics(::BoxplotGeometry) = [:x, :y, :color,
+                                         :middle,
+                                         :upper_fence, :lower_fence,
+                                         :upper_hinge, :lower_hinge]
 
 default_statistic(::BoxplotGeometry) = Gadfly.Stat.boxplot()
 
 function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.bar", aes,
-                                     :lower_fence, :lower_hinge, :middle,
-                                     :upper_hinge, :upper_fence, :outliers)
+                                     :lower_fence, :lower_hinge,
+                                     :upper_hinge, :upper_fence,)
     Gadfly.assert_aesthetics_equal_length("Geom.bar", aes,
                                      :lower_fence, :lower_hinge, :middle,
                                      :upper_hinge, :upper_fence, :outliers)
@@ -25,10 +28,10 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
 
     aes_iter = zip(aes.lower_fence,
                    aes.lower_hinge,
-                   aes.middle,
+                   aes.middle === nothing ? repeated(nothing) : aes.middle,
                    aes.upper_hinge,
                    aes.upper_fence,
-                   aes.outliers,
+                   aes.outliers === nothing ? repeated(nothing) : aes.outliers,
                    cycle(aes.x),
                    cycle(aes.color.refs))
 
@@ -46,8 +49,10 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
         mc = theme.middle_color(c) # middle color
 
         # Middle
-        push!(middle_forms, compose(lines((x - 1/6, mid), (x + 1/6, mid)),
-                                    linewidth(theme.middle_width), stroke(mc)))
+        if mid != nothing
+            push!(middle_forms, compose(lines((x - 1/6, mid), (x + 1/6, mid)),
+                                        linewidth(theme.middle_width), stroke(mc)))
+        end
 
         # Box
         push!(forms, compose(rectangle(x*cx - bw/2, lh, bw, uh - lh),
@@ -69,7 +74,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                             linewidth(theme.line_width), stroke(sc)))
 
         # Outliers
-        if !isempty(outliers)
+        if outliers != nothing && !isempty(outliers)
             push!(forms, compose(combine([circle(x, y, r) for y in outliers]...),
                                 fill(c), stroke(sc)))
         end
