@@ -25,9 +25,9 @@ function evalfunc(f::Function, a, b, n)
     # NOTE: 'colnames!' is the older deprecated name. 'names!' was also defined
     # but threw an error.
     try
-        names!(df, [:x, symbol("f(x)")])
+        names!(df, [:x, :f_x])
     catch
-        colnames!(df, ["x", "f(x)"])
+        colnames!(df, ["x", "f_x"])
     end
     df
 end
@@ -53,7 +53,7 @@ function datafy(fs::Array, a, b)
     end
     df[:f] = PooledDataArray(df[:f], name_levels)
 
-    mapping = {:x => "x", :y => "f(x)"}
+    mapping = {:x => "x", :y => "f_x"}
     if length(fs) > 1
         mapping[:color] = "f"
     end
@@ -87,7 +87,7 @@ function plot(fs::Array, a, b, elements::ElementOrFunction...; mapping...)
         push!(elements, Coord.cartesian(xflip=true))
     end
 
-    plot(df, mappingdict, Geom.line, elements...)
+    plot(df, mappingdict, Geom.line, Guide.ylabel("f(x)"), elements...)
 end
 
 # Plot a single function.
