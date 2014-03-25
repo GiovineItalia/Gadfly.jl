@@ -40,6 +40,7 @@ tests = [
     ("explicit_colorkey_title",               6inch, 3inch),
     ("explicit_subplot_titles",               6inch, 3inch),
     ("subplot_grid_smooth",                   6inch, 8inch),
+    ("smooth_lm",                             6inch, 8inch),
     ("histogram_errorbar",                    6inch, 3inch),
     ("issue106",                              6inch, 3inch),
     ("continuous_color_scale_range",          6inch, 3inch),

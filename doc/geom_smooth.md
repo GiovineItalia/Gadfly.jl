@@ -15,7 +15,7 @@ Plot a smooth function estimated from data. An alias for `Geom.line` with `Stat.
 
 # Arguments
 
-  * `method`: Currently only `:loess` is supported.
+  * `method`: `:loess` and `:lm` are supported.
   * `smoothing`: Method specific parameter controlling the degree of smoothing.
     For loess, this is the span parameter giving the proportion of data
     used for each local fit.

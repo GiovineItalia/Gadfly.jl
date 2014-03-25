@@ -26,8 +26,8 @@ function density()
 end
 
 
-function smooth(; smoothing::Float64=0.75)
-    return LineGeometry(Gadfly.Stat.smooth(smoothing=smoothing))
+function smooth(; method::Symbol=:loess, smoothing::Float64=0.75)
+    return LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing))
 end
 
 
