@@ -736,8 +736,8 @@ function apply_statistic(stat::SmoothStatistic,
     Gadfly.assert_aesthetics_defined("Stat.smooth", aes, :x, :y)
     Gadfly.assert_aesthetics_equal_length("Stat.smooth", aes, :x, :y)
 
-    if stat.method != :loess
-        error("The only Stat.smooth method currently supported is loess.")
+    if !(stat.method in [:loess,:lm])
+        error("The only Stat.smooth methods currently supported are loess and lm.")
     end
 
     num_steps = 750
@@ -749,20 +749,26 @@ function apply_statistic(stat::SmoothStatistic,
             error("Stat.smooth requires more than one distinct x value")
         end
 
-        # loess can't predict points <x_min or >x_max. Make sure that doesn't
-        # happen through a floating point fluke
-        nudge = 1e-5 * (x_max - x_min)
-
         local xs, ys
+
         try
             xs = convert(Vector{Float64}, aes.x)
             ys = convert(Vector{Float64}, aes.y)
         catch
-            error("Stat.loess requires that x and y be bound to arrays of plain numbers.")
+            error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
         end
 
+        # loess can't predict points <x_min or >x_max. Make sure that doesn't
+        # happen through a floating point fluke
+        nudge = 1e-5 * (x_max - x_min)
         aes.x = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
-        aes.y = predict(loess(xs, ys, span=stat.smoothing), aes.x)
+        
+        if stat.method == :loess
+            aes.y = predict(loess(xs, ys, span=stat.smoothing), aes.x)
+        elseif stat.method == :lm
+            lmcoeff = linreg(xs,ys)
+            aes.y = lmcoeff[2].*aes.x .+ lmcoeff[1]
+        end
     else
         groups = Dict()
         aes_color = aes.color === nothing ? [nothing] : aes.color
@@ -775,7 +781,7 @@ function apply_statistic(stat::SmoothStatistic,
                 push!(groups[c][1], x)
                 push!(groups[c][2], y)
             catch
-                error("Stat.loess requires that x and y be bound to arrays of plain numbers.")
+                error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
             end
         end
 
@@ -791,7 +797,14 @@ function apply_statistic(stat::SmoothStatistic,
             nudge = 1e-5 * (x_max - x_min)
             steps = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
 
-            for (j, (x, y)) in enumerate(zip(steps, predict(loess(xs, ys, span=stat.smoothing), steps)))
+            if stat.method == :loess
+                smoothys = predict(loess(xs, ys, span=stat.smoothing), steps)
+            elseif stat.method == :lm
+                lmcoeff = linreg(xs,ys)
+                smoothys = lmcoeff[2].*steps .+ lmcoeff[1]
+            end
+
+            for (j, (x, y)) in enumerate(zip(steps, smoothys))
                 aes.x[(i - 1) * num_steps + j] = x
                 aes.y[(i - 1) * num_steps + j] = y
                 colors[(i - 1) * num_steps + j] = c
