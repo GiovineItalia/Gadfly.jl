@@ -23,7 +23,7 @@ import Iterators
 import Iterators: distinct, drop
 import Compose.draw, Compose.hstack, Compose.vstack
 import Base: copy, push!, start, next, done, has, show, getindex, cat,
-             writemime, mimewritable, isfinite
+             writemime, mimewritable, isfinite, display
 
 export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
        layer, @plot, spy, set_default_plot_size, set_default_plot_format,
@@ -780,6 +780,79 @@ end
 
 function writemime(io::IO, ::MIME"text/plain", p::Plot)
     write(io, "Plot(...)")
+end
+
+
+# Fallback display method. When there isn't a better option, we write to a
+# temporary file and try to open it.
+function display(d::TextDisplay, p::Plot)
+    base_filename = tempname()
+    if default_plot_format == :png
+        filename = string(base_filename, ".png")
+        output = open(filename, "w")
+        draw(PNG(output, default_plot_width, default_plot_height), p)
+        close(output)
+    elseif default_plot_format == :svg
+        filename = string(base_filename, ".svg")
+        output = open(filename, "w")
+        draw(SVG(output, default_plot_width, default_plot_height), p)
+        close(output)
+    elseif default_plot_format == :html
+        filename = string(base_filename, ".html")
+        output = open(filename, "w")
+
+        plot_output = IOBuffer()
+        draw(D3(plot_output, default_plot_width, default_plot_height, false), p)
+        plot_js = takebuf_string(plot_output)
+
+        write(output,
+            """
+            <DOCTYPE html>
+            <html>
+                <head><title>Gadfly Plot</title></head>
+                <body>
+                <script charset="utf-8">
+                    $(Compose.d3_js)
+                </script>
+                <script charset="utf-8">
+                    $(gadfly_js)
+                </script>
+
+                <div id="gadflyplot"></div>
+                <script charset="utf-8">
+                    $(plot_js)
+                </script>
+                <script charset="utf-8">
+                    draw("#gadflyplot");
+                </script>
+                </body>
+            </html>
+            """)
+        close(output)
+    elseif default_plot_format == :ps
+        filename = string(base_filename, ".ps")
+        output = open(filename, "w")
+        draw(PS(output, default_plot_width, default_plot_height), p)
+        close(output)
+    elseif default_plot_format == :pdf
+        filename = string(base_filename, ".pdf")
+        output = open(filename, "w")
+        draw(PDF(output, default_plot_width, default_plot_height), p)
+        close(output)
+    else
+        # if format is set to anything else, don't show the plot
+        return
+    end
+
+    if OS_NAME == :Darwin
+        run(`open $(filename)`)
+    elseif OS_NAME == :Linux || OS_NAME == :FreeBSD
+        run(`xdg-open $(filename)`)
+    elseif OS_NAME == :Windows
+        run(`$(ENV["COMSPEC"]) /c start $(filename)`)
+    else
+        warn("Unable to show graphic due to the strangeness of your OS.")
+    end
 end
 
 
