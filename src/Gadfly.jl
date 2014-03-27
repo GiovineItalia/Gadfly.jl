@@ -807,7 +807,7 @@ function display(d::TextDisplay, p::Plot)
 
         write(output,
             """
-            <DOCTYPE html>
+            <!DOCTYPE html>
             <html>
                 <head><title>Gadfly Plot</title></head>
                 <body>
@@ -851,7 +851,7 @@ function display(d::TextDisplay, p::Plot)
     elseif OS_NAME == :Windows
         run(`$(ENV["COMSPEC"]) /c start $(filename)`)
     else
-        warn("Unable to show graphic due to the strangeness of your OS.")
+        warn("Showing plots is not supported on OS $(string(OS_NAME))")
     end
 end
 
