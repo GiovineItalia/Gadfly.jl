@@ -1,5 +1,4 @@
-
-# Executable Documenentation with Gadfly
+# Executable Documentation with Gadfly
 
 This is an executable document.
 
