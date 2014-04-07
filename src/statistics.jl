@@ -665,7 +665,7 @@ function apply_statistic(stat::BoxplotStatistic,
     aes_x = aes.x === nothing ? [nothing] : aes.x
     aes_color = aes.color === nothing ? [nothing] : aes.color
 
-    T = eltype(aes.y)
+    T = isempty(aes.y) ? eltype(aes.y) : typeof(aes.y[1] / 1)
     for (x, y, c) in zip(cycle(aes_x), aes.y, cycle(aes_color))
         if isempty(groups) || groupkeys[end] != (x, c)
             push!(groupkeys, (x, c))
@@ -764,7 +764,7 @@ function apply_statistic(stat::SmoothStatistic,
         # happen through a floating point fluke
         nudge = 1e-5 * (x_max - x_min)
         aes.x = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
-        
+
         if stat.method == :loess
             aes.y = predict(loess(xs, ys, span=stat.smoothing), aes.x)
         elseif stat.method == :lm

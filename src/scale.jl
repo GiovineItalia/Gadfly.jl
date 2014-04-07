@@ -195,7 +195,15 @@ function apply_scale(scale::ContinuousScale,
                 continue
             end
 
-            ds = Array(Any, length(getfield(data, var)))
+            T = Any
+            for (i, d) in enumerate(getfield(data, var))
+                if isconcrete(d)
+                    T = typeof(scale.trans.f(d))
+                    break
+                end
+            end
+
+            ds = DataArray(T, length(getfield(data, var)))
             for (i, d) in enumerate(getfield(data, var))
                 if isconcrete(d)
                     ds[i] = scale.trans.f(d)

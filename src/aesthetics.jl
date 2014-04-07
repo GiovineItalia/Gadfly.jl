@@ -1,13 +1,13 @@
 
 
 typealias NumericalOrCategoricalAesthetic
-    Union(Nothing, Vector, PooledDataArray)
+    Union(Nothing, Vector, DataArray, PooledDataArray)
 
 typealias CategoricalAesthetic
     Union(Nothing, PooledDataArray)
 
 typealias NumericalAesthetic
-    Union(Nothing, Vector)
+    Union(Nothing, Vector, DataArray)
 
 
 @varset Aesthetics begin
