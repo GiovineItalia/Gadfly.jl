@@ -94,6 +94,7 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
     Gadfly.assert_aesthetics_equal_length("Geom.errorbar", aes,
                                           element_aesthetics(geom)...)
 
+    colored = aes.color != nothing
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
@@ -118,7 +119,7 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
 
         stroke([theme.highlight_color(c) for c in aes.color]),
         linewidth(theme.line_width),
-        aes.color_key_continuous == true ?
+        (aes.color_key_continuous == true || !colored) ?
             svgclass("geometry") :
             svgclass([@sprintf("geometry color_%s", escape_id(aes.color_label(c)[1]))
                       for c in aes.color]))
