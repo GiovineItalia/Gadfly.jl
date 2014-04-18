@@ -785,7 +785,7 @@ end
 
 # Fallback display method. When there isn't a better option, we write to a
 # temporary file and try to open it.
-function display(d::TextDisplay, p::Plot)
+function display(d::Base.REPL.REPLDisplay, p::Plot)
     base_filename = tempname()
     if default_plot_format == :png
         filename = string(base_filename, ".png")
