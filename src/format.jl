@@ -119,6 +119,9 @@ function formatter{T<:FloatingPoint}(xs::AbstractArray{T}; fmt=:auto)
     end
     x_min, x_max = concrete_minimum(xs), concrete_maximum(xs)
 
+    x_min, x_max, delta = (float64(float32(x_min)), float64(float32(x_max)), 
+        float64(float32(delta)))
+
     if !isfinite(x_min) || !isfinite(x_max) || !isfinite(delta)
         error("At least one finite value must be provided to formatter.")
     end
