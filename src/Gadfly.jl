@@ -3,6 +3,7 @@ require("Codecs")
 require("Compose")
 require("DataFrames")
 require("DataArrays")
+require("DataStructures")
 require("Datetime")
 require("Distributions")
 require("Iterators")
@@ -16,6 +17,7 @@ using Color
 using Compose
 using DataFrames
 using DataArrays
+using DataStructures
 using Datetime
 using JSON
 

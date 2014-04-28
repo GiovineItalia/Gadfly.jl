@@ -2,11 +2,12 @@ module Stat
 
 import Gadfly
 import StatsBase
-using DataArrays
-using Compose
 using Color
-using Loess
+using Compose
+using DataArrays
+using DataStructures
 using Hexagons
+using Loess
 
 import Gadfly: Scale, Coord, element_aesthetics, default_scales, isconcrete,
                nonzero_length, setfield!
@@ -659,19 +660,14 @@ function apply_statistic(stat::BoxplotStatistic,
         return
     end
 
-    groups = {}
-    groupkeys = {}
-
     aes_x = aes.x === nothing ? [nothing] : aes.x
     aes_color = aes.color === nothing ? [nothing] : aes.color
 
     T = isempty(aes.y) ? eltype(aes.y) : typeof(aes.y[1] / 1)
+    groups = DefaultOrderedDict(() -> T[])
+
     for (x, y, c) in zip(cycle(aes_x), aes.y, cycle(aes_color))
-        if isempty(groups) || groupkeys[end] != (x, c)
-            push!(groupkeys, (x, c))
-            push!(groups, Array(T, 0))
-        end
-        push!(groups[end], y)
+        push!(groups[(x, c)], y)
     end
 
     if aes.y != nothing
@@ -683,7 +679,7 @@ function apply_statistic(stat::BoxplotStatistic,
         aes.upper_fence = Array(T, m)
         aes.outliers = Vector{T}[]
 
-        for (i, ((x, c), ys)) in enumerate(zip(groupkeys, groups))
+        for (i, ((x, c), ys)) in enumerate(groups)
             sort!(ys)
             aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
                     quantile!(ys, [0.25, 0.5, 0.75])
@@ -701,11 +697,11 @@ function apply_statistic(stat::BoxplotStatistic,
     end
 
     if !is(aes.x, nothing)
-        aes.x = PooledDataArray(Int64[x for (x, c) in groupkeys])
+        aes.x = PooledDataArray(Int64[x for (x, c) in keys(groups)])
     end
 
     if !is(aes.color, nothing)
-        aes.color = PooledDataArray(ColorValue[c for (x, c) in groupkeys],
+        aes.color = PooledDataArray(ColorValue[c for (x, c) in keys(groups)],
                                     levels(aes.color))
     end
 
