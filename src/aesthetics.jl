@@ -234,9 +234,14 @@ function cat_aes_var!(a::Dict, b::Dict)
 end
 
 
+
+# work arround 0.2 weirdness
+function cat_aes_var!(a::DataArray, b::AbstractArray)
+    return DataArray([a..., b...])
+end
+
 function cat_aes_var!(a::AbstractArray, b::AbstractArray)
-    append!(a, b)
-    a
+    return append!(a, b)
 end
 
 
@@ -324,8 +329,13 @@ function aes_by_xy_group(aes::Aesthetics)
                     setfield!(aes_grid[i, j], var,
                               make_pooled_data_array(typeof(vals), staging[i, j]))
                 else
-                    setfield!(aes_grid[i, j], var,
-                              convert(typeof(vals), copy(staging[i, j])))
+                    if applicable(convert, typeof(vals), staging[i, j])
+                        setfield(aes_grid[i, j], var,
+                                 DataArray(copy(staging[i, j])))
+                    else
+                        setfield!(aes_grid[i, j], var,
+                                  convert(typeof(vals), copy(staging[i, j])))
+                    end
                 end
             end
         else

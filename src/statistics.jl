@@ -750,9 +750,19 @@ function apply_statistic(stat::SmoothStatistic,
         local xs, ys
 
         try
-            xs = convert(Vector{Float64}, aes.x)
-            ys = convert(Vector{Float64}, aes.y)
-        catch
+            # work arround for 0.2
+            if isa(aes.x, DataArray)
+                xs = collect(Float64, aes.x)
+            else
+                xs = convert(Vector{Float64}, aes.x)
+            end
+
+            if isa(aes.y, DataArray)
+                ys = collect(Float64, aes.y)
+            else
+                ys = convert(Vector{Float64}, aes.y)
+            end
+        catch e
             error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
         end
 
