@@ -4,9 +4,9 @@ compiler:
 notifications:
     email: false
 env:
-    matrix: 
-        - JULIAVERSION="juliareleases" 
-        - JULIAVERSION="julianightlies" 
+    matrix:
+        - JULIAVERSION="juliareleases"
+        - JULIAVERSION="julianightlies"
 before_install:
     - sudo add-apt-repository ppa:staticfloat/julia-deps -y
     - sudo add-apt-repository ppa:staticfloat/${JULIAVERSION} -y
@@ -15,4 +15,5 @@ before_install:
 script:
     - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
     - julia -e 'Pkg.init(); Pkg.add("Cairo"); Pkg.add("RDatasets", v"0.1.1"); run(`ln -s $(pwd()) $(Pkg.dir("Gadfly"))`); Pkg.pin("Gadfly"); Pkg.resolve()'
-    - julia tests/test.jl
+    - julia --code-coverage tests/test.jl
+    - julia -e 'Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
