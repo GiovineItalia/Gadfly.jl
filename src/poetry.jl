@@ -105,7 +105,7 @@ end
 # Plot an expression from a to b.
 macro plot(expr, a, b)
     quote
-        plot(x -> $(expr), $(a), $(b))
+        plot($(esc(:(x -> $(expr)))), $(a), $(b))
     end
 end
 
