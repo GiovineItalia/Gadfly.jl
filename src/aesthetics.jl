@@ -330,8 +330,8 @@ function aes_by_xy_group(aes::Aesthetics)
                               make_pooled_data_array(typeof(vals), staging[i, j]))
                 else
                     if applicable(convert, typeof(vals), staging[i, j])
-                        setfield(aes_grid[i, j], var,
-                                 DataArray(copy(staging[i, j])))
+                        setfield!(aes_grid[i, j], var,
+                                  DataArray(copy(staging[i, j])))
                     else
                         setfield!(aes_grid[i, j], var,
                                   convert(typeof(vals), copy(staging[i, j])))
