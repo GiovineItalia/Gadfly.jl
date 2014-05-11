@@ -3,7 +3,9 @@ module Guide
 
 using Color
 using Compose
+using DataStructures
 using Gadfly
+using Iterators
 using JSON
 
 import Gadfly: render, escape_id, default_statistic
@@ -26,6 +28,15 @@ const under_guide_position  = UnderGuidePosition()
 const over_guide_position   = OverGuidePosition()
 
 
+# A guide graphic is a position associated with one or more contexts.
+# Multiple contexts represent multiple layout possibilites that will be
+# optimized over.
+immutable PositionedGuide
+    ctxs::Vector{Context}
+    order::Int
+    position::GuidePosition
+end
+
 
 immutable PanelBackground <: Gadfly.GuideElement
 end
@@ -35,14 +46,14 @@ const background = PanelBackground
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
-    back = compose(canvas(order=-1),
-                   rectangle(),
-                   svgclass("guide background"),
-                   stroke(theme.panel_stroke),
-                   fill(theme.panel_fill),
-                   opacity(theme.panel_opacity))
+    back = compose!(context(order=-1),
+                    rectangle(),
+                    svgclass("guide background"),
+                    stroke(theme.panel_stroke),
+                    fill(theme.panel_fill),
+                    fillopacity(theme.panel_opacity))
 
-    {(back, under_guide_position)}
+    return [PositionedGuide([back], 0, under_guide_position)]
 end
 
 
@@ -52,6 +63,7 @@ end
 const zoomslider = ZoomSlider
 
 
+# TODO: rewrite
 function render(guide::ZoomSlider, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
 
@@ -61,7 +73,6 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
     slider_size = 20mm
     background_color = "#eaeaea"
     foreground_color = "#6a6a6a"
-    #highlight_color = string("#", hex(theme.highlight_color(color(foreground_color))))
     highlight_color = "#cd5c5c";
 
     minus_button = compose(canvas(1w - edge_pad - 2*button_size - slider_size,
@@ -153,11 +164,12 @@ end
 const colorkey = ColorKey
 
 
+# TODO: rewrite
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
 function render_discrete_color_key(colors::Vector{ColorValue},
                                    labels::Dict{ColorValue, String},
-                                   title_canvas::Canvas,
+                                   title_context::Context,
                                    title_width::Measure,
                                    theme::Gadfly.Theme)
     # Key entries
@@ -217,11 +229,12 @@ function render_discrete_color_key(colors::Vector{ColorValue},
 end
 
 
+# TODO: rewrite
 # A helper for render(::ColorKey) for rendering guides for continuous color
 # scales.
 function render_continuous_color_key(colors::Vector{ColorValue},
                                      labels::Dict{ColorValue, String},
-                                     title_canvas::Canvas,
+                                     title_context::Context,
                                      title_width::Measure,
                                      theme::Gadfly.Theme)
 
@@ -295,6 +308,7 @@ function render_continuous_color_key(colors::Vector{ColorValue},
 end
 
 
+# TODO: rewrite
 function render(guide::ColorKey, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
 
@@ -437,21 +451,36 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     end
 
     # grid lines
-    grid_lines = compose(canvas(),
-                         [lines((t, 0h), (t, 1h)) for t in grids]...,
-                         stroke(theme.grid_color),
-                         linewidth(theme.grid_line_width),
-                         svgclass("guide xgridlines yfixed"))
+    grid_lines = compose(context(),
+                        lines([[(t, 0h), (t, 1h)] for t in grids]),
+                        stroke(theme.grid_color),
+                        linewidth(theme.grid_line_width),
+                        svgclass("guide xgridlines yfixed"))
 
     if !guide.label
-        return {(grid_lines, under_guide_position)}
+        [PositionedGuide(under_guide_position, [grid_lines])]
     end
 
     # tick labels
-    (_, height) = text_extents(theme.minor_label_font,
+    _, height = text_extents(theme.minor_label_font,
                                theme.minor_label_font_size,
                                values(ticks)...)
     padding = 1mm
+
+    # TODO: God, I fucking hate this system for panning/zooming.
+    # I can't compute new ticks on the javascript side, since I may be plotting
+    # weird types. Can I at least find a nicer way to precompute ticks.
+
+    # What I'd like to do is compute a big set of ticks and let the jaascript
+    # site choose which ones to display. Idealling I'd avoid polluting
+    # the aesthetics with this junk.
+
+    # TODO
+    text([tick for (tick, label) in ticks],
+         1h - padding,
+         [label for (tick, label) in ticks],
+         hcenter, vbottom)
+
 
     texts = Array(Canvas, length(ticks))
     for (i, (tick, label)) in enumerate(ticks)
@@ -579,19 +608,21 @@ function render(guide::XLabel, theme::Gadfly.Theme,
         return nothing
     end
 
-    (_, text_height) = text_extents(theme.major_label_font,
+    (text_width, text_height) = text_extents(theme.major_label_font,
                                     theme.major_label_font_size,
                                     guide.label)
 
     padding = 2mm
-    c = compose(canvas(0, 0, 1w, text_height + 2padding),
-                text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
-                stroke(nothing),
-                fill(theme.major_label_color),
-                font(theme.major_label_font),
-                fontsize(theme.major_label_font_size))
+    c = compose!(context(0, 0, 1w, text_height + 2padding,
+                         minwidth=text_width + 2padding,
+                         minheight=text_height + 2padding),
+                 text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
+                 stroke(nothing),
+                 fill(theme.major_label_color),
+                 font(theme.major_label_font),
+                 fontsize(theme.major_label_font_size))
 
-    {(c, bottom_guide_position)}
+    return [PositionedGuide([c], 0, bottom_guide_position)]
 end
 
 
@@ -611,15 +642,17 @@ function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                                              theme.major_label_font_size,
                                              guide.label)
     padding = 1mm
-    c = compose(canvas(0, 0, text_height + 2padding, 1cy,
-                       rotation=Rotation(-0.5pi, 0.5w, 0.5h)),
+    c = compose(context(0, 0, text_height + 2padding, 1cy,
+                       rotation=Rotation(-0.5pi, 0.5w, 0.5h),
+                       minwidth=text_height + 2padding,
+                       minheight=text_width + 2padding),
                 text(0.5w, 0.5h, guide.label, hcenter, vcenter),
                 stroke(nothing),
                 fill(theme.major_label_color),
                 font(theme.major_label_font),
                 fontsize(theme.major_label_font_size))
 
-    {(c, left_guide_position)}
+    return [PositionedGuide([c], 0, left_guide_position)]
 end
 
 # Title Guide
@@ -661,97 +694,74 @@ end
 # Returns:
 #   A new canvas containing the plot with guides layed out in the specified
 #   manner.
-function layout_guides(plot_canvas::Canvas,
+function layout_guides(plot_context::Context,
                        theme::Gadfly.Theme,
-                       guides::(Canvas, GuidePosition)...;
-                       preserve_plot_canvas_size=false)
+                       positioned_guides::PositionedGuide...)
     # Every guide is updated to use the plot's unit box.
-    guides = [(set_unit_box(guide, plot_canvas.unit_box), pos)
-              for (guide, pos) in guides]
-
-    # Group by position
-    top_guides    = Canvas[]
-    right_guides  = Canvas[]
-    bottom_guides = Canvas[]
-    left_guides   = Canvas[]
-    under_guides  = Canvas[]
-    over_guides   = Canvas[]
-    for (guide, pos) in guides
-        if pos === top_guide_position
-            push!(top_guides, guide)
-        elseif pos === right_guide_position
-            push!(right_guides, guide)
-        elseif pos === bottom_guide_position
-            push!(bottom_guides, guide)
-        elseif pos === left_guide_position
-            push!(left_guides, guide)
-        elseif pos === under_guide_position
-            push!(under_guides, guide)
-        elseif pos === over_guide_position
-            push!(over_guides, guide)
+    for positioned_guide in positioned_guides
+        for ctx in positioned_guide.ctxs
+            set_units!(ctx, plot_context.units)
         end
     end
 
-    # Since top/right/bottom/left guides are drawn without overlaps, we use the
-    # canvas z-order to determine ordering, with lowest ordered guides placed
-    # nearest to the panel.
-    canvas_order = canvas -> canvas.order
-    rev_canvas_order = canvas -> -canvas.order
-    sort!(by=canvas_order,     top_guides)
-    sort!(by=canvas_order,     right_guides)
-    sort!(by=canvas_order,     bottom_guides)
-    sort!(by=rev_canvas_order, left_guides)
+    # Organize guides by position
+    guides = DefaultDict(() -> (Vector{Context}, Int)[])
+    for positioned_guide in positioned_guides
+        push!(guides[positioned_guide.position],
+              (positioned_guide.ctxs, positioned_guide.order))
+    end
 
-    # Stack the guides on edge edge of the plot
+    for (position, ordered_guides) in guides
+        if position == left_guide_position
+            sort!(ordered_guides, by=x -> -x[2])
+        else
+            sort!(ordered_guides, by=x -> x[2])
+        end
+    end
 
-    top_guides    = vstack(0, 0, 1, [(g, hcenter) for g in top_guides]...)
-    right_guides  = hstack(0, 0, 1, [(g, vcenter) for g in right_guides]...)
-    bottom_guides = vstack(0, 0, 1, [(g, hcenter) for g in bottom_guides]...)
-    left_guides   = hstack(0, 0, 1, [(g, vcenter) for g in left_guides]...)
+    m = 1 + length(guides[top_guide_position]) +
+            length(guides[bottom_guide_position])
+    n = 1 + length(guides[left_guide_position]) +
+            length(guides[right_guide_position])
 
-    # Reposition each guide stack, now that we know the extents
-    t = top_guides.box.height
-    r = right_guides.box.width
-    b = bottom_guides.box.height
-    l = left_guides.box.width
+    focus = (1 + length(guides[top_guide_position]),
+             1 + length(guides[left_guide_position]))
 
-    pw = 1cx - l - r # plot width
-    ph = 1cy - t - b # plot height
+    # Populate the table
+    tbl = table(m, n, focus)
 
-    top_guides    = compose(set_box(top_guides,    BoundingBox(l, 0, pw, t)))
-        # TODO: clip path
+    i = 1
+    for (ctxs, order) in guides[top_guide_position]
+        tbl[i, focus[2]] = ctxs
+        i += 1
+    end
+    i += 1
+    for (ctxs, order) in guides[bottom_guide_position]
+        tbl[i, focus[2]] = ctxs
+        i += 1
+    end
 
-    right_guides  = compose(set_box(right_guides,  BoundingBox(l + pw, t, r, ph)))
-        # TODO: clip path
+    j = 1
+    for (ctxs, order) in guides[left_guide_position]
+        tbl[focus[1], j] = ctxs
+        j += 1
+    end
+    j += 1
+    for (ctxs, order) in guides[right_guide_position]
+        tbl[focus[1], j] = ctxs
+        j += 1
+    end
 
-    clippad_top    = 4mm
-    clippad_bottom = 1mm
-    clippad_left   = 0.1w
-    clippad_right  = 0.1w
+    tbl[focus[1], focus[2]] =
+        [compose!(context(minwidth=minwidth(plot_context),
+                          minheight=minheight(plot_context)),
+                  {context(order=-1),
+                     [c for (c, o) in guides[under_guide_position]]...},
+                  {context(order=1000),
+                     [c for (c, o) in guides[over_guide_position]]...},
+                  {context(order=0), plot_context})]
 
-    bottom_guides = compose(set_box(bottom_guides, BoundingBox(l, t + ph, pw, b)))
-    left_guides = compose(set_box(left_guides, BoundingBox(0, t, l, ph)))
-
-    root_canvas = preserve_plot_canvas_size ?
-        canvas(0, 0, 1.0w + l + r, 1.0h + t + b) : canvas()
-
-    compose(root_canvas,
-            (canvas(l, t, pw, ph),
-                {canvas(units_inherited=true, order=-1, clip=true), under_guides...},
-                {canvas(units_inherited=true, order=1000, clip=true), over_guides...},
-                (canvas(units_inherited=true, order=1, clip=true),  plot_canvas),
-                d3embed(@sprintf(
-                    ".on(\"mouseover\", guide_background_mouseover(%s))",
-                    json(theme.highlight_color(theme.grid_color)))),
-                d3embed(@sprintf(
-                    ".on(\"mouseout\", guide_background_mouseout(%s))",
-                    json(theme.grid_color))),
-                isempty(under_guides) ?
-                    nothing : d3embed(
-                        """
-                        .call(zoom_behavior(ctx))
-                        """)),
-            top_guides, right_guides, bottom_guides, left_guides)
+    return compose!(context(), tbl)
 end
 
 end # module Guide

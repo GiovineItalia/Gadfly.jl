@@ -33,7 +33,7 @@ export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
 
 
 # Re-export some essentials from Compose
-export D3, SVG, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
+export SVGJS, SVG, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
 
 
 # Backwards compatibility with julia-0.2 names
@@ -77,28 +77,7 @@ include("data.jl")
 # no arguments and are expected to produce an element.
 typealias ElementOrFunction{T <: Element} Union(Element, Base.Callable, Theme)
 
-
-# Prepare the display backend (ijuila, in particular) to show plots rendered on
-# the d3 backend.
-
 const gadfly_js = readall(joinpath(dirname(Base.source_path()), "gadfly.js"))
-
-
-function prepare_display(d::Display)
-    Compose.prepare_display(d)
-    display(d, "text/html", """<script charset="utf-8">$(gadfly_js)</script>""")
-end
-
-
-function prepare_display()
-    prepare_display(Base.Multimedia.displays[end])
-end
-
-
-try
-    display("text/html", """<script charset="utf-8">$(gadfly_js)</script>""")
-catch
-end
 
 
 # Set prefereed canvas size when rendering a plot with an explicit call to
@@ -570,17 +549,18 @@ function render(plot::Plot)
             push!(guides, Guide.background())
         end
 
-        if !in(Guide.ZoomSlider, explicit_guide_types)
-            push!(guides, Guide.zoomslider())
-        end
+        # TODO: implement these
+        #=if !in(Guide.ZoomSlider, explicit_guide_types)=#
+            #=push!(guides, Guide.zoomslider())=#
+        #=end=#
 
-        if !in(Guide.XTicks, explicit_guide_types)
-            push!(guides, Guide.xticks())
-        end
+        #=if !in(Guide.XTicks, explicit_guide_types)=#
+            #=push!(guides, Guide.xticks())=#
+        #=end=#
 
-        if !in(Guide.YTicks, explicit_guide_types)
-            push!(guides, Guide.yticks())
-        end
+        #=if !in(Guide.YTicks, explicit_guide_types)=#
+            #=push!(guides, Guide.yticks())=#
+        #=end=#
     end
 
     for guide in guides
@@ -653,10 +633,10 @@ function render(plot::Plot)
         push!(guides, Guide.colorkey())
     end
 
-    canvas = render_prepared(plot, plot_aes, layer_aess, layer_stats, scales,
-                             statistics, guides)
+    context = render_prepared(plot, plot_aes, layer_aess, layer_stats, scales,
+                              statistics, guides)
 
-    pad_inner(canvas, 5mm)
+    # pad_inner(canvas, 5mm) # TODO: implement pad in compose
 end
 
 
@@ -676,11 +656,11 @@ end
 #   statistics: Statistic elements applied plot-wise.
 #   guides: Guide elements indexed by type. (Only one type of each guide may
 #       be in the same plot.)
-#   preserve_plot_canvas_size: Don't squish the plot to fit the guides.
-#       Guides will be drawn outside the canvas
+#   preserve_plot_context_size: Don't squish the plot to fit the guides.
+#       Guides will be drawn outside the context
 #
 # Returns:
-#   A Compose canvas containing the rendered plot.
+#   A Compose context containing the rendered plot.
 #
 function render_prepared(plot::Plot,
                          plot_aes::Aesthetics,
@@ -688,30 +668,29 @@ function render_prepared(plot::Plot,
                          layer_stats::Vector{StatisticElement},
                          scales::Dict{Symbol, ScaleElement},
                          statistics::Vector{StatisticElement},
-                         guides::Vector{GuideElement};
-                         preserve_plot_canvas_size=false)
+                         guides::Vector{GuideElement})
 
     # III. Coordinates
-    plot_canvas = Coord.apply_coordinate(plot.coord, plot_aes, layer_aess...)
+    plot_context = Coord.apply_coordinate(plot.coord, plot_aes, layer_aess...)
 
     # IV. Geometries
     themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
                    for layer in plot.layers]
-    plot_canvas = compose(plot_canvas,
-                          [render(layer.geom, theme, aes)
-                           for (layer, aes, theme) in zip(plot.layers, layer_aess, themes)]...)
+
+    compose!(plot_context,
+             [render(layer.geom, theme, aes)
+              for (layer, aes, theme) in zip(plot.layers, layer_aess, themes)]...)
 
     # V. Guides
-    guide_canvases = {}
+    guide_contexts = {}
     for guide in guides
-        guide_canvas = render(guide, plot.theme, plot_aes)
-        if guide_canvas != nothing
-            append!(guide_canvases, guide_canvas)
+        guide_context = render(guide, plot.theme, plot_aes)
+        if guide_context != nothing
+            append!(guide_contexts, guide_context)
         end
     end
 
-    canvas = Guide.layout_guides(plot_canvas, plot.theme, guide_canvases...,
-                                 preserve_plot_canvas_size=preserve_plot_canvas_size)
+    c = Guide.layout_guides(plot_context, plot.theme, guide_contexts...)
 
     class = "plotroot"
     if haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale)
@@ -721,7 +700,7 @@ function render_prepared(plot::Plot,
         class = string(class, " yscalable")
     end
 
-    compose(canvas, svgclass(class))
+    compose(c, svgclass(class), jsinclude(gadfly_js))
 end
 
 

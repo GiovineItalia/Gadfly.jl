@@ -44,7 +44,7 @@ end
 const cartesian = Cartesian
 
 
-# Produce a canvas with suitable cartesian coordinates.
+# Produce a context with suitable cartesian coordinates.
 #
 # Args:
 #   coord: cartesian coordinate instance.
@@ -171,8 +171,8 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     width  = xmax - xmin + 2.0 * xpadding
     height = ymax - ymin + 2.0 * ypadding
 
-    compose(
-        canvas(unit_box=UnitBox(
+    compose!(
+        context(units=UnitBox(
             coord.xflip ? xmax + xpadding : xmin - xpadding,
             coord.yflip ? ymin - ypadding : ymax + ypadding,
             coord.xflip ? -width : width,
