@@ -451,7 +451,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     end
 
     # grid lines
-    grid_lines = compose!(context(units_inherited=true),
+    grid_lines = compose!(context(),
                           lines([[(t, 0h), (t, 1h)] for t in grids]...),
                           stroke(theme.grid_color),
                           linewidth(theme.grid_line_width),
@@ -471,7 +471,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     padding = 1mm
 
     hlayout = ctxpromise() do draw_context
-        return compose!(context(units_inherited=true),
+        return compose!(context(),
                         text([tick for (tick, label) in ticks],
                              [1h - padding],
                              [label for (tick, label) in ticks],
@@ -481,13 +481,12 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                         fontsize(theme.minor_label_font_size),
                         svgclass("guide xlabels"))
     end
-    hlayout_context = compose!(context(units_inherited=true,
-                                       minwidth=sum(label_widths),
+    hlayout_context = compose!(context(minwidth=sum(label_widths),
                                        minheight=maximum(label_heights)),
                                hlayout)
 
     vlayout = ctxpromise() do draw_context
-        return compose!(context(units_inherited=true),
+        return compose!(context(),
                         text([tick for (tick, label) in ticks],
                              [1h - padding],
                              [lobel for (tick, label) in ticks],
@@ -497,8 +496,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                         fontsize(theme.minor_label_font_size),
                         svgclass("guide xlabels"))
     end
-    vlayout_context = compose!(context(units_inherited=true,
-                                       minwidth=sum(label_heights),
+    vlayout_context = compose!(context(minwidth=sum(label_heights),
                                        minheight=maximum(label_widths)),
                                vlayout)
 
@@ -576,9 +574,9 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     for (i, (tick, label)) in enumerate(ticks)
         txt = text(width - padding, tick, label, hright, vcenter)
         if (viewmin != nothing && viewmax != nothing) && viewmin <= tick <= viewmax
-            texts[i] = compose(canvas(units_inherited=true), txt)
+            texts[i] = compose(canvas(), txt)
         else
-            texts[i] = compose(canvas(units_inherited=true, d3only=true), txt,
+            texts[i] = compose(canvas(d3only=true), txt,
                                d3embed(""".attr("visibility", "hidden")"""))
         end
     end
@@ -699,13 +697,6 @@ end
 function layout_guides(plot_context::Context,
                        theme::Gadfly.Theme,
                        positioned_guides::PositionedGuide...)
-    # Every guide is updated to use the plot's unit box.
-    #for positioned_guide in positioned_guides
-        #for ctx in positioned_guide.ctxs
-            #set_units!(ctx, plot_context.units)
-        #end
-    #end
-
     # Organize guides by position
     guides = DefaultDict(() -> (Vector{Context}, Int)[])
     for positioned_guide in positioned_guides
@@ -755,14 +746,13 @@ function layout_guides(plot_context::Context,
     end
 
     tbl[focus[1], focus[2]] =
-        [compose!(context(units_inherited=true,
-                          minwidth=minwidth(plot_context),
+        [compose!(context(minwidth=minwidth(plot_context),
                           minheight=minheight(plot_context)),
-                  {context(order=-1, units_inherited=true),
+                  {context(order=-1),
                      [c for (c, o) in guides[under_guide_position]]...},
-                  {context(order=1000, units_inherited=true),
+                  {context(order=1000),
                      [c for (c, o) in guides[over_guide_position]]...},
-                  {context(order=0, units_inherited=true),
+                  {context(order=0),
                      plot_context})]
 
     return compose!(context(), tbl)

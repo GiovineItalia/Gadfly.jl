@@ -35,7 +35,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     lw_hover_scale = 10
     lw_ratio = theme.line_width / aes.size[1]
 
-    return compose!(context(units_inherited=true),
+    return compose!(context(),
                     circle(aes.x, aes.y, aes.size),
                     fill(aes.color),
                     linewidth(theme.line_width),
