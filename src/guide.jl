@@ -451,58 +451,60 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     end
 
     # grid lines
-    grid_lines = compose(context(),
-                        lines([[(t, 0h), (t, 1h)] for t in grids]),
-                        stroke(theme.grid_color),
-                        linewidth(theme.grid_line_width),
-                        svgclass("guide xgridlines yfixed"))
+    grid_lines = compose!(context(units_inherited=true),
+                          lines([[(t, 0h), (t, 1h)] for t in grids]...),
+                          stroke(theme.grid_color),
+                          linewidth(theme.grid_line_width),
+                          svgclass("guide xgridlines yfixed"))
 
     if !guide.label
-        [PositionedGuide(under_guide_position, [grid_lines])]
+        return [PositionedGuide([grid_lines], 0, under_guide_position)]
     end
 
-    # tick labels
-    _, height = text_extents(theme.minor_label_font,
+
+    label_sizes = text_extents(theme.minor_label_font,
                                theme.minor_label_font_size,
                                values(ticks)...)
+    label_widths = [width for (width, height) in label_sizes]
+    label_heights = [height for (width, height) in label_sizes]
+
     padding = 1mm
 
-    # TODO: God, I fucking hate this system for panning/zooming.
-    # I can't compute new ticks on the javascript side, since I may be plotting
-    # weird types. Can I at least find a nicer way to precompute ticks.
-
-    # What I'd like to do is compute a big set of ticks and let the jaascript
-    # site choose which ones to display. Idealling I'd avoid polluting
-    # the aesthetics with this junk.
-
-    # TODO
-    text([tick for (tick, label) in ticks],
-         1h - padding,
-         [label for (tick, label) in ticks],
-         hcenter, vbottom)
-
-
-    texts = Array(Canvas, length(ticks))
-    for (i, (tick, label)) in enumerate(ticks)
-        txt = text(tick, 1h - padding, label, hcenter, vbottom)
-        if (viewmin != nothing && viewmax != nothing) && viewmin <= tick <= viewmax
-            texts[i] = compose(canvas(units_inherited=true), txt)
-        else
-            texts[i] = compose(canvas(units_inherited=true, d3only=true), txt,
-                               d3embed(""".attr("visibility", "hidden")"""))
-        end
+    hlayout = ctxpromise() do draw_context
+        return compose!(context(units_inherited=true),
+                        text([tick for (tick, label) in ticks],
+                             [1h - padding],
+                             [label for (tick, label) in ticks],
+                             [hcenter], [vbottom]),
+                        fill(theme.minor_label_color),
+                        font(theme.minor_label_font),
+                        fontsize(theme.minor_label_font_size),
+                        svgclass("guide xlabels"))
     end
+    hlayout_context = compose!(context(units_inherited=true,
+                                       minwidth=sum(label_widths),
+                                       minheight=maximum(label_heights)),
+                               hlayout)
 
-    tick_labels = compose(canvas(0, 0, 1w, height + 2padding, order=-1),
-                          texts...,
-                          stroke(nothing),
-                          fill(theme.minor_label_color),
-                          font(theme.minor_label_font),
-                          fontsize(theme.minor_label_font_size),
-                          svgclass("guide xlabels"))
+    vlayout = ctxpromise() do draw_context
+        return compose!(context(units_inherited=true),
+                        text([tick for (tick, label) in ticks],
+                             [1h - padding],
+                             [lobel for (tick, label) in ticks],
+                             [hright], [vbottom], [Rotation(270)]),
+                        fill(theme.minor_label_color),
+                        font(theme.minor_label_font),
+                        fontsize(theme.minor_label_font_size),
+                        svgclass("guide xlabels"))
+    end
+    vlayout_context = compose!(context(units_inherited=true,
+                                       minwidth=sum(label_heights),
+                                       minheight=maximum(label_widths)),
+                               vlayout)
 
-    {(grid_lines, under_guide_position),
-     (tick_labels, bottom_guide_position)}
+    return [PositionedGuide([hlayout_context, vlayout_context], 0,
+                            bottom_guide_position),
+            PositionedGuide([grid_lines], 0, under_guide_position)]
 end
 
 
@@ -608,9 +610,9 @@ function render(guide::XLabel, theme::Gadfly.Theme,
         return nothing
     end
 
-    (text_width, text_height) = text_extents(theme.major_label_font,
-                                    theme.major_label_font_size,
-                                    guide.label)
+    text_width, text_height = max_text_extents(theme.major_label_font,
+                                               theme.major_label_font_size,
+                                               guide.label)
 
     padding = 2mm
     c = compose!(context(0, 0, 1w, text_height + 2padding,
@@ -638,9 +640,9 @@ function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         return nothing
     end
 
-    (text_width, text_height) = text_extents(theme.major_label_font,
-                                             theme.major_label_font_size,
-                                             guide.label)
+    text_width, text_height = max_text_extents(theme.major_label_font,
+                                               theme.major_label_font_size,
+                                               guide.label)
     padding = 1mm
     c = compose(context(0, 0, text_height + 2padding, 1cy,
                        rotation=Rotation(-0.5pi, 0.5w, 0.5h),
@@ -698,11 +700,11 @@ function layout_guides(plot_context::Context,
                        theme::Gadfly.Theme,
                        positioned_guides::PositionedGuide...)
     # Every guide is updated to use the plot's unit box.
-    for positioned_guide in positioned_guides
-        for ctx in positioned_guide.ctxs
-            set_units!(ctx, plot_context.units)
-        end
-    end
+    #for positioned_guide in positioned_guides
+        #for ctx in positioned_guide.ctxs
+            #set_units!(ctx, plot_context.units)
+        #end
+    #end
 
     # Organize guides by position
     guides = DefaultDict(() -> (Vector{Context}, Int)[])
@@ -728,7 +730,7 @@ function layout_guides(plot_context::Context,
              1 + length(guides[left_guide_position]))
 
     # Populate the table
-    tbl = table(m, n, focus)
+    tbl = table(m, n, focus, units=plot_context.units)
 
     i = 1
     for (ctxs, order) in guides[top_guide_position]
@@ -753,13 +755,15 @@ function layout_guides(plot_context::Context,
     end
 
     tbl[focus[1], focus[2]] =
-        [compose!(context(minwidth=minwidth(plot_context),
+        [compose!(context(units_inherited=true,
+                          minwidth=minwidth(plot_context),
                           minheight=minheight(plot_context)),
-                  {context(order=-1),
+                  {context(order=-1, units_inherited=true),
                      [c for (c, o) in guides[under_guide_position]]...},
-                  {context(order=1000),
+                  {context(order=1000, units_inherited=true),
                      [c for (c, o) in guides[over_guide_position]]...},
-                  {context(order=0), plot_context})]
+                  {context(order=0, units_inherited=true),
+                     plot_context})]
 
     return compose!(context(), tbl)
 end

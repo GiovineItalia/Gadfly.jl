@@ -554,9 +554,9 @@ function render(plot::Plot)
             #=push!(guides, Guide.zoomslider())=#
         #=end=#
 
-        #=if !in(Guide.XTicks, explicit_guide_types)=#
-            #=push!(guides, Guide.xticks())=#
-        #=end=#
+        if !in(Guide.XTicks, explicit_guide_types)
+            push!(guides, Guide.xticks())
+        end
 
         #=if !in(Guide.YTicks, explicit_guide_types)=#
             #=push!(guides, Guide.yticks())=#
