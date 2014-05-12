@@ -7,6 +7,9 @@ env:
     matrix:
         - JULIAVERSION="juliareleases"
         - JULIAVERSION="julianightlies"
+branches:
+    only:
+        - master
 before_install:
     - sudo add-apt-repository ppa:staticfloat/julia-deps -y
     - sudo add-apt-repository ppa:staticfloat/${JULIAVERSION} -y
