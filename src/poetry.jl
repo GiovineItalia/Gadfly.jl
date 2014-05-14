@@ -151,8 +151,8 @@ function spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...)
     plot(df, x="j", y="i", color="value",
          Coord.cartesian(yflip=true),
          Scale.continuous_color,
-         Scale.x_discrete,
-         Scale.y_discrete,
+         Scale.x_continuous,
+         Scale.y_continuous,
          Geom.rectbin,
          Stat.identity,
          elements...;
