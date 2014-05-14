@@ -581,22 +581,7 @@ function apply_statistic(stat::TickStatistic,
         ticks = Float64[t for t in ticks]
         sort!(ticks)
 
-        maxgap = 0
-        for (i, j) in partition(ticks, 2, 1)
-            if j - i > maxgap
-                maxgap = j -i
-            end
-        end
-
-        if length(ticks) > 20 || maxgap > 1
-            ticks, viewmin, viewmax = Gadfly.optimize_ticks(minval, maxval)
-            if ticks[1] == 0
-                ticks[1] = 1
-            end
-            grids = ticks
-        else
-            grids = (ticks .- 0.5)[2:end]
-        end
+        grids = (ticks .- 0.5)[2:end]
         viewmin = minimum(ticks)
         viewmax = maximum(ticks)
     else
