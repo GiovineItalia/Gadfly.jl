@@ -558,9 +558,9 @@ function render(plot::Plot)
             push!(guides, Guide.xticks())
         end
 
-        #=if !in(Guide.YTicks, explicit_guide_types)=#
-            #=push!(guides, Guide.yticks())=#
-        #=end=#
+        if !in(Guide.YTicks, explicit_guide_types)
+            push!(guides, Guide.yticks())
+        end
     end
 
     for guide in guides

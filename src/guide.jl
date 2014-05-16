@@ -408,10 +408,12 @@ end
 immutable XTicks <: Gadfly.GuideElement
     label::Bool
     ticks::Union(Nothing, AbstractArray)
+    orientation::Symbol
 
     function XTicks(; label::Bool=true,
-                      ticks::Union(Nothing, AbstractArray)=nothing)
-        new(label, ticks)
+                      ticks::Union(Nothing, AbstractArray)=nothing,
+                      orientation::Symbol=:auto)
+        return new(label, ticks, orientation)
     end
 end
 
@@ -419,7 +421,7 @@ const xticks = XTicks
 
 
 function default_statistic(guide::XTicks)
-    Stat.xticks(guide.ticks)
+    return Stat.xticks(guide.ticks)
 end
 
 
@@ -489,8 +491,10 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         return compose!(context(),
                         text([tick for (tick, label) in ticks],
                              [1h - padding],
-                             [lobel for (tick, label) in ticks],
-                             [hright], [vbottom], [Rotation(270)]),
+                             [label for (tick, label) in ticks],
+                             [hright], [vbottom],
+                             [Rotation(-0.5pi, (1h - padding, tick))
+                              for (tick, label) in ticks]),
                         fill(theme.minor_label_color),
                         font(theme.minor_label_font),
                         fontsize(theme.minor_label_font_size),
@@ -500,7 +504,17 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                                        minheight=maximum(label_widths)),
                                vlayout)
 
-    return [PositionedGuide([hlayout_context, vlayout_context], 0,
+    if guide.orientation == :horizontal
+        contexts = [hlayout_context]
+    elseif guide.orientation == :vertical
+        contexts = [vlayout_context]
+    elseif guide.orientation == :auto
+        contexts = [hlayout_context, vlayout_context]
+    else
+        error("$(guide.layout) is not a valid orientation for Guide.yticks")
+    end
+
+    return [PositionedGuide(contexts, 10,
                             bottom_guide_position),
             PositionedGuide([grid_lines], 0, under_guide_position)]
 end
@@ -509,10 +523,12 @@ end
 immutable YTicks <: Gadfly.GuideElement
     label::Bool
     ticks::Union(Nothing, AbstractArray)
+    orientation::Symbol
 
     function YTicks(; label::Bool=true,
-                      ticks::Union(Nothing, AbstractArray)=nothing)
-        new(label, ticks)
+                      ticks::Union(Nothing, AbstractArray)=nothing,
+                      orientation::Symbol=:horizontal)
+        new(label, ticks, orientation)
     end
 end
 
@@ -553,44 +569,68 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     end
 
     # grid lines
-    grid_lines = compose(canvas(),
-                         [lines((0w, t), (1w, t)) for t in grids]...,
+    grid_lines = compose(context(),
+                         lines([[(0w, t), (1w, t)] for t in grids]...),
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width),
                          svgclass("guide ygridlines xfixed"))
 
     if !guide.label
-        return {(grid_lines, under_guide_position)}
+        return [PositionedGuide([grid_lines, 0, under_guide_position])]
     end
 
-    # tick labels
-    (width, _) = text_extents(theme.minor_label_font,
-                              theme.minor_label_font_size,
-                              values(ticks)...)
+    label_sizes = text_extents(theme.minor_label_font,
+                               theme.minor_label_font_size,
+                               values(ticks)...)
+    label_widths = [width for (width, height) in label_sizes]
+    label_heights = [height for (width, height) in label_sizes]
     padding = 1mm
-    width += 2padding
 
-    texts = Array(Canvas, length(ticks))
-    for (i, (tick, label)) in enumerate(ticks)
-        txt = text(width - padding, tick, label, hright, vcenter)
-        if (viewmin != nothing && viewmax != nothing) && viewmin <= tick <= viewmax
-            texts[i] = compose(canvas(), txt)
-        else
-            texts[i] = compose(canvas(d3only=true), txt,
-                               d3embed(""".attr("visibility", "hidden")"""))
-        end
+    hlayout = ctxpromise() do draw_context
+        return compose!(context(),
+                        text([1.0w - padding],
+                             [tick for (tick, label) in ticks],
+                             [label for (tick, label) in ticks],
+                             [hright], [vcenter]),
+                        fill(theme.minor_label_color),
+                        font(theme.minor_label_font),
+                        fontsize(theme.minor_label_font_size),
+                        svgclass("guide ylabels"))
+    end
+    hlayout_context = compose!(context(minwidth=maximum(label_widths),
+                                       minheight=sum(label_heights)),
+                               hlayout)
+
+    vlayout = ctxpromise() do draw_context
+        return compose!(context(),
+                        text([1.0w - padding],
+                             [tick for (tick, label) in ticks],
+                             [label for (tick, label) in ticks],
+                             [hcenter], [vbottom],
+                             [Rotation(-0.5pi, (1.0w - padding, tick))
+                              for (tick, label) in ticks]),
+                        fill(theme.minor_label_color),
+                        font(theme.minor_label_font),
+                        fontsize(theme.minor_label_font_size),
+                        svgclass("guide ylabels"))
+    end
+    vlayout_context = compose!(context(minwidth=maximum(label_heights),
+                                       minheight=sum(label_widths)),
+                               vlayout)
+
+    if guide.orientation == :horizontal
+        contexts = [hlayout_context]
+    elseif guide.orientation == :vertical
+        contexts = [vlayout_context]
+    elseif guide.orientation == :auto
+        contexts = [hlayout_context, vlayout_context]
+    else
+        error("$(guide.layout) is not a valid orientation for Guide.yticks")
     end
 
-    tick_labels = compose(canvas(0, 0, width, 1cy, order=-1),
-                          texts...,
-                          stroke(nothing),
-                          fill(theme.minor_label_color),
-                          font(theme.minor_label_font),
-                          fontsize(theme.minor_label_font_size),
-                          svgclass("guide ylabels"))
-
-    {(grid_lines, under_guide_position),
-     (tick_labels, left_guide_position)}
+    return [PositionedGuide(contexts, 10,
+                            left_guide_position),
+            PositionedGuide([grid_lines], 0, under_guide_position)]
 end
 
 
@@ -629,9 +669,15 @@ end
 # Y-axis label Guide
 immutable YLabel <: Gadfly.GuideElement
     label::Union(Nothing, String)
+    orientation::Symbol
+
+    function YLabel(label; orientation::Symbol=:auto)
+        return new(label, orientation)
+    end
 end
 
 const ylabel = YLabel
+
 
 function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     if guide.label === nothing || isempty(guide.label)
@@ -641,18 +687,41 @@ function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     text_width, text_height = max_text_extents(theme.major_label_font,
                                                theme.major_label_font_size,
                                                guide.label)
-    padding = 1mm
-    c = compose(context(0, 0, text_height + 2padding, 1cy,
-                       rotation=Rotation(-0.5pi, 0.5w, 0.5h),
-                       minwidth=text_height + 2padding,
-                       minheight=text_width + 2padding),
-                text(0.5w, 0.5h, guide.label, hcenter, vcenter),
-                stroke(nothing),
-                fill(theme.major_label_color),
-                font(theme.major_label_font),
-                fontsize(theme.major_label_font_size))
 
-    return [PositionedGuide([c], 0, left_guide_position)]
+    padding = 1mm
+    hlayout = ctxpromise() do draw_context
+        return compose!(context(),
+                        text(0.5w, 0.5h, guide.label, hcenter, vcenter),
+                        stroke(nothing),
+                        fill(theme.major_label_color),
+                        font(theme.major_label_font),
+                        fontsize(theme.major_label_font_size))
+    end
+    hlayout_context = compose!(context(minwidth=text_width + 2padding,
+                                       minheight=text_height + 2padding), hlayout)
+
+    vlayout = ctxpromise() do draw_context
+        return compose!(context(),
+                        text(0.5w, 0.5h, guide.label, hcenter, vcenter, Rotation(-0.5pi)),
+                        stroke(nothing),
+                        fill(theme.major_label_color),
+                        font(theme.major_label_font),
+                        fontsize(theme.major_label_font_size))
+    end
+    vlayout_context = compose!(context(minwidth=text_height + 2padding,
+                                       minheight=text_width + 2padding), vlayout)
+
+    if guide.orientation == :horizontal
+        contexts = [hlayout_context]
+    elseif guide.orientation == :vertical
+        contexts = [vlayout_context]
+    elseif guide.orientation == :auto
+        contexts = [hlayout_context, vlayout_context]
+    else
+        error("$(guide.layout) is not a valid orientation for Guide.ylabel")
+    end
+
+    return [PositionedGuide(contexts, 0, left_guide_position)]
 end
 
 # Title Guide
@@ -705,10 +774,10 @@ function layout_guides(plot_context::Context,
     end
 
     for (position, ordered_guides) in guides
-        if position == left_guide_position
-            sort!(ordered_guides, by=x -> -x[2])
-        else
+        if position == left_guide_position || position == top_guide_position
             sort!(ordered_guides, by=x -> x[2])
+        else
+            sort!(ordered_guides, by=x -> -x[2])
         end
     end
 
