@@ -162,3 +162,13 @@ is_int_compatable(::Integer) = true
 is_int_compatable{T <: FloatingPoint}(x::T) = abs(x) < maxintfloat(T) && float(int(x)) == x
 is_int_compatable(::Any) = false
 
+
+# Construct jscall properties to store arbitrary data in plotroot elements.
+function jsplotdata(key::String, value::String)
+    return jscall(
+        """
+        plotroot().data("$(escape_string(key))", $(value))
+        """)
+end
+
+

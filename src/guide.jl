@@ -8,7 +8,7 @@ using Gadfly
 using Iterators
 using JSON
 
-import Gadfly: render, escape_id, default_statistic
+import Gadfly: render, escape_id, default_statistic, jsplotdata
 
 
 # Where the guide should be placed in relation to the plot.
@@ -51,7 +51,13 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
                     svgclass("guide background"),
                     stroke(theme.panel_stroke),
                     fill(theme.panel_fill),
-                    fillopacity(theme.panel_opacity))
+                    fillopacity(theme.panel_opacity),
+                    jscall(
+                        """
+                        drag(guide_background_drag_onmove,
+                             guide_background_drag_onstart,
+                             guide_background_drag_onend)
+                        """))
 
     return [PositionedGuide([back], 0, under_guide_position)]
 end
@@ -457,7 +463,11 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                           lines([[(t, 0h), (t, 1h)] for t in grids]...),
                           stroke(theme.grid_color),
                           linewidth(theme.grid_line_width),
-                          svgclass("guide xgridlines yfixed"))
+                          svgclass("guide xgridlines yfixed"),
+                          jsplotdata("focused_xgrid_color",
+                                     "\"#$(hex(theme.highlight_color(theme.grid_color)))\""),
+                          jsplotdata("unfocused_xgrid_color",
+                                     "\"#$(hex(theme.grid_color))\""))
 
     if !guide.label
         return [PositionedGuide([grid_lines], 0, under_guide_position)]
@@ -573,7 +583,11 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                          lines([[(0w, t), (1w, t)] for t in grids]...),
                          stroke(theme.grid_color),
                          linewidth(theme.grid_line_width),
-                         svgclass("guide ygridlines xfixed"))
+                         svgclass("guide ygridlines xfixed"),
+                         jsplotdata("focused_ygrid_color",
+                                    "\"#$(hex(theme.highlight_color(theme.grid_color)))\""),
+                         jsplotdata("unfocused_ygrid_color",
+                                    "\"#$(hex(theme.grid_color))\""))
 
     if !guide.label
         return [PositionedGuide([grid_lines, 0, under_guide_position])]
@@ -822,7 +836,8 @@ function layout_guides(plot_context::Context,
                   {context(order=1000),
                      [c for (c, o) in guides[over_guide_position]]...},
                   {context(order=0),
-                     plot_context})]
+                     plot_context},
+                  jscall("mouseover(plot_mouseover).mouseout(plot_mouseout)"))]
 
     return compose!(context(), tbl)
 end
