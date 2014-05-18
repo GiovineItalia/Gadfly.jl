@@ -433,82 +433,119 @@ end
 
 function render(guide::XTicks, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
-    ticks = Dict()
-    grids = Set()
 
     if Gadfly.issomething(aes.xtick)
-        for (val, label) in zip(aes.xtick, aes.xtick_label(aes.xtick))
-            ticks[val] = label
+        ticks = aes.xtick
+        visibility = aes.xtickvisible
+        scale = aes.xtickscale
+
+        T = eltype(aes.xtick)
+        labels = String[]
+        for scale_ticks in groupby(zip(scale, ticks), x -> x[1])
+            append!(labels, aes.xtick_label(T[t for (s, t) in scale_ticks]))
         end
+    else
+        labels = String[]
+        ticks = {}
+        visibility = {}
+        scale = {}
     end
 
     if Gadfly.issomething(aes.xgrid)
-        for val in aes.xgrid
-            push!(grids, val)
-        end
-    end
-
-    viewmin, viewmax = nothing, nothing
-    if (viewmin != nothing && aes.xviewmin != nothing && aes.xviewmin < viewmin) ||
-       (viewmin == nothing && aes.xviewmin != nothing)
-        viewmin = aes.xviewmin
-    end
-    if (viewmax != nothing && aes.xviewmax != nothing && aes.xviewmax > viewmax) ||
-       (viewmax == nothing && aes.xviewmax != nothing)
-        viewmax = aes.xviewmax
+        grids = aes.xgrid
+    else
+        grids = {}
     end
 
     # grid lines
-    grid_lines = compose!(context(),
-                          lines([[(t, 0h), (t, 1h)] for t in grids]...),
-                          stroke(theme.grid_color),
-                          linewidth(theme.grid_line_width),
-                          svgclass("guide xgridlines yfixed"),
-                          jsplotdata("focused_xgrid_color",
-                                     "\"#$(hex(theme.highlight_color(theme.grid_color)))\""),
-                          jsplotdata("unfocused_xgrid_color",
-                                     "\"#$(hex(theme.grid_color))\""))
+    static_grid_lines = compose!(
+        context(withoutjs=true),
+        lines([[(t, 0h), (t, 1h)] for t in grids[visibility]]...),
+        stroke(theme.grid_color),
+        linewidth(theme.grid_line_width),
+        svgclass("guide xgridlines yfixed"))
+
+    dynamic_grid_lines = compose!(
+        context(withjs=true),
+        lines([[(t, 0h), (t, 1h)] for t in grids]...),
+        visible(visibility),
+        stroke(theme.grid_color),
+        linewidth(theme.grid_line_width),
+        svgclass("guide xgridlines yfixed"),
+        svgattribute("gadfly:scale", scale),
+        jsplotdata("focused_xgrid_color",
+                   "\"#$(hex(theme.highlight_color(theme.grid_color)))\""),
+        jsplotdata("unfocused_xgrid_color",
+                   "\"#$(hex(theme.grid_color))\""))
+
+    grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
 
     if !guide.label
         return [PositionedGuide([grid_lines], 0, under_guide_position)]
     end
 
-
     label_sizes = text_extents(theme.minor_label_font,
                                theme.minor_label_font_size,
-                               values(ticks)...)
+                               labels...)
     label_widths = [width for (width, height) in label_sizes]
     label_heights = [height for (width, height) in label_sizes]
 
     padding = 1mm
 
     hlayout = ctxpromise() do draw_context
-        return compose!(context(),
-                        text([tick for (tick, label) in ticks],
-                             [1h - padding],
-                             [label for (tick, label) in ticks],
-                             [hcenter], [vbottom]),
-                        fill(theme.minor_label_color),
-                        font(theme.minor_label_font),
-                        fontsize(theme.minor_label_font_size),
-                        svgclass("guide xlabels"))
+        static_labels = compose!(
+            context(withoutjs=true),
+            text(ticks[visibility], [1h - padding], labels[visibility],
+                 [hcenter], [vbottom]),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgclass("guide xlabels"))
+
+        dynamic_labels = compose!(
+            context(withjs=true),
+            text(ticks, [1h - padding], labels, [hcenter], [vbottom]),
+            visible(visibility),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgattribute("gadfly:scale", scale),
+            svgclass("guide xlabels"))
+
+        return compose!(context(), static_labels, dynamic_labels)
     end
     hlayout_context = compose!(context(minwidth=sum(label_widths),
                                        minheight=maximum(label_heights)),
                                hlayout)
 
     vlayout = ctxpromise() do draw_context
-        return compose!(context(),
-                        text([tick for (tick, label) in ticks],
-                             [1h - padding],
-                             [label for (tick, label) in ticks],
-                             [hright], [vbottom],
-                             [Rotation(-0.5pi, (1h - padding, tick))
-                              for (tick, label) in ticks]),
-                        fill(theme.minor_label_color),
-                        font(theme.minor_label_font),
-                        fontsize(theme.minor_label_font_size),
-                        svgclass("guide xlabels"))
+        static_labels = compose!(
+            context(withoutjs=true),
+            text(ticks[visibility],
+                 [1h - padding],
+                 labels[visibility],
+                 [hright], [vbottom],
+                 [Rotation(-0.5pi, (1h - padding, tick))
+                  for tick in ticks[visibility]]),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgclass("guide xlabels"))
+
+        dynamic_labels = compose!(
+            context(withoutjs=true),
+            text(ticks, [1h - padding], labels, [hright], [vbottom],
+                 [Rotation(-0.5pi, (1h - padding, tick))
+                  for tick in ticks]),
+            visible(visibility),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgattribute("gadfly:scale", scale),
+            svgclass("guide xlabels"))
+
+        return compose!(context(), static_labels, dynamic_labels)
+
     end
     vlayout_context = compose!(context(minwidth=sum(label_heights),
                                        minheight=maximum(label_widths)),
@@ -553,80 +590,116 @@ end
 
 function render(guide::YTicks, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
-    ticks = Dict()
-    grids = Set()
 
     if Gadfly.issomething(aes.ytick)
-        for (val, label) in zip(aes.ytick, aes.ytick_label(aes.ytick))
-            ticks[val] = label
+        ticks = aes.ytick
+        visibility = aes.ytickvisible
+        scale = aes.ytickscale
+        T = eltype(aes.ytick)
+        labels = String[]
+        for scale_ticks in groupby(zip(scale, ticks), x -> x[1])
+            append!(labels, aes.ytick_label(T[t for (s, t) in scale_ticks]))
         end
+    else
+        labels = String[]
+        ticks = {}
+        visibility = {}
+        scale = {}
     end
 
     if Gadfly.issomething(aes.ygrid)
-        for val in aes.ygrid
-            push!(grids, val)
-        end
-    end
-
-    viewmin, viewmax = nothing, nothing
-    if (viewmin != nothing && aes.yviewmin != nothing && aes.yviewmin < viewmin) ||
-       (viewmin == nothing && aes.yviewmin != nothing)
-        viewmin = aes.yviewmin
-    end
-    if (viewmax != nothing && aes.yviewmax != nothing && aes.yviewmax > viewmax) ||
-       (viewmax == nothing && aes.yviewmax != nothing)
-        viewmax = aes.yviewmax
+        grids = aes.ygrid
+    else
+        grids = {}
     end
 
     # grid lines
-    grid_lines = compose(context(),
-                         lines([[(0w, t), (1w, t)] for t in grids]...),
-                         stroke(theme.grid_color),
-                         linewidth(theme.grid_line_width),
-                         svgclass("guide ygridlines xfixed"),
-                         jsplotdata("focused_ygrid_color",
-                                    "\"#$(hex(theme.highlight_color(theme.grid_color)))\""),
-                         jsplotdata("unfocused_ygrid_color",
-                                    "\"#$(hex(theme.grid_color))\""))
+    static_grid_lines = compose!(
+        context(withoutjs=true),
+        lines([[(0w, t), (1w, t)] for t in grids[visibility]]...),
+        stroke(theme.grid_color),
+        linewidth(theme.grid_line_width),
+        svgclass("guide ygridlines xfixed"))
+
+    dynamic_grid_lines = compose!(
+        context(withjs=true),
+        lines([[(0w, t), (1w, t)] for t in grids]...),
+        visible(visibility),
+        stroke(theme.grid_color),
+        linewidth(theme.grid_line_width),
+        svgclass("guide ygridlines xfixed"),
+        svgattribute("gadfly:scale", scale),
+        jsplotdata("focused_ygrid_color",
+                   "\"#$(hex(theme.highlight_color(theme.grid_color)))\""),
+        jsplotdata("unfocused_ygrid_color",
+                   "\"#$(hex(theme.grid_color))\""))
+
+    grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
 
     if !guide.label
-        return [PositionedGuide([grid_lines, 0, under_guide_position])]
+        return [PositionedGuide([grid_lines], 0, under_guide_position)]
     end
 
     label_sizes = text_extents(theme.minor_label_font,
                                theme.minor_label_font_size,
-                               values(ticks)...)
+                               labels...)
     label_widths = [width for (width, height) in label_sizes]
     label_heights = [height for (width, height) in label_sizes]
     padding = 1mm
 
     hlayout = ctxpromise() do draw_context
-        return compose!(context(),
-                        text([1.0w - padding],
-                             [tick for (tick, label) in ticks],
-                             [label for (tick, label) in ticks],
-                             [hright], [vcenter]),
-                        fill(theme.minor_label_color),
-                        font(theme.minor_label_font),
-                        fontsize(theme.minor_label_font_size),
-                        svgclass("guide ylabels"))
+        static_labels = compose!(
+            context(withoutjs=true),
+            text([1.0w - padding], ticks[visibility], labels[visibility],
+                 [hright], [vcenter]),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgclass("guide ylabels"))
+
+        dynamic_labels = compose!(
+            context(withjs=true),
+            text([1.0w - padding], ticks, labels,
+                 [hright], [vcenter]),
+            visible(visibility),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgattribute("gadfly:scale", scale),
+            svgclass("guide ylabels"))
+
+        return compose!(context(), static_labels, dynamic_labels)
     end
     hlayout_context = compose!(context(minwidth=maximum(label_widths),
                                        minheight=sum(label_heights)),
                                hlayout)
 
     vlayout = ctxpromise() do draw_context
-        return compose!(context(),
-                        text([1.0w - padding],
-                             [tick for (tick, label) in ticks],
-                             [label for (tick, label) in ticks],
-                             [hcenter], [vbottom],
-                             [Rotation(-0.5pi, (1.0w - padding, tick))
-                              for (tick, label) in ticks]),
-                        fill(theme.minor_label_color),
-                        font(theme.minor_label_font),
-                        fontsize(theme.minor_label_font_size),
-                        svgclass("guide ylabels"))
+        static_grid_lines = compose!(
+            context(),
+            text([1.0w - padding], ticks[visibility], labels[visibility],
+                 [hcenter], [vbottom],
+                 [Rotation(-0.5pi, (1.0w - padding, tick))
+                  for tick in ticks[visibility]]),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgclass("guide ylabels"))
+
+        dynamic_grid_lines = compose!(
+            context(),
+            text([1.0w - padding], ticks, labels,
+                 [hcenter], [vbottom],
+                 [Rotation(-0.5pi, (1.0w - padding, tick))
+                  for tick in ticks[visibility]]),
+            visible(visibility),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgattribute("gadfly:scale", scale),
+            svgclass("guide ylabels"))
+
+        return compose!(contetx(), static_grid_lines, dynamic_grid_lines)
     end
     vlayout_context = compose!(context(minwidth=maximum(label_heights),
                                        minheight=sum(label_widths)),
@@ -830,7 +903,7 @@ function layout_guides(plot_context::Context,
 
     tbl[focus[1], focus[2]] =
         [compose!(context(minwidth=minwidth(plot_context),
-                          minheight=minheight(plot_context)),
+                          minheight=minheight(plot_context), clip=true),
                   {context(order=-1),
                      [c for (c, o) in guides[under_guide_position]]...},
                   {context(order=1000),

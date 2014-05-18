@@ -44,24 +44,25 @@ optimize_ticks() = {}
 # Args:
 #   x_min: minimum value occuring in the data.
 #   x_max: maximum value occuring in the data.
+#   Q: tick intervals and scores
+#   k_min: minimum number of ticks
+#   k_max: maximum number of ticks
+#   k_ideal: ideal number of ticks
+#   strict_span: true if no ticks should be outside [x_min, x_max].
 #
 # Returns:
 #   A Float64 vector containing tick marks.
 #
-function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false)
+function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false,
+                           Q={(1,1), (5, 0.9), (2, 0.7), (2.5, 0.5), (3, 0.2)},
+                           k_min=2, k_max=10, k_ideal=5,
+                           strict_span=false)
+
     if x_min == x_max
         return [x_min], x_min - one(T), x_min + one(T)
     end
 
-    # tick intervals and scores
-    # TODO: these should perhaps be part of the theme
-    const Q = {(1,1), (5, 0.9), (2, 0.7), (25, 0.5), (3, 0.2)}
     const n = length(Q)
-
-    # number of ticks
-    const k_min   = 2
-    const k_max   = 10
-    const k_ideal = 5
 
     # generalizing "order of magnitude"
     xspan = x_max - x_min
@@ -98,7 +99,9 @@ function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false)
                     score = (1/4)g + (1/6)s + (1/3)c + (1/4)qscore
 
                     # strict limits on coverage
-                    if span >= 2.0*xspan || span < xspan
+                    if strict_span && span > xspan
+                        core -= 10000
+                    elseif !strict_span && (span >= 2.0*xspan || span < xspan)
                         score -= 1000
                     end
 
@@ -175,6 +178,23 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false)
             optimize_ticks(year(x_min), year(x_max), extend_ticks=extend_ticks)
         Date[date(y) for y in ticks], date(viewmin), date(viewmax)
     end
+end
+
+
+
+# Generate ticks suitable for multiple scales.
+function multilevel_ticks{T}(viewmin::T, viewmax::T;
+                             scales=[0.1, 10.0])
+
+    ticks = Dict()
+    for scale in scales
+        ticks[scale] = optimize_ticks(viewmin, viewmax,
+                                       k_min=2*scale,
+                                       k_max=max(3, 10*scale),
+                                       k_ideal=max(2, 15*scale))[1]
+    end
+
+    return ticks
 end
 
 

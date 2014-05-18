@@ -36,6 +36,10 @@ export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
 export SVGJS, SVG, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
 
 
+# Define an XML namespace for custom attributes
+Compose.xmlns["gadfly"] = "http://www.gadflyjl.org/ns"
+
+
 # Backwards compatibility with julia-0.2 names
 if !isdefined(:rad2deg)
     const rad2deg = radians2degrees
@@ -633,8 +637,8 @@ function render(plot::Plot)
         push!(guides, Guide.colorkey())
     end
 
-    context = render_prepared(plot, plot_aes, layer_aess, layer_stats, scales,
-                              statistics, guides)
+    root_context = render_prepared(plot, plot_aes, layer_aess, layer_stats, scales,
+                                   statistics, guides)
 
     # pad_inner(canvas, 5mm) # TODO: implement pad in compose
 end
