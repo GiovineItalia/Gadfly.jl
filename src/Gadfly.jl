@@ -741,13 +741,19 @@ hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 
 # writemime functions for all supported compose backends.
 
-function writemime(io::IO, ::MIME"text/html", p::Plot)
-    draw(D3(io, default_plot_width, default_plot_height), p)
+function writemime(io::IO, m::MIME"text/html", p::Plot)
+    buf = IOBuffer()
+    d3 = D3(buf, default_plot_width, default_plot_height, false)
+    draw(d3, p)
+    writemime(io, m, d3)
 end
 
 
-function writemime(io::IO, ::MIME"image/svg+xml", p::Plot)
-    draw(SVG(io, default_plot_width, default_plot_height), p)
+function writemime(io::IO, m::MIME"image/svg+xml", p::Plot)
+    buf = IOBuffer()
+    svg = SVG(buf, default_plot_width, default_plot_height, false)
+    draw(svg, p)
+    writemime(io, m, svg)
 end
 
 
