@@ -601,6 +601,7 @@ function apply_statistic(stat::TickStatistic,
         tickscale = Array(Float64, tickcount)
         i = 1
         for t in ticks
+            tickscale[i] = 1.0
             tickvisible[i] = viewmin <= t <= viewmax
             i += 1
         end
