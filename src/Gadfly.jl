@@ -25,7 +25,7 @@ import Iterators
 import Iterators: distinct, drop
 import Compose.draw, Compose.hstack, Compose.vstack
 import Base: copy, push!, start, next, done, has, show, getindex, cat,
-             writemime, mimewritable, isfinite, display
+             writemime, isfinite, display
 
 export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
        layer, @plot, spy, set_default_plot_size, set_default_plot_format,
@@ -741,21 +741,19 @@ hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 
 # writemime functions for all supported compose backends.
 
-function mimewritable(T::MIME, ::Plot)
-    return (default_plot_format == :png && isa(T, MIME"image/png")) ||
-           (default_plot_format == :svg && isa(T, MIME"image/svg+xml")) ||
-           (default_plot_format == :html && isa(T, MIME"text/html")) ||
-           (default_plot_format == :ps && isa(T, MIME"application/postscript"))
+function writemime(io::IO, m::MIME"text/html", p::Plot)
+    buf = IOBuffer()
+    d3 = D3(buf, default_plot_width, default_plot_height, false)
+    draw(d3, p)
+    writemime(io, m, d3)
 end
 
 
-function writemime(io::IO, ::MIME"text/html", p::Plot)
-    draw(D3(io, default_plot_width, default_plot_height), p)
-end
-
-
-function writemime(io::IO, ::MIME"image/svg+xml", p::Plot)
-    draw(SVG(io, default_plot_width, default_plot_height), p)
+function writemime(io::IO, m::MIME"image/svg+xml", p::Plot)
+    buf = IOBuffer()
+    svg = SVG(buf, default_plot_width, default_plot_height, false)
+    draw(svg, p)
+    writemime(io, m, svg)
 end
 
 
@@ -784,68 +782,38 @@ function writemime(io::IO, ::MIME"text/plain", p::Plot)
     write(io, "Plot(...)")
 end
 
-
-# Fallback display method. When there isn't a better option, we write to a
-# temporary file and try to open it.
-function display(d::TextDisplay, p::Plot)
-    base_filename = tempname()
+function default_mime()
     if default_plot_format == :png
-        filename = string(base_filename, ".png")
-        output = open(filename, "w")
-        draw(PNG(output, default_plot_width, default_plot_height), p)
-        close(output)
+        "image/png"
     elseif default_plot_format == :svg
-        filename = string(base_filename, ".svg")
-        output = open(filename, "w")
-        draw(SVG(output, default_plot_width, default_plot_height), p)
-        close(output)
+        "image/svg+xml"
     elseif default_plot_format == :html
-        filename = string(base_filename, ".html")
-        output = open(filename, "w")
-
-        plot_output = IOBuffer()
-        draw(D3(plot_output, default_plot_width, default_plot_height, false), p)
-        plot_js = takebuf_string(plot_output)
-
-        write(output,
-            """
-            <!DOCTYPE html>
-            <html>
-                <head><title>Gadfly Plot</title></head>
-                <body>
-                <script charset="utf-8">
-                    $(Compose.d3_js)
-                </script>
-                <script charset="utf-8">
-                    $(gadfly_js)
-                </script>
-
-                <div id="gadflyplot"></div>
-                <script charset="utf-8">
-                    $(plot_js)
-                </script>
-                <script charset="utf-8">
-                    draw("#gadflyplot");
-                </script>
-                </body>
-            </html>
-            """)
-        close(output)
+        "text/html"
     elseif default_plot_format == :ps
-        filename = string(base_filename, ".ps")
-        output = open(filename, "w")
-        draw(PS(output, default_plot_width, default_plot_height), p)
-        close(output)
+        "application/postscript"
     elseif default_plot_format == :pdf
-        filename = string(base_filename, ".pdf")
-        output = open(filename, "w")
-        draw(PDF(output, default_plot_width, default_plot_height), p)
-        close(output)
+        "application/pdf"
     else
-        # if format is set to anything else, don't show the plot
-        return
+        ""
     end
+end
 
+import Base.Multimedia: @try_display, xdisplayable
+import Base.REPL: REPLDisplay
+
+function display(p::Plot)
+    displays = Base.Multimedia.displays
+    for i = length(displays):-1:1
+        m = default_mime()
+        xdisplayable(displays[i], m, p) &&
+            @try_display return display(displays[i], m, p)
+        xdisplayable(displays[i], p) &&
+            @try_display return display(displays[i], p)
+    end
+    invoke(display,(Any,),p)
+end
+
+function open_file(filename)
     if OS_NAME == :Darwin
         run(`open $(filename)`)
     elseif OS_NAME == :Linux || OS_NAME == :FreeBSD
@@ -855,6 +823,75 @@ function display(d::TextDisplay, p::Plot)
     else
         warn("Showing plots is not supported on OS $(string(OS_NAME))")
     end
+end
+
+# Fallback display method. When there isn't a better option, we write to a
+# temporary file and try to open it.
+function display(d::REPLDisplay, ::MIME"image/png", p::Plot)
+    filename = string(tempname(), ".png")
+    output = open(filename, "w")
+    draw(PNG(output, default_plot_width, default_plot_height), p)
+    close(output)
+    open_file(filename)
+end
+
+function display(d::REPLDisplay, ::MIME"image/svg+xml", p::Plot)
+    filename = string(tempname(), ".svg")
+    output = open(filename, "w")
+    draw(SVG(output, default_plot_width, default_plot_height), p)
+    close(output)
+    open_file(filename)
+end
+
+function display(d::REPLDisplay, ::MIME"text/html", p::Plot)
+    filename = string(tempname(), ".html")
+    output = open(filename, "w")
+
+    plot_output = IOBuffer()
+    draw(D3(plot_output, default_plot_width, default_plot_height, false), p)
+    plot_js = takebuf_string(plot_output)
+
+    write(output,
+        """
+        <!DOCTYPE html>
+        <html>
+            <head><title>Gadfly Plot</title></head>
+            <body>
+            <script charset="utf-8">
+                $(Compose.d3_js)
+            </script>
+            <script charset="utf-8">
+                $(gadfly_js)
+            </script>
+
+            <div id="gadflyplot"></div>
+            <script charset="utf-8">
+                $(plot_js)
+            </script>
+            <script charset="utf-8">
+                draw("#gadflyplot");
+            </script>
+            </body>
+        </html>
+        """)
+    close(output)
+    open_file(filename)
+end
+
+function display(d::REPLDisplay, ::MIME"application/postscript", p::Plot)
+    filename = string(tempname(), ".ps")
+    output = open(filename, "w")
+    draw(PS(output, default_plot_width, default_plot_height), p)
+    close(output)
+    open_file(filename)
+end
+
+function display(d::REPLDisplay, ::MIME"application/pdf", p::Plot)
+    filename = string(tempname(), ".pdf")
+    output = open(filename, "w")
+    draw(PDF(output, default_plot_width, default_plot_height), p)
+    close(output)
+    open_file(filename)
 end
 
 
