@@ -156,6 +156,10 @@ end
 
 # Print dates
 function formatter{T<:Date}(ds::AbstractArray{T}; fmt=nothing)
+    if isa(fmt, Function)
+        return fmt
+    end
+
     const month_names = [
         "January", "February", "March", "April", "May", "June", "July",
         "August", "September", "October", "November", "December"
