@@ -6,7 +6,19 @@ var client_offset = function(fig, x, y) {
     x = x * fig.node.viewBox.baseVal.width / client_box.width;
     y = y * fig.node.viewBox.baseVal.height / client_box.height;
     return [x, y]
-}
+};
+
+
+// Get an x/y coordinate value in pixels
+var xPX = function(fig, x) {
+    var client_box = fig.node.getBoundingClientRect();
+    return x * fig.node.viewBox.baseVal.width / client_box.width;
+};
+
+var yPX = function(fig, y) {
+    var client_box = fig.node.getBoundingClientRect();
+    return y * fig.node.viewBox.baseVal.height / client_box.height;
+};
 
 
 Snap.plugin(function (Snap, Element, Paper, global) {
@@ -30,12 +42,23 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             y1: bbox.y + bbox.height
         };
     };
+
+    Element.prototype.plotcenter = function () {
+        var root = this.plotroot()
+        var bbox = root.select(".guide.background").node.getBBox();
+        return {
+            x: bbox.x + bbox.width / 2,
+            y: bbox.y + bbox.height / 2
+        };
+    };
 });
 
 
 // When the plot is moused over, emphasize the grid lines.
 var plot_mouseover = function(event) {
     var root = this.plotroot();
+
+    // emphasize grid lines
     destcolor = root.data("focused_xgrid_color");
     root.select(".xgridlines")
         .selectAll("path")
@@ -45,6 +68,10 @@ var plot_mouseover = function(event) {
     root.select(".ygridlines")
         .selectAll("path")
         .animate({stroke: destcolor}, 250);
+
+    // reveal zoom slider
+    root.select(".zoomslider")
+        .animate({opacity: 1.0}, 250);
 };
 
 
@@ -60,6 +87,10 @@ var plot_mouseout = function(event) {
     root.select(".ygridlines")
         .selectAll("path")
         .animate({stroke: destcolor}, 250);
+
+    // hide zoom slider
+    root.select(".zoomslider")
+        .animate({opacity: 0.0}, 250);
 };
 
 
@@ -67,10 +98,21 @@ var plot_mouseout = function(event) {
 var set_plot_pan = function(root, tx, ty) {
     var xscalable = root.hasClass("xscalable");
     var yscalable = root.hasClass("yscalable");
+    var center = root.plotcenter();
 
-    var t = new Snap.Matrix().translate(tx, ty);
-    var xfixed_t = new Snap.Matrix().translate(0, ty);
-    var yfixed_t = new Snap.Matrix().translate(tx, 0);
+    var scale = root.data("scale");
+    var xscale = xscalable ? scale : 1.0,
+        yscale = yscalable ? scale : 1.0;
+
+    var t = new Snap.Matrix()
+                    .translate(tx, ty)
+                    .scale(xscale, yscale, center.x, center.y);
+    var xfixed_t = new Snap.Matrix()
+                           .translate(0, ty)
+                           .scale(1.0, yscale, center.x, center.y);
+    var yfixed_t = new Snap.Matrix()
+                           .translate(tx, 0)
+                           .scale(xscale, 1.0, center.x, center.y);
 
     root.selectAll(".geometry")
         .forEach(function (element, i) {
@@ -118,11 +160,95 @@ var set_plot_pan = function(root, tx, ty) {
 
 
 var set_plot_zoom = function(root, scale) {
-    // TODO: This is going to be painful, but here's the basic plan I have in
-    // mind.
-    //
-    // The tick statistic is going to produce tick marks at various scales,
-    // indexed by the scale at which they should be shown.
+    init_pan_zoom(root);
+
+    var max_scale = root.data("max_scale"),
+        min_scale = root.data("min_scale");
+    scale = Math.max(Math.min(max_scale, scale), min_scale)
+
+    var xscalable = root.hasClass("xscalable"),
+        yscalable = root.hasClass("yscalable");
+
+    var old_scale = root.data("scale");
+    root.data("scale", scale)
+
+    var xscale = xscalable ? scale : 1.0,
+        yscale = yscalable ? scale : 1.0;
+
+    var tx = root.data("tx"),
+        ty = root.data("ty");
+
+    var center = root.plotcenter();
+
+    var t = new Snap.Matrix()
+                    .translate(tx, ty)
+                    .scale(xscale, yscale, center.x, center.y);
+
+    root.selectAll(".geometry")
+        .forEach(function (element, i) {
+            element.transform(t);
+        });
+
+    if (yscalable) {
+        var xfixed_t =
+            new Snap.Matrix()
+                    .translate(0, ty)
+                    .scale(1.0, yscale, center.x, center.y);
+
+        root.selectAll(".xfixed")
+            .forEach(function (element, i) {
+                element.transform(xfixed_t);
+            });
+
+        root.select(".ylabels")
+            .selectAll("text")
+            .forEach(function (element, i) {
+                var y = element.data("y");
+                element.attr({y: y * xfixed_t.d + xfixed_t.f});
+            });
+    }
+
+    if (xscalable) {
+        var yfixed_t =
+            new Snap.Matrix()
+                    .translate(tx, 0)
+                    .scale(xscale, 1.0, center.x, center.y);
+        var yfixed_unscale =
+            new Snap.Matrix()
+                    .scale(1.0 / xscale, 1.0);
+
+        root.selectAll(".yfixed")
+            .forEach(function (element, i) {
+                element.transform(yfixed_t);
+            });
+
+
+        root.select(".xlabels")
+            .selectAll("text")
+            .forEach(function (element, i) {
+                var x = element.data("x");
+                element.attr({x: x * yfixed_t.a + yfixed_t.e});
+            });
+    }
+
+    // we must unscale anything that is scale invariance: widths, raiduses, etc.
+    var size_attribs = ["r", "font-size", "stroke-width"];
+    root.select(".plotpanel")
+        .selectAll("g, .geometry > *")
+        .forEach(function (element, i) {
+            for (i in size_attribs) {
+                var key = size_attribs[i];
+                var val = element.attr(key);
+                if (val !== undefined) {
+                    var keyval = {};
+                    keyval[key] = val * old_scale / scale;
+                    element.attr(keyval);
+                }
+            }
+        });
+
+    // hide/reveal ticks
+    // TODO
 };
 
 
@@ -150,6 +276,27 @@ var init_pan_zoom = function(root) {
 
         root.data("tickscales", tickscales)
     }
+
+    var min_scale = 1.0, max_scale = 1.0;
+    for (scale in tickscales) {
+        min_scale = Math.min(min_scale, scale);
+        max_scale = Math.max(max_scale, scale);
+    }
+    root.data("min_scale", min_scale);
+    root.data("max_scale", max_scale);
+
+    // store the original positions of labels
+    root.select(".xlabels")
+        .selectAll("text")
+        .forEach(function (element, i) {
+            element.data("x", element.asPX("x"));
+        });
+
+    root.select(".ylabels")
+        .selectAll("text")
+        .forEach(function (element, i) {
+            element.data("y", element.asPX("y"));
+        });
 
     // mark grid lines and ticks as in or out of scale.
     var mark_inscale = function (element, i) {
@@ -232,18 +379,12 @@ var init_pan_zoom = function(root) {
 var guide_background_drag_onmove = function(dx, dy, x, y, event) {
     var root = this.plotroot();
 
-    // TODO: This is going to be a problem. On firefox (dx, dy) is given
-    // in client coordinates, whereas safari and chrome give these numbers
-    // in pixels. Fuck my life.
-    // 
-    // Nope, that's not quite what's happening.
-    // 
-    // Ok, what's really happening is that firefox computes a bounding box
-    // that includes all the invisible shit.
-    //
-    // At least, I think that's what's going on.
-    // 
-    dxdy = client_offset(fig, dx,  dy);
+    // TODO:
+    // This has problems on Firefox. Here's what I think is happening: firefox
+    // computes a bounding box for everything, including the invisible shit,
+    // which throws off the 'client_offset' calculation.'
+
+    var dxdy = client_offset(fig, dx,  dy);
     dx = dxdy[0];
     dy = dxdy[1];
 
@@ -276,6 +417,102 @@ var guide_background_drag_onend = function(event) {
     var root = this.plotroot();
     root.data("tx", root.data("tx") + root.data("dx"));
     root.data("ty", root.data("ty") + root.data("dy"));
+};
+
+
+var zoomslider_button_mouseover = function(event) {
+    this.select(".button_logo")
+        .animate({fill: this.data("mouseover_color")}, 100);
+};
+
+
+var zoomslider_button_mouseout = function(event) {
+    this.select(".button_logo")
+        .animate({fill: this.data("mouseout_color")}, 100);
+};
+
+
+var zoomslider_zoomout_click = function(event) {
+    // TODO
+};
+
+
+var zoomslider_zoomin_click = function(event) {
+    // TODO
+};
+
+
+var zoomslider_track_click = function(event) {
+    // TODO
+};
+
+
+var zoomslider_thumb_mouseover = function(event) {
+    this.animate({fill: this.data("mouseover_color")}, 100);
+};
+
+
+var zoomslider_thumb_mouseout = function(event) {
+    this.animate({fill: this.data("mouseout_color")}, 100);
+};
+
+
+// compute the position in [0, 1] of the zoom slider thumb from the current scale
+var slider_position_from_scale = function(scale, min_scale, max_scale) {
+    if (scale >= 1.0) {
+        return 0.5 + 0.5 * (Math.log(scale) / Math.log(max_scale));
+    }
+    else {
+        return 0.5 * (Math.log(scale) - Math.log(min_scale)) / (0 - Math.log(min_scale));
+    }
+}
+
+
+var zoomslider_thumb_dragmove = function(dx, dy, x, y) {
+    var root = this.plotroot();
+    var min_pos = this.data("min_pos"),
+        max_pos = this.data("max_pos"),
+        min_scale = root.data("min_scale"),
+        max_scale = root.data("max_scale"),
+        old_scale = root.data("old_scale");
+
+    var dxdy = client_offset(fig, dx,  dy);
+    dx = dxdy[0];
+    dy = dxdy[1];
+        
+    var xmid = (min_pos + max_pos) / 2;
+    var xpos = slider_position_from_scale(old_scale, min_scale, max_scale) +
+                   dx / (max_pos - min_pos);
+
+    // compute the new scale
+    var new_scale;
+    if (xpos >= 0.5) {
+        new_scale = Math.exp(2.0 * (xpos - 0.5) * Math.log(max_scale));
+    }
+    else {
+        new_scale = Math.exp(2.0 * xpos * (0 - Math.log(min_scale)) +
+                        Math.log(min_scale));
+    }
+    new_scale = Math.min(max_scale, Math.max(min_scale, new_scale));
+
+    set_plot_zoom(root, new_scale);
+    this.transform(new Snap.Matrix().translate(
+            Math.max(min_pos, Math.min(
+                    max_pos, min_pos + (max_pos - min_pos) * xpos)) - xmid, 0));
+};
+
+
+var zoomslider_thumb_dragstart = function(event) {
+    var root = this.plotroot();
+    init_pan_zoom(root);
+
+    // keep track of what the scale was when we started dragging
+    root.data("old_scale", root.data("scale"));
+};
+
+
+var zoomslider_thumb_dragend = function(event) {
+    // TODO
 };
 
 
