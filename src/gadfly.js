@@ -59,7 +59,7 @@ var plot_mouseover = function(event) {
     var root = this.plotroot();
 
     // emphasize grid lines
-    destcolor = root.data("focused_xgrid_color");
+    var destcolor = root.data("focused_xgrid_color");
     root.select(".xgridlines")
         .selectAll("path")
         .animate({stroke: destcolor}, 250);
@@ -78,7 +78,7 @@ var plot_mouseover = function(event) {
 // Unemphasize grid lines on mouse out.
 var plot_mouseout = function(event) {
     var root = this.plotroot();
-    destcolor = root.data("unfocused_xgrid_color");
+    var destcolor = root.data("unfocused_xgrid_color");
     root.select(".xgridlines")
         .selectAll("path")
         .animate({stroke: destcolor}, 250);
@@ -94,25 +94,19 @@ var plot_mouseout = function(event) {
 };
 
 
-// Set a plot's zoom/pan state
-var set_plot_pan = function(root, tx, ty) {
-    var xscalable = root.hasClass("xscalable");
-    var yscalable = root.hasClass("yscalable");
-    var center = root.plotcenter();
+var set_geometry_transform = function(root, tx, ty, scale) {
+    var xscalable = root.hasClass("xscalable"),
+        yscalable = root.hasClass("yscalable");
 
-    var scale = root.data("scale");
+    var old_scale = root.data("scale");
+
     var xscale = xscalable ? scale : 1.0,
         yscale = yscalable ? scale : 1.0;
 
-    var t = new Snap.Matrix()
-                    .translate(tx, ty)
-                    .scale(xscale, yscale, center.x, center.y);
-    var xfixed_t = new Snap.Matrix()
-                           .translate(0, ty)
-                           .scale(1.0, yscale, center.x, center.y);
-    var yfixed_t = new Snap.Matrix()
-                           .translate(tx, 0)
-                           .scale(xscale, 1.0, center.x, center.y);
+    tx = xscalable ? tx : 0.0;
+    ty = yscalable ? ty : 0.0;
+
+    var t = new Snap.Matrix().translate(tx, ty).scale(xscale, yscale);
 
     root.selectAll(".geometry")
         .forEach(function (element, i) {
@@ -122,133 +116,167 @@ var set_plot_pan = function(root, tx, ty) {
     bounds = root.plotbounds();
 
     if (yscalable) {
+        var xfixed_t = new Snap.Matrix().translate(0, ty).scale(1.0, yscale);
+        var ytrans = new Snap.Matrix().translate(0, ty);
         root.selectAll(".xfixed")
             .forEach(function (element, i) {
                 element.transform(xfixed_t);
             });
 
         root.select(".ylabels")
-            .transform(xfixed_t)
+            .transform(ytrans)
             .selectAll("text")
             .forEach(function (element, i) {
+                var y = element.attr("y") * scale / old_scale;
+                element.attr("y", y);
+
                 if (element.attr("gadfly:inscale") == "true") {
-                    var x = parseFloat(element.attr("y")) + ty;
+                    y += ty;
                     element.attr("visibility",
-                        bounds.y0 <= x && x <= bounds.y1 ? "visible" : "hidden");
+                        bounds.y0 <= y && y <= bounds.y1 ? "visible" : "hidden");
                 }
             });
     }
 
     if (xscalable) {
+        var yfixed_t = new Snap.Matrix().translate(tx, 0).scale(xscale, 1.0);
+        var xtrans = new Snap.Matrix().translate(tx, 0);
         root.selectAll(".yfixed")
             .forEach(function (element, i) {
                 element.transform(yfixed_t);
             });
 
         root.select(".xlabels")
-            .transform(yfixed_t)
+            .transform(xtrans)
             .selectAll("text")
             .forEach(function (element, i) {
+                var x = element.attr("x") * scale / old_scale;
+                element.attr("x", x);
+
                 if (element.attr("gadfly:inscale") == "true") {
-                    var x = parseFloat(element.attr("x")) + tx;
+                    x += tx;
                     element.attr("visibility",
                         bounds.x0 <= x && x <= bounds.x1 ? "visible" : "hidden");
                 }
             });
     }
-};
-
-
-var set_plot_zoom = function(root, scale) {
-    init_pan_zoom(root);
-
-    var max_scale = root.data("max_scale"),
-        min_scale = root.data("min_scale");
-    scale = Math.max(Math.min(max_scale, scale), min_scale)
-
-    var xscalable = root.hasClass("xscalable"),
-        yscalable = root.hasClass("yscalable");
-
-    var old_scale = root.data("scale");
-    root.data("scale", scale)
-
-    var xscale = xscalable ? scale : 1.0,
-        yscale = yscalable ? scale : 1.0;
-
-    var tx = root.data("tx"),
-        ty = root.data("ty");
-
-    var center = root.plotcenter();
-
-    var t = new Snap.Matrix()
-                    .translate(tx, ty)
-                    .scale(xscale, yscale, center.x, center.y);
-
-    root.selectAll(".geometry")
-        .forEach(function (element, i) {
-            element.transform(t);
-        });
-
-    if (yscalable) {
-        var xfixed_t =
-            new Snap.Matrix()
-                    .translate(0, ty)
-                    .scale(1.0, yscale, center.x, center.y);
-
-        root.selectAll(".xfixed")
-            .forEach(function (element, i) {
-                element.transform(xfixed_t);
-            });
-
-        root.select(".ylabels")
-            .selectAll("text")
-            .forEach(function (element, i) {
-                var y = element.data("y");
-                element.attr({y: y * xfixed_t.d + xfixed_t.f});
-            });
-    }
-
-    if (xscalable) {
-        var yfixed_t =
-            new Snap.Matrix()
-                    .translate(tx, 0)
-                    .scale(xscale, 1.0, center.x, center.y);
-        var yfixed_unscale =
-            new Snap.Matrix()
-                    .scale(1.0 / xscale, 1.0);
-
-        root.selectAll(".yfixed")
-            .forEach(function (element, i) {
-                element.transform(yfixed_t);
-            });
-
-
-        root.select(".xlabels")
-            .selectAll("text")
-            .forEach(function (element, i) {
-                var x = element.data("x");
-                element.attr({x: x * yfixed_t.a + yfixed_t.e});
-            });
-    }
 
     // we must unscale anything that is scale invariance: widths, raiduses, etc.
     var size_attribs = ["r", "font-size", "stroke-width"];
-    root.select(".plotpanel")
-        .selectAll("g, .geometry > *")
+    root.selectAll(".geometry > *, .xgridlines, .ygridlines")
         .forEach(function (element, i) {
             for (i in size_attribs) {
                 var key = size_attribs[i];
-                var val = element.attr(key);
-                if (val !== undefined) {
+                var val = element.asPX(key);
+                if (val !== undefined && val != 0 && !isNaN(val)) {
                     var keyval = {};
                     keyval[key] = val * old_scale / scale;
                     element.attr(keyval);
                 }
             }
         });
+};
 
-    // hide/reveal ticks
-    // TODO
+
+// Find the most appropriate tick scale and update label visibility.
+var update_tickscale = function(root, scale) {
+    var tickscales = root.data("tickscales");
+    var best_tickscale = 1.0;
+    var best_tickscale_dist = Infinity;
+    for (tickscale in tickscales) {
+        var dist = Math.abs(Math.log(tickscale) - Math.log(scale));
+        if (dist < best_tickscale_dist) {
+            best_tickscale_dist = dist;
+            best_tickscale = tickscale;
+        }
+    }
+
+    if (best_tickscale != root.data("tickscale")) {
+        root.data("tickscale", best_tickscale);
+
+        var mark_inscale_gridlines = function (element, i) {
+            var inscale = element.attr("gadfly:scale") == best_tickscale;
+            element.attr("gadfly:inscale", inscale);
+            element.attr("visibility", inscale ? "visible" : "hidden");
+        };
+
+        var mark_inscale_labels = function (element, i) {
+            var inscale = element.attr("gadfly:scale") == best_tickscale;
+            element.attr("gadfly:inscale", inscale);
+            element.attr("visibility", inscale ? "visible" : "hidden");
+        };
+
+        root.select(".xgridlines").selectAll("path").forEach(mark_inscale_gridlines);
+        root.select(".ygridlines").selectAll("path").forEach(mark_inscale_gridlines);
+        root.select(".xlabels").selectAll("text").forEach(mark_inscale_labels);
+        root.select(".ylabels").selectAll("text").forEach(mark_inscale_labels);
+    }
+};
+
+
+var set_plot_pan_zoom = function(root, tx, ty, scale) {
+    var old_scale = root.data("scale");
+    var bounds = root.plotbounds();
+
+    var width = bounds.x1 - bounds.x0,
+        height = bounds.y1 - bounds.y0;
+
+    // compute the viewport derived from tx, ty, and scale
+    var x_min = -width * scale - (scale * width - width),
+        x_max = width * scale,
+        y_min = -height * scale - (scale * height - height),
+        y_max = height * scale;
+
+    var x0 = bounds.x0 - scale * bounds.x0,
+        y0 = bounds.y0 - scale * bounds.y0;
+
+    var tx = Math.max(Math.min(tx - x0, x_max), x_min),
+        ty = Math.max(Math.min(ty - y0, y_max), y_min);
+
+    tx += x0;
+    ty += y0;
+
+    // when the scale change, we may need to alter which set of
+    // ticks is being displayed
+    if (scale != old_scale) {
+        update_tickscale(root, scale);
+    }
+
+    set_geometry_transform(root, tx, ty, scale);
+
+    root.data("scale", scale);
+    root.data("tx", tx);
+    root.data("ty", ty);
+};
+
+
+var scale_centered_translation = function(root, scale) {
+    var bounds = root.plotbounds();
+
+    var width = bounds.x1 - bounds.x0,
+        height = bounds.y1 - bounds.y0;
+
+    var tx0 = root.data("tx"),
+        ty0 = root.data("ty");
+
+    var scale0 = root.data("scale");
+
+    // how off from center the current view is
+    var xoff = tx0 - (bounds.x0 * (1 - scale0) + (width * (1 - scale0)) / 2),
+        yoff = ty0 - (bounds.y0 * (1 - scale0) + (height * (1 - scale0)) / 2);
+
+    // rescale offsets
+    xoff = xoff * scale / scale0;
+    yoff = yoff * scale / scale0;
+
+    // adjust for the panel position being scaled
+    var x_edge_adjust = bounds.x0 * (1 - scale),
+        y_edge_adjust = bounds.y0 * (1 - scale);
+
+    return {
+        x: xoff + x_edge_adjust + (width - width * scale) / 2,
+        y: yoff + y_edge_adjust + (height - height * scale) / 2
+    };
 };
 
 
@@ -274,7 +302,8 @@ var init_pan_zoom = function(root) {
         root.select(".xlabels").selectAll("text").forEach(add_tick_scales);
         root.select(".ylabels").selectAll("text").forEach(add_tick_scales);
 
-        root.data("tickscales", tickscales)
+        root.data("tickscales", tickscales);
+        root.data("tickscale", 1.0);
     }
 
     var min_scale = 1.0, max_scale = 1.0;
@@ -388,20 +417,22 @@ var guide_background_drag_onmove = function(dx, dy, x, y, event) {
     dx = dxdy[0];
     dy = dxdy[1];
 
-    // keep track of the last drag offset so we can fix tx on the drag
-    // end event
+    var tx0 = root.data("tx"),
+        ty0 = root.data("ty");
 
-    var tx0 = root.data("tx");
-    var ty0 = root.data("ty");
+    var dx0 = root.data("dx"),
+        dy0 = root.data("dy");
 
-    var pan_bounds = root.data("pan_bounds");
-    tx1 = Math.max(pan_bounds.x0, Math.min(pan_bounds.x1, tx0 + dx));
-    ty1 = Math.max(pan_bounds.y0, Math.min(pan_bounds.y1, ty0 + dy));
+    root.data("dx", dx);
+    root.data("dy", dy);
 
-    root.data("dx", tx1 - tx0);
-    root.data("dy", ty1 - ty0);
+    dx = dx - dx0;
+    dy = dy - dy0;
 
-    set_plot_pan(root, tx1, ty1);
+    var tx = tx0 + dx,
+        ty = ty0 + dy;
+
+    set_plot_pan_zoom(root, tx, ty, root.data("scale"));
 };
 
 
@@ -415,8 +446,6 @@ var guide_background_drag_onstart = function(x, y, event) {
 
 var guide_background_drag_onend = function(event) {
     var root = this.plotroot();
-    root.data("tx", root.data("tx") + root.data("dx"));
-    root.data("ty", root.data("ty") + root.data("dy"));
 };
 
 
@@ -495,7 +524,10 @@ var zoomslider_thumb_dragmove = function(dx, dy, x, y) {
     }
     new_scale = Math.min(max_scale, Math.max(min_scale, new_scale));
 
-    set_plot_zoom(root, new_scale);
+    var trans = scale_centered_translation(root, new_scale);
+    set_plot_pan_zoom(root, trans.x, trans.y, new_scale);
+
+    // TODO: this will have to be move to its own function
     this.transform(new Snap.Matrix().translate(
             Math.max(min_pos, Math.min(
                     max_pos, min_pos + (max_pos - min_pos) * xpos)) - xmid, 0));
@@ -514,6 +546,7 @@ var zoomslider_thumb_dragstart = function(event) {
 var zoomslider_thumb_dragend = function(event) {
     // TODO
 };
+
 
 
 //@ sourceURL=gadfly.js

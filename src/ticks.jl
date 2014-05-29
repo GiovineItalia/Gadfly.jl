@@ -184,7 +184,7 @@ end
 
 # Generate ticks suitable for multiple scales.
 function multilevel_ticks{T}(viewmin::T, viewmax::T;
-                             scales=[0.1, 10.0])
+                             scales=[0.5, 5.0, 10.0])
 
     ticks = Dict()
     for scale in scales
