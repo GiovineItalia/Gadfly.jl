@@ -798,20 +798,49 @@ function default_mime()
     end
 end
 
-import Base.Multimedia: @try_display, xdisplayable
-import Base.REPL: REPLDisplay
 
-function display(p::Plot)
-    displays = Base.Multimedia.displays
-    for i = length(displays):-1:1
-        m = default_mime()
-        xdisplayable(displays[i], m, p) &&
-            @try_display return display(displays[i], m, p)
-        xdisplayable(displays[i], p) &&
-            @try_display return display(displays[i], p)
+if isdefined(Base, :REPL)
+    import Base.Multimedia: @try_display, xdisplayable
+    const REPLDisplay = Base.REPL.REPLDisplay
+
+    function display(p::Plot)
+        displays = Base.Multimedia.displays
+        for i = length(displays):-1:1
+            m = default_mime()
+
+            # TODO: What we really want is the try_display macro, but that's not
+            # defined in 0.2 and causes an error even though this branch
+            # isn't executed in 0.2.
+            if xdisplayable(displays[i], m, p)
+                try
+                    return display(displays[i], m, p)
+                catch
+                    isa(e, MethodError) && e.f in (display, redisplay, writemime) ||
+                        rethrow()
+                end
+            end
+
+            if xdisplayable(displays[i], p)
+                try
+                    return display(displays[i], p)
+                catch
+                    isa(e, MethodError) && e.f in (display, redisplay, writemime) ||
+                        rethrow()
+                end
+            end
+        end
+        invoke(display,(Any,),p)
     end
-    invoke(display,(Any,),p)
+else
+    # julia 0.2 fallback
+    const REPLDisplay = TextDisplay
+
+    function display(d::TextDisplay, p::Plot)
+        m = default_mime()
+        display(d, m, p)
+    end
 end
+
 
 function open_file(filename)
     if OS_NAME == :Darwin
