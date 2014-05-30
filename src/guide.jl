@@ -97,8 +97,8 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
         jscall(
             """
             click(zoomslider_zoomout_click)
-            .mouseover(zoomslider_button_mouseover)
-            .mouseout(zoomslider_button_mouseout)
+            .mouseenter(zoomslider_button_mouseover)
+            .mouseleave(zoomslider_button_mouseout)
             """),
         jsdata("mouseout_color", "\"$(foreground_color)\""),
         jsdata("mouseover_color", "\"$(highlight_color)\""))
@@ -126,8 +126,8 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
             drag(zoomslider_thumb_dragmove,
                  zoomslider_thumb_dragstart,
                  zoomslider_thumb_dragend)
-            .mouseover(zoomslider_thumb_mouseover)
-            .mouseout(zoomslider_thumb_mouseout)
+            .mousedown(zoomslider_thumb_mousedown)
+            .mouseup(zoomslider_thumb_mouseup)
             """),
          jsdata("mouseout_color", "\"$(foreground_color)\""),
          jsdata("mouseover_color", "\"$(highlight_color)\""),
@@ -152,8 +152,8 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
         jscall(
             """
             click(zoomslider_zoomin_click)
-            .mouseover(zoomslider_button_mouseover)
-            .mouseout(zoomslider_button_mouseout)
+            .mouseenter(zoomslider_button_mouseover)
+            .mouseeleave(zoomslider_button_mouseout)
             """),
         jsdata("mouseout_color", "\"$(foreground_color)\""),
         jsdata("mouseover_color", "\"$(highlight_color)\""))
@@ -924,7 +924,7 @@ function layout_guides(plot_context::Context,
                      [c for (c, o) in guides[over_guide_position]]...},
                   {context(order=0),
                      plot_context},
-                  jscall("mouseover(plot_mouseover).mouseout(plot_mouseout)"))]
+                  jscall("mouseenter(plot_mouseover).mouseleave(plot_mouseout)"))]
 
     return compose!(context(), tbl)
 end

@@ -51,6 +51,41 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             y: bbox.y + bbox.height / 2
         };
     };
+
+    // Emulate IE style mouseenter/mouseleave events, since Microsoft always
+    // does everything right.
+    // See: http://www.dynamic-tools.net/toolbox/isMouseLeaveOrEnter/
+    var events = ["mouseenter", "mouseleave"];
+
+    for (i in events) {
+        (function (event_name) {
+            var event_name = events[i];
+            Element.prototype[event_name] = function (fn, scope) {
+                if (Snap.is(fn, "function")) {
+                    var fn2 = function (event) {
+                        if (event.type != "mouseover" && event.type != "mouseout") {
+                            return;
+                        }
+
+                        var reltg = event.relatedTarget ? event.relatedTarget :
+                            event.type == "mouseout" ? event.toElement : event.fromElement;
+                        while (reltg && reltg != this.node) reltg = reltg.parentNode;
+
+                        if (reltg != this.node) {
+                            return fn.apply(this, event);
+                        }
+                    };
+
+                    if (event_name == "mouseenter") {
+                        this.mouseover(fn2, scope);
+                    } else {
+                        this.mouseout(fn2, scope);
+                    }
+                }
+                return this;
+            };
+        })(events[i]);
+    }
 });
 
 
@@ -60,14 +95,14 @@ var plot_mouseover = function(event) {
 
     // emphasize grid lines
     var destcolor = root.data("focused_xgrid_color");
-    root.select(".xgridlines")
-        .selectAll("path")
-        .animate({stroke: destcolor}, 250);
+     root.select(".xgridlines")
+         .selectAll("path")
+         .animate({stroke: destcolor}, 250);
 
     destcolor = root.data("focused_ygrid_color");
-    root.select(".ygridlines")
-        .selectAll("path")
-        .animate({stroke: destcolor}, 250);
+     root.select(".ygridlines")
+         .selectAll("path")
+         .animate({stroke: destcolor}, 250);
 
     // reveal zoom slider
     root.select(".zoomslider")
@@ -79,18 +114,18 @@ var plot_mouseover = function(event) {
 var plot_mouseout = function(event) {
     var root = this.plotroot();
     var destcolor = root.data("unfocused_xgrid_color");
-    root.select(".xgridlines")
-        .selectAll("path")
-        .animate({stroke: destcolor}, 250);
+     root.select(".xgridlines")
+         .selectAll("path")
+         .animate({stroke: destcolor}, 250);
 
     destcolor = root.data("unfocused_ygrid_color");
-    root.select(".ygridlines")
-        .selectAll("path")
-        .animate({stroke: destcolor}, 250);
+     root.select(".ygridlines")
+         .selectAll("path")
+         .animate({stroke: destcolor}, 250);
 
     // hide zoom slider
-    root.select(".zoomslider")
-        .animate({opacity: 0.0}, 250);
+     root.select(".zoomslider")
+         .animate({opacity: 0.0}, 250);
 };
 
 
@@ -167,11 +202,9 @@ var set_geometry_transform = function(root, tx, ty, scale) {
         .forEach(function (element, i) {
             for (i in size_attribs) {
                 var key = size_attribs[i];
-                var val = element.asPX(key);
+                var val = parseFloat(element.attr(key));
                 if (val !== undefined && val != 0 && !isNaN(val)) {
-                    var keyval = {};
-                    keyval[key] = val * old_scale / scale;
-                    element.attr(keyval);
+                    element.attr(key, val * old_scale / scale);
                 }
             }
         });
@@ -450,14 +483,16 @@ var guide_background_drag_onend = function(event) {
 
 
 var zoomslider_button_mouseover = function(event) {
-    this.select(".button_logo")
-        .animate({fill: this.data("mouseover_color")}, 100);
+    console.info("zoomslider_button_mouseover");
+     this.select(".button_logo")
+         .animate({fill: this.data("mouseover_color")}, 100);
 };
 
 
 var zoomslider_button_mouseout = function(event) {
-    this.select(".button_logo")
-        .animate({fill: this.data("mouseout_color")}, 100);
+    console.info("zoomslider_button_mouseout");
+     this.select(".button_logo")
+         .animate({fill: this.data("mouseout_color")}, 100);
 };
 
 
@@ -476,12 +511,12 @@ var zoomslider_track_click = function(event) {
 };
 
 
-var zoomslider_thumb_mouseover = function(event) {
+var zoomslider_thumb_mousedown = function(event) {
     this.animate({fill: this.data("mouseover_color")}, 100);
 };
 
 
-var zoomslider_thumb_mouseout = function(event) {
+var zoomslider_thumb_mouseup = function(event) {
     this.animate({fill: this.data("mouseout_color")}, 100);
 };
 
@@ -508,7 +543,7 @@ var zoomslider_thumb_dragmove = function(dx, dy, x, y) {
     var dxdy = client_offset(fig, dx,  dy);
     dx = dxdy[0];
     dy = dxdy[1];
-        
+
     var xmid = (min_pos + max_pos) / 2;
     var xpos = slider_position_from_scale(old_scale, min_scale, max_scale) +
                    dx / (max_pos - min_pos);
