@@ -1,7 +1,9 @@
 
 # Parameters controlling how a plot appears
 
-const default_font_desc = "'PT Sans','Helvetica Neue','Helvetica',sans-serif"
+const title_font_desc = "'PT Sans','Helvetica Neue','Helvetica',sans-serif"
+const label_font_desc = "'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif"
+
 
 
 # Choose highlight color by darkening the fill color
@@ -30,22 +32,22 @@ end
     default_color,         ColorOrNothing,  LCHab(70, 60, 240)
 
     # Default size when the size aesthetic is not mapped.
-    default_point_size,    Measure,         0.6mm
+    default_point_size,    Measure,         0.75mm
 
     # Width of lines in the line geometry.
     line_width,            Measure,         0.3mm
 
     # Background color of the plot.
-    panel_fill,            ColorOrNothing,  color("#fafafa")
+    panel_fill,            ColorOrNothing,  nothing
 
     # Border color of the plot panel.
-    panel_stroke,          ColorOrNothing,  color("#f1f1f5")
+    panel_stroke,          ColorOrNothing,  nothing
 
     # Opacity of the plot background panel.
     panel_opacity,         Float64,         1.0
 
     # Grid line color.
-    grid_color,            ColorOrNothing,  color("#f0f0f3")
+    grid_color,            ColorOrNothing,  color("#e0e0f0")
 
     # Grid lines for focused item.
     grid_color_focused,    ColorOrNothing,  color("#f0f0f0")
@@ -54,27 +56,27 @@ end
     grid_line_width,       Measure,         0.2mm
 
     # Font name, size, and color used for tick labels, entries in keys, etc.
-    minor_label_font,      String,          default_font_desc
+    minor_label_font,      String,          label_font_desc
     minor_label_font_size, Measure,         9pt
     minor_label_color,     ColorOrNothing,  color("#4c404b")
 
     # Font name, size and color used for axis labels, key title, etc.
-    major_label_font,      String,          default_font_desc
+    major_label_font,      String,          title_font_desc
     major_label_font_size, Measure,         11pt
     major_label_color,     ColorOrNothing,  color("#362a35")
 
     # Font name, size and color used for labels on plot elements.
-    point_label_font,      String,          default_font_desc
+    point_label_font,      String,          label_font_desc
     point_label_font_size, Measure,         8pt
     point_label_color,     ColorOrNothing,  color("#4c404b")
 
     # Font name, size and color used for key titles
-    key_title_font,      String,          default_font_desc
+    key_title_font,      String,          title_font_desc
     key_title_font_size, Measure,         11pt
     key_title_color,     ColorOrNothing,  color("#362a35")
 
     # Font name, size and color used for key entries.
-    key_label_font,      String,          default_font_desc
+    key_label_font,      String,          label_font_desc
     key_label_font_size, Measure,         9pt
     key_label_color,     ColorOrNothing,  color("#4c404b")
 

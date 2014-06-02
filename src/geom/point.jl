@@ -35,15 +35,17 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     lw_hover_scale = 10
     lw_ratio = theme.line_width / aes.size[1]
 
-    return compose!(context(),
-                    circle(aes.x, aes.y, aes.size),
-                    fill(aes.color),
-                    linewidth(theme.line_width),
-                    aes.color_key_continuous == true ?
-                        svgclass("geometry") :
-                        svgclass([@sprintf("geometry color_%s",
-                                           escape_id(aes.color_label([c])[1]))
-                                  for c in aes.color]))
+    return compose!(
+        context(),
+        circle(aes.x, aes.y, aes.size),
+        fill(aes.color),
+        stroke(map(theme.highlight_color, aes.color)),
+        linewidth(theme.highlight_width),
+        aes.color_key_continuous == true ?
+            svgclass("geometry") :
+            svgclass([@sprintf("geometry color_%s",
+                               escape_id(aes.color_label([c])[1]))
+                      for c in aes.color]))
 end
 
 

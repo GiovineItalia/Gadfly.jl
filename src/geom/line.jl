@@ -65,15 +65,18 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
 
+    ctx = context(order=2)
+
     if length(aes.color) == 1 &&
-        !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
+            !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
         points = {(x, y) for (x, y) in zip(aes.x, aes.y)}
         if !geom.preserve_order
             sort!(points, by=first)
         end
-        form = compose(lines(points...),
-                       stroke(aes.color[1]),
-                       svgclass("geometry"))
+
+        ctx = compose!(ctx, lines(points...),
+                     sroke(aes.color[1]),
+                     svgclass("geometry"))
     else
         # group points by color
         points = Dict{ColorValue, Array{(Any, Any),1}}()
@@ -84,23 +87,21 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
             push!(points[c], (x, y))
         end
 
-        forms = Array(Any, length(points))
-        for (i, (c, c_points)) in enumerate(points)
-            if !geom.preserve_order
+        if !geom.preserve_order
+            for (c, c_points) in points
                 sort!(c_points, by=first)
             end
-            forms[i] =
-                compose(lines({(x, y) for (x, y) in c_points}...),
-                        stroke(c),
-                        svgclass(@sprintf("geometry color_%s",
-                                          escape_id(aes.color_label([c])[1]))))
         end
-        form = combine(forms...)
+
+        classes = [@sprintf("geometry color_%s", escape_id(aes.color_label([c])[1]))
+                   for c in keys(points)]
+
+        ctx = compose!(ctx, lines(values(points)...),
+                      stroke(collect(keys(points))),
+                      svgclass(classes))
     end
 
-    compose(
-        canvas(units_inherited=true, order=2),
-        form, fill(nothing), linewidth(theme.line_width))
+    return compose!(ctx, fill(nothing), linewidth(theme.line_width))
 end
 
 

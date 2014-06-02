@@ -189,23 +189,23 @@ const colorkey = ColorKey
 # scales.
 function render_discrete_color_key(colors::Vector{ColorValue},
                                    labels::Dict{ColorValue, String},
-                                   title_context::Context,
+                                   title_ctx::Context,
                                    title_width::Measure,
                                    theme::Gadfly.Theme)
     # Key entries
     n = length(colors)
 
-    entry_width, entry_height = text_extents(theme.key_label_font,
-                                             theme.key_label_font_size,
-                                             values(labels)...)
+    entry_width, entry_height = max_text_extents(theme.key_label_font,
+                                                 theme.key_label_font_size,
+                                                 values(labels)...)
     entry_width += entry_height # make space for the color swatch
 
     # Rewrite to put toggleable things in a group.
     swatch_padding = 1mm
-    swatch_size = 1cy - swatch_padding
-    swatch_canvas = canvas(0w, 0h + title_canvas.box.height,
-                           1w, n * (entry_height + swatch_padding),
-                           unit_box=UnitBox(0, 0, 1, n))
+    swatch_size = 1.0cy - swatch_padding
+    swatch_ctx = context(0w, 0h + title_ctx.box.height,
+                         1w, n * (entry_height + swatch_padding),
+                         units=UnitBox(0, 0, 1, n))
     for (i, c) in enumerate(colors)
         if theme.colorkey_swatch_shape == :square
             swatch_shape = rectangle(0, i - 1, swatch_size, swatch_size)
@@ -213,39 +213,50 @@ function render_discrete_color_key(colors::Vector{ColorValue},
             swatch_shape = circle(0.5cy, (i - 1)cy + entry_height/2, swatch_size/2)
         end
 
-        swatch_shape = compose(swatch_shape,
-                               fill(c),
-                               stroke(theme.highlight_color(c)),
-                               linewidth(theme.highlight_width))
+        swatch_shape = compose!(
+            context(),
+            swatch_shape,
+            fill(c),
+            stroke(theme.highlight_color(c)),
+            linewidth(theme.highlight_width))
 
         label = labels[c]
-        swatch_label = compose(text(1cy, (i - 1)cy + entry_height/2,
-                                    label, hleft, vcenter),
-                               stroke(nothing),
-                               fill(theme.key_label_color))
+        swatch_label = compose!(
+            context(),
+            text(1cy, (i - 1)cy + entry_height/2,
+                 label, hleft, vcenter),
+            stroke(nothing),
+            fill(theme.key_label_color))
 
         color_class = @sprintf("color_%s", escape_id(label))
-        swatch = compose(combine(swatch_shape, swatch_label),
-                         svgclass(@sprintf("guide %s", color_class)),
-                         d3embed(@sprintf(
-                            ".on(\"click\", guide_toggle_color(\"%s\"))",
-                            color_class)))
-        swatch_canvas = compose(swatch_canvas, swatch)
+        swatch = compose!(
+            context(),
+            swatch_shape,
+            swatch_label,
+            svgclass(@sprintf("guide %s", color_class)))
+            #d3embed(@sprintf(".on(\"click\", guide_toggle_color(\"%s\"))",
+                             #color_class)))
+        swatch_ctx = compose(swatch_ctx, swatch)
     end
 
-    swatch_canvas = compose(swatch_canvas,
-                            font(theme.key_label_font),
-                            fontsize(theme.key_label_font_size))
+    compose!(swatch_ctx,
+             font(theme.key_label_font),
+             fontsize(theme.key_label_font_size))
 
-    title_canvas_pos = theme.guide_title_position == :left ?
+    title_ctx_pos = theme.guide_title_position == :left ?
         entry_height + swatch_padding : 0
-    title_canvas = compose(canvas(title_canvas_pos, 0h, 1w,
-                                  title_canvas.box.height),
-                           title_canvas)
+    title_ctx = compose!(
+        context(title_ctx_pos, 0h, 1w, title_ctx.box.height),
+        title_ctx)
 
-    compose(canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
-                   swatch_canvas.box.height + title_canvas.box.height, order=2),
-            pad(compose(canvas(), swatch_canvas, title_canvas), 2mm))
+    padding = 2mm
+    width = max(title_width, entry_width) + 3swatch_padding
+    height = swatch_ctx.box.height + title_ctx.box.height
+    return compose!(context(order=2,
+                            minwidth=width.abs + padding.abs,
+                            minheight=height.abs + padding.abs),
+                    pad(compose(context(0.0w, 0.5h - height/2),
+                                swatch_ctx), 2mm))
 end
 
 
@@ -333,7 +344,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
 
     if theme.key_position == :none
-        return nothing
+        return PositionedGuide[]
     else
         used_colors = Set{ColorValue}()
         colors = Array(ColorValue, 0) # to preserve ordering
@@ -374,9 +385,9 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         end
 
         # Key title
-        title_width, title_height = text_extents(theme.key_title_font,
-                                             theme.key_title_font_size,
-                                             guide_title)
+        title_width, title_height = max_text_extents(theme.key_title_font,
+                                                     theme.key_title_font_size,
+                                                     guide_title)
 
         if theme.guide_title_position == :left
             title_form = text(0.0w, title_height, guide_title, hleft, vbottom)
@@ -389,12 +400,13 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         end
 
         title_padding = 2mm
-        title_canvas = compose(canvas(0w, 0h, 1w, title_height + title_padding),
-                           title_form,
-                           stroke(nothing),
-                           font(theme.key_title_font),
-                           fontsize(theme.key_title_font_size),
-                           fill(theme.key_title_color))
+        title_canvas = compose!(
+            context(0w, 0h, 1w, title_height + title_padding),
+            title_form,
+            stroke(nothing),
+            font(theme.key_title_font),
+            fontsize(theme.key_title_font_size),
+            fill(theme.key_title_color))
 
         if theme.colorkey_swatch_shape != :circle &&
         theme.colorkey_swatch_shape != :square
@@ -402,10 +414,10 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         end
 
         if continuous_guide
-            c = render_continuous_color_key(colors, pretty_labels, title_canvas,
+            ctx = render_continuous_color_key(colors, pretty_labels, title_canvas,
                                         title_width, theme)
         else
-            c = render_discrete_color_key(colors, pretty_labels, title_canvas,
+            ctx = render_discrete_color_key(colors, pretty_labels, title_canvas,
                                       title_width, theme)
         end
 
@@ -420,7 +432,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
             position = bottom_guide_position
         end
 
-        return {(c, position)}
+        return [PositionedGuide([ctx], 0, position)]
     end
 end
 
@@ -474,14 +486,14 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     # grid lines
     static_grid_lines = compose!(
         context(withoutjs=true),
-        lines([[(t, 0h), (t, 1h)] for t in grids[visibility]]...),
+        lines({{(t, 0h), (t, 1h)} for t in grids[visibility]}...),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
         svgclass("guide xgridlines yfixed"))
 
     dynamic_grid_lines = compose!(
         context(withjs=true),
-        lines([[(t, 0h), (t, 1h)] for t in grids]...),
+        lines({{(t, 0h), (t, 1h)} for t in grids}...),
         visible(visibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
@@ -528,8 +540,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
         return compose!(context(), static_labels, dynamic_labels)
     end
-    hlayout_context = compose!(context(minwidth=sum(label_widths),
-                                       minheight=maximum(label_heights)),
+    hlayout_context = compose!(context(minwidth=sum(label_widths[visibility]),
+                                       minheight=maximum(label_heights[visibility])),
                                hlayout)
 
     vlayout = ctxpromise() do draw_context
@@ -539,18 +551,16 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                  [1h - padding],
                  labels[visibility],
                  [hright], [vbottom],
-                 [Rotation(-0.5pi, (1h - padding, tick))
-                  for tick in ticks[visibility]]),
+                 [Rotation(-0.5pi, tick, 1h - padding) for tick in ticks[visibility]]),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
             fontsize(theme.minor_label_font_size),
             svgclass("guide xlabels"))
 
         dynamic_labels = compose!(
-            context(withoutjs=true),
+            context(withjs=true),
             text(ticks, [1h - padding], labels, [hright], [vbottom],
-                 [Rotation(-0.5pi, (1h - padding, tick))
-                  for tick in ticks]),
+                 [Rotation(-0.5pi, tick, 1h - padding) for tick in ticks]),
             visible(visibility),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
@@ -561,8 +571,9 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         return compose!(context(), static_labels, dynamic_labels)
 
     end
-    vlayout_context = compose!(context(minwidth=sum(label_heights),
-                                       minheight=maximum(label_widths)),
+    vpenalty = 2mm # don't be too eager to flip the x-axis labels
+    vlayout_context = compose!(context(minwidth=sum(label_heights[visibility]),
+                                       minheight=vpenalty + maximum(label_widths[visibility])),
                                vlayout)
 
     if guide.orientation == :horizontal
@@ -630,14 +641,14 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     # grid lines
     static_grid_lines = compose!(
         context(withoutjs=true),
-        lines([[(0w, t), (1w, t)] for t in grids[visibility]]...),
+        lines({{(0w, t), (1w, t)} for t in grids[visibility]}...),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
         svgclass("guide ygridlines xfixed"))
 
     dynamic_grid_lines = compose!(
         context(withjs=true),
-        lines([[(0w, t), (1w, t)] for t in grids]...),
+        lines({{(0w, t), (1w, t)} for t in grids}...),
         visible(visibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
@@ -684,8 +695,8 @@ function render(guide::YTicks, theme::Gadfly.Theme,
 
         return compose!(context(), static_labels, dynamic_labels)
     end
-    hlayout_context = compose!(context(minwidth=maximum(label_widths),
-                                       minheight=sum(label_heights)),
+    hlayout_context = compose!(context(minwidth=maximum(label_widths[visibility]),
+                                       minheight=sum(label_heights[visibility])),
                                hlayout)
 
     vlayout = ctxpromise() do draw_context
@@ -715,9 +726,10 @@ function render(guide::YTicks, theme::Gadfly.Theme,
 
         return compose!(contetx(), static_grid_lines, dynamic_grid_lines)
     end
-    vlayout_context = compose!(context(minwidth=maximum(label_heights),
-                                       minheight=sum(label_widths)),
-                               vlayout)
+    vlayout_context =
+    compose!(context(minwidth=maximum(label_heights[visibility]),
+                     minheight=sum(label_widths[visibility])),
+             vlayout)
 
     if guide.orientation == :horizontal
         contexts = [hlayout_context]

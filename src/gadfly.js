@@ -579,7 +579,6 @@ var zoomslider_thumb_dragstart = function(event) {
 
 
 var zoomslider_thumb_dragend = function(event) {
-    // TODO
 };
 
 

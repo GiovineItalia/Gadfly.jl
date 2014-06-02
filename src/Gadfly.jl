@@ -672,7 +672,6 @@ function render_prepared(plot::Plot,
                          scales::Dict{Symbol, ScaleElement},
                          statistics::Vector{StatisticElement},
                          guides::Vector{GuideElement})
-
     # III. Coordinates
     plot_context = Coord.apply_coordinate(plot.coord, plot_aes, layer_aess...)
 
