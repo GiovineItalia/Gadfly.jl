@@ -10,6 +10,7 @@ tests = [
     ("function_plots",                        6inch, 3inch),
     ("function_layers",                       6inch, 3inch),
     ("colored_points",                        6inch, 3inch),
+    ("multicolumn_colorkey",                  6inch, 2inch),
     #("vstack",                                6inch, 6inch),
     #("hstack",                                6inch, 3inch),
     #("colorful_hist",                         6inch, 3inch),

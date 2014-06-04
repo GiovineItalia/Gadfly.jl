@@ -8,9 +8,10 @@ const label_font_desc = "'PT Sans Caption','Helvetica Neue','Helvetica',sans-ser
 
 # Choose highlight color by darkening the fill color
 function default_highlight_color(fill_color::ColorValue)
-    fill_color = convert(LCHab, fill_color)
-    c = LCHab(fill_color.l, fill_color.c, fill_color.h)
-    LCHab(c.l - 15, c.c, c.h)
+    #fill_color = convert(LCHab, fill_color)
+    #c = LCHab(fill_color.l, fill_color.c, fill_color.h)
+    #LCHab(c.l - 15, c.c, c.h)
+    return RGB(1, 1, 1)
 end
 
 function default_lowlight_color(fill_color::ColorValue)
@@ -32,7 +33,7 @@ end
     default_color,         ColorOrNothing,  LCHab(70, 60, 240)
 
     # Default size when the size aesthetic is not mapped.
-    default_point_size,    Measure,         0.75mm
+    default_point_size,    Measure,         0.9mm
 
     # Width of lines in the line geometry.
     line_width,            Measure,         0.3mm
@@ -47,23 +48,24 @@ end
     panel_opacity,         Float64,         1.0
 
     # Grid line color.
-    grid_color,            ColorOrNothing,  color("#e0e0f0")
+    grid_color,            ColorOrNothing,  color("#D0D0E0")
+    grid_strokedash,       Maybe(Vector),   [0.5mm, 0.5mm]
 
     # Grid lines for focused item.
-    grid_color_focused,    ColorOrNothing,  color("#f0f0f0")
+    grid_color_focused,    ColorOrNothing,  color("#A0A0A0")
 
     # Width of grid lines
     grid_line_width,       Measure,         0.2mm
 
     # Font name, size, and color used for tick labels, entries in keys, etc.
     minor_label_font,      String,          label_font_desc
-    minor_label_font_size, Measure,         9pt
-    minor_label_color,     ColorOrNothing,  color("#4c404b")
+    minor_label_font_size, Measure,         8pt
+    minor_label_color,     ColorOrNothing,  color("#6c606b")
 
     # Font name, size and color used for axis labels, key title, etc.
     major_label_font,      String,          title_font_desc
     major_label_font_size, Measure,         11pt
-    major_label_color,     ColorOrNothing,  color("#362a35")
+    major_label_color,     ColorOrNothing,  color("#564a55")
 
     # Font name, size and color used for labels on plot elements.
     point_label_font,      String,          label_font_desc
@@ -76,8 +78,8 @@ end
     key_title_color,     ColorOrNothing,  color("#362a35")
 
     # Font name, size and color used for key entries.
-    key_label_font,      String,          label_font_desc
-    key_label_font_size, Measure,         9pt
+    key_label_font,      String,          title_font_desc
+    key_label_font_size, Measure,         8pt
     key_label_color,     ColorOrNothing,  color("#4c404b")
 
     # Spacing between bars for Geom.bar.
@@ -117,7 +119,7 @@ end
     # Shape used in color keys for color swatches. Either :square or :circle.
     colorkey_swatch_shape, Symbol,          :square
 
-    # One of :left, :right, :top, :bottom, :none determining where color keys  
+    # One of :left, :right, :top, :bottom, :none determining where color keys
     # and the like should be placed.
     key_position,          Symbol,          :right
 

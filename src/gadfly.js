@@ -93,16 +93,24 @@ Snap.plugin(function (Snap, Element, Paper, global) {
 var plot_mouseover = function(event) {
     var root = this.plotroot();
 
+    var xgridlines = root.select(".xgridlines"),
+        ygridlines = root.select(".ygridlines");
+
+    xgridlines.data("unfocused_strokedash",
+                    xgridlines.attr("stroke-dasharray"))
+    ygridlines.data("unfocused_strokedash",
+                    ygridlines.attr("stroke-dasharray"))
+
     // emphasize grid lines
     var destcolor = root.data("focused_xgrid_color");
-     root.select(".xgridlines")
-         .selectAll("path")
-         .animate({stroke: destcolor}, 250);
+    xgridlines.attr("stroke-dasharray", "none")
+              .selectAll("path")
+              .animate({stroke: destcolor}, 250);
 
     destcolor = root.data("focused_ygrid_color");
-     root.select(".ygridlines")
-         .selectAll("path")
-         .animate({stroke: destcolor}, 250);
+    ygridlines.attr("stroke-dasharray", "none")
+              .selectAll("path")
+              .animate({stroke: destcolor}, 250);
 
     // reveal zoom slider
     root.select(".zoomslider")
@@ -113,19 +121,23 @@ var plot_mouseover = function(event) {
 // Unemphasize grid lines on mouse out.
 var plot_mouseout = function(event) {
     var root = this.plotroot();
+    var xgridlines = root.select(".xgridlines"),
+        ygridlines = root.select(".ygridlines");
+
     var destcolor = root.data("unfocused_xgrid_color");
-     root.select(".xgridlines")
-         .selectAll("path")
-         .animate({stroke: destcolor}, 250);
+
+    xgridlines.attr("stroke-dasharray", xgridlines.data("unfocused_strokedash"))
+              .selectAll("path")
+              .animate({stroke: destcolor}, 250);
 
     destcolor = root.data("unfocused_ygrid_color");
-     root.select(".ygridlines")
-         .selectAll("path")
-         .animate({stroke: destcolor}, 250);
+    ygridlines.attr("stroke-dasharray", ygridlines.data("unfocused_strokedash"))
+              .selectAll("path")
+              .animate({stroke: destcolor}, 250);
 
     // hide zoom slider
-     root.select(".zoomslider")
-         .animate({opacity: 0.0}, 250);
+    root.select(".zoomslider")
+        .animate({opacity: 0.0}, 250);
 };
 
 
@@ -483,14 +495,12 @@ var guide_background_drag_onend = function(event) {
 
 
 var zoomslider_button_mouseover = function(event) {
-    console.info("zoomslider_button_mouseover");
      this.select(".button_logo")
          .animate({fill: this.data("mouseover_color")}, 100);
 };
 
 
 var zoomslider_button_mouseout = function(event) {
-    console.info("zoomslider_button_mouseout");
      this.select(".button_logo")
          .animate({fill: this.data("mouseout_color")}, 100);
 };

@@ -52,6 +52,7 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
                     stroke(theme.panel_stroke),
                     fill(theme.panel_fill),
                     fillopacity(theme.panel_opacity),
+                    svgattribute("pointer-events", "visible"),
                     jscall(
                         """
                         drag(guide_background_drag_onmove,
@@ -69,7 +70,6 @@ end
 const zoomslider = ZoomSlider
 
 
-# TODO: rewrite
 function render(guide::ZoomSlider, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
 
@@ -153,7 +153,7 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
             """
             click(zoomslider_zoomin_click)
             .mouseenter(zoomslider_button_mouseover)
-            .mouseeleave(zoomslider_button_mouseout)
+            .mouseleave(zoomslider_button_mouseout)
             """),
         jsdata("mouseout_color", "\"$(foreground_color)\""),
         jsdata("mouseover_color", "\"$(highlight_color)\""))
@@ -192,71 +192,92 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                                    title_ctx::Context,
                                    title_width::Measure,
                                    theme::Gadfly.Theme)
-    # Key entries
+
+    # only consider layouts with a reasonable number of columns
+    maxcols = 4
+
     n = length(colors)
 
-    entry_width, entry_height = max_text_extents(theme.key_label_font,
-                                                 theme.key_label_font_size,
-                                                 values(labels)...)
-    entry_width += entry_height # make space for the color swatch
+    extents = text_extents(theme.key_label_font,
+                           theme.key_label_font_size,
+                           values(labels)...)
 
-    # Rewrite to put toggleable things in a group.
-    swatch_padding = 1mm
-    swatch_size = 1.0cy - swatch_padding
-    swatch_ctx = context(0w, 0h + title_ctx.box.height,
-                         1w, n * (entry_height + swatch_padding),
-                         units=UnitBox(0, 0, 1, n))
-    for (i, c) in enumerate(colors)
-        if theme.colorkey_swatch_shape == :square
-            swatch_shape = rectangle(0, i - 1, swatch_size, swatch_size)
-        elseif theme.colorkey_swatch_shape == :circle
-            swatch_shape = circle(0.5cy, (i - 1)cy + entry_height/2, swatch_size/2)
+    entry_height = maximum([height for (width, height) in extents])
+    swatch_size = entry_height / 2
+
+    # return a context with a lyout of numcols columns
+    function make_layout(numcols)
+        colrows = Array(Int, numcols)
+        m = n
+        for i in 1:numcols
+            colrows[i] = min(m, iceil(n / numcols))
+            m -= colrows[i]
         end
 
-        swatch_shape = compose!(
-            context(),
-            swatch_shape,
-            fill(c),
-            stroke(theme.highlight_color(c)),
-            linewidth(theme.highlight_width))
+        xpad = 1mm
+        colwidths = Array(Measure, numcols)
+        m = 0
+        for (i, nrows) in enumerate(colrows)
+            if m == n
+                colwidths[i] = 0mm
+            else
+                colwidth = maximum([width for (width, height) in extents[m+1:m+nrows]])
+                colwidth += swatch_size + 2xpad
+                colwidths[i] = colwidth
+                m += nrows
+            end
+        end
 
-        label = labels[c]
-        swatch_label = compose!(
-            context(),
-            text(1cy, (i - 1)cy + entry_height/2,
-                 label, hleft, vcenter),
-            stroke(nothing),
-            fill(theme.key_label_color))
+        ctxwidth = sum(colwidths)
+        ctxheight = entry_height * colrows[1]
 
-        color_class = @sprintf("color_%s", escape_id(label))
-        swatch = compose!(
-            context(),
-            swatch_shape,
-            swatch_label,
-            svgclass(@sprintf("guide %s", color_class)))
-            #d3embed(@sprintf(".on(\"click\", guide_toggle_color(\"%s\"))",
-                             #color_class)))
-        swatch_ctx = compose(swatch_ctx, swatch)
+        ctxp = ctxpromise() do draw_context
+            ctx = context(0, 0.5h - ctxheight/2, ctxwidth, ctxheight,
+                          units=UnitBox(0, 0, 1, colrows[1]))
+
+            m = 0
+            xpos = 0w
+            for (i, nrows) in enumerate(colrows)
+                colwidth = colwidths[i]
+
+                if theme.colorkey_swatch_shape == :square
+                    swatches_shapes = rectangle(
+                        [xpad], [(y - 0.5)*cy - swatch_size/2 for y in 1:nrows],
+                        [swatch_size], [swatch_size])
+                elseif theme.colorkey_swatch_shape == :circle
+                    swatches_shapes = circle([0.5cy], 1:nrows .- 0.5, [swatch_size/2])
+                end
+                swatches = compose!(
+                    context(),
+                    swatches_shapes,
+                    stroke(nothing),
+                    fill(colors[m+1:m+nrows]))
+
+                swatch_labels = compose!(
+                    context(),
+                    text([2xpad + swatch_size], [(y - 0.5)*cy for y in 1:nrows],
+                         collect(values(labels))[m+1:m+nrows], [hleft], [vcenter]),
+                    font(theme.key_label_font),
+                    fontsize(theme.key_label_font_size),
+                    fill(theme.key_label_color))
+
+                compose!(ctx, {context(xpos, 0), swatches, swatch_labels})
+
+                m += nrows
+                xpos += colwidths[i]
+            end
+
+            return ctx
+        end
+
+        return compose!(
+            context(minwidth=ctxwidth,
+                    minheight=ctxheight,
+                    units=UnitBox()),
+            ctxp)
     end
 
-    compose!(swatch_ctx,
-             font(theme.key_label_font),
-             fontsize(theme.key_label_font_size))
-
-    title_ctx_pos = theme.guide_title_position == :left ?
-        entry_height + swatch_padding : 0
-    title_ctx = compose!(
-        context(title_ctx_pos, 0h, 1w, title_ctx.box.height),
-        title_ctx)
-
-    padding = 2mm
-    width = max(title_width, entry_width) + 3swatch_padding
-    height = swatch_ctx.box.height + title_ctx.box.height
-    return compose!(context(order=2,
-                            minwidth=width.abs + padding.abs,
-                            minheight=height.abs + padding.abs),
-                    pad(compose(context(0.0w, 0.5h - height/2),
-                                swatch_ctx), 2mm))
+    return map(make_layout, 1:maxcols)
 end
 
 
@@ -414,10 +435,10 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         end
 
         if continuous_guide
-            ctx = render_continuous_color_key(colors, pretty_labels, title_canvas,
+            ctxs = render_continuous_color_key(colors, pretty_labels, title_canvas,
                                         title_width, theme)
         else
-            ctx = render_discrete_color_key(colors, pretty_labels, title_canvas,
+            ctxs = render_discrete_color_key(colors, pretty_labels, title_canvas,
                                       title_width, theme)
         end
 
@@ -432,7 +453,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
             position = bottom_guide_position
         end
 
-        return [PositionedGuide([ctx], 0, position)]
+        return [PositionedGuide(ctxs, 0, position)]
     end
 end
 
@@ -489,6 +510,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         lines({{(t, 0h), (t, 1h)} for t in grids[visibility]}...),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
+        strokedash([0.5mm, 0.5mm]),
         svgclass("guide xgridlines yfixed"))
 
     dynamic_grid_lines = compose!(
@@ -497,10 +519,11 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         visible(visibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
+        strokedash([0.5mm, 0.5mm]),
         svgclass("guide xgridlines yfixed"),
         svgattribute("gadfly:scale", scale),
         jsplotdata("focused_xgrid_color",
-                   "\"#$(hex(theme.highlight_color(theme.grid_color)))\""),
+                   "\"#$(hex(theme.grid_color_focused))\""),
         jsplotdata("unfocused_xgrid_color",
                    "\"#$(hex(theme.grid_color))\""))
 
@@ -548,10 +571,10 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         static_labels = compose!(
             context(withoutjs=true),
             text(ticks[visibility],
-                 [1h - padding],
+                 [padding],
                  labels[visibility],
-                 [hright], [vbottom],
-                 [Rotation(-0.5pi, tick, 1h - padding) for tick in ticks[visibility]]),
+                 [hright], [vcenter],
+                 [Rotation(-0.5pi, tick, padding) for tick in ticks[visibility]]),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
             fontsize(theme.minor_label_font_size),
@@ -571,7 +594,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         return compose!(context(), static_labels, dynamic_labels)
 
     end
-    vpenalty = 2mm # don't be too eager to flip the x-axis labels
+    @show maximum(label_widths[visibility])
+    vpenalty = 1mm # don't be too eager to flip the x-axis labels
     vlayout_context = compose!(context(minwidth=sum(label_heights[visibility]),
                                        minheight=vpenalty + maximum(label_widths[visibility])),
                                vlayout)
@@ -644,6 +668,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         lines({{(0w, t), (1w, t)} for t in grids[visibility]}...),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
+        strokedash([0.5mm, 0.5mm]),
         svgclass("guide ygridlines xfixed"))
 
     dynamic_grid_lines = compose!(
@@ -652,10 +677,11 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         visible(visibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
+        strokedash([0.5mm, 0.5mm]),
         svgclass("guide ygridlines xfixed"),
         svgattribute("gadfly:scale", scale),
         jsplotdata("focused_ygrid_color",
-                   "\"#$(hex(theme.highlight_color(theme.grid_color)))\""),
+                   "\"#$(hex(theme.grid_color_focused))\""),
         jsplotdata("unfocused_ygrid_color",
                    "\"#$(hex(theme.grid_color))\""))
 
