@@ -392,7 +392,7 @@ function apply_statistic(stat::Histogram2DStatistic,
     data = Gadfly.Data()
     data.color = Array(Int, n)
     k = 1
-    for cnt in bincounts
+    for cnt in transpose(bincounts)
         if cnt > 0
             data.color[k] = cnt
             k += 1
@@ -925,4 +925,3 @@ end
 
 
 end # module Stat
-
