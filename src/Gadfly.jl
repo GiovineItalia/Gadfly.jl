@@ -814,7 +814,7 @@ if isdefined(Base, :REPL)
             if xdisplayable(displays[i], m, p)
                 try
                     return display(displays[i], m, p)
-                catch
+                catch e
                     isa(e, MethodError) && e.f in (display, redisplay, writemime) ||
                         rethrow()
                 end
@@ -823,7 +823,7 @@ if isdefined(Base, :REPL)
             if xdisplayable(displays[i], p)
                 try
                     return display(displays[i], p)
-                catch
+                catch e
                     isa(e, MethodError) && e.f in (display, redisplay, writemime) ||
                         rethrow()
                 end
