@@ -52,7 +52,7 @@ end
 
 # Create a layer from a list of functions or expressions.
 function layer(fs::Array, a, b)
-    layer(func=fs, xmin=[a], xmin[b], Stat.func, Geom.line)
+    layer(func=fs, xmin=[a], xmax=[b], Stat.func, Geom.line)
 end
 
 

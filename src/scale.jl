@@ -4,6 +4,7 @@ module Scale
 using Color
 using Compose
 using DataArrays
+using DataStructures
 using Gadfly
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length,
@@ -258,56 +259,56 @@ function reorder_levels(da::PooledDataArray, order::AbstractVector)
 end
 
 
-function discretize(values::Vector, levels=nothing, order=nothing)
+function discretize_make_pda(values::Vector, levels=nothing)
     if levels == nothing
-        da = PooledDataArray(values)
+        return PooledDataArray(values)
     else
-        da = PooledDataArray(convert(Vector{eltype(levels)}, values), levels)
-    end
-
-    if order != nothing
-        return reorder_levels(da, order)
-    else
-        return da
+        return PooledDataArray(convert(Vector{eltype(levels)}, values), levels)
     end
 end
 
 
-function discretize(values::DataArray, levels=nothing, order=nothing)
+function discretize_make_pda(values::DataArray, levels=nothing)
     if levels == nothing
-        da = PooledDataArray(values)
+        return PooledDataArray(values)
     else
-        da = PooledDataArray(convert(DataArray{eltype(levels)}, values), levels)
-    end
-
-    if order != nothing
-        return reorder_levels(da, order)
-    else
-        return da
+        return PooledDataArray(convert(DataArray{eltype(levels)}, values), levels)
     end
 end
 
 
-function discretize(values::Range1, levels=nothing, order=nothing)
+function discretize_make_pda(vaues::Range1, levels=nothing)
     if levels == nothing
-        da = PooledDataArray(collect(values))
+        return PooledDataArray(collect(values))
     else
-        da = PooledDataArray(collect(values), levels)
-    end
-
-    if order != nothing
-        return reorder_levels(da, order)
-    else
-        return da
+        return PooledDataArray(collect(values), levels)
     end
 end
 
 
-function discretize(values::PooledDataArray, levels=nothing, order=nothing)
+function discretize_make_pda(values::PooledDataArray, levels=nothing)
     if levels == nothing
-        da = values
+        return values
     else
-        da = PooledDataArray(values, levels)
+        return PooledDataArray(values, convert(Vector{eltype(values)}, levels))
+    end
+end
+
+
+function discretize(values, levels=nothing, order=nothing,
+                    preserve_order=true)
+    if levels == nothing
+        if preserve_order
+            levels = OrderedSet()
+            for value in values
+                push!(levels, value)
+            end
+            da = discretize_make_pda(values, collect(levels))
+        else
+            da = discretize_make_pda(values)
+        end
+    else
+        da = discretize_make_pda(values, levels)
     end
 
     if order != nothing
@@ -333,8 +334,12 @@ immutable DiscreteScale <: Gadfly.ScaleElement
     # If non-nothing, a permutation of the pool of values.
     order::Union(Nothing, AbstractVector)
 
-    function DiscreteScale(vals::Vector{Symbol}; levels=nothing, order=nothing)
-        new(vals, levels, order)
+    # If true, order levels as they appear in the data.
+    preserve_order::Bool
+
+    function DiscreteScale(vals::Vector{Symbol}; levels=nothing, order=nothing,
+                           preserve_order::Bool=true)
+        new(vals, levels, order, preserve_order)
     end
 end
 
@@ -344,13 +349,15 @@ const discrete = DiscreteScale
 element_aesthetics(scale::DiscreteScale) = scale.vars
 
 
-function x_discrete(; levels=nothing, order=nothing)
-    return DiscreteScale(x_vars, levels=levels, order=order)
+function x_discrete(; levels=nothing, order=nothing, preserve_order=true)
+    return DiscreteScale(x_vars, levels=levels, order=order,
+                         preserve_order=preserve_order)
 end
 
 
-function y_discrete(; levels=nothing, order=nothing)
-    return DiscreteScale(y_vars, levels=levels, order=order)
+function y_discrete(; levels=nothing, order=nothing, preserve_order=true)
+    return DiscreteScale(y_vars, levels=levels, order=order,
+                         preserve_order=preserve_order)
 end
 
 
@@ -397,8 +404,12 @@ immutable DiscreteColorScale <: Gadfly.ScaleElement
     # If non-nothing, a permutation of the pool of values.
     order::Union(Nothing, AbstractVector)
 
-    function DiscreteColorScale(f::Function; levels=nothing, order=nothing)
-        new(f, levels, order)
+    # If true, order levels as they appear in the data
+    preserve_order::Bool
+
+    function DiscreteColorScale(f::Function; levels=nothing, order=nothing,
+                                preserve_order=true)
+        new(f, levels, order, preserve_order)
     end
 end
 
@@ -435,7 +446,7 @@ end
 
 function apply_scale(scale::DiscreteColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-    levelset = Set()
+    levelset = OrderedSet()
     for (aes, data) in zip(aess, datas)
         if data.color === nothing
             continue
@@ -449,7 +460,9 @@ function apply_scale(scale::DiscreteColorScale,
 
     if scale.levels == nothing
         scale_levels = [levelset...]
-        sort!(scale_levels)
+        if !scale.preserve_order
+            sort!(scale_levels)
+        end
     else
         scale_levels = scale.levels
     end
