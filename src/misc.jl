@@ -162,3 +162,36 @@ is_int_compatable(::Integer) = true
 is_int_compatable{T <: FloatingPoint}(x::T) = abs(x) < maxintfloat(T) && float(int(x)) == x
 is_int_compatable(::Any) = false
 
+
+## Return a DataFrame with x, y column suitable for plotting a function.
+#
+# Args:
+#  f: Function/Expression to be evaluated.
+#  a: Lower bound.
+#  b: Upper bound.
+#  n: Number of points to evaluate the function at.
+#
+# Returns:
+#  A data frame with "x" and "f(x)" columns.
+#
+function evalfunc(f::Function, a, b, n)
+    @assert n > 1
+
+    step = (b - a) / (n - 1)
+    xs = Array(typeof(a + step), n)
+    for i in 1:n
+        xs[i] = a + (i-1) * step
+    end
+
+    df = DataFrame(xs, map(f, xs))
+    # NOTE: 'colnames!' is the older deprecated name. 'names!' was also defined
+    # but threw an error.
+    try
+        names!(df, [:x, :f_x])
+    catch
+        colnames!(df, ["x", "f_x"])
+    end
+    df
+end
+
+

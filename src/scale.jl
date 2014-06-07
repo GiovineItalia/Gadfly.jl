@@ -651,5 +651,33 @@ function ygroup(; levels=nothing, order=nothing)
 end
 
 
+# Catchall scale for when no transformation of the data is necessary
+immutable IdentityScale <: Gadfly.ScaleElement
+    var::Symbol
+end
+
+
+function element_aesthetics(scale::IdentityScale)
+    return [scale.var]
+end
+
+
+function apply_scale(scale::IdentityScale,
+                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+    for (aes, data) in zip (aess, datas)
+        if getfield(data, scale.var) === nothing
+            continue
+        end
+
+        setfield!(aes, scale.var, getfield(data, scale.var))
+    end
+end
+
+
+function func()
+    return IdentityScale(:func)
+end
+
+
 end # module Scale
 

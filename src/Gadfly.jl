@@ -935,6 +935,7 @@ include("statistics.jl")
 # The default depends on whether the input is discrete or continuous (i.e.,
 # PooledDataVector or DataVector, respectively).
 const default_aes_scales = {
+        :functional => {:func => Scale.func()},
         :numerical => {:x           => Scale.x_continuous(),
                        :xmin        => Scale.x_continuous(),
                        :xmax        => Scale.x_continuous(),
@@ -966,6 +967,8 @@ const default_aes_scales = {
                          :color      => Scale.discrete_color(),
                          :label      => Scale.label()}}
 
+
+
 # Determine whether the input is categorical or numerical
 
 typealias CategoricalType Union(String, Bool, Symbol)
@@ -973,6 +976,10 @@ typealias CategoricalType Union(String, Bool, Symbol)
 
 function classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N})
     :categorical
+end
+
+function classify_data{N, T <: Base.Callable}(data::AbstractArray{T, N})
+    :functional
 end
 
 function classify_data(data::AbstractArray{Any})

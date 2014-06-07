@@ -30,6 +30,7 @@
     ysize
     color
     label
+    func
     titles, Dict{Symbol, String}, Dict{Symbol, String}()
 end
 

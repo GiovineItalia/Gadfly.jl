@@ -26,6 +26,9 @@ typealias NumericalAesthetic
     xsize,        NumericalAesthetic
     ysize,        NumericalAesthetic
 
+    # function plotting
+    func,         NumericalOrCategoricalAesthetic
+
     # fixed lines
     xintercept,   NumericalAesthetic
     yintercept,   NumericalAesthetic

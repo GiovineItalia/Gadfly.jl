@@ -924,4 +924,71 @@ function apply_statistic(stat::StepStatistic,
 end
 
 
+immutable FunctionStatistic <: Gadfly.StatisticElement
+    # Number of points to evaluate the function at
+    num_samples::Int
+
+    function FunctionStatistic(; num_samples=250)
+        return new(num_samples)
+    end
+end
+
+
+const func = FunctionStatistic
+
+
+function default_scales(::FunctionStatistic)
+    return [Gadfly.Scale.func(), Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
+end
+
+
+function element_aesthetics(::FunctionStatistic)
+    return [:func, :xmin, :xmax]
+end
+
+
+function apply_statistic(stat::FunctionStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("FunctionStatistic", aes, :func)
+    Gadfly.assert_aesthetics_defined("FunctionStatistic", aes, :xmin)
+    Gadfly.assert_aesthetics_defined("FunctionStatistic", aes, :xmax)
+    Gadfly.assert_aesthetics_equal_length("FunctionStatistic", aes, :xmin, :xmax)
+
+    aes.x = Array(Float64, length(aes.func) * stat.num_samples)
+    ys = Array(Float64, length(aes.func) * stat.num_samples)
+
+    i = 1
+    for (f, xmin, xmax) in zip(aes.func, cycle(aes.xmin), cycle(aes.xmax))
+        for x in linspace(xmin, xmax, stat.num_samples)
+            aes.x[i] = x
+            ys[i] = f(x)
+            i += 1
+        end
+    end
+
+    # color was bound explicitly
+    if aes.color != nothing
+        func_color = aes.color
+        aes.color = DataArray(eltype(aes.color), length(aes.func) * stat.num_samples)
+        for i in 1:length(aes.func)
+            aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = func_color[i]
+        end
+    elseif length(aes.func) > 1 && haskey(scales, :color)
+        data = Gadfly.Data()
+        data.color = Array(String, length(aes.func) * stat.num_samples)
+        for i in 1:length(aes.func)
+            fname = "f<sub>$(i)</sub>"
+            data.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = fname
+        end
+        Scale.apply_scale(scales[:color], [aes], data)
+    end
+
+    data = Gadfly.Data()
+    data.y = ys
+    Scale.apply_scale(scales[:y], [aes], data)
+end
+
+
 end # module Stat
