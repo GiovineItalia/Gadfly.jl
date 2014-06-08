@@ -515,7 +515,7 @@ function apply_statistic(stat::TickStatistic,
 
         in_values = chain(in_values...)
     else
-        vals = getfield(aes. in_group_var)
+        vals = getfield(aes, in_group_var)
         in_values = vals
         minval = Gadfly.concrete_minimum(in_values)
         maxval = Gadfly.concrete_maximum(in_values)
