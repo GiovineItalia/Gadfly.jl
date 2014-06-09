@@ -176,7 +176,7 @@ original value so that data points are properly identified.
 Finally geometries are responsible for actually doing the drawing. A geometry
 takes as input one or aesthetics, and used data bound to these aesthetics to
 draw things. The `Geom.point` geometry draws points using the `x` and `y`
-aesthetics, the `Geom.lines` geometry draws lines, and so on.
+aesthetics, the `Geom.line` geometry draws lines, and so on.
 
 ### Guides
 
