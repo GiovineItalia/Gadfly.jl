@@ -277,7 +277,7 @@ function discretize_make_pda(values::DataArray, levels=nothing)
 end
 
 
-function discretize_make_pda(vaues::Range1, levels=nothing)
+function discretize_make_pda(values::Range1, levels=nothing)
     if levels == nothing
         return PooledDataArray(collect(values))
     else
