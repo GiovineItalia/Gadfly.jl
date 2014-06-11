@@ -86,6 +86,17 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             };
         })(events[i]);
     }
+
+    // Snap's attr function can be too slow for things like panning/zooming.
+    // This is a function to directly update element attributes without going
+    // through eve.
+    Element.prototype.attribute = function(key, val) {
+        if (val === undefined) {
+            return this.node.getAttribute(key, val);
+        } else {
+            return this.node.setAttribute(key, val);
+        }
+    };
 });
 
 
@@ -174,10 +185,10 @@ var set_geometry_transform = function(root, tx, ty, scale) {
             .transform(ytrans)
             .selectAll("text")
             .forEach(function (element, i) {
-                var y = element.attr("y") * scale / old_scale;
-                element.attr("y", y);
+                var y = element.attribute("y") * scale / old_scale;
+                element.attribute("y", y);
 
-                if (element.attr("gadfly:inscale") == "true") {
+                if (element.attribute("gadfly:inscale") == "true") {
                     y += ty;
                     element.attr("visibility",
                         bounds.y0 <= y && y <= bounds.y1 ? "visible" : "hidden");
@@ -197,10 +208,10 @@ var set_geometry_transform = function(root, tx, ty, scale) {
             .transform(xtrans)
             .selectAll("text")
             .forEach(function (element, i) {
-                var x = element.attr("x") * scale / old_scale;
-                element.attr("x", x);
+                var x = element.attribute("x") * scale / old_scale;
+                element.attribute("x", x);
 
-                if (element.attr("gadfly:inscale") == "true") {
+                if (element.attribute("gadfly:inscale") == "true") {
                     x += tx;
                     element.attr("visibility",
                         bounds.x0 <= x && x <= bounds.x1 ? "visible" : "hidden");
@@ -214,9 +225,9 @@ var set_geometry_transform = function(root, tx, ty, scale) {
         .forEach(function (element, i) {
             for (i in size_attribs) {
                 var key = size_attribs[i];
-                var val = parseFloat(element.attr(key));
+                var val = parseFloat(element.attribute(key));
                 if (val !== undefined && val != 0 && !isNaN(val)) {
-                    element.attr(key, val * old_scale / scale);
+                    element.attribute(key, val * old_scale / scale);
                 }
             }
         });

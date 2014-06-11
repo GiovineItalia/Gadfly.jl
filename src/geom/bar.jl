@@ -48,25 +48,25 @@ function render_colorless_bar(geom::BarGeometry,
                               theme::Gadfly.Theme,
                               aes::Gadfly.Aesthetics,
                               orientation::Symbol)
-    bar_form = empty_form
     if orientation == :horizontal
-        for (y_min, y_max, x) in zip(aes.ymin, aes.ymax, aes.x)
-            geometry_id = Gadfly.unique_svg_id()
-            bar_form = combine(bar_form,
-                compose(rectangle(0.0, y_min*cy + theme.bar_spacing/2,
-                                  x, (y_max - y_min)*cy - theme.bar_spacing),
-                        svgid(geometry_id), svgclass("geometry")))
-        end
+        return compose!(
+            context(),
+            rectangle([0.0],
+                      [ymin*cy + theme.bar_spacing/2 for ymin in aes.ymin],
+                      aes.x,
+                      [(ymax - ymin)*cy - theme.bar_spacing
+                       for (ymin, ymax) in zip(aes.ymin, aes.ymax)]),
+            svgclass("geometry"))
     else
-        for (x_min, x_max, y) in zip(aes.xmin, aes.xmax, aes.y)
-            geometry_id = Gadfly.unique_svg_id()
-            bar_form = combine(bar_form,
-                compose(rectangle(x_min*cx + theme.bar_spacing/2, 0.0,
-                                  (x_max - x_min)*cx - theme.bar_spacing, y),
-                        svgid(geometry_id), svgclass("geometry")))
-        end
+        return compose!(
+            context(),
+            rectangle([xmin*cx + theme.bar_spacing/2 for xmin in aes.xmin],
+                      [0.0],
+                      [(xmax - xmin)*cx - theme.bar_spacing
+                       for (xmin, xmax) in zip(aes.xmin, aes.xmax)],
+                      aes.y),
+            svgclass("geometry"))
     end
-    bar_form
 end
 
 
@@ -239,20 +239,21 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     end
 
     if aes.color === nothing
-        form = render_colorless_bar(geom, theme, aes, geom.orientation)
+        ctx = render_colorless_bar(geom, theme, aes, geom.orientation)
     elseif geom.position == :stack
-        form = render_colorful_stacked_bar(geom, theme, aes, geom.orientation)
+        ctx = render_colorful_stacked_bar(geom, theme, aes, geom.orientation)
     elseif geom.position == :dodge
-        form = render_colorful_dodged_bar(geom, theme, aes, geom.orientation)
+        ctx = render_colorful_dodged_bar(geom, theme, aes, geom.orientation)
     else
         error("$(geom.position) is not a valid position for the bar geometry.")
     end
 
-    compose(canvas(units_inherited=true),
-            form,
-            svgattribute("shape-rendering", "crispEdges"),
-            fill(theme.default_color),
-            stroke(nothing))
+    return compose!(
+        context(),
+        ctx,
+        svgattribute("shape-rendering", "crispEdges"),
+        fill(theme.default_color),
+        stroke(nothing))
 end
 
 

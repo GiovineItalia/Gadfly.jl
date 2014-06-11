@@ -594,7 +594,6 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         return compose!(context(), static_labels, dynamic_labels)
 
     end
-    @show maximum(label_widths[visibility])
     vpenalty = 1mm # don't be too eager to flip the x-axis labels
     vlayout_context = compose!(context(minwidth=sum(label_heights[visibility]),
                                        minheight=vpenalty + maximum(label_widths[visibility])),
