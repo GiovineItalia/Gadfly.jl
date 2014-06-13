@@ -75,19 +75,6 @@ function render_colorful_stacked_bar(geom::BarGeometry,
                                      theme::Gadfly.Theme,
                                      aes::Gadfly.Aesthetics,
                                      orientation::Symbol)
-    bar_form = empty_form
-
-    if orientation == :horizontal
-        minvar = :ymin
-    else
-        minvar = :xmin
-    end
-
-    stack_height = Dict()
-    for x_min in getfield(aes, minvar)
-        stack_height[x_min] = 0.0
-    end
-
     # preserve factor orders of pooled data arrays
     if isa(aes.color, PooledDataArray)
         idxs = sortperm(aes.color.refs, rev=true)
@@ -96,33 +83,50 @@ function render_colorful_stacked_bar(geom::BarGeometry,
     end
 
     if orientation == :horizontal
-        for i in idxs
-            y_min, y_max, x, c = aes.ymin[i], aes.ymax[i], aes.x[i], aes.color[i]
-            geometry_id = Gadfly.unique_svg_id()
-            bar_form = combine(bar_form,
-                compose(rectangle(stack_height[y_min],
-                                  y_min*cy + theme.bar_spacing/2,
-                                  x, (y_max - y_min)*cy - theme.bar_spacing),
-                        fill(c),
-                        svgid(geometry_id),
-                        svgclass("geometry")))
-            stack_height[y_min] += x
+        stack_height_dict = Dict()
+        for y in aes.ymin
+            stack_height_dict[y] = zero(eltype(aes.x))
         end
+        stack_height = zeros(eltype(aes.x), length(idxs))
+
+        for (i, j) in enumerate(idxs)
+            stack_height[i] = stack_height_dict[aes.ymin[j]]
+            stack_height_dict[aes.ymin[j]] += aes.x[j]
+        end
+
+        return compose!(
+            context(),
+            rectangle(
+                stack_height,
+                [aes.ymin[i]*cy + theme.bar_spacing/2 for i in idxs],
+                [aes.x[i] for i in idxs],
+                [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs]),
+            fill([aes.color[i] for i in idxs]),
+            svgclass("geometry"))
+    elseif orientation == :vertical
+        stack_height_dict = Dict()
+        for x in aes.xmin
+            stack_height_dict[x] = zero(eltype(aes.y))
+        end
+        stack_height = zeros(eltype(aes.y), length(idxs))
+
+        for (i, j) in enumerate(idxs)
+            stack_height[i] = stack_height_dict[aes.xmin[j]]
+            stack_height_dict[aes.xmin[j]] += aes.y[j]
+        end
+
+        return compose!(
+            context(),
+            rectangle(
+                [aes.xmin[i]*cx + theme.bar_spacing/2 for i in idxs],
+                stack_height,
+                [(aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing for i in idxs],
+                [aes.y[i] for i in idxs]),
+            fill([aes.color[i] for i in idxs]),
+            svgclass("geometry"))
     else
-        for i in idxs
-            x_min, x_max, y, c = aes.xmin[i], aes.xmax[i], aes.y[i], aes.color[i]
-            geometry_id = Gadfly.unique_svg_id()
-            bar_form = combine(bar_form,
-                compose(rectangle(x_min*cx + theme.bar_spacing/2,
-                                  stack_height[x_min],
-                                  (x_max - x_min)*cx - theme.bar_spacing, y),
-                        fill(c),
-                        svgid(geometry_id),
-                        svgclass("geometry")))
-            stack_height[x_min] += y
-        end
+        error("Orientation must be :horizontal or :vertical")
     end
-    bar_form
 end
 
 
@@ -131,19 +135,6 @@ function render_colorful_dodged_bar(geom::BarGeometry,
                                     theme::Gadfly.Theme,
                                     aes::Gadfly.Aesthetics,
                                     orientation::Symbol)
-    if orientation == :horizontal
-        minvar = :ymin
-    else
-        minvar = :xmin
-    end
-    bar_form = empty_form
-    dodge_width = Dict()
-    dodge_count = Dict()
-    for x_min in getfield(aes, minvar)
-        dodge_width[x_min] = 0.0cx
-        dodge_count[x_min] = get(dodge_count, x_min, 0) + 1
-    end
-
     # preserve factor orders of pooled data arrays
     if isa(aes.color, PooledDataArray)
         idxs = sortperm(aes.color.refs, rev=true)
@@ -152,34 +143,68 @@ function render_colorful_dodged_bar(geom::BarGeometry,
     end
 
     if orientation == :horizontal
+        dodge_count = DefaultDict(() -> 0)
         for i in idxs
-            y_min, y_max, x, c = aes.ymin[i], aes.ymax[i], aes.x[i], aes.color[i]
-            geometry_id = Gadfly.unique_svg_id()
-            barwidth = ((y_max - y_min)*cy - theme.bar_spacing) / dodge_count[y_min]
-            bar_form = combine(bar_form,
-                compose(rectangle(0.0,
-                                  y_min*cy + dodge_width[y_min] + theme.bar_spacing/2,
-                                  0.0, barwidth),
-                        fill(c),
-                        svgid(geometry_id),
-                        svgclass("geometry")))
-            dodge_width[y_min] += barwidth
+            dodge_count[aes.ymin[i]] += 1
         end
+
+        dodge_height = Dict()
+        for i in idxs
+            dodge_pos_dict[aes.ymin[j]] += aes.ymin[j]*cy
+            dodge_height[aes.ymin[i]] =
+                ((aes.ymax[i] - aes.ymin[i]) / dodge_count[aes.ymin[i]]) * cy
+        end
+
+        dodge_pos_dict = DefaultDict(() -> 0cy)
+        dodge_pos = Array(Measure, length(idxs))
+        for (i, j) in enumerate(idxs)
+            dodge_pos[i] = dodge_pos_dict[aes.ymin[j]] + theme.bar_spacing/2
+            dodge_pos_dict[aes.ymin[j]] += dodge_height[aes.ymin[j]]
+        end
+
+        return compose!(
+            context(),
+            rectangle(
+                [0.0],
+                dodge_pos,
+                [0.0],
+                [((aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing) / dodge_count[aes.ymin[i]]
+                 for i in idxs]),
+            fill([aes.color[i] for i in idxs]),
+            svgclass("geometry"))
+    elseif orientation == :vertical
+        dodge_count = DefaultDict(() -> 0)
+        for i in idxs
+            dodge_count[aes.xmin[i]] += 1
+        end
+
+        dodge_width = Dict()
+        dodge_pos_dict = DefaultDict(() -> 0cx)
+        for i in idxs
+            dodge_width[aes.xmin[i]] =
+                ((aes.xmax[i] - aes.xmin[i]) / dodge_count[aes.xmin[i]]) * cx
+            dodge_pos_dict[aes.xmin[i]] = aes.xmin[i]*cx
+        end
+
+        dodge_pos = Array(Measure, length(idxs))
+        for (i, j) in enumerate(idxs)
+            dodge_pos[i] = dodge_pos_dict[aes.xmin[j]] + theme.bar_spacing/2
+            dodge_pos_dict[aes.xmin[j]] += dodge_width[aes.xmin[j]]
+        end
+
+        return compose!(
+            context(),
+            rectangle(
+                dodge_pos,
+                [0.0],
+                [((aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing) / dodge_count[aes.xmin[i]]
+                 for i in idxs],
+                [aes.y[i] for i in idxs]),
+            fill([aes.color[i] for i in idxs]),
+            svgclass("geometry"))
     else
-        for i in idxs
-            x_min, x_max, y, c = aes.xmin[i], aes.xmax[i], aes.y[i], aes.color[i]
-            geometry_id = Gadfly.unique_svg_id()
-            barwidth = ((x_max - x_min)*cx - theme.bar_spacing) / dodge_count[x_min]
-            bar_form = combine(bar_form,
-                compose(rectangle(x_min*cx + dodge_width[x_min] + theme.bar_spacing/2,
-                                  0.0, barwidth, y),
-                        fill(c),
-                        svgid(geometry_id),
-                        svgclass("geometry")))
-            dodge_width[x_min] += barwidth
-        end
+        error("Orientation must be :horizontal or :vertical")
     end
-    bar_form
 end
 
 

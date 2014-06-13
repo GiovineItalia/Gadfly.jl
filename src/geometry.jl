@@ -4,6 +4,7 @@ module Geom
 using Color
 using Compose
 using DataArrays
+using DataStructures
 using Gadfly
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
