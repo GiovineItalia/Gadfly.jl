@@ -887,19 +887,20 @@ function render(guide::Title, theme::Gadfly.Theme,
         return nothing
     end
 
-    (_, text_height) = text_extents(theme.major_label_font,
-                                    theme.major_label_font_size,
-                                    guide.label)
+    (text_width, text_height) = max_text_extents(theme.major_label_font,
+                                                 theme.major_label_font_size,
+                                                 guide.label)
 
     padding = 2mm
-    c = compose(canvas(0, 0, 1w, text_height + 2padding),
-                text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
-                stroke(nothing),
-                fill(theme.major_label_color),
-                font(theme.major_label_font),
-                fontsize(theme.major_label_font_size))
+    ctx = compose!(
+        context(minwidth=text_width, minheight=text_height + 2padding),
+        text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
+        stroke(nothing),
+        fill(theme.major_label_color),
+        font(theme.major_label_font),
+        fontsize(theme.major_label_font_size))
 
-    {(c, top_guide_position)}
+    return [PositionedGuide([ctx], 0, top_guide_position)]
 end
 
 
