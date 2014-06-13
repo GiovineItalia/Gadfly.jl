@@ -483,7 +483,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
     if Gadfly.issomething(aes.xtick)
         ticks = aes.xtick
-        visibility = aes.xtickvisible
+        tickvisibility = aes.xtickvisible
         scale = aes.xtickscale
 
         T = eltype(aes.xtick)
@@ -494,20 +494,26 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     else
         labels = String[]
         ticks = {}
-        visibility = {}
+        tickvisibility = {}
         scale = {}
     end
 
     if Gadfly.issomething(aes.xgrid)
         grids = aes.xgrid
+        if length(grids) < length(ticks)
+            gridvisibility = tickvisibility[2:end]
+        else
+            gridvisibility = tickvisibility
+        end
     else
         grids = {}
+        gridvisibility = {}
     end
 
     # grid lines
     static_grid_lines = compose!(
         context(withoutjs=true),
-        lines({{(t, 0h), (t, 1h)} for t in grids[visibility]}...),
+        lines({{(t, 0h), (t, 1h)} for t in grids[gridvisibility]}...),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
         strokedash([0.5mm, 0.5mm]),
@@ -516,7 +522,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     dynamic_grid_lines = compose!(
         context(withjs=true),
         lines({{(t, 0h), (t, 1h)} for t in grids}...),
-        visible(visibility),
+        visible(gridvisibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
         strokedash([0.5mm, 0.5mm]),
@@ -544,7 +550,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     hlayout = ctxpromise() do draw_context
         static_labels = compose!(
             context(withoutjs=true),
-            text(ticks[visibility], [1h - padding], labels[visibility],
+            text(ticks[tickvisibility], [1h - padding], labels[tickvisibility],
                  [hcenter], [vbottom]),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
@@ -554,7 +560,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         dynamic_labels = compose!(
             context(withjs=true),
             text(ticks, [1h - padding], labels, [hcenter], [vbottom]),
-            visible(visibility),
+            visible(tickvisibility),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
             fontsize(theme.minor_label_font_size),
@@ -563,18 +569,18 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
         return compose!(context(), static_labels, dynamic_labels)
     end
-    hlayout_context = compose!(context(minwidth=sum(label_widths[visibility]),
-                                       minheight=maximum(label_heights[visibility])),
+    hlayout_context = compose!(context(minwidth=sum(label_widths[tickvisibility]),
+                                       minheight=maximum(label_heights[tickvisibility])),
                                hlayout)
 
     vlayout = ctxpromise() do draw_context
         static_labels = compose!(
             context(withoutjs=true),
-            text(ticks[visibility],
+            text(ticks[tickvisibility],
                  [padding],
-                 labels[visibility],
+                 labels[tickvisibility],
                  [hright], [vcenter],
-                 [Rotation(-0.5pi, tick, padding) for tick in ticks[visibility]]),
+                 [Rotation(-0.5pi, tick, padding) for tick in ticks[tickvisibility]]),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
             fontsize(theme.minor_label_font_size),
@@ -584,7 +590,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
             context(withjs=true),
             text(ticks, [1h - padding], labels, [hright], [vbottom],
                  [Rotation(-0.5pi, tick, 1h - padding) for tick in ticks]),
-            visible(visibility),
+            visible(tickvisibility),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
             fontsize(theme.minor_label_font_size),
@@ -595,8 +601,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
     end
     vpenalty = 1mm # don't be too eager to flip the x-axis labels
-    vlayout_context = compose!(context(minwidth=sum(label_heights[visibility]),
-                                       minheight=vpenalty + maximum(label_widths[visibility])),
+    vlayout_context = compose!(context(minwidth=sum(label_heights[tickvisibility]),
+                                       minheight=vpenalty + maximum(label_widths[tickvisibility])),
                                vlayout)
 
     if guide.orientation == :horizontal
@@ -641,7 +647,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
 
     if Gadfly.issomething(aes.ytick)
         ticks = aes.ytick
-        visibility = aes.ytickvisible
+        tickvisibility = aes.ytickvisible
         scale = aes.ytickscale
         T = eltype(aes.ytick)
         labels = String[]
@@ -651,20 +657,26 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     else
         labels = String[]
         ticks = {}
-        visibility = {}
+        tickvisibility = {}
         scale = {}
     end
 
     if Gadfly.issomething(aes.ygrid)
         grids = aes.ygrid
+        if length(grids) < length(ticks)
+            gridvisibility = tickvisibility[2:end]
+        else
+            gridvisibility = tickvisibility
+        end
     else
         grids = {}
+        gridvisibility = {}
     end
 
     # grid lines
     static_grid_lines = compose!(
         context(withoutjs=true),
-        lines({{(0w, t), (1w, t)} for t in grids[visibility]}...),
+        lines({{(0w, t), (1w, t)} for t in grids[gridvisibility]}...),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
         strokedash([0.5mm, 0.5mm]),
@@ -673,7 +685,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     dynamic_grid_lines = compose!(
         context(withjs=true),
         lines({{(0w, t), (1w, t)} for t in grids}...),
-        visible(visibility),
+        visible(gridvisibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
         strokedash([0.5mm, 0.5mm]),
@@ -700,7 +712,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     hlayout = ctxpromise() do draw_context
         static_labels = compose!(
             context(withoutjs=true),
-            text([1.0w - padding], ticks[visibility], labels[visibility],
+            text([1.0w - padding], ticks[tickvisibility], labels[tickvisibility],
                  [hright], [vcenter]),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
@@ -711,7 +723,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
             context(withjs=true),
             text([1.0w - padding], ticks, labels,
                  [hright], [vcenter]),
-            visible(visibility),
+            visible(tickvisibility),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
             fontsize(theme.minor_label_font_size),
@@ -720,17 +732,17 @@ function render(guide::YTicks, theme::Gadfly.Theme,
 
         return compose!(context(), static_labels, dynamic_labels)
     end
-    hlayout_context = compose!(context(minwidth=maximum(label_widths[visibility]),
-                                       minheight=sum(label_heights[visibility])),
+    hlayout_context = compose!(context(minwidth=maximum(label_widths[tickvisibility]),
+                                       minheight=sum(label_heights[tickvisibility])),
                                hlayout)
 
     vlayout = ctxpromise() do draw_context
         static_grid_lines = compose!(
             context(),
-            text([1.0w - padding], ticks[visibility], labels[visibility],
+            text([1.0w - padding], ticks[tickvisibility], labels[tickvisibility],
                  [hcenter], [vbottom],
                  [Rotation(-0.5pi, (1.0w - padding, tick))
-                  for tick in ticks[visibility]]),
+                  for tick in ticks[tickvisibility]]),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
             fontsize(theme.minor_label_font_size),
@@ -741,8 +753,8 @@ function render(guide::YTicks, theme::Gadfly.Theme,
             text([1.0w - padding], ticks, labels,
                  [hcenter], [vbottom],
                  [Rotation(-0.5pi, (1.0w - padding, tick))
-                  for tick in ticks[visibility]]),
-            visible(visibility),
+                  for tick in ticks[tickvisibility]]),
+            visible(tickvisibility),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
             fontsize(theme.minor_label_font_size),
@@ -752,8 +764,8 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         return compose!(contetx(), static_grid_lines, dynamic_grid_lines)
     end
     vlayout_context =
-    compose!(context(minwidth=maximum(label_heights[visibility]),
-                     minheight=sum(label_widths[visibility])),
+    compose!(context(minwidth=maximum(label_heights[tickvisibility]),
+                     minheight=sum(label_widths[tickvisibility])),
              vlayout)
 
     if guide.orientation == :horizontal
