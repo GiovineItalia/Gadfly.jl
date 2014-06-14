@@ -38,9 +38,10 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme,
         min_points = collect((Any, Any), zip(aes.x, aes.ymin))
         sort!(min_points, by=first, rev=true)
 
-        form = compose(polygon(chain(min_points, max_points)...),
-                       fill(theme.lowlight_color(aes.color[1])),
-                       svgclass("geometry"))
+        ctx = compose!(
+            context(),
+            polygon(chain(min_points, max_points)...),
+            fill(theme.lowlight_color(aes.color[1])))
     else
         max_points = Dict{ColorValue, Array{(Any, Any), 1}}()
         for (x, y, c) in zip(aes.x, aes.ymax, aes.color)
@@ -58,23 +59,22 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme,
             push!(min_points[c], (x, y))
         end
 
-        forms = Array(Any, length(max_points))
-        for (i, c) in enumerate(keys(max_points))
-            c_max_points = max_points[c]
-            c_min_points = min_points[c]
-            sort!(c_max_points, by=first)
-            sort!(c_min_points, by=first, rev=true)
-
-            forms[i] =
-                compose(polygon(chain(c_min_points, c_max_points)...),
-                        fill(theme.lowlight_color(c)),
-                        opacity(theme.lowlight_opacity),
-                        svgclass(@sprintf("geometry color_%s",
-                                          escape_id(aes.color_label([c])[1]))))
+        for c in keys(max_points)
+            sort!(max_points[c], by=first)
+            sort!(min_points[c], by=first, rev=true)
         end
-        form = combine(forms...)
+
+        ctx = compose!(
+            context(),
+            polygon([[chain(min_points[c], max_points[c])...]
+                     for c in keys(max_points)]...),
+            fill([theme.lowlight_color(c) for c in keys(max_points)]))
     end
 
-    compose(form, stroke(nothing), linewidth(theme.line_width))
+    return compose!(
+        ctx,
+        svgclass("geometry"),
+        stroke(nothing),
+        linewidth(theme.line_width))
 end
 
