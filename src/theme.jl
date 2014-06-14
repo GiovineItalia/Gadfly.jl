@@ -8,10 +8,13 @@ const label_font_desc = "'PT Sans Caption','Helvetica Neue','Helvetica',sans-ser
 
 # Choose highlight color by darkening the fill color
 function default_highlight_color(fill_color::ColorValue)
-    #fill_color = convert(LCHab, fill_color)
-    #c = LCHab(fill_color.l, fill_color.c, fill_color.h)
-    #LCHab(c.l - 15, c.c, c.h)
     return RGB(1, 1, 1)
+end
+
+function default_stroke_color(fill_color::ColorValue)
+    fill_color = convert(LCHab, fill_color)
+    c = LCHab(fill_color.l, fill_color.c, fill_color.h)
+    LCHab(c.l - 15, c.c, c.h)
 end
 
 function default_lowlight_color(fill_color::ColorValue)
@@ -90,6 +93,10 @@ end
 
     # Length of caps on error bars
     errorbar_cap_length,   Measure,         3mm
+
+    # Lines are drawn in a slightly different color than fills, e.g. to
+    # differentiate histogram bars from error bars.
+    stroke_color,          Function,       default_stroke_color
 
     # Points, etc, are highlighted by stroking in slightly different color. This
     # is the stroke width.

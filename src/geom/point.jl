@@ -36,7 +36,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     lw_ratio = theme.line_width / aes.size[1]
 
     return compose!(
-        context(),
+        context(order=4),
         circle(aes.x, aes.y, aes.size),
         fill(aes.color),
         stroke(map(theme.highlight_color, aes.color)),

@@ -39,16 +39,16 @@ end
 function render(geom::ErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     # check for X and Y error bar aesthetics
     if isempty(Gadfly.undefined_aesthetics(aes, element_aesthetics(xerrorbar())...))
-        xform = render(xerrorbar(), theme, aes)
+        xctx = render(xerrorbar(), theme, aes)
     else
-        xform = empty_form
+        xctx = nothing
     end
     if isempty(Gadfly.undefined_aesthetics(aes, element_aesthetics(yerrorbar())...))
-        yform = render(yerrorbar(), theme, aes)
+        yctx = render(yerrorbar(), theme, aes)
     else
-        yform = empty_form
+        yctx = nothing
     end
-    compose(canvas(units_inherited=true, order=3), xform, yform)
+    compose(context(order=3), xctx, yctx)
 end
 
 function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
@@ -60,26 +60,24 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
-
-    # What are the actual extents. We can'n use 1/6
     caplen = theme.errorbar_cap_length/2
 
-    compose(
-        canvas(units_inherited=true, order=3),
-        combine(
-            # top cap
-            lines([[(x*cx - caplen, ymax), (x*cx + caplen, ymax)]
-                   for (x, ymax) in zip(aes.x, aes.ymax)]...),
+    return compose!(
+        context(order=3),
 
-            # error bar
-            lines([[(x*cx, ymax), (x*cx, ymin)]
-                   for (x, ymin, ymax) in zip(aes.x, aes.ymin, aes.ymax)]...),
+        # top cap
+        lines([[(x*cx - caplen, ymax), (x*cx + caplen, ymax)]
+               for (x, ymax) in zip(aes.x, aes.ymax)]...),
 
-            # bottom cap
-            lines([[(x*cx - caplen, ymin), (x*cx + caplen, ymin)]
-                   for (x, ymin) in zip(aes.x, aes.ymin)]...)),
+        # error bar
+        lines([[(x*cx, ymax), (x*cx, ymin)]
+               for (x, ymin, ymax) in zip(aes.x, aes.ymin, aes.ymax)]...),
 
-        stroke([theme.highlight_color(c) for c in aes.color]),
+        # bottom cap
+        lines([[(x*cx - caplen, ymin), (x*cx + caplen, ymin)]
+               for (x, ymin) in zip(aes.x, aes.ymin)]...),
+
+        stroke([theme.stroke_color(c) for c in aes.color]),
         linewidth(theme.line_width),
         aes.color_key_continuous == true ?
             svgclass("geometry") :
@@ -98,26 +96,24 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
-
-    # What are the actual extents. We can'n use 1/6
     caplen = theme.errorbar_cap_length/2
 
-    compose(
-        canvas(units_inherited=true, order=3),
-        combine(
-            # left cap
-            lines([[(xmin, y*cy - caplen), (xmin, y*cy + caplen)]
-                   for (xmin, y) in zip(aes.xmin, aes.y)]...),
+    return compose!(
+        context(order=3),
 
-            # error bar
-            lines([[(xmin, y*cy), (xmax, y*cy)]
-                   for (xmin, xmax, y) in zip(aes.xmin, aes.xmax, aes.y)]...),
+        # top cap
+        lines([[(xmin, y*cy - caplen), (xmin, y*cy + caplen)]
+               for (xmin, y) in zip(aes.xmin, aes.y)]...),
 
-            # right cap
-            lines([[(xmax, y*cy - caplen), (xmax, y*cy + caplen)]
-                   for (xmax, y) in zip(aes.xmax, aes.y)]...)),
+        # error bar
+        lines([[(xmin, y*cy), (xmax, y*cy)]
+               for (xmin, xmax, y) in zip(aes.xmin, aes.xmax, aes.y)]...),
 
-        stroke([theme.highlight_color(c) for c in aes.color]),
+        # right cap
+        lines([[(xmax, y*cy - caplen), (xmax, y*cy + caplen)]
+               for (xmax, y) in zip(aes.xmax, aes.y)]...),
+
+        stroke([theme.stroke_color(c) for c in aes.color]),
         linewidth(theme.line_width),
         (aes.color_key_continuous == true || !colored) ?
             svgclass("geometry") :

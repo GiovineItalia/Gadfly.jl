@@ -42,7 +42,7 @@ tests = [
     #("explicit_subplot_titles",               6inch, 3inch),
     #("subplot_grid_smooth",                   6inch, 8inch),
     ("smooth_lm",                             6inch, 8inch),
-    #("histogram_errorbar",                    6inch, 3inch),
+    ("histogram_errorbar",                    6inch, 3inch),
     #("issue106",                              6inch, 3inch),
     #("continuous_color_scale_range",          6inch, 3inch),
     #("continuous_scale_range",                6inch, 3inch),
@@ -53,18 +53,18 @@ tests = [
     #("explicit_xy_ticks",                     6inch, 3inch),
     ("boxplot",                               6inch, 3inch),
     #("subplot_categorical_bar",               6inch, 3inch),
-    #("errorbar",                              6inch, 3inch),
+    ("errorbar",                              6inch, 3inch),
     #("issue120",                              6inch, 3inch),
     #("histogram2d_discrete",                  6inch, 3inch),
-    #("layer_themes",                          6inch, 3inch),
-    #("discrete_color_manual",                 6inch, 3inch),
-    #("ordered_line",                          6inch, 3inch),
-    #("nan_skipping",                          6inch, 3inch),
+    ("layer_themes",                          6inch, 3inch),
+    ("discrete_color_manual",                 6inch, 3inch),
+    ("ordered_line",                          6inch, 3inch),
+    ("nan_skipping",                          6inch, 3inch),
     #("hexbin",                                6inch, 3inch),
     #("spy",                                   6inch, 3inch),
-    #("issue177",                              6inch, 3inch),
+    ("issue177",                              6inch, 3inch),
     ("ribbon",                                6inch, 3inch),
-    #("layer_leak",                            6inch, 3inch)
+    ("layer_leak",                            6inch, 3inch)
 ]
 
 
