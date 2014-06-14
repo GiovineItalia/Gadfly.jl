@@ -75,8 +75,8 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         end
 
         ctx = compose!(ctx, lines(points...),
-                     sroke(aes.color[1]),
-                     svgclass("geometry"))
+                       stroke(aes.color[1]),
+                       svgclass("geometry"))
     else
         # group points by color
         points = Dict{ColorValue, Array{(Any, Any),1}}()

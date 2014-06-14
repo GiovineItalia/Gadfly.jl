@@ -17,14 +17,12 @@ default_statistic(::LabelGeometry) = Gadfly.Stat.identity()
 const label = LabelGeometry
 
 
-# A deferred canvas function for labeling points in a plot. Optimizing label
-# placement depends on knowing the absolute size of the containing canvas.
-function deferred_label_canvas(geom::LabelGeometry,
-                               aes::Gadfly.Aesthetics,
-                               theme::Gadfly.Theme,
-                               parent_transform,
-                               unit_box,
-                               parent_box)
+# A deferred context function for labeling points in a plot. Optimizing label
+# placement depends on knowing the absolute size of the containing context.
+function deferred_label_context(geom::LabelGeometry,
+                                aes::Gadfly.Aesthetics,
+                                theme::Gadfly.Theme,
+                                drawctx::ParentDrawContext)
 
     # Label layout is non-trivial problem. Quite a few papers and at least one
     # Phd thesis has been written on the topic. The approach here is pretty
@@ -36,29 +34,29 @@ function deferred_label_canvas(geom::LabelGeometry,
     # TODO:
     # Penalize to prefer certain label positions over others.
 
+    parent_transform = drawctx.t
+    units = drawctx.units
+    parent_box = drawctx.box
+
     canvas_width, canvas_height = parent_box.width, parent_box.height
 
     # This should maybe go in theme? Or should we be using Aesthetics.size?
-    padding = 3mm
+    padding = 2mm
 
     point_positions = Array(Tuple, 0)
     for (x, y) in zip(aes.x, aes.y)
-        x = absolute_x_position(x*cx, parent_transform, unit_box,
-                                parent_box)
-                                # AbsoluteBoundingBox())
-        y = absolute_y_position(y*cy, parent_transform, unit_box,
-                                parent_box)
-                                # AbsoluteBoundingBox())
+        x = Compose.absolute_x_position(x*cx, parent_transform, units,
+                                        parent_box)
+        y = Compose.absolute_y_position(y*cy, parent_transform, units,
+                                        parent_box)
         x -= parent_box.x0
         y -= parent_box.y0
         push!(point_positions, (x, y))
     end
 
-    extents = [text_extents(theme.point_label_font,
-                            theme.point_label_font_size,
-                            label)
-               for label in aes.label]
-
+    extents = text_extents(theme.point_label_font,
+                           theme.point_label_font_size,
+                           aes.label...)
     extents = [(width + padding, height + padding)
                for (width, height) in extents]
 
@@ -110,6 +108,10 @@ function deferred_label_canvas(geom::LabelGeometry,
     # once, rather than every iteration of annealing.
     possible_overlaps = [Array(Int, 0) for _ in 1:length(positions)]
 
+    # TODO: this whole thing would be much more effecient if we forbid from
+    # the start labels that overlap points. We should be able to precompute
+    # that, since they're static.
+
     for j in 1:n
         for i in (j+1):n
             if overlaps(max_extents(i), max_extents(j))
@@ -150,6 +152,8 @@ function deferred_label_canvas(geom::LabelGeometry,
         end
     end
 
+    label_visibility = fill(true, length(positions))
+
     num_iterations = n * theme.label_placement_iterations
     for k in 1:num_iterations
         if total_penalty == 0
@@ -160,15 +164,13 @@ function deferred_label_canvas(geom::LabelGeometry,
         new_total_penalty = total_penalty
 
         # Propose flipping the visibility of the label.
-        if !is(positions[j], nothing) &&
-           geom.hide_overlaps &&
-           rand() < theme.label_visibility_flip_pr
+        if label_visibility[j] && geom.hide_overlaps && rand() < theme.label_visibility_flip_pr
             pos = nothing
             new_total_penalty += theme.label_hidden_penalty
 
         # Propose a change to label placement.
         else
-            if positions[j] === nothing
+            if !label_visibility[j]
                 new_total_penalty -= theme.label_hidden_penalty
             end
 
@@ -207,7 +209,7 @@ function deferred_label_canvas(geom::LabelGeometry,
             end
         end
 
-        if !box_contains(positions[j])
+        if !box_contains(positions[j]) && label_visibility[j]
             new_total_penalty -= theme.label_out_of_bounds_penalty
         end
 
@@ -216,62 +218,50 @@ function deferred_label_canvas(geom::LabelGeometry,
         end
 
         for i in possible_overlaps[j]
-            if overlaps(positions[i], positions[j])
+            if overlaps(positions[i], positions[j]) &&
+                    label_visibility[i] && label_visibility[j]
                 new_total_penalty -= 1
             end
 
-            if overlaps(positions[i], pos)
+            if overlaps(positions[i], pos) && label_visibility[i]
                 new_total_penalty += 1
             end
         end
 
         improvement = total_penalty - new_total_penalty
-        T = 0.5 * (1.0 - (k / (1 + num_iterations)))
+
+        T = 0.1 * (1.0 - (k / (1 + num_iterations)))
         if improvement >= 0 || rand() < exp(improvement / T)
-            positions[j] = pos
+            if pos === nothing
+                label_visibility[j] = false
+            else
+                label_visibility[j] = true
+                positions[j] = pos
+            end
             total_penalty = new_total_penalty
         end
+
     end
 
-    forms = Array(Any, 0)
-
-    # Quite useful for visually debugging this stuff:
-    #for position in positions
-        #if position === nothing
-            #continue
-        #end
-
-        #push!(forms,
-             #rectangle(position.x0, position.y0, position.width, position.height)
-             #<< stroke("red") << fill(nothing) << linewidth(0.1mm))
-    #end
-
-    for i in 1:n
-        if !is(positions[i], nothing)
-            # Padding? The direction depends on what side we are on.
-            point_x, point_y = point_positions[i]
-            x, y = positions[i].x0, positions[i].y0
-
-            x += extents[i][1].abs / 2
-            y += extents[i][2].abs / 2
-
-            push!(forms, compose(text(x*mm, y*mm, aes.label[i], hcenter, vcenter),
-                                 svgclass("geometry")))
-        end
-    end
-
-    compose(canvas(unit_box=unit_box),
-            combine(empty_form, forms...),
-            font(theme.point_label_font),
-            fontsize(theme.point_label_font_size),
-            fill(theme.point_label_color),
-            stroke(nothing))
+    return compose!(
+        context(),
+        text([(positions[i].x0 + extents[i][1].abs/2)*mm for i in 1:n],
+             [(positions[i].y0 + extents[i][2].abs/2)*mm for i in 1:n],
+             aes.label,
+             [hcenter], [vcenter]),
+        visible(label_visibility),
+        font(theme.point_label_font),
+        fontsize(theme.point_label_font_size),
+        fill(theme.point_label_color),
+        stroke(nothing),
+        svgclass("geometry"))
 end
 
 
 function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.Label", aes, :label, :x, :y)
-    deferredcanvas((parent_t, unit_box, parent_box) ->
-                deferred_label_canvas(geom, aes, theme, parent_t, unit_box, parent_box))
+    return ctxpromise(drawctx -> deferred_label_context(geom, aes, theme, drawctx))
 end
+
+
 

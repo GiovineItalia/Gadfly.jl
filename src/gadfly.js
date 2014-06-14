@@ -236,6 +236,9 @@ var set_geometry_transform = function(root, tx, ty, scale) {
 
 // Find the most appropriate tick scale and update label visibility.
 var update_tickscale = function(root, scale) {
+    // TODO: x and y can have a different set of tick scales, so we need to
+    // do this separately. Fuuuuuck.
+
     var tickscales = root.data("tickscales");
     var best_tickscale = 1.0;
     var best_tickscale_dist = Infinity;
@@ -249,6 +252,7 @@ var update_tickscale = function(root, scale) {
 
     if (best_tickscale != root.data("tickscale")) {
         root.data("tickscale", best_tickscale);
+        console.info(best_tickscale);
 
         var mark_inscale_gridlines = function (element, i) {
             var inscale = element.attr("gadfly:scale") == best_tickscale;
