@@ -308,14 +308,14 @@ function render_continuous_color_key(colors::Dict,
         {context(xoff, 0.5h - total_height/2, 1w, total_height, units=UnitBox()),
          rectangle(
              [0],
-             [(i - 1)*total_height / theme.key_color_gradations
+             [1*cy - i*total_height / theme.key_color_gradations
               for i in 1:theme.key_color_gradations],
              [swatch_width],
              [total_height / theme.key_color_gradations]),
 
          #grid lines
          {context(),
-          lines([[(0, y), (swatch_width, y)] for y in values(colors)]...),
+          lines([[(0, 1 - y), (swatch_width, 1 - y)] for y in values(colors)]...),
           linewidth(theme.grid_line_width),
           stroke(color("white"))},
 
@@ -324,12 +324,11 @@ function render_continuous_color_key(colors::Dict,
          stroke(nothing),
          svgattribute("shape-rendering", "crispEdges")})
 
-    # labels
     compose!(ctx,
         {context(xoff + swatch_width + padding, 0.5h - total_height/2,
                  1w, total_height, units=UnitBox()),
          text([0],
-              collect(values(colors)),
+              [1 - y for y in values(colors)],
               [labels[c] for c in keys(colors)],
               [hleft], [vcenter]),
          fill(theme.key_label_color),

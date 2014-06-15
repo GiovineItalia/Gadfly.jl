@@ -506,7 +506,7 @@ element_aesthetics(::ContinuousColorScale) = [:color]
 
 function continuous_color_gradient(;minvalue=nothing, maxvalue=nothing)
     ContinuousColorScale(
-        lab_gradient(LCHab(20, 44, 262), LCHab(100, 44, 262)),
+        lab_gradient(LCHab(0, 44, 262), LCHab(95, 15, 262)),
         minvalue=minvalue, maxvalue=maxvalue)
 end
 
@@ -578,22 +578,21 @@ function apply_scale(scale::ContinuousColorScale,
         aes.color = DataArray(cs, nas)
 
         color_key_colors = Dict{ColorValue, Float64}()
-        color_key_labels = Array(String, 0)
+        color_key_labels = Dict{ColorValue, String}()
 
         tick_labels = identity_formatter(ticks)
         for (i, j, label) in zip(ticks, ticks[2:end], tick_labels)
             r = (i - cmin) / cspan
-            color_key_colors[scale.f(r)] = r
-            push!(color_key_labels, label)
+            c = scale.f(r)
+            color_key_colors[c] = r
+            color_key_labels[c] = label
         end
-        color_key_colors[scale.f((ticks[end] - cmin) / cspan)] =
-            (ticks[end] - cmin) / cspan
-        push!(color_key_labels, tick_labels[end])
+        c = scale.f((ticks[end] - cmin) / cspan)
+        color_key_colors[c] = (ticks[end] - cmin) / cspan
+        color_key_labels[c] = tick_labels[end]
 
-        color_key_color_label =
-            [c => l for (c, l) in zip(keys(color_key_colors), color_key_labels)]
         function labeler(xs)
-            [get(color_key_color_label, x, "") for x in xs]
+            [get(color_key_labels, x, "") for x in xs]
         end
 
         aes.color_function = scale.f

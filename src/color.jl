@@ -78,3 +78,13 @@ function lab_gradient(cs::ColorValue...)
     f
 end
 
+
+function lchabmix(c0_, c1_, r, power)
+    c0 = convert(LCHab, c0_)
+    c1 = convert(LCHab, c1_)
+    w = r^power
+    lspan = c1.l - c0.l
+    cspan = c1.c - c0.c
+    hspan = c1.h - c0.h
+    return LCHab(c0.l + w*lspan, c0.c + w*cspan, c0.h + w*hspan)
+end
