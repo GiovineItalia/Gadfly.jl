@@ -69,12 +69,13 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     if length(aes.color) == 1 &&
             !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
-        points = {(x, y) for (x, y) in zip(aes.x, aes.y)}
+        T = (eltype(aes.x), eltype(aes.y))
+        points = T[(x, y) for (x, y) in zip(aes.x, aes.y)]
         if !geom.preserve_order
             sort!(points, by=first)
         end
 
-        ctx = compose!(ctx, lines(points...),
+        ctx = compose!(ctx, Compose.line(points),
                        stroke(aes.color[1]),
                        svgclass("geometry"))
     else
@@ -96,7 +97,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         classes = [@sprintf("geometry color_%s", escape_id(aes.color_label([c])[1]))
                    for c in keys(points)]
 
-        ctx = compose!(ctx, lines(values(points)...),
+        ctx = compose!(ctx, Compose.line(collect(values(points))),
                       stroke(collect(keys(points))),
                       svgclass(classes))
     end

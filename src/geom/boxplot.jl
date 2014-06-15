@@ -47,18 +47,18 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                 context(),
 
                  # Whiskers
-                lines([[(x, lh), (x, lf)]
-                         for (x, lh, lf) in zip(xs, aes.lower_hinge, aes.lower_fence)]...),
+                Compose.line([[(x, lh), (x, lf)]
+                              for (x, lh, lf) in zip(xs, aes.lower_hinge, aes.lower_fence)]),
 
-                lines([[(x, uh), (x, uf)]
-                        for (x, uh, uf) in zip(xs, aes.upper_hinge, aes.upper_fence)]...),
+                Compose.line([[(x, uh), (x, uf)]
+                              for (x, uh, uf) in zip(xs, aes.upper_hinge, aes.upper_fence)]),
 
                 # Fences
-                lines([[(x - 1/6, lf), (x + 1/6, lf)]
-                       for (x, lf) in zip(xs, aes.lower_fence)]...),
+                Compose.line([[(x - 1/6, lf), (x + 1/6, lf)]
+                              for (x, lf) in zip(xs, aes.lower_fence)]),
 
-                lines([[(x - 1/6, uf), (x + 1/6, uf)]
-                       for (x, uf) in zip(xs, aes.upper_fence)]...),
+                Compose.line([[(x - 1/6, uf), (x + 1/6, uf)]
+                              for (x, uf) in zip(xs, aes.upper_fence)]),
 
                 stroke(collect(cs))
             },
@@ -80,8 +80,8 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
     if aes.middle != nothing
         compose!(ctx, {
            context(order=1),
-           lines([[(x - 1/6, mid), (x + 1/6, mid)]
-                  for (x, mid) in zip(xs, aes.middle)]...),
+           Compose.line([[(x - 1/6, mid), (x + 1/6, mid)]
+                         for (x, mid) in zip(xs, aes.middle)]),
            linewidth(theme.middle_width),
            stroke([theme.middle_color(c) for c in cs])
         })

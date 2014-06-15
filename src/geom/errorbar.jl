@@ -66,16 +66,16 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
         context(order=3),
 
         # top cap
-        lines([[(x*cx - caplen, ymax), (x*cx + caplen, ymax)]
-               for (x, ymax) in zip(aes.x, aes.ymax)]...),
+        Compose.line([[(x*cx - caplen, ymax), (x*cx + caplen, ymax)]
+                      for (x, ymax) in zip(aes.x, aes.ymax)]),
 
         # error bar
-        lines([[(x*cx, ymax), (x*cx, ymin)]
-               for (x, ymin, ymax) in zip(aes.x, aes.ymin, aes.ymax)]...),
+        Compose.line([[(x*cx, ymax), (x*cx, ymin)]
+                      for (x, ymin, ymax) in zip(aes.x, aes.ymin, aes.ymax)]),
 
         # bottom cap
-        lines([[(x*cx - caplen, ymin), (x*cx + caplen, ymin)]
-               for (x, ymin) in zip(aes.x, aes.ymin)]...),
+        Compose.line([[(x*cx - caplen, ymin), (x*cx + caplen, ymin)]
+                      for (x, ymin) in zip(aes.x, aes.ymin)]),
 
         stroke([theme.stroke_color(c) for c in aes.color]),
         linewidth(theme.line_width),
@@ -102,16 +102,16 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
         context(order=3),
 
         # top cap
-        lines([[(xmin, y*cy - caplen), (xmin, y*cy + caplen)]
-               for (xmin, y) in zip(aes.xmin, aes.y)]...),
+        Compose.line([[(xmin, y*cy - caplen), (xmin, y*cy + caplen)]
+                      for (xmin, y) in zip(aes.xmin, aes.y)]),
 
         # error bar
-        lines([[(xmin, y*cy), (xmax, y*cy)]
-               for (xmin, xmax, y) in zip(aes.xmin, aes.xmax, aes.y)]...),
+        Compose.line([[(xmin, y*cy), (xmax, y*cy)]
+                      for (xmin, xmax, y) in zip(aes.xmin, aes.xmax, aes.y)]),
 
         # right cap
-        lines([[(xmax, y*cy - caplen), (xmax, y*cy + caplen)]
-               for (xmax, y) in zip(aes.xmax, aes.y)]...),
+        Compose.line([[(xmax, y*cy - caplen), (xmax, y*cy + caplen)]
+                      for (xmax, y) in zip(aes.xmax, aes.y)]),
 
         stroke([theme.stroke_color(c) for c in aes.color]),
         linewidth(theme.line_width),

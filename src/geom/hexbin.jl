@@ -30,7 +30,6 @@ end
 
 function render(geom::HexagonalBinGeometry, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
-
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     default_aes.xsize = [1.0]
@@ -41,18 +40,17 @@ function render(geom::HexagonalBinGeometry, theme::Gadfly.Theme,
     Gadfly.assert_aesthetics_equal_length("Geom.hexbin", aes, :x, :y)
 
     n = length(aes.x)
-
     visibility = Bool[!isna(c) for c in take(cycle(aes.color), n)]
     xs = aes.x[visibility]
     ys = aes.y[visibility]
-    xsizes = collect(take(cycle(aes.xsize), n))[visibility]
-    ysizes = collect(take(cycle(aes.ysize), n))[visibility]
-    cs = collect(take(cycle(aes.color), n))[visibility]
+    xsizes = collect(eltype(aes.xsize), take(cycle(aes.xsize), n))[visibility]
+    ysizes = collect(eltype(aes.ysize), take(cycle(aes.ysize), n))[visibility]
+    cs = collect(eltype(aes.color), take(cycle(aes.color), n))[visibility]
+    n = length(xs)
 
     return compose!(
         context(),
-        polygon([collect(hexpoints((x, y), xs, ys))
-                 for (x, y, xs, ys) in zip(xs, ys, xsizes, ysizes)]...),
+        polygon([hexpoints(xs[i], ys[i], xsizes[i], ysizes[i]) for i in 1:n]),
         linewidth(0.1mm), # pad the hexagons so they ovelap a little
         fill(cs),
         stroke(cs),

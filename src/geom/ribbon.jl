@@ -40,7 +40,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme,
 
         ctx = compose!(
             context(),
-            polygon(chain(min_points, max_points)...),
+            polygon(collect((Any, Any), chain(min_points, max_points))),
             fill(theme.lowlight_color(aes.color[1])))
     else
         max_points = Dict{ColorValue, Array{(Any, Any), 1}}()
@@ -66,8 +66,8 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme,
 
         ctx = compose!(
             context(),
-            polygon([[chain(min_points[c], max_points[c])...]
-                     for c in keys(max_points)]...),
+            polygon([collect((Any, Any), chain(min_points[c], max_points[c]))
+                     for c in keys(max_points)]),
             fill([theme.lowlight_color(c) for c in keys(max_points)]))
     end
 
