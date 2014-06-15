@@ -93,21 +93,24 @@ function render(geom::RectangularBinGeometry,
     end
 
     n = nx
-    forms = Array(Compose.Form, 0)
-    for (i, c) in zip(1:n, cycle(aes.color))
-        if !isna(c)
-            form = compose(rectangle(xmin[i], ymin[i],
-                                    (xmax[i] - xmin[i])*cx - theme.bar_spacing,
-                                    (ymax[i] - ymin[i])*cy - theme.bar_spacing),
-                           fill(c), svgclass("geometry"))
+    cs = collect(take(cycle(aes.color), n))
+    visibility = cs .!= nothing
+    xmin = xmin[visibility]
+    xmax = xmax[visibility]
+    ymin = ymin[visibility]
+    ymax = ymax[visibility]
 
-            push!(forms, form)
-        end
-    end
-
-    compose(combine(forms...),
-            stroke(nothing),
-            svgattribute("shape-rendering", "crispEdges"))
+    return compose!(
+        context(),
+        rectangle(xmin, ymin,
+                  [(x1 - x0)*cx - theme.bar_spacing
+                   for (x0, x1) in zip(xmin, xmax)],
+                  [(y1 - y0)*cy - theme.bar_spacing
+                   for (y0, y1) in zip(ymin, ymax)]),
+        fill(cs[visibility]),
+        stroke(nothing),
+        svgclass("geometry"),
+        svgattribute("shape-rendering", "crispEdges"))
 end
 
 

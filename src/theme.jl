@@ -85,6 +85,9 @@ end
     key_label_font_size, Measure,         8pt
     key_label_color,     ColorOrNothing,  color("#4c404b")
 
+    # How many gradations to show in a continuous color key.
+    key_color_gradations, Int,            40
+
     # Spacing between bars for Geom.bar.
     bar_spacing,           Measure,         0.0mm
 

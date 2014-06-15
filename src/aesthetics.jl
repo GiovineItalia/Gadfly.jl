@@ -47,9 +47,10 @@ typealias NumericalAesthetic
     ytick,        NumericalAesthetic
     xgrid,        NumericalAesthetic
     ygrid,        NumericalAesthetic
-    color_key_colors,     Maybe(Vector{ColorValue})
+    color_key_colors,     Maybe(Dict)
     color_key_title,      Maybe(String)
     color_key_continuous, Maybe(Bool)
+    color_function,       Maybe(Function)
     titles,               Maybe(Dict{Symbol, String})
 
     # mark some ticks as initially invisible

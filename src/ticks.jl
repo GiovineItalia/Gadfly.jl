@@ -58,8 +58,10 @@ function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false,
                            k_min=2, k_max=10, k_ideal=5,
                            strict_span=false)
 
+    one_t = one(T)
     if x_min == x_max
-        return [x_min], x_min - one(T), x_min + one(T)
+        R = typeof(1.0 * one_t)
+        return R[x_min], x_min - one_t, x_min + one_t
     end
 
     const n = length(Q)
@@ -67,7 +69,6 @@ function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false,
     # generalizing "order of magnitude"
     xspan = x_max - x_min
     z = bounding_order_of_magnitude(xspan)
-    one_t = one(T)
 
     high_score = -Inf
     z_best = 0.0

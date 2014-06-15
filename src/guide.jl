@@ -281,86 +281,67 @@ function render_discrete_color_key(colors::Vector{ColorValue},
 end
 
 
-# TODO: rewrite
 # A helper for render(::ColorKey) for rendering guides for continuous color
 # scales.
-function render_continuous_color_key(colors::Vector{ColorValue},
+function render_continuous_color_key(colors::Dict,
                                      labels::Dict{ColorValue, String},
+                                     color_function::Function,
                                      title_context::Context,
                                      title_width::Measure,
                                      theme::Gadfly.Theme)
 
-    # Key entries
-    entry_width, entry_height = text_extents(theme.key_label_font,
-                                             theme.key_label_font_size,
-                                             values(labels)...)
-    entry_width += entry_height # make space for the color swatch
+    entry_width, entry_height = max_text_extents(theme.key_label_font,
+                                                 theme.key_label_font_size,
+                                                 values(labels)...)
 
-    unlabeled_swatches = 0
-    for c in colors
-        if labels[c] == ""
-            unlabeled_swatches += 1
-        end
-    end
+    numlabels = length(labels)
+    total_height = 2 * numlabels * entry_height
+    swatch_width = entry_height / 2
+    xoff = 2mm
+    padding = 1mm
+    entry_width += 2padding + swatch_width + xoff
 
-    unlabeled_swatch_height = 1.0mm
-    swatch_padding = 1mm
+    ctx = context(minwidth=entry_width, minheight=total_height, units=UnitBox())
 
-    swatch_canvas = canvas(0w, 0h + title_canvas.box.height, 1w,
-                           unlabeled_swatches * unlabeled_swatch_height +
-                           (length(colors) - unlabeled_swatches) * entry_height)
+    # color bar
+    compose!(ctx,
+        {context(xoff, 0.5h - total_height/2, 1w, total_height, units=UnitBox()),
+         rectangle(
+             [0],
+             [(i - 1)*total_height / theme.key_color_gradations
+              for i in 1:theme.key_color_gradations],
+             [swatch_width],
+             [total_height / theme.key_color_gradations]),
 
-    # Nudge things to overlap slightly avoiding any gaps.
-    nudge = 0.1mm
+         #grid lines
+         {context(),
+          lines([[(0, y), (swatch_width, y)] for y in values(colors)]...),
+          linewidth(theme.grid_line_width),
+          stroke(color("white"))},
 
-    y = 0cy
-    for (i, c) in enumerate(colors)
-        if labels[c] == ""
-            swatch_square = compose(rectangle(0, y,
-                                              entry_height,
-                                              unlabeled_swatch_height + nudge),
-                                    fill(c),
-                                    linewidth(theme.highlight_width))
+         fill([color_function((i-1) / (theme.key_color_gradations - 1))
+               for i in 1:theme.key_color_gradations]),
+         stroke(nothing),
+         svgattribute("shape-rendering", "crispEdges")})
 
-            swatch_canvas = compose(swatch_canvas, swatch_square)
+    # labels
+    compose!(ctx,
+        {context(xoff + swatch_width + padding, 0.5h - total_height/2,
+                 1w, total_height, units=UnitBox()),
+         text([0],
+              collect(values(colors)),
+              [labels[c] for c in keys(colors)],
+              [hleft], [vcenter]),
+         fill(theme.key_label_color),
+         font(theme.key_label_font),
+         fontsize(theme.key_label_font_size)})
 
-            y += unlabeled_swatch_height
-        else
-            swatch_square = compose(rectangle(0, y,
-                                              entry_height,
-                                              entry_height + nudge),
-                                    fill(c),
-                                    linewidth(theme.highlight_width))
-            swatch_label = compose(text(entry_height + swatch_padding,
-                                        y + entry_height / 2,
-                                        labels[c],
-                                        hleft, vcenter),
-                                   fill(theme.key_label_color))
 
-            swatch_canvas = compose(swatch_canvas, swatch_square, swatch_label)
 
-            y += entry_height
-        end
-    end
-
-    swatch_canvas = compose(swatch_canvas,
-                            font(theme.key_label_font),
-                            fontsize(theme.key_label_font_size),
-                            stroke(nothing))
-
-    title_canvas_pos = theme.guide_title_position == :left ?
-        entry_height + swatch_padding : 0
-    title_canvas = compose(canvas(title_canvas_pos, 0h, 1w,
-                                  title_canvas.box.height),
-                           title_canvas)
-
-    compose(canvas(0, 0, max(title_width, entry_width) + 3swatch_padding,
-                   swatch_canvas.box.height + title_canvas.box.height, order=2),
-            pad(compose(canvas(), swatch_canvas, title_canvas), 2mm))
+    return [ctx]
 end
 
 
-# TODO: rewrite
 function render(guide::ColorKey, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
 
@@ -384,8 +365,8 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
             continuous_guide = true
         end
 
-        color_key_labels = aes.color_label(aes.color_key_colors)
-        for (color, label) in zip(aes.color_key_colors, color_key_labels)
+        color_key_labels = aes.color_label(keys(aes.color_key_colors))
+        for (color, label) in zip(keys(aes.color_key_colors), color_key_labels)
             if !in(color, used_colors)
                 push!(used_colors, color)
                 push!(colors, color)
@@ -435,11 +416,14 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         end
 
         if continuous_guide
-            ctxs = render_continuous_color_key(colors, pretty_labels, title_canvas,
-                                        title_width, theme)
+            ctxs = render_continuous_color_key(aes.color_key_colors,
+                                               pretty_labels,
+                                               aes.color_function,
+                                               title_canvas,
+                                               title_width, theme)
         else
             ctxs = render_discrete_color_key(colors, pretty_labels, title_canvas,
-                                      title_width, theme)
+                                             title_width, theme)
         end
 
         position = right_guide_position

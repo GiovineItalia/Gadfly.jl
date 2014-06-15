@@ -483,7 +483,7 @@ function apply_scale(scale::DiscreteColorScale,
         aes.color = colored_ds
 
         aes.color_label = labeler
-        aes.color_key_colors = colors
+        aes.color_key_colors = [c => i for (i, c) in enumerate(colors)]
     end
 end
 
@@ -577,35 +577,28 @@ function apply_scale(scale::ContinuousColorScale,
 
         aes.color = DataArray(cs, nas)
 
-        color_key_colors = Array(ColorValue, 0)
+        color_key_colors = Dict{ColorValue, Float64}()
         color_key_labels = Array(String, 0)
 
-        num_steps = 1
         tick_labels = identity_formatter(ticks)
         for (i, j, label) in zip(ticks, ticks[2:end], tick_labels)
             r = (i - cmin) / cspan
-            push!(color_key_colors, scale.f(r))
+            color_key_colors[scale.f(r)] = r
             push!(color_key_labels, label)
-
-            for step in 1:num_steps
-                k = i + (j - i) * (step / (1 + num_steps))
-                r = (k - cmin) / cspan
-                push!(color_key_colors, scale.f(r))
-                push!(color_key_labels, "")
-            end
         end
-        push!(color_key_colors, scale.f((ticks[end] - cmin) / cspan))
+        color_key_colors[scale.f((ticks[end] - cmin) / cspan)] =
+            (ticks[end] - cmin) / cspan
         push!(color_key_labels, tick_labels[end])
 
         color_key_color_label =
-            [c => l for (c, l) in zip(color_key_colors, color_key_labels)]
+            [c => l for (c, l) in zip(keys(color_key_colors), color_key_labels)]
         function labeler(xs)
             [get(color_key_color_label, x, "") for x in xs]
         end
 
+        aes.color_function = scale.f
         aes.color_label = labeler
         aes.color_key_colors = color_key_colors
-        reverse!(aes.color_key_colors)
         aes.color_key_continuous = true
     end
 end
