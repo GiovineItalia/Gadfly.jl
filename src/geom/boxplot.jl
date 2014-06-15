@@ -33,7 +33,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
     ctx = compose!(
         context(),
         fill(collect(cs)),
-        stroke([theme.highlight_color(c) for c in cs]),
+        stroke([theme.discrete_highlight_color(c) for c in cs]),
         {
             context(),
 

@@ -7,8 +7,14 @@ const label_font_desc = "'PT Sans Caption','Helvetica Neue','Helvetica',sans-ser
 
 
 # Choose highlight color by darkening the fill color
-function default_highlight_color(fill_color::ColorValue)
+function default_discrete_highlight_color(fill_color::ColorValue)
     return RGB(1, 1, 1)
+end
+
+
+function default_continuous_highlight_color(fill_color::ColorValue)
+    c = convert(LCHab, fill_color)
+    return LCHab(max(0, c.l - 40), c.c, c.h)
 end
 
 function default_stroke_color(fill_color::ColorValue)
@@ -106,7 +112,8 @@ end
     highlight_width,       Measure,         0.3mm
 
     # A function mapping fill color to stoke color for highlights.
-    highlight_color,       Function,        default_highlight_color
+    discrete_highlight_color,       Function,        default_discrete_highlight_color
+    continuous_highlight_color,     Function,        default_continuous_highlight_color
 
     # A function mapping fill color to a duller background fill color. Used for
     # Geom.ribbon in particular so lines stand out against it.

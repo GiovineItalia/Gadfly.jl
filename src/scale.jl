@@ -505,8 +505,22 @@ element_aesthetics(::ContinuousColorScale) = [:color]
 
 
 function continuous_color_gradient(;minvalue=nothing, maxvalue=nothing)
+
+    # TODO: this should be made more general purpose. I.e. define some
+    # more color scales.
+    function lch_diverge2(l0=30, l1=100, c=40, h0=260, h1=10, hmid=20, power=1.5)
+        lspan = l1 - l0
+        hspan1 = hmid - h0
+        hspan0 = h1 - hmid
+        function f(r)
+            r2 = 2r - 1
+            return LCHab(l1 - lspan * abs(r2)^power, max(10, c * abs(r2)),
+                         (1-r)*h0 + r * h1)
+        end
+    end
+
     ContinuousColorScale(
-        lab_gradient(LCHab(0, 44, 262), LCHab(95, 15, 262)),
+        lch_diverge2(),
         minvalue=minvalue, maxvalue=maxvalue)
 end
 
