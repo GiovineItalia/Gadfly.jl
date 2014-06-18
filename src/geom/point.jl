@@ -41,7 +41,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
         fill(aes.color),
         linewidth(theme.highlight_width))
 
-    if aes.color_key_continuous
+    if aes.color_key_continuous === nothing || aes.color_key_continuous
         compose!(ctx,
             stroke(map(theme.continuous_highlight_color, aes.color)),
             svgclass("geometry"))

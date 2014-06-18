@@ -920,35 +920,35 @@ function layout_guides(plot_context::Context,
     n = 1 + length(guides[left_guide_position]) +
             length(guides[right_guide_position])
 
-    focus = (1 + length(guides[top_guide_position]),
-             1 + length(guides[left_guide_position]))
+    focus_y = 1 + length(guides[top_guide_position])
+    focus_x = 1 + length(guides[left_guide_position])
 
     # Populate the table
-    tbl = table(m, n, focus, units=plot_context.units)
+    tbl = table(m, n, focus_y:focus_y, focus_x:focus_x, units=plot_context.units)
 
     i = 1
     for (ctxs, order) in guides[top_guide_position]
-        tbl[i, focus[2]] = ctxs
+        tbl[i, focus_x] = ctxs
         i += 1
     end
     i += 1
     for (ctxs, order) in guides[bottom_guide_position]
-        tbl[i, focus[2]] = ctxs
+        tbl[i, focus_x] = ctxs
         i += 1
     end
 
     j = 1
     for (ctxs, order) in guides[left_guide_position]
-        tbl[focus[1], j] = ctxs
+        tbl[focus_y, j] = ctxs
         j += 1
     end
     j += 1
     for (ctxs, order) in guides[right_guide_position]
-        tbl[focus[1], j] = ctxs
+        tbl[focus_y, j] = ctxs
         j += 1
     end
 
-    tbl[focus[1], focus[2]] =
+    tbl[focus_y, focus_x] =
         [compose!(context(minwidth=minwidth(plot_context),
                           minheight=minheight(plot_context), clip=true),
                   {context(order=-1),
@@ -959,7 +959,7 @@ function layout_guides(plot_context::Context,
                      plot_context},
                   jscall("mouseenter(plot_mouseover).mouseleave(plot_mouseout)"))]
 
-    return compose!(context(), tbl)
+    return tbl
 end
 
 end # module Guide

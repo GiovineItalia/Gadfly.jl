@@ -21,7 +21,7 @@ tests = [
     ("stacked_continuous_histogram",          6inch, 3inch),
     ("dodged_discrete_histogram",             6inch, 3inch),
     ("array_aesthetics",                      6inch, 3inch),
-    #("subplot_grid",                          6inch, 3inch),
+    ("subplot_grid",                          9inch, 5inch),
     #("subplot_grid_histogram",                6inch, 3inch),
     ("labels",                                6inch, 6inch),
     ("percent",                               6inch, 6inch),

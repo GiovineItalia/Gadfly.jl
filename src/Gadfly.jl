@@ -671,7 +671,8 @@ function render_prepared(plot::Plot,
                          layer_stats::Vector{StatisticElement},
                          scales::Dict{Symbol, ScaleElement},
                          statistics::Vector{StatisticElement},
-                         guides::Vector{GuideElement})
+                         guides::Vector{GuideElement};
+                         table_only=false)
     # III. Coordinates
     plot_context = Coord.apply_coordinate(plot.coord, plot_aes, layer_aess...)
 
@@ -692,8 +693,12 @@ function render_prepared(plot::Plot,
         end
     end
 
-    c = Guide.layout_guides(plot_context, plot.theme, guide_contexts...)
+    tbl = Guide.layout_guides(plot_context, plot.theme, guide_contexts...)
+    if table_only
+        return tbl
+    end
 
+    c = compose!(context(), tbl)
     class = "plotroot"
     if haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale)
         class = string(class, " xscalable")
