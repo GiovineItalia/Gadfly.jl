@@ -770,6 +770,11 @@ end
 # X-axis label Guide
 immutable XLabel <: Gadfly.GuideElement
     label::Union(Nothing, String)
+    orientation::Symbol
+
+    function XLabel(label; orientation::Symbol=:auto)
+        return new(label, orientation)
+    end
 end
 
 const xlabel = XLabel
@@ -786,16 +791,43 @@ function render(guide::XLabel, theme::Gadfly.Theme,
                                                guide.label)
 
     padding = 2mm
-    c = compose!(context(0, 0, 1w, text_height + 2padding,
-                         minwidth=text_width + 2padding,
-                         minheight=text_height + 2padding),
-                 text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
-                 stroke(nothing),
-                 fill(theme.major_label_color),
-                 font(theme.major_label_font),
-                 fontsize(theme.major_label_font_size))
 
-    return [PositionedGuide([c], 0, bottom_guide_position)]
+    hlayout = ctxpromise() do draw_context
+        return compose!(context(),
+                        text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
+                        stroke(nothing),
+                        fill(theme.major_label_color),
+                        font(theme.major_label_font),
+                        fontsize(theme.major_label_font_size))
+    end
+    hlayout_context = compose!(context(minwidth=text_width + 2padding,
+                                       minheight=text_height + 2padding),
+                               hlayout)
+
+    vlayout = ctxpromise() do draw_context
+        return compose!(context(),
+                        text(0.5w, padding, guide.label, hright, vcenter,
+                             Rotation(-0.5pi, 0.5w, padding)),
+                        stroke(nothing),
+                        fill(theme.major_label_color),
+                        font(theme.major_label_font),
+                        fontsize(theme.major_label_font_size))
+    end
+    vlayout_context = compose!(context(minwidth=text_height + 2padding,
+                                       minheight=text_width + 2padding),
+                              vlayout)
+
+    if guide.orientation == :horizontal
+        contexts = [hlayout_context]
+    elseif guide.orientation == :vertical
+        contexts = [vlayout_context]
+    elseif guide.orientation == :auto
+        contexts = [hlayout_context, vlayout_context]
+    else
+        error("$(guide.layout) is not a valid orientation for Guide.xlabel")
+    end
+
+    return [PositionedGuide(contexts, 0, bottom_guide_position)]
 end
 
 
@@ -821,10 +853,10 @@ function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                                                theme.major_label_font_size,
                                                guide.label)
 
-    padding = 1mm
+    padding = 2mm
     hlayout = ctxpromise() do draw_context
         return compose!(context(),
-                        text(0.5w, 0.5h, guide.label, hcenter, vcenter),
+                        text(1.0w - padding, 0.5h, guide.label, hright, vcenter),
                         stroke(nothing),
                         fill(theme.major_label_color),
                         font(theme.major_label_font),
