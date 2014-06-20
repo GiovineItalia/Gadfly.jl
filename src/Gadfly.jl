@@ -840,7 +840,7 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Plot)
     output = open(filename, "w")
 
     plot_output = IOBuffer()
-    draw(D3(plot_output, default_plot_width, default_plot_height, false), p)
+    draw(SVGJS(plot_output, default_plot_width, default_plot_height, false), p)
     plot_js = takebuf_string(plot_output)
 
     write(output,
