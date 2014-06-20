@@ -792,13 +792,13 @@ function display(d::Base.REPL.REPLDisplay, p::Plot)
         plot_output = IOBuffer()
         draw(SVGJS(plot_output, default_plot_width, default_plot_height, false,
                    jsmode=:linkabs), p)
-        plot_js = takebuf_string(plot_output)
+        plotsvg = takebuf_string(plot_output)
 
         write(output,
             """
             <!DOCTYPE html>
             <html>
-                <head><title>Gadfly Plot</title></head>
+              <head><title>Gadfly Plot</title></head>
                 <body>
                 <script charset="utf-8">
                     $(readall(Compose.snapsvgjs))
@@ -807,14 +807,8 @@ function display(d::Base.REPL.REPLDisplay, p::Plot)
                     $(readall(gadflyjs))
                 </script>
 
-                <div id="gadflyplot"></div>
-                <script charset="utf-8">
-                    $(plot_js)
-                </script>
-                <script charset="utf-8">
-                    draw("#gadflyplot");
-                </script>
-                </body>
+                $(plotsvg)
+              </body>
             </html>
             """)
         close(output)
