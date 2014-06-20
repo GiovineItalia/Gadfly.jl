@@ -71,7 +71,7 @@ tests = [
 
 backends = {
     "svg" => (name, width, height) -> SVG("$(name).svg", width, height),
-    "svgjs" => (name, width, height) -> SVGJS("$(name).js.svg",   width, height),
+    "svgjs" => (name, width, height) -> SVGJS("$(name).js.svg", width, height, jsmode=:linkabs),
     "png" => (name, width, height) -> PNG("$(name).png", width, height),
     #"ps"  => (name, width, height) -> PS("$(name).ps",   width, height),
     #"pdf" => (name, width, height) -> PDF("$(name).pdf", width, height)
@@ -121,6 +121,8 @@ function run_tests(output_filename)
             <title>Gadfly Test Plots</title>
         </head>
         <body>
+        <script src="$(Compose.snapsvgjs)"></script>
+        <script src="$(Gadfly.gadflyjs)"></script>
         <div style="width:900; margin:auto; text-align: center; font-family: sans-serif; font-size: 20pt;">
         """)
 

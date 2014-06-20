@@ -34,6 +34,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
         context(),
         fill(collect(cs)),
         stroke([theme.discrete_highlight_color(c) for c in cs]),
+        linewidth(theme.line_width),
         {
             context(),
 

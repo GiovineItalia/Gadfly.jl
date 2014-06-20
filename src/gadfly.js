@@ -220,9 +220,31 @@ var set_geometry_transform = function(root, tx, ty, scale) {
     }
 
     // we must unscale anything that is scale invariance: widths, raiduses, etc.
-    var size_attribs = ["r", "font-size", "stroke-width"];
-    root.selectAll(".geometry > *, .xgridlines, .ygridlines")
+    var size_attribs = ["font-size"];
+    var unscaled_selection = ".geometry, .geometry > *";
+    if (xscalable) {
+        size_attribs.push("rx");
+        unscaled_selection += ", .xgridlines";
+    }
+    if (yscalable) {
+        size_attribs.push("ry");
+        unscaled_selection += ", .ygridlines";
+    }
+
+    tinv = t.clone().invert();
+    root.selectAll(unscaled_selection)
         .forEach(function (element, i) {
+            // circle need special help
+            if (element.node.nodeName == "circle") {
+                var cx = element.asPX("cx"),
+                    cy = element.asPX("cy");
+                    unscale_t = new Snap.Matrix().scale(1/xscale, 1/yscale,
+                                                        cx, cy);
+                element.transform(
+                    unscale_t.add(tinv).add(t));
+                return;
+            }
+
             for (i in size_attribs) {
                 var key = size_attribs[i];
                 var val = parseFloat(element.attribute(key));
@@ -235,11 +257,10 @@ var set_geometry_transform = function(root, tx, ty, scale) {
 
 
 // Find the most appropriate tick scale and update label visibility.
-var update_tickscale = function(root, scale) {
-    // TODO: x and y can have a different set of tick scales, so we need to
-    // do this separately. Fuuuuuck.
+var update_tickscale = function(root, scale, axis) {
+    if (!root.hasClass(axis + "scalable")) return;
 
-    var tickscales = root.data("tickscales");
+    var tickscales = root.data(axis + "tickscales");
     var best_tickscale = 1.0;
     var best_tickscale_dist = Infinity;
     for (tickscale in tickscales) {
@@ -250,10 +271,8 @@ var update_tickscale = function(root, scale) {
         }
     }
 
-    if (best_tickscale != root.data("tickscale")) {
-        root.data("tickscale", best_tickscale);
-        console.info(best_tickscale);
-
+    if (best_tickscale != root.data(axis + "tickscale")) {
+        root.data(axis + "tickscale", best_tickscale);
         var mark_inscale_gridlines = function (element, i) {
             var inscale = element.attr("gadfly:scale") == best_tickscale;
             element.attr("gadfly:inscale", inscale);
@@ -266,10 +285,8 @@ var update_tickscale = function(root, scale) {
             element.attr("visibility", inscale ? "visible" : "hidden");
         };
 
-        root.select(".xgridlines").selectAll("path").forEach(mark_inscale_gridlines);
-        root.select(".ygridlines").selectAll("path").forEach(mark_inscale_gridlines);
-        root.select(".xlabels").selectAll("text").forEach(mark_inscale_labels);
-        root.select(".ylabels").selectAll("text").forEach(mark_inscale_labels);
+        root.select("." + axis + "gridlines").selectAll("path").forEach(mark_inscale_gridlines);
+        root.select("." + axis + "labels").selectAll("text").forEach(mark_inscale_labels);
     }
 };
 
@@ -299,7 +316,8 @@ var set_plot_pan_zoom = function(root, tx, ty, scale) {
     // when the scale change, we may need to alter which set of
     // ticks is being displayed
     if (scale != old_scale) {
-        update_tickscale(root, scale);
+        update_tickscale(root, scale, "x");
+        update_tickscale(root, scale, "y");
     }
 
     set_geometry_transform(root, tx, ty, scale);
@@ -346,28 +364,49 @@ var init_pan_zoom = function(root) {
         return;
     }
 
+    // The non-scaling-stroke trick. Rather than try to correct for the
+    // stroke-width when zooming, we force it to a fixed value.
+    px_per_mm = root.parent().node.getCTM().a;
+    root.selectAll("path")
+    .forEach(function (element, i) {
+        sw = element.asPX("stroke-width") * px_per_mm;
+        if (sw > 0) {
+            element.attr("stroke-width", sw);
+            element.attr("vector-effect", "non-scaling-stroke");
+        }
+    });
+
     if (root.data("tx") === undefined) root.data("tx", 0);
     if (root.data("ty") === undefined) root.data("ty", 0);
     if (root.data("scale") === undefined) root.data("scale", 1.0);
-    if (root.data("tickscales") === undefined) {
+    if (root.data("xtickscales") === undefined) {
 
         // index all the tick scales that are listed
-        var tickscales = {};
-        var add_tick_scales = function (element, i) {
-            tickscales[element.attr("gadfly:scale")] = true;
+        var xtickscales = {};
+        var ytickscales = {};
+        var add_x_tick_scales = function (element, i) {
+            xtickscales[element.attr("gadfly:scale")] = true;
+        };
+        var add_y_tick_scales = function (element, i) {
+            ytickscales[element.attr("gadfly:scale")] = true;
         };
 
-        root.select(".xgridlines").selectAll("path").forEach(add_tick_scales);
-        root.select(".ygridlines").selectAll("path").forEach(add_tick_scales);
-        root.select(".xlabels").selectAll("text").forEach(add_tick_scales);
-        root.select(".ylabels").selectAll("text").forEach(add_tick_scales);
+        root.select(".xgridlines").selectAll("path").forEach(add_x_tick_scales);
+        root.select(".ygridlines").selectAll("path").forEach(add_y_tick_scales);
+        root.select(".xlabels").selectAll("text").forEach(add_x_tick_scales);
+        root.select(".ylabels").selectAll("text").forEach(add_y_tick_scales);
 
-        root.data("tickscales", tickscales);
-        root.data("tickscale", 1.0);
+        root.data("xtickscales", xtickscales);
+        root.data("ytickscales", ytickscales);
+        root.data("xtickscale", 1.0);
     }
 
     var min_scale = 1.0, max_scale = 1.0;
-    for (scale in tickscales) {
+    for (scale in xtickscales) {
+        min_scale = Math.min(min_scale, scale);
+        max_scale = Math.max(max_scale, scale);
+    }
+    for (scale in ytickscales) {
         min_scale = Math.min(min_scale, scale);
         max_scale = Math.max(max_scale, scale);
     }

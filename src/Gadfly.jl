@@ -81,7 +81,7 @@ include("data.jl")
 # no arguments and are expected to produce an element.
 typealias ElementOrFunction{T <: Element} Union(Element, Base.Callable, Theme)
 
-const gadfly_js = readall(joinpath(dirname(Base.source_path()), "gadfly.js"))
+const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 
 
 # Set prefereed canvas size when rendering a plot with an explicit call to
@@ -707,7 +707,7 @@ function render_prepared(plot::Plot,
         class = string(class, " yscalable")
     end
 
-    compose(c, svgclass(class), jsinclude(gadfly_js))
+    compose(c, svgclass(class), jsinclude(gadflyjs))
 end
 
 
@@ -736,7 +736,7 @@ end
 
 
 function writemime(io::IO, ::MIME"text/html", p::Plot)
-    draw(D3(io, default_plot_width, default_plot_height), p)
+    draw(SVGJS(io, default_plot_width, default_plot_height), p)
 end
 
 
@@ -790,7 +790,8 @@ function display(d::Base.REPL.REPLDisplay, p::Plot)
         output = open(filename, "w")
 
         plot_output = IOBuffer()
-        draw(D3(plot_output, default_plot_width, default_plot_height, false), p)
+        draw(SVGJS(plot_output, default_plot_width, default_plot_height, false,
+                   jsmode=:linkabs), p)
         plot_js = takebuf_string(plot_output)
 
         write(output,
@@ -800,10 +801,10 @@ function display(d::Base.REPL.REPLDisplay, p::Plot)
                 <head><title>Gadfly Plot</title></head>
                 <body>
                 <script charset="utf-8">
-                    $(Compose.d3_js)
+                    $(readall(Compose.snapsvgjs))
                 </script>
                 <script charset="utf-8">
-                    $(gadfly_js)
+                    $(readall(gadflyjs))
                 </script>
 
                 <div id="gadflyplot"></div>
