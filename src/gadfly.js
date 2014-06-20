@@ -175,21 +175,24 @@ var set_geometry_transform = function(root, tx, ty, scale) {
 
     if (yscalable) {
         var xfixed_t = new Snap.Matrix().translate(0, ty).scale(1.0, yscale);
-        var ytrans = new Snap.Matrix().translate(0, ty);
         root.selectAll(".xfixed")
             .forEach(function (element, i) {
                 element.transform(xfixed_t);
             });
 
         root.select(".ylabels")
-            .transform(ytrans)
+            .transform(xfixed_t)
             .selectAll("text")
             .forEach(function (element, i) {
-                var y = element.attribute("y") * scale / old_scale;
-                element.attribute("y", y);
-
                 if (element.attribute("gadfly:inscale") == "true") {
-                    y += ty;
+                    var cx = element.asPX("x"),
+                        cy = element.asPX("y");
+                    var st = element.data("static_transform");
+                    unscale_t = new Snap.Matrix();
+                    unscale_t.scale(1, 1/scale, cx, cy).add(st);
+                    element.transform(unscale_t);
+
+                    var y = cy * scale + ty;
                     element.attr("visibility",
                         bounds.y0 <= y && y <= bounds.y1 ? "visible" : "hidden");
                 }
@@ -205,17 +208,22 @@ var set_geometry_transform = function(root, tx, ty, scale) {
             });
 
         root.select(".xlabels")
-            .transform(xtrans)
+            .transform(yfixed_t)
             .selectAll("text")
             .forEach(function (element, i) {
-                var x = element.attribute("x") * scale / old_scale;
-                element.attribute("x", x);
-
                 if (element.attribute("gadfly:inscale") == "true") {
-                    x += tx;
+                    var cx = element.asPX("x"),
+                        cy = element.asPX("y");
+                    var st = element.data("static_transform");
+                    unscale_t = new Snap.Matrix();
+                    unscale_t.scale(1/scale, 1, cx, cy).add(st);
+
+                    element.transform(unscale_t);
+
+                    var x = cx * scale + tx;
                     element.attr("visibility",
                         bounds.x0 <= x && x <= bounds.x1 ? "visible" : "hidden");
-                }
+                    }
             });
     }
 
@@ -231,17 +239,15 @@ var set_geometry_transform = function(root, tx, ty, scale) {
         unscaled_selection += ", .ygridlines";
     }
 
-    tinv = t.clone().invert();
     root.selectAll(unscaled_selection)
         .forEach(function (element, i) {
             // circle need special help
             if (element.node.nodeName == "circle") {
                 var cx = element.asPX("cx"),
                     cy = element.asPX("cy");
-                    unscale_t = new Snap.Matrix().scale(1/xscale, 1/yscale,
+                unscale_t = new Snap.Matrix().scale(1/xscale, 1/yscale,
                                                         cx, cy);
-                element.transform(
-                    unscale_t.add(tinv).add(t));
+                element.transform(unscale_t);
                 return;
             }
 
@@ -375,6 +381,14 @@ var init_pan_zoom = function(root) {
             element.attr("vector-effect", "non-scaling-stroke");
         }
     });
+
+    // Store ticks labels original tranformation
+    root.selectAll(".xlabels > text, .ylabels > text")
+        .forEach(function (element, i) {
+            var lm = element.transform().localMatrix;
+            element.data("static_transform",
+                new Snap.Matrix(lm.a, lm.b, lm.c, lm.d, lm.e, lm.f));
+        });
 
     if (root.data("tx") === undefined) root.data("tx", 0);
     if (root.data("ty") === undefined) root.data("ty", 0);
