@@ -1,4 +1,22 @@
 
+(function (glob, factory) {
+    // AMD support
+    if (typeof define === "function" && define.amd) {
+        // Define as an anonymous module
+        define("Gadfly", ["Snap.svg"], function (Snap) {
+            return factory(Snap);
+        });
+    } else {
+        // Browser globals (glob is window)
+        // Snap adds itself to window
+        glob.Gadfly = factory(glob.Snap);
+    }
+}(this, function (Snap) {
+
+    console.info("LOADING GADFLY");
+
+var Gadfly = {};
+
 
 // Convert an offset in screen units (pixels) to client units (millimeters)
 var client_offset = function(fig, x, y) {
@@ -27,6 +45,14 @@ Snap.plugin(function (Snap, Element, Paper, global) {
     Element.prototype.plotroot = function () {
         var element = this;
         while (!element.hasClass("plotroot") && element.parent() != null) {
+            element = element.parent();
+        }
+        return element;
+    };
+
+    Element.prototype.svgroot = function () {
+        var element = this;
+        while (element.node.nodeName != "svg" && element.parent() != null) {
             element = element.parent();
         }
         return element;
@@ -101,7 +127,7 @@ Snap.plugin(function (Snap, Element, Paper, global) {
 
 
 // When the plot is moused over, emphasize the grid lines.
-var plot_mouseover = function(event) {
+Gadfly.plot_mouseover = function(event) {
     var root = this.plotroot();
 
     var xgridlines = root.select(".xgridlines"),
@@ -130,7 +156,7 @@ var plot_mouseover = function(event) {
 
 
 // Unemphasize grid lines on mouse out.
-var plot_mouseout = function(event) {
+Gadfly.plot_mouseout = function(event) {
     var root = this.plotroot();
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
@@ -518,7 +544,7 @@ var init_pan_zoom = function(root) {
 
 
 // Panning
-var guide_background_drag_onmove = function(dx, dy, x, y, event) {
+Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
     var root = this.plotroot();
 
     // TODO:
@@ -526,7 +552,7 @@ var guide_background_drag_onmove = function(dx, dy, x, y, event) {
     // computes a bounding box for everything, including the invisible shit,
     // which throws off the 'client_offset' calculation.'
 
-    var dxdy = client_offset(fig, dx,  dy);
+    var dxdy = client_offset(this.svgroot(), dx,  dy);
     dx = dxdy[0];
     dy = dxdy[1];
 
@@ -549,7 +575,7 @@ var guide_background_drag_onmove = function(dx, dy, x, y, event) {
 };
 
 
-var guide_background_drag_onstart = function(x, y, event) {
+Gadfly.guide_background_drag_onstart = function(x, y, event) {
     var root = this.plotroot();
     root.data("dx", 0);
     root.data("dy", 0);
@@ -557,44 +583,44 @@ var guide_background_drag_onstart = function(x, y, event) {
 };
 
 
-var guide_background_drag_onend = function(event) {
+Gadfly.guide_background_drag_onend = function(event) {
     var root = this.plotroot();
 };
 
 
-var zoomslider_button_mouseover = function(event) {
+Gadfly.zoomslider_button_mouseover = function(event) {
      this.select(".button_logo")
          .animate({fill: this.data("mouseover_color")}, 100);
 };
 
 
-var zoomslider_button_mouseout = function(event) {
+Gadfly.zoomslider_button_mouseout = function(event) {
      this.select(".button_logo")
          .animate({fill: this.data("mouseout_color")}, 100);
 };
 
 
-var zoomslider_zoomout_click = function(event) {
+Gadfly.zoomslider_zoomout_click = function(event) {
     // TODO
 };
 
 
-var zoomslider_zoomin_click = function(event) {
+Gadfly.zoomslider_zoomin_click = function(event) {
     // TODO
 };
 
 
-var zoomslider_track_click = function(event) {
+Gadfly.zoomslider_track_click = function(event) {
     // TODO
 };
 
 
-var zoomslider_thumb_mousedown = function(event) {
+Gadfly.zoomslider_thumb_mousedown = function(event) {
     this.animate({fill: this.data("mouseover_color")}, 100);
 };
 
 
-var zoomslider_thumb_mouseup = function(event) {
+Gadfly.zoomslider_thumb_mouseup = function(event) {
     this.animate({fill: this.data("mouseout_color")}, 100);
 };
 
@@ -610,7 +636,7 @@ var slider_position_from_scale = function(scale, min_scale, max_scale) {
 }
 
 
-var zoomslider_thumb_dragmove = function(dx, dy, x, y) {
+Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y) {
     var root = this.plotroot();
     var min_pos = this.data("min_pos"),
         max_pos = this.data("max_pos"),
@@ -618,7 +644,7 @@ var zoomslider_thumb_dragmove = function(dx, dy, x, y) {
         max_scale = root.data("max_scale"),
         old_scale = root.data("old_scale");
 
-    var dxdy = client_offset(fig, dx,  dy);
+    var dxdy = client_offset(this.svgroot(), dx,  dy);
     dx = dxdy[0];
     dy = dxdy[1];
 
@@ -647,7 +673,7 @@ var zoomslider_thumb_dragmove = function(dx, dy, x, y) {
 };
 
 
-var zoomslider_thumb_dragstart = function(event) {
+Gadfly.zoomslider_thumb_dragstart = function(event) {
     var root = this.plotroot();
     init_pan_zoom(root);
 
@@ -656,9 +682,13 @@ var zoomslider_thumb_dragstart = function(event) {
 };
 
 
-var zoomslider_thumb_dragend = function(event) {
+Gadfly.zoomslider_thumb_dragend = function(event) {
 };
 
+
+return Gadfly;
+
+}));
 
 
 //@ sourceURL=gadfly.js
