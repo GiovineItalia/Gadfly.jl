@@ -24,9 +24,12 @@ function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    compose(
-        combine([lines((0w, y), (1w, y)) for y in aes.yintercept]...),
-        stroke(color), linewidth(size),
+
+    return compose!(
+        context(),
+        Compose.line([{(0w, y), (1w, y)} for y in aes.yintercept]),
+        stroke(color),
+        linewidth(size),
         svgclass("xfixed"))
 end
 

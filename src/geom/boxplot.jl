@@ -26,64 +26,69 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
     default_aes.x = Float64[0.5]
     aes = inherit(aes, default_aes)
 
-    aes_iter = zip(aes.lower_fence,
-                   aes.lower_hinge,
-                   aes.middle === nothing ? repeated(nothing) : aes.middle,
-                   aes.upper_hinge,
-                   aes.upper_fence,
-                   aes.outliers === nothing ? repeated(nothing) : aes.outliers,
-                   cycle(aes.x),
-                   cycle(aes.color.refs))
-
-    forms = Compose.Form[]
-    middle_forms = Compose.Form[]
-
-    r = theme.default_point_size
     bw = 1.0cx - theme.boxplot_spacing
+    xs = take(cycle(aes.x), length(aes.middle))
+    cs = take(cycle(aes.color), length(aes.middle))
 
-    # TODO: handle color non-nothing color
+    ctx = compose!(
+        context(),
+        fill(collect(cs)),
+        stroke([theme.discrete_highlight_color(c) for c in cs]),
+        linewidth(theme.line_width),
+        {
+            context(),
 
-    for (lf, lh, mid, uh, uf, outliers, x, cref) in aes_iter
-        c = aes.color.pool[cref]
-        sc = theme.highlight_color(c) # stroke color
-        mc = theme.middle_color(c) # middle color
+            # Box
+            rectangle(
+                [x*cx - bw/2 for x in xs],
+                aes.lower_hinge, [bw],
+                [uh - lh for (lh, uh) in zip(aes.lower_hinge, aes.upper_hinge)]),
 
-        # Middle
-        if mid != nothing
-            push!(middle_forms, compose(lines((x - 1/6, mid), (x + 1/6, mid)),
-                                        linewidth(theme.middle_width), stroke(mc)))
-        end
+            {
+                context(),
 
-        # Box
-        push!(forms, compose(rectangle(x*cx - bw/2, lh, bw, uh - lh),
-                            fill(c), stroke(sc),
-                            linewidth(theme.highlight_width)))
+                 # Whiskers
+                Compose.line([[(x, lh), (x, lf)]
+                              for (x, lh, lf) in zip(xs, aes.lower_hinge, aes.lower_fence)]),
 
-        # Whiskers
-        push!(forms, compose(lines((x, lh), (x, lf)),
-                            linewidth(theme.line_width), stroke(sc)))
+                Compose.line([[(x, uh), (x, uf)]
+                              for (x, uh, uf) in zip(xs, aes.upper_hinge, aes.upper_fence)]),
 
-        push!(forms, compose(lines((x, uh), (x, uf)),
-                            linewidth(theme.line_width), stroke(sc)))
+                # Fences
+                Compose.line([[(x - 1/6, lf), (x + 1/6, lf)]
+                              for (x, lf) in zip(xs, aes.lower_fence)]),
 
-        # Fences
-        push!(forms, compose(lines((x - 1/6, lf), (x + 1/6, lf)),
-                            linewidth(theme.line_width), stroke(sc)))
+                Compose.line([[(x - 1/6, uf), (x + 1/6, uf)]
+                              for (x, uf) in zip(xs, aes.upper_fence)]),
 
-        push!(forms, compose(lines((x - 1/6, uf), (x + 1/6, uf)),
-                            linewidth(theme.line_width), stroke(sc)))
+                stroke(collect(cs))
+            },
 
-        # Outliers
-        if outliers != nothing && !isempty(outliers)
-            push!(forms, compose(combine([circle(x, y, r) for y in outliers]...),
-                                fill(c), stroke(sc)))
-        end
+        },
+        svgclass("geometry"))
+
+    # Outliers
+    if aes.outliers != nothing && !isempty(aes.outliers)
+        xys = collect(chain([zip(cycle(x), ys)
+                             for (x, ys) in zip(xs, aes.outliers)]...))
+        compose!(ctx,
+            circle([x for (x, y) in xys],
+                   [y for (x, y) in xys],
+                   [theme.default_point_size]))
     end
 
-    compose(canvas(units_inherited=true),
-            (canvas(units_inherited=true), combine(forms...)),
-            (canvas(units_inherited=true, order=1), combine(middle_forms...)),
-            svgclass("geometry"))
+    # Middle
+    if aes.middle != nothing
+        compose!(ctx, {
+           context(order=1),
+           Compose.line([[(x - 1/6, mid), (x + 1/6, mid)]
+                         for (x, mid) in zip(xs, aes.middle)]),
+           linewidth(theme.middle_width),
+           stroke([theme.middle_color(c) for c in cs])
+        })
+    end
+
+    return ctx
 end
 
 

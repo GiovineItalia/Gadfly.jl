@@ -573,6 +573,8 @@ function apply_statistic(stat::TickStatistic,
         grids = ticks = stat.ticks
         viewmin = minval
         viewmax = maxval
+        tickvisible = fill(true, length(ticks))
+        tickscale = fill(1.0, length(ticks))
     elseif categorical
         ticks = Set()
         for val in in_values
@@ -580,15 +582,37 @@ function apply_statistic(stat::TickStatistic,
         end
         ticks = Float64[t for t in ticks]
         sort!(ticks)
-
         grids = (ticks .- 0.5)[2:end]
         viewmin = minimum(ticks)
         viewmax = maximum(ticks)
+        tickvisible = fill(true, length(ticks))
+        tickscale = fill(1.0, length(ticks))
     else
         minval, maxval = promote(minval, maxval)
         ticks, viewmin, viewmax =
             Gadfly.optimize_ticks(minval, maxval, extend_ticks=true)
+
         grids = ticks
+        multiticks = Gadfly.multilevel_ticks(viewmin - (viewmax - viewmin),
+                                             viewmax + (viewmax - viewmin))
+        tickcount = length(ticks) + sum([length(ts) for ts in values(multiticks)])
+        tickvisible = Array(Bool, tickcount)
+        tickscale = Array(Float64, tickcount)
+        i = 1
+        for t in ticks
+            tickscale[i] = 1.0
+            tickvisible[i] = viewmin <= t <= viewmax
+            i += 1
+        end
+
+        for (scale, ts) in multiticks
+            for t in ts
+                push!(ticks, t)
+                tickvisible[i] = false
+                tickscale[i] = scale
+                i += 1
+            end
+        end
     end
 
     # We use the first label function we find for any of the aesthetics. I'm not
@@ -598,6 +622,8 @@ function apply_statistic(stat::TickStatistic,
     setfield!(aes, symbol(string(stat.out_var, "tick")), ticks)
     setfield!(aes, symbol(string(stat.out_var, "grid")), grids)
     setfield!(aes, symbol(string(stat.out_var, "tick_label")), labeler)
+    setfield!(aes, symbol(string(stat.out_var, "tickvisible")), tickvisible)
+    setfield!(aes, symbol(string(stat.out_var, "tickscale")), tickscale)
 
     viewmin_var = symbol(string(stat.out_var, "viewmin"))
     if getfield(aes, viewmin_var) === nothing ||

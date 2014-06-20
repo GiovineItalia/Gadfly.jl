@@ -1,499 +1,757 @@
 
-
-// Minimum and maximum scale extents
-var MIN_SCALE = 1.0/3.0;
-var MAX_SCALE = 10.0;
-
-
-// Traverse upwards from a d3 selection to find and return the first
-// node with "plotroot" class.
-var getplotroot = function(selection)  {
-    var node = selection.node();
-    while (node && node.classList && !node.classList.contains("plotroot")) {
-        node = node.parentNode;
+(function (glob, factory) {
+    // AMD support
+    if (typeof define === "function" && define.amd) {
+        // Define as an anonymous module
+        define("Gadfly", ["Snap.svg"], function (Snap) {
+            return factory(Snap);
+        });
+    } else {
+        // Browser globals (glob is window)
+        // Snap adds itself to window
+        glob.Gadfly = factory(glob.Snap);
     }
-    return d3.select(node);
+}(this, function (Snap) {
+
+var Gadfly = {};
+
+// Convert an offset in screen units (pixels) to client units (millimeters)
+var client_offset = function(fig, x, y) {
+    var client_box = fig.node.getBoundingClientRect();
+    x = x * fig.node.viewBox.baseVal.width / client_box.width;
+    y = y * fig.node.viewBox.baseVal.height / client_box.height;
+    return [x, y]
 };
 
 
-// Construct a callback for toggling geometries on/off using color groupings.
-//
-// Args:
-//   colorclass: class names assigned to geometries belonging to a paricular
-//               color group.
-//
-// Returns:
-//   A callback function.
-//
-var guide_toggle_color = function(colorclass) {
-    var visible = true;
-    return (function() {
-        var root = getplotroot(d3.select(this));
-        if (visible) {
-            d3.select(this)
-              .transition()
-              .duration(250)
-              .style("opacity", 0.5);
-            root.selectAll(".geometry." + colorclass)
-                .transition()
-                .duration(250)
-                .style("opacity", 0);
-            visible = false;
-        } else {
-            d3.select(this)
-              .transition()
-              .duration(250)
-              .style("opacity", 1.0);
-            root.selectAll(".geometry." + colorclass)
-                .transition()
-                .duration(250)
-                .style("opacity", 1.0);
-            visible = true;
+// Get an x/y coordinate value in pixels
+var xPX = function(fig, x) {
+    var client_box = fig.node.getBoundingClientRect();
+    return x * fig.node.viewBox.baseVal.width / client_box.width;
+};
+
+var yPX = function(fig, y) {
+    var client_box = fig.node.getBoundingClientRect();
+    return y * fig.node.viewBox.baseVal.height / client_box.height;
+};
+
+
+Snap.plugin(function (Snap, Element, Paper, global) {
+    // Traverse upwards from a snap element to find and return the first
+    // note with the "plotroot" class.
+    Element.prototype.plotroot = function () {
+        var element = this;
+        while (!element.hasClass("plotroot") && element.parent() != null) {
+            element = element.parent();
         }
-    });
-};
+        return element;
+    };
 
+    Element.prototype.svgroot = function () {
+        var element = this;
+        while (element.node.nodeName != "svg" && element.parent() != null) {
+            element = element.parent();
+        }
+        return element;
+    };
 
-// Construct a callback used to toggle highly-visibility grid lines.
-//
-// Args:
-//   color: Faded-in/faded-out color, respectively.
-//
-// Returns:
-//   Callback function.
-//
-var guide_background_mouseover = function(color) {
-    return (function () {
-        var root = getplotroot(d3.select(this));
-        root.selectAll(".xgridlines, .ygridlines")
-            .transition()
-            .duration(250)
-            .attr("stroke", color);
+    Element.prototype.plotbounds = function () {
+        var root = this.plotroot()
+        var bbox = root.select(".guide.background").node.getBBox();
+        return {
+            x0: bbox.x,
+            x1: bbox.x + bbox.width,
+            y0: bbox.y,
+            y1: bbox.y + bbox.height
+        };
+    };
 
-        root.selectAll(".zoomslider")
-            .transition()
-            .duration(250)
-            .attr("opacity", 1.0);
-    });
-};
+    Element.prototype.plotcenter = function () {
+        var root = this.plotroot()
+        var bbox = root.select(".guide.background").node.getBBox();
+        return {
+            x: bbox.x + bbox.width / 2,
+            y: bbox.y + bbox.height / 2
+        };
+    };
 
-var guide_background_mouseout = function(color) {
-    return (function () {
-        var root = getplotroot(d3.select(this));
-        root.selectAll(".xgridlines, .ygridlines")
-            .transition()
-            .duration(250)
-            .attr("stroke", color);
+    // Emulate IE style mouseenter/mouseleave events, since Microsoft always
+    // does everything right.
+    // See: http://www.dynamic-tools.net/toolbox/isMouseLeaveOrEnter/
+    var events = ["mouseenter", "mouseleave"];
 
-        root.selectAll(".zoomslider")
-            .transition()
-            .duration(250)
-            .attr("opacity", 0.0);
-    });
-};
+    for (i in events) {
+        (function (event_name) {
+            var event_name = events[i];
+            Element.prototype[event_name] = function (fn, scope) {
+                if (Snap.is(fn, "function")) {
+                    var fn2 = function (event) {
+                        if (event.type != "mouseover" && event.type != "mouseout") {
+                            return;
+                        }
 
+                        var reltg = event.relatedTarget ? event.relatedTarget :
+                            event.type == "mouseout" ? event.toElement : event.fromElement;
+                        while (reltg && reltg != this.node) reltg = reltg.parentNode;
 
-// Construct a call back used for mouseover effects in the point geometry.
-//
-// Args:
-//   scale: Scale for expanded width
-//   ratio: radius / line-width. This is necessary to maintain relative width
-//          at arbitraty levels of zoom
-//
-// Returns:
-//  Callback function.
-//
-var geom_point_mouseover = function(scale, ratio) {
-    return (function() {
-        var lw = this.getAttribute('r') * ratio * scale
-        d3.select(this)
-          .transition()
-          .duration(100)
-          .style("stroke-width", lw + 'px', 'important');
-    });
-};
+                        if (reltg != this.node) {
+                            return fn.apply(this, event);
+                        }
+                    };
 
-// Construct a call back used for mouseout effects in the point geometry.
-//
-// Args:
-//   scale: Scale for expanded width
-//   ratio: radius / line-width. This is necessary to maintain relative width
-//          at arbitraty levels of zoom
-//
-// Returns:
-//  Callback function.
-//
-var geom_point_mouseout = function(scale, ratio) {
-    return (function() {
-        var lw = this.getAttribute('r') * ratio
-        d3.select(this)
-          .transition()
-          .duration(100)
-          .style("stroke-width", lw + 'px', 'important');
-    });
-};
-
-// Translate and scale geometry while trying to maintain scale invariance for
-// certain ellements.
-//
-// Args:
-//   root: d3 selection of the root plot group node.
-//   t: A transform of the form {"scale": scale}
-//   old_scale: The scaling factor applied prior to t.scale.
-//
-var set_geometry_transform = function(root, ctx, old_scale) {
-    var xscalable = root.node().classList.contains("xscalable");
-    var yscalable = root.node().classList.contains("yscalable");
-
-    var xscale = 1.0;
-    var tx = 0.0;
-    if (xscalable) {
-        xscale = ctx.scale;
-        tx = ctx.tx;
+                    if (event_name == "mouseenter") {
+                        this.mouseover(fn2, scope);
+                    } else {
+                        this.mouseout(fn2, scope);
+                    }
+                }
+                return this;
+            };
+        })(events[i]);
     }
 
-    var yscale = 1.0;
-    var ty = 0.0;
-    if (yscalable) {
-        yscale = ctx.scale;
-        ty = ctx.ty;
-    }
+
+    Element.prototype.mousewheel = function (fn, scope) {
+        if (Snap.is(fn, "function")) {
+            var el = this;
+            var fn2 = function (event) {
+                fn.apply(el, [event]);
+            };
+        }
+
+        this.node.addEventListener(
+            /Firefox/i.test(navigator.userAgent) ? "DOMMouseScroll" : "mousewheel",
+            fn2);
+
+        return this;
+    };
+
+
+    // Snap's attr function can be too slow for things like panning/zooming.
+    // This is a function to directly update element attributes without going
+    // through eve.
+    Element.prototype.attribute = function(key, val) {
+        if (val === undefined) {
+            return this.node.getAttribute(key, val);
+        } else {
+            return this.node.setAttribute(key, val);
+        }
+    };
+});
+
+
+// When the plot is moused over, emphasize the grid lines.
+Gadfly.plot_mouseover = function(event) {
+    var root = this.plotroot();
+    init_pan_zoom(root);
+
+    var xgridlines = root.select(".xgridlines"),
+        ygridlines = root.select(".ygridlines");
+
+    xgridlines.data("unfocused_strokedash",
+                    xgridlines.attr("stroke-dasharray"))
+    ygridlines.data("unfocused_strokedash",
+                    ygridlines.attr("stroke-dasharray"))
+
+    // emphasize grid lines
+    var destcolor = root.data("focused_xgrid_color");
+    xgridlines.attr("stroke-dasharray", "none")
+              .selectAll("path")
+              .animate({stroke: destcolor}, 250);
+
+    destcolor = root.data("focused_ygrid_color");
+    ygridlines.attr("stroke-dasharray", "none")
+              .selectAll("path")
+              .animate({stroke: destcolor}, 250);
+
+    // reveal zoom slider
+    root.select(".zoomslider")
+        .animate({opacity: 1.0}, 250);
+};
+
+
+// Unemphasize grid lines on mouse out.
+Gadfly.plot_mouseout = function(event) {
+    var root = this.plotroot();
+    var xgridlines = root.select(".xgridlines"),
+        ygridlines = root.select(".ygridlines");
+
+    var destcolor = root.data("unfocused_xgrid_color");
+
+    xgridlines.attr("stroke-dasharray", xgridlines.data("unfocused_strokedash"))
+              .selectAll("path")
+              .animate({stroke: destcolor}, 250);
+
+    destcolor = root.data("unfocused_ygrid_color");
+    ygridlines.attr("stroke-dasharray", ygridlines.data("unfocused_strokedash"))
+              .selectAll("path")
+              .animate({stroke: destcolor}, 250);
+
+    // hide zoom slider
+    root.select(".zoomslider")
+        .animate({opacity: 0.0}, 250);
+};
+
+
+var set_geometry_transform = function(root, tx, ty, scale) {
+    var xscalable = root.hasClass("xscalable"),
+        yscalable = root.hasClass("yscalable");
+
+    var old_scale = root.data("scale");
+
+    var xscale = xscalable ? scale : 1.0,
+        yscale = yscalable ? scale : 1.0;
+
+    tx = xscalable ? tx : 0.0;
+    ty = yscalable ? ty : 0.0;
+
+    var t = new Snap.Matrix().translate(tx, ty).scale(xscale, yscale);
 
     root.selectAll(".geometry")
-        .attr("transform",
-          "translate(" + tx + " " + ty + ") " +
-              "scale(" + xscale + " " + yscale + ")");
+        .forEach(function (element, i) {
+            element.transform(t);
+        });
 
-    var unscale_factor = old_scale / ctx.scale;
-
-    // unscale geometry widths, radiuses, etc.
-    var size_attribs = ["r"];
-    var size_styles = ["font-size", "stroke-width"];
-    root.select(".plotpanel")
-        .selectAll("g, .geometry")
-        .each(function() {
-          sel = d3.select(this);
-          var i;
-          var key;
-          var val;
-          for (i in size_styles) {
-              key = size_styles[i];
-              val = sel.style(key);
-              if (val !== null) {
-                  // For some reason d3 rounds things like font-sizes to the
-                  // nearest integer, so we are setting styles directly instead.
-                  val = parseFloat(val);
-                  sel.node().style.setProperty(key, unscale_factor * val + "px", "important");
-              }
-          }
-
-          for (i in size_attribs) {
-              key = size_attribs[i];
-              val = sel.attr(key);
-              if (val !== null) {
-                  sel.attr(key, unscale_factor * val);
-              }
-          }
-      });
-
-    // TODO:
-    // Is this going to work when we do things other than circles. Suppose we
-    // have plots where we have a path drawing some sort of symbol which we want
-    // to remain size-invariant. Should we be trying to place things using
-    // translate?
-
-    // move axis labels and grid lines around
-    if (xscalable) {
-        root.selectAll(".yfixed")
-            .attr("transform", function() {
-                return "translate(" + [ctx.tx, 0.0] + ") " +
-                       "scale(" + [ctx.scale, 1.0] + ")";
-          });
-
-        root.selectAll(".xlabels")
-            .attr("transform", function() {
-              return "translate(" + [ctx.tx, 0.0] + ")";
-          })
-          .selectAll("text")
-            .each(function() {
-                d3.select(this).attr("x",
-                    ctx.scale / old_scale * d3.select(this).attr("x"));
-            });
-    }
+    bounds = root.plotbounds();
 
     if (yscalable) {
+        var xfixed_t = new Snap.Matrix().translate(0, ty).scale(1.0, yscale);
         root.selectAll(".xfixed")
-            .attr("transform", function() {
-              return "translate(" + [0.0, ctx.ty] + ") " +
-                     "scale(" + [1.0, ctx.scale] + ")";
+            .forEach(function (element, i) {
+                element.transform(xfixed_t);
             });
 
-        root.selectAll(".ylabels")
-            .attr("transform", function() {
-              return "translate(" + [0.0, ctx.ty] + ")";
-            })
+        root.select(".ylabels")
+            .transform(xfixed_t)
             .selectAll("text")
-              .each(function() {
-                  d3.select(this).attr("y",
-                      ctx.scale / old_scale * d3.select(this).attr("y"));
+            .forEach(function (element, i) {
+                if (element.attribute("gadfly:inscale") == "true") {
+                    var cx = element.asPX("x"),
+                        cy = element.asPX("y");
+                    var st = element.data("static_transform");
+                    unscale_t = new Snap.Matrix();
+                    unscale_t.scale(1, 1/scale, cx, cy).add(st);
+                    element.transform(unscale_t);
+
+                    var y = cy * scale + ty;
+                    element.attr("visibility",
+                        bounds.y0 <= y && y <= bounds.y1 ? "visible" : "hidden");
+                }
             });
     }
 
-    var bbox = root.select(".guide.background")
-                   .select("path").node().getBBox();
+    if (xscalable) {
+        var yfixed_t = new Snap.Matrix().translate(tx, 0).scale(xscale, 1.0);
+        var xtrans = new Snap.Matrix().translate(tx, 0);
+        root.selectAll(".yfixed")
+            .forEach(function (element, i) {
+                element.transform(yfixed_t);
+            });
 
-    // hide/show ticks labels based on their position
-    root.selectAll(".xlabels")
-        .selectAll("text")
-        .attr("visibility", function() {
-            var x = parseInt(d3.select(this).attr("x"), 10) + ctx.tx;
-            return bbox.x <= x && x <= bbox.x + bbox.width ? "visible" : "hidden";
-        });
+        root.select(".xlabels")
+            .transform(yfixed_t)
+            .selectAll("text")
+            .forEach(function (element, i) {
+                if (element.attribute("gadfly:inscale") == "true") {
+                    var cx = element.asPX("x"),
+                        cy = element.asPX("y");
+                    var st = element.data("static_transform");
+                    unscale_t = new Snap.Matrix();
+                    unscale_t.scale(1/scale, 1, cx, cy).add(st);
 
-    root.selectAll(".ylabels")
-        .selectAll("text")
-        .attr("visibility", function() {
-            var y = parseInt(d3.select(this).attr("y"), 10) + ctx.ty;
-            return bbox.y <= y && y <= bbox.y + bbox.height ? "visible" : "hidden";
-        });
-};
+                    element.transform(unscale_t);
 
+                    var x = cx * scale + tx;
+                    element.attr("visibility",
+                        bounds.x0 <= x && x <= bounds.x1 ? "visible" : "hidden");
+                    }
+            });
+    }
 
-// Construct a callback used for zoombehavior.
-//
-// Args:
-//   t: A transform of the form {"scale": scale} to close arround.
-//
-// Returns:
-//   A zoom behavior.
-//
-var zoom_behavior = function(ctx) {
-    var zm = d3.behavior.zoom();
-    ctx.zoom_behavior = zm;
+    // we must unscale anything that is scale invariance: widths, raiduses, etc.
+    var size_attribs = ["font-size"];
+    var unscaled_selection = ".geometry, .geometry > *";
+    if (xscalable) {
+        size_attribs.push("rx");
+        unscaled_selection += ", .xgridlines";
+    }
+    if (yscalable) {
+        size_attribs.push("ry");
+        unscaled_selection += ", .ygridlines";
+    }
 
-    zm.scaleExtent([MIN_SCALE, MAX_SCALE])
-      .on("zoom", function(d, i) {
-        var root = getplotroot(d3.select(this));
-        old_scale = ctx.scale;
-        ctx.scale = d3.event.scale;
-        var bbox = root.select(".guide.background")
-                       .select("path").node().getBBox();
-
-        var x_min = -bbox.width * ctx.scale - (ctx.scale * bbox.width - bbox.width);
-        var x_max = bbox.width * ctx.scale;
-        var y_min = -bbox.height * ctx.scale - (ctx.scale * bbox.height - bbox.height);
-        var y_max = bbox.height * ctx.scale;
-
-        var x0 = bbox.x - ctx.scale * bbox.x;
-        var y0 = bbox.y - ctx.scale * bbox.y;
-
-        var tx = Math.max(Math.min(d3.event.translate[0] - x0, x_max), x_min);
-        var ty = Math.max(Math.min(d3.event.translate[1] - y0, y_max), y_min);
-
-        tx += x0;
-        ty += y0;
-
-        ctx.tx = tx;
-        ctx.ty = ty;
-
-        set_geometry_transform(
-            root,
-            {"tx": tx,
-             "ty": ty,
-             "scale": ctx.scale}, old_scale);
-        zm.translate([tx, ty]);
-
-        update_zoomslider(root, ctx);
-      });
-
-
-    return (function (g) {
-        zm(g);
-        default_handler = g.on("wheel.zoom");
-        function wheelhandler() {
-        if (d3.event.shiftKey) {
-                default_handler.call(this);
-                d3.event.stopPropagation();
+    root.selectAll(unscaled_selection)
+        .forEach(function (element, i) {
+            // circle need special help
+            if (element.node.nodeName == "circle") {
+                var cx = element.attribute("cx"),
+                    cy = element.attribute("cy");
+                unscale_t = new Snap.Matrix().scale(1/xscale, 1/yscale,
+                                                        cx, cy);
+                element.transform(unscale_t);
+                return;
             }
-        }
-        g.on("wheel.zoom", wheelhandler)
-         .on("mousewheel.zoom", wheelhandler)
-         .on("DOMMouseScroll.zoom", wheelhandler);
-    });
+
+            for (i in size_attribs) {
+                var key = size_attribs[i];
+                var val = parseFloat(element.attribute(key));
+                if (val !== undefined && val != 0 && !isNaN(val)) {
+                    element.attribute(key, val * old_scale / scale);
+                }
+            }
+        });
 };
 
 
-var slider_position_from_scale = function(scale) {
-    if (scale >= 1.0) {
-        return 0.5 + 0.5 * (Math.log(scale) / Math.log(MAX_SCALE));
+// Find the most appropriate tick scale and update label visibility.
+var update_tickscale = function(root, scale, axis) {
+    if (!root.hasClass(axis + "scalable")) return;
+
+    var tickscales = root.data(axis + "tickscales");
+    var best_tickscale = 1.0;
+    var best_tickscale_dist = Infinity;
+    for (tickscale in tickscales) {
+        var dist = Math.abs(Math.log(tickscale) - Math.log(scale));
+        if (dist < best_tickscale_dist) {
+            best_tickscale_dist = dist;
+            best_tickscale = tickscale;
+        }
     }
-    else {
-        return 0.5 * (Math.log(scale) - Math.log(MIN_SCALE)) / (0 - Math.log(MIN_SCALE));
+
+    if (best_tickscale != root.data(axis + "tickscale")) {
+        root.data(axis + "tickscale", best_tickscale);
+        var mark_inscale_gridlines = function (element, i) {
+            var inscale = element.attr("gadfly:scale") == best_tickscale;
+            element.attribute("gadfly:inscale", inscale);
+            element.attr("visibility", inscale ? "visible" : "hidden");
+        };
+
+        var mark_inscale_labels = function (element, i) {
+            var inscale = element.attr("gadfly:scale") == best_tickscale;
+            element.attribute("gadfly:inscale", inscale);
+            element.attr("visibility", inscale ? "visible" : "hidden");
+        };
+
+        root.select("." + axis + "gridlines").selectAll("path").forEach(mark_inscale_gridlines);
+        root.select("." + axis + "labels").selectAll("text").forEach(mark_inscale_labels);
     }
 };
 
 
-// Construct a call
-var zoomslider_behavior = function(ctx, min_extent, max_extent) {
-    var drag = d3.behavior.drag();
-    ctx.zoomslider_behavior = drag;
-    ctx.min_zoomslider_extent = min_extent;
-    ctx.max_zoomslider_extent = max_extent;
+var set_plot_pan_zoom = function(root, tx, ty, scale) {
+    var old_scale = root.data("scale");
+    var bounds = root.plotbounds();
 
-    drag.on("drag", function() {
-        var xmid = (min_extent + max_extent) / 2;
-        var new_scale;
+    var width = bounds.x1 - bounds.x0,
+        height = bounds.y1 - bounds.y0;
 
-        // current slider posisition
-        var xpos = slider_position_from_scale(ctx.scale) +
-            (d3.event.dx / (max_extent - min_extent));
+    // compute the viewport derived from tx, ty, and scale
+    var x_min = -width * scale - (scale * width - width),
+        x_max = width * scale,
+        y_min = -height * scale - (scale * height - height),
+        y_max = height * scale;
 
-        // new scale
-        if (xpos >= 0.5) {
-            new_scale = Math.exp(2.0 * (xpos - 0.5) * Math.log(MAX_SCALE));
-        }
-        else {
-            new_scale = Math.exp(2.0 * xpos * (0 - Math.log(MIN_SCALE)) +
-                Math.log(MIN_SCALE));
-        }
-        new_scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, new_scale));
+    var x0 = bounds.x0 - scale * bounds.x0,
+        y0 = bounds.y0 - scale * bounds.y0;
 
-        // update scale
-        var root = getplotroot(d3.select(this));
-        var new_trans = scale_centered_translation(root, ctx, new_scale);
+    var tx = Math.max(Math.min(tx - x0, x_max), x_min),
+        ty = Math.max(Math.min(ty - y0, y_max), y_min);
 
-        ctx.zoom_behavior.scale(new_scale);
-        ctx.zoom_behavior.translate(new_trans);
-        ctx.zoom_behavior.event(root);
+    tx += x0;
+    ty += y0;
 
-        // Note: the zoom event will take care of repositioning the slider thumb
-    });
+    // when the scale change, we may need to alter which set of
+    // ticks is being displayed
+    if (scale != old_scale) {
+        update_tickscale(root, scale, "x");
+        update_tickscale(root, scale, "y");
+    }
 
-    drag.on("dragstart", function() {
-        d3.event.sourceEvent.stopPropagation();
-    });
+    set_geometry_transform(root, tx, ty, scale);
 
-    return drag;
+    root.data("scale", scale);
+    root.data("tx", tx);
+    root.data("ty", ty);
 };
 
 
-// Reposition the zoom slider thumb based on the current scale
-var update_zoomslider = function(root, ctx) {
-    var xmid = (ctx.min_zoomslider_extent + ctx.max_zoomslider_extent) / 2;
-    var xpos = ctx.min_zoomslider_extent +
-        ((ctx.max_zoomslider_extent - ctx.min_zoomslider_extent) *
-            slider_position_from_scale(ctx.scale));
-    root.select(".zoomslider_thumb")
-        .attr("transform", "translate(" + (xpos - xmid) + " " + 0 + ")");
-};
+var scale_centered_translation = function(root, scale) {
+    var bounds = root.plotbounds();
 
+    var width = bounds.x1 - bounds.x0,
+        height = bounds.y1 - bounds.y0;
 
-// Compute the translation needed to change the scale when keeping the plot
-// centered.
-scale_centered_translation = function(root, ctx, new_scale) {
-    var bbox = root.select(".guide.background")
-                   .select("path").node().getBBox();
+    var tx0 = root.data("tx"),
+        ty0 = root.data("ty");
+
+    var scale0 = root.data("scale");
 
     // how off from center the current view is
-    var xoff = ctx.zoom_behavior.translate()[0] -
-              (bbox.x * (1 - ctx.scale) + (bbox.width * (1 - ctx.scale)) / 2);
-    var yoff = ctx.zoom_behavior.translate()[1] -
-              (bbox.y * (1 - ctx.scale) + (bbox.height * (1 - ctx.scale)) / 2);
+    var xoff = tx0 - (bounds.x0 * (1 - scale0) + (width * (1 - scale0)) / 2),
+        yoff = ty0 - (bounds.y0 * (1 - scale0) + (height * (1 - scale0)) / 2);
 
     // rescale offsets
-    xoff = xoff * new_scale / ctx.scale;
-    yoff = yoff * new_scale / ctx.scale;
+    xoff = xoff * scale / scale0;
+    yoff = yoff * scale / scale0;
 
     // adjust for the panel position being scaled
-    var x_edge_adjust = bbox.x * (1 - new_scale);
-    var y_edge_adjust = bbox.y * (1 - new_scale);
+    var x_edge_adjust = bounds.x0 * (1 - scale),
+        y_edge_adjust = bounds.y0 * (1 - scale);
 
-    return [xoff + x_edge_adjust + (bbox.width - bbox.width * new_scale) / 2,
-            yoff + y_edge_adjust + (bbox.height - bbox.height * new_scale) / 2];
+    return {
+        x: xoff + x_edge_adjust + (width - width * scale) / 2,
+        y: yoff + y_edge_adjust + (height - height * scale) / 2
+    };
 };
 
 
-// jump to a new scale with a nice transition
-var zoom_step = function(root, ctx, new_scale) {
-    var bbox = root.select(".guide.background")
-                   .select("path").node().getBBox();
-    ctx.zoom_behavior.size([bbox.width, bbox.height]);
-    new_trans = scale_centered_translation(root, ctx, new_scale);
+// Initialize data for panning zooming if it isn't already.
+var init_pan_zoom = function(root) {
+    if (root.data("zoompan-ready")) {
+        return;
+    }
 
-    root.transition()
-        .duration(250)
-        .tween("zoom", function()  {
-            var trans_interp = d3.interpolate(ctx.zoom_behavior.translate(), new_trans);
-            var scale_interp = d3.interpolate(ctx.zoom_behavior.scale(), new_scale);
-            return function (t) {
-                ctx.zoom_behavior.translate(trans_interp(t))
-                                 .scale(scale_interp(t));
-                ctx.zoom_behavior.event(root);
-            };
+    // The non-scaling-stroke trick. Rather than try to correct for the
+    // stroke-width when zooming, we force it to a fixed value.
+    px_per_mm = root.parent().node.getCTM().a;
+    root.selectAll("path")
+    .forEach(function (element, i) {
+        sw = element.asPX("stroke-width") * px_per_mm;
+        if (sw > 0) {
+            element.attribute("stroke-width", sw);
+            element.attribute("vector-effect", "non-scaling-stroke");
+        }
+    });
+
+    // Store ticks labels original tranformation
+    root.selectAll(".xlabels > text, .ylabels > text")
+        .forEach(function (element, i) {
+            var lm = element.transform().localMatrix;
+            element.data("static_transform",
+                new Snap.Matrix(lm.a, lm.b, lm.c, lm.d, lm.e, lm.f));
         });
+
+    if (root.data("tx") === undefined) root.data("tx", 0);
+    if (root.data("ty") === undefined) root.data("ty", 0);
+    if (root.data("scale") === undefined) root.data("scale", 1.0);
+    if (root.data("xtickscales") === undefined) {
+
+        // index all the tick scales that are listed
+        var xtickscales = {};
+        var ytickscales = {};
+        var add_x_tick_scales = function (element, i) {
+            xtickscales[element.attribute("gadfly:scale")] = true;
+        };
+        var add_y_tick_scales = function (element, i) {
+            ytickscales[element.attribute("gadfly:scale")] = true;
+        };
+
+        root.select(".xgridlines").selectAll("path").forEach(add_x_tick_scales);
+        root.select(".ygridlines").selectAll("path").forEach(add_y_tick_scales);
+        root.select(".xlabels").selectAll("text").forEach(add_x_tick_scales);
+        root.select(".ylabels").selectAll("text").forEach(add_y_tick_scales);
+
+        root.data("xtickscales", xtickscales);
+        root.data("ytickscales", ytickscales);
+        root.data("xtickscale", 1.0);
+    }
+
+    var min_scale = 1.0, max_scale = 1.0;
+    for (scale in xtickscales) {
+        min_scale = Math.min(min_scale, scale);
+        max_scale = Math.max(max_scale, scale);
+    }
+    for (scale in ytickscales) {
+        min_scale = Math.min(min_scale, scale);
+        max_scale = Math.max(max_scale, scale);
+    }
+    root.data("min_scale", min_scale);
+    root.data("max_scale", max_scale);
+
+    // store the original positions of labels
+    root.select(".xlabels")
+        .selectAll("text")
+        .forEach(function (element, i) {
+            element.data("x", element.asPX("x"));
+        });
+
+    root.select(".ylabels")
+        .selectAll("text")
+        .forEach(function (element, i) {
+            element.data("y", element.asPX("y"));
+        });
+
+    // mark grid lines and ticks as in or out of scale.
+    var mark_inscale = function (element, i) {
+        element.attribute("gadfly:inscale", element.attribute("gadfly:scale") == 1.0);
+    };
+
+    root.select(".xgridlines").selectAll("path").forEach(mark_inscale);
+    root.select(".ygridlines").selectAll("path").forEach(mark_inscale);
+    root.select(".xlabels").selectAll("text").forEach(mark_inscale);
+    root.select(".ylabels").selectAll("text").forEach(mark_inscale);
+
+    // figure out the upper ond lower bounds on panning using the maximum
+    // and minum grid lines
+    var bounds = root.plotbounds();
+    var pan_bounds = {
+        x0: 0.0,
+        y0: 0.0,
+        x1: 0.0,
+        y1: 0.0
+    };
+
+    root.select(".xgridlines")
+        .selectAll("path")
+        .forEach(function (element, i) {
+            if (element.attribute("gadfly:inscale") == "true") {
+                var bbox = element.node.getBBox();
+                if (bounds.x1 - bbox.x < pan_bounds.x0) {
+                    pan_bounds.x0 = bounds.x1 - bbox.x;
+                }
+                if (bounds.x0 - bbox.x > pan_bounds.x1) {
+                    pan_bounds.x1 = bounds.x0 - bbox.x;
+                }
+            }
+        });
+
+    root.select(".ygridlines")
+        .selectAll("path")
+        .forEach(function (element, i) {
+            if (element.attribute("gadfly:inscale") == "true") {
+                var bbox = element.node.getBBox();
+                if (bounds.y1 - bbox.y < pan_bounds.y0) {
+                    pan_bounds.y0 = bounds.y1 - bbox.y;
+                }
+                if (bounds.y0 - bbox.y > pan_bounds.y1) {
+                    pan_bounds.y1 = bounds.y0 - bbox.y;
+                }
+            }
+        });
+
+    // nudge these values a little
+    pan_bounds.x0 -= 5;
+    pan_bounds.x1 += 5;
+    pan_bounds.y0 -= 5;
+    pan_bounds.y1 += 5;
+    root.data("pan_bounds", pan_bounds);
+
+    // Set all grid lines at scale 1.0 to visible. Out of bounds lines
+    // will be clipped.
+    root.select(".xgridlines")
+        .selectAll("path")
+        .forEach(function (element, i) {
+            if (element.attribute("gadfly:inscale") == "true") {
+                element.attr("visibility", "visible");
+            }
+        });
+
+    root.select(".ygridlines")
+        .selectAll("path")
+        .forEach(function (element, i) {
+            if (element.attribute("gadfly:inscale") == "true") {
+                element.attr("visibility", "visible");
+            }
+        });
+
+    root.data("zoompan-ready", true)
 };
 
 
-// Handlers for clicking the zoom in or zoom out buttons.
-var zoomout_behavior = function(ctx) {
-    return (function() {
-        var new_scale = Math.max(MIN_SCALE, ctx.scale / 1.5);
-        var root = getplotroot(d3.select(this));
-        zoom_step(root, ctx, new_scale);
-        d3.event.stopPropagation();
+// Panning
+Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
+    var root = this.plotroot();
+
+    // TODO:
+    // This has problems on Firefox. Here's what I think is happening: firefox
+    // computes a bounding box for everything, including the invisible shit,
+    // which throws off the 'client_offset' calculation.'
+
+    var dxdy = client_offset(this.svgroot(), dx,  dy);
+    dx = dxdy[0];
+    dy = dxdy[1];
+
+    var tx0 = root.data("tx"),
+        ty0 = root.data("ty");
+
+    var dx0 = root.data("dx"),
+        dy0 = root.data("dy");
+
+    root.data("dx", dx);
+    root.data("dy", dy);
+
+    dx = dx - dx0;
+    dy = dy - dy0;
+
+    var tx = tx0 + dx,
+        ty = ty0 + dy;
+
+    set_plot_pan_zoom(root, tx, ty, root.data("scale"));
+};
+
+
+Gadfly.guide_background_drag_onstart = function(x, y, event) {
+    var root = this.plotroot();
+    root.data("dx", 0);
+    root.data("dy", 0);
+    init_pan_zoom(root);
+};
+
+
+Gadfly.guide_background_drag_onend = function(event) {
+    var root = this.plotroot();
+};
+
+
+Gadfly.guide_background_scroll = function(event) {
+    if (event.shiftKey) {
+        var root = this.plotroot();
+        init_pan_zoom(root);
+        var new_scale = root.data("scale") * Math.pow(2, 0.002 * event.wheelDelta);
+        new_scale = Math.max(
+            root.data("min_scale"),
+            Math.min(root.data("max_scale"), new_scale))
+        update_plot_scale(root, new_scale);
+        event.stopPropagation();
+    }
+};
+
+
+Gadfly.zoomslider_button_mouseover = function(event) {
+     this.select(".button_logo")
+         .animate({fill: this.data("mouseover_color")}, 100);
+};
+
+
+Gadfly.zoomslider_button_mouseout = function(event) {
+     this.select(".button_logo")
+         .animate({fill: this.data("mouseout_color")}, 100);
+};
+
+
+Gadfly.zoomslider_zoomout_click = function(event) {
+    var root = this.plotroot();
+    init_pan_zoom(root);
+    var min_scale = root.data("min_scale"),
+        scale = root.data("scale");
+    Snap.animate(
+        scale,
+        Math.max(min_scale, scale / 1.5),
+        function (new_scale) {
+            update_plot_scale(root, new_scale);
+        },
+        200);
+};
+
+
+Gadfly.zoomslider_zoomin_click = function(event) {
+    var root = this.plotroot();
+    init_pan_zoom(root);
+    var max_scale = root.data("max_scale"),
+        scale = root.data("scale");
+
+    Snap.animate(
+        scale,
+        Math.min(max_scale, scale * 1.5),
+        function (new_scale) {
+            update_plot_scale(root, new_scale);
+        },
+        200);
+};
+
+
+Gadfly.zoomslider_track_click = function(event) {
+    // TODO
+};
+
+
+Gadfly.zoomslider_thumb_mousedown = function(event) {
+    this.animate({fill: this.data("mouseover_color")}, 100);
+};
+
+
+Gadfly.zoomslider_thumb_mouseup = function(event) {
+    this.animate({fill: this.data("mouseout_color")}, 100);
+};
+
+
+// compute the position in [0, 1] of the zoom slider thumb from the current scale
+var slider_position_from_scale = function(scale, min_scale, max_scale) {
+    if (scale >= 1.0) {
+        return 0.5 + 0.5 * (Math.log(scale) / Math.log(max_scale));
+    }
+    else {
+        return 0.5 * (Math.log(scale) - Math.log(min_scale)) / (0 - Math.log(min_scale));
+    }
+}
+
+
+var update_plot_scale = function(root, new_scale) {
+    var trans = scale_centered_translation(root, new_scale);
+    set_plot_pan_zoom(root, trans.x, trans.y, new_scale);
+
+    root.selectAll(".zoomslider_thumb")
+        .forEach(function (element, i) {
+            var min_pos = element.data("min_pos"),
+                max_pos = element.data("max_pos"),
+                min_scale = root.data("min_scale"),
+                max_scale = root.data("max_scale");
+            var xmid = (min_pos + max_pos) / 2;
+            var xpos = slider_position_from_scale(new_scale, min_scale, max_scale);
+            element.transform(new Snap.Matrix().translate(
+                Math.max(min_pos, Math.min(
+                         max_pos, min_pos + (max_pos - min_pos) * xpos)) - xmid, 0));
     });
 };
 
 
-var zoomin_behavior = function(ctx) {
-    return (function() {
-        var new_scale = Math.min(MAX_SCALE, ctx.scale * 1.5);
-        var root = getplotroot(d3.select(this));
-        zoom_step(root, ctx, new_scale);
-        d3.event.stopPropagation();
-    });
+Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y) {
+    var root = this.plotroot();
+    var min_pos = this.data("min_pos"),
+        max_pos = this.data("max_pos"),
+        min_scale = root.data("min_scale"),
+        max_scale = root.data("max_scale"),
+        old_scale = root.data("old_scale");
+
+    var dxdy = client_offset(this.svgroot(), dx,  dy);
+    dx = dxdy[0];
+    dy = dxdy[1];
+
+    var xmid = (min_pos + max_pos) / 2;
+    var xpos = slider_position_from_scale(old_scale, min_scale, max_scale) +
+                   dx / (max_pos - min_pos);
+
+    // compute the new scale
+    var new_scale;
+    if (xpos >= 0.5) {
+        new_scale = Math.exp(2.0 * (xpos - 0.5) * Math.log(max_scale));
+    }
+    else {
+        new_scale = Math.exp(2.0 * xpos * (0 - Math.log(min_scale)) +
+                        Math.log(min_scale));
+    }
+    new_scale = Math.min(max_scale, Math.max(min_scale, new_scale));
+
+    update_plot_scale(root, new_scale);
 };
 
 
-var zoomslider_track_behavior = function(ctx, min_extent, max_extent) {
-    return (function() {
-        var xpos = slider_position_from_scale(ctx.scale);
-        var bbox = this.getBBox();
-        var xclick = (d3.mouse(this)[0] - bbox.x) / bbox.width;
-        var root = getplotroot(d3.select(this));
-        var new_scale;
-        if (xclick < xpos) {
-            new_scale = Math.max(MIN_SCALE, ctx.scale / 1.5);
-            zoom_step(root, ctx, new_scale);
-        }
-        else {
-            new_scale = Math.min(MAX_SCALE, ctx.scale * 1.5);
-            zoom_step(root, ctx, new_scale);
-        }
-        d3.event.stopPropagation();
-    });
+Gadfly.zoomslider_thumb_dragstart = function(event) {
+    var root = this.plotroot();
+    init_pan_zoom(root);
+
+    // keep track of what the scale was when we started dragging
+    root.data("old_scale", root.data("scale"));
 };
 
 
-// Mouseover effects for zoom slider
-var zoomslider_button_mouseover = function(destcolor) {
-    return (function() {
-        d3.select(this)
-          .selectAll(".button_logo")
-          .transition()
-          .duration(150)
-          .attr("fill", destcolor);
-    });
+Gadfly.zoomslider_thumb_dragend = function(event) {
 };
 
 
-var zoomslider_thumb_mouseover = function(destcolor) {
-    return (function() {
-        d3.select(this)
-          .transition()
-          .duration(150)
-          .attr("fill", destcolor);
-    });
-};
+return Gadfly;
+
+}));
+
 
 //@ sourceURL=gadfly.js

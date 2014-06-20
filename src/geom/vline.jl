@@ -23,8 +23,11 @@ function render(geom::VLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    compose(
-        combine([lines((x, 0h), (x, 1h)) for x in aes.xintercept]...),
-        stroke(color), linewidth(size),
+
+    return compose!(
+        context(),
+        Compose.line([{(x, 0h), (x, 1h)} for x in aes.xintercept]),
+        stroke(color),
+        linewidth(size),
         svgclass("yfixed"))
 end

@@ -496,7 +496,7 @@ function apply_scale(scale::DiscreteColorScale,
         aes.color = colored_ds
 
         aes.color_label = labeler
-        aes.color_key_colors = colors
+        aes.color_key_colors = [c => i for (i, c) in enumerate(colors)]
     end
 end
 
@@ -518,8 +518,22 @@ element_aesthetics(::ContinuousColorScale) = [:color]
 
 
 function continuous_color_gradient(;minvalue=nothing, maxvalue=nothing)
+
+    # TODO: this should be made more general purpose. I.e. define some
+    # more color scales.
+    function lch_diverge2(l0=30, l1=100, c=40, h0=260, h1=10, hmid=20, power=1.5)
+        lspan = l1 - l0
+        hspan1 = hmid - h0
+        hspan0 = h1 - hmid
+        function f(r)
+            r2 = 2r - 1
+            return LCHab(l1 - lspan * abs(r2)^power, max(10, c * abs(r2)),
+                         (1-r)*h0 + r * h1)
+        end
+    end
+
     ContinuousColorScale(
-        lab_gradient(LCHab(20, 44, 262), LCHab(100, 44, 262)),
+        lch_diverge2(),
         minvalue=minvalue, maxvalue=maxvalue)
 end
 
@@ -590,35 +604,27 @@ function apply_scale(scale::ContinuousColorScale,
 
         aes.color = DataArray(cs, nas)
 
-        color_key_colors = Array(ColorValue, 0)
-        color_key_labels = Array(String, 0)
+        color_key_colors = Dict{ColorValue, Float64}()
+        color_key_labels = Dict{ColorValue, String}()
 
-        num_steps = 1
         tick_labels = identity_formatter(ticks)
         for (i, j, label) in zip(ticks, ticks[2:end], tick_labels)
             r = (i - cmin) / cspan
-            push!(color_key_colors, scale.f(r))
-            push!(color_key_labels, label)
-
-            for step in 1:num_steps
-                k = i + (j - i) * (step / (1 + num_steps))
-                r = (k - cmin) / cspan
-                push!(color_key_colors, scale.f(r))
-                push!(color_key_labels, "")
-            end
+            c = scale.f(r)
+            color_key_colors[c] = r
+            color_key_labels[c] = label
         end
-        push!(color_key_colors, scale.f((ticks[end] - cmin) / cspan))
-        push!(color_key_labels, tick_labels[end])
+        c = scale.f((ticks[end] - cmin) / cspan)
+        color_key_colors[c] = (ticks[end] - cmin) / cspan
+        color_key_labels[c] = tick_labels[end]
 
-        color_key_color_label =
-            [c => l for (c, l) in zip(color_key_colors, color_key_labels)]
         function labeler(xs)
-            [get(color_key_color_label, x, "") for x in xs]
+            [get(color_key_labels, x, "") for x in xs]
         end
 
+        aes.color_function = scale.f
         aes.color_label = labeler
         aes.color_key_colors = color_key_colors
-        reverse!(aes.color_key_colors)
         aes.color_key_continuous = true
     end
 end

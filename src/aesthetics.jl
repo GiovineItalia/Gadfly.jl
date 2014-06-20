@@ -50,10 +50,19 @@ typealias NumericalAesthetic
     ytick,        NumericalAesthetic
     xgrid,        NumericalAesthetic
     ygrid,        NumericalAesthetic
-    color_key_colors,     Maybe(Vector{ColorValue})
+    color_key_colors,     Maybe(Dict)
     color_key_title,      Maybe(String)
     color_key_continuous, Maybe(Bool)
+    color_function,       Maybe(Function)
     titles,               Maybe(Dict{Symbol, String})
+
+    # mark some ticks as initially invisible
+    xtickvisible,         Maybe(Vector{Bool})
+    ytickvisible,         Maybe(Vector{Bool})
+
+    # scale at which ticks should become visible
+    xtickscale,           Maybe(Vector{Float64})
+    ytickscale,           Maybe(Vector{Float64})
 
     # pesudo-aesthetics used to indicate that drawing might
     # occur beyond any x/y value.

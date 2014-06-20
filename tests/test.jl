@@ -10,6 +10,7 @@ tests = [
     ("function_plots",                        6inch, 3inch),
     ("function_layers",                       6inch, 3inch),
     ("colored_points",                        6inch, 3inch),
+    ("multicolumn_colorkey",                  6inch, 2inch),
     ("vstack",                                6inch, 6inch),
     ("hstack",                                6inch, 3inch),
     ("colorful_hist",                         6inch, 3inch),
@@ -20,7 +21,7 @@ tests = [
     ("stacked_continuous_histogram",          6inch, 3inch),
     ("dodged_discrete_histogram",             6inch, 3inch),
     ("array_aesthetics",                      6inch, 3inch),
-    ("subplot_grid",                          6inch, 3inch),
+    ("subplot_grid",                          10inch, 10inch),
     ("subplot_grid_histogram",                6inch, 3inch),
     ("labels",                                6inch, 6inch),
     ("percent",                               6inch, 6inch),
@@ -63,16 +64,17 @@ tests = [
     ("spy",                                   6inch, 3inch),
     ("issue177",                              6inch, 3inch),
     ("ribbon",                                6inch, 3inch),
-    ("layer_leak",                            6inch, 3inch)
+    ("layer_leak",                            6inch, 3inch),
+    ("hline_vline",                           6inch, 3inch)
 ]
 
 
 backends = {
     "svg" => (name, width, height) -> SVG("$(name).svg", width, height),
-    "d3"  => (name, width, height) -> D3("$(name).js",   width, height),
+    "svgjs" => (name, width, height) -> SVGJS("$(name).js.svg", width, height, jsmode=:linkabs),
     "png" => (name, width, height) -> PNG("$(name).png", width, height),
-    "ps"  => (name, width, height) -> PS("$(name).ps",   width, height),
-    "pdf" => (name, width, height) -> PDF("$(name).pdf", width, height)
+    #"ps"  => (name, width, height) -> PS("$(name).ps",   width, height),
+    #"pdf" => (name, width, height) -> PDF("$(name).pdf", width, height)
 }
 
 
@@ -109,9 +111,6 @@ function run_tests(output_filename)
         end
     end
 
-    d3src = Pkg.dir("Compose", "data", "d3.v3.min.js")
-    gadflysrc = Pkg.dir("Gadfly", "src", "gadfly.js")
-
     output = open(output_filename, "w")
     print(output,
         """
@@ -122,8 +121,8 @@ function run_tests(output_filename)
             <title>Gadfly Test Plots</title>
         </head>
         <body>
-        <script src="$(d3src)"></script>
-        <script src="$(gadflysrc)"></script>
+        <script src="$(Compose.snapsvgjs)"></script>
+        <script src="$(Gadfly.gadflyjs)"></script>
         <div style="width:900; margin:auto; text-align: center; font-family: sans-serif; font-size: 20pt;">
         """)
 
@@ -133,9 +132,7 @@ function run_tests(output_filename)
         end
 
         println(output, "<p>", name, "</p>")
-        print(output, """<div id="$(name)"></div>""")
-        print(output, """<script src="$(name).js"></script>""")
-        print(output, """<script>draw("#$(name)")</script>""")
+        print(output, """<div id="$(name)"><object type="image/svg+xml" data="$(name).js.svg"></object></div>""")
         print(output, """<img width="450px" src="$(name).svg">""")
         print(output, """<img width="450px" src="$(name).png">\n""")
     end

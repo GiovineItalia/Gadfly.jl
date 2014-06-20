@@ -34,18 +34,26 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     lw_hover_scale = 10
     lw_ratio = theme.line_width / aes.size[1]
-    compose(circle(aes.x, aes.y, aes.size),
-            fill(aes.color),
-            stroke([theme.highlight_color(c) for c in aes.color]),
-            linewidth(theme.line_width),
-            d3embed(@sprintf(".on(\"mouseover\", geom_point_mouseover(%0.2f, %0.2f), false)",
-                             lw_hover_scale, lw_ratio)),
-            d3embed(@sprintf(".on(\"mouseout\", geom_point_mouseout(%0.2f, %0.2f), false)",
-                             lw_hover_scale, lw_ratio)),
-            aes.color_key_continuous == true ?
-                svgclass("geometry") :
-                svgclass([@sprintf("geometry color_%s", escape_id(aes.color_label([c])[1]))
-                          for c in aes.color]))
+
+    ctx = compose!(
+        context(order=4),
+        circle(aes.x, aes.y, aes.size),
+        fill(aes.color),
+        linewidth(theme.highlight_width))
+
+    if aes.color_key_continuous != nothing && aes.color_key_continuous
+        compose!(ctx,
+            stroke(map(theme.continuous_highlight_color, aes.color)),
+            svgclass("geometry"))
+    else
+        compose!(ctx,
+            stroke(map(theme.discrete_highlight_color, aes.color)),
+            svgclass([@sprintf("geometry color_%s",
+                               escape_id(aes.color_label([c])[1]))
+                      for c in aes.color]))
+    end
+
+    return ctx
 end
 
 

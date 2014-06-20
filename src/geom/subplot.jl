@@ -139,7 +139,6 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     Stat.apply_statistics(geom_stats, scales, coord, geom_aes)
 
-
     # if either axis is on a free scale, we need to apply row/column-wise
     # tick statistics.
     if (geom.free_x_axis)
@@ -166,7 +165,14 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         Gadfly.inherit!(aes_grid[i, j], geom_aes)
     end
 
-    canvas_grid = Array(Canvas, n, m)
+    # TODO: this assumed a rather ridged layout
+    tbl = table(n + 2, m + 2, 1:n, 3:m+2,
+                x_prop=ones(m), y_prop=ones(n),
+                fixed_configs={
+                    [(i, 1) for i in 1:n],
+                    [(i, 2) for i in 1:n],
+                    [(n+1, j) for j in 3:m+2],
+                    [(n+2, j) for j in 3:m+2]})
 
     xtitle = "x"
     for v in [:x, :xmin, :xmax]
@@ -186,6 +192,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     xlabels = superplot_aes.xgroup_label(1.0:m)
     ylabels = superplot_aes.ygroup_label(1.0:n)
+    subplot_padding = 3mm
 
     for i in 1:n, j in 1:m
         p = Plot()
@@ -210,28 +217,47 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             push!(guides, Guide.xticks(label=false))
         end
 
+        joff = 0
         if j == 1
+            joff += 1
             push!(guides, Guide.yticks())
             if !is(superplot_aes.ygroup, nothing)
+                joff += 1
                 push!(guides, Guide.ylabel(ylabels[i]))
             end
         else
             push!(guides, Guide.yticks(label=false))
         end
 
-        canvas_grid[i, j] =
-            Gadfly.render_prepared(
+        subtbl = Gadfly.render_prepared(
                             p, aes_grid[i, j], layer_aes_grid[i, j],
                             layer_stats,
                             Dict{Symbol, Gadfly.ScaleElement}(),
                             plot_stats,
                             guides,
-                            preserve_plot_canvas_size=true)
+                            table_only=true)
 
-        canvas_grid[i, j] = pad(canvas_grid[i, j], 3.0mm)
+        tbl[i, 2 + j] = pad(subtbl[1, 1 + joff], subplot_padding)
+
+        for k in 2:size(subtbl, 1)
+            for ctx in subtbl[k, 1 + joff]
+                ctx.units = subtbl.units
+            end
+            tbl[i + k - 1, 2 + j] =
+                pad(subtbl[k, 1 + joff], subplot_padding, 0mm)
+        end
+
+        for k in 1:(size(subtbl, 2)-1)
+            for ctx in subtbl[1, k]
+                ctx.units = subtbl.units
+            end
+            tbl[i, k] =
+                pad(subtbl[1, k], 0mm, subplot_padding)
+        end
     end
 
-    gridstack(canvas_grid, 0w, 0h, halign=hright)
+
+    return compose!(context(), tbl)
 end
 
 
