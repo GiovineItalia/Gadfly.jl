@@ -841,7 +841,7 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Plot)
 
     plot_output = IOBuffer()
     draw(SVGJS(plot_output, default_plot_width, default_plot_height, false), p)
-    plot_js = takebuf_string(plot_output)
+    plotsvg = takebuf_string(plot_output)
 
     write(output,
         """

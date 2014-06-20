@@ -565,8 +565,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
         dynamic_labels = compose!(
             context(withjs=true),
-            text(ticks, [1h - padding], labels, [hright], [vbottom],
-                 [Rotation(-0.5pi, tick, 1h - padding) for tick in ticks]),
+            text(ticks, [padding], labels, [hright], [vbottom],
+                 [Rotation(-0.5pi, tick, padding) for tick in ticks]),
             visible(tickvisibility),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
