@@ -154,28 +154,32 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     if all([aes.x === nothing || typeof(aes.x) <: PooledDataArray for aes in aess])
         xmin -= 0.5
         xmax += 0.5
-        xpadding = 0.0
+        xpadding = 0mm
     else
-        xpadding = 0.03 * (xmax - xmin)
+        xpadding = 2mm
     end
 
     if all([aes.y === nothing || typeof(aes.y) <: PooledDataArray for aes in aess])
         ymin -= 0.5
         ymax += 0.5
-        ypadding = 0.0
+        ypadding = 0mm
     else
-        ypadding = 0.03 * (ymax - ymin)
+        ypadding = 2mm
     end
 
-    width  = xmax - xmin + 2.0 * xpadding
-    height = ymax - ymin + 2.0 * ypadding
+    width  = xmax - xmin
+    height = ymax - ymin
 
     compose!(
         context(units=UnitBox(
-            coord.xflip ? xmax + xpadding : xmin - xpadding,
-            coord.yflip ? ymin - ypadding : ymax + ypadding,
+            coord.xflip ? xmax : xmin,
+            coord.yflip ? ymin : ymax,
             coord.xflip ? -width : width,
-            coord.yflip ? height : -height)),
+            coord.yflip ? height : -height,
+            leftpad=xpadding,
+            rightpad=xpadding,
+            toppad=ypadding,
+            bottompad=ypadding)),
         svgclass("plotpanel"))
 end
 
