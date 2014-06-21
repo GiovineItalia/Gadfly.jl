@@ -237,6 +237,9 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                             guides,
                             table_only=true)
 
+        for c in subtbl[1, 1 + joff]
+            c.units = subtbl.units
+        end
         tbl[i, 2 + j] = pad(subtbl[1, 1 + joff], subplot_padding)
 
         for k in 2:size(subtbl, 1)
@@ -255,7 +258,6 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                 pad(subtbl[1, k], 0mm, subplot_padding)
         end
     end
-
 
     return compose!(context(), tbl)
 end
