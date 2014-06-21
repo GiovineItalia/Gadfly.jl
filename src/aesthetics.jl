@@ -249,7 +249,9 @@ end
 
 # work arround 0.2 weirdness
 function cat_aes_var!(a::DataArray, b::AbstractArray)
-    return DataArray([a..., b...])
+    da = DataArray(eltype(a), length(a) + length(b))
+    copy!(da, [a..., b...])
+    return da
 end
 
 function cat_aes_var!(a::AbstractArray, b::AbstractArray)
@@ -342,8 +344,11 @@ function aes_by_xy_group(aes::Aesthetics)
                               make_pooled_data_array(typeof(vals), staging[i, j]))
                 else
                     if applicable(convert, typeof(vals), staging[i, j])
-                        setfield!(aes_grid[i, j], var,
-                                  DataArray(copy(staging[i, j])))
+                        T = eltype(vals)
+                        if T <: ColorValue T = ColorValue end
+                        da = DataArray(T, length(staging[i, j]))
+                        copy!(da, staging[i, j])
+                        setfield!(aes_grid[i, j], var, da)
                     else
                         setfield!(aes_grid[i, j], var,
                                   convert(typeof(vals), copy(staging[i, j])))
