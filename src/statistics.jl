@@ -227,7 +227,7 @@ function apply_statistic(stat::DensityStatistic,
             error("Kernel density estimation only works on Real types.")
         end
 
-        x_f64 = convert(Vector{Float64}, aes.x)
+        x_f64 = collect(Float64, aes.x)
         # When will stat.n ever be <= 1? Seems pointless
         # certainly its length will always be 1
         window = stat.n > 1 ? bandwidth(x_f64) : 0.1

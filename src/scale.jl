@@ -277,7 +277,7 @@ function discretize_make_pda(values::DataArray, levels=nothing)
 end
 
 
-function discretize_make_pda(values::Union(Range1, FloatRange), levels=nothing)
+function discretize_make_pda(values::Range, levels=nothing)
     if levels == nothing
         return PooledDataArray(collect(values))
     else
@@ -372,7 +372,6 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
             end
 
             disc_data = discretize(getfield(data, var), scale.levels, scale.order)
-            @show var
             setfield!(aes, var, PooledDataArray(int64(disc_data.refs)))
 
             # The leveler for discrete scales is a closure over the discretized data.

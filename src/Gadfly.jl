@@ -786,23 +786,65 @@ function default_mime()
 end
 
 
-import Base.Multimedia: @try_display, xdisplayable
-import Base.REPL: REPLDisplay
+if isdefined(Base, :REPL)
+    import Base.Multimedia: @try_display, xdisplayable
+    const REPLDisplay = Base.REPL.REPLDisplay
 
-function display(p::Plot)
-    displays = Base.Multimedia.displays
-    for i = length(displays):-1:1
-        m = default_mime()
-        if xdisplayable(displays[i], m, p)
-             @try_display return display(displays[i], m, p)
-        end
+    function display(p::Plot)
+        displays = Base.Multimedia.displays
+        for i = length(displays):-1:1
+            m = default_mime()
 
-        if xdisplayable(displays[i], p)
-            @try_display return display(displays[i], p)
+            if xdisplayable(displays[i], m, p)
+                try
+                    return display(displays[i], m, p)
+                catch e
+                    isa(e, MethodError) && e.f in (display, redisplay, writemime) ||
+                        rethrow()
+                end
+            end
+
+            if xdisplayable(displays[i], p)
+                try
+                    return display(displays[i], p)
+                catch e
+                    isa(e, MethodError) && e.f in (display, redisplay, writemime) ||
+                        rethrow()
+                end
+            end
         end
+        invoke(display,(Any,),p)
     end
-    invoke(display,(Any,),p)
+else
+    # julia 0.2 fallback
+    const REPLDisplay = TextDisplay
+
+    function display(d::TextDisplay, p::Plot)
+        m = default_mime()
+        display(d, m, p)
+    end
 end
+
+
+# TODO: Replace the above block with this as soon as we drop 0.2 support.
+
+#import Base.Multimedia: @try_display, xdisplayable
+#import Base.REPL: REPLDisplay
+
+#function display(p::Plot)
+    #displays = Base.Multimedia.displays
+    #for i = length(displays):-1:1
+        #m = default_mime()
+        #if xdisplayable(displays[i], m, p)
+             #@try_display return display(displays[i], m, p)
+        #end
+
+        #if xdisplayable(displays[i], p)
+            #@try_display return display(displays[i], p)
+        #end
+    #end
+    #invoke(display,(Any,),p)
+#end
 
 
 function open_file(filename)
