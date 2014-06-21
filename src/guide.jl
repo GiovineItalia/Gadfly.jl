@@ -949,34 +949,62 @@ function layout_guides(plot_context::Context,
     focus_y = 1 + length(guides[top_guide_position])
     focus_x = 1 + length(guides[left_guide_position])
 
+    plot_units = plot_context.units
+
     # Populate the table
-    tbl = table(m, n, focus_y:focus_y, focus_x:focus_x, units=plot_context.units)
+    tbl = table(m, n, focus_y:focus_y, focus_x:focus_x, units=plot_units)
 
     i = 1
     for (ctxs, order) in guides[top_guide_position]
+        for ctx in ctxs
+            if ctx.units == Compose.nil_unit_box
+                ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
+            end
+        end
+
         tbl[i, focus_x] = ctxs
         i += 1
     end
     i += 1
     for (ctxs, order) in guides[bottom_guide_position]
+        for ctx in ctxs
+            if ctx.units == Compose.nil_unit_box
+                ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
+            end
+        end
+
         tbl[i, focus_x] = ctxs
         i += 1
     end
 
     j = 1
     for (ctxs, order) in guides[left_guide_position]
+        for ctx in ctxs
+            if ctx.units == Compose.nil_unit_box
+                ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
+            end
+        end
+
         tbl[focus_y, j] = ctxs
         j += 1
     end
     j += 1
     for (ctxs, order) in guides[right_guide_position]
+        for ctx in ctxs
+            if ctx.units == Compose.nil_unit_box
+                ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
+            end
+        end
+
         tbl[focus_y, j] = ctxs
         j += 1
     end
 
     tbl[focus_y, focus_x] =
         [compose!(context(minwidth=minwidth(plot_context),
-                          minheight=minheight(plot_context), clip=true),
+                          minheight=minheight(plot_context),
+                          units=plot_units,
+                          clip=true),
                   {context(order=-1),
                      [c for (c, o) in guides[under_guide_position]]...},
                   {context(order=1000),

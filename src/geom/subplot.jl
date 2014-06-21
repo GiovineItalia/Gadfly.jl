@@ -192,7 +192,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     xlabels = superplot_aes.xgroup_label(1.0:m)
     ylabels = superplot_aes.ygroup_label(1.0:n)
-    subplot_padding = 3mm
+    subplot_padding = 2mm
 
     for i in 1:n, j in 1:m
         p = Plot()
@@ -237,23 +237,25 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                             guides,
                             table_only=true)
 
-        for c in subtbl[1, 1 + joff]
-            c.units = subtbl.units
-        end
+        # copy over the correct units, since we are reparenting the children
+        #for u in 1:size(subtbl, 1), v in 1:size(subtbl, 2)
+            #for child in subtbl[u, v]
+                #if child.units == Compose.nil_unit_box
+                    #child.units = subtbl.units
+                #end
+            #end
+        #end
+
         tbl[i, 2 + j] = pad(subtbl[1, 1 + joff], subplot_padding)
 
+        # bottom guides
         for k in 2:size(subtbl, 1)
-            for ctx in subtbl[k, 1 + joff]
-                ctx.units = subtbl.units
-            end
             tbl[i + k - 1, 2 + j] =
                 pad(subtbl[k, 1 + joff], subplot_padding, 0mm)
         end
 
+        # left guides
         for k in 1:(size(subtbl, 2)-1)
-            for ctx in subtbl[1, k]
-                ctx.units = subtbl.units
-            end
             tbl[i, k] =
                 pad(subtbl[1, k], 0mm, subplot_padding)
         end
