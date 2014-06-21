@@ -15,15 +15,6 @@
 
 var Gadfly = {};
 
-// Convert an offset in screen units (pixels) to client units (millimeters)
-var client_offset = function(fig, x, y) {
-    var client_box = fig.node.getBoundingClientRect();
-    x = x * fig.node.viewBox.baseVal.width / client_box.width;
-    y = y * fig.node.viewBox.baseVal.height / client_box.height;
-    return [x, y]
-};
-
-
 // Get an x/y coordinate value in pixels
 var xPX = function(fig, x) {
     var client_box = fig.node.getBoundingClientRect();
@@ -413,9 +404,14 @@ var init_pan_zoom = function(root) {
 
     // The non-scaling-stroke trick. Rather than try to correct for the
     // stroke-width when zooming, we force it to a fixed value.
-    px_per_mm = root.parent().node.getCTM().a;
+    var px_per_mm = root.node.getCTM().a;
+
+    // Drag events report deltas in pixels, which we'd like to convert to
+    // millimeters.
+    root.data("px_per_mm", px_per_mm);
+
     root.selectAll("path")
-    .forEach(function (element, i) {
+        .forEach(function (element, i) {
         sw = element.asPX("stroke-width") * px_per_mm;
         if (sw > 0) {
             element.attribute("stroke-width", sw);
@@ -561,15 +557,9 @@ var init_pan_zoom = function(root) {
 // Panning
 Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
     var root = this.plotroot();
-
-    // TODO:
-    // This has problems on Firefox. Here's what I think is happening: firefox
-    // computes a bounding box for everything, including the invisible shit,
-    // which throws off the 'client_offset' calculation.'
-
-    var dxdy = client_offset(this.svgroot(), dx,  dy);
-    dx = dxdy[0];
-    dy = dxdy[1];
+    var px_per_mm = root.data("px_per_mm");
+    dx /= px_per_mm;
+    dy /= px_per_mm;
 
     var tx0 = root.data("tx"),
         ty0 = root.data("ty");
@@ -713,9 +703,9 @@ Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y) {
         max_scale = root.data("max_scale"),
         old_scale = root.data("old_scale");
 
-    var dxdy = client_offset(this.svgroot(), dx,  dy);
-    dx = dxdy[0];
-    dy = dxdy[1];
+    var px_per_mm = root.data("px_per_mm");
+    dx /= px_per_mm;
+    dy /= px_per_mm;
 
     var xmid = (min_pos + max_pos) / 2;
     var xpos = slider_position_from_scale(old_scale, min_scale, max_scale) +
