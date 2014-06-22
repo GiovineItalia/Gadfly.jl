@@ -178,7 +178,6 @@ end
 const colorkey = ColorKey
 
 
-# TODO: rewrite
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
 function render_discrete_color_key(colors::Vector{ColorValue},
@@ -196,6 +195,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                            theme.key_label_font_size,
                            values(labels)...)
 
+    title_height = title_ctx.box.height
     entry_height = maximum([height for (width, height) in extents])
     swatch_size = entry_height / 2
 
@@ -223,10 +223,16 @@ function render_discrete_color_key(colors::Vector{ColorValue},
         end
 
         ctxwidth = sum(colwidths)
-        ctxheight = entry_height * colrows[1]
+        ctxheight = entry_height * colrows[1] + title_height
 
         ctxp = ctxpromise() do draw_context
-            ctx = context(0, 0.5h - ctxheight/2, ctxwidth, ctxheight,
+            yoff = 0.5h - ctxheight/2
+            outerctx = context()
+
+            compose!(outerctx, {context(xpad, yoff), title_ctx})
+
+            ctx = context(0, yoff + title_height,
+                          ctxwidth, ctxheight - title_height,
                           units=UnitBox(0, 0, 1, colrows[1]))
 
             m = 0
@@ -236,7 +242,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
 
                 if theme.colorkey_swatch_shape == :square
                     swatches_shapes = rectangle(
-                        [xpad], [(y - 0.5)*cy - swatch_size/2 for y in 1:nrows],
+                        [xpad], [y*cy - swatch_size/2 for y in 1:nrows],
                         [swatch_size], [swatch_size])
                 elseif theme.colorkey_swatch_shape == :circle
                     swatches_shapes = circle([0.5cy], 1:nrows .- 0.5, [swatch_size/2])
@@ -249,23 +255,23 @@ function render_discrete_color_key(colors::Vector{ColorValue},
 
                 swatch_labels = compose!(
                     context(),
-                    text([2xpad + swatch_size], [(y - 0.5)*cy for y in 1:nrows],
+                    text([2xpad + swatch_size], [y*cy for y in 1:nrows],
                          collect(values(labels))[m+1:m+nrows], [hleft], [vcenter]),
                     font(theme.key_label_font),
                     fontsize(theme.key_label_font_size),
                     fill(theme.key_label_color))
 
-                compose!(ctx, {context(xpos, 0), swatches, swatch_labels})
+                compose!(ctx, {context(xpos, yoff), swatches, swatch_labels})
 
                 m += nrows
                 xpos += colwidths[i]
             end
 
-            return ctx
+            return compose!(outerctx, ctx)
         end
 
         return compose!(
-            context(minwidth=ctxwidth,
+            context(minwidth=max(title_width, ctxwidth),
                     minheight=ctxheight,
                     units=UnitBox()),
             ctxp)
@@ -289,17 +295,24 @@ function render_continuous_color_key(colors::Dict,
                                                  values(labels)...)
 
     numlabels = length(labels)
-    total_height = 2 * numlabels * entry_height
+    title_height = title_context.box.height
+    total_height = 2 * numlabels * entry_height + title_height
     swatch_width = entry_height / 2
     xoff = 2mm
     padding = 1mm
     entry_width += 2padding + swatch_width + xoff
 
-    ctx = context(minwidth=entry_width, minheight=total_height, units=UnitBox())
+    ctx = context(minwidth=max(title_width, entry_width),
+                  minheight=total_height, units=UnitBox())
+
+    yoff = 0.5h - total_height/2
+
+    compose!(ctx, {context(xoff, yoff), title_context})
 
     # color bar
     compose!(ctx,
-        {context(xoff, 0.5h - total_height/2, 1w, total_height, units=UnitBox()),
+        {context(xoff, yoff + title_height,
+                 1w, total_height, units=UnitBox()),
          rectangle(
              [0],
              [1*cy - i*total_height / theme.key_color_gradations
@@ -319,7 +332,7 @@ function render_continuous_color_key(colors::Dict,
          svgattribute("shape-rendering", "crispEdges")})
 
     compose!(ctx,
-        {context(xoff + swatch_width + padding, 0.5h - total_height/2,
+        {context(xoff + swatch_width + padding, yoff + title_height,
                  1w, total_height, units=UnitBox()),
          text([0],
               [1 - y for y in values(colors)],
@@ -394,8 +407,8 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
             error("$(theme.guide_title_position) is not a valid guide title position")
         end
 
-        title_padding = 2mm
-        title_canvas = compose!(
+        title_padding = 4mm
+        title_context = compose!(
             context(0w, 0h, 1w, title_height + title_padding),
             title_form,
             stroke(nothing),
@@ -412,10 +425,11 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
             ctxs = render_continuous_color_key(aes.color_key_colors,
                                                pretty_labels,
                                                aes.color_function,
-                                               title_canvas,
+                                               title_context,
                                                title_width, theme)
         else
-            ctxs = render_discrete_color_key(colors, pretty_labels, title_canvas,
+            ctxs = render_discrete_color_key(colors, pretty_labels,
+                                             title_context,
                                              title_width, theme)
         end
 

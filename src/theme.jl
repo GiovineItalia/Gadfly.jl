@@ -131,7 +131,7 @@ end
 
     # Horizontal position of the title of color key guides. One of :left,
     # :right, :center.
-    guide_title_position,  Symbol,          :center
+    guide_title_position,  Symbol,          :left
 
     # Shape used in color keys for color swatches. Either :square or :circle.
     colorkey_swatch_shape, Symbol,          :square
