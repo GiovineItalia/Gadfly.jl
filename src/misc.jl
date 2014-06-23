@@ -15,6 +15,10 @@ function isconcrete{T<:Number}(x::T)
     !isna(x) && isfinite(x)
 end
 
+function isconcrete(x::MathConst)
+    return true
+end
+
 function isconcrete(x)
     !isna(x)
 end

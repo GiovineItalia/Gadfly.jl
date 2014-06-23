@@ -482,7 +482,7 @@ function apply_statistic(stat::TickStatistic,
                 size = aes.size === nothing ? [nothing] : aes.size
 
                 for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
-                    if !Gadfly.isconcrete(val) || !isfinite(val)
+                    if !Gadfly.isconcrete(val)
                         continue
                     end
 
