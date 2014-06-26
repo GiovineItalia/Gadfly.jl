@@ -4,8 +4,6 @@
 const title_font_desc = "'PT Sans','Helvetica Neue','Helvetica',sans-serif"
 const label_font_desc = "'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif"
 
-
-
 # Choose highlight color by darkening the fill color
 function default_discrete_highlight_color(fill_color::ColorValue)
     return RGB(1, 1, 1)

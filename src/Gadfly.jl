@@ -23,7 +23,7 @@ using JSON
 
 import Iterators
 import Iterators: distinct, drop
-import Compose.draw, Compose.hstack, Compose.vstack
+import Compose: draw, hstack, vstack, gridstack
 import Base: copy, push!, start, next, done, has, show, getindex, cat,
              writemime, isfinite, display
 
@@ -724,6 +724,7 @@ vstack(ps::Vector{Plot}) = vstack([render(p) for p in ps]...)
 hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
 hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 
+gridstack(ps::Matrix{Plot}) = gridstack(map(render, ps))
 
 # writemime functions for all supported compose backends.
 

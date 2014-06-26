@@ -296,7 +296,7 @@ function render_continuous_color_key(colors::Dict,
 
     numlabels = length(labels)
     title_height = title_context.box.height
-    total_height = 2 * numlabels * entry_height + title_height
+    total_height = 1.5 * numlabels * entry_height + title_height
     swatch_width = entry_height / 2
     xoff = 2mm
     padding = 1mm
