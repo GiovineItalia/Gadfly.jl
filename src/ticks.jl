@@ -137,6 +137,7 @@ end
 
 
 function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
+                        k_min=nothing, k_max=nothing,
                         scale=:auto)
     # This can be pretty simple. We are choosing ticks on one of three
     # scales: years, months, days.

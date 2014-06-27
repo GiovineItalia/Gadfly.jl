@@ -152,7 +152,7 @@ const y_vars = [:y, :ymin, :ymax, :yintercept, :middle,
 
 function continuous_scale_partial(vars::Vector{Symbol},
                                   trans::ContinuousScaleTransform)
-    function f(;minvalue=nothing, maxvalue=nothing, format=nothing, minticks=nothing, maxticks=nothing)
+    function f(;minvalue=nothing, maxvalue=nothing, format=nothing, minticks=2, maxticks=10)
         ContinuousScale(vars, trans, minvalue=minvalue, maxvalue=maxvalue,
                         format=format, minticks=minticks, maxticks=maxticks)
     end
