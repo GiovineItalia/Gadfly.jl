@@ -31,6 +31,31 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
     xs = take(cycle(aes.x), n)
     cs = take(cycle(aes.color), n)
 
+    # We allow lower_hinge > upper_hinge, and lower_fence > upper_fence. So we
+    # need to organize them for drawing here
+    lower_hinge = similar(aes.lower_hinge)
+    upper_hinge = similar(aes.upper_hinge)
+    lower_fence = similar(aes.lower_fence)
+    upper_fence = similar(aes.upper_fence)
+    for (i, (lh, uh, lf, uf)) in enumerate(zip(aes.lower_hinge, aes.upper_hinge,
+                                               aes.lower_fence, aes.upper_fence))
+        if uh > lh
+            lower_hinge[i] = aes.lower_hinge[i]
+            upper_hinge[i] = aes.upper_hinge[i]
+        else
+            lower_hinge[i] = aes.upper_hinge[i]
+            upper_hinge[i] = aes.lower_hinge[i]
+        end
+
+        if uf > lf
+            lower_fence[i] = aes.lower_fence[i]
+            upper_fence[i] = aes.upper_fence[i]
+        else
+            lower_fence[i] = aes.upper_fence[i]
+            upper_fence[i] = aes.lower_fence[i]
+        end
+    end
+
     ctx = compose!(
         context(),
         fill(collect(cs)),
@@ -42,25 +67,25 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
             # Box
             rectangle(
                 [x*cx - bw/2 for x in xs],
-                aes.lower_hinge, [bw],
-                [uh - lh for (lh, uh) in zip(aes.lower_hinge, aes.upper_hinge)]),
+                lower_hinge, [bw],
+                [uh - lh for (lh, uh) in zip(lower_hinge, upper_hinge)]),
 
             {
                 context(),
 
                  # Whiskers
                 Compose.line([[(x, lh), (x, lf)]
-                              for (x, lh, lf) in zip(xs, aes.lower_hinge, aes.lower_fence)]),
+                              for (x, lh, lf) in zip(xs, lower_hinge, lower_fence)]),
 
                 Compose.line([[(x, uh), (x, uf)]
-                              for (x, uh, uf) in zip(xs, aes.upper_hinge, aes.upper_fence)]),
+                              for (x, uh, uf) in zip(xs, upper_hinge, upper_fence)]),
 
                 # Fences
                 Compose.line([[(x - 1/6, lf), (x + 1/6, lf)]
-                              for (x, lf) in zip(xs, aes.lower_fence)]),
+                              for (x, lf) in zip(xs, lower_fence)]),
 
                 Compose.line([[(x - 1/6, uf), (x + 1/6, uf)]
-                              for (x, uf) in zip(xs, aes.upper_fence)]),
+                              for (x, uf) in zip(xs, upper_fence)]),
 
                 stroke(collect(cs))
             },
