@@ -26,9 +26,10 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
     default_aes.x = Float64[0.5]
     aes = inherit(aes, default_aes)
 
-    bw = 1.0cx - theme.boxplot_spacing
     n = length(aes.lower_hinge)
-    xs = take(cycle(aes.x), n)
+    bw = 1w / n - theme.boxplot_spacing # boxplot width
+    fw = 2/3 * bw # fence width
+    xs = [Measure(cx=x) for x in take(cycle(aes.x), n)]
     cs = take(cycle(aes.color), n)
 
     # We allow lower_hinge > upper_hinge, and lower_fence > upper_fence. So we
@@ -66,7 +67,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
 
             # Box
             rectangle(
-                [x*cx - bw/2 for x in xs],
+                [x - bw/2 for x in xs],
                 lower_hinge, [bw],
                 [uh - lh for (lh, uh) in zip(lower_hinge, upper_hinge)]),
 
@@ -81,10 +82,10 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                               for (x, uh, uf) in zip(xs, upper_hinge, upper_fence)]),
 
                 # Fences
-                Compose.line([[(x - 1/6, lf), (x + 1/6, lf)]
+                Compose.line([[(x - fw, lf), (x + fw, lf)]
                               for (x, lf) in zip(xs, lower_fence)]),
 
-                Compose.line([[(x - 1/6, uf), (x + 1/6, uf)]
+                Compose.line([[(x - fw, uf), (x + fw, uf)]
                               for (x, uf) in zip(xs, upper_fence)]),
 
                 stroke(collect(cs))
@@ -110,7 +111,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
     if aes.middle != nothing
         compose!(ctx, {
            context(order=1),
-           Compose.line([[(x - 1/6, mid), (x + 1/6, mid)]
+           Compose.line([[(x - fw, mid), (x + fw, mid)]
                          for (x, mid) in zip(xs, aes.middle)]),
            linewidth(theme.middle_width),
            stroke([theme.middle_color(c) for c in cs])

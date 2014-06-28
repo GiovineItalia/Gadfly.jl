@@ -664,8 +664,6 @@ function apply_statistic(stat::BoxplotStatistic,
             push!(groups, (x, c))
         end
 
-        Scale.apply_scale(Scale.x_discrete(), [aes], Gadfly.Data(x=aes.x))
-
         if !is(aes.color, nothing)
             aes.color = PooledDataArray(ColorValue[c for (x, c) in groups],
                                         levels(aes.color))
@@ -708,10 +706,6 @@ function apply_statistic(stat::BoxplotStatistic,
             push!(aes.outliers,
                  filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
         end
-    end
-
-    if !is(aes.x, nothing)
-        aes.x = PooledDataArray(Int64[x for (x, c) in keys(groups)])
     end
 
     if !is(aes.color, nothing)
