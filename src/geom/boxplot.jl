@@ -27,8 +27,9 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
     aes = inherit(aes, default_aes)
 
     bw = 1.0cx - theme.boxplot_spacing
-    xs = take(cycle(aes.x), length(aes.middle))
-    cs = take(cycle(aes.color), length(aes.middle))
+    n = length(aes.lower_hinge)
+    xs = take(cycle(aes.x), n)
+    cs = take(cycle(aes.color), n)
 
     ctx = compose!(
         context(),
