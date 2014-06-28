@@ -16,6 +16,7 @@ typealias NumericalAesthetic
     size,         Maybe(Vector{Measure})
     color,        Maybe(AbstractDataVector{ColorValue})
     label,        CategoricalAesthetic
+    group,        CategoricalAesthetic
 
     xmin,         NumericalAesthetic
     xmax,         NumericalAesthetic

@@ -34,8 +34,13 @@ function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::Float64)
     for i in 1:d
         if bincounts[i] > 0
             ll += bincounts[i] * log(bincounts[i] / (n * binwidth))
+        else
+            # penalize zero bins, otherwise issues with imprecise measurements
+            # and such occur.
+            ll -= 5
         end
     end
+
     ll - (d - 1 + log(d)^2.5)
 end
 

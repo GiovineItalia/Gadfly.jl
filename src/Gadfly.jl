@@ -952,6 +952,7 @@ const default_aes_scales = {
                        :xgroup      => Scale.xgroup(),
                        :ygroup      => Scale.ygroup(),
                        :color       => Scale.continuous_color(),
+                       :group       => Scale.group_discrete(),
                        :label       => Scale.label(),
                        :size        => Scale.size_continuous()},
         :categorical => {:x          => Scale.x_discrete(),
@@ -965,6 +966,7 @@ const default_aes_scales = {
                          :xgroup     => Scale.xgroup(),
                          :ygroup     => Scale.ygroup(),
                          :color      => Scale.discrete_color(),
+                         :group      => Scale.group_discrete(),
                          :label      => Scale.label()}}
 
 

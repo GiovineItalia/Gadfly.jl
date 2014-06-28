@@ -29,6 +29,7 @@
     xsize
     ysize
     color
+    group
     label
     func
     titles, Dict{Symbol, String}, Dict{Symbol, String}()

@@ -364,6 +364,12 @@ function y_discrete(; levels=nothing, order=nothing, preserve_order=true)
 end
 
 
+function group_discrete(; levels=nothing, order=nothing, preserve_order=true)
+    return DiscreteScale([:group], levels=levels, order=order,
+                         preserve_order=preserve_order)
+end
+
+
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                      datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
