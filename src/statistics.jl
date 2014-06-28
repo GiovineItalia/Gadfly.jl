@@ -590,8 +590,7 @@ function apply_statistic(stat::TickStatistic,
     else
         minval, maxval = promote(minval, maxval)
         ticks, viewmin, viewmax =
-            Gadfly.optimize_ticks(minval, maxval, extend_ticks=true)
-
+            Gadfly.optimize_ticks(minval, maxval, extend_ticks=true, k_min = scales[:y].minticks, k_max = scales[:y].maxticks)
         grids = ticks
         multiticks = Gadfly.multilevel_ticks(viewmin - (viewmax - viewmin),
                                              viewmax + (viewmax - viewmin))

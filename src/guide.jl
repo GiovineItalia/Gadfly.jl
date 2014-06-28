@@ -507,7 +507,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         line([{(t, 0h), (t, 1h)} for t in grids[gridvisibility]]),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
-        strokedash([0.5mm, 0.5mm]),
+        strokedash(theme.grid_strokedash),
         svgclass("guide xgridlines yfixed"))
 
     dynamic_grid_lines = compose!(
@@ -516,7 +516,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         visible(gridvisibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
-        strokedash([0.5mm, 0.5mm]),
+        strokedash(theme.grid_strokedash),
         svgclass("guide xgridlines yfixed"),
         svgattribute("gadfly:scale", scale),
         jsplotdata("focused_xgrid_color",
@@ -607,8 +607,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     end
 
     return [PositionedGuide(contexts, 10,
-                            bottom_guide_position),
-            PositionedGuide([grid_lines], 0, under_guide_position)]
+                            bottom_guide_position)]
+#            PositionedGuide([grid_lines], 0, under_guide_position)]
 end
 
 
@@ -670,7 +670,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         line([{(0w, t), (1w, t)} for t in grids[gridvisibility]]),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
-        strokedash([0.5mm, 0.5mm]),
+        strokedash(theme.grid_strokedash),
         svgclass("guide ygridlines xfixed"))
 
     dynamic_grid_lines = compose!(
@@ -679,7 +679,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         visible(gridvisibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
-        strokedash([0.5mm, 0.5mm]),
+        strokedash(theme.grid_strokedash),
         svgclass("guide ygridlines xfixed"),
         svgattribute("gadfly:scale", scale),
         jsplotdata("focused_ygrid_color",

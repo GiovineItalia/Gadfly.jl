@@ -57,7 +57,7 @@ function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false,
                            Q={(1,1), (5, 0.9), (2, 0.7), (2.5, 0.5), (3, 0.2)},
                            k_min=2, k_max=10, k_ideal=5,
                            strict_span=false)
-
+                           
     one_t = one(T)
     if x_min == x_max
         R = typeof(1.0 * one_t)
@@ -137,6 +137,7 @@ end
 
 
 function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
+                        k_min=nothing, k_max=nothing,
                         scale=:auto)
     # This can be pretty simple. We are choosing ticks on one of three
     # scales: years, months, days.
