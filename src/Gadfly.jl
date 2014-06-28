@@ -639,7 +639,7 @@ function render(plot::Plot)
     root_context = render_prepared(plot, plot_aes, layer_aess, layer_stats, scales,
                                    statistics, guides)
 
-    # pad_inner(canvas, 5mm) # TODO: implement pad in compose
+    return pad(root_context, 5mm)
 end
 
 
