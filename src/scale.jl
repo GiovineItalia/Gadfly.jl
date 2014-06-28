@@ -64,7 +64,7 @@ end
 
 function identity_formatter(xs::AbstractArray; format=:auto)
     fmt = formatter(xs, fmt=format)
-    [fmt(x) for x in xs]
+    return [fmt(x) for x in xs]
 end
 
 const identity_transform =
@@ -140,7 +140,7 @@ function make_labeler(scale::ContinuousScale)
         scale.trans.label
     else
         function f(xs)
-            scale.trans.label(xs, format=scale.format)
+            return scale.trans.label(xs, format=scale.format)
         end
     end
 end

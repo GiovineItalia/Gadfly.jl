@@ -522,6 +522,7 @@ function apply_statistic(stat::TickStatistic,
         categorical = true
     end
 
+
     # consider forced tick marks
     if stat.ticks != nothing
         minval = min(minval, minimum(stat.ticks))
@@ -662,11 +663,14 @@ function apply_statistic(stat::BoxplotStatistic,
         for (x, c) in zip(aes.x, cycle(aes_color))
             push!(groups, (x, c))
         end
-        aes.x = PooledDataArray(Int64[x for (x, c) in groups])
+
+        Scale.apply_scale(Scale.x_discrete(), [aes], Gadfly.Data(x=aes.x))
+
         if !is(aes.color, nothing)
             aes.color = PooledDataArray(ColorValue[c for (x, c) in groups],
                                         levels(aes.color))
         end
+
         return
     end
 
