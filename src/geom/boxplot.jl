@@ -69,12 +69,15 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
 
     # Outliers
     if aes.outliers != nothing && !isempty(aes.outliers)
-        xys = collect(chain([zip(cycle(x), ys)
-                             for (x, ys) in zip(xs, aes.outliers)]...))
+        xys = collect(chain([zip(cycle(x), ys, cycle([c]))
+                             for (x, ys, c) in zip(xs, aes.outliers, cs)]...))
         compose!(ctx,
-            circle([x for (x, y) in xys],
-                   [y for (x, y) in xys],
-                   [theme.default_point_size]))
+            (context(),
+             circle([x for (x, y, c) in xys],
+                    [y for (x, y, c) in xys],
+                    [theme.default_point_size]),
+             stroke([theme.discrete_highlight_color(c) for (x, y, c) in xys]),
+             fill([c for (x, y, c) in xys])))
     end
 
     # Middle
