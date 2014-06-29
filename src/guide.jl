@@ -348,104 +348,158 @@ function render_continuous_color_key(colors::Dict,
 end
 
 
+function render_colorkey_title(title::String, theme::Gadfly.Theme)
+    title_width, title_height = max_text_extents(theme.key_title_font,
+                                                 theme.key_title_font_size,
+                                                 title)
+
+    if theme.guide_title_position == :left
+        title_form = text(0.0w, title_height, title, hleft, vbottom)
+    elseif theme.guide_title_position == :center
+        title_form = text(0.5w, title_height, title, hcenter, vbottom)
+    elseif theme.guide_title_position == :right
+        title_form = text(1.0w, title_height, title, hright, vbottom)
+    else
+        error("$(theme.guide_title_position) is not a valid guide title position")
+    end
+
+    title_padding = 4mm
+    title_context = compose!(
+        context(0w, 0h, 1w, title_height + title_padding),
+        title_form,
+        stroke(nothing),
+        font(theme.key_title_font),
+        fontsize(theme.key_title_font_size),
+        fill(theme.key_title_color))
+
+    return title_context, title_width
+end
+
+
 function render(guide::ColorKey, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
 
     if theme.key_position == :none
         return PositionedGuide[]
-    else
-        used_colors = Set{ColorValue}()
-        colors = Array(ColorValue, 0) # to preserve ordering
-        labels = Dict{ColorValue, Set{String}}()
-
-        continuous_guide = false
-        guide_title = guide.title
-
-        if guide_title === nothing && !is(aes.color_key_title, nothing)
-            guide_title = aes.color_key_title
-        end
-
-        if aes.color_key_colors != nothing &&
-           aes.color_key_continuous != nothing &&
-           aes.color_key_continuous
-            continuous_guide = true
-        end
-
-        color_key_labels = aes.color_label(keys(aes.color_key_colors))
-        for (color, label) in zip(keys(aes.color_key_colors), color_key_labels)
-            if !in(color, used_colors)
-                push!(used_colors, color)
-                push!(colors, color)
-                labels[color] = Set{String}()
-                push!(labels[color], label)
-            else
-                push!(labels[color], label)
-            end
-        end
-
-        if guide_title === nothing
-            guide_title = "Color"
-        end
-
-        pretty_labels = Dict{ColorValue, String}()
-        for (color, label) in labels
-            pretty_labels[color] = join(labels[color], ", ")
-        end
-
-        # Key title
-        title_width, title_height = max_text_extents(theme.key_title_font,
-                                                     theme.key_title_font_size,
-                                                     guide_title)
-
-        if theme.guide_title_position == :left
-            title_form = text(0.0w, title_height, guide_title, hleft, vbottom)
-        elseif theme.guide_title_position == :center
-            title_form = text(0.5w, title_height, guide_title, hcenter, vbottom)
-        elseif theme.guide_title_position == :right
-            title_form = text(1.0w, title_height, guide_title, hright, vbottom)
-        else
-            error("$(theme.guide_title_position) is not a valid guide title position")
-        end
-
-        title_padding = 4mm
-        title_context = compose!(
-            context(0w, 0h, 1w, title_height + title_padding),
-            title_form,
-            stroke(nothing),
-            font(theme.key_title_font),
-            fontsize(theme.key_title_font_size),
-            fill(theme.key_title_color))
-
-        if theme.colorkey_swatch_shape != :circle &&
-        theme.colorkey_swatch_shape != :square
-            error("$(theme.colorkey_swatch_shape) is not a valid color key swatch shape")
-        end
-
-        if continuous_guide
-            ctxs = render_continuous_color_key(aes.color_key_colors,
-                                               pretty_labels,
-                                               aes.color_function,
-                                               title_context,
-                                               title_width, theme)
-        else
-            ctxs = render_discrete_color_key(colors, pretty_labels,
-                                             title_context,
-                                             title_width, theme)
-        end
-
-        position = right_guide_position
-        if theme.key_position == :left
-            position = left_guide_position
-        elseif theme.key_position == :right
-            position = right_guide_position
-        elseif theme.key_position == :top
-            position = top_guide_position
-        elseif theme.key_position == :bottom
-            position = bottom_guide_position
-        end
-
-        return [PositionedGuide(ctxs, 0, position)]
     end
+
+    used_colors = Set{ColorValue}()
+    colors = Array(ColorValue, 0) # to preserve ordering
+    labels = Dict{ColorValue, Set{String}}()
+
+    continuous_guide = false
+    guide_title = guide.title
+
+    if guide_title === nothing && !is(aes.color_key_title, nothing)
+        guide_title = aes.color_key_title
+    end
+
+    if aes.color_key_colors != nothing &&
+       aes.color_key_continuous != nothing &&
+       aes.color_key_continuous
+        continuous_guide = true
+    end
+
+    color_key_labels = aes.color_label(keys(aes.color_key_colors))
+    for (color, label) in zip(keys(aes.color_key_colors), color_key_labels)
+        if !in(color, used_colors)
+            push!(used_colors, color)
+            push!(colors, color)
+            labels[color] = Set{String}()
+            push!(labels[color], label)
+        else
+            push!(labels[color], label)
+        end
+    end
+
+    if guide_title === nothing
+        guide_title = "Color"
+    end
+
+    pretty_labels = Dict{ColorValue, String}()
+    for (color, label) in labels
+        pretty_labels[color] = join(labels[color], ", ")
+    end
+
+    title_context, title_width = render_colorkey_title(guide_title, theme)
+
+    if theme.colorkey_swatch_shape != :circle &&
+    theme.colorkey_swatch_shape != :square
+        error("$(theme.colorkey_swatch_shape) is not a valid color key swatch shape")
+    end
+
+    if continuous_guide
+        ctxs = render_continuous_color_key(aes.color_key_colors,
+                                           pretty_labels,
+                                           aes.color_function,
+                                           title_context,
+                                           title_width, theme)
+    else
+        ctxs = render_discrete_color_key(colors, pretty_labels,
+                                         title_context,
+                                         title_width, theme)
+    end
+
+    position = right_guide_position
+    if theme.key_position == :left
+        position = left_guide_position
+    elseif theme.key_position == :right
+        position = right_guide_position
+    elseif theme.key_position == :top
+        position = top_guide_position
+    elseif theme.key_position == :bottom
+        position = bottom_guide_position
+    end
+
+    return [PositionedGuide(ctxs, 0, position)]
+end
+
+
+immutable ManualColorKey <: Gadfly.GuideElement
+    title::Union(String, Nothing)
+    labels::Vector{String}
+    colors::Vector
+end
+
+
+const manual_color_key = ManualColorKey
+
+
+function render(guide::ManualColorKey, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    if theme.key_position == :none
+        return PositionedGuide[]
+    end
+
+    guide_title = guide.title
+
+    if guide_title === nothing && !is(aes.color_key_title, nothing)
+        guide_title = aes.color_key_title
+    end
+
+    if guide_title === nothing
+        guide_title = "Color"
+    end
+
+    title_context, title_width = render_colorkey_title(guide_title, theme)
+
+    colors = ColorValue[color(c) for c in guide.colors]
+    labels = (ColorValue => String)[c => l for (c, l) in zip(colors, guide.labels)]
+
+    ctxs = render_discrete_color_key(colors, labels, title_context, title_width, theme)
+
+    position = right_guide_position
+    if theme.key_position == :left
+        position = left_guide_position
+    elseif theme.key_position == :right
+        position = right_guide_position
+    elseif theme.key_position == :top
+        position = top_guide_position
+    elseif theme.key_position == :bottom
+        position = bottom_guide_position
+    end
+
+    return [PositionedGuide(ctxs, 0, position)]
 end
 
 
