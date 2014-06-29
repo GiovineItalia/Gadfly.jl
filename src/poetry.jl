@@ -50,6 +50,42 @@ function plot(f::Function, a, b, elements::ElementOrFunction...; mapping...)
 end
 
 
+# Plot a single function using a contour plot
+function plot(f::Function, xmin, xmax, ymin, ymax,
+              elements::ElementOrFunction...; mapping...)
+    if isempty(elements)
+        elements = ElementOrFunction[]
+    elseif isa(elements, Tuple)
+        elements = ElementOrFunction[elements...]
+    end
+
+    element_types = Set(map(typeof, elements))
+
+    if !in(Guide.xlabel, element_types)
+        push!(elements, Guide.xlabel("x"))
+    end
+
+    if !in(Guide.ylabel, element_types)
+        push!(elements, Guide.ylabel("y"))
+    end
+
+    if !in(Guide.colorkey, element_types)
+        push!(elements, Guide.colorkey("f(x,y)"))
+    end
+
+    push!(elements, Coord.cartesian(xflip=xmin > xmax, yflip=ymin > ymax))
+
+    mappingdict = {:func => [f], :xmin => [xmin], :xmax => [xmax],
+                   :ymin => [ymin], :ymax => [ymax]}
+    for (k, v) in mapping
+        mappingdict[k] = v
+    end
+
+    plot(Geom.contour, elements...; mappingdict...)
+end
+
+
+
 # Create a layer from a list of functions or expressions.
 function layer(fs::Array, a, b)
     layer(func=fs, xmin=[a], xmax=[b], Stat.func, Geom.line)

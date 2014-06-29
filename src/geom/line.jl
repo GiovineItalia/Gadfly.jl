@@ -15,6 +15,13 @@ end
 
 const line = LineGeometry
 
+
+function contour(; n=15, samples=150, preserve_order=false)
+    return LineGeometry(Gadfly.Stat.contour(n=n, samples=samples),
+                                            preserve_order=preserve_order)
+end
+
+
 # Only allowing identity statistic in paths b/c I don't think any
 # any of the others will work with `preserve_order=true` right now
 function path()

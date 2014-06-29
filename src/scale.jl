@@ -536,7 +536,7 @@ function continuous_color_gradient(;minvalue=nothing, maxvalue=nothing)
         hspan0 = h1 - hmid
         function f(r)
             r2 = 2r - 1
-            return LCHab(l1 - lspan * abs(r2)^power, max(10, c * abs(r2)),
+            return LCHab(min(80, l1 - lspan * abs(r2)^power), max(10, c * abs(r2)),
                          (1-r)*h0 + r * h1)
         end
     end

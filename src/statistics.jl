@@ -2,6 +2,7 @@ module Stat
 
 import Gadfly
 import StatsBase
+import Contour
 using Color
 using Compose
 using DataArrays
@@ -962,12 +963,13 @@ const func = FunctionStatistic
 
 
 function default_scales(::FunctionStatistic)
-    return [Gadfly.Scale.func(), Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
+    return [Gadfly.Scale.func(), Gadfly.Scale.x_continuous(),
+            Gadfly.Scale.y_continuous()]
 end
 
 
 function element_aesthetics(::FunctionStatistic)
-    return [:func, :xmin, :xmax]
+    return [:func, :xmin, :xmax, :ymin, :ymax]
 end
 
 
@@ -1013,6 +1015,62 @@ function apply_statistic(stat::FunctionStatistic,
     data.y = ys
     Scale.apply_scale(scales[:y], [aes], data)
 end
+
+
+immutable ContourStatistic <: Gadfly.StatisticElement
+    n::Int
+    samples::Int
+
+    function ContourStatistic(; n=15, samples=150)
+        new(n, samples)
+    end
+end
+
+
+element_aesthetics(::ContourStatistic) = [:func, :xmin, :xmax, :ymin, :ymax]
+
+
+const contour = ContourStatistic
+
+
+function default_scales(::ContourStatistic)
+    return [Gadfly.Scale.func(), Gadfly.Scale.x_continuous(),
+            Gadfly.Scale.y_continuous(),
+            Gadfly.Scale.continuous_color_gradient()]
+end
+
+
+function apply_statistic(stat::ContourStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    if length(aes.func) != 1
+        error("Stat.contour requires exactly one function")
+    end
+
+    f = aes.func[1]
+    xs = linspace(aes.xmin[1], aes.xmax[1], stat.samples)
+    ys = linspace(aes.ymin[1], aes.ymax[1], stat.samples)
+    zs = Float64[f(x, y) for x in xs, y in ys]
+    levels = Float64[]
+    contour_xs = eltype(xs)[]
+    contour_ys = eltype(ys)[]
+    for contour in Contour.contours(xs, ys, zs, stat.n)
+        for curve in contour.lines
+            for v in curve.vertices
+                push!(contour_xs, v[1])
+                push!(contour_ys, v[2])
+                push!(levels, contour.level)
+            end
+        end
+    end
+
+    color_scale = get(scales, :color, Gadfly.Scale.continuous_color_gradient())
+    Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=levels))
+    Scale.apply_scale(scales[:x], [aes],  Gadfly.Data(x=contour_xs))
+    Scale.apply_scale(scales[:y], [aes], Gadfly.Data(y=contour_ys))
+end
+
 
 
 end # module Stat
