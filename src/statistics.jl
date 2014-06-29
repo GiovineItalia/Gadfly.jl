@@ -686,6 +686,7 @@ function apply_statistic(stat::BoxplotStatistic,
 
     if aes.y != nothing
         m = length(groups)
+        aes.x = Array(eltype(aes.x), m)
         aes.middle = Array(T, m)
         aes.lower_hinge = Array(T, m)
         aes.upper_hinge = Array(T, m)
@@ -695,6 +696,8 @@ function apply_statistic(stat::BoxplotStatistic,
 
         for (i, ((x, c), ys)) in enumerate(groups)
             sort!(ys)
+
+            aes.x[i] = x
             aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
                     quantile!(ys, [0.25, 0.5, 0.75])
             iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
@@ -708,6 +711,10 @@ function apply_statistic(stat::BoxplotStatistic,
             push!(aes.outliers,
                  filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
         end
+    end
+
+    if isa(aes_x, PooledDataArray)
+        aes.x = PooledDataArray(aes.x, aes_x.pool)
     end
 
     if !is(aes.color, nothing)

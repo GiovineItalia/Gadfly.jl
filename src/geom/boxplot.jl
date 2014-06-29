@@ -60,7 +60,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
     ctx = compose!(
         context(),
         fill(collect(cs)),
-        stroke([theme.discrete_highlight_color(c) for c in cs]),
+        stroke(collect(cs)),
         linewidth(theme.line_width),
         {
             context(),
@@ -82,10 +82,10 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                               for (x, uh, uf) in zip(xs, upper_hinge, upper_fence)]),
 
                 # Fences
-                Compose.line([[(x - fw, lf), (x + fw, lf)]
+                Compose.line([[(x - fw/2, lf), (x + fw/2, lf)]
                               for (x, lf) in zip(xs, lower_fence)]),
 
-                Compose.line([[(x - fw, uf), (x + fw, uf)]
+                Compose.line([[(x - fw/2, uf), (x + fw/2, uf)]
                               for (x, uf) in zip(xs, upper_fence)]),
 
                 stroke(collect(cs))
@@ -96,7 +96,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
 
     # Outliers
     if aes.outliers != nothing && !isempty(aes.outliers)
-        xys = collect(chain([zip(cycle(x), ys, cycle([c]))
+        xys = collect(chain([zip(cycle([x]), ys, cycle([c]))
                              for (x, ys, c) in zip(xs, aes.outliers, cs)]...))
         compose!(ctx,
             (context(),
@@ -111,7 +111,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
     if aes.middle != nothing
         compose!(ctx, {
            context(order=1),
-           Compose.line([[(x - fw, mid), (x + fw, mid)]
+           Compose.line([[(x - fw/2, mid), (x + fw/2, mid)]
                          for (x, mid) in zip(xs, aes.middle)]),
            linewidth(theme.middle_width),
            stroke([theme.middle_color(c) for c in cs])

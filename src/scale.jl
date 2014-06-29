@@ -381,6 +381,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
             end
 
             disc_data = discretize(getfield(data, var), scale.levels, scale.order)
+
             setfield!(aes, var, PooledDataArray(int64(disc_data.refs)))
 
             # The leveler for discrete scales is a closure over the discretized data.
