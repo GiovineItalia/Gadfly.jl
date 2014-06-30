@@ -53,8 +53,8 @@ const cartesian = Cartesian
 #   A compose Canvas.
 #
 function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
-    xmin = nothing
-    xmax = nothing
+    xmin = NaN
+    xmax = NaN
     for var in coord.xvars
         for aes in aess
             if getfield(aes, var) === nothing
@@ -66,24 +66,12 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
                 vals = {vals}
             end
 
-            for val in vals
-                if !Gadfly.isconcrete(val)
-                    continue
-                end
-
-                if xmin === nothing || val < xmin
-                    xmin = val
-                end
-
-                if xmax === nothing || val > xmax
-                    xmax = val
-                end
-            end
+            xmin, xmax = Gadfly.concrete_minmax(vals, xmin, xmax)
         end
     end
 
-    ymin = nothing
-    ymax = nothing
+    ymin = NaN
+    ymax = NaN
     for var in coord.yvars
         for aes in aess
             if getfield(aes, var) === nothing
@@ -93,19 +81,7 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
             # Outliers is an odd aesthetic that needs special treatment.
             if var == :outliers
                 for vals in aes.outliers
-                    for val in vals
-                        if !Gadfly.isconcrete(val)
-                            continue
-                        end
-
-                        if ymin === nothing || val < ymin
-                            ymin = val
-                        end
-
-                        if ymax === nothing || val > ymax
-                            ymax = val
-                        end
-                    end
+                    ymin, ymax = Gadfly.concrete_minmax(vals, ymin, ymax)
                 end
 
                 continue
@@ -116,19 +92,7 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
                 vals = {vals}
             end
 
-            for val in vals
-                if !Gadfly.isconcrete(val)
-                    continue
-                end
-
-                if ymin === nothing || val < ymin
-                    ymin = val
-                end
-
-                if ymax === nothing || val > ymax
-                    ymax = val
-                end
-            end
+            ymin, ymax = Gadfly.concrete_minmax(vals, ymin, ymax)
         end
     end
 
