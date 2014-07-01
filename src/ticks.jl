@@ -54,10 +54,16 @@ optimize_ticks() = {}
 #   A Float64 vector containing tick marks.
 #
 function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false,
-                           Q={(1,1), (5, 0.9), (2, 0.7), (2.5, 0.5), (3, 0.2)},
+                           Q=[(1.0,1.0), (5.0, 0.9), (2.0, 0.7), (2.5, 0.5), (3.0, 0.2)],
                            k_min=2, k_max=10, k_ideal=5,
                            strict_span=false)
-                           
+
+    Qv = [(float64(q[1]), float64(q[2])) for q in Q]
+    optimize_ticks_typed(x_min, x_max, extend_ticks, Qv, k_min, k_max, k_ideal, strict_span)
+end
+
+function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(Float64,Float64)}, k_min,
+                           k_max, k_ideal, strict_span)
     one_t = one(T)
     if x_min == x_max
         R = typeof(1.0 * one_t)

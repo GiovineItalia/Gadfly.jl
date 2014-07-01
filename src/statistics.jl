@@ -482,30 +482,7 @@ function apply_statistic(stat::TickStatistic,
 
                 size = aes.size === nothing ? [nothing] : aes.size
 
-                for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
-                    if !Gadfly.isconcrete(val)
-                        continue
-                    end
-
-                    if val < minval || !isfinite(minval)
-                        minval = val
-                    end
-
-                    if val > maxval || !isfinite(maxval)
-                        maxval = val
-                    end
-
-                    if s != nothing
-                        minval = min(minval, val - s)
-                        maxval = max(maxval, val + s)
-                    end
-
-                    if ds != nothing
-                        minval = min(minval, val - ds)
-                        maxval = max(maxval, val + ds)
-                    end
-                end
-
+                minval, maxval = apply_statistic_typed(minval, maxval, vals, size, dsize)
                 push!(in_values, vals)
             end
         end
@@ -640,6 +617,63 @@ function apply_statistic(stat::TickStatistic,
     end
 
     nothing
+end
+
+function apply_statistic_typed(minval, maxval, vals, size, dsize)
+#     for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
+    lensize  = length(size)
+    lendsize = length(dsize)
+    for (i, val) in enumerate(vals)
+        if !Gadfly.isconcrete(val) || !isfinite(val)
+            continue
+        end
+
+        s = size[mod1(i, lensize)]
+        ds = dsize[mod1(i, lendsize)]
+
+        minval, maxval = minvalmaxval(minval, maxval, val, s, ds)
+    end
+    minval, maxval
+end
+
+function apply_statistic_typed{T}(minval, maxval, vals::DataArray{T}, size, dsize)
+#     for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
+    lensize  = length(size)
+    lendsize = length(dsize)
+    for i = 1:length(vals)
+        if vals.na[i]
+            continue
+        end
+
+        val::T = vals.data[i]
+        s = size[mod1(i, lensize)]
+        ds = dsize[mod1(i, lendsize)]
+
+        minval, maxval = minvalmaxval(minval, maxval, val, s, ds)
+    end
+    minval, maxval
+end
+
+function minvalmaxval{T}(minval::T, maxval::T, val, s, ds)
+    if val < minval || !isfinite(minval)
+        minval = val
+    end
+
+    if val > maxval || !isfinite(maxval)
+        maxval = val
+    end
+
+    if s != nothing
+        minval = min(minval, val - s)::T
+        maxval = max(maxval, val + s)::T
+    end
+
+    if ds != nothing
+        minval = min(minval, val - ds)::T
+        maxval = max(maxval, val + ds)::T
+    end
+
+    minval, maxval
 end
 
 immutable BoxplotStatistic <: Gadfly.StatisticElement

@@ -34,6 +34,23 @@ function concrete_length(xs)
     n
 end
 
+function concrete_length{T}(xs::DataArray{T})
+    n = 0
+    for i = 1:length(xs)
+        if !xs.na[i] && isfinite(xs.data[i]::T)
+            n += 1
+        end
+    end
+    n
+end
+
+function concrete_length(xs::Iterators.Chain)
+    n = 0
+    for obj in xs.xss
+        n += concrete_length(obj)
+    end
+    n
+end
 
 function concrete_minimum(xs)
     if done(xs, start(xs))
@@ -77,6 +94,46 @@ function concrete_maximum(xs)
     end
     return x_max
 end
+
+
+function concrete_minmax{T<:Real}(xs, xmin::T, xmax::T)
+    for x in xs
+        if isconcrete(x)
+            xT = convert(T, x)
+            if isnan(xmin) || xT < xmin
+                xmin = xT
+            end
+            if isnan(xmax) || xT > xmax
+                xmax = xT
+            end
+        end
+    end
+    xmin, xmax
+end
+
+function concrete_minmax{T<:Real, TA}(xs::DataArray{TA}, xmin::T, xmax::T)
+    for i = 1:length(xs)
+        if !xs.na[i]
+            x = xs.data[i]::TA
+            xT = convert(T, x)
+            if isnan(xmin) || xT < xmin
+                xmin = xT
+            end
+            if isnan(xmax) || xT > xmax
+                xmax = xT
+            end
+        end
+    end
+    xmin, xmax
+end
+
+function concrete_minmax{T<:Real}(xs::Iterators.Chain, xmin::T, xmax::T)
+    for obj in xs.xss
+        xmin, xmax = concrete_minmax(obj, xmin, xmax)
+    end
+    xmin, xmax
+end
+
 
 
 function nonzero_length(xs)

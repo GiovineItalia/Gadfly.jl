@@ -208,14 +208,7 @@ function apply_scale(scale::ContinuousScale,
             end
 
             ds = DataArray(T, length(getfield(data, var)))
-            for (i, d) in enumerate(getfield(data, var))
-                if isconcrete(d)
-                    ds[i] = scale.trans.f(d)
-                    i += 1
-                else
-                    ds[i] = d
-                end
-            end
+            apply_scale_typed!(ds, getfield(data, var), scale)
 
             setfield!(aes, var, ds)
 
@@ -250,6 +243,16 @@ function apply_scale(scale::ContinuousScale,
     end
 end
 
+function apply_scale_typed!(ds, field, scale)
+    for (i, d) in enumerate(field)
+        if isconcrete(d)
+            ds[i] = scale.trans.f(d)
+            i += 1
+        else
+            ds[i] = d
+        end
+    end
+end
 
 # Reorder the levels of a pooled data array
 function reorder_levels(da::PooledDataArray, order::AbstractVector)
