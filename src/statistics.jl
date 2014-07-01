@@ -14,7 +14,7 @@ import Gadfly: Scale, Coord, element_aesthetics, default_scales, isconcrete,
                nonzero_length, setfield!
 import StatsBase: bandwidth, kde
 import Distributions: Uniform
-import Iterators: chain, cycle, product, partition
+import Iterators: chain, cycle, product, partition, distinct
 
 include("bincount.jl")
 
@@ -124,9 +124,14 @@ function apply_statistic(stat::HistogramStatistic,
             bincounts[x - x_min + 1] += 1
         end
     else
-        d, bincounts = choose_bin_count_1d(values,
-                                           stat.minbincount,
-                                           stat.maxbincount)
+        value_set = Set(values[Bool[Gadfly.isconcrete(v) for v in values]])
+        if  length(value_set) / length(values) < 0.9
+            d, bincounts = choose_bin_count_simple(values, value_set)
+        else
+            d, bincounts = choose_bin_count_1d(values,
+                                               stat.minbincount,
+                                               stat.maxbincount)
+        end
     end
 
     x_min = Gadfly.concrete_minimum(values)
