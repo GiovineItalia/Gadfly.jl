@@ -428,7 +428,7 @@ function render(plot::Plot)
             end
 
             for (k, v) in layer.mapping
-                setfield!(datas[i], k, eval_plot_mapping(layer.data_source, v))
+                set_mapped_data!(datas[i], layer.data_source, k, v)
             end
         end
     end
@@ -449,7 +449,12 @@ function render(plot::Plot)
         union!(used_aesthetics, element_aesthetics(stat))
     end
 
-    defined_unused_aesthetics = setdiff(set(keys(plot.mapping)), used_aesthetics)
+    mapped_aesthetics = set(keys(plot.mapping))
+    for layer in plot.layers
+        union!(mapped_aesthetics, keys(layer.mapping))
+    end
+
+    defined_unused_aesthetics = setdiff(mapped_aesthetics, used_aesthetics)
     if !isempty(defined_unused_aesthetics)
         warn("The following aesthetics are mapped, but not used by any geometry:\n    ",
              join([string(a) for a in defined_unused_aesthetics], ", "))
@@ -459,6 +464,7 @@ function render(plot::Plot)
     for scale in plot.scales
         union!(scaled_aesthetics, element_aesthetics(scale))
     end
+
 
     # Only one scale can be applied to an aesthetic (without getting some weird
     # and incorrect results), so we organize scales into a dict.
@@ -488,11 +494,29 @@ function render(plot::Plot)
 
     # Assign scales to mapped aesthetics first.
     for var in unscaled_aesthetics
-        if !haskey(plot.mapping, var)
+        if !in(var, mapped_aesthetics)
             continue
         end
 
-        t = classify_data(getfield(plot.data, var))
+        var_data = getfield(plot.data, var)
+        if var_data == nothing
+            for data in datas
+                var_layer_data = getfield(data, var)
+                if var_layer_data != nothing
+                    var_data = var_layer_data
+                    break
+                end
+            end
+        end
+
+        if var_data == nothing
+            continue
+        end
+
+        t = classify_data(var_data)
+        if t == nothing
+
+        end
 
         if haskey(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
@@ -571,7 +595,7 @@ function render(plot::Plot)
     end
 
     function mapped_and_used(vs)
-        any([haskey(plot.mapping, v) && in(v, used_aesthetics) for v in vs])
+        any([in(v, mapped_aesthetics) && in(v, used_aesthetics) for v in vs])
     end
 
     function choose_name(vs, fallback)
@@ -580,6 +604,15 @@ function render(plot::Plot)
                 return plot.data.titles[v]
             end
         end
+
+        for v in vs
+            for data in datas
+                if haskey(data.titles, v)
+                    return data.titles[v]
+                end
+            end
+        end
+
         fallback
     end
 
