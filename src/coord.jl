@@ -44,6 +44,84 @@ end
 const cartesian = Cartesian
 
 
+# Return the first concrete aesthetic value in one of the given aesthetics
+#
+# Args:
+#   aess: An array of Aesthetics to search through.
+#   vars: Aesthetic variables to search though.
+#
+# Returns:
+#   A concrete value if one is found, otherwise nothing.
+#
+function first_concrete_aesthetic_value(aess::Vector{Gadfly.Aesthetics},
+                                        vars::Vector{Symbol})
+    T = aesthetics_type(aess, vars)
+    for var in vars
+        for aes in aess
+            vals = getfield(aes, var)
+            if vals === nothing
+                continue
+            end
+
+            if !isa(vals, AbstractArray)
+                vals = [vals]
+            end
+
+            if var == :outliers
+                for outlier_vals in aes.outliers
+                    for val in outlier_vals
+                        if Gadfly.isconcrete(val)
+                            return convert(T, val)
+                        end
+                    end
+                end
+                continue
+            end
+
+            for val in vals
+                if Gadfly.isconcrete(val)
+                    return convert(T, val)
+                end
+            end
+        end
+    end
+
+    return nothing
+end
+
+
+# Find a common type among a group of aesthetics.
+#
+# Args:
+#   aess: An array of Aesthetics to search through.
+#   vars: Aesthetic variables to search though.
+#
+# Returns:
+#   A common type.
+function aesthetics_type(aess::Vector{Gadfly.Aesthetics},
+                              vars::Vector{Symbol})
+    T = None
+    for var in vars
+        for aes in aess
+            vals = getfield(aes, var)
+            if vals === nothing
+                continue
+            end
+
+            if var == :outliers
+                if !isempty(vals)
+                    T = promote_type(T, eltype(first(vals)))
+                end
+            else
+                T = promote_type(T, eltype(vals))
+            end
+        end
+    end
+
+    return T
+end
+
+
 # Produce a context with suitable cartesian coordinates.
 #
 # Args:
@@ -52,47 +130,49 @@ const cartesian = Cartesian
 # Returns:
 #   A compose Canvas.
 #
-function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
-    xmin = NaN
-    xmax = NaN
-    for var in coord.xvars
-        for aes in aess
-            if getfield(aes, var) === nothing
-                continue
-            end
+function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics})
+    xmin = xmax = first_concrete_aesthetic_value(aess, coord.xvars)
+    if xmin != nothing
+        for var in coord.xvars
+            for aes in aess
+                vals = getfield(aes, var)
+                if vals === nothing
+                    continue
+                end
 
-            vals = getfield(aes, var)
-            if !isa(vals, AbstractArray)
-                vals = {vals}
-            end
+                if !isa(vals, AbstractArray)
+                    vals = [vals]
+                end
 
-            xmin, xmax = Gadfly.concrete_minmax(vals, xmin, xmax)
+                xmin, xmax = Gadfly.concrete_minmax(vals, xmin, xmax)
+            end
         end
     end
 
-    ymin = NaN
-    ymax = NaN
-    for var in coord.yvars
-        for aes in aess
-            if getfield(aes, var) === nothing
-                continue
-            end
-
-            # Outliers is an odd aesthetic that needs special treatment.
-            if var == :outliers
-                for vals in aes.outliers
-                    ymin, ymax = Gadfly.concrete_minmax(vals, ymin, ymax)
+    ymin = ymax = first_concrete_aesthetic_value(aess, coord.yvars)
+    if ymin != nothing
+        for var in coord.yvars
+            for aes in aess
+                vals = getfield(aes, var)
+                if vals === nothing
+                    continue
                 end
 
-                continue
-            end
+                # Outliers is an odd aesthetic that needs special treatment.
+                if var == :outliers
+                    for outlier_vals in aes.outliers
+                        ymin, ymax = Gadfly.concrete_minmax(outlier_vals, ymin, ymax)
+                    end
 
-            vals = getfield(aes, var)
-            if !isa(vals, AbstractArray)
-                vals = {vals}
-            end
+                    continue
+                end
 
-            ymin, ymax = Gadfly.concrete_minmax(vals, ymin, ymax)
+                if !isa(vals, AbstractArray)
+                    vals = [vals]
+                end
+
+                ymin, ymax = Gadfly.concrete_minmax(vals, ymin, ymax)
+            end
         end
     end
 

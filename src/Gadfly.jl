@@ -675,7 +675,7 @@ function render_prepared(plot::Plot,
                          guides::Vector{GuideElement};
                          table_only=false)
     # III. Coordinates
-    plot_context = Coord.apply_coordinate(plot.coord, plot_aes, layer_aess...)
+    plot_context = Coord.apply_coordinate(plot.coord, vcat(plot_aes, layer_aess))
 
     # IV. Geometries
     themes = Theme[layer.theme === nothing ? plot.theme : layer.theme

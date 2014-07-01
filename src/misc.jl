@@ -111,6 +111,7 @@ function concrete_minmax{T<:Real}(xs, xmin::T, xmax::T)
     xmin, xmax
 end
 
+
 function concrete_minmax{T<:Real, TA}(xs::DataArray{TA}, xmin::T, xmax::T)
     for i = 1:length(xs)
         if !xs.na[i]
@@ -126,6 +127,40 @@ function concrete_minmax{T<:Real, TA}(xs::DataArray{TA}, xmin::T, xmax::T)
     end
     xmin, xmax
 end
+
+
+function concrete_minmax{T}(xs, xmin::T, xmax::T)
+    for x in xs
+        if isconcrete(x)
+            xT = convert(T, x)
+            if xT < xmin
+                xmin = xT
+            end
+            if xT > xmax
+                xmax = xT
+            end
+        end
+    end
+    xmin, xmax
+end
+
+
+function concrete_minmax{T, TA}(xs::DataArray{TA}, xmin::T, xmax::T)
+    for i = 1:length(xs)
+        if !xs.na[i]
+            x = xs.data[i]::TA
+            xT = convert(T, x)
+            if xT < xmin
+                xmin = xT
+            end
+            if xT > xmax
+                xmax = xT
+            end
+        end
+    end
+    xmin, xmax
+end
+
 
 function concrete_minmax{T<:Real}(xs::Iterators.Chain, xmin::T, xmax::T)
     for obj in xs.xss
