@@ -108,7 +108,7 @@ const asinh_transform =
 
 function sqrt_formatter(xs::AbstractArray; format=:plain)
     fmt = formatter(xs, fmt=format)
-    [@sprintf("√%s", fmt(x)) for x in xs]
+    [@sprintf("%s<sup>2</sup>", fmt(x)) for x in xs]
 end
 
 const sqrt_transform = ContinuousScaleTransform(sqrt, x -> x^2, sqrt_formatter)
