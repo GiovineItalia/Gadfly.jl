@@ -475,8 +475,10 @@ function apply_statistic(stat::TickStatistic,
                 if maxval == nothing
                     maxval = first(vals)
                 end
+                T = promote_type(typeof(minval), typeof(maxval))
+                minval = convert(T, minval)
+                maxval = convert(T, maxval)
 
-                T = isempty(vals) ? eltype(vals) : typeof(first(vals))
                 if stat.out_var == "x"
                     dsize = aes.xsize === nothing ? [nothing] : aes.xsize
                 elseif stat.out_var == "y"
