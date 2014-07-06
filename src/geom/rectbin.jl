@@ -92,7 +92,7 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme,
     end
 
     n = nx
-    cs = collect(take(cycle(aes.color), n))
+    cs = collect(takestrict(cycle(aes.color), n))
     visibility = cs .!= nothing
     xmin = xmin[visibility]
     xmax = xmax[visibility]

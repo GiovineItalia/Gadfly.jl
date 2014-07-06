@@ -40,12 +40,12 @@ function render(geom::HexagonalBinGeometry, theme::Gadfly.Theme,
     Gadfly.assert_aesthetics_equal_length("Geom.hexbin", aes, :x, :y)
 
     n = length(aes.x)
-    visibility = Bool[!isna(c) for c in take(cycle(aes.color), n)]
+    visibility = Bool[!isna(c) for c in takestrict(cycle(aes.color), n)]
     xs = aes.x[visibility]
     ys = aes.y[visibility]
-    xsizes = collect(eltype(aes.xsize), take(cycle(aes.xsize), n))[visibility]
-    ysizes = collect(eltype(aes.ysize), take(cycle(aes.ysize), n))[visibility]
-    cs = collect(eltype(aes.color), take(cycle(aes.color), n))[visibility]
+    xsizes = collect(eltype(aes.xsize), takestrict(cycle(aes.xsize), n))[visibility]
+    ysizes = collect(eltype(aes.ysize), takestrict(cycle(aes.ysize), n))[visibility]
+    cs = collect(eltype(aes.color), takestrict(cycle(aes.color), n))[visibility]
     n = length(xs)
 
     return compose!(
