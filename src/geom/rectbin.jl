@@ -44,9 +44,8 @@ end
 # Returns
 #   A compose form.
 #
-function render(geom::RectangularBinGeometry,
-                theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+function render(geom::RectangularBinGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
 
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])

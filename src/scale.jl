@@ -12,6 +12,13 @@ import Gadfly: element_aesthetics, isconcrete, concrete_length,
 
 include("color.jl")
 
+
+# Return true if var is categorical.
+function iscategorical(scales::Dict{Symbol, Gadfly.ScaleElement}, var::Symbol)
+    return haskey(scales, var) && isa(scales[var], DiscreteScale)
+end
+
+
 # Apply some scales to data in the given order.
 #
 # Args:

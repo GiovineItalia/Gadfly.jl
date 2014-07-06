@@ -63,7 +63,8 @@ end
 # Returns:
 #   A compose Form.
 #
-function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
+                scales::Dict{Symbol, ScaleElement})
     Gadfly.assert_aesthetics_defined("Geom.line", aes, :x, :y)
     Gadfly.assert_aesthetics_equal_length("Geom.line", aes,
                                           element_aesthetics(geom)...)

@@ -218,7 +218,8 @@ end
 # Returns
 #   A compose form.
 #
-function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
+                scales::Dict{Symbol, ScaleElement})
     if geom.orientation == :horizontal
         if (is(aes.ymin, nothing) || is(aes.ymax, nothing)) && is(aes.y, nothing)
             error("Geom.bar required \"y\" to be bound or both \"y_min\" and \"y_max\".")

@@ -93,7 +93,8 @@ end
 # Render a subplot grid geometry, which consists of rendering and arranging
 # many smaller plots.
 function render(geom::SubplotGrid, theme::Gadfly.Theme,
-                superplot_aes::Gadfly.Aesthetics)
+                superplot_aes::Gadfly.Aesthetics,
+                scales::Dict{Symbol, ScaleElement})
     if superplot_aes.xgroup === nothing && superplot_aes.ygroup === nothing
         error("Geom.subplot_grid requires \"xgroup\" and/or \"ygroup\" to be bound.")
     end
@@ -103,7 +104,6 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     n, m = size(aes_grid)
 
     coord = Coord.cartesian()
-    scales = Dict{Symbol, Gadfly.ScaleElement}()
     plot_stats = Gadfly.StatisticElement[stat for stat in geom.statistics]
     layer_stats = Gadfly.StatisticElement[typeof(layer.statistic) == Stat.nil ?
                        Geom.default_statistic(layer.geom) : layer.statistic
@@ -205,6 +205,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         end
         guides = Gadfly.GuideElement[guide for guide in geom.guides]
 
+        p.scales = collect(ScaleElement, values(scales))
+
         # default guides
         push!(guides, Guide.background())
 
@@ -232,7 +234,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         subtbl = Gadfly.render_prepared(
                             p, aes_grid[i, j], layer_aes_grid[i, j],
                             layer_stats,
-                            Dict{Symbol, Gadfly.ScaleElement}(),
+                            scales,
                             plot_stats,
                             guides,
                             table_only=true)

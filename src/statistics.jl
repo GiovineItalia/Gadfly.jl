@@ -77,6 +77,13 @@ end
 
 element_aesthetics(::HistogramStatistic) = [:x]
 
+function default_scales(stat::HistogramStatistic)
+    if stat.orientation == :vertical
+        return [Gadfly.Scale.y_continuous()]
+    else
+        return [Gadfly.Scale.x_continuous()]
+    end
+end
 
 const histogram = HistogramStatistic
 
@@ -116,6 +123,7 @@ function apply_statistic(stat::HistogramStatistic,
     end
 
     if haskey(scales, var) && isa(scales[var], Scale.DiscreteScale)
+        isdiscrete = true
         x_min = minimum(values)
         x_max = maximum(values)
         d = x_max - x_min + 1
@@ -124,6 +132,7 @@ function apply_statistic(stat::HistogramStatistic,
             bincounts[x - x_min + 1] += 1
         end
     else
+        isdiscrete = false
         value_set = Set(values[Bool[Gadfly.isconcrete(v) for v in values]])
         if  length(value_set) / length(values) < 0.9
             d, bincounts = choose_bin_count_simple(values, value_set)
@@ -136,17 +145,20 @@ function apply_statistic(stat::HistogramStatistic,
 
     x_min = Gadfly.concrete_minimum(values)
     x_max = Gadfly.concrete_maximum(values)
-    binwidth = (x_max - x_min) / d
+    binwidth = isdiscrete ? 1 : (x_max - x_min) / d
 
     if aes.color === nothing
-        setfield!(aes, minvar, Array(Float64, d))
-        setfield!(aes, maxvar, Array(Float64, d))
         setfield!(aes, othervar, Array(Float64, d))
-
-        for j in 1:d
-            getfield(aes, minvar)[j] = x_min + (j - 1) * binwidth
-            getfield(aes, maxvar)[j] = x_min + j * binwidth
-            getfield(aes, othervar)[j] = bincounts[j]
+        if isdiscrete
+            setfield!(aes, var, collect(Int, 1:d))
+        else
+            setfield!(aes, minvar, Array(isdiscrete ? Int : Float64, d))
+            setfield!(aes, maxvar, Array(isdiscrete ? Int : Float64, d))
+            for j in 1:d
+                getfield(aes, minvar)[j] = x_min + (j - 1) * binwidth
+                getfield(aes, maxvar)[j] = x_min + j * binwidth
+                getfield(aes, othervar)[j] = bincounts[j]
+            end
         end
     else
         groups = Dict()
@@ -162,8 +174,13 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
 
-        setfield!(aes, minvar, Array(Float64, d * length(groups)))
-        setfield!(aes, maxvar, Array(Float64, d * length(groups)))
+        if isdiscrete
+            setfield!(aes, var, Array(Int, d * length(groups)))
+        else
+            setfield!(aes, minvar, Array(isdiscrete ? Int : Float64, d * length(groups)))
+            setfield!(aes, maxvar, Array(isdiscrete ? Int : Float64, d * length(groups)))
+        end
+
         setfield!(aes, othervar, Array(Float64, d * length(groups)))
         colors = Array(ColorValue, d * length(groups))
 
@@ -176,18 +193,32 @@ function apply_statistic(stat::HistogramStatistic,
                 if !Gadfly.isconcrete(x)
                     continue
                 end
-                bin = max(1, min(d, int(ceil((x - x_min) / binwidth))))
-                bincounts[bin] += 1
+                if isdiscrete
+                    bincounts[int(x)] += 1
+                else
+                    bin = max(1, min(d, int(ceil((x - x_min) / binwidth))))
+                    bincounts[bin] += 1
+                end
             end
             stack_height += bincounts[1:d]
 
-            for j in 1:d
-                idx = (i-1)*d + j
-                getfield(aes, minvar)[idx] = x_min + (j - 1) * binwidth
-                getfield(aes, maxvar)[idx] = x_min + j * binwidth
-                getfield(aes, othervar)[idx] = bincounts[j]
-                colors[idx] = c
+            if isdiscrete
+                for j in 1:d
+                    idx = (i-1)*d + j
+                    getfield(aes, var)[idx] = j
+                    getfield(aes, othervar)[idx] = bincounts[j]
+                    colors[idx] = c
+                end
+            else
+                for j in 1:d
+                    idx = (i-1)*d + j
+                    getfield(aes, minvar)[idx] = x_min + (j - 1) * binwidth
+                    getfield(aes, maxvar)[idx] = x_min + j * binwidth
+                    getfield(aes, othervar)[idx] = bincounts[j]
+                    colors[idx] = c
+                end
             end
+
         end
 
         drawmax = float64(maximum(stack_height))
@@ -218,6 +249,7 @@ const density = DensityStatistic
 
 element_aesthetics(::DensityStatistic) = [:x, :y]
 
+default_scales(::DensityStatistic) = [Gadfly.Scale.y_continuous()]
 
 function apply_statistic(stat::DensityStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -457,17 +489,16 @@ function apply_statistic(stat::TickStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
+
     in_group_var = symbol(string(stat.out_var, "group"))
     minval, maxval = nothing, nothing
     if getfield(aes, in_group_var) === nothing
         in_values = {}
-        categorical = true
+        categorical = (:x in stat.in_vars && Scale.iscategorical(scales, :x)) ||
+                      (:y in stat.in_vars && Scale.iscategorical(scales, :y))
+
         for var in stat.in_vars
             vals = getfield(aes, var)
-            if vals != nothing && !isa(vals, PooledDataArray)
-                categorical = false
-            end
-
             if vals != nothing
                 if minval == nothing
                     minval = first(vals)
@@ -506,7 +537,6 @@ function apply_statistic(stat::TickStatistic,
         maxval = Gadfly.concrete_maximum(in_values)
         categorical = true
     end
-
 
     # consider forced tick marks
     if stat.ticks != nothing

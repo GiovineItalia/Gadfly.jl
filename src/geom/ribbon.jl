@@ -1,7 +1,7 @@
 
 immutable RibbonGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
-    
+
     function RibbonGeometry(default_statistic=Gadfly.Stat.identity())
         new(default_statistic)
     end
@@ -21,7 +21,7 @@ end
 
 
 function render(geom::RibbonGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
     Gadfly.assert_aesthetics_defined("Geom.ribbon", aes, :x, :ymin, :ymax)
     Gadfly.assert_aesthetics_equal_length("Geom.ribbon", aes,
                                           element_aesthetics(geom)...)

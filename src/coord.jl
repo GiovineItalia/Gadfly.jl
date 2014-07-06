@@ -130,7 +130,8 @@ end
 # Returns:
 #   A compose Canvas.
 #
-function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics})
+function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
+                          scales::Dict{Symbol, Gadfly.ScaleElement})
     xmin = xmax = first_concrete_aesthetic_value(aess, coord.xvars)
     if xmin != nothing
         for var in coord.xvars
@@ -195,7 +196,8 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics})
     # using discrete scales. TODO: Think more carefully about this. Is there a
     # way for the geometry to let the coordinates know that a little extra room
     # is needed to draw everything?
-    if all([aes.x === nothing || typeof(aes.x) <: PooledDataArray for aes in aess])
+
+    if Scale.iscategorical(scales, :x)
         xmin -= 0.5
         xmax += 0.5
         xpadding = 0mm
@@ -203,7 +205,7 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics})
         xpadding = 2mm
     end
 
-    if all([aes.y === nothing || typeof(aes.y) <: PooledDataArray for aes in aess])
+    if Scale.iscategorical(scales, :y)
         ymin -= 0.5
         ymax += 0.5
         ypadding = 0mm

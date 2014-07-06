@@ -22,7 +22,7 @@ using Datetime
 using JSON
 
 import Iterators
-import Iterators: distinct, drop
+import Iterators: distinct, drop, chain
 import Compose: draw, hstack, vstack, gridstack
 import Base: copy, push!, start, next, done, has, show, getindex, cat,
              writemime, isfinite, display
@@ -478,7 +478,7 @@ function render(plot::Plot)
     unscaled_aesthetics = setdiff(used_aesthetics, scaled_aesthetics)
 
     # Add default scales for statistics.
-    for stat in layer_stats
+    for stat in chain(plot.statistics, layer_stats)
         for scale in default_scales(stat)
             # Use the statistics default scale only when it covers some
             # aesthetic that is not already scaled.
@@ -708,14 +708,15 @@ function render_prepared(plot::Plot,
                          guides::Vector{GuideElement};
                          table_only=false)
     # III. Coordinates
-    plot_context = Coord.apply_coordinate(plot.coord, vcat(plot_aes, layer_aess))
+    plot_context = Coord.apply_coordinate(plot.coord, vcat(plot_aes,
+                                          layer_aess), scales)
 
     # IV. Geometries
     themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
                    for layer in plot.layers]
 
     compose!(plot_context,
-             [render(layer.geom, theme, aes)
+             [render(layer.geom, theme, aes, scales)
               for (layer, aes, theme) in zip(plot.layers, layer_aess, themes)]...)
 
     # V. Guides
