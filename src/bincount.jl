@@ -121,13 +121,14 @@ end
 #   A tuple of the form (d, bincounts), where d gives the optimal number of
 #   bins, and bincounts is an array giving the number of occurances in each bin.
 #
-function choose_bin_count_simple(xs::AbstractArray, xs_set::Set)
+function choose_bin_count_simple(xs::AbstractArray, xs_set::Set,
+                                 min_bin_count=1, max_bin_count=150)
     n = length(xs_set)
     if n <= 1
         return 1, Int[n > 0 ? 1 : 0]
     end
 
-    d = iround(sqrt(n))
+    d = min(max(iround(sqrt(n)), min_bin_count), max_bin_count)
     bincounts = zeros(Int, d)
     x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)
     span = x_max - x_min
