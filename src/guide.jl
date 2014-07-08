@@ -282,7 +282,10 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                 xpos += colwidths[i]
             end
 
-            return compose!(outerctx, ctx, svgclass("guide"))
+            return compose!(outerctx, ctx,
+                            # defeat webkit's asinine default drag behavior
+                            jscall("drag(function() {}, function() {}, function() {})"),
+                            svgclass("guide colorkey"))
         end
 
         return compose!(
@@ -356,7 +359,7 @@ function render_continuous_color_key(colors::Dict,
          fill(theme.key_label_color),
          font(theme.key_label_font),
          fontsize(theme.key_label_font_size)},
-         svgclass(".guide"))
+         svgclass("guide colorkey"))
 
     return [ctx]
 end

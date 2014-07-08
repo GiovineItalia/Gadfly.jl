@@ -608,7 +608,7 @@ Gadfly.guide_background_scroll = function(event) {
 
 
 Gadfly.zoomslider_button_mouseover = function(event) {
-     this.select(".button_logo")
+    this.select(".button_logo")
          .animate({fill: this.data("mouseover_color")}, 100);
 };
 
@@ -739,18 +739,35 @@ Gadfly.zoomslider_thumb_dragend = function(event) {
 };
 
 
-Gadfly.colorkey_swatch_click = function(event) {
-    var root = this.plotroot();
-    var color_class = this.data("color_class");
-
+var toggle_color_class = function(root, color_class, ison) {
     var guides = root.selectAll(".guide ." + color_class);
     var geoms = root.selectAll(".geometry ." + color_class);
-    if (this.attr("opacity") == 1.0) {
+    if (ison) {
         guides.animate({opacity: 0.5}, 250);
         geoms.animate({opacity: 0.0}, 250);
     } else {
         guides.animate({opacity: 1.0}, 250);
         geoms.animate({opacity: 1.0}, 250);
+    }
+};
+
+
+Gadfly.colorkey_swatch_click = function(event) {
+    var root = this.plotroot();
+    var color_class = this.data("color_class");
+
+    if (event.shiftKey) {
+        root.selectAll(".colorkey text")
+            .forEach(function (element) {
+                var other_color_class = element.data("color_class");
+                console.info(other_color_class);
+                if (other_color_class != color_class) {
+                    toggle_color_class(root, other_color_class,
+                                       element.attr("opacity") == 1.0);
+                }
+            });
+    } else {
+        toggle_color_class(root, color_class, this.attr("opacity") == 1.0);
     }
 };
 
