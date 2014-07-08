@@ -83,9 +83,8 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme,
         linewidth(theme.line_width),
         aes.color_key_continuous == true ?
             svgclass("geometry") :
-            svgclass([@sprintf("geometry color_%s",
-                escape_id(aes.color_label([c])[1]))
-                          for c in aes.color]))
+            svgclass([string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
+                      for c in aes.color]))
 end
 
 function render(geom::XErrorBarGeometry, theme::Gadfly.Theme,
@@ -120,6 +119,6 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme,
         linewidth(theme.line_width),
         (aes.color_key_continuous == true || !colored) ?
             svgclass("geometry") :
-            svgclass([@sprintf("geometry color_%s", escape_id(aes.color_label(c)[1]))
+            svgclass([string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
                       for c in aes.color]))
 end

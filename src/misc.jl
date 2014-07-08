@@ -309,3 +309,8 @@ function jsplotdata(key::String, value::String, arg::Vector{Measure}=Measure[])
 end
 
 
+function svg_color_class_from_label(label::String)
+    return @sprintf("color_%s", escape_id(label))
+end
+
+

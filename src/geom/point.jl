@@ -48,8 +48,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme,
     else
         compose!(ctx,
             stroke(map(theme.discrete_highlight_color, aes.color)),
-            svgclass([@sprintf("color_%s",
-                               escape_id(aes.color_label([c])[1]))
+            svgclass([svg_color_class_from_label(escape_id(aes.color_label([c])[1]))
                       for c in aes.color]))
     end
 

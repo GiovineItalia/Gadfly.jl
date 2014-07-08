@@ -739,6 +739,22 @@ Gadfly.zoomslider_thumb_dragend = function(event) {
 };
 
 
+Gadfly.colorkey_swatch_click = function(event) {
+    var root = this.plotroot();
+    var color_class = this.data("color_class");
+
+    var guides = root.selectAll(".guide ." + color_class);
+    var geoms = root.selectAll(".geometry ." + color_class);
+    if (this.attr("opacity") == 1.0) {
+        guides.animate({opacity: 0.5}, 250);
+        geoms.animate({opacity: 0.0}, 250);
+    } else {
+        guides.animate({opacity: 1.0}, 250);
+        geoms.animate({opacity: 1.0}, 250);
+    }
+};
+
+
 return Gadfly;
 
 }));

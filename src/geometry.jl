@@ -9,7 +9,8 @@ using Gadfly
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
 import Gadfly: render, element_aesthetics, inherit, escape_id,
-               default_statistic, setfield!, set, ScaleElement
+               default_statistic, setfield!, set, ScaleElement,
+               svg_color_class_from_label
 import Iterators
 import Iterators: cycle, product, distinct, takestrict, chain, repeated
 
