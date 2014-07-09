@@ -33,7 +33,7 @@ export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
 
 
 # Re-export some essentials from Compose
-export SVGJS, SVG, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
+export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
 
 
 # Define an XML namespace for custom attributes

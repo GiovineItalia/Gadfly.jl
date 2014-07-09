@@ -760,7 +760,6 @@ Gadfly.colorkey_swatch_click = function(event) {
         root.selectAll(".colorkey text")
             .forEach(function (element) {
                 var other_color_class = element.data("color_class");
-                console.info(other_color_class);
                 if (other_color_class != color_class) {
                     toggle_color_class(root, other_color_class,
                                        element.attr("opacity") == 1.0);
