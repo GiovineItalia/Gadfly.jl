@@ -17,7 +17,7 @@ before_install:
     - sudo apt-get install git libpcre3-dev julia -y
 script:
     - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-    - julia -e 'Pkg.init(); Pkg.add("Cairo"); Pkg.add("RDatasets", v"0.1.1"); run(`ln -s $(pwd()) $(Pkg.dir("Gadfly"))`); Pkg.pin("Gadfly"); Pkg.resolve()'
+    - julia -e 'Pkg.init(); Pkg.add("Cairo"); Pkg.add("RDatasets", v"0.1.1"); run(`ln -s $(pwd()) $(Pkg.dir("Gadfly"))`); Pkg.pin("Gadfly"); Pkg.resolve(); Pkg.checkout("Compose")'
     - if [ $JULIAVERSION = "julianightlies" ]; then julia --code-coverage tests/test.jl; fi
     - if [ $JULIAVERSION = "juliarelease" ]; then julia tests/test.jl; fi
     - if [ $JULIAVERSION = "julianightlies" ]; then julia -e 'Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'; fi
