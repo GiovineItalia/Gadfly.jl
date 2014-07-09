@@ -740,8 +740,8 @@ Gadfly.zoomslider_thumb_dragend = function(event) {
 
 
 var toggle_color_class = function(root, color_class, ison) {
-    var guides = root.selectAll(".guide ." + color_class);
-    var geoms = root.selectAll(".geometry ." + color_class);
+    var guides = root.selectAll(".guide." + color_class + ",.guide ." + color_class);
+    var geoms = root.selectAll(".geometry." + color_class + ",.geometry ." + color_class);
     if (ison) {
         guides.animate({opacity: 0.5}, 250);
         geoms.animate({opacity: 0.0}, 250);
