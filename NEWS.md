@@ -1,4 +1,16 @@
 
+# Version 0.3.3
+
+  * Add `fixed` and `aspect_ratio` arguments to `Coord.cartesian` to control a
+    plot's aspect ratio.
+
+  * A PGF backend, allowing plots to be rendered as TeX documents.
+
+  * Reimplement toggleable color keys in the SVGJS backend.
+
+# Version 0.3.2
+
+  * Bug fix release.
 
 # Version 0.3.1
 
