@@ -1135,16 +1135,22 @@ function apply_statistic(stat::ContourStatistic,
     levels = Float64[]
     contour_xs = eltype(xs)[]
     contour_ys = eltype(ys)[]
+
+    groups = PooledDataArray(Int[])
+    group = 0
     for contour in Contour.contours(xs, ys, zs, stat.n)
         for curve in contour.lines
             for v in curve.vertices
                 push!(contour_xs, v[1])
                 push!(contour_ys, v[2])
                 push!(levels, contour.level)
+                push!(groups, group)
             end
+            group += 1
         end
     end
 
+    aes.group = groups
     color_scale = get(scales, :color, Gadfly.Scale.continuous_color_gradient())
     Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=levels))
     Scale.apply_scale(scales[:x], [aes],  Gadfly.Data(x=contour_xs))
