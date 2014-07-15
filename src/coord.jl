@@ -27,16 +27,20 @@ immutable Cartesian <: Gadfly.CoordinateElement
     xmax
     ymin
     ymax
-    xflip
-    yflip
+    xflip::Bool
+    yflip::Bool
+    fixed::Bool
+    aspect_ratio::Union(Nothing, Float64)
 
     function Cartesian(
             xvars=[:x, :xviewmin, :xviewmax, :xmin, :xmax],
             yvars=[:y, :yviewmin, :yviewmax, :ymin, :ymax, :middle,
                    :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers];
             xflip::Bool=false, yflip::Bool=false,
-            xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing)
-        new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip)
+            xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,
+            fixed=false, aspect_ratio=nothing)
+        new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
+            aspect_ratio)
     end
 end
 

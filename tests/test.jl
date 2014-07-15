@@ -66,7 +66,8 @@ tests = [
     ("ribbon",                                6inch, 3inch),
     ("layer_leak",                            6inch, 3inch),
     ("hline_vline",                           6inch, 3inch),
-    ("grid_strokedash",                           6inch, 3inch)
+    ("grid_strokedash",                       6inch, 3inch),
+    ("aspect_ratio",                          6inch, 3inch)
 ]
 
 

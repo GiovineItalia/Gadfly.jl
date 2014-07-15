@@ -24,7 +24,7 @@ using JSON
 import Iterators
 import Iterators: distinct, drop, chain
 import Compose: draw, hstack, vstack, gridstack
-import Base: copy, push!, start, next, done, has, show, getindex, cat,
+import Base: copy, push!, start, next, done, show, getindex, cat,
              writemime, isfinite, display
 
 export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
@@ -728,7 +728,8 @@ function render_prepared(plot::Plot,
         end
     end
 
-    tbl = Guide.layout_guides(plot_context, plot.theme, guide_contexts...)
+    tbl = Guide.layout_guides(plot_context, plot.coord,
+                              plot.theme, guide_contexts...)
     if table_only
         return tbl
     end

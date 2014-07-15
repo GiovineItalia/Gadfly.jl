@@ -1010,6 +1010,7 @@ end
 #   A new canvas containing the plot with guides layed out in the specified
 #   manner.
 function layout_guides(plot_context::Context,
+                       coord::Gadfly.CoordinateElement,
                        theme::Gadfly.Theme,
                        positioned_guides::PositionedGuide...)
     # Organize guides by position
@@ -1038,7 +1039,15 @@ function layout_guides(plot_context::Context,
     plot_units = plot_context.units
 
     # Populate the table
-    tbl = table(m, n, focus_y:focus_y, focus_x:focus_x, units=plot_units)
+
+    aspect_ratio = nothing
+    if coord.fixed
+        aspect_ratio = abs(plot_context.units.width / plot_context.units.height)
+    elseif coord.aspect_ratio != nothing
+        aspect_ratio = coord.aspect_ratio
+    end
+    tbl = table(m, n, focus_y:focus_y, focus_x:focus_x, units=plot_units,
+                aspect_ratio=aspect_ratio)
 
     i = 1
     for (ctxs, order) in guides[top_guide_position]
