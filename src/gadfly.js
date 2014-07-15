@@ -140,9 +140,9 @@ Gadfly.plot_mouseover = function(event) {
         ygridlines = root.select(".ygridlines");
 
     xgridlines.data("unfocused_strokedash",
-                    xgridlines.attr("stroke-dasharray"))
+                    xgridlines.attr("stroke-dasharray").replace(/px/g, "mm"))
     ygridlines.data("unfocused_strokedash",
-                    ygridlines.attr("stroke-dasharray"))
+                    ygridlines.attr("stroke-dasharray").replace(/px/g, "mm"))
 
     // emphasize grid lines
     var destcolor = root.data("focused_xgrid_color");
