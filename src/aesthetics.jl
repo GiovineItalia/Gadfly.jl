@@ -250,7 +250,8 @@ end
 
 # work arround 0.2 weirdness
 function cat_aes_var!(a::DataArray, b::AbstractArray)
-    da = DataArray(eltype(a), length(a) + length(b))
+    T = promote_type(eltype(a), eltype(b))
+    da = DataArray(T, length(a) + length(b))
     copy!(da, [a..., b...])
     return da
 end
