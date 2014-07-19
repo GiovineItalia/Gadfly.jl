@@ -197,8 +197,9 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                            theme.key_label_font_size,
                            values(labels)...)
 
+    ypad = 1.0mm
     title_height = title_ctx.box.height
-    entry_height = maximum([height for (width, height) in extents])
+    entry_height = maximum([height for (width, height) in extents]) + ypad
     swatch_size = entry_height / 2
 
     # return a context with a lyout of numcols columns

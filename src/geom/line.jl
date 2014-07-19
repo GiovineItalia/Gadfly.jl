@@ -92,7 +92,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
         end
 
         classes = [string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
-                   for c in keys(points)]
+                   for (c, g) in keys(points)]
 
         ctx = compose!(ctx, Compose.line(collect(values(points))),
                       stroke(collect(map(first, keys(points)))),

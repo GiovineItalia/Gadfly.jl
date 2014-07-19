@@ -1078,9 +1078,12 @@ function apply_statistic(stat::FunctionStatistic,
     if aes.color != nothing
         func_color = aes.color
         aes.color = DataArray(eltype(aes.color), length(aes.func) * stat.num_samples)
+        groups = DataArray(Int, length(aes.func) * stat.num_samples)
         for i in 1:length(aes.func)
             aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = func_color[i]
+            groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
+        aes.group = PooledDataArray(groups)
     elseif length(aes.func) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
         data.color = Array(String, length(aes.func) * stat.num_samples)
