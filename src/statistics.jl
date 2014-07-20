@@ -12,7 +12,7 @@ using Loess
 
 import Gadfly: Scale, Coord, element_aesthetics, default_scales, isconcrete,
                nonzero_length, setfield!
-import StatsBase: bandwidth, kde
+import KernelDensity
 import Distributions: Uniform
 import Iterators: chain, cycle, product, partition, distinct
 
@@ -270,9 +270,9 @@ function apply_statistic(stat::DensityStatistic,
         x_f64 = collect(Float64, aes.x)
         # When will stat.n ever be <= 1? Seems pointless
         # certainly its length will always be 1
-        window = stat.n > 1 ? bandwidth(x_f64) : 0.1
-        f = kde(x_f64, width=window, npoints=stat.n)
-        aes.x = f.x
+        window = stat.n > 1 ? KernelDensity.default_bandwidth(x_f64) : 0.1
+        f = KernelDensity.kde(x_f64, bandwidth=window, npoints=stat.n)
+        aes.x = collect(Float64, f.x)
         aes.y = f.density
     else
         groups = Dict()
@@ -288,8 +288,8 @@ function apply_statistic(stat::DensityStatistic,
         aes.x = Array(Float64, 0)
         aes.y = Array(Float64, 0)
         for (c, xs) in groups
-            window = stat.n > 1 ? bandwidth(xs) : 0.1
-            f = kde(xs, width=window, npoints=stat.n)
+            window = stat.n > 1 ? KernelDensity.default_bandwidth(xs) : 0.1
+            f = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
             append!(aes.x, f.x)
             append!(aes.y, f.density)
             for _ in 1:length(f.x)
