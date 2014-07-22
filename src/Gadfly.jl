@@ -40,17 +40,6 @@ export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack,
 Compose.xmlns["gadfly"] = "http://www.gadflyjl.org/ns"
 
 
-# Backwards compatibility with julia-0.2 names
-if !isdefined(:rad2deg)
-    const rad2deg = radians2degrees
-    const deg2rad = degrees2radians
-end
-
-if !isdefined(:setfield!)
-    const setfield! = setfield
-end
-
-
 typealias ColorOrNothing Union(ColorValue, Nothing)
 
 
@@ -449,7 +438,7 @@ function render(plot::Plot)
         union!(used_aesthetics, element_aesthetics(stat))
     end
 
-    mapped_aesthetics = set(keys(plot.mapping))
+    mapped_aesthetics = Set(keys(plot.mapping))
     for layer in plot.layers
         union!(mapped_aesthetics, keys(layer.mapping))
     end
@@ -482,7 +471,7 @@ function render(plot::Plot)
         for scale in default_scales(stat)
             # Use the statistics default scale only when it covers some
             # aesthetic that is not already scaled.
-            scale_aes = set(element_aesthetics(scale))
+            scale_aes = Set(element_aesthetics(scale))
             if !isempty(intersect(scale_aes, unscaled_aesthetics))
                 for var in scale_aes
                     scales[var] = scale
@@ -520,7 +509,7 @@ function render(plot::Plot)
 
         if haskey(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
-            scale_aes = set(element_aesthetics(scale))
+            scale_aes = Set(element_aesthetics(scale))
             for var in scale_aes
                 scales[var] = scale
             end
@@ -543,7 +532,7 @@ function render(plot::Plot)
 
         if haskey(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
-            scale_aes = set(element_aesthetics(scale))
+            scale_aes = Set(element_aesthetics(scale))
             for var in scale_aes
                 scales[var] = scale
             end
@@ -822,66 +811,23 @@ function default_mime()
     end
 end
 
+import Base.Multimedia: @try_display, xdisplayable
+import Base.REPL: REPLDisplay
 
-if isdefined(Base, :REPL)
-    import Base.Multimedia: @try_display, xdisplayable
-    const REPLDisplay = Base.REPL.REPLDisplay
-
-    function display(p::Plot)
-        displays = Base.Multimedia.displays
-        for i = length(displays):-1:1
-            m = default_mime()
-
-            if xdisplayable(displays[i], m, p)
-                try
-                    return display(displays[i], m, p)
-                catch e
-                    isa(e, MethodError) && e.f in (display, redisplay, writemime) ||
-                        rethrow()
-                end
-            end
-
-            if xdisplayable(displays[i], p)
-                try
-                    return display(displays[i], p)
-                catch e
-                    isa(e, MethodError) && e.f in (display, redisplay, writemime) ||
-                        rethrow()
-                end
-            end
-        end
-        invoke(display,(Any,),p)
-    end
-else
-    # julia 0.2 fallback
-    const REPLDisplay = TextDisplay
-
-    function display(d::TextDisplay, p::Plot)
+function display(p::Plot)
+    displays = Base.Multimedia.displays
+    for i = length(displays):-1:1
         m = default_mime()
-        display(d, m, p)
+        if xdisplayable(displays[i], m, p)
+             @try_display return display(displays[i], m, p)
+        end
+
+        if xdisplayable(displays[i], p)
+            @try_display return display(displays[i], p)
+        end
     end
+    invoke(display,(Any,),p)
 end
-
-
-# TODO: Replace the above block with this as soon as we drop 0.2 support.
-
-#import Base.Multimedia: @try_display, xdisplayable
-#import Base.REPL: REPLDisplay
-
-#function display(p::Plot)
-    #displays = Base.Multimedia.displays
-    #for i = length(displays):-1:1
-        #m = default_mime()
-        #if xdisplayable(displays[i], m, p)
-             #@try_display return display(displays[i], m, p)
-        #end
-
-        #if xdisplayable(displays[i], p)
-            #@try_display return display(displays[i], p)
-        #end
-    #end
-    #invoke(display,(Any,),p)
-#end
 
 
 function open_file(filename)

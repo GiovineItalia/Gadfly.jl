@@ -8,7 +8,7 @@ using DataStructures
 using Gadfly
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length,
-               nonzero_length, formatter, setfield!, set
+               nonzero_length, formatter
 
 include("color.jl")
 
@@ -227,7 +227,7 @@ function apply_scale(scale::ContinuousScale,
                 label_var = symbol(@sprintf("%s_label", string(var)))
             end
 
-            if in(label_var, set(names(aes)))
+            if in(label_var, Set(names(aes)))
                 setfield!(aes, label_var, make_labeler(scale))
             end
         end
@@ -406,7 +406,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                 end
             end
 
-            if in(label_var, set(names(aes)))
+            if in(label_var, Set(names(aes)))
                 setfield!(aes, label_var, labeler)
             end
         end
