@@ -6,9 +6,11 @@ immutable LineGeometry <: Gadfly.GeometryElement
     # Do not reorder points along the x-axis.
     preserve_order::Bool
 
+    order::Int
+
     function LineGeometry(default_statistic=Gadfly.Stat.identity();
-                          preserve_order=false)
-        new(default_statistic, preserve_order)
+                          preserve_order=false, order=2)
+        new(default_statistic, preserve_order, order)
     end
 end
 
@@ -34,7 +36,8 @@ end
 
 
 function smooth(; method::Symbol=:loess, smoothing::Float64=0.75)
-    return LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing))
+    return LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing),
+                        order=5)
 end
 
 
@@ -73,7 +76,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
 
-    ctx = context(order=2)
+    ctx = context(order=geom.order)
 
     if aes.group != nothing
         # group points by group

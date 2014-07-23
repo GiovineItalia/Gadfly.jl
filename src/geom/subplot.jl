@@ -5,31 +5,26 @@
 abstract SubplotGeometry <: Gadfly.GeometryElement
 
 
-immutable SubplotLayer
-    statistic::Gadfly.StatisticElement
-    geom::Gadfly.GeometryElement
-
-    function SubplotLayer(geom::Gadfly.GeometryElement=Geom.nil(),
-                          statistic::Gadfly.StatisticElement=Stat.nil())
-        new(statistic, geom)
-    end
-end
-
-
 # Adding elements to subplots in a generic way.
 
-function add_subplot_element(subplot::SubplotGeometry, arg::Function)
+function add_subplot_element(subplot::SubplotGeometry, arg::Base.Callable)
     add_subplot_element(subplot, arg())
 end
 
 
-function add_subplot_element(subplot::SubplotGeometry, arg::SubplotLayer)
+function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.Layer)
     push!(subplot.layers, arg)
 end
 
 
-function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.GeometryElement)
-    push!(subplot.layers, SubplotLayer(arg))
+function add_subplot_element(p::SubplotGeometry, arg::Gadfly.GeometryElement)
+    if !isempty(p.layers) && isa(p.layers[end].geom, Geom.Nil)
+        p.layers[end].geom = arg
+    else
+        layer = Layer()
+        layer.geom = arg
+        push!(p.layers, layer)
+    end
 end
 
 
@@ -55,7 +50,7 @@ end
 
 
 immutable SubplotGrid <: SubplotGeometry
-    layers::Vector{SubplotLayer}
+    layers::Vector{Gadfly.Layer}
     statistics::Vector{Gadfly.StatisticElement}
     guides::Vector{Gadfly.GuideElement}
     free_x_axis::Bool
@@ -65,7 +60,7 @@ immutable SubplotGrid <: SubplotGeometry
     # these using scales.
     function SubplotGrid(elements::Gadfly.ElementOrFunction...;
                          free_x_axis=false, free_y_axis=false)
-        subplot = new(SubplotLayer[], Gadfly.StatisticElement[],
+        subplot = new(Gadfly.Layer[], Gadfly.StatisticElement[],
                       Gadfly.GuideElement[], free_x_axis, free_y_axis)
 
         for element in elements
@@ -116,29 +111,45 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     layer_aes_grid = Array(Array{Gadfly.Aesthetics, 1}, n, m)
     for i in 1:n, j in 1:m
-        layer_aes = fill(copy(aes_grid[i, j]), length(geom.layers))
+        layer_aes = Gadfly.Aesthetics[copy(aes_grid[i, j])
+                                      for _ in 1:length(geom.layers)]
 
         for (layer_stat, aes) in zip(layer_stats, layer_aes)
             Stat.apply_statistics(Gadfly.StatisticElement[layer_stat],
                                   scales, coord, aes)
         end
+        layer_aes_grid[i, j] = layer_aes
 
         plot_aes = cat(layer_aes...)
         Stat.apply_statistics(plot_stats, scales, coord, plot_aes)
-
         aes_grid[i, j] = plot_aes
-        layer_aes_grid[i, j] = layer_aes
     end
 
     # apply geom-wide statistics
     geom_aes = cat(aes_grid...)
     geom_stats = Gadfly.StatisticElement[]
 
-    if !geom.free_x_axis
+    has_stat_xticks = false
+    has_stat_yticks = false
+    for guide in geom.guides
+        stat = default_statistic(guide)
+        if !isa(stat, Gadfly.Stat.identity)
+            if isa(stat, Gadfly.Stat.TickStatistic)
+                if stat.out_var == "x"
+                    has_stat_xticks = true
+                elseif stat.out_var == "y"
+                    has_stat_yticks = true
+                end
+            end
+            push!(geom_stats, stat)
+        end
+    end
+
+    if !geom.free_x_axis && !has_stat_xticks
         push!(geom_stats, Stat.xticks())
     end
 
-    if !geom.free_y_axis
+    if !geom.free_y_axis && !has_stat_yticks
         push!(geom_stats, Stat.yticks())
     end
 
@@ -202,13 +213,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     for i in 1:n, j in 1:m
         p = Plot()
         p.theme = theme
-        for layer in geom.layers
-            plot_layer = Gadfly.Layer()
-            plot_layer.statistic = layer.statistic
-            plot_layer.geom = layer.geom
-            push!(p.layers, plot_layer)
-        end
-        guides = Gadfly.GuideElement[guide for guide in geom.guides]
+        p.layers = geom.layers
+        guides = Gadfly.GuideElement[]
 
         p.scales = collect(ScaleElement, values(scales))
 
@@ -241,18 +247,17 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                             aes_grid[i, j], layer_aes_grid[i, j],
                             layer_stats,
                             scales,
-                            plot_stats,
                             guides,
                             table_only=true)
 
         # copy over the correct units, since we are reparenting the children
-        #for u in 1:size(subtbl, 1), v in 1:size(subtbl, 2)
-            #for child in subtbl[u, v]
-                #if child.units == Compose.nil_unit_box
-                    #child.units = subtbl.units
-                #end
-            #end
-        #end
+        for u in 1:size(subtbl, 1), v in 1:size(subtbl, 2)
+            for child in subtbl[u, v]
+                if child.units == Compose.nil_unit_box
+                    child.units = subtbl.units
+                end
+            end
+        end
 
         tbl[i, 2 + j] = pad(subtbl[1, 1 + joff], subplot_padding)
 

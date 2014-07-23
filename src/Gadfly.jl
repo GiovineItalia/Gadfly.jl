@@ -672,7 +672,7 @@ function render(plot::Plot)
     end
 
     root_context = render_prepared(plot, coord, plot_aes, layer_aess,
-                                   layer_stats, scales, statistics, guides)
+                                   layer_stats, scales, guides)
 
     return pad_inner(root_context, 5mm)
 end
@@ -706,7 +706,6 @@ function render_prepared(plot::Plot,
                          layer_aess::Vector{Aesthetics},
                          layer_stats::Vector{StatisticElement},
                          scales::Dict{Symbol, ScaleElement},
-                         statistics::Vector{StatisticElement},
                          guides::Vector{GuideElement};
                          table_only=false)
     # III. Coordinates

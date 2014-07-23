@@ -247,8 +247,29 @@ function cat_aes_var!(a::Dict, b::Dict)
 end
 
 
-function cat_aes_var!(a::AbstractArray, b::AbstractArray)
+function cat_aes_var!{T}(a::AbstractArray{T}, b::AbstractArray{T})
     return append!(a, b)
+end
+
+
+function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
+    V = promote_type(T, U)
+    if isa(a, DataArray) || isa(b, DataArray)
+        ab = DataArray(V, length(a) + length(b))
+    else
+        ab = Array(V, length(a), length(b))
+    end
+    i = 1
+    for x in a
+        ab[i] = x
+        i += 1
+    end
+    for x in b
+        ab[i] = x
+        i += 1
+    end
+
+    return ab
 end
 
 
