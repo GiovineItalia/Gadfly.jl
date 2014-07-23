@@ -6,14 +6,23 @@ immutable LineGeometry <: Gadfly.GeometryElement
     # Do not reorder points along the x-axis.
     preserve_order::Bool
 
+    order::Int
+
     function LineGeometry(default_statistic=Gadfly.Stat.identity();
-                          preserve_order=false)
-        new(default_statistic, preserve_order)
+                          preserve_order=false, order=2)
+        new(default_statistic, preserve_order, order)
     end
 end
 
 
 const line = LineGeometry
+
+
+function contour(; n=15, samples=150, preserve_order=true)
+    return LineGeometry(Gadfly.Stat.contour(n=n, samples=samples),
+                                            preserve_order=preserve_order)
+end
+
 
 # Only allowing identity statistic in paths b/c I don't think any
 # any of the others will work with `preserve_order=true` right now
@@ -27,7 +36,8 @@ end
 
 
 function smooth(; method::Symbol=:loess, smoothing::Float64=0.75)
-    return LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing))
+    return LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing),
+                        order=5)
 end
 
 
@@ -42,7 +52,7 @@ end
 
 
 function element_aesthetics(::LineGeometry)
-    return [:x, :y, :color]
+    return [:x, :y, :color, :group]
 end
 
 
@@ -56,7 +66,8 @@ end
 # Returns:
 #   A compose Form.
 #
-function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
+                scales::Dict{Symbol, ScaleElement})
     Gadfly.assert_aesthetics_defined("Geom.line", aes, :x, :y)
     Gadfly.assert_aesthetics_equal_length("Geom.line", aes,
                                           element_aesthetics(geom)...)
@@ -65,9 +76,32 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     default_aes.color = PooledDataArray(ColorValue[theme.default_color])
     aes = inherit(aes, default_aes)
 
-    ctx = context(order=2)
+    ctx = context(order=geom.order)
 
-    if length(aes.color) == 1 &&
+    if aes.group != nothing
+        # group points by group
+        points = Dict{Any, Array{(Any, Any),1}}()
+        for (x, y, c, g) in zip(aes.x, aes.y, cycle(aes.color), cycle(aes.group))
+            if !haskey(points, (c,g))
+                points[(c,g)] = Array((Any, Any),0)
+            end
+            push!(points[(c,g)], (x, y))
+        end
+
+        if !geom.preserve_order
+            for (g, g_points) in points
+                sort!(g_points, by=first)
+            end
+        end
+
+        classes = [string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
+                   for (c, g) in keys(points)]
+
+        ctx = compose!(ctx, Compose.line(collect(values(points))),
+                      stroke(collect(map(first, keys(points)))),
+                      svgclass(classes))
+
+    elseif length(aes.color) == 1 &&
             !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
         T = (eltype(aes.x), eltype(aes.y))
         points = T[(x, y) for (x, y) in zip(aes.x, aes.y)]
@@ -94,7 +128,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
             end
         end
 
-        classes = [@sprintf("geometry color_%s", escape_id(aes.color_label([c])[1]))
+        classes = [string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
                    for c in keys(points)]
 
         ctx = compose!(ctx, Compose.line(collect(values(points))),

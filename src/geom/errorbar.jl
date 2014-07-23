@@ -36,22 +36,24 @@ end
 # Returns:
 #   A compose Form.
 #
-function render(geom::ErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::ErrorBarGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
     # check for X and Y error bar aesthetics
     if isempty(Gadfly.undefined_aesthetics(aes, element_aesthetics(xerrorbar())...))
-        xctx = render(xerrorbar(), theme, aes)
+        xctx = render(xerrorbar(), theme, aes, scales)
     else
         xctx = nothing
     end
     if isempty(Gadfly.undefined_aesthetics(aes, element_aesthetics(yerrorbar())...))
-        yctx = render(yerrorbar(), theme, aes)
+        yctx = render(yerrorbar(), theme, aes, scales)
     else
         yctx = nothing
     end
     compose(context(order=3), xctx, yctx)
 end
 
-function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::YErrorBarGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
     Gadfly.assert_aesthetics_defined("Geom.errorbar", aes,
                                      element_aesthetics(geom)...)
     Gadfly.assert_aesthetics_equal_length("Geom.errorbar", aes,
@@ -81,12 +83,12 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
         linewidth(theme.line_width),
         aes.color_key_continuous == true ?
             svgclass("geometry") :
-            svgclass([@sprintf("geometry color_%s",
-                escape_id(aes.color_label([c])[1]))
-                          for c in aes.color]))
+            svgclass([string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
+                      for c in aes.color]))
 end
 
-function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::XErrorBarGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
     Gadfly.assert_aesthetics_defined("Geom.errorbar", aes,
                                      element_aesthetics(geom)...)
     Gadfly.assert_aesthetics_equal_length("Geom.errorbar", aes,
@@ -117,6 +119,6 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
         linewidth(theme.line_width),
         (aes.color_key_continuous == true || !colored) ?
             svgclass("geometry") :
-            svgclass([@sprintf("geometry color_%s", escape_id(aes.color_label(c)[1]))
+            svgclass([string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
                       for c in aes.color]))
 end

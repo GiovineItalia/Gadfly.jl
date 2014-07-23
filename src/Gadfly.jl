@@ -22,10 +22,10 @@ using Datetime
 using JSON
 
 import Iterators
-import Iterators: distinct, drop
-import Compose.draw, Compose.hstack, Compose.vstack
-import Base: copy, push!, start, next, done, has, show, getindex, cat,
-             writemime, mimewritable, isfinite, display
+import Iterators: distinct, drop, chain
+import Compose: draw, hstack, vstack, gridstack
+import Base: copy, push!, start, next, done, show, getindex, cat,
+             writemime, isfinite, display
 
 export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
        layer, @plot, spy, set_default_plot_size, set_default_plot_format,
@@ -33,22 +33,11 @@ export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
 
 
 # Re-export some essentials from Compose
-export SVGJS, SVG, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
+export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
 
 
 # Define an XML namespace for custom attributes
 Compose.xmlns["gadfly"] = "http://www.gadflyjl.org/ns"
-
-
-# Backwards compatibility with julia-0.2 names
-if !isdefined(:rad2deg)
-    const rad2deg = radians2degrees
-    const deg2rad = degrees2radians
-end
-
-if !isdefined(:setfield!)
-    const setfield! = setfield
-end
 
 
 typealias ColorOrNothing Union(ColorValue, Nothing)
@@ -57,6 +46,7 @@ typealias ColorOrNothing Union(ColorValue, Nothing)
 element_aesthetics(::Any) = []
 default_scales(::Any) = []
 default_statistic(::Any) = Stat.identity()
+element_coordinate_type(::Any) = Coord.cartesian
 
 
 abstract Element
@@ -178,14 +168,14 @@ type Plot
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
-    coord::CoordinateElement
+    coord::Union(Nothing, CoordinateElement)
     guides::Vector{GuideElement}
     theme::Theme
     mapping::Dict
 
     function Plot()
         new(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
-            Coord.cartesian(), GuideElement[], default_theme)
+            nothing, GuideElement[], default_theme)
     end
 end
 
@@ -428,8 +418,19 @@ function render(plot::Plot)
             end
 
             for (k, v) in layer.mapping
-                setfield!(datas[i], k, eval_plot_mapping(layer.data_source, v))
+                set_mapped_data!(datas[i], layer.data_source, k, v)
             end
+        end
+    end
+
+    # Figure out the coordinates
+    coord = plot.coord
+    for layer in plot.layers
+        coord_type = element_coordinate_type(layer.geom)
+        if coord === nothing
+            coord = coord_type()
+        elseif typeof(coord) != coord_type
+            error("Plot uses multiple coordinates: $(typeof(coord)) and $(coord_type)")
         end
     end
 
@@ -449,7 +450,12 @@ function render(plot::Plot)
         union!(used_aesthetics, element_aesthetics(stat))
     end
 
-    defined_unused_aesthetics = setdiff(set(keys(plot.mapping)), used_aesthetics)
+    mapped_aesthetics = Set(keys(plot.mapping))
+    for layer in plot.layers
+        union!(mapped_aesthetics, keys(layer.mapping))
+    end
+
+    defined_unused_aesthetics = setdiff(mapped_aesthetics, used_aesthetics)
     if !isempty(defined_unused_aesthetics)
         warn("The following aesthetics are mapped, but not used by any geometry:\n    ",
              join([string(a) for a in defined_unused_aesthetics], ", "))
@@ -459,6 +465,7 @@ function render(plot::Plot)
     for scale in plot.scales
         union!(scaled_aesthetics, element_aesthetics(scale))
     end
+
 
     # Only one scale can be applied to an aesthetic (without getting some weird
     # and incorrect results), so we organize scales into a dict.
@@ -472,11 +479,11 @@ function render(plot::Plot)
     unscaled_aesthetics = setdiff(used_aesthetics, scaled_aesthetics)
 
     # Add default scales for statistics.
-    for stat in layer_stats
+    for stat in chain(plot.statistics, layer_stats)
         for scale in default_scales(stat)
             # Use the statistics default scale only when it covers some
             # aesthetic that is not already scaled.
-            scale_aes = set(element_aesthetics(scale))
+            scale_aes = Set(element_aesthetics(scale))
             if !isempty(intersect(scale_aes, unscaled_aesthetics))
                 for var in scale_aes
                     scales[var] = scale
@@ -488,15 +495,33 @@ function render(plot::Plot)
 
     # Assign scales to mapped aesthetics first.
     for var in unscaled_aesthetics
-        if !haskey(plot.mapping, var)
+        if !in(var, mapped_aesthetics)
             continue
         end
 
-        t = classify_data(getfield(plot.data, var))
+        var_data = getfield(plot.data, var)
+        if var_data == nothing
+            for data in datas
+                var_layer_data = getfield(data, var)
+                if var_layer_data != nothing
+                    var_data = var_layer_data
+                    break
+                end
+            end
+        end
+
+        if var_data == nothing
+            continue
+        end
+
+        t = classify_data(var_data)
+        if t == nothing
+
+        end
 
         if haskey(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
-            scale_aes = set(element_aesthetics(scale))
+            scale_aes = Set(element_aesthetics(scale))
             for var in scale_aes
                 scales[var] = scale
             end
@@ -519,7 +544,7 @@ function render(plot::Plot)
 
         if haskey(default_aes_scales[t], var)
             scale = default_aes_scales[t][var]
-            scale_aes = set(element_aesthetics(scale))
+            scale_aes = Set(element_aesthetics(scale))
             for var in scale_aes
                 scales[var] = scale
             end
@@ -571,7 +596,7 @@ function render(plot::Plot)
     end
 
     function mapped_and_used(vs)
-        any([haskey(plot.mapping, v) && in(v, used_aesthetics) for v in vs])
+        any([in(v, mapped_aesthetics) && in(v, used_aesthetics) for v in vs])
     end
 
     function choose_name(vs, fallback)
@@ -580,6 +605,15 @@ function render(plot::Plot)
                 return plot.data.titles[v]
             end
         end
+
+        for v in vs
+            for data in datas
+                if haskey(data.titles, v)
+                    return data.titles[v]
+                end
+            end
+        end
+
         fallback
     end
 
@@ -622,24 +656,25 @@ function render(plot::Plot)
 
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, layer_aess)
-        Stat.apply_statistics(StatisticElement[layer_stat], scales, plot.coord, aes)
+        Stat.apply_statistics(StatisticElement[layer_stat], scales, coord, aes)
     end
 
     # IIb. Plot-wise Statistics
     plot_aes = cat(layer_aess...)
     statistics = collect(statistics)
-    Stat.apply_statistics(statistics, scales, plot.coord, plot_aes)
+    Stat.apply_statistics(statistics, scales, coord, plot_aes)
 
     # Add some default guides determined by defined aesthetics
     if !all([aes.color === nothing for aes in [plot_aes, layer_aess...]]) &&
-       !in(Guide.ColorKey, explicit_guide_types)
+       !in(Guide.ColorKey, explicit_guide_types) &&
+       !in(Guide.ManualColorKey, explicit_guide_types)
         push!(guides, Guide.colorkey())
     end
 
-    root_context = render_prepared(plot, plot_aes, layer_aess, layer_stats, scales,
-                                   statistics, guides)
+    root_context = render_prepared(plot, coord, plot_aes, layer_aess,
+                                   layer_stats, scales, guides)
 
-    # pad_inner(canvas, 5mm) # TODO: implement pad in compose
+    return pad_inner(root_context, 5mm)
 end
 
 
@@ -666,22 +701,23 @@ end
 #   A Compose context containing the rendered plot.
 #
 function render_prepared(plot::Plot,
+                         coord::CoordinateElement,
                          plot_aes::Aesthetics,
                          layer_aess::Vector{Aesthetics},
                          layer_stats::Vector{StatisticElement},
                          scales::Dict{Symbol, ScaleElement},
-                         statistics::Vector{StatisticElement},
                          guides::Vector{GuideElement};
                          table_only=false)
     # III. Coordinates
-    plot_context = Coord.apply_coordinate(plot.coord, plot_aes, layer_aess...)
+    plot_context = Coord.apply_coordinate(coord, vcat(plot_aes,
+                                          layer_aess), scales)
 
     # IV. Geometries
     themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
                    for layer in plot.layers]
 
     compose!(plot_context,
-             [render(layer.geom, theme, aes)
+             [render(layer.geom, theme, aes, scales)
               for (layer, aes, theme) in zip(plot.layers, layer_aess, themes)]...)
 
     # V. Guides
@@ -693,7 +729,8 @@ function render_prepared(plot::Plot,
         end
     end
 
-    tbl = Guide.layout_guides(plot_context, plot.theme, guide_contexts...)
+    tbl = Guide.layout_guides(plot_context, coord,
+                              plot.theme, guide_contexts...)
     if table_only
         return tbl
     end
@@ -724,24 +761,24 @@ vstack(ps::Vector{Plot}) = vstack([render(p) for p in ps]...)
 hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
 hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
 
+gridstack(ps::Matrix{Plot}) = gridstack(map(render, ps))
 
 # writemime functions for all supported compose backends.
 
-function mimewritable(T::MIME, ::Plot)
-    return (default_plot_format == :png && isa(T, MIME"image/png")) ||
-           (default_plot_format == :svg && isa(T, MIME"image/svg+xml")) ||
-           (default_plot_format == :html && isa(T, MIME"text/html")) ||
-           (default_plot_format == :ps && isa(T, MIME"application/postscript"))
+
+function writemime(io::IO, m::MIME"text/html", p::Plot)
+    buf = IOBuffer()
+    svg = SVGJS(buf, default_plot_width, default_plot_height, false)
+    draw(svg, p)
+    writemime(io, m, svg)
 end
 
 
-function writemime(io::IO, ::MIME"text/html", p::Plot)
-    draw(SVGJS(io, default_plot_width, default_plot_height), p)
-end
-
-
-function writemime(io::IO, ::MIME"image/svg+xml", p::Plot)
-    draw(SVG(io, default_plot_width, default_plot_height), p)
+function writemime(io::IO, m::MIME"image/svg+xml", p::Plot)
+    buf = IOBuffer()
+    svg = SVG(buf, default_plot_width, default_plot_height, false)
+    draw(svg, p)
+    writemime(io, m, svg)
 end
 
 
@@ -770,69 +807,42 @@ function writemime(io::IO, ::MIME"text/plain", p::Plot)
     write(io, "Plot(...)")
 end
 
-
-# Fallback display method. When there isn't a better option, we write to a
-# temporary file and try to open it.
-function display(d::Base.REPL.REPLDisplay, p::Plot)
-    base_filename = tempname()
+function default_mime()
     if default_plot_format == :png
-        filename = string(base_filename, ".png")
-        output = open(filename, "w")
-        draw(PNG(output, default_plot_width, default_plot_height), p)
-        close(output)
+        "image/png"
     elseif default_plot_format == :svg
-        filename = string(base_filename, ".svg")
-        output = open(filename, "w")
-        draw(SVG(output, default_plot_width, default_plot_height), p)
-        close(output)
+        "image/svg+xml"
     elseif default_plot_format == :html
-        filename = string(base_filename, ".html")
-        output = open(filename, "w")
-
-        plot_output = IOBuffer()
-        draw(SVGJS(plot_output, default_plot_width, default_plot_height, false,
-                   jsmode=:linkabs), p)
-        plot_js = takebuf_string(plot_output)
-
-        write(output,
-            """
-            <!DOCTYPE html>
-            <html>
-                <head><title>Gadfly Plot</title></head>
-                <body>
-                <script charset="utf-8">
-                    $(readall(Compose.snapsvgjs))
-                </script>
-                <script charset="utf-8">
-                    $(readall(gadflyjs))
-                </script>
-
-                <div id="gadflyplot"></div>
-                <script charset="utf-8">
-                    $(plot_js)
-                </script>
-                <script charset="utf-8">
-                    draw("#gadflyplot");
-                </script>
-                </body>
-            </html>
-            """)
-        close(output)
+        "text/html"
     elseif default_plot_format == :ps
-        filename = string(base_filename, ".ps")
-        output = open(filename, "w")
-        draw(PS(output, default_plot_width, default_plot_height), p)
-        close(output)
+        "application/postscript"
     elseif default_plot_format == :pdf
-        filename = string(base_filename, ".pdf")
-        output = open(filename, "w")
-        draw(PDF(output, default_plot_width, default_plot_height), p)
-        close(output)
+        "application/pdf"
     else
-        # if format is set to anything else, don't show the plot
-        return
+        ""
     end
+end
 
+import Base.Multimedia: @try_display, xdisplayable
+import Base.REPL: REPLDisplay
+
+function display(p::Plot)
+    displays = Base.Multimedia.displays
+    for i = length(displays):-1:1
+        m = default_mime()
+        if xdisplayable(displays[i], m, p)
+             @try_display return display(displays[i], m, p)
+        end
+
+        if xdisplayable(displays[i], p)
+            @try_display return display(displays[i], p)
+        end
+    end
+    invoke(display,(Any,),p)
+end
+
+
+function open_file(filename)
     if OS_NAME == :Darwin
         run(`open $(filename)`)
     elseif OS_NAME == :Linux || OS_NAME == :FreeBSD
@@ -842,6 +852,69 @@ function display(d::Base.REPL.REPLDisplay, p::Plot)
     else
         warn("Showing plots is not supported on OS $(string(OS_NAME))")
     end
+end
+
+# Fallback display method. When there isn't a better option, we write to a
+# temporary file and try to open it.
+function display(d::REPLDisplay, ::MIME"image/png", p::Plot)
+    filename = string(tempname(), ".png")
+    output = open(filename, "w")
+    draw(PNG(output, default_plot_width, default_plot_height), p)
+    close(output)
+    open_file(filename)
+end
+
+function display(d::REPLDisplay, ::MIME"image/svg+xml", p::Plot)
+    filename = string(tempname(), ".svg")
+    output = open(filename, "w")
+    draw(SVG(output, default_plot_width, default_plot_height), p)
+    close(output)
+    open_file(filename)
+end
+
+function display(d::REPLDisplay, ::MIME"text/html", p::Plot)
+    filename = string(tempname(), ".html")
+    output = open(filename, "w")
+
+    plot_output = IOBuffer()
+    draw(SVGJS(plot_output, default_plot_width, default_plot_height, false), p)
+    plotsvg = takebuf_string(plot_output)
+
+    write(output,
+        """
+        <!DOCTYPE html>
+        <html>
+          <head><title>Gadfly Plot</title></head>
+            <body>
+            <script charset="utf-8">
+                $(readall(Compose.snapsvgjs))
+            </script>
+            <script charset="utf-8">
+                $(readall(gadflyjs))
+            </script>
+
+            $(plotsvg)
+          </body>
+        </html>
+        """)
+    close(output)
+    open_file(filename)
+end
+
+function display(d::REPLDisplay, ::MIME"application/postscript", p::Plot)
+    filename = string(tempname(), ".ps")
+    output = open(filename, "w")
+    draw(PS(output, default_plot_width, default_plot_height), p)
+    close(output)
+    open_file(filename)
+end
+
+function display(d::REPLDisplay, ::MIME"application/pdf", p::Plot)
+    filename = string(tempname(), ".pdf")
+    output = open(filename, "w")
+    draw(PDF(output, default_plot_width, default_plot_height), p)
+    close(output)
+    open_file(filename)
 end
 
 
@@ -856,6 +929,7 @@ include("statistics.jl")
 # The default depends on whether the input is discrete or continuous (i.e.,
 # PooledDataVector or DataVector, respectively).
 const default_aes_scales = {
+        :functional => {:func => Scale.func()},
         :numerical => {:x           => Scale.x_continuous(),
                        :xmin        => Scale.x_continuous(),
                        :xmax        => Scale.x_continuous(),
@@ -872,6 +946,7 @@ const default_aes_scales = {
                        :xgroup      => Scale.xgroup(),
                        :ygroup      => Scale.ygroup(),
                        :color       => Scale.continuous_color(),
+                       :group       => Scale.group_discrete(),
                        :label       => Scale.label(),
                        :size        => Scale.size_continuous()},
         :categorical => {:x          => Scale.x_discrete(),
@@ -885,7 +960,10 @@ const default_aes_scales = {
                          :xgroup     => Scale.xgroup(),
                          :ygroup     => Scale.ygroup(),
                          :color      => Scale.discrete_color(),
+                         :group      => Scale.group_discrete(),
                          :label      => Scale.label()}}
+
+
 
 # Determine whether the input is categorical or numerical
 
@@ -894,6 +972,10 @@ typealias CategoricalType Union(String, Bool, Symbol)
 
 function classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N})
     :categorical
+end
+
+function classify_data{N, T <: Base.Callable}(data::AbstractArray{T, N})
+    :functional
 end
 
 function classify_data(data::AbstractArray{Any})

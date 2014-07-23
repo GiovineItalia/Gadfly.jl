@@ -27,21 +27,103 @@ immutable Cartesian <: Gadfly.CoordinateElement
     xmax
     ymin
     ymax
-    xflip
-    yflip
+    xflip::Bool
+    yflip::Bool
+    fixed::Bool
+    aspect_ratio::Union(Nothing, Float64)
 
     function Cartesian(
             xvars=[:x, :xviewmin, :xviewmax, :xmin, :xmax],
             yvars=[:y, :yviewmin, :yviewmax, :ymin, :ymax, :middle,
                    :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers];
             xflip::Bool=false, yflip::Bool=false,
-            xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing)
-        new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip)
+            xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,
+            fixed=false, aspect_ratio=nothing)
+        new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
+            aspect_ratio)
     end
 end
 
 
 const cartesian = Cartesian
+
+
+# Return the first concrete aesthetic value in one of the given aesthetics
+#
+# Args:
+#   aess: An array of Aesthetics to search through.
+#   vars: Aesthetic variables to search though.
+#
+# Returns:
+#   A concrete value if one is found, otherwise nothing.
+#
+function first_concrete_aesthetic_value(aess::Vector{Gadfly.Aesthetics},
+                                        vars::Vector{Symbol})
+    T = aesthetics_type(aess, vars)
+    for var in vars
+        for aes in aess
+            vals = getfield(aes, var)
+            if vals === nothing
+                continue
+            end
+
+            if !isa(vals, AbstractArray)
+                vals = [vals]
+            end
+
+            if var == :outliers
+                for outlier_vals in aes.outliers
+                    for val in outlier_vals
+                        if Gadfly.isconcrete(val)
+                            return convert(T, val)
+                        end
+                    end
+                end
+                continue
+            end
+
+            for val in vals
+                if Gadfly.isconcrete(val)
+                    return convert(T, val)
+                end
+            end
+        end
+    end
+
+    return nothing
+end
+
+
+# Find a common type among a group of aesthetics.
+#
+# Args:
+#   aess: An array of Aesthetics to search through.
+#   vars: Aesthetic variables to search though.
+#
+# Returns:
+#   A common type.
+function aesthetics_type(aess::Vector{Gadfly.Aesthetics},
+                              vars::Vector{Symbol})
+    T = None
+    for var in vars
+        for aes in aess
+            vals = getfield(aes, var)
+            if vals === nothing
+                continue
+            end
+
+            if var == :outliers
+                if !isempty(vals)
+                    T = promote_type(T, eltype(first(vals)))
+                end
+            else
+                T = promote_type(T, eltype(vals))
+            end
+        end
+    end
+
+    return T
+end
 
 
 # Produce a context with suitable cartesian coordinates.
@@ -52,82 +134,49 @@ const cartesian = Cartesian
 # Returns:
 #   A compose Canvas.
 #
-function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
-    xmin = nothing
-    xmax = nothing
-    for var in coord.xvars
-        for aes in aess
-            if getfield(aes, var) === nothing
-                continue
-            end
-
-            vals = getfield(aes, var)
-            if !isa(vals, AbstractArray)
-                vals = {vals}
-            end
-
-            for val in vals
-                if !Gadfly.isconcrete(val)
+function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
+                          scales::Dict{Symbol, Gadfly.ScaleElement})
+    xmin = xmax = first_concrete_aesthetic_value(aess, coord.xvars)
+    if xmin != nothing
+        for var in coord.xvars
+            for aes in aess
+                vals = getfield(aes, var)
+                if vals === nothing
                     continue
                 end
 
-                if xmin === nothing || val < xmin
-                    xmin = val
+                if !isa(vals, AbstractArray)
+                    vals = [vals]
                 end
 
-                if xmax === nothing || val > xmax
-                    xmax = val
-                end
+                xmin, xmax = Gadfly.concrete_minmax(vals, xmin, xmax)
             end
         end
     end
 
-    ymin = nothing
-    ymax = nothing
-    for var in coord.yvars
-        for aes in aess
-            if getfield(aes, var) === nothing
-                continue
-            end
-
-            # Outliers is an odd aesthetic that needs special treatment.
-            if var == :outliers
-                for vals in aes.outliers
-                    for val in vals
-                        if !Gadfly.isconcrete(val)
-                            continue
-                        end
-
-                        if ymin === nothing || val < ymin
-                            ymin = val
-                        end
-
-                        if ymax === nothing || val > ymax
-                            ymax = val
-                        end
-                    end
-                end
-
-                continue
-            end
-
-            vals = getfield(aes, var)
-            if !isa(vals, AbstractArray)
-                vals = {vals}
-            end
-
-            for val in vals
-                if !Gadfly.isconcrete(val)
+    ymin = ymax = first_concrete_aesthetic_value(aess, coord.yvars)
+    if ymin != nothing
+        for var in coord.yvars
+            for aes in aess
+                vals = getfield(aes, var)
+                if vals === nothing
                     continue
                 end
 
-                if ymin === nothing || val < ymin
-                    ymin = val
+                # Outliers is an odd aesthetic that needs special treatment.
+                if var == :outliers
+                    for outlier_vals in aes.outliers
+                        ymin, ymax = Gadfly.concrete_minmax(outlier_vals, ymin, ymax)
+                    end
+
+                    continue
                 end
 
-                if ymax === nothing || val > ymax
-                    ymax = val
+                if !isa(vals, AbstractArray)
+                    vals = [vals]
                 end
+
+                ymin, ymax = Gadfly.concrete_minmax(vals, ymin, ymax)
             end
         end
     end
@@ -142,7 +191,6 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
         xmax = 1.0
     end
 
-
     if ymin === nothing || !isfinite(ymin)
         ymin = 0.0
         ymax = 1.0
@@ -152,33 +200,51 @@ function apply_coordinate(coord::Cartesian, aess::Gadfly.Aesthetics...)
     # using discrete scales. TODO: Think more carefully about this. Is there a
     # way for the geometry to let the coordinates know that a little extra room
     # is needed to draw everything?
-    if all([aes.x === nothing || typeof(aes.x) <: PooledDataArray for aes in aess])
+
+    if Scale.iscategorical(scales, :x)
         xmin -= 0.5
         xmax += 0.5
-        xpadding = 0.0
+        xpadding = 0mm
     else
-        xpadding = 0.03 * (xmax - xmin)
+        xpadding = 2mm
     end
 
-    if all([aes.y === nothing || typeof(aes.y) <: PooledDataArray for aes in aess])
+    if Scale.iscategorical(scales, :y)
         ymin -= 0.5
         ymax += 0.5
-        ypadding = 0.0
+        ypadding = 0mm
     else
-        ypadding = 0.03 * (ymax - ymin)
+        ypadding = 2mm
     end
 
-    width  = xmax - xmin + 2.0 * xpadding
-    height = ymax - ymin + 2.0 * ypadding
+    width  = xmax - xmin
+    height = ymax - ymin
 
     compose!(
         context(units=UnitBox(
-            coord.xflip ? xmax + xpadding : xmin - xpadding,
-            coord.yflip ? ymin - ypadding : ymax + ypadding,
+            coord.xflip ? xmax : xmin,
+            coord.yflip ? ymin : ymax,
             coord.xflip ? -width : width,
-            coord.yflip ? height : -height)),
+            coord.yflip ? height : -height,
+            leftpad=xpadding,
+            rightpad=xpadding,
+            toppad=ypadding,
+            bottompad=ypadding)),
         svgclass("plotpanel"))
 end
+
+
+immutable SubplotGrid <: Gadfly.CoordinateElement
+end
+
+
+function apply_coordinate(coord::SubplotGrid, aess::Vector{Gadfly.Aesthetics},
+                          scales::Dict{Symbol, Gadfly.ScaleElement})
+    compose!(context(), svgclass("plotpanel"))
+end
+
+
+const subplot_grid = SubplotGrid
 
 end # module Coord
 

@@ -1,7 +1,7 @@
 !["Alice looked up at the Rocking-horse-fly with great interest, and made up her
 mind that it must have been just repainted, it looked so bright and sticky."](http://dcjones.github.com/Gadfly.jl/rockinghorsefly.png)
 
-[![Build Status](https://api.travis-ci.org/dcjones/Gadfly.jl.png)](https://travis-ci.org/dcjones/Gadfly.jl)
+[![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.3.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.3) [![Build Status](http://img.shields.io/travis/dcjones/Gadfly.jl.svg)](https://travis-ci.org/dcjones/Gadfly.jl) [![Coverage Status](http://img.shields.io/coveralls/dcjones/Gadfly.jl.svg)](https://coveralls.io/r/dcjones/Gadfly.jl)
 
 **Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
@@ -11,9 +11,9 @@ It's influenced heavily by Leland Wilkinson's book
 and Hadley Wickham's refinment of that grammar in
 [ggplot2](http://ggplot2.org/).
 
-It renders publication quality graphics to PNG, Postscript, PDF, SVG, and
-Javascript. The Javascript backend uses [d3](http://d3js.org/) to add
-interactivity like panning, zooming, and toggling.
+It renders publication quality graphics to PNG, Postscript, PDF, SVG. The SVG
+backend uses embedded javascript, powered by [Snap.svg](http://snapsvg.io/) to
+add interactivity like panning, zooming, and toggling.
 
 Check out the [manual](http://dcjones.github.io/Gadfly.jl) for more details and
 examples.
@@ -32,8 +32,8 @@ installed.
 ## Optional: cairo, pango, and fontconfig
 
 Gadfly works best with the C libraries cairo, pango, and fontconfig installed.
-The PNG, PS, and PDF backends require cairo, but without it the SVG and
-Javascript/D3 backends are still available.
+The PNG, PS, and PDF backends require cairo, but without it the SVG backends
+(`SVG` and `SVGJS`) are still available.
 
 Complex layouts involving text are also somewhat more accurate when pango and
 fontconfig are available.
@@ -176,7 +176,7 @@ original value so that data points are properly identified.
 Finally geometries are responsible for actually doing the drawing. A geometry
 takes as input one or aesthetics, and used data bound to these aesthetics to
 draw things. The `Geom.point` geometry draws points using the `x` and `y`
-aesthetics, the `Geom.lines` geometry draws lines, and so on.
+aesthetics, the `Geom.line` geometry draws lines, and so on.
 
 ### Guides
 
@@ -188,50 +188,37 @@ while guides have some special layout considerations.
 # Drawing to backends
 
 Gadfly plots can be rendered to number of formats. Without cairo, or any
-non-julia libraries, it can produce SVG and d3-powered javascript. Installing
-cairo gives you access to the `PNG`, `PDF`, and `PS` backends. Rendering to a
-backend works the same for any of these.
+non-julia libraries, it can produce SVG. Installing cairo gives you access to
+the `PNG`, `PDF`, and `PS` backends. Rendering to a backend works the same for
+any of these.
 
 ```julia
 some_plot = plot(x=[1,2,3], y=[4,5,6])
 draw(PNG("myplot.png", 6inch, 3inch), some_plot)
 ```
 
-## Using the d3 backend
+## Using the SVGJS backend
 
-The `D3` backend writes javascript. Making use of its output is slightly more
-involved than with the image backends.
+The `SVGJS` backend writes SVG with embedded javascript. There are a couple
+subtlties with using the output from this backend.
 
-Rendering to Javascript is easy enough:
+Drawing to the backend works like any other.
 
 ```julia
-draw(D3("mammals.js", 6inch, 6inch), p)
+draw(SVGJS("mammals.js.svg", 6inch, 6inch), p)
 ```
 
-Before the output can be included, you must include the d3 and gadfly javascript
-libraries. The necessary include for Gadfly is "gadfly.js" which lives in the
-src directory (which you can find by running `joinpath(Pkg.dir("Gadfly"), "src",
-"gadfly.js")` in julia).
+If included with an `<img>` tag, it will display as a static SVG image.
+```html
+<img src="mammals.js.svg"/>
+```
 
-D3 can be downloaded from [here](http://d3js.org/d3.v3.zip).
-
-Now the output can be included in an HTML like.
+For the interactive javascript features to be enables, the output either needs
+to be inluded inline in the HTML page, or include with an object tag, like.
 
 ```html
-<script src="d3.v3.min.js"></script>
-<script src="gadfly.js"></script>
-
-<!-- Placed whereever you want the graphic to be rendered. -->
-<div id="my_chart"></div>
-<script src="mammals.js"></script>
-<script>
-draw("#my_chart");
-</script>
+<object data="mammals.js.svg" type="image/svg+xml"></object>
 ```
-
-A `div` element must be placed, and the `draw` function defined in mammals.js
-must be passed the id of this element, so it knows where in the document to
-place the plot.
 
 # Reporting Bugs
 

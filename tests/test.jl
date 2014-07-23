@@ -7,9 +7,9 @@ haskde = :kde in names(StatsBase)
 
 tests = [
     ("points",                                6inch, 3inch),
+    ("colored_points",                        6inch, 3inch),
     ("function_plots",                        6inch, 3inch),
     ("function_layers",                       6inch, 3inch),
-    ("colored_points",                        6inch, 3inch),
     ("multicolumn_colorkey",                  6inch, 2inch),
     ("vstack",                                6inch, 6inch),
     ("hstack",                                6inch, 3inch),
@@ -65,7 +65,9 @@ tests = [
     ("issue177",                              6inch, 3inch),
     ("ribbon",                                6inch, 3inch),
     ("layer_leak",                            6inch, 3inch),
-    ("hline_vline",                           6inch, 3inch)
+    ("hline_vline",                           6inch, 3inch),
+    ("grid_strokedash",                       6inch, 3inch),
+    ("aspect_ratio",                          6inch, 3inch)
 ]
 
 

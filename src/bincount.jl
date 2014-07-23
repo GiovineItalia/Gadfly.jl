@@ -33,9 +33,10 @@ function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::Float64)
     ll = 0
     for i in 1:d
         if bincounts[i] > 0
-            ll += bincounts[i] * log(bincounts[i] / (n * binwidth))
+            ll += bincounts[i] * log(d * bincounts[i] / (n * binwidth))
         end
     end
+
     ll - (d - 1 + log(d)^2.5)
 end
 
@@ -44,6 +45,8 @@ end
 #
 # Args:
 #   xs: A sample.
+#   min_bin_count: Minimum number of bins to consider.
+#   max_bin_count: Maximum number of bins to consider.
 #
 # Returns:
 #   A tuple of the form (d, bincounts), where d gives the optimal number of
@@ -96,6 +99,48 @@ function choose_bin_count_1d(xs::AbstractVector, min_bin_count=1, max_bin_count=
     end
 
     (d_best, bincounts)
+end
+
+
+# Choose a reasonable number of bins using a simpler heuristic for
+# semi-continous data
+#
+# Birge's heursitic, implemented `choose_bin_count_1d` works well for continuous
+# data, but the assumption of continuity can be too strong when a continuous
+# value is measured at such low resolution that the data is effectively
+# discrete.
+#
+# So this function is to handle those cases by using a dumber heuristic. Namely
+# choosing sqrt(n) as the number of bins.
+#
+# Args:
+#   xs: A sample.
+#   xs_set: A set of the values in xs
+#
+# Returns
+#   A tuple of the form (d, bincounts), where d gives the optimal number of
+#   bins, and bincounts is an array giving the number of occurances in each bin.
+#
+function choose_bin_count_simple(xs::AbstractArray, xs_set::Set,
+                                 min_bin_count=1, max_bin_count=150)
+    n = length(xs_set)
+    if n <= 1
+        return 1, Int[n > 0 ? 1 : 0]
+    end
+
+    d = min(max(iround(sqrt(n)), min_bin_count), max_bin_count)
+    bincounts = zeros(Int, d)
+    x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)
+    span = x_max - x_min
+    binwidth = span / d
+    for x in xs
+        if !isconcrete(x)
+            continue
+        end
+        bincounts[max(1, min(d, int(ceil((x - x_min) / binwidth))))] += 1
+    end
+
+    return d, bincounts
 end
 
 

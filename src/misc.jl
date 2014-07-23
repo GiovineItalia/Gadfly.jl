@@ -1,18 +1,12 @@
 
-# Work around differences in julia 0.2 and 0.3 set constructors.
-function set(T::Type, itr)
-    S = Set{T}()
-    union!(S, itr)
-end
-
-function set(itr)
-    set(Any, itr)
-end
-
 
 # Is this usable data?
 function isconcrete{T<:Number}(x::T)
     !isna(x) && isfinite(x)
+end
+
+function isconcrete(x::MathConst)
+    return true
 end
 
 function isconcrete(x)
@@ -30,6 +24,23 @@ function concrete_length(xs)
     n
 end
 
+function concrete_length{T}(xs::DataArray{T})
+    n = 0
+    for i = 1:length(xs)
+        if !xs.na[i] && isfinite(xs.data[i]::T)
+            n += 1
+        end
+    end
+    n
+end
+
+function concrete_length(xs::Iterators.Chain)
+    n = 0
+    for obj in xs.xss
+        n += concrete_length(obj)
+    end
+    n
+end
 
 function concrete_minimum(xs)
     if done(xs, start(xs))
@@ -73,6 +84,81 @@ function concrete_maximum(xs)
     end
     return x_max
 end
+
+
+function concrete_minmax{T<:Real}(xs, xmin::T, xmax::T)
+    for x in xs
+        if isconcrete(x)
+            xT = convert(T, x)
+            if isnan(xmin) || xT < xmin
+                xmin = xT
+            end
+            if isnan(xmax) || xT > xmax
+                xmax = xT
+            end
+        end
+    end
+    xmin, xmax
+end
+
+
+function concrete_minmax{T<:Real, TA}(xs::DataArray{TA}, xmin::T, xmax::T)
+    for i = 1:length(xs)
+        if !xs.na[i]
+            x = xs.data[i]::TA
+            xT = convert(T, x)
+            if isnan(xmin) || xT < xmin
+                xmin = xT
+            end
+            if isnan(xmax) || xT > xmax
+                xmax = xT
+            end
+        end
+    end
+    xmin, xmax
+end
+
+
+function concrete_minmax{T}(xs, xmin::T, xmax::T)
+    for x in xs
+        if isconcrete(x)
+            xT = convert(T, x)
+            if xT < xmin
+                xmin = xT
+            end
+            if xT > xmax
+                xmax = xT
+            end
+        end
+    end
+    xmin, xmax
+end
+
+
+function concrete_minmax{T, TA}(xs::DataArray{TA}, xmin::T, xmax::T)
+    for i = 1:length(xs)
+        if !xs.na[i]
+            x = xs.data[i]::TA
+            xT = convert(T, x)
+            if xT < xmin
+                xmin = xT
+            end
+            if xT > xmax
+                xmax = xT
+            end
+        end
+    end
+    xmin, xmax
+end
+
+
+function concrete_minmax{T<:Real}(xs::Iterators.Chain, xmin::T, xmax::T)
+    for obj in xs.xss
+        xmin, xmax = concrete_minmax(obj, xmin, xmax)
+    end
+    xmin, xmax
+end
+
 
 
 function nonzero_length(xs)
@@ -163,6 +249,38 @@ is_int_compatable{T <: FloatingPoint}(x::T) = abs(x) < maxintfloat(T) && float(i
 is_int_compatable(::Any) = false
 
 
+## Return a DataFrame with x, y column suitable for plotting a function.
+#
+# Args:
+#  f: Function/Expression to be evaluated.
+#  a: Lower bound.
+#  b: Upper bound.
+#  n: Number of points to evaluate the function at.
+#
+# Returns:
+#  A data frame with "x" and "f(x)" columns.
+#
+function evalfunc(f::Function, a, b, n)
+    @assert n > 1
+
+    step = (b - a) / (n - 1)
+    xs = Array(typeof(a + step), n)
+    for i in 1:n
+        xs[i] = a + (i-1) * step
+    end
+
+    df = DataFrame(xs, map(f, xs))
+    # NOTE: 'colnames!' is the older deprecated name. 'names!' was also defined
+    # but threw an error.
+    try
+        names!(df, [:x, :f_x])
+    catch
+        colnames!(df, ["x", "f_x"])
+    end
+    df
+end
+
+
 # Construct a jscall to store arbitrary data in the element
 function jsdata(key::String, value::String, arg::Vector{Measure}=Measure[])
     return jscall(
@@ -178,6 +296,11 @@ function jsplotdata(key::String, value::String, arg::Vector{Measure}=Measure[])
         """
         plotroot().data("$(escape_string(key))", $(value))
         """, arg)
+end
+
+
+function svg_color_class_from_label(label::String)
+    return @sprintf("color_%s", escape_id(label))
 end
 
 

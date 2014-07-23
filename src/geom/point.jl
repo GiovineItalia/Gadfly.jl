@@ -22,7 +22,8 @@ end
 # Returns:
 #   A compose Form.
 #
-function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::PointGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
     Gadfly.assert_aesthetics_defined("Geom.point", aes, :x, :y)
     Gadfly.assert_aesthetics_equal_length("Geom.point", aes,
                                           element_aesthetics(geom)...)
@@ -36,24 +37,22 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     lw_ratio = theme.line_width / aes.size[1]
 
     ctx = compose!(
-        context(order=4),
+        context(),
         circle(aes.x, aes.y, aes.size),
         fill(aes.color),
         linewidth(theme.highlight_width))
 
     if aes.color_key_continuous != nothing && aes.color_key_continuous
         compose!(ctx,
-            stroke(map(theme.continuous_highlight_color, aes.color)),
-            svgclass("geometry"))
+            stroke(map(theme.continuous_highlight_color, aes.color)))
     else
         compose!(ctx,
             stroke(map(theme.discrete_highlight_color, aes.color)),
-            svgclass([@sprintf("geometry color_%s",
-                               escape_id(aes.color_label([c])[1]))
+            svgclass([svg_color_class_from_label(escape_id(aes.color_label([c])[1]))
                       for c in aes.color]))
     end
 
-    return ctx
+    return compose!(context(order=4), svgclass("geometry"), ctx)
 end
 
 

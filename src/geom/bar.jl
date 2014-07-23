@@ -34,12 +34,12 @@ end
 
 
 function element_aesthetics(::BarGeometry)
-    [:x, :y, :color]
+    [:x, :xmin, :xmax, :y, :color]
 end
 
 
 function default_statistic(geom::BarGeometry)
-    geom.default_statistic
+    return geom.default_statistic
 end
 
 
@@ -218,19 +218,18 @@ end
 # Returns
 #   A compose form.
 #
-function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
+                scales::Dict{Symbol, ScaleElement})
     if geom.orientation == :horizontal
-        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :y)
-        if (is(aes.xmin, nothing) || is(aes.xmax, nothing)) && is(aes.x, nothing)
-            error("Geom.bar required \"x\" to be bound or both \"x_min\" and \"x_max\".")
+        if (is(aes.ymin, nothing) || is(aes.ymax, nothing)) && is(aes.y, nothing)
+            error("Geom.bar required \"y\" to be bound or both \"y_min\" and \"y_max\".")
         end
         var = :y
         minvar = :ymin
         maxvar = :ymax
     else
-        Gadfly.assert_aesthetics_defined("Geom.bar", aes, :x)
-        if (is(aes.ymin, nothing) || is(aes.ymax, nothing)) && is(aes.y, nothing)
-            error("Geom.bar required \"y\" to be bound or both \"y_min\" and \"y_max\".")
+        if (is(aes.xmin, nothing) || is(aes.xmax, nothing)) && is(aes.x, nothing)
+            error("Geom.bar required \"x\" to be bound or both \"x_min\" and \"x_max\".")
         end
         var = :x
         minvar = :xmin
@@ -243,7 +242,7 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         T = eltype(values)
 
         span = zero(T)
-        unique_count = length(set(values))
+        unique_count = length(Set(values))
         if unique_count > 1
             span = (maximum(values) - minimum(values)) / (unique_count - 1)
         end

@@ -8,7 +8,8 @@ using Gadfly
 using Iterators
 using JSON
 
-import Gadfly: render, escape_id, default_statistic, jsdata, jsplotdata
+import Gadfly: render, escape_id, default_statistic, jsdata, jsplotdata,
+               svg_color_class_from_label
 
 
 # Where the guide should be placed in relation to the plot.
@@ -52,13 +53,7 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
                     stroke(theme.panel_stroke),
                     fill(theme.panel_fill),
                     fillopacity(theme.panel_opacity),
-                    svgattribute("pointer-events", "visible"),
-                    jscall(
-                        """
-                        drag(guide_background_drag_onmove,
-                             guide_background_drag_onstart,
-                             guide_background_drag_onend)
-                        """))
+                    svgattribute("pointer-events", "visible"))
 
     return [PositionedGuide([back], 0, under_guide_position)]
 end
@@ -96,9 +91,9 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
         fill(background_color),
         jscall(
             """
-            click(zoomslider_zoomout_click)
-            .mouseenter(zoomslider_button_mouseover)
-            .mouseleave(zoomslider_button_mouseout)
+            click(Gadfly.zoomslider_zoomout_click)
+            .mouseenter(Gadfly.zoomslider_button_mouseover)
+            .mouseleave(Gadfly.zoomslider_button_mouseout)
             """),
         jsdata("mouseout_color", "\"$(foreground_color)\""),
         jsdata("mouseover_color", "\"$(highlight_color)\""))
@@ -114,7 +109,7 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
         {context(),
          rectangle(),
          fill(background_color),
-         jscall("click(zoomslider_track_click)"),
+         jscall("click(Gadfly.zoomslider_track_click)"),
          jsdata("min_pos", "%x", Measure[slider_min_pos]),
          jsdata("max_pos", "%x", Measure[slider_max_pos])},
         {context(order=1),
@@ -123,11 +118,11 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
          svgclass("zoomslider_thumb"),
          jscall(
             """
-            drag(zoomslider_thumb_dragmove,
-                 zoomslider_thumb_dragstart,
-                 zoomslider_thumb_dragend)
-            .mousedown(zoomslider_thumb_mousedown)
-            .mouseup(zoomslider_thumb_mouseup)
+            drag(Gadfly.zoomslider_thumb_dragmove,
+                 Gadfly.zoomslider_thumb_dragstart,
+                 Gadfly.zoomslider_thumb_dragend)
+            .mousedown(Gadfly.zoomslider_thumb_mousedown)
+            .mouseup(Gadfly.zoomslider_thumb_mouseup)
             """),
          jsdata("mouseout_color", "\"$(foreground_color)\""),
          jsdata("mouseover_color", "\"$(highlight_color)\""),
@@ -151,9 +146,9 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
         fill(background_color),
         jscall(
             """
-            click(zoomslider_zoomin_click)
-            .mouseenter(zoomslider_button_mouseover)
-            .mouseleave(zoomslider_button_mouseout)
+            click(Gadfly.zoomslider_zoomin_click)
+            .mouseenter(Gadfly.zoomslider_button_mouseover)
+            .mouseleave(Gadfly.zoomslider_button_mouseout)
             """),
         jsdata("mouseout_color", "\"$(foreground_color)\""),
         jsdata("mouseover_color", "\"$(highlight_color)\""))
@@ -184,11 +179,11 @@ end
 const colorkey = ColorKey
 
 
-# TODO: rewrite
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
 function render_discrete_color_key(colors::Vector{ColorValue},
                                    labels::Dict{ColorValue, String},
+                                   aes_color_label,
                                    title_ctx::Context,
                                    title_width::Measure,
                                    theme::Gadfly.Theme)
@@ -202,7 +197,9 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                            theme.key_label_font_size,
                            values(labels)...)
 
-    entry_height = maximum([height for (width, height) in extents])
+    ypad = 1.0mm
+    title_height = title_ctx.box.height
+    entry_height = maximum([height for (width, height) in extents]) + ypad
     swatch_size = entry_height / 2
 
     # return a context with a lyout of numcols columns
@@ -229,10 +226,16 @@ function render_discrete_color_key(colors::Vector{ColorValue},
         end
 
         ctxwidth = sum(colwidths)
-        ctxheight = entry_height * colrows[1]
+        ctxheight = entry_height * colrows[1] + title_height
 
         ctxp = ctxpromise() do draw_context
-            ctx = context(0, 0.5h - ctxheight/2, ctxwidth, ctxheight,
+            yoff = 0.5h - ctxheight/2
+            outerctx = context()
+
+            compose!(outerctx, {context(xpad, yoff), title_ctx})
+
+            ctx = context(0, yoff + title_height,
+                          ctxwidth, ctxheight - title_height,
                           units=UnitBox(0, 0, 1, colrows[1]))
 
             m = 0
@@ -242,36 +245,52 @@ function render_discrete_color_key(colors::Vector{ColorValue},
 
                 if theme.colorkey_swatch_shape == :square
                     swatches_shapes = rectangle(
-                        [xpad], [(y - 0.5)*cy - swatch_size/2 for y in 1:nrows],
+                        [xpad], [y*cy - swatch_size/2 for y in 1:nrows],
                         [swatch_size], [swatch_size])
                 elseif theme.colorkey_swatch_shape == :circle
                     swatches_shapes = circle([0.5cy], 1:nrows .- 0.5, [swatch_size/2])
                 end
+                cs = colors[m+1:m+nrows]
                 swatches = compose!(
                     context(),
                     swatches_shapes,
                     stroke(nothing),
-                    fill(colors[m+1:m+nrows]))
+                    fill(cs))
 
                 swatch_labels = compose!(
                     context(),
-                    text([2xpad + swatch_size], [(y - 0.5)*cy for y in 1:nrows],
+                    text([2xpad + swatch_size], [y*cy for y in 1:nrows],
                          collect(values(labels))[m+1:m+nrows], [hleft], [vcenter]),
                     font(theme.key_label_font),
                     fontsize(theme.key_label_font_size),
                     fill(theme.key_label_color))
 
-                compose!(ctx, {context(xpos, 0), swatches, swatch_labels})
+                col = compose!(context(xpos, yoff), swatches, swatch_labels)
+                if aes_color_label != nothing
+                    classes = [svg_color_class_from_label(aes_color_label([c])[1]) for c in cs]
+                    #class_jscalls = ["data(\"color_class\", \"$(c)\")"
+                                     #for c in classes]
+                    compose!(col,
+                        svgclass(classes),
+                        jscall(["""
+                            data(\"color_class\", \"$(c)\")
+                            .click(Gadfly.colorkey_swatch_click)
+                            """ for c in classes]))
+                end
+                compose!(ctx, col)
 
                 m += nrows
                 xpos += colwidths[i]
             end
 
-            return ctx
+            return compose!(outerctx, ctx,
+                            # defeat webkit's asinine default drag behavior
+                            jscall("drag(function() {}, function() {}, function() {})"),
+                            svgclass("guide colorkey"))
         end
 
         return compose!(
-            context(minwidth=ctxwidth,
+            context(minwidth=max(title_width, ctxwidth),
                     minheight=ctxheight,
                     units=UnitBox()),
             ctxp)
@@ -295,17 +314,24 @@ function render_continuous_color_key(colors::Dict,
                                                  values(labels)...)
 
     numlabels = length(labels)
-    total_height = 2 * numlabels * entry_height
+    title_height = title_context.box.height
+    total_height = 1.5 * numlabels * entry_height + title_height
     swatch_width = entry_height / 2
     xoff = 2mm
     padding = 1mm
     entry_width += 2padding + swatch_width + xoff
 
-    ctx = context(minwidth=entry_width, minheight=total_height, units=UnitBox())
+    ctx = context(minwidth=max(title_width, entry_width),
+                  minheight=total_height, units=UnitBox())
+
+    yoff = 0.5h - total_height/2
+
+    compose!(ctx, {context(xoff, yoff), title_context})
 
     # color bar
     compose!(ctx,
-        {context(xoff, 0.5h - total_height/2, 1w, total_height, units=UnitBox()),
+        {context(xoff, yoff + title_height,
+                 1w, total_height, units=UnitBox()),
          rectangle(
              [0],
              [1*cy - i*total_height / theme.key_color_gradations
@@ -325,7 +351,7 @@ function render_continuous_color_key(colors::Dict,
          svgattribute("shape-rendering", "crispEdges")})
 
     compose!(ctx,
-        {context(xoff + swatch_width + padding, 0.5h - total_height/2,
+        {context(xoff + swatch_width + padding, yoff + title_height,
                  1w, total_height, units=UnitBox()),
          text([0],
               [1 - y for y in values(colors)],
@@ -333,11 +359,38 @@ function render_continuous_color_key(colors::Dict,
               [hleft], [vcenter]),
          fill(theme.key_label_color),
          font(theme.key_label_font),
-         fontsize(theme.key_label_font_size)})
-
-
+         fontsize(theme.key_label_font_size)},
+         svgclass("guide colorkey"))
 
     return [ctx]
+end
+
+
+function render_colorkey_title(title::String, theme::Gadfly.Theme)
+    title_width, title_height = max_text_extents(theme.key_title_font,
+                                                 theme.key_title_font_size,
+                                                 title)
+
+    if theme.guide_title_position == :left
+        title_form = text(0.0w, title_height, title, hleft, vbottom)
+    elseif theme.guide_title_position == :center
+        title_form = text(0.5w, title_height, title, hcenter, vbottom)
+    elseif theme.guide_title_position == :right
+        title_form = text(1.0w, title_height, title, hright, vbottom)
+    else
+        error("$(theme.guide_title_position) is not a valid guide title position")
+    end
+
+    title_padding = 4mm
+    title_context = compose!(
+        context(0w, 0h, 1w, title_height + title_padding),
+        title_form,
+        stroke(nothing),
+        font(theme.key_title_font),
+        fontsize(theme.key_title_font_size),
+        fill(theme.key_title_color))
+
+    return title_context, title_width
 end
 
 
@@ -346,98 +399,126 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
 
     if theme.key_position == :none
         return PositionedGuide[]
-    else
-        used_colors = Set{ColorValue}()
-        colors = Array(ColorValue, 0) # to preserve ordering
-        labels = Dict{ColorValue, Set{String}}()
-
-        continuous_guide = false
-        guide_title = guide.title
-
-        if guide_title === nothing && !is(aes.color_key_title, nothing)
-            guide_title = aes.color_key_title
-        end
-
-        if aes.color_key_colors != nothing &&
-           aes.color_key_continuous != nothing &&
-           aes.color_key_continuous
-            continuous_guide = true
-        end
-
-        color_key_labels = aes.color_label(keys(aes.color_key_colors))
-        for (color, label) in zip(keys(aes.color_key_colors), color_key_labels)
-            if !in(color, used_colors)
-                push!(used_colors, color)
-                push!(colors, color)
-                labels[color] = Set{String}()
-                push!(labels[color], label)
-            else
-                push!(labels[color], label)
-            end
-        end
-
-        if guide_title === nothing
-            guide_title = "Color"
-        end
-
-        pretty_labels = Dict{ColorValue, String}()
-        for (color, label) in labels
-            pretty_labels[color] = join(labels[color], ", ")
-        end
-
-        # Key title
-        title_width, title_height = max_text_extents(theme.key_title_font,
-                                                     theme.key_title_font_size,
-                                                     guide_title)
-
-        if theme.guide_title_position == :left
-            title_form = text(0.0w, title_height, guide_title, hleft, vbottom)
-        elseif theme.guide_title_position == :center
-            title_form = text(0.5w, title_height, guide_title, hcenter, vbottom)
-        elseif theme.guide_title_position == :right
-            title_form = text(1.0w, title_height, guide_title, hright, vbottom)
-        else
-            error("$(theme.guide_title_position) is not a valid guide title position")
-        end
-
-        title_padding = 2mm
-        title_canvas = compose!(
-            context(0w, 0h, 1w, title_height + title_padding),
-            title_form,
-            stroke(nothing),
-            font(theme.key_title_font),
-            fontsize(theme.key_title_font_size),
-            fill(theme.key_title_color))
-
-        if theme.colorkey_swatch_shape != :circle &&
-        theme.colorkey_swatch_shape != :square
-            error("$(theme.colorkey_swatch_shape) is not a valid color key swatch shape")
-        end
-
-        if continuous_guide
-            ctxs = render_continuous_color_key(aes.color_key_colors,
-                                               pretty_labels,
-                                               aes.color_function,
-                                               title_canvas,
-                                               title_width, theme)
-        else
-            ctxs = render_discrete_color_key(colors, pretty_labels, title_canvas,
-                                             title_width, theme)
-        end
-
-        position = right_guide_position
-        if theme.key_position == :left
-            position = left_guide_position
-        elseif theme.key_position == :right
-            position = right_guide_position
-        elseif theme.key_position == :top
-            position = top_guide_position
-        elseif theme.key_position == :bottom
-            position = bottom_guide_position
-        end
-
-        return [PositionedGuide(ctxs, 0, position)]
     end
+
+    used_colors = Set{ColorValue}()
+    colors = Array(ColorValue, 0) # to preserve ordering
+    labels = Dict{ColorValue, Set{String}}()
+
+    continuous_guide = false
+    guide_title = guide.title
+
+    if guide_title === nothing && !is(aes.color_key_title, nothing)
+        guide_title = aes.color_key_title
+    end
+
+    if aes.color_key_colors != nothing &&
+       aes.color_key_continuous != nothing &&
+       aes.color_key_continuous
+        continuous_guide = true
+    end
+
+    color_key_labels = aes.color_label(keys(aes.color_key_colors))
+    for (color, label) in zip(keys(aes.color_key_colors), color_key_labels)
+        if !in(color, used_colors)
+            push!(used_colors, color)
+            push!(colors, color)
+            labels[color] = Set{String}()
+            push!(labels[color], label)
+        else
+            push!(labels[color], label)
+        end
+    end
+
+    if guide_title === nothing
+        guide_title = "Color"
+    end
+
+    pretty_labels = Dict{ColorValue, String}()
+    for (color, label) in labels
+        pretty_labels[color] = join(labels[color], ", ")
+    end
+
+    title_context, title_width = render_colorkey_title(guide_title, theme)
+
+    if theme.colorkey_swatch_shape != :circle &&
+    theme.colorkey_swatch_shape != :square
+        error("$(theme.colorkey_swatch_shape) is not a valid color key swatch shape")
+    end
+
+    if continuous_guide
+        ctxs = render_continuous_color_key(aes.color_key_colors,
+                                           pretty_labels,
+                                           aes.color_function,
+                                           title_context,
+                                           title_width, theme)
+    else
+        ctxs = render_discrete_color_key(colors, pretty_labels,
+                                         aes.color_label,
+                                         title_context,
+                                         title_width, theme)
+    end
+
+    position = right_guide_position
+    if theme.key_position == :left
+        position = left_guide_position
+    elseif theme.key_position == :right
+        position = right_guide_position
+    elseif theme.key_position == :top
+        position = top_guide_position
+    elseif theme.key_position == :bottom
+        position = bottom_guide_position
+    end
+
+    return [PositionedGuide(ctxs, 0, position)]
+end
+
+
+immutable ManualColorKey <: Gadfly.GuideElement
+    title::Union(String, Nothing)
+    labels::Vector{String}
+    colors::Vector
+end
+
+
+const manual_color_key = ManualColorKey
+
+
+function render(guide::ManualColorKey, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    if theme.key_position == :none
+        return PositionedGuide[]
+    end
+
+    guide_title = guide.title
+
+    if guide_title === nothing && !is(aes.color_key_title, nothing)
+        guide_title = aes.color_key_title
+    end
+
+    if guide_title === nothing
+        guide_title = "Color"
+    end
+
+    title_context, title_width = render_colorkey_title(guide_title, theme)
+
+    colors = ColorValue[color(c) for c in guide.colors]
+    labels = (ColorValue => String)[c => l for (c, l) in zip(colors, guide.labels)]
+
+    ctxs = render_discrete_color_key(colors, labels, title_context, title_width, theme)
+
+    position = right_guide_position
+    if theme.key_position == :left
+        position = left_guide_position
+    elseif theme.key_position == :right
+        position = right_guide_position
+    elseif theme.key_position == :top
+        position = top_guide_position
+    elseif theme.key_position == :bottom
+        position = bottom_guide_position
+    end
+
+    return [PositionedGuide(ctxs, 0, position)]
 end
 
 
@@ -499,7 +580,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         line([{(t, 0h), (t, 1h)} for t in grids[gridvisibility]]),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
-        strokedash([0.5mm, 0.5mm]),
+        strokedash(theme.grid_strokedash),
         svgclass("guide xgridlines yfixed"))
 
     dynamic_grid_lines = compose!(
@@ -508,7 +589,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         visible(gridvisibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
-        strokedash([0.5mm, 0.5mm]),
+        strokedash(theme.grid_strokedash),
         svgclass("guide xgridlines yfixed"),
         svgattribute("gadfly:scale", scale),
         jsplotdata("focused_xgrid_color",
@@ -533,7 +614,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     hlayout = ctxpromise() do draw_context
         static_labels = compose!(
             context(withoutjs=true),
-            text(ticks[tickvisibility], [1h - padding], labels[tickvisibility],
+            text(ticks[tickvisibility], [1h + padding], labels[tickvisibility],
                  [hcenter], [vbottom]),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
@@ -542,7 +623,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
         dynamic_labels = compose!(
             context(withjs=true),
-            text(ticks, [1h - padding], labels, [hcenter], [vbottom]),
+            text(ticks, [1h + padding], labels, [hcenter], [vbottom]),
             visible(tickvisibility),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
@@ -571,8 +652,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
         dynamic_labels = compose!(
             context(withjs=true),
-            text(ticks, [1h - padding], labels, [hright], [vbottom],
-                 [Rotation(-0.5pi, tick, 1h - padding) for tick in ticks]),
+            text(ticks, [padding], labels, [hright], [vbottom],
+                 [Rotation(-0.5pi, tick, padding) for tick in ticks]),
             visible(tickvisibility),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
@@ -662,7 +743,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         line([{(0w, t), (1w, t)} for t in grids[gridvisibility]]),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
-        strokedash([0.5mm, 0.5mm]),
+        strokedash(theme.grid_strokedash),
         svgclass("guide ygridlines xfixed"))
 
     dynamic_grid_lines = compose!(
@@ -671,7 +752,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         visible(gridvisibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
-        strokedash([0.5mm, 0.5mm]),
+        strokedash(theme.grid_strokedash),
         svgclass("guide ygridlines xfixed"),
         svgattribute("gadfly:scale", scale),
         jsplotdata("focused_ygrid_color",
@@ -790,8 +871,7 @@ function render(guide::XLabel, theme::Gadfly.Theme,
                                                theme.major_label_font_size,
                                                guide.label)
 
-    padding = 2mm
-
+    padding = 3mm
     hlayout = ctxpromise() do draw_context
         return compose!(context(),
                         text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
@@ -867,7 +947,7 @@ function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     vlayout = ctxpromise() do draw_context
         return compose!(context(),
-                        text(0.5w, 0.5h, guide.label, hcenter, vcenter, Rotation(-0.5pi)),
+                        text(0.5w, 0.5h - padding, guide.label, hcenter, vcenter, Rotation(-0.5pi)),
                         stroke(nothing),
                         fill(theme.major_label_color),
                         font(theme.major_label_font),
@@ -930,6 +1010,7 @@ end
 #   A new canvas containing the plot with guides layed out in the specified
 #   manner.
 function layout_guides(plot_context::Context,
+                       coord::Gadfly.CoordinateElement,
                        theme::Gadfly.Theme,
                        positioned_guides::PositionedGuide...)
     # Organize guides by position
@@ -955,41 +1036,87 @@ function layout_guides(plot_context::Context,
     focus_y = 1 + length(guides[top_guide_position])
     focus_x = 1 + length(guides[left_guide_position])
 
+    plot_units = plot_context.units
+
     # Populate the table
-    tbl = table(m, n, focus_y:focus_y, focus_x:focus_x, units=plot_context.units)
+
+    aspect_ratio = nothing
+    if isa(coord, Gadfly.Coord.cartesian)
+        if coord.fixed
+            aspect_ratio = abs(plot_context.units.width / plot_context.units.height)
+        elseif coord.aspect_ratio != nothing
+            aspect_ratio = coord.aspect_ratio
+        end
+    end
+    tbl = table(m, n, focus_y:focus_y, focus_x:focus_x, units=plot_units,
+                aspect_ratio=aspect_ratio)
 
     i = 1
     for (ctxs, order) in guides[top_guide_position]
+        for ctx in ctxs
+            if ctx.units == Compose.nil_unit_box
+                ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
+            end
+        end
+
         tbl[i, focus_x] = ctxs
         i += 1
     end
     i += 1
     for (ctxs, order) in guides[bottom_guide_position]
+        for ctx in ctxs
+            if ctx.units == Compose.nil_unit_box
+                ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
+            end
+        end
+
         tbl[i, focus_x] = ctxs
         i += 1
     end
 
     j = 1
     for (ctxs, order) in guides[left_guide_position]
+        for ctx in ctxs
+            if ctx.units == Compose.nil_unit_box
+                ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
+            end
+        end
+
         tbl[focus_y, j] = ctxs
         j += 1
     end
     j += 1
     for (ctxs, order) in guides[right_guide_position]
+        for ctx in ctxs
+            if ctx.units == Compose.nil_unit_box
+                ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
+            end
+        end
+
         tbl[focus_y, j] = ctxs
         j += 1
     end
 
     tbl[focus_y, focus_x] =
         [compose!(context(minwidth=minwidth(plot_context),
-                          minheight=minheight(plot_context), clip=true),
+                          minheight=minheight(plot_context),
+                          units=plot_units,
+                          clip=false),
                   {context(order=-1),
                      [c for (c, o) in guides[under_guide_position]]...},
                   {context(order=1000),
                      [c for (c, o) in guides[over_guide_position]]...},
                   {context(order=0),
                      plot_context},
-                  jscall("mouseenter(plot_mouseover).mouseleave(plot_mouseout)"))]
+                  jscall(
+                    """
+                    mouseenter(Gadfly.plot_mouseover)
+                    .mouseleave(Gadfly.plot_mouseout)
+                    .mousewheel(Gadfly.guide_background_scroll)
+                    .drag(Gadfly.guide_background_drag_onmove,
+                          Gadfly.guide_background_drag_onstart,
+                          Gadfly.guide_background_drag_onend)
+                    """))]
 
     return tbl
 end

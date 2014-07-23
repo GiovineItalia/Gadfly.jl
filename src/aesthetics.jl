@@ -16,6 +16,7 @@ typealias NumericalAesthetic
     size,         Maybe(Vector{Measure})
     color,        Maybe(AbstractDataVector{ColorValue})
     label,        CategoricalAesthetic
+    group,        CategoricalAesthetic
 
     xmin,         NumericalAesthetic
     xmax,         NumericalAesthetic
@@ -25,6 +26,9 @@ typealias NumericalAesthetic
     # hexagon sizes used for hexbin
     xsize,        NumericalAesthetic
     ysize,        NumericalAesthetic
+
+    # function plotting
+    func,         NumericalOrCategoricalAesthetic
 
     # fixed lines
     xintercept,   NumericalAesthetic
@@ -135,7 +139,7 @@ end
 #   vars: Symbol that must be defined in the aesthetics.
 #
 function undefined_aesthetics(aes::Aesthetics, vars::Symbol...)
-    setdiff(set(vars), defined_aesthetics(aes))
+    setdiff(Set(vars), defined_aesthetics(aes))
 end
 
 function assert_aesthetics_defined(who::String, aes::Aesthetics, vars::Symbol...)
@@ -243,9 +247,29 @@ function cat_aes_var!(a::Dict, b::Dict)
 end
 
 
-function cat_aes_var!(a::AbstractArray, b::AbstractArray)
-    append!(a, b)
-    a
+function cat_aes_var!{T}(a::AbstractArray{T}, b::AbstractArray{T})
+    return append!(a, b)
+end
+
+
+function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
+    V = promote_type(T, U)
+    if isa(a, DataArray) || isa(b, DataArray)
+        ab = DataArray(V, length(a) + length(b))
+    else
+        ab = Array(V, length(a), length(b))
+    end
+    i = 1
+    for x in a
+        ab[i] = x
+        i += 1
+    end
+    for x in b
+        ab[i] = x
+        i += 1
+    end
+
+    return ab
 end
 
 
@@ -255,7 +279,7 @@ end
 
 
 function cat_aes_var!{T}(xs::PooledDataVector{T}, ys::PooledDataVector{T})
-    newpool = T[x for x in union(set(xs.pool), set(ys.pool))]
+    newpool = T[x for x in union(Set(xs.pool), Set(ys.pool))]
     newdata = vcat(T[x for x in xs], T[y for y in ys])
     PooledDataArray(newdata, newpool, [false for _ in newdata])
 end
@@ -287,14 +311,13 @@ function aes_by_xy_group(aes::Aesthetics)
     yrefs = aes.ygroup === nothing ? [1] : aes.ygroup
 
     aes_grid = Array(Aesthetics, n, m)
-    staging = Array(Vector{Any}, n, m)
+    staging = Array(DataArray, n, m)
     for i in 1:n, j in 1:m
         aes_grid[i, j] = Aesthetics()
-        staging[i, j] = Array(Any, 0)
     end
 
     function make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},
-                                          arr::Array)
+                                          arr::AbstractArray)
         PooledDataArray(convert(Array{T}, arr))
     end
 
@@ -321,7 +344,7 @@ function aes_by_xy_group(aes::Aesthetics)
             end
 
             for i in 1:n, j in 1:m
-                empty!(staging[i, j])
+                staging[i, j] = DataArray(eltype(vals), 0)
             end
 
             for (i, j, v) in zip(Iterators.cycle(yrefs), Iterators.cycle(xrefs), vals)
@@ -333,8 +356,16 @@ function aes_by_xy_group(aes::Aesthetics)
                     setfield!(aes_grid[i, j], var,
                               make_pooled_data_array(typeof(vals), staging[i, j]))
                 else
-                    setfield!(aes_grid[i, j], var,
-                              convert(typeof(vals), copy(staging[i, j])))
+                    if !applicable(convert, typeof(vals), staging[i, j])
+                        T = eltype(vals)
+                        if T <: ColorValue T = ColorValue end
+                        da = DataArray(T, length(staging[i, j]))
+                        copy!(da, staging[i, j])
+                        setfield!(aes_grid[i, j], var, da)
+                    else
+                        setfield!(aes_grid[i, j], var,
+                                  convert(typeof(vals), copy(staging[i, j])))
+                    end
                 end
             end
         else
