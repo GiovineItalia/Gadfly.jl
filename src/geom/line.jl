@@ -18,8 +18,8 @@ end
 const line = LineGeometry
 
 
-function contour(; n=15, samples=150, preserve_order=true)
-    return LineGeometry(Gadfly.Stat.contour(n=n, samples=samples),
+function contour(; levels=15, samples=150, preserve_order=true)
+    return LineGeometry(Gadfly.Stat.contour(levels=levels, samples=samples),
                                             preserve_order=preserve_order)
 end
 

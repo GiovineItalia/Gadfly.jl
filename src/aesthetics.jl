@@ -1,13 +1,13 @@
 
 
 typealias NumericalOrCategoricalAesthetic
-    Union(Nothing, Vector, DataArray, PooledDataArray)
+    Union(Nothing, Matrix, Vector, DataArray, PooledDataArray)
 
 typealias CategoricalAesthetic
     Union(Nothing, PooledDataArray)
 
 typealias NumericalAesthetic
-    Union(Nothing, Vector, DataArray)
+    Union(Nothing, Matrix, Vector, DataArray)
 
 
 @varset Aesthetics begin
@@ -107,7 +107,8 @@ const aesthetic_aliases =
      :x_tick        => :xtick,
      :y_tick        => :ytick,
      :x_grid        => :xgrid,
-     :y_grid        => :ygrid]
+     :y_grid        => :ygrid,
+     :z             => :func]
 
 
 # Index as if this were a data frame

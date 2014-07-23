@@ -1089,13 +1089,16 @@ function apply_statistic(stat::FunctionStatistic,
     Scale.apply_scale(scales[:y], [aes], data)
 end
 
-
 immutable ContourStatistic <: Gadfly.StatisticElement
-    n::Int
+    levels
     samples::Int
 
     function ContourStatistic(; n=15, samples=150)
         new(n, samples)
+    end
+
+    function ContourStatistic(; levels=15, samples=150)
+        new(levels, samples)
     end
 end
 
@@ -1117,21 +1120,45 @@ function apply_statistic(stat::ContourStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    if length(aes.func) != 1
-        error("Stat.contour requires exactly one function")
+    xs = aes.x
+    ys = aes.y
+
+    if typeof(aes.func) <: Array{Function} 
+        if length(aes.func) != 1
+            error("Stat.contour requires exactly one function")
+        end
+        if xs == nothing && aes.xmin != nothing && aes.xmax != nothing
+            xs = linspace(aes.xmin[1], aes.xmax[1], stat.samples)
+        end
+            
+        if ys == nothing && aes.ymin != nothing && aes.ymax != nothing
+            ys = linspace(aes.ymin[1], aes.ymax[1], stat.samples)
+        end
+
+        zs = Float64[aes.func[1](x, y) for x in xs, y in ys]
+
+    elseif typeof(aes.func) <: Matrix
+        zs = aes.func
+        if xs == nothing
+            xs = float([1:size(zs)[1]])
+        end
+        if ys == nothing
+            ys = float([1:size(zs)[2]])
+        end
+        if size(zs) != (length(xs), length(ys))
+            error("Stat.contour requires dimension of z to be length(x) by length(y)")
+        end
+    else
+        error("Stat.contour requires either a matrix or a function")
     end
 
-    f = aes.func[1]
-    xs = linspace(aes.xmin[1], aes.xmax[1], stat.samples)
-    ys = linspace(aes.ymin[1], aes.ymax[1], stat.samples)
-    zs = Float64[f(x, y) for x in xs, y in ys]
     levels = Float64[]
     contour_xs = eltype(xs)[]
     contour_ys = eltype(ys)[]
 
     groups = PooledDataArray(Int[])
     group = 0
-    for contour in Contour.contours(xs, ys, zs, stat.n)
+    for contour in Contour.contours(xs, ys, zs, stat.levels)
         for curve in contour.lines
             for v in curve.vertices
                 push!(contour_xs, v[1])
