@@ -39,7 +39,7 @@ end
 
 
 function default_statistic(geom::BarGeometry)
-    geom.default_statistic
+    return geom.default_statistic
 end
 
 

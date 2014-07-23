@@ -233,5 +233,18 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
         svgclass("plotpanel"))
 end
 
+
+immutable SubplotGrid <: Gadfly.CoordinateElement
+end
+
+
+function apply_coordinate(coord::SubplotGrid, aess::Vector{Gadfly.Aesthetics},
+                          scales::Dict{Symbol, Gadfly.ScaleElement})
+    compose!(context(), svgclass("plotpanel"))
+end
+
+
+const subplot_grid = SubplotGrid
+
 end # module Coord
 

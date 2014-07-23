@@ -46,6 +46,7 @@ typealias ColorOrNothing Union(ColorValue, Nothing)
 element_aesthetics(::Any) = []
 default_scales(::Any) = []
 default_statistic(::Any) = Stat.identity()
+element_coordinate_type(::Any) = Coord.cartesian
 
 
 abstract Element
@@ -167,14 +168,14 @@ type Plot
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
-    coord::CoordinateElement
+    coord::Union(Nothing, CoordinateElement)
     guides::Vector{GuideElement}
     theme::Theme
     mapping::Dict
 
     function Plot()
         new(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
-            Coord.cartesian(), GuideElement[], default_theme)
+            nothing, GuideElement[], default_theme)
     end
 end
 
@@ -422,6 +423,17 @@ function render(plot::Plot)
         end
     end
 
+    # Figure out the coordinates
+    coord = plot.coord
+    for layer in plot.layers
+        coord_type = element_coordinate_type(layer.geom)
+        if coord === nothing
+            coord = coord_type()
+        elseif typeof(coord) != coord_type
+            error("Plot uses multiple coordinates: $(typeof(coord)) and $(coord_type)")
+        end
+    end
+
     # Add default statistics for geometries.
     layer_stats = Array(StatisticElement, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
@@ -644,13 +656,13 @@ function render(plot::Plot)
 
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, layer_aess)
-        Stat.apply_statistics(StatisticElement[layer_stat], scales, plot.coord, aes)
+        Stat.apply_statistics(StatisticElement[layer_stat], scales, coord, aes)
     end
 
     # IIb. Plot-wise Statistics
     plot_aes = cat(layer_aess...)
     statistics = collect(statistics)
-    Stat.apply_statistics(statistics, scales, plot.coord, plot_aes)
+    Stat.apply_statistics(statistics, scales, coord, plot_aes)
 
     # Add some default guides determined by defined aesthetics
     if !all([aes.color === nothing for aes in [plot_aes, layer_aess...]]) &&
@@ -659,8 +671,8 @@ function render(plot::Plot)
         push!(guides, Guide.colorkey())
     end
 
-    root_context = render_prepared(plot, plot_aes, layer_aess, layer_stats, scales,
-                                   statistics, guides)
+    root_context = render_prepared(plot, coord, plot_aes, layer_aess,
+                                   layer_stats, scales, statistics, guides)
 
     return pad_inner(root_context, 5mm)
 end
@@ -689,6 +701,7 @@ end
 #   A Compose context containing the rendered plot.
 #
 function render_prepared(plot::Plot,
+                         coord::CoordinateElement,
                          plot_aes::Aesthetics,
                          layer_aess::Vector{Aesthetics},
                          layer_stats::Vector{StatisticElement},
@@ -697,7 +710,7 @@ function render_prepared(plot::Plot,
                          guides::Vector{GuideElement};
                          table_only=false)
     # III. Coordinates
-    plot_context = Coord.apply_coordinate(plot.coord, vcat(plot_aes,
+    plot_context = Coord.apply_coordinate(coord, vcat(plot_aes,
                                           layer_aess), scales)
 
     # IV. Geometries
@@ -717,7 +730,7 @@ function render_prepared(plot::Plot,
         end
     end
 
-    tbl = Guide.layout_guides(plot_context, plot.coord,
+    tbl = Guide.layout_guides(plot_context, coord,
                               plot.theme, guide_contexts...)
     if table_only
         return tbl

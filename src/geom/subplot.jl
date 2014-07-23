@@ -90,6 +90,11 @@ function element_aesthetics(geom::SubplotGrid)
 end
 
 
+function element_coordinate_type(::SubplotGrid)
+    return Gadfly.Coord.subplot_grid
+end
+
+
 # Render a subplot grid geometry, which consists of rendering and arranging
 # many smaller plots.
 function render(geom::SubplotGrid, theme::Gadfly.Theme,
@@ -232,7 +237,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         end
 
         subtbl = Gadfly.render_prepared(
-                            p, aes_grid[i, j], layer_aes_grid[i, j],
+                            p, Gadfly.Coord.cartesian(),
+                            aes_grid[i, j], layer_aes_grid[i, j],
                             layer_stats,
                             scales,
                             plot_stats,

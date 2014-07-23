@@ -1041,10 +1041,12 @@ function layout_guides(plot_context::Context,
     # Populate the table
 
     aspect_ratio = nothing
-    if coord.fixed
-        aspect_ratio = abs(plot_context.units.width / plot_context.units.height)
-    elseif coord.aspect_ratio != nothing
-        aspect_ratio = coord.aspect_ratio
+    if isa(coord, Gadfly.Coord.cartesian)
+        if coord.fixed
+            aspect_ratio = abs(plot_context.units.width / plot_context.units.height)
+        elseif coord.aspect_ratio != nothing
+            aspect_ratio = coord.aspect_ratio
+        end
     end
     tbl = table(m, n, focus_y:focus_y, focus_x:focus_x, units=plot_units,
                 aspect_ratio=aspect_ratio)
