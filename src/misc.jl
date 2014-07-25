@@ -87,6 +87,10 @@ end
 
 
 function concrete_minmax{T<:Real}(xs, xmin::T, xmax::T)
+    if eltype(xs) <: Base.Callable
+        return xmin, xmax
+    end
+
     for x in xs
         if isconcrete(x)
             xT = convert(T, x)

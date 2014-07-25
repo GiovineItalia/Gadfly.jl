@@ -1,7 +1,7 @@
 
 
 typealias NumericalOrCategoricalAesthetic
-    Union(Nothing, Matrix, Vector, DataArray, PooledDataArray)
+    Union(Nothing, Vector, DataArray, PooledDataArray)
 
 typealias CategoricalAesthetic
     Union(Nothing, PooledDataArray)
@@ -12,7 +12,8 @@ typealias NumericalAesthetic
 
 @varset Aesthetics begin
     x,            NumericalOrCategoricalAesthetic
-    y,            NumericalOrCategoricalAesthetic
+    y,            Union(NumericalOrCategoricalAesthetic)
+    z,            Union(Nothing, Function, Matrix)
     size,         Maybe(Vector{Measure})
     color,        Maybe(AbstractDataVector{ColorValue})
     label,        CategoricalAesthetic
@@ -26,9 +27,6 @@ typealias NumericalAesthetic
     # hexagon sizes used for hexbin
     xsize,        NumericalAesthetic
     ysize,        NumericalAesthetic
-
-    # function plotting
-    func,         NumericalOrCategoricalAesthetic
 
     # fixed lines
     xintercept,   NumericalAesthetic
@@ -107,8 +105,7 @@ const aesthetic_aliases =
      :x_tick        => :xtick,
      :y_tick        => :ytick,
      :x_grid        => :xgrid,
-     :y_grid        => :ygrid,
-     :z             => :func]
+     :y_grid        => :ygrid]
 
 
 # Index as if this were a data frame
@@ -250,6 +247,19 @@ end
 
 function cat_aes_var!{T}(a::AbstractArray{T}, b::AbstractArray{T})
     return append!(a, b)
+end
+
+
+# Let arrays of numbers clobber arrays of functions. This is slightly odd
+# behavior, comes up with with function statistics applied on a layer-wise
+# basis.
+function cat_aes_var!{T <: Base.Callable, U}(a::AbstractArray{T}, b::AbstractArray{U})
+    return b
+end
+
+
+function cat_aes_var!{T, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U})
+    return a
 end
 
 

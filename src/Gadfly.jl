@@ -290,10 +290,11 @@ eval_plot_mapping(data::AbstractDataFrame, arg::String) = eval_plot_mapping(data
 eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
 eval_plot_mapping(data::AbstractDataFrame, arg::AbstractArray) = arg
+eval_plot_mapping(data::AbstractDataFrame, arg::Function) = arg
 
 # Acceptable types of values that can be bound to aesthetics.
 typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
-                               AbstractArray)
+                               AbstractArray, Function)
 
 
 # Create a new plot.
@@ -929,7 +930,8 @@ include("statistics.jl")
 # The default depends on whether the input is discrete or continuous (i.e.,
 # PooledDataVector or DataVector, respectively).
 const default_aes_scales = {
-        :functional => {:func => Scale.func()},
+        :functional => {:z => Scale.z_func(),
+                        :y => Scale.y_func()},
         :numerical => {:x           => Scale.x_continuous(),
                        :xmin        => Scale.x_continuous(),
                        :xmax        => Scale.x_continuous(),
@@ -975,6 +977,10 @@ function classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N})
 end
 
 function classify_data{N, T <: Base.Callable}(data::AbstractArray{T, N})
+    :functional
+end
+
+function classify_data{T <: Base.Callable}(data::T)
     :functional
 end
 

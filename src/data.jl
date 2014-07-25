@@ -4,6 +4,7 @@
 @varset Data begin
     x
     y
+    z
     xmin
     xmax
     ymin

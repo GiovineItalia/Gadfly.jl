@@ -35,7 +35,7 @@ function plot(fs::Array, a, b, elements::ElementOrFunction...; mapping...)
         push!(elements, Coord.cartesian(xflip=true))
     end
 
-    mappingdict = {:func => fs, :xmin => [a], :xmax => [b]}
+    mappingdict = {:y => fs, :xmin => [a], :xmax => [b]}
     for (k, v) in mapping
         mappingdict[k] = v
     end
@@ -46,7 +46,7 @@ end
 
 # Plot a single function.
 function plot(f::Function, a, b, elements::ElementOrFunction...; mapping...)
-    plot([f], a, b, elements...; mapping...)
+    plot(Function[f], a, b, elements...; mapping...)
 end
 
 
@@ -75,7 +75,7 @@ function plot(f::Function, xmin, xmax, ymin, ymax,
 
     push!(elements, Coord.cartesian(xflip=xmin > xmax, yflip=ymin > ymax))
 
-    mappingdict = {:func => [f], :xmin => [xmin], :xmax => [xmax],
+    mappingdict = {:z    => f, :xmin => [xmin], :xmax => [xmax],
                    :ymin => [ymin], :ymax => [ymax]}
     for (k, v) in mapping
         mappingdict[k] = v
@@ -88,7 +88,7 @@ end
 
 # Create a layer from a list of functions or expressions.
 function layer(fs::Array, a, b)
-    layer(func=fs, xmin=[a], xmax=[b], Stat.func, Geom.line)
+    layer(y=fs, xmin=[a], xmax=[b], Stat.func, Geom.line)
 end
 
 

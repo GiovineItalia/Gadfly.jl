@@ -501,7 +501,7 @@ function apply_statistic(stat::TickStatistic,
 
         for var in stat.in_vars
             vals = getfield(aes, var)
-            if vals != nothing
+            if vals != nothing && eltype(vals) != Function
                 if minval == nothing
                     minval = first(vals)
                 end
@@ -676,7 +676,6 @@ function apply_statistic_typed(minval, maxval, vals, size, dsize)
 end
 
 function apply_statistic_typed{T}(minval, maxval, vals::DataArray{T}, size, dsize)
-#     for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
     lensize  = length(size)
     lendsize = length(dsize)
     for i = 1:length(vals)
@@ -1033,13 +1032,12 @@ const func = FunctionStatistic
 
 
 function default_scales(::FunctionStatistic)
-    return [Gadfly.Scale.func(), Gadfly.Scale.x_continuous(),
-            Gadfly.Scale.y_continuous()]
+    return [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
 end
 
 
 function element_aesthetics(::FunctionStatistic)
-    return [:func, :xmin, :xmax, :ymin, :ymax]
+    return [:y, :xmin, :xmax, :ymin, :ymax]
 end
 
 
@@ -1047,16 +1045,16 @@ function apply_statistic(stat::FunctionStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    Gadfly.assert_aesthetics_defined("FunctionStatistic", aes, :func)
+    Gadfly.assert_aesthetics_defined("FunctionStatistic", aes, :y)
     Gadfly.assert_aesthetics_defined("FunctionStatistic", aes, :xmin)
     Gadfly.assert_aesthetics_defined("FunctionStatistic", aes, :xmax)
     Gadfly.assert_aesthetics_equal_length("FunctionStatistic", aes, :xmin, :xmax)
 
-    aes.x = Array(Float64, length(aes.func) * stat.num_samples)
-    ys = Array(Float64, length(aes.func) * stat.num_samples)
+    aes.x = Array(Float64, length(aes.y) * stat.num_samples)
+    ys = Array(Float64, length(aes.y) * stat.num_samples)
 
     i = 1
-    for (f, xmin, xmax) in zip(aes.func, cycle(aes.xmin), cycle(aes.xmax))
+    for (f, xmin, xmax) in zip(aes.y, cycle(aes.xmin), cycle(aes.xmax))
         for x in linspace(xmin, xmax, stat.num_samples)
             aes.x[i] = x
             ys[i] = f(x)
@@ -1067,17 +1065,17 @@ function apply_statistic(stat::FunctionStatistic,
     # color was bound explicitly
     if aes.color != nothing
         func_color = aes.color
-        aes.color = DataArray(eltype(aes.color), length(aes.func) * stat.num_samples)
-        groups = DataArray(Int, length(aes.func) * stat.num_samples)
-        for i in 1:length(aes.func)
+        aes.color = DataArray(eltype(aes.color), length(aes.y) * stat.num_samples)
+        groups = DataArray(Int, length(aes.y) * stat.num_samples)
+        for i in 1:length(aes.y)
             aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = func_color[i]
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
         aes.group = PooledDataArray(groups)
-    elseif length(aes.func) > 1 && haskey(scales, :color)
+    elseif length(aes.y) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
-        data.color = Array(String, length(aes.func) * stat.num_samples)
-        for i in 1:length(aes.func)
+        data.color = Array(String, length(aes.y) * stat.num_samples)
+        for i in 1:length(aes.y)
             fname = "f<sub>$(i)</sub>"
             data.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = fname
         end
@@ -1103,14 +1101,14 @@ immutable ContourStatistic <: Gadfly.StatisticElement
 end
 
 
-element_aesthetics(::ContourStatistic) = [:func, :xmin, :xmax, :ymin, :ymax]
+element_aesthetics(::ContourStatistic) = [:z, :xmin, :xmax, :ymin, :ymax]
 
 
 const contour = ContourStatistic
 
 
 function default_scales(::ContourStatistic)
-    return [Gadfly.Scale.func(), Gadfly.Scale.x_continuous(),
+    return [Gadfly.Scale.z_func(), Gadfly.Scale.x_continuous(),
             Gadfly.Scale.y_continuous(),
             Gadfly.Scale.continuous_color_gradient()]
 end
@@ -1123,22 +1121,19 @@ function apply_statistic(stat::ContourStatistic,
     xs = aes.x
     ys = aes.y
 
-    if typeof(aes.func) <: Array{Function} 
-        if length(aes.func) != 1
-            error("Stat.contour requires exactly one function")
-        end
+    if typeof(aes.z) <: Function
         if xs == nothing && aes.xmin != nothing && aes.xmax != nothing
             xs = linspace(aes.xmin[1], aes.xmax[1], stat.samples)
         end
-            
+
         if ys == nothing && aes.ymin != nothing && aes.ymax != nothing
             ys = linspace(aes.ymin[1], aes.ymax[1], stat.samples)
         end
 
-        zs = Float64[aes.func[1](x, y) for x in xs, y in ys]
+        zs = Float64[aes.z(x, y) for x in xs, y in ys]
 
-    elseif typeof(aes.func) <: Matrix
-        zs = aes.func
+    elseif typeof(aes.z) <: Matrix
+        zs = aes.z
         if xs == nothing
             xs = float([1:size(zs)[1]])
         end

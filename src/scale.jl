@@ -202,20 +202,29 @@ function apply_scale(scale::ContinuousScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
-            if getfield(data, var) === nothing
+            vals = getfield(data, var)
+            if vals === nothing
+                continue
+            end
+
+            # special case for function arrays bound to :y
+            # pass the function values through and wait for the scale to
+            # be reapplied by Stat.func
+            if var == :y && eltype(vals) == Function
+                aes.y = vals
                 continue
             end
 
             T = Any
-            for (i, d) in enumerate(getfield(data, var))
+            for (i, d) in enumerate(vals)
                 if isconcrete(d)
                     T = typeof(scale.trans.f(d))
                     break
                 end
             end
 
-            ds = DataArray(T, length(getfield(data, var)))
-            apply_scale_typed!(ds, getfield(data, var), scale)
+            ds = DataArray(T, length(vals))
+            apply_scale_typed!(ds, vals, scale)
 
             setfield!(aes, var, ds)
 
@@ -713,8 +722,13 @@ function apply_scale(scale::IdentityScale,
 end
 
 
-function func()
-    return IdentityScale(:func)
+function z_func()
+    return IdentityScale(:z)
+end
+
+
+function y_func()
+    return IdentityScale(:z)
 end
 
 
