@@ -257,9 +257,6 @@ function apply_statistic(stat::DensityStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    if !isdefined(:kde)
-        error("KDE is currently not available for your version of Julia.")
-    end
     Gadfly.assert_aesthetics_defined("DensityStatistic", aes, :x)
 
     if aes.color === nothing
