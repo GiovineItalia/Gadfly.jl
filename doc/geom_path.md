@@ -18,7 +18,6 @@ Draw lines between points in the order they appear in the data. This is `Geom.li
 ```{.julia hide="true" results="none"}
 using Gadfly
 
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 Here's a random walk in 2D:

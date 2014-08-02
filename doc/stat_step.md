@@ -25,7 +25,6 @@ depending on the `direction` argument.
 ```{.julia hide="true" results="none"}
 using Gadfly
 
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(14cm, 8cm)
 srand(1234)
 ```

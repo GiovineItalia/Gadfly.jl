@@ -26,7 +26,6 @@ Plot a smooth function estimated from data. An alias for `Geom.line` with `Stat.
 using RDatasets
 using Gadfly
 
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(16cm, 10cm)
 ```
 

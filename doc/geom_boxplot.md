@@ -36,7 +36,6 @@ defined:
 using RDatasets
 using Gadfly
 
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 

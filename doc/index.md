@@ -28,7 +28,6 @@ using Gadfly
 ```
 
 ```{.julia hide="true" results="none"}
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 

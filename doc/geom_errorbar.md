@@ -27,7 +27,6 @@ With the later a vertical error bar is drawn, and the former, a horizontal bar.
 using RDatasets
 using Gadfly
 
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(14cm, 8cm)
 srand(1234)
 ```

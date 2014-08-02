@@ -18,7 +18,6 @@ Draw a kernel density estimate from data. An alias for `Geom.line` with
 using RDatasets
 using Gadfly
 
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
