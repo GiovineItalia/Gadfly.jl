@@ -1,15 +1,3 @@
-
-require("Codecs")
-require("Compose")
-require("DataFrames")
-require("DataArrays")
-require("DataStructures")
-require("Datetime")
-require("Distributions")
-require("Iterators")
-require("JSON")
-require("Loess")
-
 module Gadfly
 
 using Codecs
