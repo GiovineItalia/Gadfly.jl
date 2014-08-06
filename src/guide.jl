@@ -827,7 +827,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
             svgattribute("gadfly:scale", scale),
             svgclass("guide ylabels"))
 
-        return compose!(contetx(), static_grid_lines, dynamic_grid_lines)
+        return compose!(context(), static_grid_lines, dynamic_grid_lines)
     end
     vlayout_context =
         compose!(context(minwidth=maximum(label_heights[tickvisibility]),
