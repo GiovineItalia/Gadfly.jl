@@ -182,7 +182,7 @@ const colorkey = ColorKey
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
 function render_discrete_color_key(colors::Vector{ColorValue},
-                                   labels::Dict{ColorValue, String},
+                                   labels::OrderedDict{ColorValue, String},
                                    aes_color_label,
                                    title_ctx::Context,
                                    title_width::Measure,
@@ -303,7 +303,7 @@ end
 # A helper for render(::ColorKey) for rendering guides for continuous color
 # scales.
 function render_continuous_color_key(colors::Dict,
-                                     labels::Dict{ColorValue, String},
+                                     labels::OrderedDict{ColorValue, String},
                                      color_function::Function,
                                      title_context::Context,
                                      title_width::Measure,
@@ -403,7 +403,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
 
     used_colors = Set{ColorValue}()
     colors = Array(ColorValue, 0) # to preserve ordering
-    labels = Dict{ColorValue, Set{String}}()
+    labels = OrderedDict{ColorValue, Set{String}}()
 
     continuous_guide = false
     guide_title = guide.title
@@ -434,7 +434,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         guide_title = "Color"
     end
 
-    pretty_labels = Dict{ColorValue, String}()
+    pretty_labels = OrderedDict{ColorValue, String}()
     for (color, label) in labels
         pretty_labels[color] = join(labels[color], ", ")
     end

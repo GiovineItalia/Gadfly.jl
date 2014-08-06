@@ -506,7 +506,6 @@ function apply_scale(scale::DiscreteColorScale,
         [color_map[x] for x in xs]
     end
 
-
     for (aes, data) in zip(aess, datas)
         if data.color === nothing
             continue
@@ -525,7 +524,10 @@ function apply_scale(scale::DiscreteColorScale,
         aes.color = colored_ds
 
         aes.color_label = labeler
-        aes.color_key_colors = [c => i for (i, c) in enumerate(colors)]
+        aes.color_key_colors = OrderedDict()
+        for (i, c) in enumerate(colors)
+            aes.color_key_colors[c] = i
+        end
     end
 end
 

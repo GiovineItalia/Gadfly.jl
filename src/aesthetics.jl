@@ -49,7 +49,7 @@ typealias NumericalAesthetic
     ytick,        NumericalAesthetic
     xgrid,        NumericalAesthetic
     ygrid,        NumericalAesthetic
-    color_key_colors,     Maybe(Dict)
+    color_key_colors,     Maybe(Associative)
     color_key_title,      Maybe(String)
     color_key_continuous, Maybe(Bool)
     color_function,       Maybe(Function)
