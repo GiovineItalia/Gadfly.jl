@@ -449,7 +449,8 @@ end
 
 
 # Common discrete color scales
-function discrete_color_hue(; levels=nothing, order=nothing)
+function discrete_color_hue(; levels=nothing, order=nothing,
+                            preserve_order=true)
     DiscreteColorScale(
         h -> convert(Vector{ColorValue},
              distinguishable_colors(h, ColorValue[LCHab(70, 60, 240)],
@@ -457,7 +458,7 @@ function discrete_color_hue(; levels=nothing, order=nothing)
                                     cchoices=Float64[0, 50, 60, 70],
                                     hchoices=linspace(0, 330, 24),
                                     transform=c -> deuteranopic(c, 0.5))),
-        levels=levels, order=order)
+        levels=levels, order=order, preserve_order=preserve_order)
 end
 
 
