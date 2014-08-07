@@ -259,18 +259,28 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             end
         end
 
-        tbl[i, 2 + j] = pad(subtbl[1, 1 + joff], subplot_padding)
+        tbl[i, 2 + j] = pad(subtbl[1, 1 + joff],
+                            j > 1 ? subplot_padding : 0mm,
+                            subplot_padding,
+                            subplot_padding,
+                            i < n ? subplot_padding : 0mm)
 
         # bottom guides
         for k in 2:size(subtbl, 1)
             tbl[i + k - 1, 2 + j] =
-                pad(subtbl[k, 1 + joff], subplot_padding, 0mm)
+                pad(subtbl[k, 1 + joff],
+                    j > 1 ? subplot_padding : 0mm,
+                    subplot_padding,
+                    0mm, 0mm)
         end
 
         # left guides
         for k in 1:(size(subtbl, 2)-1)
             tbl[i, k] =
-                pad(subtbl[1, k], 0mm, subplot_padding)
+                pad(subtbl[1, k],
+                    0mm, 0mm,
+                    subplot_padding,
+                    i < n ? subplot_padding : 0mm)
         end
     end
 

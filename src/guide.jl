@@ -798,7 +798,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     end
     hpenalty = 3
     hlayout_context =
-        compose!(context(minwidth=maximum(label_widths[tickvisibility]),
+        compose!(context(minwidth=maximum(label_widths[tickvisibility]) + 2padding,
                          minheight=sum(label_heights[tickvisibility]),
                          penalty=hpenalty), hlayout)
 
@@ -1105,7 +1105,7 @@ function layout_guides(plot_context::Context,
         [compose!(context(minwidth=minwidth(plot_context),
                           minheight=minheight(plot_context),
                           units=plot_units,
-                          clip=false),
+                          clip=true),
                   {context(order=-1),
                      [c for (c, o) in guides[under_guide_position]]...},
                   {context(order=1000),
