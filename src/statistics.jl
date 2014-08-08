@@ -13,7 +13,7 @@ using Loess
 import Gadfly: Scale, Coord, element_aesthetics, default_scales, isconcrete,
                nonzero_length, setfield!
 import KernelDensity
-import Distributions: Uniform
+import Distributions: Uniform, qqbuild
 import Iterators: chain, cycle, product, partition, distinct
 
 include("bincount.jl")
@@ -1169,6 +1169,35 @@ function apply_statistic(stat::ContourStatistic,
     Scale.apply_scale(scales[:y], [aes], Gadfly.Data(y=contour_ys))
 end
 
+
+immutable QQStatistic <: Gadfly.StatisticElement
+
+end
+
+element_aesthetics(::QQStatistic) = [:x, :y]
+
+const qq = QQStatistic
+
+function default_scales(::QQStatistic)
+    return [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous]
+end
+
+function apply_statistic(stat::QQStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+
+    Gadfly.assert_aesthetics_defined("Stat.qq", aes, :x, :y)
+    
+    xs = aes.x
+    ys = aes.y
+
+    qqq = qqbuild(xs, ys)
+
+    aes.x = qqq.qx
+    aes.y = qqq.qy    
+
+end
 
 
 end # module Stat
