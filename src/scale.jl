@@ -9,6 +9,7 @@ using Gadfly
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length,
                nonzero_length, formatter
+import Distributions: Distribution
 
 include("color.jl")
 
@@ -212,6 +213,13 @@ function apply_scale(scale::ContinuousScale,
             # be reapplied by Stat.func
             if var == :y && eltype(vals) == Function
                 aes.y = vals
+                continue
+            end
+
+            # special case for Distribution values bound to :x or :y. wait for
+            # scale to be re-applied by Stat.qq
+            if in(var, [:x, :y]) && typeof(vals) <: Distribution
+                setfield!(aes, var, vals)
                 continue
             end
 

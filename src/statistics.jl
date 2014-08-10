@@ -13,7 +13,7 @@ using Loess
 import Gadfly: Scale, Coord, element_aesthetics, default_scales, isconcrete,
                nonzero_length, setfield!
 import KernelDensity
-import Distributions: Uniform, qqbuild
+import Distributions: Uniform, Distribution, qqbuild
 import Iterators: chain, cycle, product, partition, distinct
 
 include("bincount.jl")
@@ -1171,7 +1171,6 @@ end
 
 
 immutable QQStatistic <: Gadfly.StatisticElement
-
 end
 
 element_aesthetics(::QQStatistic) = [:x, :y]
@@ -1188,14 +1187,49 @@ function apply_statistic(stat::QQStatistic,
                          aes::Gadfly.Aesthetics)
 
     Gadfly.assert_aesthetics_defined("Stat.qq", aes, :x, :y)
-    
-    xs = aes.x
-    ys = aes.y
+
+    # NOTES:
+    #
+    # actually, apply_scales happens before apply_statistics, so we need to
+    # handle in apply_scales the Distributions that might be bound to x and
+    # y... By analogy with Stat.func, we can add a check in apply_statistic
+    # which defers application.  Stat.func though requires an ARRAY of
+    # Functions, and doesn't work on naked functions bound to aes.y.  If we want
+    # to bind Distributions, we'd need to extend the types that are allowed for
+    # aes.y/.x (e.g. change type of Aesthetics fields x and y).  Right now these
+    # are of type NumericalOrCategoricalAesthetic.  The .x and .y fields are the
+    # _only_ place where this type is used, but I'm not sure if there's a reason
+    # that changing this typealias would be a bad idea...for now I've just use a
+    # direct `Union(NumericalOrCategoricalAesthetic, Distribution)`.
+    #
+    # TODO:
+    #
+    # Need to fix application of non-default scales (like Scale.x_log10).
+
+    local xs, ys
+
+    # a little helper function to convert either numeric or distribution
+    # variables to a format suitable to input to qqbuild.
+    toVecOrDist = v -> typeof(v) <: Distribution ? v : convert(Vector{Float64}, v)
+
+    try
+        (xs, ys) = map(toVecOrDist, (aes.x, aes.y))
+    catch e
+        error("Stat.qq requires that x and y be bound to either a Distribution or to arrays of plain numbers (for now).")
+    end
+
 
     qqq = qqbuild(xs, ys)
 
     aes.x = qqq.qx
     aes.y = qqq.qy    
+
+    data = Gadfly.Data()
+    #data.x = qqq.qx
+    #data.y = qqq.qy
+
+    Scale.apply_scale(scales[:x], [aes], data)
+    Scale.apply_scale(scales[:y], [aes], data)
 
 end
 
