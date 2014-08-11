@@ -4,7 +4,7 @@ author: Daniel Jones
 order: 1
 ...
 
-![](breadandbutterfly.jpg)
+<div style="text-align: center"><img width=300px src="logo.svg"></div>
 
 Gadfly is a system for plotting and visualization based largely on Hadley
 Wickhams's [ggplot2](http://ggplot2.org/) for R, and Leland Wilkinson's book

@@ -15,7 +15,7 @@ It renders publication quality graphics to PNG, Postscript, PDF, SVG. The SVG
 backend uses embedded javascript, powered by [Snap.svg](http://snapsvg.io/) to
 add interactivity like panning, zooming, and toggling.
 
-Check out the [manual](http://dcjones.github.io/Gadfly.jl) for more details and
+Check out the [manual](http://gadflyjl.org) for more details and
 examples.
 
 # Installation
