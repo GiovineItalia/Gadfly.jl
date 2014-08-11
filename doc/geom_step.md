@@ -23,7 +23,6 @@ Connect points using a stepwise function. Equivalent to `Geom.line` with
 ```{.julia hide="true" results="none"}
 using Gadfly
 
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(14cm, 8cm)
 srand(1234)
 ```

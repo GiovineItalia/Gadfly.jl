@@ -22,7 +22,6 @@ Create a continuous color scale to be used for the plot.
 ```{.julia hide="true" results="none"}
 using Gadfly
 
-Gadfly.prepare_display()
 ```
 
 Define a custom color scale for a grid:

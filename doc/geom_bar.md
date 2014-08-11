@@ -41,7 +41,6 @@ If `x` is given, a bar will be drawn at each x value, specifying both `xmin` and
 using RDatasets
 using Gadfly
 
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(12cm, 8cm)
 ```
 

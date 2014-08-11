@@ -28,15 +28,14 @@ using Gadfly
 ```
 
 ```{.julia hide="true" results="none"}
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ## Optional: cairo, pango, and fontconfig
 
 Gadfly works best with the C libraries cairo, pango, and fontconfig installed.
-The PNG, PS, and PDF backends require cairo, but without it the SVG and
-Javascript/D3 backends are still available.
+The PNG, PS, and PDF backends require cairo, but without it the SVG backends
+(`SVG` and `SVGJS`) are still available.
 
 Complex layouts involving text are also somewhat more accurate when pango and
 fontconfig are available.
@@ -104,10 +103,10 @@ myplot = plot(..)
 
 # draw on every available backend
 draw(SVG("myplot.svg", 4inch, 3inch), myplot)
+draw(SVGJS("myplot.svg", 4inch, 3inch), myplot)
 draw(PNG("myplot.png", 4inch, 3inch), myplot)
 draw(PDF("myplot.pdf", 4inch, 3inch), myplot)
 draw(PS("myplot.ps", 4inch, 3inch), myplot)
-draw(D3("myplot.js", 4inch, 3inch), myplot)
 ```
 
 If used from [IJulia](https://github.com/JuliaLang/IJulia.jl), the output of
@@ -160,8 +159,6 @@ plotting functions and expressions more convenient.
 plot(f::Function, a, b, elements::Element...)
 
 plot(fs::Array, a, b, elements::Element...)
-
-@plot(expr, a, b)
 ```
 
 Some special forms of `plot` exist for quickly generating 2d plots of functions.
@@ -169,11 +166,6 @@ Some special forms of `plot` exist for quickly generating 2d plots of functions.
 ```julia
 # E.g.
 plot([sin, cos], 0, 25)
-```
-
-```julia
-# E.g.
-@plot(cos(x)/x, 5, 25)
 ```
 
 # Layers
@@ -203,45 +195,36 @@ layer(another_dataframe, x="col1", y="col2", Geom.point)
 # Drawing to backends
 
 Gadfly plots can be rendered to number of formats. Without cairo, or any
-non-julia libraries, it can produce SVG and d3-powered javascript. Installing
-cairo gives you access to the `PNG`, `PDF`, and `PS` backends. Rendering to a
-backend works the same for any of these.
+non-julia libraries, it can produce SVG. Installing cairo gives you access to
+the `PNG`, `PDF`, and `PS` backends. Rendering to a backend works the same for
+any of these.
 
 ```{.julia execute="false"}
 p = plot(x=[1,2,3], y=[4,5,6])
 draw(PNG("myplot.png", 12cm, 6cm), p)
 ```
 
-## Using the d3 backend
+## Using the SVGJS backend
 
-The `D3` backend writes javascript. Making use of its output is slightly more
-involved than with the image backends.
+The `SVGJS` backend writes SVG with embedded javascript. There are a couple
+subtlties with using the output from this backend.
 
-Rendering to Javascript is easy enough:
+Drawing to the backend works like any other.
 
 ```{.julia execute="false"}
-draw(D3("plot.js", 6inch, 6inch), p)
+draw(SVGJS("mammals.js.svg", 6inch, 6inch), p)
 ```
 
-Before the output can be included, you must include the d3 and gadfly javascript
-libraries. The necessary include for Gadfly is "gadfly.js" which lives in the
-src directory (which you can find by running `joinpath(Pkg.dir("Gadfly"), "src",
-"gadfly.js")` in julia).
+If included with an `<img>` tag, it will display as a static SVG image.
+```{.html execute="false"}
+<img src="mammals.js.svg"/>
+```
 
-D3 can be downloaded from [here](http://d3js.org/d3.v3.zip).
-
-Now the output can be included in an HTML page like:
+For the interactive javascript features to be enables, the output either needs
+to be inluded inline in the HTML page, or include with an object tag, like.
 
 ```{.html execute="false"}
-<script src="d3.min.js"></script>
-<script src="gadfly.js"></script>
-
-<!-- Placed whereever you want the graphic to be rendered. -->
-<div id="my_chart"></div>
-<script src="mammals.js"></script>
-<script>
-draw("#my_chart");
-</script>
+<object data="mammals.js.svg" type="image/svg+xml"></object>
 ```
 
 A `div` element must be placed, and the `draw` function defined in mammals.js

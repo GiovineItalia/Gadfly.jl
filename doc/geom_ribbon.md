@@ -19,7 +19,6 @@ Draw a ribbon bounded above and below by `ymin` and `ymin`, respectively.
 ```{.julia hide="true" results="none"}
 using Gadfly, DataFrames
 
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 

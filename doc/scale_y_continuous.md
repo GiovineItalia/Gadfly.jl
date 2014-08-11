@@ -37,7 +37,6 @@ A number of transformed continuous scales are provided.
 using RDatasets
 using Gadfly
 
-Gadfly.prepare_display()
 srand(1234)
 ```
 

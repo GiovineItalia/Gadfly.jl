@@ -23,7 +23,6 @@ Create a discrete color scale to be used for the plot.
 ```{.julia hide="true" results="none"}
 using Gadfly
 
-Gadfly.prepare_display()
 srand(1234)
 ```
 

@@ -25,7 +25,6 @@ Create a continuous color scale that the plot will use.
 ```{.julia hide="true" results="none"}
 using Gadfly
 
-Gadfly.prepare_display()
 srand(1234)
 ```
 
