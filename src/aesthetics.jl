@@ -245,7 +245,12 @@ function cat_aes_var!(a::Dict, b::Dict)
 end
 
 
-function cat_aes_var!{T}(a::AbstractArray{T}, b::AbstractArray{T})
+function cat_aes_var!{T <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{T})
+    return append!(a, b)
+end
+
+
+function cat_aes_var!{T <: Base.Callable, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U})
     return append!(a, b)
 end
 
@@ -260,6 +265,11 @@ end
 
 function cat_aes_var!{T, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U})
     return a
+end
+
+
+function cat_aes_var!{T}(a::AbstractArray{T}, b::AbstractArray{T})
+    return append!(a, b)
 end
 
 
