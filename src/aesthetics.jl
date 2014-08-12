@@ -11,8 +11,8 @@ typealias NumericalAesthetic
 
 
 @varset Aesthetics begin
-    x,            NumericalOrCategoricalAesthetic
-    y,            Union(NumericalOrCategoricalAesthetic)
+    x,            Union(NumericalOrCategoricalAesthetic, Distribution)
+    y,            Union(NumericalOrCategoricalAesthetic, Distribution)
     z,            Union(Nothing, Function, Matrix)
     size,         Maybe(Vector{Measure})
     color,        Maybe(AbstractDataVector{ColorValue})

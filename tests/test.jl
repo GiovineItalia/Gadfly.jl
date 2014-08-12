@@ -66,7 +66,8 @@ tests = [
     ("grid_strokedash",                       6inch, 3inch),
     ("aspect_ratio",                          6inch, 3inch),
     ("contour_function",                      6inch, 3inch),
-    ("contour_matrix",                        6inch, 3inch)
+    ("contour_matrix",                        6inch, 3inch),
+    ("stat_qq",                               6inch, 3inch)
 ]
 
 

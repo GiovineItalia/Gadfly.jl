@@ -14,6 +14,7 @@ import Iterators: distinct, drop, chain
 import Compose: draw, hstack, vstack, gridstack
 import Base: copy, push!, start, next, done, show, getindex, cat,
              writemime, isfinite, display
+import Distributions: Distribution
 
 export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
        layer, @plot, spy, set_default_plot_size, set_default_plot_format,
@@ -279,10 +280,11 @@ eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
 eval_plot_mapping(data::AbstractDataFrame, arg::AbstractArray) = arg
 eval_plot_mapping(data::AbstractDataFrame, arg::Function) = arg
+eval_plot_mapping(data::AbstractDataFrame, arg::Distribution) = arg
 
 # Acceptable types of values that can be bound to aesthetics.
 typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
-                               AbstractArray, Function)
+                               AbstractArray, Function, Distribution)
 
 
 # Create a new plot.
@@ -982,6 +984,10 @@ function classify_data(data::AbstractArray{Any})
 end
 
 function classify_data(data::AbstractArray)
+    :numerical
+end
+
+function classify_data(data::Distribution)
     :numerical
 end
 

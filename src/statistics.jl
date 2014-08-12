@@ -13,7 +13,7 @@ using Loess
 import Gadfly: Scale, Coord, element_aesthetics, default_scales, isconcrete,
                nonzero_length, setfield!
 import KernelDensity
-import Distributions: Uniform
+import Distributions: Uniform, Distribution, qqbuild
 import Iterators: chain, cycle, product, partition, distinct
 
 include("bincount.jl")
@@ -1169,6 +1169,74 @@ function apply_statistic(stat::ContourStatistic,
     Scale.apply_scale(scales[:y], [aes], Gadfly.Data(y=contour_ys))
 end
 
+
+immutable QQStatistic <: Gadfly.StatisticElement
+end
+
+element_aesthetics(::QQStatistic) = [:x, :y]
+
+const qq = QQStatistic
+
+function default_scales(::QQStatistic)
+    return [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous]
+end
+
+function apply_statistic(stat::QQStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+
+    Gadfly.assert_aesthetics_defined("Stat.qq", aes, :x, :y)
+
+    # NOTES:
+    #
+    # apply_scales happens before apply_statistics, so we need to handle in
+    # apply_scales the Distributions that might be bound to x and y... By
+    # analogy with Stat.func, we can add a check in apply_statistic which defers
+    # application.  Stat.func though requires an ARRAY of Functions, and doesn't
+    # work on naked functions bound to aes.y.  If we want to bind Distributions,
+    # we'd need to extend the types that are allowed for aes.y/.x (e.g. change
+    # type of Aesthetics fields x and y).  Right now these are of type
+    # NumericalOrCategoricalAesthetic.  The .x and .y fields are the _only_
+    # place where this type is used, but I'm not sure if there's a reason that
+    # changing this typealias would be a bad idea...for now I've just used a
+    # direct `Union(NumericalOrCategoricalAesthetic, Distribution)`.
+    #
+    # TODO:
+    #
+    # Grouping by color etc.?
+
+    # a little helper function to convert either numeric or distribution
+    # variables to a format suitable to input to qqbuild.
+    toVecOrDist = v -> typeof(v) <: Distribution ? v : convert(Vector{Float64}, v)
+
+    # check and convert :x and :y to proper types for input to qqbuild
+    local xs, ys
+    try
+        (xs, ys) = map(toVecOrDist, (aes.x, aes.y))
+    catch e
+        error("Stat.qq requires that x and y be bound to either a Distribution or to arrays of plain numbers.")
+    end
+
+    qqq = qqbuild(xs, ys)
+
+    aes.x = qqq.qx
+    aes.y = qqq.qy    
+
+    # apply_scale to Distribution-bound aesthetics is deferred, so re-apply here
+    # (but only for Distribution, numeric data is already scaled).  Only one of
+    # :x or :y can be a Distribution since qqbuild will throw an error for two
+    # Distributions.
+    data = Gadfly.Data()
+    if typeof(xs) <: Distribution
+        data.x = aes.x
+        Scale.apply_scale(scales[:x], [aes], data)
+    elseif typeof(ys) <: Distribution
+        data.y = aes.y
+        Scale.apply_scale(scales[:y], [aes], data)
+    end
+
+end
 
 
 end # module Stat
