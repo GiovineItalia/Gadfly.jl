@@ -118,6 +118,7 @@ function apply_statistic(stat::HistogramStatistic,
     if isempty(getfield(aes, var))
         setfield!(aes, minvar, Float64[1.0])
         setfield!(aes, maxvar, Float64[1.0])
+        setfield!(aes, var, Float64[1.0])
         setfield!(aes, othervar, Float64[0.0])
         return
     end
@@ -156,9 +157,11 @@ function apply_statistic(stat::HistogramStatistic,
         else
             setfield!(aes, minvar, Array(isdiscrete ? Int : Float64, d))
             setfield!(aes, maxvar, Array(isdiscrete ? Int : Float64, d))
+            setfield!(aes, var, Array(isdiscrete ? Int : Float64, d))
             for j in 1:d
                 getfield(aes, minvar)[j] = x_min + (j - 1) * binwidth
                 getfield(aes, maxvar)[j] = x_min + j * binwidth
+                getfield(aes, var)[j] = x_min + (j - 0.5) * binwidth
                 getfield(aes, othervar)[j] = bincounts[j]
             end
         end
@@ -181,6 +184,7 @@ function apply_statistic(stat::HistogramStatistic,
         else
             setfield!(aes, minvar, Array(isdiscrete ? Int : Float64, d * length(groups)))
             setfield!(aes, maxvar, Array(isdiscrete ? Int : Float64, d * length(groups)))
+            setfield!(aes, var, Array(isdiscrete ? Int : Float64, d * length(groups)))
         end
 
         setfield!(aes, othervar, Array(Float64, d * length(groups)))
@@ -216,6 +220,7 @@ function apply_statistic(stat::HistogramStatistic,
                     idx = (i-1)*d + j
                     getfield(aes, minvar)[idx] = x_min + (j - 1) * binwidth
                     getfield(aes, maxvar)[idx] = x_min + j * binwidth
+                    getfield(aes, var)[idx] = x_min + (j - 0.5) * binwidth
                     getfield(aes, othervar)[idx] = bincounts[j]
                     colors[idx] = c
                 end
@@ -385,6 +390,7 @@ function apply_statistic(stat::Histogram2DStatistic,
     else
         aes.xmin = Array(Float64, n)
         aes.xmax = Array(Float64, n)
+        aes.x = Array(Int64, n)
     end
 
     if y_categorial
