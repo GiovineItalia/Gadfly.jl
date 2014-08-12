@@ -739,7 +739,17 @@ end
 
 
 function y_func()
-    return IdentityScale(:z)
+    return IdentityScale(:y)
+end
+
+
+function x_distribution()
+    return IdentityScale(:x)
+end
+
+
+function y_distribution()
+    return IdentityScale(:y)
 end
 
 

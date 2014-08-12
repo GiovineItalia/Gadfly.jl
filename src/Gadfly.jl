@@ -17,7 +17,7 @@ import Base: copy, push!, start, next, done, show, getindex, cat,
 import Distributions: Distribution
 
 export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
-       layer, @plot, spy, set_default_plot_size, set_default_plot_format,
+       layer, spy, set_default_plot_size, set_default_plot_format,
        prepare_display
 
 
@@ -920,6 +920,8 @@ include("statistics.jl")
 # The default depends on whether the input is discrete or continuous (i.e.,
 # PooledDataVector or DataVector, respectively).
 const default_aes_scales = {
+        :distribution => {:x => Scale.x_distribution(),
+                          :y => Scale.y_distribution()},
         :functional => {:z => Scale.z_func(),
                         :y => Scale.y_func()},
         :numerical => {:x           => Scale.x_continuous(),
@@ -988,7 +990,7 @@ function classify_data(data::AbstractArray)
 end
 
 function classify_data(data::Distribution)
-    :numerical
+    :distribution
 end
 
 # Axis labels are taken whatever is mapped to these aesthetics, in order of

@@ -10,6 +10,8 @@ ymins = ys .- (1.96 * sds / sqrt(n))
 ymaxs = ys .+ (1.96 * sds / sqrt(n))
 cs = [string(i) for i in 1:n]
 
-plot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs, color=cs, Geom.point, Geom.errorbar)
+plot(x=1:length(sds),
+    x=ys, xmin=ymins, xmax=ymaxs,
+    y=ys, ymin=ymins, ymax=ymaxs, color=cs, Geom.point, Geom.errorbar)
 
 

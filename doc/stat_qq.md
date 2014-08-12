@@ -19,7 +19,6 @@ theoretical quantiles will be compared with the sample quantiles of the other.
 ```{.julia hide="true" results="none"}
 using Gadfly, Distributions
 
-Gadfly.prepare_display()
 Gadfly.set_default_plot_size(14cm, 8cm)
 srand(1234)
 ```
