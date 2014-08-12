@@ -130,8 +130,6 @@ plot(x=collect(1:100), y=sort(rand(100)),
 plot(f::Function, a, b, elements::Element...)
 
 plot(fs::Array, a, b, elements::Element...)
-
-@plot(expr, a, b)
 ```
 
 Some special forms of `plot` exist for quickly generating 2d plots of functions.
@@ -143,12 +141,6 @@ plot([sin, cos], 0, 25)
 
 ![Sin/Cos](http://homes.cs.washington.edu/~dcjones/gadfly/sin_cos.svg)
 
-```julia
-# E.g.
-@plot(cos(x)/x, 5, 25)
-```
-
-![Cosx](http://homes.cs.washington.edu/~dcjones/gadfly/cosx.svg)
 
 # Elements
 
