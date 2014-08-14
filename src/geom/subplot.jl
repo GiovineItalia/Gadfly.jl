@@ -170,6 +170,11 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     if (geom.free_y_axis)
         for i in 1:n
             row_aes = cat([aes_grid[i, j] for j in 1:m]...)
+            row_aes.xgrid = nothing
+            row_aes.xtick = nothing
+            row_aes.xtickvisible = nothing
+            row_aes.xtickscale = nothing
+
             Stat.apply_statistic(Stat.yticks(), scales, coord, row_aes)
             for j in 1:m
                 aes_grid[i, j] = cat(aes_grid[i, j], row_aes)
