@@ -512,6 +512,7 @@ function apply_statistic(stat::TickStatistic,
                     maxval = first(vals)
                 end
                 T = promote_type(typeof(minval), typeof(maxval))
+                T = promote_type(T, eltype(vals))
                 minval = convert(T, minval)
                 maxval = convert(T, maxval)
 
@@ -661,7 +662,7 @@ function apply_statistic(stat::TickStatistic,
     nothing
 end
 
-function apply_statistic_typed(minval, maxval, vals, size, dsize)
+function apply_statistic_typed{T}(minval::T, maxval::T, vals, size, dsize)
 #     for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
     lensize  = length(size)
     lendsize = length(dsize)
@@ -673,7 +674,7 @@ function apply_statistic_typed(minval, maxval, vals, size, dsize)
         s = size[mod1(i, lensize)]
         ds = dsize[mod1(i, lendsize)]
 
-        minval, maxval = minvalmaxval(minval, maxval, val, s, ds)
+        minval, maxval = minvalmaxval(minval, maxval, convert(T, val), s, ds)
     end
     minval, maxval
 end
