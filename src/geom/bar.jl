@@ -224,12 +224,21 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
         if (is(aes.ymin, nothing) || is(aes.ymax, nothing)) && is(aes.y, nothing)
             error("Geom.bar required \"y\" to be bound or both \"y_min\" and \"y_max\".")
         end
+        if (aes.y != nothing && length(aes.y) != length(aes.x)) ||
+           (aes.ymin != nothing && (length(aes.ymin) != length(aes.x) || length(aes.ymax) != length(aes.x)))
+            error("Geom.bar requires x and y to be of equal length.")
+        end
+
         var = :y
         minvar = :ymin
         maxvar = :ymax
     else
         if (is(aes.xmin, nothing) || is(aes.xmax, nothing)) && is(aes.x, nothing)
             error("Geom.bar required \"x\" to be bound or both \"x_min\" and \"x_max\".")
+        end
+        if (aes.x != nothing && length(aes.x) != length(aes.y)) ||
+           (aes.xmin != nothing && (length(aes.xmin) != length(aes.y) || length(aes.xmax) != length(aes.y)))
+            error("Geom.bar requires x and y to be of equal length.")
         end
         var = :x
         minvar = :xmin
