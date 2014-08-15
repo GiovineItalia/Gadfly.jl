@@ -154,6 +154,7 @@ function apply_statistic(stat::HistogramStatistic,
         setfield!(aes, othervar, Array(Float64, d))
         if isdiscrete
             setfield!(aes, var, collect(Int, 1:d))
+            setfield!(aes, othervar, bincounts)
         else
             setfield!(aes, minvar, Array(isdiscrete ? Int : Float64, d))
             setfield!(aes, maxvar, Array(isdiscrete ? Int : Float64, d))
@@ -495,54 +496,50 @@ function apply_statistic(stat::TickStatistic,
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
 
+    if isa(coord, Coord.SubplotGrid)
+        error("TickStatistic cannot be applied to subplot coordinates.")
+    end
+
     in_group_var = symbol(string(stat.out_var, "group"))
     minval, maxval = nothing, nothing
-    if getfield(aes, in_group_var) === nothing
-        in_values = {}
-        categorical = (:x in stat.in_vars && Scale.iscategorical(scales, :x)) ||
-                      (:y in stat.in_vars && Scale.iscategorical(scales, :y))
+    in_values = {}
+    categorical = (:x in stat.in_vars && Scale.iscategorical(scales, :x)) ||
+                  (:y in stat.in_vars && Scale.iscategorical(scales, :y))
 
-        for var in stat.in_vars
-            vals = getfield(aes, var)
-            if vals != nothing && eltype(vals) != Function
-                if minval == nothing
-                    minval = first(vals)
-                end
-                if maxval == nothing
-                    maxval = first(vals)
-                end
-                T = promote_type(typeof(minval), typeof(maxval))
-                T = promote_type(T, eltype(vals))
-                minval = convert(T, minval)
-                maxval = convert(T, maxval)
-
-                if stat.out_var == "x"
-                    dsize = aes.xsize === nothing ? [nothing] : aes.xsize
-                elseif stat.out_var == "y"
-                    dsize = aes.ysize === nothing ? [nothing] : aes.ysize
-                else
-                    dsize = [nothing]
-                end
-
-                size = aes.size === nothing ? [nothing] : aes.size
-
-                minval, maxval = apply_statistic_typed(minval, maxval, vals, size, dsize)
-                push!(in_values, vals)
+    for var in stat.in_vars
+        vals = getfield(aes, var)
+        if vals != nothing && eltype(vals) != Function
+            if minval == nothing
+                minval = first(vals)
             end
-        end
+            if maxval == nothing
+                maxval = first(vals)
+            end
+            T = promote_type(typeof(minval), typeof(maxval))
+            T = promote_type(T, eltype(vals))
+            minval = convert(T, minval)
+            maxval = convert(T, maxval)
 
-        if isempty(in_values)
-            return
-        end
+            if stat.out_var == "x"
+                dsize = aes.xsize === nothing ? [nothing] : aes.xsize
+            elseif stat.out_var == "y"
+                dsize = aes.ysize === nothing ? [nothing] : aes.ysize
+            else
+                dsize = [nothing]
+            end
 
-        in_values = chain(in_values...)
-    else
-        vals = getfield(aes, in_group_var)
-        in_values = vals
-        minval = Gadfly.concrete_minimum(in_values)
-        maxval = Gadfly.concrete_maximum(in_values)
-        categorical = true
+            size = aes.size === nothing ? [nothing] : aes.size
+
+            minval, maxval = apply_statistic_typed(minval, maxval, vals, size, dsize)
+            push!(in_values, vals)
+        end
     end
+
+    if isempty(in_values)
+        return
+    end
+
+    in_values = chain(in_values...)
 
     # consider forced tick marks
     if stat.ticks != nothing

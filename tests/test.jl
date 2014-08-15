@@ -6,13 +6,15 @@ tests = [
     ("points",                                6inch, 3inch),
     ("colored_points",                        6inch, 3inch),
     ("function_plots",                        6inch, 3inch),
+    ("function_explicit_colors",              6inch, 3inch),
     ("function_layers",                       6inch, 3inch),
     ("multicolumn_colorkey",                  6inch, 2inch),
     ("vstack",                                6inch, 6inch),
     ("hstack",                                6inch, 3inch),
     ("colorful_hist",                         6inch, 3inch),
     ("discrete_histogram",                    6inch, 3inch),
-    ("discrete_histogram_horizontal",         6inch, 3inch),
+    ("discrete_bar",                          6inch, 3inch),
+    ("discrete_bar_horizontal",               6inch, 3inch),
     ("stacked_discrete_histogram",            6inch, 3inch),
     ("stacked_discrete_histogram_horizontal", 6inch, 3inch),
     ("stacked_continuous_histogram",          6inch, 3inch),
@@ -41,6 +43,7 @@ tests = [
     ("explicit_subplot_titles",               6inch, 3inch),
     ("subplot_grid_smooth",                   6inch, 8inch),
     ("smooth_lm",                             6inch, 8inch),
+    ("colored_smooth_lm",                     6inch, 8inch),
     ("histogram_errorbar",                    6inch, 3inch),
     ("issue106",                              6inch, 3inch),
     ("continuous_color_scale_range",          6inch, 3inch),
@@ -70,8 +73,10 @@ tests = [
     ("aspect_ratio",                          6inch, 3inch),
     ("contour_function",                      6inch, 3inch),
     ("contour_matrix",                        6inch, 3inch),
-    ("stat_qq",                               6inch, 3inch),
-    ("line_histogram",                        6inch, 3inch)
+    ("stat_qq",                               6inch, 16inch),
+    ("line_histogram",                        6inch, 3inch),
+    ("layer_data",                            6inch, 3inch),
+
 ]
 
 

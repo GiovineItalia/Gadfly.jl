@@ -1,5 +1,6 @@
 
-using RDatasets, DataArrays, Gadfly
+using Gadfly, Distributions
 
-plot(dataset("plm", "Cigar"), x=:Year, y=:Sales, Scale.x_discrete, Geom.bar)
+plot(x=rand(Poisson(20), 1000), Scale.x_discrete, Geom.histogram)
+
 
