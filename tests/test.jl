@@ -32,6 +32,7 @@ tests = [
     ("timeseries_year_2",                     6inch, 3inch),
     ("timeseries_year_3",                     6inch, 3inch),
     ("timeseries_colorful",                   6inch, 3inch),
+    ("date_bar",                              6inch, 3inch),
     ("custom_themes",                         6inch, 3inch),
     ("issue98",                               6inch, 3inch),
     ("issue82",                               6inch, 3inch),

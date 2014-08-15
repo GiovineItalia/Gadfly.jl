@@ -52,17 +52,17 @@ function render_colorless_bar(geom::BarGeometry,
         return compose!(
             context(),
             rectangle([0.0],
-                      [ymin*cy + theme.bar_spacing/2 for ymin in aes.ymin],
+                      [Measure(cy=ymin) + theme.bar_spacing/2 for ymin in aes.ymin],
                       aes.x,
-                      [(ymax - ymin)*cy - theme.bar_spacing
+                      [Measure(cy=(ymax - ymin)) - theme.bar_spacing
                        for (ymin, ymax) in zip(aes.ymin, aes.ymax)]),
             svgclass("geometry"))
     else
         return compose!(
             context(),
-            rectangle([xmin*cx + theme.bar_spacing/2 for xmin in aes.xmin],
+            rectangle([Measure(cx=xmin) + theme.bar_spacing/2 for xmin in aes.xmin],
                       [0.0],
-                      [(xmax - xmin)*cx - theme.bar_spacing
+                      [Measure(cx=(xmax - xmin)) - theme.bar_spacing
                        for (xmin, xmax) in zip(aes.xmin, aes.xmax)],
                       aes.y),
             svgclass("geometry"))
@@ -248,7 +248,8 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
     if getfield(aes, minvar) === nothing
         aes2 = Gadfly.Aesthetics()
         values = getfield(aes, var)
-        T = eltype(values)
+        minvalue, maxvalue = minimum(values), maximum(values)
+        T = typeof(maxvalue - minvalue)
 
         span = zero(T)
         unique_count = length(Set(values))
