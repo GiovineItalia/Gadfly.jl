@@ -100,7 +100,20 @@ type Layer <: Element
     function Layer()
         new(nothing, Dict(), Stat.nil(), Geom.nil(), nothing)
     end
+
+    function Layer(lyr::Layer)
+        new(lyr.data_source,
+            lyr.mapping,
+            lyr.statistic,
+            lyr.geom,
+            lyr.theme)
+    end
 end
+
+function copy(lyr::Layer)
+    lyr_new = Layer(lyr)
+end
+
 
 
 function layer(data_source::AbstractDataFrame, elements::ElementOrFunction...;
@@ -108,46 +121,53 @@ function layer(data_source::AbstractDataFrame, elements::ElementOrFunction...;
     lyr = Layer()
     lyr.data_source = data_source
     lyr.mapping = clean_mapping(mapping)
+    lyrs = Layer[lyr]
     for element in elements
-        add_plot_element(lyr, element)
+        add_plot_element(lyrs, element)
     end
-    lyr
+    lyrs
 end
 
 
 function layer(elements::ElementOrFunction...; mapping...)
     lyr = Layer()
     lyr.mapping = clean_mapping(mapping)
+    lyrs = Layer[lyr]
     for element in elements
-        add_plot_element(lyr, element)
+        add_plot_element(lyrs, element)
     end
-    lyr
+    lyrs
 end
 
 
-function add_plot_element{T<:Element}(lyr::Layer, arg::T)
+function add_plot_element{T<:Element}(lyrs::Vector{Layer}, arg::T)
     error("Layers can't be used with elements of type $(typeof(arg))")
 end
 
 
-function add_plot_element(lyr::Layer, arg::Base.Callable)
-    add_plot_element(lyr, arg())
+function add_plot_element(lyrs::Vector{Layer}, arg::GeometryElement)
+    if ! is(lyrs[end].geom, Geom.nil())
+        push!(lyrs, copy(lyrs[end]))
+    end
+    lyrs[end].geom = arg
 end
 
 
-function add_plot_element(lyr::Layer, arg::GeometryElement)
-    lyr.geom = arg
+function add_plot_element(lyrs::Vector{Layer}, arg::Base.Callable)
+    add_plot_element(lyrs::Vector{Layer}, arg())
 end
 
 
-function add_plot_element(lyr::Layer, arg::StatisticElement)
-    lyr.statistic = arg
+function add_plot_element(lyrs::Vector{Layer}, arg::StatisticElement)
+    [lyr.statistic = arg for lyr in lyrs]
 end
 
 
-function add_plot_element(lyr::Layer, arg::Theme)
-    lyr.theme = arg
+function add_plot_element(lyrs::Vector{Layer}, arg::Theme)
+    [lyr.theme = arg for lyr in lyrs]
 end
+
+
 
 
 # A full plot specification.
@@ -211,6 +231,11 @@ end
 
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Layer)
     push!(p.layers, arg)
+end
+
+
+function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Vector{Layer})
+    append!(p.layers, arg)
 end
 
 
@@ -305,7 +330,12 @@ typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
 #            names of columns in the data frame or other expressions.
 #   elements: Geometries, statistics, etc.
 
-function plot(data_source::AbstractDataFrame, elements::ElementOrFunction...; mapping...)
+# because a call to layer() expands to a vector of layers (one for each Geom
+# supplied), we need to allow Vector{Layer} to count as an Element for the
+# purposes of plot().
+typealias ElementOrFunctionOrLayers Union(ElementOrFunction, Vector{Layer})
+
+function plot(data_source::AbstractDataFrame, elements::ElementOrFunctionOrLayers...; mapping...)
     p = Plot()
     p.mapping = clean_mapping(mapping)
     p.data_source = data_source
@@ -321,7 +351,7 @@ function plot(data_source::AbstractDataFrame, elements::ElementOrFunction...; ma
 end
 
 
-function plot(elements::ElementOrFunction...; mapping...)
+function plot(elements::ElementOrFunctionOrLayers...; mapping...)
     plot(DataFrame(), elements...; mapping...)
 end
 
@@ -340,7 +370,7 @@ end
 # Returns:
 #   A Plot object.
 #
-function plot(data_source::AbstractDataFrame, mapping::Dict, elements::ElementOrFunction...)
+function plot(data_source::AbstractDataFrame, mapping::Dict, elements::ElementOrFunctionOrLayers...)
     p = Plot()
     for element in elements
         add_plot_element(p, data_source, element)

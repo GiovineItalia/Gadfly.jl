@@ -77,6 +77,7 @@ tests = [
     ("stat_qq",                               6inch, 16inch),
     ("line_histogram",                        6inch, 3inch),
     ("layer_data",                            6inch, 3inch),
+    ("multi_geom_layer",                      6inch, 3inch),
 
 ]
 
