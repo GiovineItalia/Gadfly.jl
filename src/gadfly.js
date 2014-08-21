@@ -261,7 +261,7 @@ var set_geometry_transform = function(root, tx, ty, scale) {
 
     // we must unscale anything that is scale invariance: widths, raiduses, etc.
     var size_attribs = ["font-size"];
-    var unscaled_selection = ".geometry, .geometry > *";
+    var unscaled_selection = ".geometry, .geometry *";
     if (xscalable) {
         size_attribs.push("rx");
         unscaled_selection += ", .xgridlines";
