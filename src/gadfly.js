@@ -198,7 +198,7 @@ var set_geometry_transform = function(root, tx, ty, scale) {
 
     var t = new Snap.Matrix().translate(tx, ty).scale(xscale, yscale);
 
-    root.selectAll(".geometry")
+    root.selectAll(".geometry, image")
         .forEach(function (element, i) {
             element.transform(t);
         });

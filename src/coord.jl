@@ -31,6 +31,7 @@ immutable Cartesian <: Gadfly.CoordinateElement
     yflip::Bool
     fixed::Bool
     aspect_ratio::Union(Nothing, Float64)
+    raster::Bool
 
     function Cartesian(
             xvars=[:x, :xviewmin, :xviewmax, :xmin, :xmax],
@@ -38,9 +39,9 @@ immutable Cartesian <: Gadfly.CoordinateElement
                    :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers];
             xflip::Bool=false, yflip::Bool=false,
             xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,
-            fixed=false, aspect_ratio=nothing)
+            fixed=false, aspect_ratio=nothing, raster=false)
         new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
-            aspect_ratio)
+            aspect_ratio, raster)
     end
 end
 
@@ -229,7 +230,8 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
             leftpad=xpadding,
             rightpad=xpadding,
             toppad=ypadding,
-            bottompad=ypadding)),
+            bottompad=ypadding),
+            raster=coord.raster),
         svgclass("plotpanel"))
 end
 
