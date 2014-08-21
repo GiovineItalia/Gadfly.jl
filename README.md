@@ -26,7 +26,7 @@ From the Julia REPL a reasonably up to date version can be installed with
 Pkg.add("Gadfly")
 ```
 
-This will likely result in half a dozen or so other packages also being
+This will likely result in two dozen or so other packages also being
 installed.
 
 ## Optional: cairo, pango, and fontconfig
