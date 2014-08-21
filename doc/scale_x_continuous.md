@@ -14,6 +14,7 @@ Map numerical data to x positions in cartesian coordinates.
   * `format`: How numbers should be formatted. One of `:plain`, `:scientific`,
     or `:auto`. The default in `:auto` which prints very large or very small
     numbers in scientific notation, and other numbers plainly.
+  * `scalable`: When set to false, scale is fixed when zooming (default: true)
 
 # Variations
 

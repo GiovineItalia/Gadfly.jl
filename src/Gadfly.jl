@@ -758,10 +758,10 @@ function render_prepared(plot::Plot,
 
     c = compose!(context(), tbl)
     class = "plotroot"
-    if haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale)
+    if haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale) && scales[:x].scalable
         class = string(class, " xscalable")
     end
-    if haskey(scales, :y) && isa(scales[:y], Scale.ContinuousScale)
+    if haskey(scales, :y) && isa(scales[:y], Scale.ContinuousScale) && scales[:y].scalable
         class = string(class, " yscalable")
     end
 

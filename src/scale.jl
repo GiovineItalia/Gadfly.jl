@@ -132,13 +132,15 @@ immutable ContinuousScale <: Gadfly.ScaleElement
     minticks
     maxticks
     format
+    scalable
 
     function ContinuousScale(vars::Vector{Symbol},
                              trans::ContinuousScaleTransform;
                              minvalue=nothing, maxvalue=nothing,
                              minticks=2, maxticks=10,
-                             format=nothing)
-        new(vars, trans, minvalue, maxvalue, minticks, maxticks, format)
+                             format=nothing,
+                             scalable=true)
+        new(vars, trans, minvalue, maxvalue, minticks, maxticks, format, scalable)
     end
 end
 
@@ -160,9 +162,11 @@ const y_vars = [:y, :ymin, :ymax, :yintercept, :middle,
 
 function continuous_scale_partial(vars::Vector{Symbol},
                                   trans::ContinuousScaleTransform)
-    function f(;minvalue=nothing, maxvalue=nothing, format=nothing, minticks=2, maxticks=10)
+    function f(; minvalue=nothing, maxvalue=nothing, format=nothing, minticks=2,
+                 maxticks=10, scalable=true)
         ContinuousScale(vars, trans, minvalue=minvalue, maxvalue=maxvalue,
-                        format=format, minticks=minticks, maxticks=maxticks)
+                        format=format, minticks=minticks, maxticks=maxticks,
+                        scalable=scalable)
     end
 end
 
