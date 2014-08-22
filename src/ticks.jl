@@ -220,7 +220,7 @@ function multilevel_ticks(viewmin::Date, viewmax::Date;
             s = div(span, Day(1))
         end
 
-        ticks[s/20] = optimize_ticks(viewmin, viewmax, scale=scale)[1]
+        ticks[div(s,20)] = optimize_ticks(viewmin, viewmax, scale=scale)[1]
     end
 
     return ticks
