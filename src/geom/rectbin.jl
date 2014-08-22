@@ -48,7 +48,7 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(ColorValue[theme.default_color])
+    default_aes.color = PooledDataArray(RGB[theme.default_color])
     aes = inherit(aes, default_aes)
 
     if aes.x === nothing && (aes.xmin === nothing || aes.xmax === nothing)
@@ -74,39 +74,52 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme,
         error("""Geom.rectbin requires an equal number of x (or xmin/xmax) and
                  y (or ymin/ymax) values.""")
     end
+    n = nx
 
     if aes.xmin === nothing
         xmin = [x - 0.5 for x in aes.x]
-        xmax = [x + 0.5 for x in aes.x]
+        xwidths = [1.0*cx - theme.bar_spacing]
     else
         xmin = aes.xmin
-        xmax = aes.xmax
+        xwidths = [(x1 - x0)*cx - theme.bar_spacing
+                   for (x0, x1) in zip(aes.xmin, aes.xmax)]
     end
 
     if aes.ymin === nothing
         ymin = [y - 0.5 for y in aes.y]
-        ymax = [y + 0.5 for y in aes.y]
+        ywidths = [1.0*cy - theme.bar_spacing]
     else
         ymin = aes.ymin
-        ymax = aes.ymax
+        ywidths = [(y1 - y0)*cy - theme.bar_spacing
+                   for (y0, y1) in zip(aes.ymin, aes.ymax)]
     end
 
-    n = nx
-    cs = collect(takestrict(cycle(aes.color), n))
-    visibility = cs .!= nothing
-    xmin = xmin[visibility]
-    xmax = xmax[visibility]
-    ymin = ymin[visibility]
-    ymax = ymax[visibility]
+    cs = Array(RGB, n)
+    for i in 1:n
+        cs[i] = convert(RGB, aes.color[((i - 1) % length(aes.color)) + 1])
+    end
+
+    allvisible = true
+    for c in cs
+        if c == nothing
+            allvisible = false
+            break
+        end
+    end
+
+    if !allvisible
+        visibility = cs .!= nothing
+        cs = cs[visibility]
+        xmin = xmin[visibility]
+        xmax = xmax[visibility]
+        ymin = ymin[visibility]
+        ymax = ymax[visibility]
+    end
 
     return compose!(
         context(),
-        rectangle(xmin, ymin,
-                  [(x1 - x0)*cx - theme.bar_spacing
-                   for (x0, x1) in zip(xmin, xmax)],
-                  [(y1 - y0)*cy - theme.bar_spacing
-                   for (y0, y1) in zip(ymin, ymax)]),
-        fill(cs[visibility]),
+        rectangle(xmin, ymin, xwidths, ywidths),
+        fill(cs),
         stroke(nothing),
         svgclass("geometry"),
         svgattribute("shape-rendering", "crispEdges"))

@@ -189,7 +189,7 @@ function apply_statistic(stat::HistogramStatistic,
         end
 
         setfield!(aes, othervar, Array(Float64, d * length(groups)))
-        colors = Array(ColorValue, d * length(groups))
+        colors = Array(RGB, d * length(groups))
 
         x_min = Gadfly.concrete_minimum(values)
         x_max = Gadfly.concrete_maximum(values)
@@ -287,7 +287,7 @@ function apply_statistic(stat::DensityStatistic,
             end
         end
 
-        colors = Array(ColorValue, 0)
+        colors = Array(RGB, 0)
         aes.x = Array(Float64, 0)
         aes.y = Array(Float64, 0)
         for (c, xs) in groups
@@ -875,7 +875,7 @@ function apply_statistic(stat::SmoothStatistic,
 
         aes.x = Array(Float64, length(groups) * num_steps)
         aes.y = Array(Float64, length(groups) * num_steps)
-        colors = Array(ColorValue, length(groups) * num_steps)
+        colors = Array(RGB, length(groups) * num_steps)
 
         for (i, (c, (xs, ys))) in enumerate(groups)
             x_min, x_max = minimum(xs), maximum(xs)
