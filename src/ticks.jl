@@ -213,11 +213,11 @@ function multilevel_ticks(viewmin::Date, viewmax::Date;
     ticks = Dict()
     for scale in scales
         if scale == :year
-            s = span / Day(360)
+            s = div(span, Day(360))
         elseif scale == :month
-            s = span / Day(90)
+            s = div(span, Day(90))
         else
-            s = span / Day(1)
+            s = div(span, Day(1))
         end
 
         ticks[s/20] = optimize_ticks(viewmin, viewmax, scale=scale)[1]
