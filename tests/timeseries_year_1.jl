@@ -1,8 +1,8 @@
 
-using Gadfly, DataArrays, Datetime, RDatasets
+using Gadfly, DataArrays, Dates, RDatasets
 
 economics = dataset("ggplot2", "economics")
-dates = Date[date(d) for d in economics[:Date]]
+dates = Date[Date(d) for d in economics[:Date]]
 
 try
     economics[:Date] = dates

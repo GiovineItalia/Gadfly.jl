@@ -1,8 +1,8 @@
 
-using Gadfly, DataArrays, Datetime, RDatasets
+using Gadfly, DataArrays, Dates, RDatasets
 
 approval = dataset("Zelig", "approval")
-dates = Date[date(y, m)
+dates = Date[Date(y, m)
              for (y, m) in zip(approval[:Year], approval[:Month])]
 try
     approval[:Date] = dates

@@ -1,9 +1,9 @@
 #!/usr/bin/env julia
 
-using Datetime, Gadfly, DataFrames
+using Dates, Gadfly, DataFrames
 
-a = [date("2013-01-01"):day(1):date("2014-01-01")]
-b = [date("2012-01-01"):day(1):date("2016-01-01")]
+a = [Date("2013-01-01"):day(1):Date("2014-01-01")]
+b = [Date("2012-01-01"):day(1):Date("2016-01-01")]
 ya = sin(0.01 * convert(Array{Float64}, a))
 yb = cos(0.01 * convert(Array{Float64}, b))
 
