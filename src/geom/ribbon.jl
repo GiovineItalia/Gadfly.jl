@@ -27,7 +27,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme,
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGB[theme.default_color])
+    default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
     if length(aes.color) == 1 &&
@@ -43,7 +43,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme,
             polygon(collect((Any, Any), chain(min_points, max_points))),
             fill(theme.lowlight_color(aes.color[1])))
     else
-        max_points = Dict{RGB, Array{(Any, Any), 1}}()
+        max_points = Dict{RGB{Float32}, Array{(Any, Any), 1}}()
         for (x, y, c) in zip(aes.x, aes.ymax, aes.color)
             if !haskey(max_points, c)
                 max_points[c] = Array((Any, Any),0)
@@ -51,7 +51,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme,
             push!(max_points[c], (x, y))
         end
 
-        min_points = Dict{RGB, Array{(Any, Any), 1}}()
+        min_points = Dict{RGB{Float32}, Array{(Any, Any), 1}}()
         for (x, y, c) in zip(aes.x, aes.ymin, aes.color)
             if !haskey(min_points, c)
                 min_points[c] = Array((Any, Any),0)

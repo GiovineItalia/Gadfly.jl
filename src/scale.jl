@@ -511,7 +511,7 @@ function apply_scale(scale::DiscreteColorScale,
     if scale.order != nothing
         permute!(scale_levels, scale.order)
     end
-    colors = convert(Vector{RGB}, scale.f(length(scale_levels)))
+    colors = convert(Vector{RGB{Float32}}, scale.f(length(scale_levels)))
 
     color_map = {color => string(label)
                  for (label, color) in zip(scale_levels, colors)}
@@ -524,7 +524,7 @@ function apply_scale(scale::DiscreteColorScale,
             continue
         end
         ds = discretize(data.color, scale_levels)
-        colorvals = Array(RGB, nonzero_length(ds.refs))
+        colorvals = Array(RGB{Float32}, nonzero_length(ds.refs))
         i = 1
         for k in ds.refs
             if k != 0
@@ -637,7 +637,7 @@ function apply_scale(scale::ContinuousColorScale,
             continue
         end
 
-        aes.color = DataArray(RGB, length(data.color))
+        aes.color = DataArray(RGB{Float32}, length(data.color))
         apply_scale_typed!(aes.color, data.color, scale, cmin, cspan)
 
         color_key_colors = Dict{ColorValue, Float64}()
@@ -670,7 +670,7 @@ function apply_scale_typed!(ds, field, scale::ContinuousColorScale,
                             cmin::Float64, cspan::Float64)
     for (i, d) in enumerate(field)
         if isconcrete(d)
-            ds[i] = convert(RGB, scale.f((convert(Float64, d) - cmin) / cspan))
+            ds[i] = convert(RGB{Float32}, scale.f((convert(Float64, d) - cmin) / cspan))
         else
             ds[i] = NA
         end

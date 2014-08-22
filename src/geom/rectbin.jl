@@ -48,7 +48,7 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGB[theme.default_color])
+    default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
     if aes.x === nothing && (aes.xmin === nothing || aes.xmax === nothing)
@@ -94,9 +94,13 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme,
                    for (y0, y1) in zip(aes.ymin, aes.ymax)]
     end
 
-    cs = Array(RGB, n)
-    for i in 1:n
-        cs[i] = convert(RGB, aes.color[((i - 1) % length(aes.color)) + 1])
+    if length(aes.color) == n
+        cs = aes.color
+    else
+        cs = Array(RGB{Float32}, n)
+        for i in 1:n
+            cs[i] = aes.color[((i - 1) % length(aes.color)) + 1]
+        end
     end
 
     allvisible = true

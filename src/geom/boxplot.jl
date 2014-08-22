@@ -22,7 +22,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                                      :upper_hinge, :upper_fence, :outliers)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGB[theme.default_color])
+    default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
     default_aes.x = Float64[0.5]
     aes = inherit(aes, default_aes)
 
