@@ -391,7 +391,6 @@ function apply_statistic(stat::Histogram2DStatistic,
     else
         aes.xmin = Array(Float64, n)
         aes.xmax = Array(Float64, n)
-        aes.x = Array(Int64, n)
     end
 
     if y_categorial
