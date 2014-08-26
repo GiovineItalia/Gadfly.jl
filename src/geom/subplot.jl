@@ -17,6 +17,13 @@ function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.Layer)
 end
 
 
+function add_subplot_element(subplot::SubplotGeometry, arg::Vector{Gadfly.Layer})
+    for layer in arg
+        push!(subplot.layers, layer)
+    end
+end
+
+
 function add_subplot_element(p::SubplotGeometry, arg::Gadfly.GeometryElement)
     if !isempty(p.layers) && isa(p.layers[end].geom, Geom.Nil)
         p.layers[end].geom = arg
@@ -58,7 +65,7 @@ immutable SubplotGrid <: SubplotGeometry
 
     # Current plot has no way of passing existing aesthetics. It always produces
     # these using scales.
-    function SubplotGrid(elements::Gadfly.ElementOrFunction...;
+    function SubplotGrid(elements::Gadfly.ElementOrFunctionOrLayers...;
                          free_x_axis=false, free_y_axis=false)
         subplot = new(Gadfly.Layer[], Gadfly.StatisticElement[],
                       Gadfly.GuideElement[], free_x_axis, free_y_axis)
