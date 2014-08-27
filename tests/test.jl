@@ -24,6 +24,7 @@ tests = [
     ("subplot_grid",                          10inch, 10inch),
     ("subplot_grid_free_axis",                10inch, 10inch),
     ("subplot_grid_histogram",                6inch, 3inch),
+    ("subplot_layers",                        8inch, 6inch),
     ("labels",                                6inch, 6inch),
     ("percent",                               6inch, 6inch),
     ("timeseries_day",                        6inch, 3inch),
