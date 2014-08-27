@@ -90,6 +90,7 @@ backends = {
     "png" => (name, width, height) -> PNG("$(name).png", width, height),
     #"ps"  => (name, width, height) -> PS("$(name).ps",   width, height),
     #"pdf" => (name, width, height) -> PDF("$(name).pdf", width, height)
+    "pgf" => (name, width, height) -> PGF("$(name).tex", width, height)
 }
 
 
