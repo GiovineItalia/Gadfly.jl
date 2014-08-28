@@ -4,9 +4,8 @@ compiler:
 notifications:
     email: false
 env:
-    matrix:
-        - JULIAVERSION="juliareleases"
-        - JULIAVERSION="julianightlies"
+    - JULIAVERSION="juliareleases"
+    - JULIAVERSION="julianightlies"
 branches:
     only:
         - master
@@ -15,9 +14,10 @@ before_install:
     - sudo add-apt-repository ppa:staticfloat/${JULIAVERSION} -y
     - sudo apt-get update -qq -y
     - sudo apt-get install git libpcre3-dev julia -y
-script:
     - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-    - julia -e 'Pkg.init(); Pkg.add("Cairo"); Pkg.add("RDatasets", v"0.1.1"); run(`ln -s $(pwd()) $(Pkg.dir("Gadfly"))`); Pkg.pin("Gadfly"); Pkg.resolve(); Pkg.checkout("Compose")'
-    - if [ $JULIAVERSION = "julianightlies" ]; then julia --code-coverage tests/test.jl; fi
-    - if [ $JULIAVERSION = "juliarelease" ]; then julia tests/test.jl; fi
-    - if [ $JULIAVERSION = "julianightlies" ]; then julia -e 'Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'; fi
+script:
+    - julia -e 'Pkg.init(); Pkg.clone(pwd())'
+    - julia -e 'Pkg.checkout("Compose")'
+    - julia -e 'Pkg.test("Gadfly", coverage=true)'
+after_success:
+    - julia -e 'cd(Pkg.dir("Gadfly")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
