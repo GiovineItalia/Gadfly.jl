@@ -95,7 +95,7 @@ backends = {
 
 
 function run_tests(output_filename)
-    testdir = Pkg.dir("Gadfly", "tests")
+    testdir = Pkg.dir("Gadfly", "test")
     whitelist = Set()
     if !isempty(ARGS)
         union!(whitelist, ARGS)
