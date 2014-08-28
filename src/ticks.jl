@@ -146,17 +146,17 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
                         k_min=nothing, k_max=nothing,
                         scale=:auto)
     # This can be pretty simple. We are choosing ticks on one of three
-    # scales: years, months, days.
+    # scales: years, months, day.
     if year(x_max) - year(x_min) <= 1 && scale != :year
         if year(x_max) == year(x_min) && month(x_max) - month(x_min) <= 1 && scale != :month
             ticks = Date[]
-            if x_max - x_min > days(7) && scale != :day
+            if x_max - x_min > Day(7) && scale != :day
                 # This will probably need to be smarter
                 push!(ticks, x_min)
                 while true
-                    next_month = date(year(ticks[end]), month(ticks[end])) + month(1)
-                    while ticks[end] + week(1) < next_month - days(2)
-                        push!(ticks, ticks[end] + week(1))
+                    next_month = Date(year(ticks[end]), month(ticks[end])) + Month(1)
+                    while ticks[end] + Week(1) < next_month - Day(2)
+                        push!(ticks, ticks[end] + Week(1))
                     end
                     push!(ticks, next_month)
                     if next_month >= x_max
@@ -166,7 +166,7 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
             else
                 push!(ticks, x_min)
                 while ticks[end] < x_max
-                    push!(ticks, ticks[end] + day(1))
+                    push!(ticks, ticks[end] + Day(1))
                 end
             end
 
@@ -174,9 +174,9 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
             ticks, viewmin, viewmax
         else
             ticks = Date[]
-            push!(ticks, date(year(x_min), month(x_min)))
+            push!(ticks, Date(year(x_min), month(x_min)))
             while ticks[end] < x_max
-                push!(ticks, ticks[end] + month(1))
+                push!(ticks, ticks[end] + Month(1))
             end
             viewmin, viewmax = ticks[1], ticks[end]
 
@@ -185,7 +185,7 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
     else
         ticks, viewmin, viewmax =
             optimize_ticks(year(x_min), year(x_max), extend_ticks=extend_ticks)
-        Date[date(y) for y in ticks], date(viewmin), date(viewmax)
+        Date[Date(y) for y in ticks], Date(viewmin), Date(viewmax)
     end
 end
 
@@ -213,14 +213,14 @@ function multilevel_ticks(viewmin::Date, viewmax::Date;
     ticks = Dict()
     for scale in scales
         if scale == :year
-            s = span / days(360)
+            s = div(span, Day(360))
         elseif scale == :month
-            s = span / day(90)
+            s = div(span, Day(90))
         else
-            s = span / day(1)
+            s = div(span, Day(1))
         end
 
-        ticks[s/20] = optimize_ticks(viewmin, viewmax, scale=scale)[1]
+        ticks[div(s,20)] = optimize_ticks(viewmin, viewmax, scale=scale)[1]
     end
 
     return ticks

@@ -1,10 +1,10 @@
 
-using Gadfly, DataArrays, DataFrames, Datetime, RDatasets
+using Gadfly, DataArrays, DataFrames, Dates, RDatasets
 
 y = 1973
 airquality = dataset("datasets", "airquality")
 
-dates = Date[date(1973, m, d)
+dates = Date[Date(1973, m, d)
              for (m, d) in zip(airquality[:Month], airquality[:Day])]
 
 try

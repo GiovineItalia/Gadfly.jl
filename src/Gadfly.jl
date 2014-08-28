@@ -6,7 +6,7 @@ using Compose
 using DataFrames
 using DataArrays
 using DataStructures
-using Datetime
+using Dates
 using JSON
 
 import Iterators
