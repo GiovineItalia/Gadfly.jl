@@ -34,8 +34,8 @@ immutable Cartesian <: Gadfly.CoordinateElement
     raster::Bool
 
     function Cartesian(
-            xvars=[:x, :xviewmin, :xviewmax, :xmin, :xmax],
-            yvars=[:y, :yviewmin, :yviewmax, :ymin, :ymax, :middle,
+            xvars=[:x, :xmin, :xmax],
+            yvars=[:y, :ymin, :ymax, :middle,
                    :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers];
             xflip::Bool=false, yflip::Bool=false,
             xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,
@@ -138,6 +138,7 @@ end
 function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
                           scales::Dict{Symbol, Gadfly.ScaleElement})
     xmin = xmax = first_concrete_aesthetic_value(aess, coord.xvars)
+
     if xmin != nothing
         for var in coord.xvars
             for aes in aess
@@ -179,6 +180,24 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
 
                 ymin, ymax = Gadfly.concrete_minmax(vals, ymin, ymax)
             end
+        end
+    end
+
+    for aes in aess
+        if aes.xviewmin != nothing
+            xmin = aes.xviewmin
+        end
+
+        if aes.xviewmax != nothing
+            xmax = aes.xviewmax
+        end
+
+        if aes.yviewmin != nothing
+            ymin = aes.yviewmin
+        end
+
+        if aes.yviewmax != nothing
+            ymax = aes.yviewmax
         end
     end
 
