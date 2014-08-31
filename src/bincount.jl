@@ -45,14 +45,15 @@ end
 #
 # Args:
 #   xs: A sample.
-#   min_bin_count: Minimum number of bins to consider.
-#   max_bin_count: Maximum number of bins to consider.
+#   d_min: Minimum number of bins to consider.
+#   d_max: Maximum number of bins to consider.
 #
 # Returns:
-#   A tuple of the form (d, bincounts), where d gives the optimal number of
-#   bins, and bincounts is an array giving the number of occurances in each bin.
+#   A tuple of the form (d, bincounts, x_max), where d gives the optimal number of
+#   bins, and bincounts is an array giving the number of occurances in each
+#   bin, and x_max is the end point of the final bin.
 #
-function choose_bin_count_1d(xs::AbstractVector, min_bin_count=1, max_bin_count=150)
+function choose_bin_count_1d(xs::AbstractVector, d_min=1, d_max=150)
     n = length(xs)
     if n <= 1
         return 1, Int[0]
@@ -61,8 +62,6 @@ function choose_bin_count_1d(xs::AbstractVector, min_bin_count=1, max_bin_count=
     x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)
     span = x_max - x_min
 
-    d_min = min_bin_count
-    d_max = max_bin_count
     bincounts = zeros(Int, d_max)
 
     d_best = d_min
@@ -98,49 +97,85 @@ function choose_bin_count_1d(xs::AbstractVector, min_bin_count=1, max_bin_count=
         bincounts[max(1, min(d_best, int(ceil((x - x_min) / binwidth))))] += 1
     end
 
-    (d_best, bincounts)
+    return d_best, bincounts, x_max
 end
 
 
-# Choose a reasonable number of bins using a simpler heuristic for
-# semi-continous data
+# Choose a reasonable number of bins when the data is considered discrete, which
+# this case means integers, or low-resolution real number measurements.
 #
-# Birge's heursitic, implemented `choose_bin_count_1d` works well for continuous
-# data, but the assumption of continuity can be too strong when a continuous
-# value is measured at such low resolution that the data is effectively
-# discrete.
-#
-# So this function is to handle those cases by using a dumber heuristic. Namely
-# choosing sqrt(n) as the number of bins.
+# This works similarly to choose_bin_count_1d, except restricts the binwidths to
+# be a multiple of the smallest distance between two adjacent unique values.
+# E.g. for integer data, this means bin width are integers as well. This usually
+# leads to better results.
 #
 # Args:
 #   xs: A sample.
-#   xs_set: A set of the values in xs
+#   xs_set: An of the unique values in xs in sorted order.
+#   d_min: Minimum number of allowed bins.
+#   d_max: Maximum number of allowed bins.
 #
 # Returns
-#   A tuple of the form (d, bincounts), where d gives the optimal number of
-#   bins, and bincounts is an array giving the number of occurances in each bin.
+#   A tuple of the form (d, bincounts, x_max), where d gives the optimal number of
+#   bins, and bincounts is an array giving the number of occurances in each
+#   bin, and x_max is the end point of the final bin.
 #
-function choose_bin_count_simple(xs::AbstractArray, xs_set::Set,
-                                 min_bin_count=1, max_bin_count=150)
+function choose_bin_count_1d_discrete(xs::AbstractArray, xs_set::AbstractArray,
+                                      d_min=1, d_max=150)
     n = length(xs_set)
     if n <= 1
         return 1, Int[n > 0 ? 1 : 0]
     end
 
-    d = min(max(iround(sqrt(n)), min_bin_count), max_bin_count)
-    bincounts = zeros(Int, d)
+    # minimum distance between two values
+    mingap = zero(eltype(xs))
+    for (a, b) in zip(1:length(xs_set)-1, 2:length(xs_set))
+        mingap = mingap == zero(eltype(xs)) ? b - a : min(b - a, mingap)
+    end
+
     x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)
     span = x_max - x_min
-    binwidth = span / d
+
+    d_best = d_min
+    pll_best = -Inf
+    bincounts = zeros(Int, d_max)
+    for d in d_min:d_max
+        binwidth = span / d
+        binwidth = ceil(binwidth / mingap) * mingap # round to a multiple of mingap
+
+        # don't bother with binning that stretches past the end of the data
+        if binwidth == mingap && x_min + binwidth * (d - 1) > x_max
+            break
+        end
+
+        bincounts[1:d] = 0
+        for x in xs
+            if !isconcrete(x)
+                continue
+            end
+            bincounts[max(1, min(d, int(ceil((x - x_min) / binwidth))))] += 1
+        end
+
+        pll = bincount_pll(d, n, bincounts, binwidth)
+
+        if pll > pll_best
+            d_best = d
+            pll_best = pll
+        end
+    end
+
+    d = d_best
+    binwidth = ceil(span / d / mingap) * mingap
+    x_max = x_min + binwidth * d
+    bincounts[1:d_best] = 0
     for x in xs
         if !isconcrete(x)
             continue
         end
-        bincounts[max(1, min(d, int(ceil((x - x_min) / binwidth))))] += 1
+        bincounts[max(1, min(d_best, int(ceil((x - x_min) / binwidth))))] += 1
     end
 
-    return d, bincounts
+    return d_best, bincounts, x_max
 end
 
 

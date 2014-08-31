@@ -134,20 +134,19 @@ function apply_statistic(stat::HistogramStatistic,
         end
     else
         isdiscrete = false
-        value_set = Set(values[Bool[Gadfly.isconcrete(v) for v in values]])
+        value_set = collect(Set(values[Bool[Gadfly.isconcrete(v) for v in values]]))
+        sort!(value_set)
+
         if  length(value_set) / length(values) < 0.9
-            d, bincounts = choose_bin_count_simple(values, value_set,
-                                                   stat.minbincount,
-                                                   stat.maxbincount)
+            d, bincounts, x_max = choose_bin_count_1d_discrete(
+                        values, value_set, stat.minbincount, stat.maxbincount)
         else
-            d, bincounts = choose_bin_count_1d(values,
-                                               stat.minbincount,
-                                               stat.maxbincount)
+            d, bincounts, x_max = choose_bin_count_1d(
+                        values, stat.minbincount, stat.maxbincount)
         end
     end
 
     x_min = Gadfly.concrete_minimum(values)
-    x_max = Gadfly.concrete_maximum(values)
     binwidth = isdiscrete ? 1 : (x_max - x_min) / d
 
     if aes.color === nothing
@@ -192,7 +191,6 @@ function apply_statistic(stat::HistogramStatistic,
         colors = Array(RGB{Float32}, d * length(groups))
 
         x_min = Gadfly.concrete_minimum(values)
-        x_max = Gadfly.concrete_maximum(values)
         stack_height = zeros(Int, d)
         for (i, (c, xs)) in enumerate(groups)
             fill!(bincounts, 0)
