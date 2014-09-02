@@ -236,7 +236,13 @@ function apply_statistic(stat::HistogramStatistic,
         aes.color = PooledDataArray(colors)
     end
 
-    setfield!(aes, labelvar, Scale.identity_formatter)
+    if haskey(scales, othervar)
+        data = Gadfly.Data()
+        setfield!(data, othervar, getfield(aes, othervar))
+        Scale.apply_scale(scales[othervar], [aes], data)
+    else
+        setfield!(aes, labelvar, Scale.identity_formatter)
+    end
 end
 
 
@@ -789,7 +795,6 @@ function apply_statistic(stat::BoxplotStatistic,
     end
 
     if isa(aes_x, PooledDataArray)
-        println(STDERR, "here")
         aes.x = PooledDataArray(aes.x, aes_x.pool)
     end
 
@@ -1228,7 +1233,7 @@ function apply_statistic(stat::QQStatistic,
     qqq = qqbuild(xs, ys)
 
     aes.x = qqq.qx
-    aes.y = qqq.qy    
+    aes.y = qqq.qy
 
     # apply_scale to Distribution-bound aesthetics is deferred, so re-apply here
     # (but only for Distribution, numeric data is already scaled).  Only one of
