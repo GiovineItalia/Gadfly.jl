@@ -80,7 +80,7 @@ tests = [
     ("layer_data",                            6inch, 3inch),
     ("multi_geom_layer",                      6inch, 3inch),
     ("raster",                                6inch, 3inch),
-
+    ("single_boxplot",                        6inch, 3inch),
 ]
 
 

@@ -744,7 +744,12 @@ function apply_statistic(stat::BoxplotStatistic,
         return
     end
 
-    aes_x = aes.x === nothing ? [nothing] : aes.x
+    if aes.x === nothing
+        aes_x = [1]
+        aes.x_label = x -> fill("", length(x))
+    else
+        aes_x = aes.x
+    end
     aes_color = aes.color === nothing ? [nothing] : aes.color
 
     T = isempty(aes.y) ? eltype(aes.y) : typeof(aes.y[1] / 1)
@@ -784,6 +789,7 @@ function apply_statistic(stat::BoxplotStatistic,
     end
 
     if isa(aes_x, PooledDataArray)
+        println(STDERR, "here")
         aes.x = PooledDataArray(aes.x, aes_x.pool)
     end
 
