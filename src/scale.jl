@@ -361,6 +361,12 @@ end
 immutable DiscreteScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
 
+    # Labels are either a function that takes an array of values and returns
+    # an array of string labels, a vector of string labels of the same length
+    # as the number of unique values in the discrete data, or nothing to use
+    # the default labels.
+    labels::Union(Nothing, Function)
+
     # If non-nothing, give values for the scale. Order will be respected and
     # anything in the data that's not represented in values will be set to NA.
     levels::Union(Nothing, AbstractVector)
@@ -368,12 +374,9 @@ immutable DiscreteScale <: Gadfly.ScaleElement
     # If non-nothing, a permutation of the pool of values.
     order::Union(Nothing, AbstractVector)
 
-    # If true, order levels as they appear in the data.
-    preserve_order::Bool
-
-    function DiscreteScale(vals::Vector{Symbol}; levels=nothing, order=nothing,
-                           preserve_order::Bool=true)
-        new(vals, levels, order, preserve_order)
+    function DiscreteScale(vals::Vector{Symbol};
+                           labels=nothing, levels=nothing, order=nothing)
+        new(vals, labels, levels, order)
     end
 end
 
@@ -383,21 +386,18 @@ const discrete = DiscreteScale
 element_aesthetics(scale::DiscreteScale) = scale.vars
 
 
-function x_discrete(; levels=nothing, order=nothing, preserve_order=true)
-    return DiscreteScale(x_vars, levels=levels, order=order,
-                         preserve_order=preserve_order)
+function x_discrete(; labels=nothing, levels=nothing, order=nothing)
+    return DiscreteScale(x_vars, labels=labels, levels=levels, order=order)
 end
 
 
-function y_discrete(; levels=nothing, order=nothing, preserve_order=true)
-    return DiscreteScale(y_vars, levels=levels, order=order,
-                         preserve_order=preserve_order)
+function y_discrete(; labels=nothing, levels=nothing, order=nothing)
+    return DiscreteScale(y_vars, labels=labels, levels=levels, order=order)
 end
 
 
-function group_discrete(; levels=nothing, order=nothing, preserve_order=true)
-    return DiscreteScale([:group], levels=levels, order=order,
-                         preserve_order=preserve_order)
+function group_discrete(; labels=nothing, levels=nothing, order=nothing)
+    return DiscreteScale([:group], labels=labels, levels=levels, order=order)
 end
 
 
@@ -416,15 +416,26 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
             setfield!(aes, var, PooledDataArray(int64(disc_data.refs)))
 
             # The leveler for discrete scales is a closure over the discretized data.
-            function labeler(xs)
-                lvls = levels(disc_data)
-                vals = {1 <= x <= length(lvls) ? lvls[x] : "" for x in xs}
-                if all([isa(val, FloatingPoint) for val in vals])
-                    format = formatter(vals)
-                    [format(val) for val in vals]
-                else
-                    [string(val) for val in vals]
+            if scale.labels === nothing
+                function default_labeler(xs)
+                    lvls = levels(disc_data)
+                    vals = {1 <= x <= length(lvls) ? lvls[x] : "" for x in xs}
+                    if all([isa(val, FloatingPoint) for val in vals])
+                        format = formatter(vals)
+                        [format(val) for val in vals]
+                    else
+                        [string(val) for val in vals]
+                    end
                 end
+
+                labeler = default_labeler
+            else
+                function explicit_labeler(xs)
+                    lvls = levels(disc_data)
+                    return [string(scale.labels(lvls[x])) for x in xs]
+                end
+
+                labeler = explicit_labeler
             end
 
             if in(label_var, Set(names(aes)))
