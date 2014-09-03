@@ -12,7 +12,7 @@ Map numerical data to x positions in cartesian coordinates.
   * `minvalue`: Force the plot viewport to a minimum x value.
   * `maxvalue`: Force the plot viewport to a maximum x value.
   * `format`: How numbers should be formatted. One of `:plain`, `:scientific`,
-    or `:auto`. The default in `:auto` which prints very large or very small
+    `:engineering`, or `:auto`. The default in `:auto` which prints very large or very small
     numbers in scientific notation, and other numbers plainly.
   * `scalable`: When set to false, scale is fixed when zooming (default: true)
 

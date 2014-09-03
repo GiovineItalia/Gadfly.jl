@@ -57,7 +57,8 @@ end
 
 # Print a floating point number in scientific notation at fixed precision. Sort of equivalent
 # to @sprintf("%0.$(precision)e", x), but prettier printing.
-function format_fixed_scientific(x::FloatingPoint, precision::Integer)
+function format_fixed_scientific(x::FloatingPoint, precision::Integer,
+                                 engineering::Bool)
     if x == 0.0
         return "0"
     elseif x == Inf
@@ -86,11 +87,24 @@ function format_fixed_scientific(x::FloatingPoint, precision::Integer)
     end
 
     push!(ss, digits[1])
+    nextdigit = 2
+    if engineering
+        while (point - 1) % 3 != 0
+            if nextdigit <= len
+                push!(ss, digits[nextdigit])
+            else
+                push!(ss, '0')
+            end
+            nextdigit += 1
+            point -= 1
+        end
+    end
+
     if precision > 1
         push!(ss, '.')
     end
 
-    for i in 2:len
+    for i in nextdigit:len
         push!(ss, digits[i])
     end
 
@@ -149,7 +163,19 @@ function formatter{T<:FloatingPoint}(xs::AbstractArray{T}; fmt=:auto)
 
         precision = 1 + max(0, x_max_magnitude - delta_magnitude)
 
-        return x -> format_fixed_scientific(x, precision)
+        return x -> format_fixed_scientific(x, precision, false)
+    elseif fmt == :engineering
+        Base.Grisu.@grisu_ccall delta Base.Grisu.SHORTEST_SINGLE 0
+        delta_magnitude = Base.Grisu.POINT[1]
+
+        Base.Grisu.@grisu_ccall x_max Base.Grisu.SHORTEST_SINGLE 0
+        x_max_magnitude = Base.Grisu.POINT[1]
+
+        precision = 1 + max(0, x_max_magnitude - delta_magnitude)
+
+        return x -> format_fixed_scientific(x, precision, true)
+    else
+        error("$(fmt) is not a recongnized number format")
     end
 end
 
