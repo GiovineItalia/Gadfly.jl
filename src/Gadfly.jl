@@ -765,7 +765,7 @@ function render_prepared(plot::Plot,
         class = string(class, " yscalable")
     end
 
-    compose(c, svgclass(class), jsinclude(gadflyjs))
+    compose(c, svgclass(class), jsinclude(gadflyjs, ("Gadfly", "Gadfly")))
 end
 
 
