@@ -140,6 +140,9 @@ immutable ContinuousScale <: Gadfly.ScaleElement
                              minticks=2, maxticks=10,
                              format=nothing,
                              scalable=true)
+        if minvalue != nothing && maxvalue != nothing && minvalue > maxvalue
+            error("Cannot construct a ContinuousScale with minvalue > maxvalue")
+        end
         new(vars, trans, minvalue, maxvalue, minticks, maxticks, format, scalable)
     end
 end
