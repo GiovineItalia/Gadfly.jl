@@ -722,13 +722,13 @@ immutable GroupingScale <: Gadfly.ScaleElement
 end
 
 
-function xgroup(; levels=nothing, order=nothing)
-    return DiscreteScale([:xgroup], levels=levels, order=order)
+function xgroup(; labels=nothing, levels=nothing, order=nothing)
+    return DiscreteScale([:xgroup], labels=labels, levels=levels, order=order)
 end
 
 
-function ygroup(; levels=nothing, order=nothing)
-    return DiscreteScale([:ygroup], levels=levels, order=order)
+function ygroup(; labels=nothing, levels=nothing, order=nothing)
+    return DiscreteScale([:ygroup], labels=labels, levels=levels, order=order)
 end
 
 
