@@ -131,11 +131,13 @@ immutable ContinuousScale <: Gadfly.ScaleElement
     maxvalue
     minticks
     maxticks
+    labels::Union(Nothing, Function)
     format
     scalable
 
     function ContinuousScale(vars::Vector{Symbol},
                              trans::ContinuousScaleTransform;
+                             labels=nothing,
                              minvalue=nothing, maxvalue=nothing,
                              minticks=2, maxticks=10,
                              format=nothing,
@@ -143,13 +145,18 @@ immutable ContinuousScale <: Gadfly.ScaleElement
         if minvalue != nothing && maxvalue != nothing && minvalue > maxvalue
             error("Cannot construct a ContinuousScale with minvalue > maxvalue")
         end
-        new(vars, trans, minvalue, maxvalue, minticks, maxticks, format, scalable)
+        new(vars, trans, minvalue, maxvalue, minticks, maxticks, labels,
+            format, scalable)
     end
 end
 
 
 function make_labeler(scale::ContinuousScale)
-    if scale.format == nothing
+    if scale.labels != nothing
+        function f(xs)
+            return [scale.labels(x) for x in xs]
+        end
+    elseif scale.format == nothing
         scale.trans.label
     else
         function f(xs)
@@ -165,11 +172,11 @@ const y_vars = [:y, :ymin, :ymax, :yintercept, :middle,
 
 function continuous_scale_partial(vars::Vector{Symbol},
                                   trans::ContinuousScaleTransform)
-    function f(; minvalue=nothing, maxvalue=nothing, format=nothing, minticks=2,
+    function f(; minvalue=nothing, maxvalue=nothing, labels=nothing, format=nothing, minticks=2,
                  maxticks=10, scalable=true)
         ContinuousScale(vars, trans, minvalue=minvalue, maxvalue=maxvalue,
-                        format=format, minticks=minticks, maxticks=maxticks,
-                        scalable=scalable)
+                        labels=labels, format=format, minticks=minticks,
+                        maxticks=maxticks, scalable=scalable)
     end
 end
 
