@@ -11,6 +11,9 @@ Map numerical data to x positions in cartesian coordinates.
 
   * `minvalue`: Force the plot viewport to a minimum x value.
   * `maxvalue`: Force the plot viewport to a maximum x value.
+  * `labels`: Either a `Function` or `nothing`. When a
+    function is given, values are formatted using this function. The function
+    should map a value in `x` to a string giving its label.
   * `format`: How numbers should be formatted. One of `:plain`, `:scientific`,
     `:engineering`, or `:auto`. The default in `:auto` which prints very large or very small
     numbers in scientific notation, and other numbers plainly.
@@ -57,3 +60,7 @@ plot(x=rand(10), y=rand(10), Scale.x_continuous(minvalue=-10, maxvalue=10))
 plot(x=rand(10), y=rand(10), Scale.x_continuous(format=:scientific))
 ```
 
+```julia
+# Use manual formatting
+plot(x=rand(10), y=rand(10), Scale.x_continuous(labels=x -> @sprintf("%0.4f", x)))
+```

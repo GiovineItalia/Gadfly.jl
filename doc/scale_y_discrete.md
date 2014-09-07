@@ -15,7 +15,8 @@ easiest way to get that data to plot appropriately.
 # Arguments
 
   * `labels`: Either a `Function` or `nothing`. When a
-    function is given, it map a value in `x` to a string giving its label.
+    function is given, values are formatted using this function. The function
+    should map a value in `x` to a string giving its label.
   * `levels`: If non-nothing, give values for the scale. Order will be respected
     and anything in the data that's not respresented in `levels` will be set to
     `NA`.
