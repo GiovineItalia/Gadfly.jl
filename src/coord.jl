@@ -40,6 +40,9 @@ immutable Cartesian <: Gadfly.CoordinateElement
             xflip::Bool=false, yflip::Bool=false,
             xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,
             fixed=false, aspect_ratio=nothing, raster=false)
+        if isa(aspect_ratio, Real)
+            aspect_ratio = convert(Float64, aspect_ratio)
+        end
         new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
             aspect_ratio, raster)
     end
