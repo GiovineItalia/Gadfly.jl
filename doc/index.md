@@ -192,6 +192,16 @@ You can also pass different data frames to each layers:
 layer(another_dataframe, x="col1", y="col2", Geom.point)
 ```
 
+# Stacking
+
+Plots can also be stacked horizontally with ``hstack`` or vertically with ``vstack``. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with ``subplot_grid``.
+
+```{.julia execute="false"}
+p1 = plot(x=[1,2,3], y=[4,5,6])
+p2 = plot(x=[1,2,3], y=[6,7,8])
+draw(PDF("data.pdf", 6inch, 6inch) vstack(p1,p2))
+```
+
 # Drawing to backends
 
 Gadfly plots can be rendered to number of formats. Without cairo, or any
