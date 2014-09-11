@@ -102,6 +102,21 @@ function element_aesthetics(geom::SubplotGrid)
 end
 
 
+function default_scales(geom::SubplotGrid)
+    scales = Gadfly.ScaleElement[]
+    for stat in geom.statistics
+        append!(scales, default_scales(stat))
+    end
+
+    for layer in geom.layers
+        append!(scales, default_scales(layer.geom))
+        append!(scales, default_scales(default_statistic(layer.geom)))
+    end
+
+    return scales
+end
+
+
 function element_coordinate_type(::SubplotGrid)
     return Gadfly.Coord.subplot_grid
 end

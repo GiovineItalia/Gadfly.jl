@@ -488,8 +488,8 @@ function render(plot::Plot)
     unscaled_aesthetics = setdiff(used_aesthetics, scaled_aesthetics)
 
     # Add default scales for statistics.
-    for stat in chain(plot.statistics, layer_stats)
-        for scale in default_scales(stat)
+    for element in chain(plot.statistics, layer_stats, [l.geom for l in plot.layers])
+        for scale in default_scales(element)
             # Use the statistics default scale only when it covers some
             # aesthetic that is not already scaled.
             scale_aes = Set(element_aesthetics(scale))
