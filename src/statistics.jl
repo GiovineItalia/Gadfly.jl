@@ -799,7 +799,7 @@ function apply_statistic(stat::BoxplotStatistic,
     end
 
     if !is(aes.color, nothing)
-        aes.color = PooledDataArray(ColorValue[c for (x, c) in keys(groups)],
+        aes.color = PooledDataArray(RGB{Float32}[c for (x, c) in keys(groups)],
                                     levels(aes.color))
     end
 
