@@ -218,15 +218,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     hascolorkey = haskey(geom.guides, Guide.ColorKey)
 
-    # TODO: This has one major problem still:
-    #
-    #  * x_prop doesn't really work. We need to constrain every other
-    #    cell in the table. This is kind of a big problem. It's going to require
-    #    some changes to table.
-    #
-
     if hascolorkey
-        xprop = [isodd(j) ? 1.0 : 1.0 for j in 3:2*m+2]
+        xprop = [(isodd(j) ? 1.0 : NaN) for j in 3:2*m+2]
         tbl = table(n + 2, 2*m + 2, 1:n, 3:2*m+2,
                     x_prop=xprop, y_prop=ones(n),
                     fixed_configs={
@@ -298,7 +291,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             push!(guides, get(geom.guides, Guide.YTicks, Guide.yticks()))
             if !is(superplot_aes.ygroup, nothing)
                 joff += 1
-                push!(guides, get(geom.guides, Guide.YLabel, Guide.ylabel(ylabels[j])))
+                push!(guides, get(geom.guides, Guide.YLabel, Guide.ylabel(ylabels[i])))
             end
         else
             push!(guides, Guide.yticks(label=false))
@@ -341,21 +334,25 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         end
 
         # bottom guides
-        for k in 2:size(subtbl, 1)
-            tbl[i + k - 1, hascolorkey ? 2 + 2*j - 1: 2 + j] =
-                pad(subtbl[k, 1 + joff],
-                    j > 1 ? subplot_padding : 0mm,
-                    subplot_padding,
-                    0mm, 0mm)
+        if i == n
+            for k in 2:size(subtbl, 1)
+                tbl[i + k - 1, hascolorkey ? 2 + 2*j - 1: 2 + j] =
+                    pad(subtbl[k, 1 + joff],
+                        j > 1 ? subplot_padding : 0mm,
+                        subplot_padding,
+                        0mm, 0mm)
+            end
         end
 
         # left guides
-        for k in 1:(size(subtbl, 2)-1)
-            tbl[i, k] =
-                pad(subtbl[1, k],
-                    0mm, 0mm,
-                    subplot_padding,
-                    i < n ? subplot_padding : 0mm)
+        if j == 1
+            for k in 1:(size(subtbl, 2)-1)
+                tbl[i, k] =
+                    pad(subtbl[1, k],
+                        0mm, 0mm,
+                        subplot_padding,
+                        i < n ? subplot_padding : 0mm)
+            end
         end
     end
 
