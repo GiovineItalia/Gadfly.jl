@@ -52,8 +52,8 @@ include("ticks.jl")
 include("color.jl")
 include("varset.jl")
 include("theme.jl")
-include("aesthetics.jl")
 include("data.jl")
+include("aesthetics.jl")
 
 
 # The layer and plot functions can also take functions that are evaluated with
@@ -686,13 +686,24 @@ function render(plot::Plot)
     Stat.apply_statistics(statistics, scales, coord, plot_aes)
 
     # Add some default guides determined by defined aesthetics
-    if !all([aes.color === nothing for aes in [plot_aes, layer_aess...]]) &&
+    supress_colorkey = false
+    for layer in plot.layers
+        if isa(layer.geom, Geom.SubplotGeometry) &&
+                haskey(layer.geom.guides, Guide.ColorKey)
+            supress_colorkey = true
+            break
+        end
+    end
+
+    if !supress_colorkey &&
+       !all([aes.color === nothing for aes in [plot_aes, layer_aess...]]) &&
        !in(Guide.ColorKey, explicit_guide_types) &&
        !in(Guide.ManualColorKey, explicit_guide_types)
         push!(guides, Guide.colorkey())
     end
 
-    root_context = render_prepared(plot, coord, plot_aes, layer_aess,
+    root_context = render_prepared(plot, coord, plot_aes,
+                                   layer_aess, datas,
                                    layer_stats, scales, guides)
 
     return pad_inner(root_context, 5mm)
@@ -725,6 +736,7 @@ function render_prepared(plot::Plot,
                          coord::CoordinateElement,
                          plot_aes::Aesthetics,
                          layer_aess::Vector{Aesthetics},
+                         layer_datas::Vector{Data},
                          layer_stats::Vector{StatisticElement},
                          scales::Dict{Symbol, ScaleElement},
                          guides::Vector{GuideElement};
@@ -738,8 +750,8 @@ function render_prepared(plot::Plot,
                    for layer in plot.layers]
 
     compose!(plot_context,
-             [render(layer.geom, theme, aes, scales)
-              for (layer, aes, theme) in zip(plot.layers, layer_aess, themes)]...)
+             [render(layer.geom, theme, aes, data, scales)
+              for (layer, aes, data, theme) in zip(plot.layers, layer_aess, layer_datas, themes)]...)
 
     # V. Guides
     guide_contexts = {}

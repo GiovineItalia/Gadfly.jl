@@ -19,7 +19,8 @@ end
 
 # Generate a form for the vline geometry
 function render(geom::VLineGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
+                aes::Gadfly.Aesthetics, data::Gadfly.Data,
+                scales::Dict{Symbol, ScaleElement})
     Gadfly.assert_aesthetics_defined("Geom.vline", aes, :xintercept)
 
     color = geom.color === nothing ? theme.default_color : geom.color

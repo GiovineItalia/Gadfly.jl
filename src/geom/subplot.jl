@@ -40,8 +40,17 @@ function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.StatisticElem
 end
 
 
+function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.ScaleElement)
+    push!(subplot.scales, arg)
+    if (isa(arg, Scale.ContinuousColorScale) ||
+        isa(arg, Scale.DiscreteColorScale)) && !haskey(subplot.guides, Guide.ColorKey)
+        subplot.guides[Guide.ColorKey] = Guide.colorkey()
+    end
+end
+
+
 function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.GuideElement)
-    push!(subplot.guides, arg)
+    subplot.guides[typeof(arg)] = arg
 end
 
 
@@ -59,7 +68,8 @@ end
 immutable SubplotGrid <: SubplotGeometry
     layers::Vector{Gadfly.Layer}
     statistics::Vector{Gadfly.StatisticElement}
-    guides::Vector{Gadfly.GuideElement}
+    scales::Vector{Gadfly.ScaleElement}
+    guides::Dict{Type, Gadfly.GuideElement}
     free_x_axis::Bool
     free_y_axis::Bool
 
@@ -67,8 +77,8 @@ immutable SubplotGrid <: SubplotGeometry
     # these using scales.
     function SubplotGrid(elements::Gadfly.ElementOrFunctionOrLayers...;
                          free_x_axis=false, free_y_axis=false)
-        subplot = new(Gadfly.Layer[], Gadfly.StatisticElement[],
-                      Gadfly.GuideElement[], free_x_axis, free_y_axis)
+        subplot = new(Gadfly.Layer[], Gadfly.ScaleElement[], Gadfly.StatisticElement[],
+                      Dict{Type, Gadfly.GuideElement}(), free_x_axis, free_y_axis)
 
         for element in elements
             add_subplot_element(subplot, element)
@@ -101,14 +111,19 @@ end
 # many smaller plots.
 function render(geom::SubplotGrid, theme::Gadfly.Theme,
                 superplot_aes::Gadfly.Aesthetics,
+                superplot_data::Gadfly.Data,
                 scales::Dict{Symbol, ScaleElement})
     if superplot_aes.xgroup === nothing && superplot_aes.ygroup === nothing
         error("Geom.subplot_grid requires \"xgroup\" and/or \"ygroup\" to be bound.")
     end
 
     # partition the each aesthetic into a matrix of aesthetics
-    aes_grid = Gadfly.aes_by_xy_group(superplot_aes)
+    aes_grid = Gadfly.by_xy_group(superplot_aes, superplot_aes.xgroup,
+                                  superplot_aes.ygroup)
     n, m = size(aes_grid)
+
+    data_grid = Gadfly.by_xy_group(superplot_data, superplot_aes.xgroup,
+                                   superplot_aes.ygroup)
 
     coord = Coord.cartesian()
     plot_stats = Gadfly.StatisticElement[stat for stat in geom.statistics]
@@ -116,10 +131,16 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                        Geom.default_statistic(layer.geom) : layer.statistic
                    for layer in geom.layers]
 
-    layer_aes_grid = Array(Array{Gadfly.Aesthetics, 1}, n, m)
+    layer_aes_grid = Array(Vector{Gadfly.Aesthetics}, n, m)
+    layer_data_grid = Array(Vector{Gadfly.Data}, n, m)
+
     for i in 1:n, j in 1:m
         layer_aes = Gadfly.Aesthetics[copy(aes_grid[i, j])
                                       for _ in 1:length(geom.layers)]
+        layer_data_grid[i, j] = [data_grid[i, j] for _ in 1:length(geom.layers)]
+        Scale.apply_scales(geom.scales, layer_aes,
+                           layer_data_grid[i, j]...)
+
 
         for (layer_stat, aes) in zip(layer_stats, layer_aes)
             Stat.apply_statistics(Gadfly.StatisticElement[layer_stat],
@@ -138,7 +159,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     has_stat_xticks = false
     has_stat_yticks = false
-    for guide in geom.guides
+    for guide in values(geom.guides)
         stat = default_statistic(guide)
         if !isa(stat, Gadfly.Stat.identity)
             if isa(stat, Gadfly.Stat.TickStatistic)
@@ -193,14 +214,35 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         Gadfly.inherit!(aes_grid[i, j], geom_aes)
     end
 
-    # TODO: this assumed a rather ridged layout
-    tbl = table(n + 2, m + 2, 1:n, 3:m+2,
-                x_prop=ones(m), y_prop=ones(n),
-                fixed_configs={
-                    [(i, 1) for i in 1:n],
-                    [(i, 2) for i in 1:n],
-                    [(n+1, j) for j in 3:m+2],
-                    [(n+2, j) for j in 3:m+2]})
+    # TODO: this assumes a rather ridged layout
+
+    hascolorkey = haskey(geom.guides, Guide.ColorKey)
+
+    # TODO: This has one major problem still:
+    #
+    #  * x_prop doesn't really work. We need to constrain every other
+    #    cell in the table. This is kind of a big problem. It's going to require
+    #    some changes to table.
+    #
+
+    if hascolorkey
+        xprop = [isodd(j) ? 1.0 : 1.0 for j in 3:2*m+2]
+        tbl = table(n + 2, 2*m + 2, 1:n, 3:2*m+2,
+                    x_prop=xprop, y_prop=ones(n),
+                    fixed_configs={
+                        [(i, 1) for i in 1:n],
+                        [(i, 2) for i in 1:n],
+                        [(n+1, j) for j in 3:2:m+2],
+                        [(n+2, j) for j in 3:2:m+2]})
+    else
+        tbl = table(n + 2, m + 2, 1:n, 3:m+2,
+                    x_prop=ones(m), y_prop=ones(n),
+                    fixed_configs={
+                        [(i, 1) for i in 1:n],
+                        [(i, 2) for i in 1:n],
+                        [(n+1, j) for j in 3:m+2],
+                        [(n+2, j) for j in 3:m+2]})
+    end
 
     xtitle = "x"
     for v in [:x, :xmin, :xmax]
@@ -228,15 +270,23 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         p.layers = geom.layers
         guides = Gadfly.GuideElement[]
 
+        for guide in values(geom.guides)
+            if typeof(guide) in [Guide.XTicks, Guide.YTicks, Guide.XLabel, Guide.YLabel]
+                continue
+            end
+            push!(guides, guide)
+        end
+
         p.scales = collect(ScaleElement, values(scales))
 
         # default guides
         push!(guides, Guide.background())
 
         if i == n
-            push!(guides, Guide.xticks())
+            push!(guides, get(geom.guides, Guide.XTicks, Guide.xticks()))
+
             if !is(superplot_aes.xgroup, nothing)
-                push!(guides, Guide.xlabel(xlabels[j]))
+                push!(guides, get(geom.guides, Guide.XLabel, Guide.xlabel(xlabels[j])))
             end
         else
             push!(guides, Guide.xticks(label=false))
@@ -245,10 +295,10 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         joff = 0
         if j == 1
             joff += 1
-            push!(guides, Guide.yticks())
+            push!(guides, get(geom.guides, Guide.YTicks, Guide.yticks()))
             if !is(superplot_aes.ygroup, nothing)
                 joff += 1
-                push!(guides, Guide.ylabel(ylabels[i]))
+                push!(guides, get(geom.guides, Guide.YLabel, Guide.ylabel(ylabels[j])))
             end
         else
             push!(guides, Guide.yticks(label=false))
@@ -257,6 +307,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         subtbl = Gadfly.render_prepared(
                             p, Gadfly.Coord.cartesian(),
                             aes_grid[i, j], layer_aes_grid[i, j],
+                            layer_data_grid[i, j],
                             layer_stats,
                             scales,
                             guides,
@@ -271,15 +322,27 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             end
         end
 
-        tbl[i, 2 + j] = pad(subtbl[1, 1 + joff],
-                            j > 1 ? subplot_padding : 0mm,
-                            subplot_padding,
-                            subplot_padding,
-                            i < n ? subplot_padding : 0mm)
+        # All of the below needs to be rewritten to take into account the
+        # possibility that subplots will have their own external guides.
+        # We could special case it.
+        if hascolorkey
+            tbl[i, 2 + 2*j - 1] = pad(subtbl[1, 1 + joff],
+                                      j > 1 ? subplot_padding : 0mm,
+                                      subplot_padding,
+                                      subplot_padding,
+                                      i < n ? subplot_padding : 0mm)
+            tbl[i, 2 + 2*j] = subtbl[1, 2 + joff]
+        else
+            tbl[i, 2 + j] = pad(subtbl[1, 1 + joff],
+                                j > 1 ? subplot_padding : 0mm,
+                                subplot_padding,
+                                subplot_padding,
+                                i < n ? subplot_padding : 0mm)
+        end
 
         # bottom guides
         for k in 2:size(subtbl, 1)
-            tbl[i + k - 1, 2 + j] =
+            tbl[i + k - 1, hascolorkey ? 2 + 2*j - 1: 2 + j] =
                 pad(subtbl[k, 1 + joff],
                     j > 1 ? subplot_padding : 0mm,
                     subplot_padding,

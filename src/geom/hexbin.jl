@@ -29,7 +29,8 @@ end
 
 
 function render(geom::HexagonalBinGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
+                aes::Gadfly.Aesthetics, data::Gadfly.Data,
+                scales::Dict{Symbol, ScaleElement})
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
     default_aes.xsize = [1.0]

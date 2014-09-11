@@ -308,33 +308,33 @@ end
 
 # Summarizing aesthetics
 
-# Produce a matrix of Aesthetic objects partitioning the ariginal
-# Aesthetics object by the cartesian product of xgroup and ygroup.
+# Produce a matrix of Aesthetic or Data objects partitioning the original
+# Aesthetics or Data object by the cartesian product of xgroup and ygroup.
 #
 # This is useful primarily for drawing facets and subplots.
 #
 # Args:
-#   aes: Aesthetics objects to partition.
+#   aes: Aesthetics or Data objects to partition.
 #
 # Returns:
 #   A Array{Aesthetics} of size max(1, length(xgroup)) by
 #   max(1, length(ygroup))
 #
-function aes_by_xy_group(aes::Aesthetics)
-    @assert !is(aes.xgroup, nothing) || !is(aes.ygroup, nothing)
-    @assert aes.xgroup === nothing || aes.ygroup === nothing ||
-            length(aes.xgroup) == length(aes.ygroup)
+function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup)
+    @assert !is(xgroup, nothing) || !is(ygroup, nothing)
+    @assert xgroup === nothing || ygroup === nothing ||
+            length(xgroup) == length(ygroup)
 
-    n = aes.ygroup === nothing ? 1 : maximum(aes.ygroup)
-    m = aes.xgroup === nothing ? 1 : maximum(aes.xgroup)
+    n = ygroup === nothing ? 1 : maximum(ygroup)
+    m = xgroup === nothing ? 1 : maximum(xgroup)
 
-    xrefs = aes.xgroup === nothing ? [1] : aes.xgroup
-    yrefs = aes.ygroup === nothing ? [1] : aes.ygroup
+    xrefs = xgroup === nothing ? [1] : xgroup
+    yrefs = ygroup === nothing ? [1] : ygroup
 
-    aes_grid = Array(Aesthetics, n, m)
+    aes_grid = Array(T, n, m)
     staging = Array(DataArray, n, m)
     for i in 1:n, j in 1:m
-        aes_grid[i, j] = Aesthetics()
+        aes_grid[i, j] = T()
     end
 
     function make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},
@@ -342,8 +342,7 @@ function aes_by_xy_group(aes::Aesthetics)
         PooledDataArray(convert(Array{T}, arr))
     end
 
-    for var in Aesthetics.names
-
+    for var in T.names
         # Skipped aesthetics. Don't try to partition aesthetics for which it
         # makes no sense to pass on to subplots.
         if var == :xgroup || var == :ygroup||
@@ -359,8 +358,8 @@ function aes_by_xy_group(aes::Aesthetics)
 
         vals = getfield(aes, var)
         if typeof(vals) <: AbstractArray
-            if !is(aes.xgroup, nothing) && length(vals) != length(aes.xgroup) ||
-               !is(aes.ygroup, nothing) && length(vals) != length(aes.ygroup)
+            if !is(xgroup, nothing) && length(vals) != length(xgroup) ||
+               !is(ygroup, nothing) && length(vals) != length(ygroup)
                 error("Aesthetic $(var) must be the same length as xgroup or ygroup")
             end
 
