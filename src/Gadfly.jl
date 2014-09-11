@@ -63,28 +63,16 @@ typealias ElementOrFunction{T <: Element} Union(Element, Base.Callable, Theme)
 const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 
 
-# Set prefereed canvas size when rendering a plot with an explicit call to
+# Set prefereed canvas size when rendering a plot without an explicit call to
 # `draw`.
-default_plot_width = 12cm
-default_plot_height = 8cm
-
 function set_default_plot_size(width::Compose.MeasureOrNumber,
                                height::Compose.MeasureOrNumber)
-    global default_plot_width
-    global default_plot_height
-    default_plot_width = Compose.x_measure(width)
-    default_plot_height = Compose.y_measure(height)
+    Compose.set_default_graphic_size(width, height)
 end
 
 
-default_plot_format = :html
-
 function set_default_plot_format(fmt::Symbol)
-    if !(fmt in [:html, :png, :svg, :pdf, :ps])
-        error("$(fmt) is not a supported plot format")
-    end
-    global default_plot_format
-    default_plot_format = fmt
+    Compose.set_default_graphic_format(fmt)
 end
 
 
@@ -801,7 +789,8 @@ gridstack(ps::Matrix{Plot}) = gridstack(map(render, ps))
 
 function writemime(io::IO, m::MIME"text/html", p::Plot)
     buf = IOBuffer()
-    svg = SVGJS(buf, default_plot_width, default_plot_height, false)
+    svg = SVGJS(buf, Compose.default_graphic_width,
+                Compose.default_graphic_height, false)
     draw(svg, p)
     writemime(io, m, svg)
 end
@@ -809,7 +798,8 @@ end
 
 function writemime(io::IO, m::MIME"image/svg+xml", p::Plot)
     buf = IOBuffer()
-    svg = SVG(buf, default_plot_width, default_plot_height, false)
+    svg = SVG(buf, Compose.default_graphic_width,
+              Compose.default_graphic_height, false)
     draw(svg, p)
     writemime(io, m, svg)
 end
@@ -818,22 +808,18 @@ end
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
     function writemime(io::IO, ::MIME"image/png", p::Plot)
-        draw(PNG(io, default_plot_width, default_plot_height), p)
+        draw(PNG(io, Compose.default_graphic_width,
+                 Compose.default_graphic_height), p)
     end
 end
 
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
     function writemime(io::IO, ::MIME"application/postscript", p::Plot)
-        draw(PS(io, default_plot_width, default_plot_height), p)
+        draw(PS(io, Compose.default_graphic_width,
+             Compose.default_graphic_height), p)
     end
 end
-
-
-# TODO: the serializeable branch has to be merged before this will work.
-#function writemime(io::IO, ::MIME"application/json", p::Plot)
-    #JSON.print(io, serialize(p, with_data=true))
-#end
 
 
 function writemime(io::IO, ::MIME"text/plain", p::Plot)
@@ -841,15 +827,15 @@ function writemime(io::IO, ::MIME"text/plain", p::Plot)
 end
 
 function default_mime()
-    if default_plot_format == :png
+    if Compose.default_graphic_format == :png
         "image/png"
-    elseif default_plot_format == :svg
+    elseif Compose.default_graphic_format == :svg
         "image/svg+xml"
-    elseif default_plot_format == :html
+    elseif Compose.default_graphic_format == :html
         "text/html"
-    elseif default_plot_format == :ps
+    elseif Compose.default_graphic_format == :ps
         "application/postscript"
-    elseif default_plot_format == :pdf
+    elseif Compose.default_graphic_format == :pdf
         "application/pdf"
     else
         ""
@@ -892,7 +878,8 @@ end
 function display(d::REPLDisplay, ::MIME"image/png", p::Plot)
     filename = string(tempname(), ".png")
     output = open(filename, "w")
-    draw(PNG(output, default_plot_width, default_plot_height), p)
+    draw(PNG(output, Compose.default_graphic_width,
+             Compose.default_graphic_height), p)
     close(output)
     open_file(filename)
 end
@@ -900,7 +887,8 @@ end
 function display(d::REPLDisplay, ::MIME"image/svg+xml", p::Plot)
     filename = string(tempname(), ".svg")
     output = open(filename, "w")
-    draw(SVG(output, default_plot_width, default_plot_height), p)
+    draw(SVG(output, Compose.default_graphic_width,
+             Compose.default_graphic_height), p)
     close(output)
     open_file(filename)
 end
@@ -910,7 +898,8 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Plot)
     output = open(filename, "w")
 
     plot_output = IOBuffer()
-    draw(SVGJS(plot_output, default_plot_width, default_plot_height, false), p)
+    draw(SVGJS(plot_output, Compose.default_graphic_width,
+               Compose.default_graphic_height, false), p)
     plotsvg = takebuf_string(plot_output)
 
     write(output,
@@ -937,7 +926,8 @@ end
 function display(d::REPLDisplay, ::MIME"application/postscript", p::Plot)
     filename = string(tempname(), ".ps")
     output = open(filename, "w")
-    draw(PS(output, default_plot_width, default_plot_height), p)
+    draw(PS(output, Compose.default_graphic_width,
+            Compose.default_graphic_height), p)
     close(output)
     open_file(filename)
 end
@@ -945,7 +935,8 @@ end
 function display(d::REPLDisplay, ::MIME"application/pdf", p::Plot)
     filename = string(tempname(), ".pdf")
     output = open(filename, "w")
-    draw(PDF(output, default_plot_width, default_plot_height), p)
+    draw(PDF(output, Compose.default_graphic_width,
+             Compose.default_graphic_height), p)
     close(output)
     open_file(filename)
 end
