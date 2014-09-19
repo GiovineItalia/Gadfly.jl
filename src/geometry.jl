@@ -22,7 +22,7 @@ end
 const nil = Nil
 
 function render(geom::Nil, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
-                scales::Dict{Symbol, ScaleElement})
+                data::Gadfly.Data, scales::Dict{Symbol, ScaleElement})
 end
 
 
