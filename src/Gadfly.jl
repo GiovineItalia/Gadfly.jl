@@ -3,11 +3,11 @@ module Gadfly
 using Codecs
 using Color
 using Compose
-using DataFrames
 using DataArrays
+using DataFrames
 using DataStructures
-using Datetime
 using JSON
+using Showoff
 
 import Iterators
 import Iterators: distinct, drop, chain
@@ -47,7 +47,6 @@ abstract StatisticElement   <: Element
 
 
 include("misc.jl")
-include("format.jl")
 include("ticks.jl")
 include("color.jl")
 include("varset.jl")

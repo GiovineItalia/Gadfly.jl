@@ -6,9 +6,10 @@ using Compose
 using DataArrays
 using DataStructures
 using Gadfly
+using Showoff
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length,
-               nonzero_length, formatter
+               nonzero_length
 import Distributions: Distribution
 
 include("color.jl")
@@ -70,53 +71,47 @@ immutable ContinuousScaleTransform
 end
 
 
-function identity_formatter(xs::AbstractArray; format=:auto)
-    fmt = formatter(xs, fmt=format)
-    return [fmt(x) for x in xs]
+function identity_formatter(xs::AbstractArray, format=:auto)
+    return showoff(xs, format)
 end
 
 const identity_transform =
     ContinuousScaleTransform(identity, identity, identity_formatter)
 
-function log10_formatter(xs::AbstractArray; format=:plain)
-    fmt = formatter(xs, fmt=format)
-    [@sprintf("10<sup>%s</sup>", fmt(x)) for x in xs]
+function log10_formatter(xs::AbstractArray, format=:plain)
+    [@sprintf("10<sup>%s</sup>", x) for x in showoff(xs, format)]
 end
 
 const log10_transform =
     ContinuousScaleTransform(log10, x -> 10^x, log10_formatter)
 
 
-function log2_formatter(xs::AbstractArray; format=:plain)
-    fmt = formatter(xs, fmt=format)
-    [@sprintf("2<sup>%s</sup>", fmt(x)) for x in xs]
+function log2_formatter(xs::AbstractArray, format=:plain)
+    [@sprintf("2<sup>%s</sup>", x) for x in showoff(xs, format)]
 end
 
 const log2_transform =
     ContinuousScaleTransform(log2, x -> 2^x, log2_formatter)
 
 
-function ln_formatter(xs::AbstractArray; format=:plain)
-    fmt = formatter(xs, fmt=format)
-    [@sprintf("e<sup>%s</sup>", fmt(x)) for x in xs]
+function ln_formatter(xs::AbstractArray, format=:plain)
+    [@sprintf("e<sup>%s</sup>", x) for x in showoff(xs, format)]
 end
 
 const ln_transform =
     ContinuousScaleTransform(log, exp, ln_formatter)
 
 
-function asinh_formatter(xs::AbstractArray; format=:plain)
-    fmt = formatter(xs, fmt=format)
-    [@sprintf("asinh(%s)", fmt(x)) for x in xs]
+function asinh_formatter(xs::AbstractArray, format=:plain)
+    [@sprintf("asinh(%s)", x) for x in showoff(xs, format)]
 end
 
 const asinh_transform =
     ContinuousScaleTransform(asinh, sinh, asinh_formatter)
 
 
-function sqrt_formatter(xs::AbstractArray; format=:plain)
-    fmt = formatter(xs, fmt=format)
-    [@sprintf("%s<sup>2</sup>", fmt(x)) for x in xs]
+function sqrt_formatter(xs::AbstractArray, format=:plain)
+    [@sprintf("%s<sup>2</sup>", x) for x in showoff(xs, format)]
 end
 
 const sqrt_transform = ContinuousScaleTransform(sqrt, x -> x^2, sqrt_formatter)
@@ -160,7 +155,7 @@ function make_labeler(scale::ContinuousScale)
         scale.trans.label
     else
         function f(xs)
-            return scale.trans.label(xs, format=scale.format)
+            return scale.trans.label(xs, scale.format)
         end
     end
 end
@@ -431,10 +426,9 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                     lvls = levels(disc_data)
                     vals = {1 <= x <= length(lvls) ? lvls[x] : "" for x in xs}
                     if all([isa(val, FloatingPoint) for val in vals])
-                        format = formatter(vals)
-                        [format(val) for val in vals]
+                        return showoff(vals)
                     else
-                        [string(val) for val in vals]
+                        return [string(val) for val in vals]
                     end
                 end
 

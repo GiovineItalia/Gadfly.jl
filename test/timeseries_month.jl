@@ -1,17 +1,18 @@
 
-using Gadfly, DataArrays, Datetime, RDatasets
+using Gadfly, DataArrays, RDatasets
+
+if VERSION < v"0.4-dev"
+    using Datetime
+else
+    date = Date
+end
 
 y = 1973
 airquality = dataset("datasets", "airquality")
 
 dates = Date[date(1973, m, d)
              for (m, d) in zip(airquality[:Month], airquality[:Day])]
-
-try
-    airquality[:Date] = dates
-catch
-    airquality["Date"] = dates
-end
+airquality[:Date] = dates
 
 p = plot(airquality, x=:Date, y=:Temp, Geom.line)
 

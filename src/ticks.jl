@@ -150,13 +150,13 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
     if year(x_max) - year(x_min) <= 1 && scale != :year
         if year(x_max) == year(x_min) && month(x_max) - month(x_min) <= 1 && scale != :month
             ticks = Date[]
-            if x_max - x_min > days(7) && scale != :day
+            if x_max - x_min > make_days(7) && scale != :day
                 # This will probably need to be smarter
                 push!(ticks, x_min)
                 while true
-                    next_month = date(year(ticks[end]), month(ticks[end])) + month(1)
-                    while ticks[end] + week(1) < next_month - days(2)
-                        push!(ticks, ticks[end] + week(1))
+                    next_month = date(year(ticks[end]), month(ticks[end])) + make_months(1)
+                    while ticks[end] + make_weeks(1) < next_month - make_days(2)
+                        push!(ticks, ticks[end] + make_weeks(1))
                     end
                     push!(ticks, next_month)
                     if next_month >= x_max
@@ -176,7 +176,7 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
             ticks = Date[]
             push!(ticks, date(year(x_min), month(x_min)))
             while ticks[end] < x_max
-                push!(ticks, ticks[end] + month(1))
+                push!(ticks, ticks[end] + make_months(1))
             end
             viewmin, viewmax = ticks[1], ticks[end]
 
@@ -185,7 +185,8 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
     else
         ticks, viewmin, viewmax =
             optimize_ticks(year(x_min), year(x_max), extend_ticks=extend_ticks)
-        Date[date(y) for y in ticks], date(viewmin), date(viewmax)
+        return Date[date(iround(y)) for y in ticks],
+                   date(iround(viewmin)), date(iround(viewmax))
     end
 end
 
@@ -213,11 +214,11 @@ function multilevel_ticks(viewmin::Date, viewmax::Date;
     ticks = Dict()
     for scale in scales
         if scale == :year
-            s = span / days(360)
+            s = span / make_days(360)
         elseif scale == :month
-            s = span / day(90)
+            s = span / make_days(90)
         else
-            s = span / day(1)
+            s = span / make_days(1)
         end
 
         ticks[s/20] = optimize_ticks(viewmin, viewmax, scale=scale)[1]
