@@ -1142,7 +1142,7 @@ function apply_statistic(stat::ContourStatistic,
         zs = Float64[aes.z(x, y) for x in xs, y in ys]
 
     elseif typeof(aes.z) <: Matrix
-        zs = convert(Matrix[Float64}, aes.z)
+        zs = convert(Matrix{Float64}, aes.z)
 
         if xs == nothing
             xs = float([1:size(zs)[1]])
