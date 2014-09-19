@@ -176,11 +176,6 @@ function nonzero_length(xs)
 end
 
 
-function default_formatter(xs)
-    [string(x) for x in xs]
-end
-
-
 # Create a new object of type T from a with missing values (i.e., those set to
 # nothing) inherited from b.
 function inherit{T}(a::T, b::T)
@@ -195,7 +190,7 @@ function inherit!{T}(a::T, b::T)
         aval = getfield(a, field)
         bval = getfield(b, field)
         # TODO: this is a hack to let non-default labelers overide the defaults
-        if aval === nothing || aval === string || aval == default_formatter
+        if aval === nothing || aval === string || aval == showoff
             setfield!(a, field, bval)
         elseif typeof(aval) <: Dict && typeof(bval) <: Dict
             merge!(aval, getfield(b, field))
@@ -307,4 +302,36 @@ function svg_color_class_from_label(label::String)
     return @sprintf("color_%s", escape_id(label))
 end
 
+
+# TODO: Delete when 0.3 and Datetime compatibility is dropped
+if VERSION < v"0.4-dev"
+    using Datetime
+    # TODO: showoff
+
+    make_months(x::Integer) = months(x)
+    make_days(x::Integer) = days(x)
+    make_weeks(x::Integer) = weeks(x)
+else
+    const year = Dates.year
+    const month = Dates.month
+    const date = Date
+    const days = Dates.Day
+
+    make_months(x::Integer) = Dates.Month(x)
+    make_days(x::Integer) = Dates.Day(x)
+    make_weeks(x::Integer) = Dates.Week(x)
+
+    if !method_exists(/, (Dates.Day, Dates.Day))
+        /(a::Dates.Day, b::Dates.Day) = a.value / b.value
+    end
+
+    if !method_exists(/, (Dates.Day, Real))
+        /(a::Dates.Day, b::Real) = Dates.Day(iround(a.value / b))
+    end
+
+    #if !method_exists(*, (FloatingPoint, Dates.Day))
+        *(a::FloatingPoint, b::Dates.Day) = Dates.Day(iround(a * b.value))
+        *(a::Dates.Day, b::FloatingPoint) = b * a
+    #end
+end
 

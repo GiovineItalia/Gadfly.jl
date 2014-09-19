@@ -1,6 +1,13 @@
 #!/usr/bin/env julia
 
-using Datetime, Gadfly, DataFrames
+using Gadfly, DataFrames
+
+if VERSION < v"0.4-dev"
+    using Datetime
+else
+    date = Date
+    day = Dates.Day
+end
 
 a = [date("2013-01-01"):day(1):date("2014-01-01")]
 b = [date("2012-01-01"):day(1):date("2016-01-01")]

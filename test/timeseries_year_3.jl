@@ -1,14 +1,16 @@
 
-using Gadfly, DataArrays, Datetime, RDatasets
+using Gadfly, DataArrays, RDatasets
+
+if VERSION < v"0.4-dev"
+    using Datetime
+else
+    date = Date
+end
 
 approval = dataset("Zelig", "approval")
 dates = Date[date(y, m)
              for (y, m) in zip(approval[:Year], approval[:Month])]
-try
-    approval[:Date] = dates
-catch
-    approval["Date"] = dates
-end
+approval[:Date] = dates
 
 p = plot(approval, x="Date", y="Approve", Geom.line)
 

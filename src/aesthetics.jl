@@ -77,13 +77,13 @@ typealias NumericalAesthetic
     yviewmax,     Any
 
     # labeling functions
-    x_label,      Function, default_formatter
-    y_label,      Function, default_formatter
-    xtick_label,  Function, default_formatter
-    ytick_label,  Function, default_formatter
-    color_label,  Function, default_formatter
-    xgroup_label, Function, default_formatter
-    ygroup_label, Function, default_formatter
+    x_label,      Function, showoff
+    y_label,      Function, showoff
+    xtick_label,  Function, showoff
+    ytick_label,  Function, showoff
+    color_label,  Function, showoff
+    xgroup_label, Function, showoff
+    ygroup_label, Function, showoff
 end
 
 
@@ -236,7 +236,7 @@ end
 cat_aes_var!(a::Nothing, b::Nothing) = a
 cat_aes_var!(a::Nothing, b) = copy(b)
 cat_aes_var!(a, b::Nothing) = a
-cat_aes_var!(a::Function, b::Function) = a === string || a == default_formatter ? b : a
+cat_aes_var!(a::Function, b::Function) = a === string || a == showoff ? b : a
 
 
 function cat_aes_var!(a::Dict, b::Dict)
