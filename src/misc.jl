@@ -306,7 +306,58 @@ end
 # TODO: Delete when 0.3 and Datetime compatibility is dropped
 if VERSION < v"0.4-dev"
     using Datetime
-    # TODO: showoff
+
+    function Showoff.showoff{T <: Date}(ds::AbstractArray{T}, style=:none)
+        const month_names = [
+            "January", "February", "March", "April", "May", "June", "July",
+            "August", "September", "October", "November", "December"
+        ]
+
+        const month_abbrevs = [
+            "Jan", "Feb", "Mar", "Apr", "May", "June",
+            "July", "Aug", "Sept", "Oct", "Nev", "Dec"
+        ]
+
+        day_all_1   = all(map(d -> day(d) == 1, ds))
+        month_all_1 = all(map(d -> month(d) == 1, ds))
+        years = Set()
+        for d in ds
+            push!(years, year(d))
+        end
+
+        buf = IOBuffer()
+        labels = Array(String, length(ds))
+        if day_all_1 && month_all_1
+            # only label years
+            for (i, d) in enumerate(ds)
+                print(buf, year(d))
+                labels[i] = takebuf_string(buf)
+            end
+        elseif day_all_1
+            # label months and years
+            for (i, d) in enumerate(ds)
+                if d == ds[1] || month(d) == 1
+                    print(buf, month_abbrevs[month(d)], " ", year(d))
+                else
+                    print(buf, month_abbrevs[month(d)])
+                end
+                labels[i] = takebuf_string(buf)
+            end
+        else
+            for (i, d) in enumerate(ds)
+                if d == ds[1] || (month(d) == 1 && day(d) == 1)
+                    print(buf, month_abbrevs[month(d)], " ", day(d), " ", year(d))
+                elseif day(d) == 1
+                    print(buf, month_abbrevs[month(d)], " ", day(d))
+                else
+                    print(buf, day(d))
+                end
+                labels[i] = takebuf_string(buf)
+            end
+        end
+
+        return labels
+    end
 
     make_months(x::Integer) = months(x)
     make_days(x::Integer) = days(x)
