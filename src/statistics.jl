@@ -1127,8 +1127,8 @@ function apply_statistic(stat::ContourStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    xs = convert(Vector{Float64}, aes.x)
-    ys = convert(Vector{Float64}, aes.y)
+    xs = aes.x === nothing ? nothing : convert(Vector{Float64}, aes.x)
+    ys = aes.y === nothing ? nothing : convert(Vector{Float64}, aes.y)
 
     if typeof(aes.z) <: Function
         if xs == nothing && aes.xmin != nothing && aes.xmax != nothing
