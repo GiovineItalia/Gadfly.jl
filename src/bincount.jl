@@ -55,8 +55,10 @@ end
 #
 function choose_bin_count_1d(xs::AbstractVector, d_min=1, d_max=150)
     n = length(xs)
-    if n <= 1
-        return 1, Int[0]
+    if n == 0
+        return 1, Int[0], 0
+    elseif n == 1
+        return 1, Int[1], xs[1]
     end
 
     x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)
@@ -123,8 +125,10 @@ end
 function choose_bin_count_1d_discrete(xs::AbstractArray, xs_set::AbstractArray,
                                       d_min=1, d_max=150)
     n = length(xs_set)
-    if n <= 1
-        return 1, Int[n > 0 ? 1 : 0]
+    if n == 0
+        return 1, Int[0], 0
+    elseif n == 1
+        return 1, Int[length(xs)], xs[1] + one(eltype(xs))
     end
 
     # minimum distance between two values
