@@ -2,15 +2,15 @@
 using Gadfly, DataArrays, DataFrames, RDatasets
 
 if VERSION < v"0.4-dev"
-    using Datetime
+    using Dates
 else
-    date = Date
+    using Base.Dates
 end
 
 y = 1973
 airquality = dataset("datasets", "airquality")
 
-dates = Date[date(1973, m, d)
+dates = Date[Date(1973, m, d)
              for (m, d) in zip(airquality[:Month], airquality[:Day])]
 
 airquality[:Date] = dates

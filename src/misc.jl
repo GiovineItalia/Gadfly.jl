@@ -303,9 +303,9 @@ function svg_color_class_from_label(label::String)
 end
 
 
-# TODO: Delete when 0.3 and Datetime compatibility is dropped
+# TODO: Delete when 0.3 compatibility is dropped
 if VERSION < v"0.4-dev"
-    using Datetime
+    using Dates
 
     function Showoff.showoff{T <: Date}(ds::AbstractArray{T}, style=:none)
         const month_names = [
@@ -318,11 +318,11 @@ if VERSION < v"0.4-dev"
             "July", "Aug", "Sept", "Oct", "Nev", "Dec"
         ]
 
-        day_all_1   = all(map(d -> day(d) == 1, ds))
-        month_all_1 = all(map(d -> month(d) == 1, ds))
+        day_all_1   = all(map(d -> Dates.day(d) == 1, ds))
+        month_all_1 = all(map(d -> Dates.month(d) == 1, ds))
         years = Set()
         for d in ds
-            push!(years, year(d))
+            push!(years, Dates.year(d))
         end
 
         buf = IOBuffer()
@@ -330,27 +330,27 @@ if VERSION < v"0.4-dev"
         if day_all_1 && month_all_1
             # only label years
             for (i, d) in enumerate(ds)
-                print(buf, year(d))
+                print(buf, Dates.year(d))
                 labels[i] = takebuf_string(buf)
             end
         elseif day_all_1
             # label months and years
             for (i, d) in enumerate(ds)
-                if d == ds[1] || month(d) == 1
-                    print(buf, month_abbrevs[month(d)], " ", year(d))
+                if d == ds[1] || Dates.month(d) == 1
+                    print(buf, month_abbrevs[Dates.month(d)], " ", Dates.year(d))
                 else
-                    print(buf, month_abbrevs[month(d)])
+                    print(buf, month_abbrevs[Dates.month(d)])
                 end
                 labels[i] = takebuf_string(buf)
             end
         else
             for (i, d) in enumerate(ds)
-                if d == ds[1] || (month(d) == 1 && day(d) == 1)
-                    print(buf, month_abbrevs[month(d)], " ", day(d), " ", year(d))
-                elseif day(d) == 1
-                    print(buf, month_abbrevs[month(d)], " ", day(d))
+                if d == ds[1] || (Dates.month(d) == 1 && Dates.day(d) == 1)
+                    print(buf, month_abbrevs[Dates.month(d)], " ", Dates.day(d), " ", Dates.year(d))
+                elseif Dates.day(d) == 1
+                    print(buf, month_abbrevs[Dates.month(d)], " ", Dates.day(d))
                 else
-                    print(buf, day(d))
+                    print(buf, Dates.day(d))
                 end
                 labels[i] = takebuf_string(buf)
             end
@@ -358,31 +358,21 @@ if VERSION < v"0.4-dev"
 
         return labels
     end
-
-    make_months(x::Integer) = months(x)
-    make_days(x::Integer) = days(x)
-    make_weeks(x::Integer) = weeks(x)
 else
-    const year = Dates.year
-    const month = Dates.month
-    const date = Date
-    const days = Dates.Day
-
-    make_months(x::Integer) = Dates.Month(x)
-    make_days(x::Integer) = Dates.Day(x)
-    make_weeks(x::Integer) = Dates.Week(x)
-
-    if !method_exists(/, (Dates.Day, Dates.Day))
-        /(a::Dates.Day, b::Dates.Day) = a.value / b.value
-    end
-
-    if !method_exists(/, (Dates.Day, Real))
-        /(a::Dates.Day, b::Real) = Dates.Day(iround(a.value / b))
-    end
-
-    #if !method_exists(*, (FloatingPoint, Dates.Day))
-        *(a::FloatingPoint, b::Dates.Day) = Dates.Day(iround(a * b.value))
-        *(a::Dates.Day, b::FloatingPoint) = b * a
-    #end
+    using Base.Dates
 end
+
+if !method_exists(/, (Dates.Day, Dates.Day))
+    /(a::Dates.Day, b::Dates.Day) = a.value / b.value
+end
+
+if !method_exists(/, (Dates.Day, Real))
+    /(a::Dates.Day, b::Real) = Dates.Day(iround(a.value / b))
+end
+
+#if !method_exists(*, (FloatingPoint, Dates.Day))
+    *(a::FloatingPoint, b::Dates.Day) = Dates.Day(iround(a * b.value))
+    *(a::Dates.Day, b::FloatingPoint) = b * a
+#end
+
 

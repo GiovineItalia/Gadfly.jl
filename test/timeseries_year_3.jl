@@ -2,13 +2,13 @@
 using Gadfly, DataArrays, RDatasets
 
 if VERSION < v"0.4-dev"
-    using Datetime
+    using Dates
 else
-    date = Date
+    using Base.Dates
 end
 
 approval = dataset("Zelig", "approval")
-dates = Date[date(y, m)
+dates = Date[Date(y, m)
              for (y, m) in zip(approval[:Year], approval[:Month])]
 approval[:Date] = dates
 
