@@ -188,19 +188,19 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
 
     for aes in aess
         if aes.xviewmin != nothing
-            xmin = aes.xviewmin
+            xmin = min(xmin, aes.xviewmin)
         end
 
         if aes.xviewmax != nothing
-            xmax = aes.xviewmax
+            xmax = max(xmax, aes.xviewmax)
         end
 
         if aes.yviewmin != nothing
-            ymin = aes.yviewmin
+            ymin = min(ymin, aes.yviewmin)
         end
 
         if aes.yviewmax != nothing
-            ymax = aes.yviewmax
+            ymax = max(ymax, aes.yviewmax)
         end
     end
 

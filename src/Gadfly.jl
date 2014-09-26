@@ -662,6 +662,7 @@ function render(plot::Plot)
         layer_aess[1].color_key_title = string(plot.mapping[:color])
     end
 
+
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, layer_aess)
         Stat.apply_statistics(StatisticElement[layer_stat], scales, coord, aes)
