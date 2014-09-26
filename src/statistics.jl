@@ -137,7 +137,6 @@ function apply_statistic(stat::HistogramStatistic,
         value_set = collect(Set(values[Bool[Gadfly.isconcrete(v) for v in values]]))
         sort!(value_set)
 
-
         if  length(value_set) / length(values) < 0.9
             d, bincounts, x_max = choose_bin_count_1d_discrete(
                         values, value_set, stat.minbincount, stat.maxbincount)
