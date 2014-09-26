@@ -135,7 +135,14 @@ function choose_bin_count_1d_discrete(xs::AbstractArray, xs_set::AbstractArray,
     mingap = zero(eltype(xs))
     for (i, j) in zip(1:length(xs_set)-1, 2:length(xs_set))
         a, b = xs[i], xs[j]
-        mingap = mingap == zero(eltype(xs)) ? abs(b - a) : min(abs(b - a), mingap)
+        gap = abs(a - b)
+        if isconcrete(gap) && gap > zero(eltype(xs))
+            if mingap == zero(eltype(xs))
+                mingap = gap
+            else
+                mingap = min(gap, mingap)
+            end
+        end
     end
 
     x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)
