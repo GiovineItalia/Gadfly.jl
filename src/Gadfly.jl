@@ -775,11 +775,11 @@ end
 
 
 # Convenience stacking functions
-vstack(ps::Plot...) = vstack([render(p) for p in ps]...)
-vstack(ps::Vector{Plot}) = vstack([render(p) for p in ps]...)
+vstack(ps::Plot...) = vstack(Context[render(p) for p in ps]...)
+vstack(ps::Vector{Plot}) = vstack(Context[render(p) for p in ps]...)
 
-hstack(ps::Plot...) = hstack([render(p) for p in ps]...)
-hstack(ps::Vector{Plot}) = hstack([render(p) for p in ps]...)
+hstack(ps::Plot...) = hstack(Context[render(p) for p in ps]...)
+hstack(ps::Vector{Plot}) = hstack(Context[render(p) for p in ps]...)
 
 gridstack(ps::Matrix{Plot}) = gridstack(map(render, ps))
 
