@@ -23,6 +23,7 @@ Check out the [manual](http://gadflyjl.org) for more details and
 examples.
 
 # Installation
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/dcjones/Gadfly.jl?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 From the Julia REPL a reasonably up to date version can be installed with
 
