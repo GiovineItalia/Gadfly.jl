@@ -199,7 +199,7 @@ Plots can also be stacked horizontally with ``hstack`` or vertically with ``vsta
 ```{.julia execute="false"}
 p1 = plot(x=[1,2,3], y=[4,5,6])
 p2 = plot(x=[1,2,3], y=[6,7,8])
-draw(PDF("data.pdf", 6inch, 6inch) vstack(p1,p2))
+draw(PDF("data.pdf", 6inch, 6inch), vstack(p1,p2))
 ```
 
 # Drawing to backends
