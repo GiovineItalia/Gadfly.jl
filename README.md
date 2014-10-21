@@ -93,7 +93,7 @@ plot(dataset("car", "SLID"), x="Wages", color="Language", Geom.histogram)
 
 ![Car](http://homes.cs.washington.edu/~dcjones/gadfly/car.svg)
 
-A catalog of plot elements given later in this document.
+A catalog of plot elements is given later in this document.
 
 
 ## Heretical
@@ -154,29 +154,29 @@ operates on data bound to aesthetics, but in different ways.
 ### Statistics
 
 Statistics are functions taking as input one or more aesthetics, operating on
-those values, then output to one or more aesthetic. For example, drawing of
+those values, then output to one or more aesthetics. For example, drawing of
 boxplots typically uses the boxplot statistic (Stat.boxplot) that takes as input
 the `x` and `y` aesthetic, and outputs the middle, and upper and lower hinge,
 and upper and lower fence aesthetics.
 
 ### Scales
 
-Scales, similarly to statistics apply a transformation to the original data,
+Scales, similarly to statistics, apply a transformation to the original data,
 typically mapping one aesthetic to the same aesthetic, while retaining the
-original value. The `Scale.x_log10` aesthetic maps the `x` aesthetic back the
-`x` aesthetic after applying a log10 transformation, but keeps track of the
-original value so that data points are properly identified.
+original value. The `Scale.x_log10` aesthetic maps the `x` aesthetic back to
+the `x` aesthetic after applying a log10 transformation, but keeps track of
+the original value so that data points are properly identified.
 
 ### Geometries
 
-Finally geometries are responsible for actually doing the drawing. A geometry
-takes as input one or aesthetics, and used data bound to these aesthetics to
-draw things. The `Geom.point` geometry draws points using the `x` and `y`
+Finally, geometries are responsible for actually doing the drawing. A geometry
+takes as input one or more aesthetics, and used data bound to these aesthetics
+to draw things. The `Geom.point` geometry draws points using the `x` and `y`
 aesthetics, the `Geom.line` geometry draws lines, and so on.
 
 ### Guides
 
-Very similar to geometries are guides, which draw graphics supported the actual
+Very similar to geometries are guides, which draw graphics supporting the actual
 visualization, such as axis ticks and labels and color keys. The major
 distinction is that geometries always draw within the rectangular plot frame,
 while guides have some special layout considerations.
@@ -196,7 +196,7 @@ draw(PNG("myplot.png", 6inch, 3inch), some_plot)
 ## Using the SVGJS backend
 
 The `SVGJS` backend writes SVG with embedded javascript. There are a couple
-subtlties with using the output from this backend.
+subtleties with using the output from this backend.
 
 Drawing to the backend works like any other.
 
@@ -209,8 +209,8 @@ If included with an `<img>` tag, it will display as a static SVG image.
 <img src="mammals.js.svg"/>
 ```
 
-For the interactive javascript features to be enables, the output either needs
-to be inluded inline in the HTML page, or include with an object tag, like.
+For the interactive javascript features to be enabled, the output either needs
+to be included inline in the HTML page, or included with an object tag, like.
 
 ```html
 <object data="mammals.js.svg" type="image/svg+xml"></object>
