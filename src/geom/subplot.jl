@@ -163,13 +163,13 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         end
         layer_aes_grid[i, j] = layer_aes
 
-        plot_aes = cat(layer_aes...)
+        plot_aes = Gadfly.concat(layer_aes...)
         Stat.apply_statistics(plot_stats, scales, coord, plot_aes)
         aes_grid[i, j] = plot_aes
     end
 
     # apply geom-wide statistics
-    geom_aes = cat(aes_grid...)
+    geom_aes = Gadfly.concat(aes_grid...)
     geom_stats = Gadfly.StatisticElement[]
 
     has_stat_xticks = false
@@ -202,17 +202,17 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     # tick statistics.
     if (geom.free_x_axis)
         for j in 1:m
-            col_aes = cat([aes_grid[i, j] for i in 1:n]...)
+            col_aes = Gadfly.concat([aes_grid[i, j] for i in 1:n]...)
             Stat.apply_statistic(Stat.xticks(), scales, coord, col_aes)
             for i in 1:n
-                aes_grid[i, j] = cat(aes_grid[i, j], col_aes)
+                aes_grid[i, j] = Gadfly.concat(aes_grid[i, j], col_aes)
             end
         end
     end
 
     if (geom.free_y_axis)
         for i in 1:n
-            row_aes = cat([aes_grid[i, j] for j in 1:m]...)
+            row_aes = Gadfly.concat([aes_grid[i, j] for j in 1:m]...)
             row_aes.xgrid = nothing
             row_aes.xtick = nothing
             row_aes.xtickvisible = nothing
@@ -220,7 +220,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
             Stat.apply_statistic(Stat.yticks(), scales, coord, row_aes)
             for j in 1:m
-                aes_grid[i, j] = cat(aes_grid[i, j], row_aes)
+                aes_grid[i, j] = Gadfly.concat(aes_grid[i, j], row_aes)
             end
         end
     end
