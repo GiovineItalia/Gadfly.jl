@@ -315,7 +315,7 @@ if VERSION < v"0.4-dev"
 
         const month_abbrevs = [
             "Jan", "Feb", "Mar", "Apr", "May", "June",
-            "July", "Aug", "Sept", "Oct", "Nev", "Dec"
+            "July", "Aug", "Sept", "Oct", "Nov", "Dec"
         ]
 
         day_all_1   = all(map(d -> Dates.day(d) == 1, ds))
