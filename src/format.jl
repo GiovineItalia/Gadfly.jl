@@ -193,7 +193,7 @@ function formatter{T<:Date}(ds::AbstractArray{T}; fmt=nothing)
 
     const month_abbrevs = [
         "Jan", "Feb", "Mar", "Apr", "May", "June",
-        "July", "Aug", "Sept", "Oct", "Nev", "Dec"
+        "July", "Aug", "Sept", "Oct", "Nov", "Dec"
     ]
 
     day_all_1   = all(map(d -> day(d) == 1, ds))
