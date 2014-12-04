@@ -184,7 +184,7 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
         end
     else
         ticks, viewmin, viewmax =
-            optimize_ticks(year(x_min), year(x_max), extend_ticks=extend_ticks)
+            optimize_ticks(year(x_min), year(x_max + Year(1) - Day(1)), extend_ticks=extend_ticks)
         return Date[Date(iround(y)) for y in ticks],
                    Date(iround(viewmin)), Date(iround(viewmax))
     end
