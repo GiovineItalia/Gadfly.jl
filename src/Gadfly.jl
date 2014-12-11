@@ -669,7 +669,7 @@ function render(plot::Plot)
     end
 
     # IIb. Plot-wise Statistics
-    plot_aes = cat(layer_aess...)
+    plot_aes = concat(layer_aess...)
     statistics = collect(statistics)
     Stat.apply_statistics(statistics, scales, coord, plot_aes)
 
