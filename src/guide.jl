@@ -1,6 +1,7 @@
 
 module Guide
 
+using Compat
 using Color
 using Compose
 using DataStructures
@@ -207,7 +208,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
         colrows = Array(Int, numcols)
         m = n
         for i in 1:numcols
-            colrows[i] = min(m, iceil(n / numcols))
+            colrows[i] = min(m, ceil(Integer, (n / numcols)))
             m -= colrows[i]
         end
 

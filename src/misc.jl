@@ -1,6 +1,4 @@
-
-
-# Is this usable data?
+#Is this usable data?
 function isconcrete{T<:Number}(x::T)
     !isna(x) && isfinite(x)
 end
@@ -367,11 +365,11 @@ if !method_exists(/, (Dates.Day, Dates.Day))
 end
 
 if !method_exists(/, (Dates.Day, Real))
-    /(a::Dates.Day, b::Real) = Dates.Day(iround(a.value / b))
+    /(a::Dates.Day, b::Real) = Dates.Day(round(Integer, (a.value / b)))
 end
 
 #if !method_exists(*, (FloatingPoint, Dates.Day))
-    *(a::FloatingPoint, b::Dates.Day) = Dates.Day(iround(a * b.value))
+    *(a::FloatingPoint, b::Dates.Day) = Dates.Day(round(Integer, (a * b.value)))
     *(a::Dates.Day, b::FloatingPoint) = b * a
 #end
 
