@@ -906,7 +906,10 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Plot)
         """
         <!DOCTYPE html>
         <html>
-          <head><title>Gadfly Plot</title></head>
+          <head>
+            <title>Gadfly Plot</title>
+            <meta charset="utf-8">
+          </head>
             <body>
             <script charset="utf-8">
                 $(readall(Compose.snapsvgjs))
