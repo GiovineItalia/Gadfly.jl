@@ -86,12 +86,12 @@ tests = [
 
 
 backends = {
-    "svg" => (name, width, height) -> SVG("$(name).svg", width, height),
-    "svgjs" => (name, width, height) -> SVGJS("$(name).js.svg", width, height, jsmode=:linkabs),
-    "png" => (name, width, height) -> PNG("$(name).png", width, height),
-    #"ps"  => (name, width, height) -> PS("$(name).ps",   width, height),
-    #"pdf" => (name, width, height) -> PDF("$(name).pdf", width, height)
-    "pgf" => (name, width, height) -> PGF("$(name).tex", width, height)
+    "svg" => (name, width, height) -> SVG("output/$(name).svg", width, height),
+    "svgjs" => (name, width, height) -> SVGJS("output/$(name).js.svg", width, height, jsmode=:linkabs),
+    "png" => (name, width, height) -> PNG("output/$(name).png", width, height),
+    #"ps"  => (name, width, height) -> PS("output/$(name).ps",   width, height),
+    #"pdf" => (name, width, height) -> PDF("output/$(name).pdf", width, height)
+    "pgf" => (name, width, height) -> PGF("output/$(name).tex", width, height)
 }
 
 
@@ -157,6 +157,6 @@ function run_tests(output_filename)
 end
 
 
-run_tests("test.html")
+run_tests("output/test.html")
 
 
