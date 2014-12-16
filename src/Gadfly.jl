@@ -12,7 +12,7 @@ using Showoff
 
 import Iterators
 import Iterators: distinct, drop, chain
-import Compose: draw, hstack, vstack, gridstack
+import Compose: draw, hstack, vstack, gridstack, isinstalled
 import Base: copy, push!, start, next, done, show, getindex, cat,
              writemime, isfinite, display
 import Distributions: Distribution
@@ -822,10 +822,31 @@ try
     end
 end
 
-
 function writemime(io::IO, ::MIME"text/plain", p::Plot)
     write(io, "Plot(...)")
 end
+
+# writemime for signals of Plots
+if isinstalled("Patchwork", v"0.1.2") && isinstalled("Reactive")
+
+    import Base: writemime
+    import Reactive: Signal, lift
+
+    if isdefined(Main, :IJulia)
+        import IJulia: metadata
+        metadata(::Signal{Plot}) = Dict()
+    end
+
+    function writemime(io::IO, m::MIME"text/html", ctx::Signal{Plot})
+        writemime(io, m, lift(c -> draw(
+            Patchable(
+                Compose.default_graphic_width,
+                Compose.default_graphic_height
+            ), c), ctx))
+    end
+
+end
+
 
 function default_mime()
     if Compose.default_graphic_format == :png
