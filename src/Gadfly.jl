@@ -2,6 +2,7 @@ module Gadfly
 
 using Codecs
 using Color
+using Compat
 using Compose
 using DataArrays
 using DataFrames
