@@ -504,9 +504,12 @@ function render(guide::ManualColorKey, theme::Gadfly.Theme,
     title_context, title_width = render_colorkey_title(guide_title, theme)
 
     colors = ColorValue[color(c) for c in guide.colors]
-    labels = (ColorValue => String)[c => l for (c, l) in zip(colors, guide.labels)]
+    labels = OrderedDict{ColorValue, String}()
+    for (c, l) in zip(colors, guide.labels)
+	labels[c] = l
+    end
 
-    ctxs = render_discrete_color_key(colors, labels, title_context, title_width, theme)
+    ctxs = render_discrete_color_key(colors, labels, aes.color_label, title_context, title_width, theme)
 
     position = right_guide_position
     if theme.key_position == :left
