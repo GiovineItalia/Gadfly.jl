@@ -82,6 +82,7 @@ tests = [
     ("raster",                                6inch, 3inch),
     ("single_boxplot",                        6inch, 3inch),
     ("subplot_scales",                        6inch, 3inch),
+    ("issue509",                              6inch, 3inch),
 ]
 
 
