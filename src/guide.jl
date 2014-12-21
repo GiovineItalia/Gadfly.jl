@@ -1129,5 +1129,20 @@ function layout_guides(plot_context::Context,
     return tbl
 end
 
+
+immutable Annotation <: Gadfly.GuideElement
+    ctx::Context
+end
+
+
+const annotation = Annotation
+
+
+function render(guide::Annotation, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    return [PositionedGuide([guide.ctx], 0, over_guide_position)]
+end
+
+
 end # module Guide
 
