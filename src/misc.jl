@@ -25,7 +25,7 @@ end
 function concrete_length{T}(xs::DataArray{T})
     n = 0
     for i = 1:length(xs)
-        if !xs.na[i] && isfinite(xs.data[i]::T)
+        if !xs.na[i] && isconcrete(xs.data[i]::T)
             n += 1
         end
     end
