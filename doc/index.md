@@ -107,6 +107,7 @@ draw(SVGJS("myplot.svg", 4inch, 3inch), myplot)
 draw(PNG("myplot.png", 4inch, 3inch), myplot)
 draw(PDF("myplot.pdf", 4inch, 3inch), myplot)
 draw(PS("myplot.ps", 4inch, 3inch), myplot)
+draw(PGF("myplot.tex", 4inch, 3inch), myplot)
 ```
 
 If used from [IJulia](https://github.com/JuliaLang/IJulia.jl), the output of
