@@ -24,6 +24,7 @@ Draw histograms. An alias for `Geom.bar` with `Stat.histogram`.
     be used to deterimine a reasonable value.
   * `minbincount`: Set a lower limit when automatically choosing a bin count.
   * `maxbincount`: Set an upper limit when automatically choosing a bin count.
+  * `density`: If true, use density rather that counts.
 
 # Examples
 
@@ -49,3 +50,8 @@ plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut",
      Geom.histogram(bincount=30))
 ```
 
+```julia
+# Density instead of counts
+plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut",
+     Geom.histogram(bincount=30, density=true))
+```

@@ -61,15 +61,17 @@ immutable HistogramStatistic <: Gadfly.StatisticElement
     minbincount::Int
     maxbincount::Int
     orientation::Symbol
+    density::Bool
 
     function HistogramStatistic(; bincount=nothing,
                                   minbincount=3,
                                   maxbincount=150,
-                                  orientation::Symbol=:vertical)
+                                  orientation::Symbol=:vertical,
+                                  density::Bool=false)
         if bincount != nothing
-            new(bincount, bincount, orientation)
+            new(bincount, bincount, orientation, density)
         else
-            new(minbincount, maxbincount, orientation)
+            new(minbincount, maxbincount, orientation, density)
         end
     end
 end
@@ -144,6 +146,13 @@ function apply_statistic(stat::HistogramStatistic,
             d, bincounts, x_max = choose_bin_count_1d(
                         values, stat.minbincount, stat.maxbincount)
         end
+
+        if stat.density
+            x_min = Gadfly.concrete_minimum(values)
+            span = x_max - x_min
+            binwidth = span / d
+            bincounts ./= sum(bincounts) * binwidth
+        end
     end
 
     x_min = Gadfly.concrete_minimum(values)
@@ -191,6 +200,7 @@ function apply_statistic(stat::HistogramStatistic,
         colors = Array(RGB{Float32}, d * length(groups))
 
         x_min = Gadfly.concrete_minimum(values)
+        x_span = x_max - x_min
         stack_height = zeros(Int, d)
         for (i, (c, xs)) in enumerate(groups)
             fill!(bincounts, 0)
@@ -205,6 +215,12 @@ function apply_statistic(stat::HistogramStatistic,
                     bincounts[bin] += 1
                 end
             end
+
+            if stat.density
+                binwidth = x_span / d
+                bincounts ./= sum(bincounts) * binwidth
+            end
+
             stack_height += bincounts[1:d]
 
             if isdiscrete
@@ -224,7 +240,6 @@ function apply_statistic(stat::HistogramStatistic,
                     colors[idx] = c
                 end
             end
-
         end
 
         drawmax = float64(maximum(stack_height))

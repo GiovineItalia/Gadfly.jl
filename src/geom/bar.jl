@@ -23,11 +23,14 @@ end
 const bar = BarGeometry
 
 function histogram(; position=:stack, bincount=nothing,
-                   minbincount=3, maxbincount=150, orientation::Symbol=:vertical)
+                   minbincount=3, maxbincount=150,
+                   orientation::Symbol=:vertical,
+                   density::Bool=false)
     BarGeometry(Gadfly.Stat.histogram(bincount=bincount,
                                       minbincount=minbincount,
                                       maxbincount=maxbincount,
-                                      orientation=orientation),
+                                      orientation=orientation,
+                                      density=density),
                 position=position,
                 orientation=orientation)
 end
