@@ -15,6 +15,15 @@
 #   A plot objects.
 #
 function plot(fs::Array, a, b, elements::ElementOrFunction...; mapping...)
+    # Catch a common misuse of this function
+    if isa(b, ElementOrFunction)
+        error(
+        """
+        Invalid plot usage:
+            plot(xs, ys, ...) should be plot(x=xs, y=ys, ...)
+        """)
+    end
+
     if isempty(elements)
         elements = ElementOrFunction[]
     elseif isa(elements, Tuple)
