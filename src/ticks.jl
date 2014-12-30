@@ -107,7 +107,7 @@ function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(Fl
 
                     # strict limits on coverage
                     if strict_span && span > xspan
-                        core -= 10000
+                        score -= 10000
                     elseif !strict_span && (span >= 2.0*xspan || span < xspan)
                         score -= 1000
                     end
