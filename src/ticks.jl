@@ -145,13 +145,29 @@ end
 function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
                         k_min=nothing, k_max=nothing,
                         scale=:auto)
-    # This can be pretty simple. We are choosing ticks on one of three
-    # scales: years, months, days.
+    return optimize_ticks(convert(DateTime, x_min), convert(DateTime, x_max),
+                          extend_ticks=extend_ticks, scale=scale)
+end
+
+
+function optimize_ticks(x_min::DateTime, x_max::DateTime; extend_ticks::Bool=false,
+                        k_min=nothing, k_max=nothing,
+                        scale=:auto)
+    if x_min == x_max
+        x_max += Second(1)
+    end
+
     if year(x_max) - year(x_min) <= 1 && scale != :year
         if year(x_max) == year(x_min) && month(x_max) - month(x_min) <= 1 && scale != :month
-            ticks = Date[]
-            if x_max - x_min > Day(7) && scale != :day
-                # This will probably need to be smarter
+            ticks = DateTime[]
+
+            const scales = [
+                Day(1), Hour(1), Minute(1), Second(1), Millisecond(100),
+                Millisecond(10), Millisecond(1)
+            ]
+
+            # ticks on week boundries
+            if x_min + Day(7) < x_max || scale == :week
                 push!(ticks, x_min)
                 while true
                     next_month = Date(year(ticks[end]), month(ticks[end])) + Month(1)
@@ -164,29 +180,74 @@ function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
                     end
                 end
             else
-                push!(ticks, x_min)
+                scale = nothing
+                if scale != :auto
+                    # TODO: manually setting scale with :day, :minute, etc
+                end
+
+                if scale === nothing
+                    for proposed_scale in [Day(1), Hour(1), Minute(1),
+                                           Second(1), Millisecond(100),
+                                           Millisecond(10), Millisecond(1)]
+                        if x_min + proposed_scale < x_max
+                            scale = proposed_scale
+                            break
+                        end
+                    end
+                end
+
+                if scale === nothing
+                    scale = Millisecond(1)
+                end
+
+                # round x_min down
+                if scale === Day(1)
+                    first_tick = DateTime(year(x_min), month(x_min), day(x_min))
+                elseif scale === Hour(1)
+                    first_tick = DateTime(year(x_min), month(x_min), day(x_min),
+                                          hour(x_min))
+                elseif scale === Minute(1)
+                    first_tick = DateTime(year(x_min), month(x_min), day(x_min),
+                                          hour(x_min), minute(x_min))
+                elseif scale === Second(1)
+                    first_tick = DateTime(year(x_min), month(x_min), day(x_min),
+                                          hour(x_min), minute(x_min), second(x_min))
+                elseif scale === Millisecond(100)
+                    first_tick = DateTime(year(x_min), month(x_min), day(x_min),
+                                          hour(x_min), minute(x_min),
+                                          second(x_min), millisecond(x_min) % 100)
+                elseif scale === Millisecond(10)
+                    first_tick = DateTime(year(x_min), month(x_min), day(x_min),
+                                          hour(x_min), minute(x_min),
+                                          second(x_min), millisecond(x_min) % 10)
+                else
+                    first_tick = x_min
+                end
+                push!(ticks, first_tick)
+
                 while ticks[end] < x_max
-                    push!(ticks, ticks[end] + day(1))
+                    push!(ticks, ticks[end] + scale)
                 end
             end
 
             viewmin, viewmax = ticks[1], ticks[end]
-            ticks, viewmin, viewmax
+            return ticks, viewmin, viewmax
         else
-            ticks = Date[]
+            ticks = DateTime[]
             push!(ticks, Date(year(x_min), month(x_min)))
             while ticks[end] < x_max
                 push!(ticks, ticks[end] + Month(1))
             end
             viewmin, viewmax = ticks[1], ticks[end]
 
-            ticks, x_min, x_max
+            return ticks, x_min, x_max
         end
     else
         ticks, viewmin, viewmax =
             optimize_ticks(year(x_min), year(x_max + Year(1) - Day(1)), extend_ticks=extend_ticks)
-        return Date[Date(round(y)) for y in ticks],
-                   Date(round(viewmin)), Date(round(viewmax))
+
+        return DateTime[DateTime(round(y)) for y in ticks],
+                        DateTime(round(viewmin)), DateTime(round(viewmax))
     end
 end
 
@@ -210,15 +271,24 @@ end
 
 function multilevel_ticks(viewmin::Date, viewmax::Date;
                           scales=[:year, :month, :day])
-    span = viewmax - viewmin
+    return multilevel_ticks(convert(DateTime, viewmin),
+                            convert(DateTime, viewmax),
+                            scales=scales)
+end
+
+
+function multilevel_ticks(viewmin::DateTime, viewmax::DateTime;
+                          scales=[:year, :month, :day])
+    # TODO: This needs to be improved for DateTime
+    span = convert(Float64, Dates.toms(viewmax - viewmin))
     ticks = Dict()
     for scale in scales
         if scale == :year
-            s = span / Day(360)
+            s = span / Dates.toms(Day(360))
         elseif scale == :month
-            s = span / Day(90)
+            s = span / Dates.toms(Day(90))
         else
-            s = span / Day(1)
+            s = span / Dates.toms(Day(1))
         end
 
         ticks[s/20] = optimize_ticks(viewmin, viewmax, scale=scale)[1]

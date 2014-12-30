@@ -305,53 +305,85 @@ end
 if VERSION < v"0.4-dev"
     using Dates
 
-    function Showoff.showoff{T <: Date}(ds::AbstractArray{T}, style=:none)
-        const month_names = [
-            "January", "February", "March", "April", "May", "June", "July",
-            "August", "September", "October", "November", "December"
-        ]
-
-        const month_abbrevs = [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        ]
-
-        day_all_1   = all(map(d -> Dates.day(d) == 1, ds))
-        month_all_1 = all(map(d -> Dates.month(d) == 1, ds))
+    function Showoff.showoff{T <: Union(Date, DateTime)}(ds::AbstractArray{T}, style=:none)
         years = Set()
+        months = Set()
+        days = Set()
+        hours = Set()
+        minutes = Set()
+        seconds = Set()
         for d in ds
             push!(years, Dates.year(d))
+            push!(months, Dates.month(d))
+            push!(days, Dates.day(d))
+            push!(hours, Dates.hour(d))
+            push!(minutes, Dates.minute(d))
+            push!(seconds, Dates.second(d))
+        end
+        all_same_year         = length(years)   == 1
+        all_one_month         = length(months)  == 1 && 1 in months
+        all_one_day           = length(days)    == 1 && 1 in days
+        all_zero_hour         = length(hours)   == 1 && 0 in hours
+        all_zero_minute       = length(minutes) == 1 && 0 in minutes
+        all_zero_seconds      = length(minutes) == 1 && 0 in minutes
+        all_zero_milliseconds = length(minutes) == 1 && 0 in minutes
+
+        # first label format
+        label_months = false
+        label_days = false
+        f1 = "u d, yyyy"
+        f2 = ""
+        if !all_zero_seconds
+            f2 = "HH:MM:SS.sss"
+        elseif !all_zero_seconds
+            f2 = "HH:MM:SS"
+        elseif !all_zero_hour || !all_zero_minute
+            f2 = "HH:MM"
+        else
+            if !all_one_day
+                first_label_format = "u d yyyy"
+            elseif !all_one_month
+                first_label_format = "u yyyy"
+            elseif !all_one_day
+                first_label_format = "yyyy"
+            end
+        end
+        if f2 != ""
+            first_label_format = string(f1, " ", f2)
+        else
+            first_label_format = f1
         end
 
-        buf = IOBuffer()
         labels = Array(String, length(ds))
-        if day_all_1 && month_all_1
-            # only label years
-            for (i, d) in enumerate(ds)
-                print(buf, Dates.year(d))
-                labels[i] = takebuf_string(buf)
-            end
-        elseif day_all_1
-            # label months and years
-            for (i, d) in enumerate(ds)
-                if d == ds[1] || Dates.month(d) == 1
-                    print(buf, month_abbrevs[Dates.month(d)], " ", Dates.year(d))
+        labels[1] = Dates.format(ds[1], first_label_format)
+        d_last = ds[1]
+        for (i, d) in enumerate(ds[2:end])
+            if Dates.year(d) != Dates.year(d_last)
+                if all_one_day && all_one_month
+                    f1 = "yyyy"
+                elseif all_one_day && !all_one_month
+                    f1 = "u yyyy"
                 else
-                    print(buf, month_abbrevs[Dates.month(d)])
+                    f1 = "u d, yyyy"
                 end
-                labels[i] = takebuf_string(buf)
+            elseif Dates.month(d) != Dates.month(d_last)
+                f1 = all_one_day ? "u" : "u d"
+            elseif Dates.day(d) != Dates.day(d_last)
+                f1 = "d"
+            else
+                f1 = ""
             end
-        else
-            for (i, d) in enumerate(ds)
-                if d == ds[1] || (Dates.month(d) == 1 && Dates.day(d) == 1)
-                    print(buf, month_abbrevs[Dates.month(d)], " ", Dates.day(d), " ", Dates.year(d))
-                elseif Dates.day(d) == 1
-                    print(buf, month_abbrevs[Dates.month(d)], " ", Dates.day(d))
-                else
-                    print(buf, Dates.day(d))
-                end
-                labels[i] = takebuf_string(buf)
+
+            if f2 != ""
+                f = string(f1, " ", f2)
+            elseif f1 != ""
+                f = f1
+            else
+                f = first_label_format
             end
+
+            labels[i+1] = Dates.format(d, f)
+            d_last = d
         end
 
         return labels
@@ -368,9 +400,23 @@ if !method_exists(/, (Dates.Day, Real))
     /(a::Dates.Day, b::Real) = Dates.Day(round(Integer, (a.value / b)))
 end
 
+if !method_exists(/, (Dates.Millisecond, Dates.Millisecond))
+    /(a::Dates.Millisecond, b::Dates.Millisecond) = a.value / b.value
+end
+
+if !method_exists(/, (Dates.Millisecond, Real))
+    /(a::Dates.Millisecond, b::Real) = Dates.Millisecond(round(Integer, (a.value / b)))
+end
+
+if !method_exists(-, (Dates.Date, Dates.DateTime))
+    -(a::Dates.Date, b::Dates.DateTime) = convert(Dates.DateTime, a) - b
+end
+
 #if !method_exists(*, (FloatingPoint, Dates.Day))
     *(a::FloatingPoint, b::Dates.Day) = Dates.Day(round(Integer, (a * b.value)))
     *(a::Dates.Day, b::FloatingPoint) = b * a
+    *(a::FloatingPoint, b::Dates.Millisecond) = Dates.Millisecond(round(Integer, (a * b.value)))
+    *(a::Dates.Millisecond, b::FloatingPoint) = b * a
 #end
 
 
