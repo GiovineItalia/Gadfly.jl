@@ -84,9 +84,10 @@ type Layer <: Element
     statistic::StatisticElement
     geom::GeometryElement
     theme::Union(Nothing, Theme)
+    order::Int
 
     function Layer()
-        new(nothing, Dict(), Stat.nil(), Geom.nil(), nothing)
+        new(nothing, Dict(), Stat.nil(), Geom.nil(), nothing, 0)
     end
 
     function Layer(lyr::Layer)
@@ -104,11 +105,15 @@ end
 
 
 
-function layer(data_source::AbstractDataFrame, elements::ElementOrFunction...;
-               mapping...)
+function layer(data_source::Union(AbstractDataFrame, Nothing),
+               elements::ElementOrFunction...; mapping...)
+    mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
     lyr.data_source = data_source
     lyr.mapping = clean_mapping(mapping)
+    if haskey(mapping, :order)
+        lyr.order = mapping[:order]
+    end
     lyrs = Layer[lyr]
     for element in elements
         add_plot_element(lyrs, element)
@@ -118,13 +123,7 @@ end
 
 
 function layer(elements::ElementOrFunction...; mapping...)
-    lyr = Layer()
-    lyr.mapping = clean_mapping(mapping)
-    lyrs = Layer[lyr]
-    for element in elements
-        add_plot_element(lyrs, element)
-    end
-    lyrs
+    return layer(nothing, elements...; mapping...)
 end
 
 
@@ -267,6 +266,11 @@ end
 function clean_mapping(mapping)
     cleaned = Dict{Symbol, AestheticValue}()
     for (key, val) in mapping
+        # skip the "order" pesudo-aesthetic, used to order layers
+        if key == :order
+            continue
+        end
+
         if haskey(aesthetic_aliases, key)
             key = aesthetic_aliases[key]
         elseif !in(key, Aesthetics.names)
@@ -739,7 +743,7 @@ function render_prepared(plot::Plot,
                    for layer in plot.layers]
 
     compose!(plot_context,
-             [render(layer.geom, theme, aes, data, scales)
+             [compose(context(order=layer.order), render(layer.geom, theme, aes, data, scales))
               for (layer, aes, data, theme) in zip(plot.layers, layer_aess, layer_datas, themes)]...)
 
     # V. Guides

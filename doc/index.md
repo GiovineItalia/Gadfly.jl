@@ -193,6 +193,16 @@ You can also pass different data frames to each layers:
 layer(another_dataframe, x="col1", y="col2", Geom.point)
 ```
 
+Ordering of layers can be controlled with the `order` keyword. A higher order
+number will cause a layer to be drawn on top of any layers with a lower number.
+If not specifiel, default order for a layer is 0.
+
+```.{julia execute="false"}
+plot(layer(x=rand(10), y=rand(10), Geom.point, order=1),
+     layer(x=rand(10), y=rand(10), Geom.line, order=2))
+```
+
+
 # Stacking
 
 Plots can also be stacked horizontally with ``hstack`` or vertically with ``vstack``. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with ``subplot_grid``.
