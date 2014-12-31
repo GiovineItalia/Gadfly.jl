@@ -28,7 +28,7 @@ function render(geom::VLineGeometry, theme::Gadfly.Theme,
 
     return compose!(
         context(),
-        Compose.line([{(x, 0h), (x, 1h)} for x in aes.xintercept]),
+        Compose.line([[(x, 0h), (x, 1h)] for x in aes.xintercept]),
         stroke(color),
         linewidth(size),
         svgclass("yfixed"))

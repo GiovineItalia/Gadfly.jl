@@ -2,6 +2,7 @@
 module Scale
 
 using Color
+using Compat
 using Compose
 using DataArrays
 using DataStructures
@@ -424,7 +425,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
             if scale.labels === nothing
                 function default_labeler(xs)
                     lvls = levels(disc_data)
-                    vals = {1 <= x <= length(lvls) ? lvls[x] : "" for x in xs}
+                    vals = Any[1 <= x <= length(lvls) ? lvls[x] : "" for x in xs]
                     if all([isa(val, FloatingPoint) for val in vals])
                         return showoff(vals)
                     else
@@ -528,8 +529,8 @@ function apply_scale(scale::DiscreteColorScale,
     end
     colors = convert(Vector{RGB{Float32}}, scale.f(length(scale_levels)))
 
-    color_map = {color => string(label)
-                 for (label, color) in zip(scale_levels, colors)}
+    color_map = @compat Dict([color => string(label)
+                              for (label, color) in zip(scale_levels, colors)])
     function labeler(xs)
         [color_map[x] for x in xs]
     end

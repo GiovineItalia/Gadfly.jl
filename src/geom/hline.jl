@@ -29,7 +29,7 @@ function render(geom::HLineGeometry, theme::Gadfly.Theme,
 
     return compose!(
         context(),
-        Compose.line([{(0w, y), (1w, y)} for y in aes.yintercept]),
+        Compose.line([[(0w, y), (1w, y)] for y in aes.yintercept]),
         stroke(color),
         linewidth(size),
         svgclass("xfixed"))

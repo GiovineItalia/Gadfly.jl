@@ -44,7 +44,7 @@ function plot(fs::Array, a, b, elements::ElementOrFunction...; mapping...)
         push!(elements, Coord.cartesian(xflip=true))
     end
 
-    mappingdict = {:y => fs, :xmin => [a], :xmax => [b]}
+    mappingdict = @compat Dict{Symbol, Any}(:y => fs, :xmin => [a], :xmax => [b])
     for (k, v) in mapping
         mappingdict[k] = v
     end
@@ -84,8 +84,8 @@ function plot(f::Function, xmin, xmax, ymin, ymax,
 
     push!(elements, Coord.cartesian(xflip=xmin > xmax, yflip=ymin > ymax))
 
-    mappingdict = {:z    => f, :xmin => [xmin], :xmax => [xmax],
-                   :ymin => [ymin], :ymax => [ymax]}
+    mappingdict = @compat Dict{Symbol, Any}(:z    => f, :xmin => [xmin], :xmax => [xmax],
+                                            :ymin => [ymin], :ymax => [ymax])
     for (k, v) in mapping
         mappingdict[k] = v
     end

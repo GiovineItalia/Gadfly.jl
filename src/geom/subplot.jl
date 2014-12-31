@@ -237,19 +237,19 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         xprop = [(isodd(j) ? 1.0 : NaN) for j in 3:2*m+2]
         tbl = table(n + 2, 2*m + 2, 1:n, 3:2*m+2,
                     x_prop=xprop, y_prop=ones(n),
-                    fixed_configs={
+                    fixed_configs=Any[
                         [(i, 1) for i in 1:n],
                         [(i, 2) for i in 1:n],
                         [(n+1, j) for j in 3:2:m+2],
-                        [(n+2, j) for j in 3:2:m+2]})
+                        [(n+2, j) for j in 3:2:m+2]])
     else
         tbl = table(n + 2, m + 2, 1:n, 3:m+2,
                     x_prop=ones(m), y_prop=ones(n),
-                    fixed_configs={
+                    fixed_configs=Any[
                         [(i, 1) for i in 1:n],
                         [(i, 2) for i in 1:n],
                         [(n+1, j) for j in 3:m+2],
-                        [(n+2, j) for j in 3:m+2]})
+                        [(n+2, j) for j in 3:m+2]])
     end
 
     xtitle = "x"

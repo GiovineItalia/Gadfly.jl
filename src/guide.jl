@@ -84,11 +84,11 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
         stroke(foreground_color),
         strokeopacity(0.0),
         linewidth(0.3mm),
-        {context(),
+        (context(),
          polygon([(0.2, 0.4), (0.8, 0.4),
                   (0.8, 0.6), (0.2, 0.6)]),
          fill(foreground_color),
-         svgclass("button_logo")},
+         svgclass("button_logo")),
         fill(background_color),
         jscall(
             """
@@ -107,13 +107,13 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
 
     slider = compose!(
         context(slider_xpos, edge_pad, slider_size - 2 * slide_pad, button_size),
-        {context(),
+        (context(),
          rectangle(),
          fill(background_color),
          jscall("click(Gadfly.zoomslider_track_click)"),
          jsdata("min_pos", "%x", Measure[slider_min_pos]),
-         jsdata("max_pos", "%x", Measure[slider_max_pos])},
-        {context(order=1),
+         jsdata("max_pos", "%x", Measure[slider_max_pos])),
+        (context(order=1),
          rectangle(0.5cx - slider_width/2, 0.0, slider_width, 1h),
          fill(foreground_color),
          svgclass("zoomslider_thumb"),
@@ -128,7 +128,7 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
          jsdata("mouseout_color", "\"$(foreground_color)\""),
          jsdata("mouseover_color", "\"$(highlight_color)\""),
          jsdata("min_pos", "%x", Measure[slider_min_pos]),
-         jsdata("max_pos", "%x", Measure[slider_max_pos])})
+         jsdata("max_pos", "%x", Measure[slider_max_pos])))
 
     plus_button = compose!(
         context(1w - edge_pad - button_size, edge_pad,
@@ -137,13 +137,13 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
         stroke(foreground_color),
         strokeopacity(0.0),
         linewidth(0.3mm),
-        {context(),
+        (context(),
          polygon([(0.2, 0.4), (0.4, 0.4), (0.4, 0.2),
                   (0.6, 0.2), (0.6, 0.4), (0.8, 0.4),
                   (0.8, 0.6), (0.6, 0.6), (0.6, 0.8),
                   (0.4, 0.8), (0.4, 0.6), (0.2, 0.6)]),
          fill(foreground_color),
-         svgclass("button_logo")},
+         svgclass("button_logo")),
         fill(background_color),
         jscall(
             """
@@ -233,7 +233,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
             yoff = 0.5h - ctxheight/2
             outerctx = context()
 
-            compose!(outerctx, {context(xpad, yoff), title_ctx})
+            compose!(outerctx, (context(xpad, yoff), title_ctx))
 
             ctx = context(0, yoff + title_height,
                           ctxwidth, ctxheight - title_height,
@@ -327,11 +327,11 @@ function render_continuous_color_key(colors::Dict,
 
     yoff = 0.5h - total_height/2
 
-    compose!(ctx, {context(xoff, yoff), title_context})
+    compose!(ctx, (context(xoff, yoff), title_context))
 
     # color bar
     compose!(ctx,
-        {context(xoff, yoff + title_height,
+        (context(xoff, yoff + title_height,
                  1w, total_height, units=UnitBox()),
          rectangle(
              [0],
@@ -341,18 +341,18 @@ function render_continuous_color_key(colors::Dict,
              [total_height / theme.key_color_gradations]),
 
          #grid lines
-         {context(),
-          line([{(0, 1 - y), (swatch_width, 1 - y)} for y in values(colors)]),
+         (context(),
+          line([[(0, 1 - y), (swatch_width, 1 - y)] for y in values(colors)]),
           linewidth(theme.grid_line_width),
-          stroke(color("white"))},
+          stroke(color("white"))),
 
          fill([color_function((i-1) / (theme.key_color_gradations - 1))
                for i in 1:theme.key_color_gradations]),
          stroke(nothing),
-         svgattribute("shape-rendering", "crispEdges")})
+         svgattribute("shape-rendering", "crispEdges")))
 
     compose!(ctx,
-        {context(xoff + swatch_width + padding, yoff + title_height,
+        (context(xoff + swatch_width + padding, yoff + title_height,
                  1w, total_height, units=UnitBox()),
          text([0],
               [1 - y for y in values(colors)],
@@ -360,7 +360,7 @@ function render_continuous_color_key(colors::Dict,
               [hleft], [vcenter]),
          fill(theme.key_label_color),
          font(theme.key_label_font),
-         fontsize(theme.key_label_font_size)},
+         fontsize(theme.key_label_font_size)),
          svgclass("guide colorkey"))
 
     return [ctx]
@@ -561,9 +561,9 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         end
     else
         labels = String[]
-        ticks = {}
-        tickvisibility = {}
-        scale = {}
+        ticks = Any[]
+        tickvisibility = Any[]
+        scale = Any[]
     end
 
     if Gadfly.issomething(aes.xgrid)
@@ -574,14 +574,14 @@ function render(guide::XTicks, theme::Gadfly.Theme,
             gridvisibility = tickvisibility
         end
     else
-        grids = {}
-        gridvisibility = {}
+        grids = Any[]
+        gridvisibility = Any[]
     end
 
     # grid lines
     static_grid_lines = compose!(
         context(withoutjs=true),
-        line([{(t, 0h), (t, 1h)} for t in grids[gridvisibility]]),
+        line([[(t, 0h), (t, 1h)] for t in grids[gridvisibility]]),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
         strokedash(theme.grid_strokedash),
@@ -589,7 +589,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
     dynamic_grid_lines = compose!(
         context(withjs=true),
-        line([{(t, 0h), (t, 1h)} for t in grids]),
+        line([[(t, 0h), (t, 1h)] for t in grids]),
         visible(gridvisibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
@@ -724,9 +724,9 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         end
     else
         labels = String[]
-        ticks = {}
-        tickvisibility = {}
-        scale = {}
+        ticks = Any[]
+        tickvisibility = Any[]
+        scale = Any[]
     end
 
     if Gadfly.issomething(aes.ygrid)
@@ -737,14 +737,14 @@ function render(guide::YTicks, theme::Gadfly.Theme,
             gridvisibility = tickvisibility
         end
     else
-        grids = {}
-        gridvisibility = {}
+        grids = Any[]
+        gridvisibility = Any[]
     end
 
     # grid lines
     static_grid_lines = compose!(
         context(withoutjs=true),
-        line([{(0w, t), (1w, t)} for t in grids[gridvisibility]]),
+        line([[(0w, t), (1w, t)] for t in grids[gridvisibility]]),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
         strokedash(theme.grid_strokedash),
@@ -752,7 +752,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
 
     dynamic_grid_lines = compose!(
         context(withjs=true),
-        line([{(0w, t), (1w, t)} for t in grids]),
+        line([[(0w, t), (1w, t)] for t in grids]),
         visible(gridvisibility),
         stroke(theme.grid_color),
         linewidth(theme.grid_line_width),
@@ -1110,12 +1110,12 @@ function layout_guides(plot_context::Context,
                           minheight=minheight(plot_context),
                           units=plot_units,
                           clip=true),
-                  {context(order=-1),
-                     [c for (c, o) in guides[under_guide_position]]...},
-                  {context(order=1000),
-                     [c for (c, o) in guides[over_guide_position]]...},
-                  {context(order=0),
-                     plot_context},
+                  Any[context(order=-1),
+                      [c for (c, o) in guides[under_guide_position]]...],
+                  Any[context(order=1000),
+                      [c for (c, o) in guides[over_guide_position]]...],
+                  (context(order=0),
+                     plot_context),
                   jscall(
                     """
                     mouseenter(Gadfly.plot_mouseover)

@@ -747,7 +747,7 @@ function render_prepared(plot::Plot,
               for (layer, aes, data, theme) in zip(plot.layers, layer_aess, layer_datas, themes)]...)
 
     # V. Guides
-    guide_contexts = {}
+    guide_contexts = Any[]
     for guide in guides
         guide_context = render(guide, plot.theme, plot_aes)
         if guide_context != nothing
@@ -985,43 +985,43 @@ include("statistics.jl")
 # All aesthetics must have a scale. If none is given, we use a default.
 # The default depends on whether the input is discrete or continuous (i.e.,
 # PooledDataVector or DataVector, respectively).
-const default_aes_scales = {
-        :distribution => {:x => Scale.x_distribution(),
-                          :y => Scale.y_distribution()},
-        :functional => {:z => Scale.z_func(),
-                        :y => Scale.y_func()},
-        :numerical => {:x           => Scale.x_continuous(),
-                       :xmin        => Scale.x_continuous(),
-                       :xmax        => Scale.x_continuous(),
-                       :xintercept  => Scale.x_continuous(),
-                       :y           => Scale.y_continuous(),
-                       :ymin        => Scale.y_continuous(),
-                       :ymax        => Scale.y_continuous(),
-                       :yintercept  => Scale.y_continuous(),
-                       :middle      => Scale.y_continuous(),
-                       :upper_fence => Scale.y_continuous(),
-                       :lower_fence => Scale.y_continuous(),
-                       :upper_hinge => Scale.y_continuous(),
-                       :lower_hinge => Scale.y_continuous(),
-                       :xgroup      => Scale.xgroup(),
-                       :ygroup      => Scale.ygroup(),
-                       :color       => Scale.continuous_color(),
-                       :group       => Scale.group_discrete(),
-                       :label       => Scale.label(),
-                       :size        => Scale.size_continuous()},
-        :categorical => {:x          => Scale.x_discrete(),
-                         :xmin       => Scale.x_discrete(),
-                         :xmax       => Scale.x_discrete(),
-                         :xintercept => Scale.x_discrete(),
-                         :y          => Scale.y_discrete(),
-                         :ymin       => Scale.y_discrete(),
-                         :ymax       => Scale.y_discrete(),
-                         :yintercept => Scale.y_discrete(),
-                         :xgroup     => Scale.xgroup(),
-                         :ygroup     => Scale.ygroup(),
-                         :color      => Scale.discrete_color(),
-                         :group      => Scale.group_discrete(),
-                         :label      => Scale.label()}}
+const default_aes_scales = @compat Dict{Symbol, Dict}(
+        :distribution => Dict{Symbol, Any}(:x => Scale.x_distribution(),
+                                           :y => Scale.y_distribution()),
+        :functional => Dict{Symbol, Any}(:z => Scale.z_func(),
+                                         :y => Scale.y_func()),
+        :numerical => Dict{Symbol, Any}(:x           => Scale.x_continuous(),
+                                        :xmin        => Scale.x_continuous(),
+                                        :xmax        => Scale.x_continuous(),
+                                        :xintercept  => Scale.x_continuous(),
+                                        :y           => Scale.y_continuous(),
+                                        :ymin        => Scale.y_continuous(),
+                                        :ymax        => Scale.y_continuous(),
+                                        :yintercept  => Scale.y_continuous(),
+                                        :middle      => Scale.y_continuous(),
+                                        :upper_fence => Scale.y_continuous(),
+                                        :lower_fence => Scale.y_continuous(),
+                                        :upper_hinge => Scale.y_continuous(),
+                                        :lower_hinge => Scale.y_continuous(),
+                                        :xgroup      => Scale.xgroup(),
+                                        :ygroup      => Scale.ygroup(),
+                                        :color       => Scale.continuous_color(),
+                                        :group       => Scale.group_discrete(),
+                                        :label       => Scale.label(),
+                                        :size        => Scale.size_continuous()),
+        :categorical => Dict{Symbol, Any}(:x          => Scale.x_discrete(),
+                                          :xmin       => Scale.x_discrete(),
+                                          :xmax       => Scale.x_discrete(),
+                                          :xintercept => Scale.x_discrete(),
+                                          :y          => Scale.y_discrete(),
+                                          :ymin       => Scale.y_discrete(),
+                                          :ymax       => Scale.y_discrete(),
+                                          :yintercept => Scale.y_discrete(),
+                                          :xgroup     => Scale.xgroup(),
+                                          :ygroup     => Scale.ygroup(),
+                                          :color      => Scale.discrete_color(),
+                                          :group      => Scale.group_discrete(),
+                                          :label      => Scale.label()))
 
 
 

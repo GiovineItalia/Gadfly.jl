@@ -52,8 +52,8 @@ end
 function chain(ds::Data...)
     chained_data = Data()
     for name in Data.names
-        vs = {getfield(d, name) for d in ds}
-        vs = {v for v in filter(issomething, vs)}
+        vs = Any[getfield(d, name) for d in ds]
+        vs = Any[v for v in filter(issomething, vs)]
         if isempty(vs)
             setfield!(chained_data, name, nothing)
         else

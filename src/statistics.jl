@@ -520,7 +520,7 @@ function apply_statistic(stat::TickStatistic,
 
     in_group_var = symbol(string(stat.out_var, "group"))
     minval, maxval = nothing, nothing
-    in_values = {}
+    in_values = Any[]
     categorical = (:x in stat.in_vars && Scale.iscategorical(scales, :x)) ||
                   (:y in stat.in_vars && Scale.iscategorical(scales, :y))
 
@@ -752,7 +752,7 @@ function apply_statistic(stat::BoxplotStatistic,
             :x, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence)
 
         aes_color = aes.color === nothing ? [nothing] : aes.color
-        groups = {}
+        groups = Any[]
         for (x, c) in zip(aes.x, cycle(aes_color))
             push!(groups, (x, c))
         end

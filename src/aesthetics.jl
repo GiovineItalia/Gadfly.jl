@@ -89,23 +89,23 @@ end
 
 # Alternate aesthetic names
 const aesthetic_aliases =
-    [:colour        => :color,
-     :x_min         => :xmin,
-     :x_max         => :xmax,
-     :y_min         => :ymin,
-     :y_max         => :ymax,
-     :x_group       => :xgroup,
-     :y_group       => :ygroup,
-     :x_viewmin     => :xviewmin,
-     :x_viewmax     => :xviewmax,
-     :y_viewmin     => :yviewmin,
-     :y_viewmax     => :yviewmax,
-     :x_group_label => :xgroup_label,
-     :y_group_label => :ygroup_label,
-     :x_tick        => :xtick,
-     :y_tick        => :ytick,
-     :x_grid        => :xgrid,
-     :y_grid        => :ygrid]
+    @compat Dict{Symbol, Symbol}(:colour        => :color,
+                                 :x_min         => :xmin,
+                                 :x_max         => :xmax,
+                                 :y_min         => :ymin,
+                                 :y_max         => :ymax,
+                                 :x_group       => :xgroup,
+                                 :y_group       => :ygroup,
+                                 :x_viewmin     => :xviewmin,
+                                 :x_viewmax     => :xviewmax,
+                                 :y_viewmin     => :yviewmin,
+                                 :y_viewmax     => :yviewmax,
+                                 :x_group_label => :xgroup_label,
+                                 :y_group_label => :ygroup_label,
+                                 :x_tick        => :xtick,
+                                 :y_tick        => :ytick,
+                                 :x_grid        => :xgrid,
+                                 :y_grid        => :ygrid)
 
 
 # Index as if this were a data frame

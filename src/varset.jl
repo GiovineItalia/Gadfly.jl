@@ -7,10 +7,10 @@ macro varset(name::Symbol, table)
     @assert table.head == :block
     table = table.args
 
-    names = {}
-    vars = {}
-    defaults = {}
-    parameters = {}
+    names = Any[]
+    vars = Any[]
+    defaults = Any[]
+    parameters = Any[]
     parameters_expr = Expr(:parameters)
 
     for row in table

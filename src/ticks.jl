@@ -33,7 +33,7 @@ end
 
 
 # Empty catchall
-optimize_ticks() = {}
+optimize_ticks() = Any[]
 
 
 # Find some reasonable values for tick marks.

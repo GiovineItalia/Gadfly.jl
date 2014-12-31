@@ -63,7 +63,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
         fill(collect(cs)),
         stroke(collect(cs)),
         linewidth(theme.line_width),
-        {
+        (
             context(),
 
             # Box
@@ -72,7 +72,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                 lower_hinge, [bw],
                 [uh - lh for (lh, uh) in zip(lower_hinge, upper_hinge)]),
 
-            {
+            (
                 context(),
 
                  # Whiskers
@@ -90,9 +90,9 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
                               for (x, uf) in zip(xs, upper_fence)]),
 
                 stroke(collect(cs))
-            },
+            ),
 
-        },
+        ),
         svgclass("geometry"))
 
     # Outliers
@@ -110,13 +110,13 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
 
     # Middle
     if aes.middle != nothing
-        compose!(ctx, {
+        compose!(ctx, (
            context(order=1),
            Compose.line([[(x - fw/2, mid), (x + fw/2, mid)]
                          for (x, mid) in zip(xs, aes.middle)]),
            linewidth(theme.middle_width),
            stroke([theme.middle_color(c) for c in cs])
-        })
+        ))
     end
 
     return ctx

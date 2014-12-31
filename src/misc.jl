@@ -412,6 +412,19 @@ if !method_exists(-, (Dates.Date, Dates.DateTime))
     -(a::Dates.Date, b::Dates.DateTime) = convert(Dates.DateTime, a) - b
 end
 
+if !method_exists(-, (Dates.DateTime, Dates.Date))
+    -(a::Dates.DateTime, b::Dates.Date) = a - convert(Dates.DateTime, b)
+end
+
+for T in [Dates.Hour, Dates.Minute, Dates.Second, Dates.Millisecond]
+    if !method_exists(-, (Dates.Date, T))
+        @eval begin
+            -(a::Dates.Date, b::$(T)) = convert(Dates.DateTime, a) - b
+        end
+    end
+end
+
+
 #if !method_exists(*, (FloatingPoint, Dates.Day))
     *(a::FloatingPoint, b::Dates.Day) = Dates.Day(round(Integer, (a * b.value)))
     *(a::Dates.Day, b::FloatingPoint) = b * a

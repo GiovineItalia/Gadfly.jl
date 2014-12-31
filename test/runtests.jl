@@ -1,6 +1,6 @@
 #!/usr/bin/env julia
 
-using RDatasets, Gadfly
+using RDatasets, Gadfly, Compat
 
 tests = [
     ("points",                                6inch, 3inch),
@@ -88,14 +88,14 @@ tests = [
 ]
 
 
-backends = {
+backends = @compat Dict{String, Function}(
     "svg" => (name, width, height) -> SVG("output/$(name).svg", width, height),
     "svgjs" => (name, width, height) -> SVGJS("output/$(name).js.svg", width, height, jsmode=:linkabs),
     "png" => (name, width, height) -> PNG("output/$(name).png", width, height),
     #"ps"  => (name, width, height) -> PS("output/$(name).ps",   width, height),
     #"pdf" => (name, width, height) -> PDF("output/$(name).pdf", width, height)
     "pgf" => (name, width, height) -> PGF("output/$(name).tex", width, height)
-}
+)
 
 
 function run_tests(output_filename)
