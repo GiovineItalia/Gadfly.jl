@@ -1,5 +1,5 @@
 ---
-title: discrete_color_manual
+title: color_discrete_manual
 author: David Chudzicki
 part: Scale
 order: 2008
@@ -29,5 +29,5 @@ srand(1234)
 
 ```julia
 plot(x=rand(12), y=rand(12), color=repeat(["a","b","c"], outer=[4]), 
-     Scale.discrete_color_manual("red","purple","green"))
+     Scale.color_discrete_manual("red","purple","green"))
 ```

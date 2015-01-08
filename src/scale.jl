@@ -497,7 +497,7 @@ end
 
 
 # Common discrete color scales
-function discrete_color_hue(; levels=nothing, order=nothing,
+function color_discrete_hue(; levels=nothing, order=nothing,
                             preserve_order=true)
     DiscreteColorScale(
         h -> convert(Vector{ColorValue},
@@ -509,17 +509,23 @@ function discrete_color_hue(; levels=nothing, order=nothing,
         levels=levels, order=order, preserve_order=preserve_order)
 end
 
+@deprecate discrete_color_hue(; levels=nothing, order=nothing, preserve_order=true) color_discrete_hue(; levels=levels, order=order, preserve_order=preserve_order)
 
-const discrete_color = discrete_color_hue
+
+const color_discrete = color_discrete_hue
+
+@deprecate discrete_color(; levels=nothing, order=nothing, preserve_order=true) color_discrete(; levels=levels, order=order, preserve_order=preserve_order)
 
 
-function discrete_color_manual(colors...; levels=nothing, order=nothing)
+function color_discrete_manual(colors...; levels=nothing, order=nothing)
     cs = ColorValue[color(c) for c in colors]
     function f(n)
         distinguishable_colors(n, cs)
     end
     DiscreteColorScale(f, levels=levels, order=order)
 end
+
+@deprecate discrete_color_manual(colors...; levels=nothing, order=nothing) color_discrete_manual(colors...; levels=levels, order=order)
 
 
 function apply_scale(scale::DiscreteColorScale,
@@ -597,7 +603,7 @@ end
 element_aesthetics(::ContinuousColorScale) = [:color]
 
 
-function continuous_color_gradient(;minvalue=nothing, maxvalue=nothing)
+function color_continuous_gradient(;minvalue=nothing, maxvalue=nothing)
 
     # TODO: this should be made more general purpose. I.e. define some
     # more color scales.
@@ -617,7 +623,12 @@ function continuous_color_gradient(;minvalue=nothing, maxvalue=nothing)
         minvalue=minvalue, maxvalue=maxvalue)
 end
 
-const continuous_color = continuous_color_gradient
+@deprecate continuous_color_gradient(;minvalue=nothing, maxvalue=nothing) color_continuous_gradient(;minvalue=minvalue, maxvalue=maxvalue)
+
+
+const color_continuous = color_continuous_gradient
+
+@deprecate continuous_color(;minvalue=nothing, maxvalue=nothing) color_continuous(;minvalue=nothing, maxvalue=nothing)
 
 
 function apply_scale(scale::ContinuousColorScale,

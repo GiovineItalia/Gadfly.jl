@@ -1,4 +1,5 @@
 
+
 # Particularly useful or beautiful grammar of graphics invocations.
 
 
@@ -120,7 +121,7 @@ function spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...)
     df = DataFrame(i=is, j=js, value=values)
     plot(df, x="j", y="i", color="value",
          Coord.cartesian(yflip=true),
-         Scale.continuous_color,
+         Scale.color_continuous,
          Scale.x_continuous,
          Scale.y_continuous,
          Geom.rectbin,

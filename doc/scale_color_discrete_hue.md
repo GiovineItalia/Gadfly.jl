@@ -1,5 +1,5 @@
 ---
-title: discrete_color_hue
+title: color_discrete_hue
 author: David Chudzicki
 part: Scale
 order: 2008
@@ -30,5 +30,5 @@ This forces the use of a discrete scale on data that would otherwise receive a c
 
 ```julia
 plot(x=rand(12), y=rand(12), color=repeat([1,2,3], outer=[4]),
-     Scale.discrete_color())
+     Scale.color_discrete())
 ```

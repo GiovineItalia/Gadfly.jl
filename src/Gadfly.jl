@@ -1005,7 +1005,7 @@ const default_aes_scales = @compat Dict{Symbol, Dict}(
                                         :lower_hinge => Scale.y_continuous(),
                                         :xgroup      => Scale.xgroup(),
                                         :ygroup      => Scale.ygroup(),
-                                        :color       => Scale.continuous_color(),
+                                        :color       => Scale.color_continuous(),
                                         :group       => Scale.group_discrete(),
                                         :label       => Scale.label(),
                                         :size        => Scale.size_continuous()),
@@ -1019,7 +1019,7 @@ const default_aes_scales = @compat Dict{Symbol, Dict}(
                                           :yintercept => Scale.y_discrete(),
                                           :xgroup     => Scale.xgroup(),
                                           :ygroup     => Scale.ygroup(),
-                                          :color      => Scale.discrete_color(),
+                                          :color      => Scale.color_discrete(),
                                           :group      => Scale.group_discrete(),
                                           :label      => Scale.label()))
 

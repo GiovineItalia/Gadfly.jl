@@ -1,5 +1,5 @@
 ---
-title: continuous_color_gradient
+title: color_continuous_gradient
 author: David Chudzicki
 part: Scale
 order: 2008
@@ -32,5 +32,5 @@ srand(1234)
 # The data are all between 0 and 1, but the color scale goes from -1 to 1. 
 # For example, you might do this to force a consistent color scale between plots.
 plot(x=rand(12), y=rand(12), color=rand(12), 
-     Scale.continuous_color(minvalue=-1, maxvalue=1))
+     Scale.color_continuous(minvalue=-1, maxvalue=1))
 ```
