@@ -451,6 +451,26 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
 end
 
 
+immutable NoneColorScale <: Gadfly.ScaleElement
+end
+
+
+const color_none = NoneColorScale
+
+
+function element_aesthetics(scale::NoneColorScale)
+    [:color]
+end
+
+
+function apply_scale(scale::NoneColorScale,
+                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+    for aes in aess
+        aes.color = nothing
+    end
+end
+
+
 immutable DiscreteColorScale <: Gadfly.ScaleElement
     f::Function # A function f(n) that produces a vector of n colors.
 
