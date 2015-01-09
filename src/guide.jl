@@ -1140,7 +1140,8 @@ const annotation = Annotation
 
 function render(guide::Annotation, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
-    return [PositionedGuide([guide.ctx], 0, over_guide_position)]
+    ctx = compose(context(), svgclass("geometry"), guide.ctx)
+    return [PositionedGuide([ctx], 0, over_guide_position)]
 end
 
 
