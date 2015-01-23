@@ -145,7 +145,7 @@ of absolute and relative units and complex coordinate transforms. The primary
 backend is a native SVG generator (almost native: it uses pango to precompute
 text extents), though there is also a (currently, slightly buggy) Cairo backend.
 
-Building graphics declaratively let's you do some fun things. Like stick to
+Building graphics declaratively let's you do some fun things. Like stick two
 plots together:
 
 ```julia
