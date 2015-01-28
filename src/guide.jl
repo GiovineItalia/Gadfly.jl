@@ -670,7 +670,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     end
     vpenalty = 3
     vlayout_context = compose!(context(minwidth=sum(label_heights[tickvisibility]),
-                                       minheight=maximum(label_widths[tickvisibility]),
+                                       minheight=2padding + maximum(label_widths[tickvisibility]),
                                        penalty=vpenalty), vlayout)
 
     if guide.orientation == :horizontal
