@@ -618,7 +618,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     hlayout = ctxpromise() do draw_context
         static_labels = compose!(
             context(withoutjs=true),
-            text(ticks[tickvisibility], [1h + padding], labels[tickvisibility],
+            text(ticks[tickvisibility], [1h - padding], labels[tickvisibility],
                  [hcenter], [vbottom]),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
@@ -627,7 +627,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
         dynamic_labels = compose!(
             context(withjs=true),
-            text(ticks, [1h + padding], labels, [hcenter], [vbottom]),
+            text(ticks, [1h - padding], labels, [hcenter], [vbottom]),
             visible(tickvisibility),
             fill(theme.minor_label_color),
             font(theme.minor_label_font),
@@ -638,7 +638,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         return compose!(context(), static_labels, dynamic_labels)
     end
     hlayout_context = compose!(context(minwidth=sum(label_widths[tickvisibility]),
-                                       minheight=maximum(label_heights[tickvisibility])),
+                                       minheight=2*padding + maximum(label_heights[tickvisibility])),
                                hlayout)
 
     vlayout = ctxpromise() do draw_context
