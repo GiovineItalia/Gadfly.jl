@@ -54,6 +54,9 @@ end
     # Opacity of the plot background panel.
     panel_opacity,         Float64,         1.0
 
+    # Background of the entire plot
+    background_color,      ColorOrNothing,  nothing
+
     # Grid line color.
     grid_color,            ColorOrNothing,  color("#D0D0E0")
     grid_strokedash,       Maybe(Vector),   [0.5mm, 0.5mm]

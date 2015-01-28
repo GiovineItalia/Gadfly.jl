@@ -699,7 +699,15 @@ function render(plot::Plot)
                                    layer_aess, datas,
                                    layer_stats, scales, guides)
 
-    return pad_inner(root_context, 5mm)
+    ctx =  pad_inner(root_context, 5mm)
+
+    if plot.theme.background_color != nothing
+        compose!(ctx, (context(order=-1000000),
+                        fill(plot.theme.background_color),
+                        stroke(nothing), rectangle()))
+    end
+
+    return ctx
 end
 
 

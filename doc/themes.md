@@ -23,6 +23,8 @@ overrides the default theme's value.
   * `panel_opacity`: Opacity of the plot background panel. (Float in [0.0, 1.0])
   * `panel_stroke`: Border color of the main plot panel. (ColorValue or
     Nothing)
+  * `background_color`: Background color for the entire plot. If nothing, no
+    background. (ColorValue or Nothing)
   * `grid_color`: Color of grid lines. (ColorValue or Nothing)
   * `grid_color_focused`: In the D3 backend, mousing over the plot makes the
     grid lines emphasised by transitioning to this color. (ColorValue or Nothing)
