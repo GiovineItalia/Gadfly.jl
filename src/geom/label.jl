@@ -45,9 +45,9 @@ function deferred_label_context(geom::LabelGeometry,
 
     point_positions = Array(Tuple, 0)
     for (x, y) in zip(aes.x, aes.y)
-        x = Compose.absolute_x_position(x*cx, parent_transform, units,
+        x = Compose.absolute_x_position(Compose.x_measure(x), parent_transform, units,
                                         parent_box)
-        y = Compose.absolute_y_position(y*cy, parent_transform, units,
+        y = Compose.absolute_y_position(Compose.y_measure(y), parent_transform, units,
                                         parent_box)
         x -= parent_box.x0
         y -= parent_box.y0
