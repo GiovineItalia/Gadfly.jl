@@ -20,9 +20,7 @@ function element_aesthetics(::RibbonGeometry)
 end
 
 
-function render(geom::RibbonGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, data::Gadfly.Data,
-                scales::Dict{Symbol, ScaleElement})
+function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.ribbon", aes, :x, :ymin, :ymax)
     Gadfly.assert_aesthetics_equal_length("Geom.ribbon", aes,
                                           element_aesthetics(geom)...)

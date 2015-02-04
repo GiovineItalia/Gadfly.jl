@@ -36,25 +36,22 @@ end
 # Returns:
 #   A compose Form.
 #
-function render(geom::ErrorBarGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, data::Gadfly.Data,
-                scales::Dict{Symbol, ScaleElement})
+function render(geom::ErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     # check for X and Y error bar aesthetics
     if isempty(Gadfly.undefined_aesthetics(aes, element_aesthetics(xerrorbar())...))
-        xctx = render(xerrorbar(), theme, aes, scales)
+        xctx = render(xerrorbar(), theme, aes)
     else
         xctx = nothing
     end
     if isempty(Gadfly.undefined_aesthetics(aes, element_aesthetics(yerrorbar())...))
-        yctx = render(yerrorbar(), theme, aes, scales)
+        yctx = render(yerrorbar(), theme, aes)
     else
         yctx = nothing
     end
     compose(context(order=3), xctx, yctx)
 end
 
-function render(geom::YErrorBarGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
+function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.errorbar", aes,
                                      element_aesthetics(geom)...)
     Gadfly.assert_aesthetics_equal_length("Geom.errorbar", aes,
@@ -88,8 +85,7 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme,
                       for c in aes.color]))
 end
 
-function render(geom::XErrorBarGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, scales::Dict{Symbol, ScaleElement})
+function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.errorbar", aes,
                                      element_aesthetics(geom)...)
     Gadfly.assert_aesthetics_equal_length("Geom.errorbar", aes,

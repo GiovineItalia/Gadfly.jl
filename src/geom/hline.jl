@@ -19,9 +19,7 @@ end
 
 
 # Generate a form for the hline geometry
-function render(geom::HLineGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, data::Gadfly.Data,
-                scales::Dict{Symbol, ScaleElement})
+function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.hline", aes, :yintercept)
 
     color = geom.color === nothing ? theme.default_color : geom.color

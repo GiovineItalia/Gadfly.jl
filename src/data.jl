@@ -64,3 +64,16 @@ function chain(ds::Data...)
     chained_data
 end
 
+
+function show(io::IO, data::Data)
+    maxlen = 0
+    print(io, "Data(")
+    for name in names(Data)
+        if getfield(data, name) != nothing
+            print(io, "\n  ", string(name), "=")
+            show(io, getfield(data, name))
+        end
+    end
+    print(io, "\n)\n")
+end
+

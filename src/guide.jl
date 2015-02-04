@@ -562,7 +562,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     else
         labels = String[]
         ticks = Any[]
-        tickvisibility = Any[]
+        tickvisibility = Bool[]
         scale = Any[]
     end
 
@@ -575,7 +575,11 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         end
     else
         grids = Any[]
-        gridvisibility = Any[]
+        gridvisibility = Bool[]
+    end
+
+    if sum(gridvisibility) == 0 && sum(tickvisibility) == 0
+        return PositionedGuide[]
     end
 
     # grid lines
@@ -725,7 +729,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
     else
         labels = String[]
         ticks = Any[]
-        tickvisibility = Any[]
+        tickvisibility = Bool[]
         scale = Any[]
     end
 
@@ -738,7 +742,11 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         end
     else
         grids = Any[]
-        gridvisibility = Any[]
+        gridvisibility = Bool[]
+    end
+
+    if sum(gridvisibility) == 0 && sum(tickvisibility) == 0
+        return PositionedGuide[]
     end
 
     # grid lines

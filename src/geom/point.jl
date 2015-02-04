@@ -22,9 +22,7 @@ end
 # Returns:
 #   A compose Form.
 #
-function render(geom::PointGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, data::Gadfly.Data,
-                scales::Dict{Symbol, ScaleElement})
+function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.point", aes, :x, :y)
     Gadfly.assert_aesthetics_equal_length("Geom.point", aes,
                                           element_aesthetics(geom)...)

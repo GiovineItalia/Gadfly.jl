@@ -23,7 +23,7 @@ tests = [
     ("array_aesthetics",                      6inch, 3inch),
     ("subplot_grid",                          10inch, 10inch),
     ("subplot_grid_free_axis",                10inch, 10inch),
-    ("subplot_grid_histogram",                6inch, 3inch),
+    ("subplot_grid_histogram",                10inch, 3inch),
     ("subplot_layers",                        8inch, 6inch),
     ("labels",                                6inch, 6inch),
     ("percent",                               6inch, 6inch),
@@ -85,7 +85,8 @@ tests = [
     ("issue509",                              6inch, 3inch),
     ("layer_order",                           6inch, 3inch),
     ("single_datetime",                       6inch, 3inch),
-    ("layered_subplots",                      6inch, 6inch)
+    ("layered_subplots",                      6inch, 6inch),
+    ("subplot_layer_data",                    6inch, 6inch)
 ]
 
 

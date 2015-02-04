@@ -176,6 +176,11 @@ type Plot
 end
 
 
+function layers(p::Plot)
+    return p.layers
+end
+
+
 function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Function)
     add_plot_element(p, data, arg())
 end
@@ -418,6 +423,8 @@ function render(plot::Plot)
     datas = Array(Data, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
         if layer.data_source === nothing && isempty(layer.mapping)
+            layer.data_source = plot.data_source
+            layer.mapping = plot.mapping
             datas[i] = plot.data
         else
             datas[i] = Data()
@@ -432,6 +439,31 @@ function render(plot::Plot)
 
             for (k, v) in layer.mapping
                 set_mapped_data!(datas[i], layer.data_source, k, v)
+            end
+        end
+    end
+
+    # We need to process subplot layers somewhat as though they were regular
+    # plot layers. This is the only way scales, etc, can be consistently
+    # applied. I'm not exactly sure what that entails. Ultimately, we need to
+    # feed this stuff back to the layers, right?
+    subplot_datas = Data[]
+    for (layer, layer_data) in zip(plot.layers, datas)
+        if isa(layer.geom, Geom.SubplotGeometry)
+            for subplot_layer in layers(layer.geom)
+                subplot_data = Data()
+                if subplot_layer.data_source === nothing
+                    subplot_layer.data_source = layer.data_source
+                end
+
+                if isempty(subplot_layer.mapping)
+                    subplot_layer.mapping = layer.mapping
+                end
+
+                for (k, v) in subplot_layer.mapping
+                    set_mapped_data!(subplot_data, subplot_layer.data_source, k, v)
+                end
+                push!(subplot_datas, subplot_data)
             end
         end
     end
@@ -478,7 +510,6 @@ function render(plot::Plot)
     for scale in plot.scales
         union!(scaled_aesthetics, element_aesthetics(scale))
     end
-
 
     # Only one scale can be applied to an aesthetic (without getting some weird
     # and incorrect results), so we organize scales into a dict.
@@ -547,7 +578,7 @@ function render(plot::Plot)
         end
 
         t = :categorical
-        for data in datas
+        for data in chain(datas, subplot_datas)
             val = getfield(data, var)
             if val != nothing
                 t = classify_data(val)
@@ -651,7 +682,8 @@ function render(plot::Plot)
     end
 
     # I. Scales
-    layer_aess = Scale.apply_scales(Iterators.distinct(values(scales)), datas...)
+    layer_aess = Scale.apply_scales(Iterators.distinct(values(scales)),
+                                    datas..., subplot_datas...)
 
     # set default labels
     for (i, layer) in enumerate(plot.layers)
@@ -666,7 +698,6 @@ function render(plot::Plot)
        haskey(plot.mapping, :color) && !isa(plot.mapping[:color], AbstractArray)
         layer_aess[1].color_key_title = string(plot.mapping[:color])
     end
-
 
     # IIa. Layer-wise statistics
     for (layer_stat, aes) in zip(layer_stats, layer_aess)
@@ -695,9 +726,28 @@ function render(plot::Plot)
         push!(guides, Guide.colorkey())
     end
 
-    root_context = render_prepared(plot, coord, plot_aes,
-                                   layer_aess, datas,
-                                   layer_stats, scales, guides)
+    # build arrays of scaled aesthetics for layers within subplots
+    layer_subplot_aess = Array(Vector{Aesthetics}, length(plot.layers))
+    layer_subplot_datas = Array(Vector{Data}, length(plot.layers))
+    j = 1
+    for (i, layer) in enumerate(plot.layers)
+        layer_subplot_aess[i] = Aesthetics[]
+        layer_subplot_datas[i] = Data[]
+        if isa(layer.geom, Geom.SubplotGeometry)
+            for subplot_layer in layers(layer.geom)
+                push!(layer_subplot_aess[i], layer_aess[length(datas) + j])
+                inherit!(layer_subplot_aess[i][end], plot_aes)
+                push!(layer_subplot_datas[i], subplot_datas[j])
+                j += 1
+            end
+        end
+    end
+
+
+    root_context = render_prepared(plot, coord, plot_aes, layer_aess,
+                                   layer_stats, layer_subplot_aess,
+                                   layer_subplot_datas,
+                                   scales, guides)
 
     ctx =  pad_inner(root_context, 5mm)
 
@@ -723,6 +773,9 @@ end
 #       as plot.layers.
 #   layer_stats: A vector of statistic elements of the same length as
 #       plot.layers.
+#   layer_subplot_aesthetics: An array of aesthetics for each layer in the plot.
+#       If the layer in a subplot geometry, the array is scaled data for each
+#       sub-geometry, otherwise it's empty. I just melted your brain, didn't I?
 #   scales: Dictionary mapping an aesthetics symbol to the scale applied to it.
 #   statistics: Statistic elements applied plot-wise.
 #   guides: Guide elements indexed by type. (Only one type of each guide may
@@ -737,8 +790,9 @@ function render_prepared(plot::Plot,
                          coord::CoordinateElement,
                          plot_aes::Aesthetics,
                          layer_aess::Vector{Aesthetics},
-                         layer_datas::Vector{Data},
                          layer_stats::Vector{StatisticElement},
+                         layer_subplot_aess::Vector{Vector{Aesthetics}},
+                         layer_subplot_datas::Vector{Vector{Data}},
                          scales::Dict{Symbol, ScaleElement},
                          guides::Vector{GuideElement};
                          table_only=false)
@@ -751,8 +805,13 @@ function render_prepared(plot::Plot,
                    for layer in plot.layers]
 
     compose!(plot_context,
-             [compose(context(order=layer.order), render(layer.geom, theme, aes, data, scales))
-              for (layer, aes, data, theme) in zip(plot.layers, layer_aess, layer_datas, themes)]...)
+             [compose(context(order=layer.order), render(layer.geom, theme, aes,
+                                                         subplot_aes, subplot_data,
+                                                         scales))
+              for (layer, aes, subplot_aes, subplot_data, theme) in zip(plot.layers, layer_aess,
+                                                   layer_subplot_aess,
+                                                   layer_subplot_datas,
+                                                   themes)]...)
 
     # V. Guides
     guide_contexts = Any[]

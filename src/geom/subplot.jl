@@ -90,6 +90,11 @@ immutable SubplotGrid <: SubplotGeometry
 end
 
 
+function layers(geom::SubplotGrid)
+    return geom.layers
+end
+
+
 const subplot_grid = SubplotGrid
 
 
@@ -126,19 +131,31 @@ end
 # many smaller plots.
 function render(geom::SubplotGrid, theme::Gadfly.Theme,
                 superplot_aes::Gadfly.Aesthetics,
-                superplot_data::Gadfly.Data,
-                scales::Dict{Symbol, ScaleElement})
-    if superplot_aes.xgroup === nothing && superplot_aes.ygroup === nothing
-        error("Geom.subplot_grid requires \"xgroup\" and/or \"ygroup\" to be bound.")
+                subplot_layer_aess::Vector{Gadfly.Aesthetics},
+                subplot_layer_datas::Vector{Gadfly.Data},
+                scales::Dict{Symbol, Gadfly.ScaleElement})
+
+    m = 1
+    n = 1
+    for layer_aes in subplot_layer_aess
+        if layer_aes.xgroup != nothing
+            m = max(m, maximum(layer_aes.xgroup))
+        end
+        if layer_aes.ygroup != nothing
+            n = max(n, maximum(layer_aes.ygroup))
+        end
     end
 
-    # partition the each aesthetic into a matrix of aesthetics
-    aes_grid = Gadfly.by_xy_group(superplot_aes, superplot_aes.xgroup,
-                                  superplot_aes.ygroup)
-    n, m = size(aes_grid)
+    layer_aes_grid = Array(Matrix{Gadfly.Aesthetics}, length(geom.layers))
+    for (i, (layer, aes)) in enumerate(zip(geom.layers, subplot_layer_aess))
+        layer_aes_grid[i] = Gadfly.by_xy_group(aes, aes.xgroup, aes.ygroup, m, n)
+    end
 
-    data_grid = Gadfly.by_xy_group(superplot_data, superplot_aes.xgroup,
-                                   superplot_aes.ygroup)
+    layer_data_grid = Array(Matrix{Gadfly.Data}, length(geom.layers))
+    for (i, (layer, data, aes)) in enumerate(zip(geom.layers, subplot_layer_datas,
+                                                 subplot_layer_aess))
+        layer_data_grid[i] = Gadfly.by_xy_group(data, aes.xgroup, aes.ygroup, m, n)
+    end
 
     coord = Coord.cartesian()
     plot_stats = Gadfly.StatisticElement[stat for stat in geom.statistics]
@@ -146,30 +163,22 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                        Geom.default_statistic(layer.geom) : layer.statistic
                    for layer in geom.layers]
 
-    layer_aes_grid = Array(Vector{Gadfly.Aesthetics}, n, m)
-    layer_data_grid = Array(Vector{Gadfly.Data}, n, m)
-
     for i in 1:n, j in 1:m
-        layer_aes = Gadfly.Aesthetics[copy(aes_grid[i, j])
-                                      for _ in 1:length(geom.layers)]
-        layer_data_grid[i, j] = [data_grid[i, j] for _ in 1:length(geom.layers)]
-        Scale.apply_scales(geom.scales, layer_aes,
-                           layer_data_grid[i, j]...)
+        Scale.apply_scales(geom.scales,
+                           Gadfly.Aesthetics[layer_aes_grid[k][i, j]
+                                             for k in 1:length(geom.layers)],
+                           Gadfly.Data[layer_data_grid[k][i, j]
+                                       for k in 1:length(geom.layers)]...)
 
-
-        for (layer_stat, aes) in zip(layer_stats, layer_aes)
+        for (k, layer_stat) in enumerate(layer_stats)
             Stat.apply_statistics(Gadfly.StatisticElement[layer_stat],
-                                  scales, coord, aes)
+                                  scales, coord, layer_aes_grid[k][i, j])
         end
-        layer_aes_grid[i, j] = layer_aes
-
-        plot_aes = Gadfly.concat(layer_aes...)
-        Stat.apply_statistics(plot_stats, scales, coord, plot_aes)
-        aes_grid[i, j] = plot_aes
     end
 
     # apply geom-wide statistics
-    geom_aes = Gadfly.concat(aes_grid...)
+    geom_aes = Gadfly.concat([layer_aes_grid[k][i,j]
+                              for i in 1:n, j in 1:m, k in 1:length(geom.layers)]...)
     geom_stats = Gadfly.StatisticElement[]
 
     has_stat_xticks = false
@@ -198,35 +207,41 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     Stat.apply_statistics(geom_stats, scales, coord, geom_aes)
 
+    aes_grid = [geom_aes for i in 1:n, j in 1:m]
+
     # if either axis is on a free scale, we need to apply row/column-wise
     # tick statistics.
     if (geom.free_x_axis)
         for j in 1:m
-            col_aes = Gadfly.concat([aes_grid[i, j] for i in 1:n]...)
+            col_aes = Gadfly.concat([layer_aes_grid[k][i, j]
+                                     for i in 1:n, k in 1:length(geom.layers)]...)
             Stat.apply_statistic(Stat.xticks(), scales, coord, col_aes)
-            for i in 1:n
-                aes_grid[i, j] = Gadfly.concat(aes_grid[i, j], col_aes)
+            for i in 1:n, k in 1:length(geom.layers)
+                layer_aes_grid[k][i, j] = Gadfly.concat(layer_aes_grid[k][i, j], col_aes)
+                aes_grid[i, j] = col_aes
             end
         end
     end
 
     if (geom.free_y_axis)
         for i in 1:n
-            row_aes = Gadfly.concat([aes_grid[i, j] for j in 1:m]...)
+            row_aes = Gadfly.concat([layer_aes_grid[k][i, j]
+                                     for j in 1:m, k in 1:length(geom.layers)]...)
             row_aes.xgrid = nothing
             row_aes.xtick = nothing
             row_aes.xtickvisible = nothing
             row_aes.xtickscale = nothing
 
             Stat.apply_statistic(Stat.yticks(), scales, coord, row_aes)
-            for j in 1:m
-                aes_grid[i, j] = Gadfly.concat(aes_grid[i, j], row_aes)
+            for j in 1:m, k in 1:length(geom.layers)
+                layer_aes_grid[k][i, j] = Gadfly.concat(layer_aes_grid[k][i, j], row_aes)
+                aes_grid[i, j] = row_aes
             end
         end
     end
 
-    for i in 1:n, j in 1:m
-        Gadfly.inherit!(aes_grid[i, j], geom_aes)
+    for k in length(geom.layers), i in 1:n, j in 1:m
+        Gadfly.inherit!(layer_aes_grid[k][i, j], geom_aes)
     end
 
     # TODO: this assumes a rather ridged layout
@@ -272,6 +287,12 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     ylabels = superplot_aes.ygroup_label(1.0:n)
     subplot_padding = 2mm
 
+    # This assumes non of the layers themselves are subplot geometries
+    layer_subplot_aess = Vector{Gadfly.Aesthetics}[Array(Gadfly.Aesthetics, 0)
+                                                   for _ in 1:length(geom.layers)]
+    layer_subplot_datas = Vector{Gadfly.Data}[Array(Gadfly.Data, 0)
+                                                   for _ in 1:length(geom.layers)]
+
     for i in 1:n, j in 1:m
         p = Plot()
         p.theme = theme
@@ -314,9 +335,12 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
         subtbl = Gadfly.render_prepared(
                             p, Gadfly.Coord.cartesian(),
-                            aes_grid[i, j], layer_aes_grid[i, j],
-                            layer_data_grid[i, j],
+                            aes_grid[i, j],
+                            Gadfly.Aesthetics[layer_aes_grid[k][i, j]
+                                              for k in 1:length(geom.layers)],
                             layer_stats,
+                            layer_subplot_aess,
+                            layer_subplot_datas,
                             scales,
                             guides,
                             table_only=true)

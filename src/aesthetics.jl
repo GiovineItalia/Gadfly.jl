@@ -87,6 +87,19 @@ typealias NumericalAesthetic
 end
 
 
+function show(io::IO, data::Aesthetics)
+    maxlen = 0
+    print(io, "Aesthetics(")
+    for name in names(Aesthetics)
+        if getfield(data, name) != nothing
+            print(io, "\n  ", string(name), "=")
+            show(io, getfield(data, name))
+        end
+    end
+    print(io, "\n)\n")
+end
+
+
 # Alternate aesthetic names
 const aesthetic_aliases =
     @compat Dict{Symbol, Symbol}(:colour        => :color,
@@ -320,13 +333,13 @@ end
 #   A Array{Aesthetics} of size max(1, length(xgroup)) by
 #   max(1, length(ygroup))
 #
-function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup)
-    @assert !is(xgroup, nothing) || !is(ygroup, nothing)
+function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
+                                                   num_xgroups, num_ygroups)
     @assert xgroup === nothing || ygroup === nothing ||
             length(xgroup) == length(ygroup)
 
-    n = ygroup === nothing ? 1 : maximum(ygroup)
-    m = xgroup === nothing ? 1 : maximum(xgroup)
+    n = num_ygroups
+    m = num_xgroups
 
     xrefs = xgroup === nothing ? [1] : xgroup
     yrefs = ygroup === nothing ? [1] : ygroup
@@ -335,6 +348,10 @@ function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup)
     staging = Array(DataArray, n, m)
     for i in 1:n, j in 1:m
         aes_grid[i, j] = T()
+    end
+
+    if is(xgroup, nothing) && is(ygroup, nothing)
+        return aes_grid
     end
 
     function make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},

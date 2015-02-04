@@ -258,9 +258,7 @@ function deferred_label_context(geom::LabelGeometry,
 end
 
 
-function render(geom::LabelGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, data::Gadfly.Data,
-                scales::Dict{Symbol, ScaleElement})
+function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.Label", aes, :label, :x, :y)
     return ctxpromise(drawctx -> deferred_label_context(geom, aes, theme, drawctx))
 end
