@@ -135,6 +135,18 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                 subplot_layer_datas::Vector{Gadfly.Data},
                 scales::Dict{Symbol, Gadfly.ScaleElement})
 
+    # inherit aesthetics from the plot when needed but not provided
+    for (layer, layer_aes) in zip(geom.layers, subplot_layer_aess)
+        inherited_aes = element_aesthetics(layer.geom)
+        push!(inherited_aes, :xgroup, :ygroup)
+        for var in inherited_aes
+            if getfield(layer_aes, var) === nothing
+                setfield!(layer_aes, var, getfield(superplot_aes, var))
+            end
+        end
+    end
+
+    # work out the grid size
     m = 1
     n = 1
     for layer_aes in subplot_layer_aess

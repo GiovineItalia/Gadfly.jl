@@ -580,9 +580,8 @@ function render(plot::Plot)
         t = :categorical
         for data in chain(datas, subplot_datas)
             val = getfield(data, var)
-            if val != nothing
+            if val != nothing && val != :categorical
                 t = classify_data(val)
-                break
             end
         end
 
@@ -736,13 +735,11 @@ function render(plot::Plot)
         if isa(layer.geom, Geom.SubplotGeometry)
             for subplot_layer in layers(layer.geom)
                 push!(layer_subplot_aess[i], layer_aess[length(datas) + j])
-                inherit!(layer_subplot_aess[i][end], plot_aes)
                 push!(layer_subplot_datas[i], subplot_datas[j])
                 j += 1
             end
         end
     end
-
 
     root_context = render_prepared(plot, coord, plot_aes, layer_aess,
                                    layer_stats, layer_subplot_aess,

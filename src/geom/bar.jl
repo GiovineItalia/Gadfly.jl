@@ -238,7 +238,7 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         if (is(aes.xmin, nothing) || is(aes.xmax, nothing)) && is(aes.x, nothing)
             error("Geom.bar required \"x\" to be bound or both \"x_min\" and \"x_max\".")
         end
-        if (aes.x != nothing && length(aes.x) != length(aes.y)) ||
+        if (aes.x != nothing && length(aes.x) != length(aes.y)) &&
            (aes.xmin != nothing && (length(aes.xmin) != length(aes.y) || length(aes.xmax) != length(aes.y)))
             error("Geom.bar requires x and y to be of equal length.")
         end
