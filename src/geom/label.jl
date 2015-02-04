@@ -1,9 +1,14 @@
 
 immutable LabelGeometry <: Gadfly.GeometryElement
+    # One of :dynamic, :left, :right, :above, :below, :centered
+    position::Symbol
+
+    # If true, hide labels that can't be made to not-overlap during dynamic
+    # lael layout.
     hide_overlaps::Bool
 
-    function LabelGeometry(;hide_overlaps::Bool=true)
-        new(hide_overlaps)
+    function LabelGeometry(;position=:dynamic, hide_overlaps::Bool=true)
+        new(position, hide_overlaps)
     end
 end
 
@@ -258,9 +263,42 @@ function deferred_label_context(geom::LabelGeometry,
 end
 
 
+const label_layouts = @compat Dict(
+    :left     => (hright,  vcenter, -2mm,  0mm),
+    :right    => (hleft,   vcenter,  2mm,  0mm),
+    :above    => (hcenter, vbottom,  0mm, -2mm),
+    :below    => (hcenter, vtop,     0mm,  2mm),
+    :centered => (hcenter, vcenter,  0mm,  0mm)
+)
+
+
 function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.Label", aes, :label, :x, :y)
-    return ctxpromise(drawctx -> deferred_label_context(geom, aes, theme, drawctx))
+
+    if geom.position == :dynamic
+        return ctxpromise(drawctx -> deferred_label_context(geom, aes, theme, drawctx))
+    else
+        if !in(geom.position, [:left, :right, :above, :below, :centered])
+            error("""
+                The position argument of Geom.label must be one of :dynamic,
+                :left, :right, :above, :below, :centered
+                """)
+        end
+
+        hpos, vpos, xoff, yoff = label_layouts[geom.position]
+
+        return compose!(
+            context(),
+            text([Compose.x_measure(x) + xoff for x in aes.x],
+                 [Compose.y_measure(y) + yoff for y in aes.y],
+                 aes.label,
+                 [hpos], [vpos]),
+            font(theme.point_label_font),
+            fontsize(theme.point_label_font_size),
+            fill(theme.point_label_color),
+            stroke(nothing),
+            svgclass("geometry"))
+    end
 end
 
 

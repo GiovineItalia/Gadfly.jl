@@ -22,8 +22,14 @@ overlap, and hides any that would overlap.
 Geom.label(;hide_overlaps=true)
 ```
 
-  * `hide_overlaps`: If true, labels that would otherwise overlap another
-    label or be drawn outside the plot panel are hidden. (default: true)
+  * `position`: One of `:dynamic`, `:left`, `:right`, `:above`, `:below`,
+    `:centered`. If `:dynamic` is used, label positions will be adjusted to
+    avoid overaps. Otherwise, labels will be statically positioned left, right,
+    above, below, or centered relative to the point.
+
+  * `hide_overlaps`: If true, and dynamic positioning is used, labels that would
+    otherwise overlap another label or be drawn outside the plot panel are
+    hidden. (default: true)
 
 
 # Examples
@@ -47,4 +53,7 @@ plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
      Scale.x_log10, Scale.y_log10, Geom.point, Geom.label)
 ```
 
-
+```julia
+plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
+     Scale.x_log10, Scale.y_log10, Geom.label(position=:centered))
+```

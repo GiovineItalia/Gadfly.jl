@@ -2,6 +2,7 @@
 module Geom
 
 using Color
+using Compat
 using Compose
 using DataArrays
 using DataStructures
