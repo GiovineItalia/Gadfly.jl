@@ -418,6 +418,15 @@ function render(plot::Plot)
         push!(plot.layers, layer)
     end
 
+    # TODO: When subplots are given in multiple layers, we should rearrange,
+    # putting the layers in one subplot instead.
+    if sum([isa(layer.geom, Geom.SubplotGeometry) for layer in plot.layers]) > 1
+        error("""
+            Subplot geometries can not be used in multiple layers. Instead
+            use layers within one subplot geometry.
+            """)
+    end
+
     # Process layers, filling inheriting mappings or data from the Plot where
     # they are missing.
     datas = Array(Data, length(plot.layers))
