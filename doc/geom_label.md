@@ -18,7 +18,7 @@ overlap, and hides any that would overlap.
 
 # Arguments
 
-```{.julia execute="fales"}
+```{.julia execute="false"}
 Geom.label(;hide_overlaps=true)
 ```
 
