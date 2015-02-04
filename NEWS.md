@@ -5,6 +5,13 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 0.3.11
 
+  * Options to statically position `Geom.label` labels. (Issue #542)
+
+  * Layers within `Geom.subplot_grid` now work correctly. (Issue #528)
+
+  * Add a `background_color` option in `Theme` to change the plot's background
+    color. (Issue #534)
+
   * Rename color scales for increased consistency: `Scale.continuous_color` →
     `Scale.color_continuous` and `Scale.discrete_color` → `Scale.color_discrete`.
 

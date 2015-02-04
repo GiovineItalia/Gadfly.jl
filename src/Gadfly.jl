@@ -454,8 +454,7 @@ function render(plot::Plot)
 
     # We need to process subplot layers somewhat as though they were regular
     # plot layers. This is the only way scales, etc, can be consistently
-    # applied. I'm not exactly sure what that entails. Ultimately, we need to
-    # feed this stuff back to the layers, right?
+    # applied.
     subplot_datas = Data[]
     for (layer, layer_data) in zip(plot.layers, datas)
         if isa(layer.geom, Geom.SubplotGeometry)
