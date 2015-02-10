@@ -63,13 +63,6 @@ typealias NumericalAesthetic
     xtickscale,           Maybe(Vector{Float64})
     ytickscale,           Maybe(Vector{Float64})
 
-    # pesudo-aesthetics used to indicate that drawing might
-    # occur beyond any x/y value.
-    xdrawmin,     Any
-    xdrawmax,     Any
-    ydrawmin,     Any
-    ydrawmax,     Any
-
     # plot viewport extents
     xviewmin,     Any
     xviewmax,     Any
@@ -365,8 +358,6 @@ function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
         if var == :xgroup || var == :ygroup||
            var == :xtick || var == :ytick ||
            var == :xgrid || var == :ygrid ||
-           var == :x_drawmin || var == :y_drawmin ||
-           var == :x_drawmax || var == :y_drawmax ||
            var == :x_viewmin || var == :y_viewmin ||
            var == :x_viewmax || var == :y_viewmax ||
            var == :color_key_colors
@@ -413,6 +404,32 @@ function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
     end
 
     aes_grid
+end
+
+
+function inherit!(a::Aesthetics, b::Aesthetics;
+                  clobber=[])
+    clobber_set = Set{Symbol}(clobber)
+    for field in Aesthetics.names
+        aval = getfield(a, field)
+        bval = getfield(b, field)
+        if field in clobber_set
+            setfield!(a, field, bval)
+        elseif aval === nothing || aval === string || aval == showoff
+            setfield!(a, field, bval)
+        elseif field == :xviewmin || field == :yviewmin
+            if bval != nothing && (aval == nothing || aval > bval)
+                setfield!(a, field, bval)
+            end
+        elseif field == :xviewmax || field == :yviewmax
+            if bval != nothing && (aval == nothing || aval < bval)
+                setfield!(a, field, bval)
+            end
+        elseif typeof(aval) <: Dict && typeof(bval) <: Dict
+            merge!(aval, getfield(b, field))
+        end
+    end
+    nothing
 end
 
 

@@ -99,14 +99,14 @@ function apply_statistic(stat::HistogramStatistic,
         othervar = :x
         minvar = :ymin
         maxvar = :ymax
-        drawmaxvar = :xdrawmax
+        viewmaxvar = :xviewmax
         labelvar = :x_label
     else
         var = :x
         othervar = :y
         minvar = :xmin
         maxvar = :xmax
-        drawmaxvar = :ydrawmax
+        viewmaxvar = :yviewmax
         labelvar = :y_label
     end
 
@@ -242,10 +242,10 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
 
-        drawmax = float64(maximum(stack_height))
-        aes_drawmax = getfield(aes, drawmaxvar)
-        if aes_drawmax === nothing || aes_drawmax < drawmax
-            setfield!(aes, drawmaxvar, drawmax)
+        viewmax = float64(maximum(stack_height))
+        aes_viewmax = getfield(aes, viewmaxvar)
+        if aes_viewmax === nothing || aes_viewmax < viewmax
+            setfield!(aes, viewmaxvar, viewmax)
         end
 
         aes.color = PooledDataArray(colors)
@@ -485,14 +485,14 @@ end
 
 
 function xticks(ticks::Union(Nothing, AbstractArray)=nothing)
-    TickStatistic([:x, :xmin, :xmax, :xdrawmin, :xdrawmax], "x", ticks)
+    TickStatistic([:x, :xmin, :xmax], "x", ticks)
 end
 
 
 function yticks(ticks::Union(Nothing, AbstractArray)=nothing)
     TickStatistic(
         [:y, :ymin, :ymax, :middle, :lower_hinge, :upper_hinge,
-         :lower_fence, :upper_fence, :ydrawmin, :ydrawmax], "y", ticks)
+         :lower_fence, :upper_fence], "y", ticks)
 end
 
 

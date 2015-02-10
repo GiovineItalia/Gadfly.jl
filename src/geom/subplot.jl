@@ -218,8 +218,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     end
 
     Stat.apply_statistics(geom_stats, scales, coord, geom_aes)
-
-    aes_grid = [geom_aes for i in 1:n, j in 1:m]
+    aes_grid = [copy(geom_aes) for i in 1:n, j in 1:m]
 
     # if either axis is on a free scale, we need to apply row/column-wise
     # tick statistics.
@@ -229,8 +228,10 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                                      for i in 1:n, k in 1:length(geom.layers)]...)
             Stat.apply_statistic(Stat.xticks(), scales, coord, col_aes)
             for i in 1:n, k in 1:length(geom.layers)
-                layer_aes_grid[k][i, j] = Gadfly.concat(layer_aes_grid[k][i, j], col_aes)
-                aes_grid[i, j] = col_aes
+                Gadfly.inherit!(layer_aes_grid[k][i, j], col_aes,
+                                clobber=[:xgrid, :xtick, :xtickvisible, :xtickscale])
+                Gadfly.inherit!(aes_grid[i, j], col_aes,
+                                clobber=[:xgrid, :xtick, :xtickvisible, :xtickscale])
             end
         end
     end
@@ -239,21 +240,19 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         for i in 1:n
             row_aes = Gadfly.concat([layer_aes_grid[k][i, j]
                                      for j in 1:m, k in 1:length(geom.layers)]...)
-            row_aes.xgrid = nothing
-            row_aes.xtick = nothing
-            row_aes.xtickvisible = nothing
-            row_aes.xtickscale = nothing
 
             Stat.apply_statistic(Stat.yticks(), scales, coord, row_aes)
             for j in 1:m, k in 1:length(geom.layers)
-                layer_aes_grid[k][i, j] = Gadfly.concat(layer_aes_grid[k][i, j], row_aes)
-                aes_grid[i, j] = row_aes
+                Gadfly.inherit!(layer_aes_grid[k][i, j], row_aes,
+                                clobber=[:ygrid, :ytick, :ytickvisible, :ytickscale])
+                Gadfly.inherit!(aes_grid[i, j], row_aes,
+                                clobber=[:ygrid, :ytick, :ytickvisible, :ytickscale])
             end
         end
     end
 
     for k in length(geom.layers), i in 1:n, j in 1:m
-        Gadfly.inherit!(layer_aes_grid[k][i, j], geom_aes)
+        Gadfly.inherit!(layer_aes_grid[k][i, j], aes_grid[i, j])
     end
 
     # TODO: this assumes a rather ridged layout
