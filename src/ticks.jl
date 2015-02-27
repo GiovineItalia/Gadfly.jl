@@ -65,7 +65,7 @@ end
 function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(Float64,Float64)}, k_min,
                            k_max, k_ideal, strict_span)
     one_t = one(T)
-    if x_min == x_max
+    if x_max - x_min < eps()*one_t
         R = typeof(1.0 * one_t)
         return R[x_min], x_min - one_t, x_min + one_t
     end
