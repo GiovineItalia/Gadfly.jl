@@ -241,7 +241,17 @@ function apply_scale(scale::ContinuousScale,
                 end
             end
 
-            ds = DataArray(T, length(vals))
+            hasna = false
+            if isa(vals, AbstractDataArray)
+                for d in vals
+                    if isna(d)
+                        hasna = true
+                        break
+                    end
+                end
+            end
+
+            ds = hasna ? DataArray(T, length(vals)) : Array(T, length(vals))
             apply_scale_typed!(ds, vals, scale)
 
             setfield!(aes, var, ds)

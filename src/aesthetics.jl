@@ -284,7 +284,7 @@ function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
     if isa(a, DataArray) || isa(b, DataArray)
         ab = DataArray(V, length(a) + length(b))
     else
-        ab = Array(V, length(a), length(b))
+        ab = Array(V, length(a) + length(b))
     end
     i = 1
     for x in a
@@ -338,7 +338,7 @@ function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
     yrefs = ygroup === nothing ? [1] : ygroup
 
     aes_grid = Array(T, n, m)
-    staging = Array(DataArray, n, m)
+    staging = Array(AbstractArray, n, m)
     for i in 1:n, j in 1:m
         aes_grid[i, j] = T()
     end
@@ -348,9 +348,11 @@ function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
     end
 
     function make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},
-                                          arr::AbstractArray)
+                                             arr::AbstractArray)
         PooledDataArray(convert(Array{T}, arr))
     end
+    make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},
+                                    arr::PooledDataArray{T, U, V}) = arr
 
     for var in T.names
         # Skipped aesthetics. Don't try to partition aesthetics for which it
@@ -372,7 +374,7 @@ function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
             end
 
             for i in 1:n, j in 1:m
-                staging[i, j] = DataArray(eltype(vals), 0)
+                staging[i, j] = similar(vals, 0)
             end
 
             for (i, j, v) in zip(Iterators.cycle(yrefs), Iterators.cycle(xrefs), vals)
