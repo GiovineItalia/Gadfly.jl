@@ -3,8 +3,7 @@
 # Find the smallest order of magnitude that is larger than xspan This is a
 # little opaque because I want to avoid assuming the log function is defined
 # over typeof(xspan)
-function bounding_order_of_magnitude(xspan)
-    DT = typeof(xspan)
+function bounding_order_of_magnitude{DT}(xspan::DT)
     one_dt = one(DT)
 
     a = 1
@@ -91,6 +90,12 @@ function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(Fl
                 end
 
                 r = ceil((x_max - span) / (q*10.0^z * one_t))
+
+                # isufficient precision to compute ticks at this scale
+                if r + q*10.0^z * one_t <= r
+                    continue
+                end
+
                 while r*q*10.0^z * one_t <= x_min
                     has_zero = r <= 0 && abs(r) < k
 
@@ -121,6 +126,11 @@ function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(Fl
             end
         end
         z -= 1
+    end
+
+    if isinf(high_score)
+        R = typeof(1.0 * one_t)
+        return R[x_min], x_min - one_t, x_min + one_t
     end
 
     span = q_best * 10.0^z_best * one_t
