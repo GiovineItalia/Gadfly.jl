@@ -33,7 +33,7 @@ overrides the default theme's value.
     labels. (String)
   * `minor_label_font_size`: Font size used for minor labels. (Measure)
   * `minor_label_color`: Color used for minor labels. (ColorValue)
-  * `major_label_font`: Font used for major labels usch as guide titles and axis
+  * `major_label_font`: Font used for major labels such as guide titles and axis
     labels. (String)
   * `major_label_font_size`: Font size used for major labels. (Measure)
   * `major_label_color`: Color used for major labels. (ColorValue)
