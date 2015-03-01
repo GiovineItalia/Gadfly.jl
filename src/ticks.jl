@@ -89,14 +89,13 @@ function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(Fl
                     continue
                 end
 
-                r = ceil((x_max - span) / (q*10.0^z * one_t))
-
-                # isufficient precision to compute ticks at this scale
-                if r + q*10.0^z * one_t <= r
+                stp = q*10.0^z
+                if stp < eps()
                     continue
                 end
+                r = ceil((x_max - span) / (stp * one_t))
 
-                while r*q*10.0^z * one_t <= x_min
+                while r*stp * one_t <= x_min
                     has_zero = r <= 0 && abs(r) < k
 
                     # simplicity
