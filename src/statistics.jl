@@ -99,6 +99,7 @@ function apply_statistic(stat::HistogramStatistic,
         othervar = :x
         minvar = :ymin
         maxvar = :ymax
+        viewminvar = :xviewmin
         viewmaxvar = :xviewmax
         labelvar = :x_label
     else
@@ -106,6 +107,7 @@ function apply_statistic(stat::HistogramStatistic,
         othervar = :y
         minvar = :xmin
         maxvar = :xmax
+        viewminvar = :yviewmin
         viewmaxvar = :yviewmax
         labelvar = :y_label
     end
@@ -249,6 +251,10 @@ function apply_statistic(stat::HistogramStatistic,
         end
 
         aes.color = PooledDataArray(colors)
+    end
+
+    if getfield(aes, viewminvar) === nothing
+        setfield!(aes, viewminvar, 0.0)
     end
 
     if haskey(scales, othervar)

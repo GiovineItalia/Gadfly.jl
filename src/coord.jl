@@ -191,26 +191,26 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     # viewmin/max that is set explicitly should override min/max
     for aes in aess
         if aes.xviewmin != nothing
-            xviewmin = xviewmin === nothing ? aes.xviewmin : min(xviewmin, aes.xviewmin) 
+            xviewmin = xviewmin === nothing ? aes.xviewmin : min(xviewmin, aes.xviewmin)
         end
 
         if aes.xviewmax != nothing
-            xviewmax = xviewmax === nothing ? aes.xviewmax : max(xviewmax, aes.xviewmax) 
+            xviewmax = xviewmax === nothing ? aes.xviewmax : max(xviewmax, aes.xviewmax)
         end
 
         if aes.yviewmin != nothing
-            yviewmin = yviewmin === nothing ? aes.yviewmin : min(yviewmin, aes.yviewmin) 
+            yviewmin = yviewmin === nothing ? aes.yviewmin : min(yviewmin, aes.yviewmin)
         end
 
         if aes.yviewmax != nothing
-            yviewmax = yviewmax === nothing ? aes.yviewmax : max(yviewmax, aes.yviewmax) 
+            yviewmax = yviewmax === nothing ? aes.yviewmax : max(yviewmax, aes.yviewmax)
         end
     end
 
-    xmax = xviewmax === nothing ? xmax : xviewmax 
-    xmin = xviewmin === nothing ? xmin : xviewmin 
-    ymax = yviewmax === nothing ? ymax : yviewmax 
-    ymin = yviewmin === nothing ? ymin : yviewmin 
+    xmax = xviewmax === nothing ? xmax : xviewmax
+    xmin = xviewmin === nothing ? xmin : xviewmin
+    ymax = yviewmax === nothing ? ymax : yviewmax
+    ymin = yviewmin === nothing ? ymin : yviewmin
 
     # Hard limits set in Coord should override everything else
     xmin = coord.xmin === nothing ? xmin : coord.xmin
