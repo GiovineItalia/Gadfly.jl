@@ -28,7 +28,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
+    default_aes.color = PooledDataArray(RGBA{Float32}[theme.default_color])
     default_aes.size = Measure[theme.default_point_size]
     aes = inherit(aes, default_aes)
 

@@ -9,10 +9,21 @@ function default_discrete_highlight_color(fill_color::ColorValue)
     return RGB(1, 1, 1)
 end
 
+function default_discrete_highlight_color(fill_color::AlphaColorValue)
+    return AlphaColorValue{RGB{Float32}, Float32}(
+        default_discrete_highlight_color(fill_color.c),
+        fill_color.alpha)
+end
 
 function default_continuous_highlight_color(fill_color::ColorValue)
     c = convert(LCHab, fill_color)
     return LCHab(max(0, c.l - 40), c.c, c.h)
+end
+
+function default_continuous_highlight_color(fill_color::AlphaColorValue)
+    return AlphaColorValue{RGB{Float32}, Float32}(
+        default_continuous_highlight_color(fill_color.c),
+        fill_color.alpha)
 end
 
 function default_stroke_color(fill_color::ColorValue)
@@ -21,10 +32,22 @@ function default_stroke_color(fill_color::ColorValue)
     LCHab(c.l - 15, c.c, c.h)
 end
 
+function default_stroke_color(fill_color::AlphaColorValue)
+    return AlphaColorValue{RGB{Float32}, Float32}(
+        default_stroke_color(fill_color.c),
+        fill_color.alpha)
+end
+
 function default_lowlight_color(fill_color::ColorValue)
     fill_color = convert(LCHab, fill_color)
     c = LCHab(fill_color.l, fill_color.c, fill_color.h)
     LCHab(90, 20, c.h)
+end
+
+function default_lowlight_color(fill_color::AlphaColorValue)
+    return AlphaColorValue{RGB{Float32}, Float32}(
+        default_lowlight_color(fill_color.c),
+        fill_color.alpha)
 end
 
 # Choose a middle color by darkening the fill color
@@ -33,6 +56,11 @@ function default_middle_color(fill_color::ColorValue)
     LCHab(fill_color.l + 40, fill_color.c, fill_color.h)
 end
 
+function default_middle_color(fill_color::AlphaColorValue)
+    return AlphaColorValue{RGB{Float32}, Float32}(
+        default_middle_color(fill_color.c),
+        fill_color.alpha)
+end
 
 @varset Theme begin
     # If the color aesthetic is not mapped to anything, this is the color that

@@ -30,7 +30,7 @@ export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack,
 Compose.xmlns["gadfly"] = "http://www.gadflyjl.org/ns"
 
 
-typealias ColorOrNothing Union(ColorValue, Nothing)
+typealias ColorOrNothing Union(ColorValue, AlphaColorValue, Nothing)
 
 
 element_aesthetics(::Any) = []
