@@ -491,13 +491,13 @@ end
 
 
 function xticks(ticks::Union(Nothing, AbstractArray)=nothing)
-    TickStatistic([:x, :xmin, :xmax], "x", ticks)
+    TickStatistic([:x, :xmin, :xmax, :xintercept], "x", ticks)
 end
 
 
 function yticks(ticks::Union(Nothing, AbstractArray)=nothing)
     TickStatistic(
-        [:y, :ymin, :ymax, :middle, :lower_hinge, :upper_hinge,
+        [:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge,
          :lower_fence, :upper_fence], "y", ticks)
 end
 
