@@ -40,6 +40,7 @@ typealias NumericalAesthetic
     lower_fence,  NumericalAesthetic
     upper_fence,  NumericalAesthetic
     outliers,     NumericalAesthetic
+    width,        NumericalAesthetic
 
     # subplots
     xgroup,       CategoricalAesthetic

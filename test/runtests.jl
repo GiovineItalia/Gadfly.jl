@@ -88,8 +88,10 @@ tests = [
     ("layered_subplots",                      6inch, 6inch),
     ("subplot_layer_data",                    6inch, 6inch),
     ("static_label_layout",                   6inch, 16inch),
-    ("subplot_grid_free_y_1",                 30cm, 10cm),
-    ("subplot_grid_free_y_2",                 10cm, 30cm)
+    ("subplot_grid_free_y_1",                 30cm,  10cm),
+    ("subplot_grid_free_y_2",                 10cm,  30cm),
+    ("violin",                                6inch, 3inch),
+    ("single_violin",                         6inch, 3inch)
 ]
 
 

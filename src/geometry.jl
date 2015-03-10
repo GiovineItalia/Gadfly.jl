@@ -56,6 +56,7 @@ include("geom/rectbin.jl")
 include("geom/subplot.jl")
 include("geom/vline.jl")
 include("geom/ribbon.jl")
+include("geom/violin.jl")
 
 end # module Geom
 

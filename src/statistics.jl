@@ -1273,4 +1273,63 @@ function apply_statistic(stat::QQStatistic,
 end
 
 
+immutable ViolinStatistic <: Gadfly.StatisticElement
+    # Number of points sampled
+    n::Int
+
+    function ViolinStatistic(n=300)
+        new(n)
+    end
+end
+
+
+element_aesthetics(::ViolinStatistic) = [:x, :y]
+
+const violin = ViolinStatistic
+
+
+function apply_statistic(stat::ViolinStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+
+    if !isa(aes.y[1], Real)
+        error("Kernel density estimation only works on Real types.")
+    end
+
+    if aes.x === nothing
+        y_f64 = collect(Float64, aes.y)
+        window = stat.n > 1 ? KernelDensity.default_bandwidth(y_f64) : 0.1
+        f = KernelDensity.kde(y_f64, bandwidth=window, npoints=stat.n)
+        aes.y = collect(Float64, f.x)
+        aes.width = f.density
+    else
+        grouped_y = DefaultDict(eltype(aes.x), Vector{Float64}, () -> Float64[])
+        for (x, y) in zip(cycle(aes.x), aes.y)
+            push!(grouped_y[x], y)
+        end
+
+        aes.x     = Array(Float64, 0)
+        aes.y     = Array(Float64, 0)
+        aes.width = Array(Float64, 0)
+
+        for (x, ys) in grouped_y
+            window = stat.n > 1 ? KernelDensity.default_bandwidth(ys) : 0.1
+            f = KernelDensity.kde(ys, bandwidth=window, npoints=stat.n)
+            append!(aes.y, f.x)
+            append!(aes.width, f.density)
+            for _ in 1:length(f.x)
+                push!(aes.x, x)
+            end
+        end
+    end
+
+    pad = 0.1
+    maxwidth = maximum(aes.width)
+    aes.width .*= 1 - pad
+    aes.width ./= maxwidth
+end
+
 end # module Stat
+
+
