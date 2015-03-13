@@ -37,7 +37,7 @@ end
 
 
 function element_aesthetics(::BarGeometry)
-    [:x, :xmin, :xmax, :y, :color]
+    [:x, :xmin, :xmax, :y, :ymin, :ymax, :color]
 end
 
 
@@ -55,9 +55,9 @@ function render_colorless_bar(geom::BarGeometry,
         return compose!(
             context(),
             rectangle([0.0],
-                      [Measure(cy=ymin) + theme.bar_spacing/2 for ymin in aes.ymin],
+                      [Measure(cy=ymin) - theme.bar_spacing/2 for ymin in aes.ymin],
                       aes.x,
-                      [Measure(cy=(ymax - ymin)) - theme.bar_spacing
+                      [Measure(cy=(ymax - ymin)) + theme.bar_spacing
                        for (ymin, ymax) in zip(aes.ymin, aes.ymax)]),
             svgclass("geometry"))
     else
@@ -101,9 +101,9 @@ function render_colorful_stacked_bar(geom::BarGeometry,
             context(),
             rectangle(
                 stack_height,
-                [aes.ymin[i]*cy + theme.bar_spacing/2 for i in idxs],
+                [aes.ymin[i]*cy - theme.bar_spacing/2 for i in idxs],
                 [aes.x[i] for i in idxs],
-                [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs]),
+                [(aes.ymax[i] - aes.ymin[i])*cy + theme.bar_spacing for i in idxs]),
             fill([aes.color[i] for i in idxs]),
             svgclass("geometry"))
     elseif orientation == :vertical
@@ -161,7 +161,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
 
         dodge_pos = Array(Measure, length(idxs))
         for (i, j) in enumerate(idxs)
-            dodge_pos[i] = dodge_pos_dict[aes.ymin[j]] + theme.bar_spacing/2
+            dodge_pos[i] = dodge_pos_dict[aes.ymin[j]] - theme.bar_spacing/2
             dodge_pos_dict[aes.ymin[j]] += dodge_height[aes.ymin[j]]
         end
 
@@ -171,7 +171,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
                 [0.0],
                 dodge_pos,
                 [aes.x[i] for i in idxs],
-                [((aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing) / dodge_count[aes.ymin[i]]
+                [((aes.ymax[i] - aes.ymin[i])*cy + theme.bar_spacing) / dodge_count[aes.ymin[i]]
                  for i in idxs]),
             fill([aes.color[i] for i in idxs]),
             svgclass("geometry"))
