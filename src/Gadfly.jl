@@ -17,7 +17,7 @@ import Base: copy, push!, start, next, done, show, getindex, cat,
              writemime, isfinite, display
 import Distributions: Distribution
 
-export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
+export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, Reshape, render, plot,
        layer, spy, set_default_plot_size, set_default_plot_format,
        prepare_display
 
@@ -40,6 +40,7 @@ element_coordinate_type(::Any) = Coord.cartesian
 
 
 abstract Element
+abstract ReshapeElement     <: Element
 abstract ScaleElement       <: Element
 abstract CoordinateElement  <: Element
 abstract GeometryElement    <: Element
@@ -75,24 +76,28 @@ function set_default_plot_format(fmt::Symbol)
     Compose.set_default_graphic_format(fmt)
 end
 
+typealias DataSourceType Union(AbstractDataFrame, AbstractArray, Nothing)
+
 
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 type Layer <: Element
-    data_source::Union(AbstractDataFrame, Nothing)
+    data_source::DataSourceType
     mapping::Dict
+    reshape::ReshapeElement
     statistic::StatisticElement
     geom::GeometryElement
     theme::Union(Nothing, Theme)
     order::Int
 
     function Layer()
-        new(nothing, Dict(), Stat.nil(), Geom.nil(), nothing, 0)
+        new(nothing, Dict(), Reshape.nil(), Stat.nil(), Geom.nil(), nothing, 0)
     end
 
     function Layer(lyr::Layer)
         new(lyr.data_source,
             lyr.mapping,
+            lyr.reshape,
             lyr.statistic,
             lyr.geom,
             lyr.theme)
@@ -105,7 +110,7 @@ end
 
 
 
-function layer(data_source::Union(AbstractDataFrame, Nothing),
+function layer(data_source::DataSourceType,
                elements::ElementOrFunction...; mapping...)
     mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
@@ -145,6 +150,11 @@ function add_plot_element(lyrs::Vector{Layer}, arg::Base.Callable)
 end
 
 
+function add_plot_element(lyrs::Vector{Layer}, arg::ReshapeElement)
+    [lyr.reshape = arg for lyr in lyrs]
+end
+
+
 function add_plot_element(lyrs::Vector{Layer}, arg::StatisticElement)
     [lyr.statistic = arg for lyr in lyrs]
 end
@@ -160,8 +170,8 @@ end
 # A full plot specification.
 type Plot
     layers::Vector{Layer}
-    data_source::Union(Nothing, AbstractDataFrame)
-    data::Data
+    data_source::DataSourceType
+    reshape::ReshapeElement
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
     coord::Union(Nothing, CoordinateElement)
@@ -170,7 +180,7 @@ type Plot
     mapping::Dict
 
     function Plot()
-        new(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
+        new(Layer[], nothing, Reshape.nil(), ScaleElement[], StatisticElement[],
             nothing, GuideElement[], default_theme)
     end
 end
@@ -181,12 +191,12 @@ function layers(p::Plot)
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Function)
+function add_plot_element(p::Plot, data::DataSourceType, arg::Function)
     add_plot_element(p, data, arg())
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement)
+function add_plot_element(p::Plot, data::DataSourceType, arg::GeometryElement)
     if !isempty(p.layers) && isa(p.layers[end].geom, Geom.Nil)
         p.layers[end].geom = arg
     else
@@ -197,12 +207,17 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
+function add_plot_element(p::Plot, data::DataSourceType, arg::ScaleElement)
     push!(p.scales, arg)
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElement)
+function add_plot_element(p::Plot, data::DataSourceType, arg::ReshapeElement)
+    p.reshape = arg
+end
+
+
+function add_plot_element(p::Plot, data::DataSourceType, arg::StatisticElement)
     if isempty(p.layers)
         push!(p.layers, Layer())
     end
@@ -211,32 +226,32 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElemen
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
+function add_plot_element(p::Plot, data::DataSourceType, arg::CoordinateElement)
     p.coord = arg
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GuideElement)
+function add_plot_element(p::Plot, data::DataSourceType, arg::GuideElement)
     push!(p.guides, arg)
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Layer)
+function add_plot_element(p::Plot, data::DataSourceType, arg::Layer)
     push!(p.layers, arg)
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Vector{Layer})
+function add_plot_element(p::Plot, data::DataSourceType, arg::Vector{Layer})
     append!(p.layers, arg)
 end
 
 
-function add_plot_element{T <: Element}(p::Plot, data::AbstractDataFrame, f::Type{T})
+function add_plot_element{T <: Element}(p::Plot, data::DataSourceType, f::Type{T})
     add_plot_element(p, data, f())
 end
 
 
-function add_plot_element(p::Plot, ::AbstractDataFrame, theme::Theme)
+function add_plot_element(p::Plot, ::DataSourceType, theme::Theme)
     p.theme = theme
 end
 
@@ -252,7 +267,7 @@ end
 # Modifies:
 #   data
 #
-function set_mapped_data!(data::Data, data_source::AbstractDataFrame, k::Symbol, v)
+function set_mapped_data!(data::Data, data_source::DataSourceType, k::Symbol, v)
     setfield!(data, k, eval_plot_mapping(data_source, v))
 
     if isa(v, String) || isa(v, Symbol)
@@ -296,13 +311,13 @@ end
 
 
 # Evaluate a mapping.
-eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[arg]
-eval_plot_mapping(data::AbstractDataFrame, arg::String) = eval_plot_mapping(data, symbol(arg))
-eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
-eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
-eval_plot_mapping(data::AbstractDataFrame, arg::AbstractArray) = arg
-eval_plot_mapping(data::AbstractDataFrame, arg::Function) = arg
-eval_plot_mapping(data::AbstractDataFrame, arg::Distribution) = arg
+eval_plot_mapping(data::DataSourceType, arg::Symbol) = data[arg]
+eval_plot_mapping(data::DataSourceType, arg::String) = eval_plot_mapping(data, symbol(arg))
+eval_plot_mapping(data::DataSourceType, arg::Integer) = data[arg]
+eval_plot_mapping(data::DataSourceType, arg::Expr) = with(data, arg)
+eval_plot_mapping(data::DataSourceType, arg::AbstractArray) = arg
+eval_plot_mapping(data::DataSourceType, arg::Function) = arg
+eval_plot_mapping(data::DataSourceType, arg::Distribution) = arg
 
 # Acceptable types of values that can be bound to aesthetics.
 typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
@@ -332,13 +347,10 @@ typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
 # purposes of plot().
 typealias ElementOrFunctionOrLayers Union(ElementOrFunction, Vector{Layer})
 
-function plot(data_source::AbstractDataFrame, elements::ElementOrFunctionOrLayers...; mapping...)
+function plot(data_source::DataSourceType, elements::ElementOrFunctionOrLayers...; mapping...)
     p = Plot()
     p.mapping = clean_mapping(mapping)
     p.data_source = data_source
-    for (k, v) in p.mapping
-        set_mapped_data!(p.data, data_source, k, v)
-    end
 
     for element in elements
         add_plot_element(p, data_source, element)
@@ -369,15 +381,12 @@ end
 #
 function plot(data_source::AbstractDataFrame, mapping::Dict, elements::ElementOrFunctionOrLayers...)
     p = Plot()
+    p.mapping = mapping
+    p.data_source = data_source
+
     for element in elements
         add_plot_element(p, data_source, element)
     end
-
-    for (var, value) in mapping
-        set_mapped_data!(p.data, data_source, var, value)
-    end
-    p.mapping = mapping
-    p.data_source = data_source
 
     p
 end
@@ -429,25 +438,33 @@ function render(plot::Plot)
 
     # Process layers, filling inheriting mappings or data from the Plot where
     # they are missing.
+    plot_data = Data()
+    plot_data_source = Reshape.apply_reshape(plot.reshape, plot.data_source)
+    for (k, v) in plot.mapping
+        set_mapped_data!(plot_data, plot_data_source, k, v)
+    end
+
     datas = Array(Data, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
         if layer.data_source === nothing && isempty(layer.mapping)
-            layer.data_source = plot.data_source
+            layer.data_source = plot_data_source
             layer.mapping = plot.mapping
-            datas[i] = plot.data
+            datas[i] = plot_data
         else
             datas[i] = Data()
 
             if layer.data_source === nothing
-                layer.data_source = plot.data_source
+                layer.data_source = plot_data_source
             end
+
+            data_source = Reshape.apply_reshape(layer.reshape, layer.data_source)
 
             if isempty(layer.mapping)
                 layer.mapping = plot.mapping
             end
 
             for (k, v) in layer.mapping
-                set_mapped_data!(datas[i], layer.data_source, k, v)
+                set_mapped_data!(datas[i], data_source, k, v)
             end
         end
     end
@@ -551,7 +568,7 @@ function render(plot::Plot)
             continue
         end
 
-        var_data = getfield(plot.data, var)
+        var_data = getfield(plot_data, var)
         if var_data == nothing
             for data in datas
                 var_layer_data = getfield(data, var)
@@ -652,8 +669,8 @@ function render(plot::Plot)
 
     function choose_name(vs, fallback)
         for v in vs
-            if haskey(plot.data.titles, v)
-                return plot.data.titles[v]
+            if haskey(plot_data.titles, v)
+                return plot_data.titles[v]
             end
         end
 
@@ -671,8 +688,8 @@ function render(plot::Plot)
     if mapped_and_used(x_axis_label_aesthetics) &&
         !in(Guide.XLabel, explicit_guide_types)
         label = choose_name(x_axis_label_aesthetics, "x")
-        if facet_plot && haskey(plot.data.titles, :xgroup)
-            label = string(label, " <i><b>by</b></i> ", plot.data.titles[:xgroup])
+        if facet_plot && haskey(plot_data.titles, :xgroup)
+            label = string(label, " <i><b>by</b></i> ", plot_data.titles[:xgroup])
         end
 
         push!(guides, Guide.xlabel(label))
@@ -681,8 +698,8 @@ function render(plot::Plot)
     if mapped_and_used(y_axis_label_aesthetics) &&
        !in(Guide.YLabel, explicit_guide_types)
         label = choose_name(y_axis_label_aesthetics, "y")
-        if facet_plot && haskey(plot.data.titles, :ygroup)
-            label = string(label, " <i><b>by</b></i> ", plot.data.titles[:ygroup])
+        if facet_plot && haskey(plot_data.titles, :ygroup)
+            label = string(label, " <i><b>by</b></i> ", plot_data.titles[:ygroup])
         end
 
         push!(guides, Guide.ylabel(label))
@@ -1052,6 +1069,7 @@ include("coord.jl")
 include("geometry.jl")
 include("guide.jl")
 include("statistics.jl")
+include("reshape.jl")
 
 
 # All aesthetics must have a scale. If none is given, we use a default.
