@@ -162,9 +162,10 @@ function make_labeler(scale::ContinuousScale)
 end
 
 
-const x_vars = [:x, :xmin, :xmax, :xintercept]
+const x_vars = [:x, :xmin, :xmax, :xintercept, :xviewmin, :xviewmax]
 const y_vars = [:y, :ymin, :ymax, :yintercept, :middle,
-                :upper_fence, :lower_fence, :upper_hinge, :lower_hinge]
+                :upper_fence, :lower_fence, :upper_hinge, :lower_hinge,
+                :yviewmin, :yviewmax]
 
 function continuous_scale_partial(vars::Vector{Symbol},
                                   trans::ContinuousScaleTransform)
@@ -254,7 +255,12 @@ function apply_scale(scale::ContinuousScale,
             ds = hasna ? DataArray(T, length(vals)) : Array(T, length(vals))
             apply_scale_typed!(ds, vals, scale)
 
-            setfield!(aes, var, ds)
+            if var == :xviewmin || var == :xviewmax ||
+               var == :yviewmin || var == :yviewmax
+                setfield!(aes, var, ds[1])
+            else
+                setfield!(aes, var, ds)
+            end
 
             if var in x_vars
                 label_var = :x_label

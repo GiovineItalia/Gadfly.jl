@@ -60,18 +60,20 @@ const identity = Identity
 immutable HistogramStatistic <: Gadfly.StatisticElement
     minbincount::Int
     maxbincount::Int
+    position::Symbol # :dodge or :stack
     orientation::Symbol
     density::Bool
 
     function HistogramStatistic(; bincount=nothing,
                                   minbincount=3,
                                   maxbincount=150,
+                                  position::Symbol=:stack,
                                   orientation::Symbol=:vertical,
                                   density::Bool=false)
         if bincount != nothing
-            new(bincount, bincount, orientation, density)
+            new(bincount, bincount, position, orientation, density)
         else
-            new(minbincount, maxbincount, orientation, density)
+            new(minbincount, maxbincount, position, orientation, density)
         end
     end
 end
@@ -244,10 +246,12 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
 
-        viewmax = float64(maximum(stack_height))
-        aes_viewmax = getfield(aes, viewmaxvar)
-        if aes_viewmax === nothing || aes_viewmax < viewmax
-            setfield!(aes, viewmaxvar, viewmax)
+        if stat.position == :stack
+            viewmax = float64(maximum(stack_height))
+            aes_viewmax = getfield(aes, viewmaxvar)
+            if aes_viewmax === nothing || aes_viewmax < viewmax
+                setfield!(aes, viewmaxvar, viewmax)
+            end
         end
 
         aes.color = PooledDataArray(colors)
@@ -260,6 +264,7 @@ function apply_statistic(stat::HistogramStatistic,
     if haskey(scales, othervar)
         data = Gadfly.Data()
         setfield!(data, othervar, getfield(aes, othervar))
+        setfield!(data, viewmaxvar, getfield(aes, viewmaxvar))
         Scale.apply_scale(scales[othervar], [aes], data)
     else
         setfield!(aes, labelvar, Scale.identity_formatter)
