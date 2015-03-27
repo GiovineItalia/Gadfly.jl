@@ -13,7 +13,9 @@ Map numerical data to y positions in cartesian coordinates.
   * `maxvalue`: Force the plot viewport to a maximum y value.
   * `labels`: Either a `Function` or `nothing`. When a
     function is given, values are formatted using this function. The function
-    should map a value in `x` to a string giving its label.
+    should map a value in `x` to a string giving its label. If the scale
+    applies a transformation, transformed label values will be passed to this
+    function.
   * `format`: How numbers should be formatted. One of `:plain`, `:scientific`,
     `:engineering`, or `:auto`. The default in `:auto` which prints very large or very small
     numbers in scientific notation, and other numbers plainly.
