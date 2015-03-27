@@ -266,6 +266,32 @@ function apply_statistic(stat::HistogramStatistic,
         setfield!(data, othervar, getfield(aes, othervar))
         setfield!(data, viewmaxvar, getfield(aes, viewmaxvar))
         Scale.apply_scale(scales[othervar], [aes], data)
+
+        # See issue #560. Stacked histograms on a non-linear y scale are a strange
+        # thing. After some discussion, the least confusing thing is to make the stack
+        # partitioned linearly. Here we make that adjustment.
+        if stat.position == :stack && aes.color != nothing
+            # A little trickery to figure out the scale stack height.
+            data = Gadfly.Data()
+            setfield!(data, othervar, stack_height)
+            scaled_stackheight_aes = Gadfly.Aesthetics()
+            Scale.apply_scale(scales[othervar], [scaled_stackheight_aes], data)
+            scaled_stackheight = getfield(scaled_stackheight_aes, othervar)
+
+            othervals = getfield(aes, othervar)
+            for j in 1:d
+                naive_stackheight = 0
+                for i in 1:length(groups)
+                    idx = (i-1)*d + j
+                    naive_stackheight += othervals[idx]
+                end
+
+                for i in 1:length(groups)
+                    idx = (i-1)*d + j
+                    othervals[idx] = scaled_stackheight[j] * othervals[idx] / naive_stackheight
+                end
+            end
+        end
     else
         setfield!(aes, labelvar, Scale.identity_formatter)
     end
