@@ -38,9 +38,9 @@ function render(geom::ViolinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
 
     ctx = context(order=geom.order)
     compose!(ctx,
-             polygon([vcat([(x - w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])],
-                           reverse!([(x + w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])]))
-                      for x in keys(grouped_y)]))
+             Compose.polygon([vcat([(x - w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])],
+                                   reverse!([(x + w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])]))
+                              for x in keys(grouped_y)]))
 
 
     return compose!(ctx,

@@ -10,7 +10,8 @@ order: 1007
 
   * `x`: X-axis position.
   * `y`: Y-axis position.
-  * `color` (optional): Group categorically by color.
+  * `group` (optional): Group categorically.
+  * `color` (optional): Group categorically and indicate by color.
 
 # Arguments
 

@@ -15,9 +15,9 @@ Draw violin plots.
 
 Aesthetics used directly:
 
-  * `x`
-  * `y`
-  * `width`
+  * `x`: Group categorically on the X-axis
+  * `y`: Y-axis position.
+  * `width`: Density at a given `y` value.
 
 With the default statistic `Stat.violin`, only the following need be defined:
 

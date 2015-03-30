@@ -135,11 +135,11 @@ function render_colorful_stacked_bar(geom::BarGeometry,
     compose!(ctx, fill(cs), svgclass("geometry"))
     if isa(theme.bar_highlight, Function)
         compose!(ctx,
-                 linewidth(theme.line_width),
+                 linewidth(theme.highlight_width),
                  stroke([theme.bar_highlight(c) for c in cs]))
     elseif isa(theme.bar_highlight, ColorValue)
         compose!(ctx,
-                 linewidth(theme.line_width),
+                 linewidth(theme.highlight_width),
                  stroke(theme.bar_highlight))
     else
         compose!(ctx, stroke(nothing))

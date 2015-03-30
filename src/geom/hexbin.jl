@@ -49,7 +49,7 @@ function render(geom::HexagonalBinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aes
 
     return compose!(
         context(),
-        polygon([hexpoints(xs[i], ys[i], xsizes[i], ysizes[i]) for i in 1:n]),
+        Compose.polygon([hexpoints(xs[i], ys[i], xsizes[i], ysizes[i]) for i in 1:n]),
         linewidth(0.1mm), # pad the hexagons so they ovelap a little
         fill(cs),
         stroke(cs),
