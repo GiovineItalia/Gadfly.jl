@@ -54,10 +54,10 @@ optimize_ticks() = Any[]
 #
 function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false,
                            Q=[(1.0,1.0), (5.0, 0.9), (2.0, 0.7), (2.5, 0.5), (3.0, 0.2)],
-                           k_min=2, k_max=10, k_ideal=5,
+                           k_min::Int=2, k_max::Int=10, k_ideal::Int=5,
                            strict_span=false)
 
-    Qv = [(float64(q[1]), float64(q[2])) for q in Q]
+    Qv = [((@compat Float64(q[1])), (@compat Float64(q[2]))) for q in Q]
     optimize_ticks_typed(x_min, x_max, extend_ticks, Qv, k_min, k_max, k_ideal, strict_span)
 end
 
@@ -77,7 +77,7 @@ function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(Fl
 
     high_score = -Inf
     z_best = 0.0
-    k_best = 0.0
+    k_best = 0
     r_best = 0.0
     q_best = 0.0
 
@@ -134,13 +134,13 @@ function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(Fl
 
     span = q_best * 10.0^z_best * one_t
     if extend_ticks
-        S = Array(typeof(1.0 * one_t), int(3 * k_best))
+        S = Array(typeof(1.0 * one_t), (@compat Int(3 * k_best)))
         for i in 0:(3*k_best - 1)
             S[i+1] = (r_best + i - k_best) * span
         end
         viewmin, viewmax = S[k_best + 1], S[2 * k_best]
     else
-        S = Array(typeof(1.0 * one_t), int(k_best))
+        S = Array(typeof(1.0 * one_t), k_best)
         for i in 0:(k_best - 1)
             S[i+1] = (r_best + i) * span
         end
@@ -269,9 +269,9 @@ function multilevel_ticks{T}(viewmin::T, viewmax::T;
     ticks = Dict()
     for scale in scales
         ticks[scale] = optimize_ticks(viewmin, viewmax,
-                                       k_min=2*scale,
-                                       k_max=max(3, 10*scale),
-                                       k_ideal=max(2, 15*scale))[1]
+                                      k_min=max(1, (@compat round(Int, 2*scale))),
+                                      k_max=max(3, (@compat round(Int, 10*scale))),
+                                      k_ideal=max(2, (@compat round(Int, 15*scale))))[1]
     end
 
     return ticks

@@ -79,7 +79,7 @@ function choose_bin_count_1d(xs::AbstractVector, d_min=1, d_max=150)
             if !isconcrete(x)
                 continue
             end
-            bincounts[max(1, min(d, int(ceil((x - x_min) / binwidth))))] += 1
+            bincounts[max(1, min(d, (@compat ceil(Int, (x - x_min) / binwidth))))] += 1
         end
 
         pll = bincount_pll(d, n, bincounts, binwidth)
@@ -96,7 +96,7 @@ function choose_bin_count_1d(xs::AbstractVector, d_min=1, d_max=150)
         if !isconcrete(x)
             continue
         end
-        bincounts[max(1, min(d_best, int(ceil((x - x_min) / binwidth))))] += 1
+        bincounts[max(1, min(d_best, (@compat ceil(Int, (x - x_min) / binwidth))))] += 1
     end
 
     return d_best, bincounts, x_max
@@ -165,7 +165,8 @@ function choose_bin_count_1d_discrete(xs::AbstractArray, xs_set::AbstractArray,
             if !isconcrete(x)
                 continue
             end
-            bincounts[max(1, min(d, int(ceil((x - x_min) / binwidth))))] += 1
+            idx = @compat ceil(Int, (x - x_min) / binwidth)
+            bincounts[max(1, min(d, idx))] += 1
         end
 
         pll = bincount_pll(d, n, bincounts, binwidth)
@@ -184,7 +185,8 @@ function choose_bin_count_1d_discrete(xs::AbstractArray, xs_set::AbstractArray,
         if !isconcrete(x)
             continue
         end
-        bincounts[max(1, min(d_best, int(ceil((x - x_min) / binwidth))))] += 1
+        idx = @compat ceil(Int, (x - x_min) / binwidth)
+        bincounts[max(1, min(d_best, idx))] += 1
     end
 
     return d_best, bincounts, x_max
@@ -225,8 +227,8 @@ function choose_bin_count_2d(xs::AbstractVector, ys::AbstractVector,
             continue
         end
 
-        i = max(1, min(dx, int(ceil((x - x_min) / wx))))
-        j = max(1, min(dy, int(ceil((y - y_min) / wy))))
+        i = max(1, min(dx, (@compat ceil(Int, (x - x_min) / wx))))
+        j = max(1, min(dy, (@compat ceil(Int, (y - y_min) / wy))))
         bincounts[j, i] += 1
     end
 

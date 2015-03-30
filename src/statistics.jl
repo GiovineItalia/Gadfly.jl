@@ -4,6 +4,7 @@ import Gadfly
 import StatsBase
 import Contour
 using Color
+using Compat
 using Compose
 using DataArrays
 using DataStructures
@@ -215,7 +216,7 @@ function apply_statistic(stat::HistogramStatistic,
                 if isdiscrete
                     bincounts[int(x)] += 1
                 else
-                    bin = max(1, min(d, int(ceil((x - x_min) / binwidth))))
+                    bin = max(1, min(d, (@compat ceil(Int, (x - x_min) / binwidth))))
                     bincounts[bin] += 1
                 end
             end
@@ -247,7 +248,7 @@ function apply_statistic(stat::HistogramStatistic,
         end
 
         if stat.position == :stack
-            viewmax = float64(maximum(stack_height))
+            viewmax = @compat Float64(maximum(stack_height))
             aes_viewmax = getfield(aes, viewmaxvar)
             if aes_viewmax === nothing || aes_viewmax < viewmax
                 setfield!(aes, viewmaxvar, viewmax)
@@ -654,7 +655,7 @@ function apply_statistic(stat::TickStatistic,
         for val in in_values
             push!(ticks, val)
         end
-        ticks = Float64[t for t in ticks]
+        ticks = Int[t for t in ticks]
         sort!(ticks)
         grids = (ticks .- 0.5)[2:end]
         viewmin = minimum(ticks)

@@ -294,8 +294,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         end
     end
 
-    xlabels = superplot_aes.xgroup_label(1.0:m)
-    ylabels = superplot_aes.ygroup_label(1.0:n)
+    xlabels = superplot_aes.xgroup_label(1:m)
+    ylabels = superplot_aes.ygroup_label(1:n)
     subplot_padding = 2mm
 
     # This assumes non of the layers themselves are subplot geometries
