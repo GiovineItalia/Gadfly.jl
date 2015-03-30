@@ -65,6 +65,9 @@ overrides the default theme's value.
      placement of the title of color key guides. (Symbol)
   * `colorkey_swatch_shape`: The shape used in color swatches in the color key
     guide. Either `:circle` or `:square`  (Symbol)
+  * `bar_highlight`: Color used to stroke bars in bar plots. If a function is
+    given, it's used to transform the fill color of the bars to obtain a stroke
+    color. (Function, ColorValue, or Nothing)
 
 # Examples
 

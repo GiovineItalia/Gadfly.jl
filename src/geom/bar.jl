@@ -53,7 +53,7 @@ function render_colorless_bar(geom::BarGeometry,
                               aes::Gadfly.Aesthetics,
                               orientation::Symbol)
     if orientation == :horizontal
-        return compose!(
+        ctx = compose!(
             context(),
             rectangle([0.0],
                       [Measure(cy=ymin) - theme.bar_spacing/2 for ymin in aes.ymin],
@@ -62,7 +62,7 @@ function render_colorless_bar(geom::BarGeometry,
                        for (ymin, ymax) in zip(aes.ymin, aes.ymax)]),
             svgclass("geometry"))
     else
-        return compose!(
+        ctx = compose!(
             context(),
             rectangle([Measure(cx=xmin) + theme.bar_spacing/2 for xmin in aes.xmin],
                       [0.0],
@@ -71,6 +71,7 @@ function render_colorless_bar(geom::BarGeometry,
                       aes.y),
             svgclass("geometry"))
     end
+    return compose!(ctx, stroke(nothing))
 end
 
 
@@ -86,6 +87,7 @@ function render_colorful_stacked_bar(geom::BarGeometry,
         idxs = 1:length(aes.color)
     end
 
+    ctx = context()
     if orientation == :horizontal
         stack_height_dict = Dict()
         for y in aes.ymin
@@ -98,15 +100,14 @@ function render_colorful_stacked_bar(geom::BarGeometry,
             stack_height_dict[aes.ymin[j]] += aes.x[j]
         end
 
-        return compose!(
-            context(),
+        cs = [aes.color[i] for i in idxs]
+        compose!(
+            ctx,
             rectangle(
                 stack_height,
                 [aes.ymin[i]*cy - theme.bar_spacing/2 for i in idxs],
                 [aes.x[i] for i in idxs],
-                [(aes.ymax[i] - aes.ymin[i])*cy + theme.bar_spacing for i in idxs]),
-            fill([aes.color[i] for i in idxs]),
-            svgclass("geometry"))
+                [(aes.ymax[i] - aes.ymin[i])*cy + theme.bar_spacing for i in idxs]))
     elseif orientation == :vertical
         stack_height_dict = Dict()
         for x in aes.xmin
@@ -119,18 +120,31 @@ function render_colorful_stacked_bar(geom::BarGeometry,
             stack_height_dict[aes.xmin[j]] += aes.y[j]
         end
 
-        return compose!(
-            context(),
+        cs = [aes.color[i] for i in idxs]
+        compose!(
+            ctx,
             rectangle(
                 [aes.xmin[i]*cx + theme.bar_spacing/2 for i in idxs],
                 stack_height,
                 [(aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing for i in idxs],
-                [aes.y[i] for i in idxs]),
-            fill([aes.color[i] for i in idxs]),
-            svgclass("geometry"))
+                [aes.y[i] for i in idxs]))
     else
         error("Orientation must be :horizontal or :vertical")
     end
+
+    compose!(ctx, fill(cs), svgclass("geometry"))
+    if isa(theme.bar_highlight, Function)
+        compose!(ctx,
+                 linewidth(theme.line_width),
+                 stroke([theme.bar_highlight(c) for c in cs]))
+    elseif isa(theme.bar_highlight, ColorValue)
+        compose!(ctx,
+                 linewidth(theme.line_width),
+                 stroke(theme.bar_highlight))
+    else
+        compose!(ctx, stroke(nothing))
+    end
+    return ctx
 end
 
 
@@ -289,8 +303,7 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         context(),
         ctx,
         svgattribute("shape-rendering", "crispEdges"),
-        fill(theme.default_color),
-        stroke(nothing))
+        fill(theme.default_color))
 end
 
 

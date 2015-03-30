@@ -169,6 +169,9 @@ end
     # and the like should be placed.
     key_position,          Symbol,          :right
 
+    # True if bars in bar plots should be stroked. Stroke color is
+    bar_highlight,         Union(Nothing, Function, ColorValue),   nothing
+
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.
 
