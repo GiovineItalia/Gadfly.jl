@@ -71,7 +71,16 @@ function render_colorless_bar(geom::BarGeometry,
                       aes.y),
             svgclass("geometry"))
     end
-    return compose!(ctx, stroke(nothing))
+
+    compose!(ctx, fill(theme.default_color))
+    if isa(theme.bar_highlight, Function)
+        compose!(ctx, stroke(theme.bar_highlight(theme.default_color)))
+    elseif isa(theme.bar_highlight, ColorValue)
+        compose!(ctx, stroke(theme.bar_highlight))
+    else
+        compose!(ctx, stroke(nothing))
+    end
+    return ctx
 end
 
 
@@ -100,7 +109,6 @@ function render_colorful_stacked_bar(geom::BarGeometry,
             stack_height_dict[aes.ymin[j]] += aes.x[j]
         end
 
-        cs = [aes.color[i] for i in idxs]
         compose!(
             ctx,
             rectangle(
@@ -120,7 +128,6 @@ function render_colorful_stacked_bar(geom::BarGeometry,
             stack_height_dict[aes.xmin[j]] += aes.y[j]
         end
 
-        cs = [aes.color[i] for i in idxs]
         compose!(
             ctx,
             rectangle(
@@ -132,15 +139,12 @@ function render_colorful_stacked_bar(geom::BarGeometry,
         error("Orientation must be :horizontal or :vertical")
     end
 
+    cs = [aes.color[i] for i in idxs]
     compose!(ctx, fill(cs), svgclass("geometry"))
     if isa(theme.bar_highlight, Function)
-        compose!(ctx,
-                 linewidth(theme.highlight_width),
-                 stroke([theme.bar_highlight(c) for c in cs]))
+        compose!(ctx, stroke([theme.bar_highlight(c) for c in cs]))
     elseif isa(theme.bar_highlight, ColorValue)
-        compose!(ctx,
-                 linewidth(theme.highlight_width),
-                 stroke(theme.bar_highlight))
+        compose!(ctx, stroke(theme.bar_highlight))
     else
         compose!(ctx, stroke(nothing))
     end
@@ -160,6 +164,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
         idxs = 1:length(aes.color)
     end
 
+    ctx = context()
     if orientation == :horizontal
         dodge_count = DefaultDict(() -> 0)
         for i in idxs
@@ -180,16 +185,14 @@ function render_colorful_dodged_bar(geom::BarGeometry,
             dodge_pos_dict[aes.ymin[j]] += dodge_height[aes.ymin[j]]
         end
 
-        return compose!(
-            context(),
+        compose!(
+            ctx,
             rectangle(
                 [0.0],
                 dodge_pos,
                 [aes.x[i] for i in idxs],
                 [((aes.ymax[i] - aes.ymin[i])*cy + theme.bar_spacing) / dodge_count[aes.ymin[i]]
-                 for i in idxs]),
-            fill([aes.color[i] for i in idxs]),
-            svgclass("geometry"))
+                 for i in idxs]))
     elseif orientation == :vertical
         dodge_count = DefaultDict(() -> 0)
         for i in idxs
@@ -210,19 +213,28 @@ function render_colorful_dodged_bar(geom::BarGeometry,
             dodge_pos_dict[aes.xmin[j]] += dodge_width[aes.xmin[j]]
         end
 
-        return compose!(
-            context(),
+        compose!(
+            ctx,
             rectangle(
                 dodge_pos,
                 [0.0],
                 [((aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing) / dodge_count[aes.xmin[i]]
                  for i in idxs],
-                [aes.y[i] for i in idxs]),
-            fill([aes.color[i] for i in idxs]),
-            svgclass("geometry"))
+                [aes.y[i] for i in idxs]))
     else
         error("Orientation must be :horizontal or :vertical")
     end
+
+    cs = [aes.color[i] for i in idxs]
+    compose!(ctx, fill(cs), svgclass("geometry"))
+    if isa(theme.bar_highlight, Function)
+        compose!(ctx, stroke([theme.bar_highlight(c) for c in cs]))
+    elseif isa(theme.bar_highlight, ColorValue)
+        compose!(ctx, stroke(theme.bar_highlight))
+    else
+        compose!(ctx, stroke(nothing))
+    end
+    return ctx
 end
 
 
@@ -302,8 +314,8 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     return compose!(
         context(),
         ctx,
-        svgattribute("shape-rendering", "crispEdges"),
-        fill(theme.default_color))
+        linewidth(theme.highlight_width),
+        svgattribute("shape-rendering", "crispEdges"))
 end
 
 
