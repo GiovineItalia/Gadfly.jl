@@ -97,14 +97,14 @@ end
 
 
 # Create a layer from a list of functions or expressions.
-function layer(fs::Array, a, b)
-    layer(y=fs, xmin=[a], xmax=[b], Stat.func, Geom.line)
+function layer(fs::Array, a, b, elements::ElementOrFunction...)
+    layer(y=fs, xmin=[a], xmax=[b], Stat.func, Geom.line, elements...)
 end
 
 
 # Create a layer from a single function.
-function layer(f::Function, a, b)
-    layer([f], a, b)
+function layer(f::Function, a, b, elements::ElementOrFunction...)
+    layer([f], a, b, elements...)
 end
 
 
