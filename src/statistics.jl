@@ -1023,6 +1023,8 @@ function apply_statistic(stat::HexBinStatistic,
         error("HexBinGeometry requires a continuous color scale.")
     end
 
+    aes.color_key_title = "Count"
+
     Scale.apply_scale(color_scale, [aes], data)
 end
 
