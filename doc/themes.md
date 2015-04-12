@@ -46,6 +46,7 @@ overrides the default theme's value.
   * `key_label_font`: Font used for key entry labels. (String)
   * `key_label_font_size`: Font size used for key entry labels. (Measure)
   * `key_label_color`: Color used for key entry labels. (ColorValue)
+  * `key_max_columns`: Maximum number of columns for key entry labels. (Int)
   * `bar_spacing`: Spacing between bars in `Geom.bar`. (Measure)
   * `boxplot_spacing`: Spacing between boxplots in `Geom.boxplot`. (Measure)
   * `errorbar_cap_length`: Length of caps on error bars. (Measure)

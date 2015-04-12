@@ -190,7 +190,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                                    theme::Gadfly.Theme)
 
     # only consider layouts with a reasonable number of columns
-    maxcols = 4
+    maxcols = theme.key_max_columns < 1 ? 1 : theme.key_max_columns
 
     n = length(colors)
 
