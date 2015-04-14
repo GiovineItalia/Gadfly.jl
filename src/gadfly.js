@@ -427,6 +427,11 @@ var init_pan_zoom = function(root) {
                 new Snap.Matrix(lm.a, lm.b, lm.c, lm.d, lm.e, lm.f));
         });
 
+    var xgridlines = root.select(".xgridlines");
+    var ygridlines = root.select(".ygridlines");
+    var xlabels = root.select(".xlabels");
+    var ylabels = root.select(".ylabels");
+
     if (root.data("tx") === undefined) root.data("tx", 0);
     if (root.data("ty") === undefined) root.data("ty", 0);
     if (root.data("scale") === undefined) root.data("scale", 1.0);
@@ -442,10 +447,10 @@ var init_pan_zoom = function(root) {
             ytickscales[element.attribute("gadfly:scale")] = true;
         };
 
-        root.select(".xgridlines").selectAll("path").forEach(add_x_tick_scales);
-        root.select(".ygridlines").selectAll("path").forEach(add_y_tick_scales);
-        root.select(".xlabels").selectAll("text").forEach(add_x_tick_scales);
-        root.select(".ylabels").selectAll("text").forEach(add_y_tick_scales);
+        if (xgridlines) xgridlines.selectAll("path").forEach(add_x_tick_scales);
+        if (ygridlines) ygridlines.selectAll("path").forEach(add_y_tick_scales);
+        if (xlabels) xlabels.selectAll("text").forEach(add_x_tick_scales);
+        if (ylabels) ylabels.selectAll("text").forEach(add_y_tick_scales);
 
         root.data("xtickscales", xtickscales);
         root.data("ytickscales", ytickscales);
@@ -465,27 +470,29 @@ var init_pan_zoom = function(root) {
     root.data("max_scale", max_scale);
 
     // store the original positions of labels
-    root.select(".xlabels")
-        .selectAll("text")
-        .forEach(function (element, i) {
-            element.data("x", element.asPX("x"));
-        });
+    if (xlabels) {
+        xlabels.selectAll("text")
+               .forEach(function (element, i) {
+                   element.data("x", element.asPX("x"));
+               });
+    }
 
-    root.select(".ylabels")
-        .selectAll("text")
-        .forEach(function (element, i) {
-            element.data("y", element.asPX("y"));
-        });
+    if (ylabels) {
+        ylabels.selectAll("text")
+               .forEach(function (element, i) {
+                   element.data("y", element.asPX("y"));
+               });
+    }
 
     // mark grid lines and ticks as in or out of scale.
     var mark_inscale = function (element, i) {
         element.attribute("gadfly:inscale", element.attribute("gadfly:scale") == 1.0);
     };
 
-    root.select(".xgridlines").selectAll("path").forEach(mark_inscale);
-    root.select(".ygridlines").selectAll("path").forEach(mark_inscale);
-    root.select(".xlabels").selectAll("text").forEach(mark_inscale);
-    root.select(".ylabels").selectAll("text").forEach(mark_inscale);
+    if (xgridlines) xgridlines.selectAll("path").forEach(mark_inscale);
+    if (ygridlines) ygridlines.selectAll("path").forEach(mark_inscale);
+    if (xlabels) xlabels.selectAll("text").forEach(mark_inscale);
+    if (ylabels) ylabels.selectAll("text").forEach(mark_inscale);
 
     // figure out the upper ond lower bounds on panning using the maximum
     // and minum grid lines
@@ -497,33 +504,39 @@ var init_pan_zoom = function(root) {
         y1: 0.0
     };
 
-    root.select(".xgridlines")
-        .selectAll("path")
-        .forEach(function (element, i) {
-            if (element.attribute("gadfly:inscale") == "true") {
-                var bbox = element.node.getBBox();
-                if (bounds.x1 - bbox.x < pan_bounds.x0) {
-                    pan_bounds.x0 = bounds.x1 - bbox.x;
+    if (xgridlines) {
+        xgridlines
+            .selectAll("path")
+            .forEach(function (element, i) {
+                if (element.attribute("gadfly:inscale") == "true") {
+                    var bbox = element.node.getBBox();
+                    if (bounds.x1 - bbox.x < pan_bounds.x0) {
+                        pan_bounds.x0 = bounds.x1 - bbox.x;
+                    }
+                    if (bounds.x0 - bbox.x > pan_bounds.x1) {
+                        pan_bounds.x1 = bounds.x0 - bbox.x;
+                    }
+                    element.attr("visibility", "visible");
                 }
-                if (bounds.x0 - bbox.x > pan_bounds.x1) {
-                    pan_bounds.x1 = bounds.x0 - bbox.x;
-                }
-            }
-        });
+            });
+    }
 
-    root.select(".ygridlines")
-        .selectAll("path")
-        .forEach(function (element, i) {
-            if (element.attribute("gadfly:inscale") == "true") {
-                var bbox = element.node.getBBox();
-                if (bounds.y1 - bbox.y < pan_bounds.y0) {
-                    pan_bounds.y0 = bounds.y1 - bbox.y;
+    if (ygridlines) {
+        ygridlines
+            .selectAll("path")
+            .forEach(function (element, i) {
+                if (element.attribute("gadfly:inscale") == "true") {
+                    var bbox = element.node.getBBox();
+                    if (bounds.y1 - bbox.y < pan_bounds.y0) {
+                        pan_bounds.y0 = bounds.y1 - bbox.y;
+                    }
+                    if (bounds.y0 - bbox.y > pan_bounds.y1) {
+                        pan_bounds.y1 = bounds.y0 - bbox.y;
+                    }
+                    element.attr("visibility", "visible");
                 }
-                if (bounds.y0 - bbox.y > pan_bounds.y1) {
-                    pan_bounds.y1 = bounds.y0 - bbox.y;
-                }
-            }
-        });
+            });
+    }
 
     // nudge these values a little
     pan_bounds.x0 -= 5;
@@ -531,24 +544,6 @@ var init_pan_zoom = function(root) {
     pan_bounds.y0 -= 5;
     pan_bounds.y1 += 5;
     root.data("pan_bounds", pan_bounds);
-
-    // Set all grid lines at scale 1.0 to visible. Out of bounds lines
-    // will be clipped.
-    root.select(".xgridlines")
-        .selectAll("path")
-        .forEach(function (element, i) {
-            if (element.attribute("gadfly:inscale") == "true") {
-                element.attr("visibility", "visible");
-            }
-        });
-
-    root.select(".ygridlines")
-        .selectAll("path")
-        .forEach(function (element, i) {
-            if (element.attribute("gadfly:inscale") == "true") {
-                element.attr("visibility", "visible");
-            }
-        });
 
     root.data("zoompan-ready", true)
 };
