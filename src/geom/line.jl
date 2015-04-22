@@ -79,10 +79,10 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     if aes.group != nothing
         # group points by group
-        points = Dict{Any, Array{(Any, Any),1}}()
+        points = Dict{Any, Array{(@compat Tuple{Any, Any}),1}}()
         for (x, y, c, g) in zip(aes.x, aes.y, cycle(aes.color), cycle(aes.group))
             if !haskey(points, (c,g))
-                points[(c,g)] = Array((Any, Any),0)
+                points[(c,g)] = Array((@compat Tuple{Any, Any}),0)
             end
             push!(points[(c,g)], (x, y))
         end
@@ -102,7 +102,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     elseif length(aes.color) == 1 &&
             !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
-        T = (eltype(aes.x), eltype(aes.y))
+        T = (@compat Tuple{eltype(aes.x), eltype(aes.y)})
         points = T[(x, y) for (x, y) in zip(aes.x, aes.y)]
         if !geom.preserve_order
             sort!(points, by=first)
@@ -113,10 +113,10 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                        svgclass("geometry"))
     else
         # group points by color
-        points = Dict{ColorValue, Array{(Any, Any),1}}()
+        points = Dict{ColorValue, Array{(@compat Tuple{Any, Any}),1}}()
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
             if !haskey(points, c)
-                points[c] = Array((Any, Any),0)
+                points[c] = Array((@compat Tuple{Any, Any}),0)
             end
             push!(points[c], (x, y))
         end

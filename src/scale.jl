@@ -518,10 +518,10 @@ function color_discrete_hue(; levels=nothing, order=nothing,
     DiscreteColorScale(
         h -> convert(Vector{ColorValue},
              distinguishable_colors(h, ColorValue[LCHab(70, 60, 240)],
+                                    transform=c -> deuteranopic(c, 0.5),
                                     lchoices=Float64[65, 70, 75, 80],
                                     cchoices=Float64[0, 50, 60, 70],
-                                    hchoices=linspace(0, 330, 24),
-                                    transform=c -> deuteranopic(c, 0.5))),
+                                    hchoices=linspace(0, 330, 24))),
         levels=levels, order=order, preserve_order=preserve_order)
 end
 

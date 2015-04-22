@@ -1030,7 +1030,7 @@ function layout_guides(plot_context::Context,
                        theme::Gadfly.Theme,
                        positioned_guides::PositionedGuide...)
     # Organize guides by position
-    guides = DefaultDict(() -> (Vector{Context}, Int)[])
+    guides = DefaultDict(() -> (@compat Tuple{Vector{Context}, Int})[])
     for positioned_guide in positioned_guides
         push!(guides[positioned_guide.position],
               (positioned_guide.ctxs, positioned_guide.order))
