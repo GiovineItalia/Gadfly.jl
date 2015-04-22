@@ -61,7 +61,7 @@ function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false,
     optimize_ticks_typed(x_min, x_max, extend_ticks, Qv, k_min, k_max, k_ideal, strict_span)
 end
 
-function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(Float64,Float64)}, k_min,
+function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(@compat Tuple{Float64,Float64})}, k_min,
                            k_max, k_ideal, strict_span)
     one_t = one(T)
     if x_max - x_min < eps()*one_t

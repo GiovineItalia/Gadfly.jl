@@ -184,7 +184,7 @@ end
 
 
 function inherit!{T}(a::T, b::T)
-    for field in T.names
+    for field in fieldnames(T)
         aval = getfield(a, field)
         bval = getfield(b, field)
         # TODO: this is a hack to let non-default labelers overide the defaults

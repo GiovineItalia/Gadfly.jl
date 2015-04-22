@@ -46,6 +46,11 @@ abstract GeometryElement    <: Element
 abstract GuideElement       <: Element
 abstract StatisticElement   <: Element
 
+# The names stashed on the Aesthetics object were retrieved with .names
+# in v0.3. That moves to fieldnames in v0.4. When v0.3 support is ended
+# you can delete this line
+if VERSION < v"0.4-dev" const fieldnames = names end
+
 
 include("misc.jl")
 include("ticks.jl")
@@ -278,7 +283,7 @@ function clean_mapping(mapping)
 
         if haskey(aesthetic_aliases, key)
             key = aesthetic_aliases[key]
-        elseif !in(key, Aesthetics.names)
+        elseif !in(key, fieldnames(Aesthetics))
             warn("$(string(key)) is not a recognized aesthetic. Ignoring.")
             continue
         end

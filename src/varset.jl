@@ -56,7 +56,7 @@ macro varset(name::Symbol, table)
             # shallow copy constructor
             function $(name)(a::$(name))
                 b = new()
-                for name in $(name).names
+                for name in fieldnames($(name))
                     setfield!(b, name, getfield(a, name))
                 end
                 b

@@ -270,7 +270,7 @@ function apply_scale(scale::ContinuousScale,
                 label_var = symbol(@sprintf("%s_label", string(var)))
             end
 
-            if in(label_var, Set(names(aes)))
+            if in(label_var, Set(fieldnames(aes)))
                 setfield!(aes, label_var, make_labeler(scale))
             end
         end

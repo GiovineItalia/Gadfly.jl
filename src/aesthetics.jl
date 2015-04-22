@@ -85,7 +85,7 @@ end
 function show(io::IO, data::Aesthetics)
     maxlen = 0
     print(io, "Aesthetics(")
-    for name in names(Aesthetics)
+    for name in fieldnames(Aesthetics)
         if getfield(data, name) != nothing
             print(io, "\n  ", string(name), "=")
             show(io, getfield(data, name))
@@ -125,7 +125,7 @@ end
 # Return the set of variables that are non-nothing.
 function defined_aesthetics(aes::Aesthetics)
     vars = Set{Symbol}()
-    for name in Aesthetics.names
+    for name in fieldnames(Aesthetics)
         if !is(getfield(aes, name), nothing)
             push!(vars, name)
         end
@@ -195,7 +195,7 @@ copy(a::Aesthetics) = Aesthetics(a)
 # Modifies: a
 #
 function update!(a::Aesthetics, b::Aesthetics)
-    for name in Aesthetics.names
+    for name in fieldnames(Aesthetics)
         if issomething(getfield(b, name))
             setfield(a, name, getfield(b, name))
         end
@@ -232,7 +232,7 @@ end
 function concat(aess::Aesthetics...)
     cataes = Aesthetics()
     for aes in aess
-        for var in Aesthetics.names
+        for var in fieldnames(Aesthetics)
             setfield!(cataes, var,
                       cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
         end
@@ -356,7 +356,7 @@ function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
     make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},
                                     arr::PooledDataArray{T, U, V}) = arr
 
-    for var in T.names
+    for var in fieldnames(T)
         # Skipped aesthetics. Don't try to partition aesthetics for which it
         # makes no sense to pass on to subplots.
         if var == :xgroup || var == :ygroup||
@@ -414,7 +414,7 @@ end
 function inherit!(a::Aesthetics, b::Aesthetics;
                   clobber=[])
     clobber_set = Set{Symbol}(clobber)
-    for field in Aesthetics.names
+    for field in fieldnames(Aesthetics)
         aval = getfield(a, field)
         bval = getfield(b, field)
         if field in clobber_set
