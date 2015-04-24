@@ -29,31 +29,34 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
+    aes_x, aes_ymin, aes_ymax = concretize(aes.x, aes.ymin, aes.ymax)
+
     if length(aes.color) == 1 &&
         !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
-        max_points = collect((Any, Any), zip(aes.x, aes.ymax))
+        max_points = collect(zip(aes_x, aes_ymax))
         sort!(max_points, by=first)
 
-        min_points = collect((Any, Any), zip(aes.x, aes.ymin))
+        min_points = collect(zip(aes_x, aes_ymin))
         sort!(min_points, by=first, rev=true)
 
         ctx = compose!(
             context(),
-            Compose.polygon(collect((Any, Any), chain(min_points, max_points))),
+            Compose.polygon(collect(chain(min_points, max_points))),
             fill(theme.lowlight_color(aes.color[1])))
     else
-        max_points = Dict{RGB{Float32}, Array{(Any, Any), 1}}()
-        for (x, y, c) in zip(aes.x, aes.ymax, aes.color)
+        XT, YT = eltype(aes_x), promote_type(eltype(aes_ymin), eltype(aes_ymax))
+        max_points = Dict{RGB{Float32}, Vector{(@compat Tuple{XT, YT})}}()
+        for (x, y, c) in zip(aes_x, aes_ymax, aes.color)
             if !haskey(max_points, c)
-                max_points[c] = Array((Any, Any),0)
+                max_points[c] = Array((@compat Tuple{XT, YT}), 0)
             end
             push!(max_points[c], (x, y))
         end
 
-        min_points = Dict{RGB{Float32}, Array{(Any, Any), 1}}()
+        min_points = Dict{RGB{Float32}, Vector{(@compat Tuple{XT, YT})}}()
         for (x, y, c) in zip(aes.x, aes.ymin, aes.color)
             if !haskey(min_points, c)
-                min_points[c] = Array((Any, Any),0)
+                min_points[c] = Array((@compat Tuple{XT, YT}), 0)
             end
             push!(min_points[c], (x, y))
         end
@@ -65,7 +68,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
 
         ctx = compose!(
             context(),
-            Compose.polygon([collect((Any, Any), chain(min_points[c], max_points[c]))
+            Compose.polygon([collect((@compat Tuple{XT, YT}), chain(min_points[c], max_points[c]))
                      for c in keys(max_points)]),
             fill([theme.lowlight_color(c) for c in keys(max_points)]))
     end

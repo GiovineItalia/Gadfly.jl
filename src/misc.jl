@@ -11,6 +11,61 @@ function isconcrete(x)
     !isna(x)
 end
 
+
+function isallconcrete(xs)
+    ans = true
+    for x in xs
+        if !isconcrete(x)
+            ans = false
+            break
+        end
+    end
+    return ans
+end
+
+
+function concretize(xss::AbstractVector...)
+    if all(map(isallconcrete, xss))
+        return xss
+    end
+
+    count = 0
+    for j in 1:length(xss[1])
+        for xs in xss
+            if !isconcrete(xs[j])
+                @goto next_j1
+            end
+        end
+
+        count += 1
+        @label next_j1
+    end
+
+    yss = Array(AbstractVector, length(xss))
+    for (i, xs) in enumerate(xss)
+        yss[i] = Array(eltype(xs), count)
+    end
+
+    k = 1
+    for j in 1:length(xss[1])
+        for xs in xss
+            if !isconcrete(xs[j])
+                @goto next_j2
+            end
+        end
+
+        for (i, xs) in enumerate(xss)
+            yss[i][k] = xs[j]
+        end
+        k += 1
+
+        @label next_j2
+    end
+
+    return tuple(yss...)
+end
+
+
 # How many concrete elements in an iterable
 function concrete_length(xs)
     n = 0
@@ -392,6 +447,10 @@ else
     using Base.Dates
 end
 
+
+# TODO: This is a clusterfuck. I should really just wrap Date types to force
+# them to behave how I want.
+
 if !method_exists(/, (Dates.Day, Dates.Day))
     /(a::Dates.Day, b::Dates.Day) = a.value / b.value
 end
@@ -399,6 +458,7 @@ end
 if !method_exists(/, (Dates.Day, Real))
     /(a::Dates.Day, b::Real) = Dates.Day(round(Integer, (a.value / b)))
 end
+/(a::Dates.Day, b::FloatingPoint) = convert(Dates.Millisecond, a) / b
 
 if !method_exists(/, (Dates.Millisecond, Dates.Millisecond))
     /(a::Dates.Millisecond, b::Dates.Millisecond) = a.value / b.value
@@ -407,13 +467,22 @@ end
 if !method_exists(/, (Dates.Millisecond, Real))
     /(a::Dates.Millisecond, b::Real) = Dates.Millisecond(round(Integer, (a.value / b)))
 end
+/(a::Dates.Millisecond, b::FloatingPoint) = Dates.Millisecond(round(Integer, (a.value / b)))
+
 
 if !method_exists(-, (Dates.Date, Dates.DateTime))
     -(a::Dates.Date, b::Dates.DateTime) = convert(Dates.DateTime, a) - b
 end
 
++(a::Dates.Date, b::Dates.Millisecond) = convert(Dates.DateTime, a) + b
+
 if !method_exists(-, (Dates.DateTime, Dates.Date))
     -(a::Dates.DateTime, b::Dates.Date) = a - convert(Dates.DateTime, b)
+end
+
+
+if !method_exists(/, (Dates.Day, Dates.Millisecond))
+    /(a::Dates.Day, b::Dates.Millisecond) = convert(Dates.Millisecond, a) / b
 end
 
 for T in [Dates.Hour, Dates.Minute, Dates.Second, Dates.Millisecond]
@@ -431,5 +500,56 @@ end
     *(a::FloatingPoint, b::Dates.Millisecond) = Dates.Millisecond(round(Integer, (a * b.value)))
     *(a::Dates.Millisecond, b::FloatingPoint) = b * a
 #end
+
+
+# Arbitrarily order colors
+function color_isless(a::ColorValue, b::ColorValue)
+    return color_isless(convert(RGB, a), convert(RGB, b))
+end
+
+
+function color_isless(a::AlphaColorValue, b::AlphaColorValue)
+    return color_isless(convert(RGB, a), convert(RGB, b))
+end
+
+
+function color_isless(a::RGB, b::RGB)
+    if a.r < b.r
+        return true
+    elseif a.r == b.r
+        if a.g < b.g
+            return true
+        elseif a.g == b.g
+            return a.b < b.b
+        else
+            return false
+        end
+    else
+        return false
+    end
+end
+
+
+function color_isless(a::RGBA, b::RGBA)
+    if a.c < b.c
+        return true
+    elseif a.c == b.c
+        return a.alpha < b.alpha
+    else
+        return false
+    end
+end
+
+
+function group_color_isless{S, T <: ColorValue}(a::(@compat Tuple{S, T}),
+                                                b::(@compat Tuple{S, T}))
+    if a[1] < b[1]
+        return true
+    elseif a[1] == b[1]
+        return color_isless(a[2], b[2])
+    else
+        return false
+    end
+end
 
 

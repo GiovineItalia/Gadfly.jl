@@ -35,19 +35,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     lw_hover_scale = 10
     lw_ratio = theme.line_width / aes.size[1]
 
-    if !all(map(isconcrete, aes.x)) || !all(map(isconcrete, aes.y))
-        aes_x = Array(eltype(aes.x), 0)
-        aes_y = Array(eltype(aes.y), 0)
-        for (x, y) in zip(aes.x, aes.y)
-            if !isconcrete(x) || !isconcrete(y)
-                continue
-            end
-            push!(aes_x, x)
-            push!(aes_y, y)
-        end
-    else
-        aes_x, aes_y = aes.x, aes.y
-    end
+    aes_x, aes_y = concretize(aes.x, aes.y)
 
     ctx = compose!(
         context(),

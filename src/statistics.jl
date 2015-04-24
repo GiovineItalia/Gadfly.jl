@@ -988,11 +988,11 @@ function apply_statistic(stat::HexBinStatistic,
     xsize = xspan / stat.xbincount
     ysize = yspan / stat.ybincount
 
-    counts = Dict{(Any, Any), Int}()
+    counts = Dict{(@compat Tuple{Int, Int}), Int}()
     for (x, y) in zip(aes.x, aes.y)
-        h = convert(HexagonOffsetOddR, pointhex(x - xmin + xspan/2,
-                                                y - ymin + yspan/2,
-                                                xsize, ysize))
+        h = convert(HexagonOffsetOddR, cube_round(x - xmin + xspan/2,
+                                                  y - ymin + yspan/2,
+                                                  xsize, ysize))
         idx = (h.q, h.r)
         if !haskey(counts, idx)
             counts[idx] = 1

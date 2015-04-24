@@ -20,7 +20,7 @@ end
 
 
 function polygon_points(xs, ys, preserve_order)
-    T = (eltype(xs), eltype(ys))
+    T = (@compat Tuple{eltype(xs), eltype(ys)})
     if preserve_order
         return T[(x, y)for (x, y) in zip(xs, ys)]
     else

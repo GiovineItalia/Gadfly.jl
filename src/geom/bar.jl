@@ -283,20 +283,20 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         span = zero(T)
         unique_count = length(Set(values))
         if unique_count > 1
-            span = (maximum(values) - minimum(values)) / (unique_count - 1)
+            span = (maximum(values) - minimum(values)) / convert(Float64, (unique_count - 1))
         end
 
         if span == zero(T)
             span = one(T)
         end
 
-        T = promote_type(eltype(values), typeof(span/2))
+        T = promote_type(eltype(values), typeof(span/2.0))
         setfield!(aes2, minvar, Array(T, length(values)))
         setfield!(aes2, maxvar, Array(T, length(values)))
 
         for (i, x) in enumerate(values)
-            getfield(aes2, minvar)[i] = x - span/2
-            getfield(aes2, maxvar)[i] = x + span/2
+            getfield(aes2, minvar)[i] = x - span/2.0
+            getfield(aes2, maxvar)[i] = x + span/2.0
         end
         aes = inherit(aes, aes2)
     end

@@ -76,28 +76,63 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     aes = inherit(aes, default_aes)
 
     ctx = context(order=geom.order)
+    XT, YT, CT = eltype(aes.x), eltype(aes.y), eltype(aes.color)
+    XYT = @compat Tuple{XT, YT}
 
     if aes.group != nothing
-        # group points by group
-        points = Dict{Any, Array{(@compat Tuple{Any, Any}),1}}()
-        for (x, y, c, g) in zip(aes.x, aes.y, cycle(aes.color), cycle(aes.group))
-            if !haskey(points, (c,g))
-                points[(c,g)] = Array((@compat Tuple{Any, Any}),0)
-            end
-            push!(points[(c,g)], (x, y))
-        end
+        GT = eltype(aes.group)
 
         if !geom.preserve_order
-            for (g, g_points) in points
-                sort!(g_points, by=first)
+            p = sortperm(aes.x)
+            aes_group = aes.group[p]
+            aes_color = aes.color[p]
+            aes_x = aes.x[p]
+            aes_y = aes.y[p]
+        else
+            aes_group = copy(aes.group)
+            aes_color = copy(aes.color)
+            aes_x = copy(aes.x)
+            aes_y = copy(aes.y)
+        end
+
+        # organize x, y pairs into lines
+        p = sortperm(collect((@compat Tuple{GT, CT}),zip(aes_group, aes_color)),
+                     lt=Gadfly.group_color_isless)
+        permute!(aes_group, p)
+        permute!(aes_color, p)
+        permute!(aes_x, p)
+        permute!(aes_y, p)
+
+        points = Vector{XYT}[]
+        points_colors = CT[]
+        points_groups = GT[]
+
+        first_point = true
+        for (i, (x, y, c, g)) in enumerate(zip(aes_x, aes_y, aes_color, aes_group))
+            if !isconcrete(x) || !isconcrete(y)
+                first_point = true
+                continue
             end
+
+            if i > 1 && (c != points_colors[end] || g != points_groups[end])
+                first_point = true
+            end
+
+            if first_point
+                push!(points, XYT[])
+                push!(points_colors, c)
+                push!(points_groups, g)
+                first_point = false
+            end
+
+            push!(points[end], (x, y))
         end
 
         classes = [string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
-                   for (c, g) in keys(points)]
+                   for (c, g) in zip(points_colors, points_groups)]
 
-        ctx = compose!(ctx, Compose.line(collect(values(points))),
-                      stroke(collect(map(first, keys(points)))),
+        ctx = compose!(ctx, Compose.line(points),
+                      stroke(points_colors),
                       svgclass(classes))
 
     elseif length(aes.color) == 1 &&
@@ -112,26 +147,51 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                        stroke(aes.color[1]),
                        svgclass("geometry"))
     else
-        # group points by color
-        points = Dict{ColorValue, Array{(@compat Tuple{Any, Any}),1}}()
-        for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
-            if !haskey(points, c)
-                points[c] = Array((@compat Tuple{Any, Any}),0)
-            end
-            push!(points[c], (x, y))
+        if !geom.preserve_order
+            p = sortperm(aes.x)
+            aes_color = aes.color[p]
+            aes_x = aes.x[p]
+            aes_y = aes.y[p]
+        else
+            aes_color = copy(aes.color)
+            aes_x = copy(aes.x)
+            aes_y = copy(aes.y)
         end
 
-        if !geom.preserve_order
-            for (c, c_points) in points
-                sort!(c_points, by=first)
+        # organize x, y pairs into lines
+        p = sortperm(aes_color, lt=Gadfly.color_isless)
+        permute!(aes_color, p)
+        permute!(aes_x, p)
+        permute!(aes_y, p)
+
+        points = Vector{XYT}[]
+        points_colors = CT[]
+
+        first_point = true
+        for (i, (x, y, c)) in enumerate(zip(aes_x, aes_y, aes_color))
+            if !isconcrete(x) || !isconcrete(y)
+                first_point = true
+                continue
             end
+
+            if i > 1 && c != points_colors[end]
+                first_point = true
+            end
+
+            if first_point
+                push!(points, XYT[])
+                push!(points_colors, c)
+                first_point = false
+            end
+
+            push!(points[end], (x, y))
         end
 
         classes = [string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
-                   for c in keys(points)]
+                   for c in points_colors]
 
-        ctx = compose!(ctx, Compose.line(collect(values(points))),
-                      stroke(collect(keys(points))),
+        ctx = compose!(ctx, Compose.line(points),
+                      stroke(points_colors),
                       svgclass(classes))
     end
 

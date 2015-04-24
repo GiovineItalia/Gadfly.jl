@@ -809,6 +809,24 @@ function render_prepared(plot::Plot,
     themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
                    for layer in plot.layers]
 
+    # function f(xs...)
+    #     @show typeof(xs[1])
+    # end
+    # tmp = [render(layer.geom, theme, aes, subplot_aes, subplot_data, scales)
+    #        for (layer, aes, subplot_aes, subplot_data, theme) in zip(plot.layers, layer_aess, layer_subplot_aess, layer_subplot_datas, themes)]
+
+    # for (layer, aes, subplot_aes, subplot_data, theme) in zip(plot.layers, layer_aess, layer_subplot_aess, layer_subplot_datas, themes)
+    #     @show layer.geom
+    #     @show typeof(layer_aess)
+    #     @show typeof(layer_subplot_aess)
+    #     @show typeof(layer_subplot_datas)
+    #     @show typeof(themes)
+    # end
+    # tmp = [compose(context(order=layer.order),
+    #                  render(layer.geom, theme, aes, subplot_aes, subplot_data, scales))
+    #         for (layer, aes, subplot_aes, subplot_data, theme) in zip(plot.layers, layer_aess,
+    #                  layer_subplot_aess, layer_subplot_datas, themes)]
+
     compose!(plot_context,
              [compose(context(order=layer.order), render(layer.geom, theme, aes,
                                                          subplot_aes, subplot_data,
