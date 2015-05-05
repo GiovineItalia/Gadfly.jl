@@ -504,16 +504,16 @@ end
 
 # Arbitrarily order colors
 function color_isless(a::ColorValue, b::ColorValue)
-    return color_isless(convert(RGB, a), convert(RGB, b))
+    return color_isless(convert(RGB{Float32}, a), convert(RGB{Float32}, b))
 end
 
 
 function color_isless(a::AlphaColorValue, b::AlphaColorValue)
-    return color_isless(convert(RGB, a), convert(RGB, b))
+    return color_isless(convert(RGBA{Float32}, a), convert(RGBA{Float32}, b))
 end
 
 
-function color_isless(a::RGB, b::RGB)
+function color_isless(a::RGB{Float32}, b::RGB{Float32})
     if a.r < b.r
         return true
     elseif a.r == b.r
@@ -530,7 +530,7 @@ function color_isless(a::RGB, b::RGB)
 end
 
 
-function color_isless(a::RGBA, b::RGBA)
+function color_isless(a::RGBA{Float32}, b::RGBA{Float32})
     if a.c < b.c
         return true
     elseif a.c == b.c

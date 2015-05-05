@@ -1200,10 +1200,10 @@ function apply_statistic(stat::ContourStatistic,
         zs = convert(Matrix{Float64}, aes.z)
 
         if xs == nothing
-            xs = float([1:size(zs)[1]])
+            xs = collect(Float64, 1:size(zs)[1])
         end
         if ys == nothing
-            ys = float([1:size(zs)[2]])
+            ys = collect(Float64, 1:size(zs)[2])
         end
         if size(zs) != (length(xs), length(ys))
             error("Stat.contour requires dimension of z to be length(x) by length(y)")

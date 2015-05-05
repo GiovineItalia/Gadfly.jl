@@ -556,7 +556,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
         T = eltype(aes.xtick)
         labels = String[]
-        for scale_ticks in groupby(zip(scale, ticks), x -> x[1])
+        for scale_ticks in groupby(x -> x[1], zip(scale, ticks))
             append!(labels, aes.xtick_label(T[t for (s, t) in scale_ticks]))
         end
     else
@@ -723,7 +723,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         scale = aes.ytickscale
         T = eltype(aes.ytick)
         labels = String[]
-        for scale_ticks in groupby(zip(scale, ticks), x -> x[1])
+        for scale_ticks in groupby(x -> x[1], zip(scale, ticks))
             append!(labels, aes.ytick_label(T[t for (s, t) in scale_ticks]))
         end
     else
