@@ -913,7 +913,7 @@ function apply_statistic(stat::SmoothStatistic,
         aes.x = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
 
         if stat.method == :loess
-            aes.y = predict(loess(xs, ys, span=stat.smoothing), aes.x)
+            aes.y = Loess.predict(loess(xs, ys, span=stat.smoothing), aes.x)
         elseif stat.method == :lm
             lmcoeff = linreg(xs,ys)
             aes.y = lmcoeff[2].*aes.x .+ lmcoeff[1]
@@ -947,7 +947,7 @@ function apply_statistic(stat::SmoothStatistic,
             steps = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
 
             if stat.method == :loess
-                smoothys = predict(loess(xs, ys, span=stat.smoothing), steps)
+                smoothys = Loess.predict(loess(xs, ys, span=stat.smoothing), steps)
             elseif stat.method == :lm
                 lmcoeff = linreg(xs,ys)
                 smoothys = lmcoeff[2].*steps .+ lmcoeff[1]
