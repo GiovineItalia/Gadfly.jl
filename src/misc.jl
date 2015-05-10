@@ -455,6 +455,11 @@ if !method_exists(/, (Dates.Day, Dates.Day))
     /(a::Dates.Day, b::Dates.Day) = a.value / b.value
 end
 
+if VERSION < v"0.4.0-dev"
+    Base.convert(::Type{Dates.Millisecond}, d::Dates.Day) =
+        Dates.Millisecond(24 * 60 * 60 * 1000 * Dates.value(d))
+end
+
 if !method_exists(/, (Dates.Day, Real))
     /(a::Dates.Day, b::Real) = Dates.Day(round(Integer, (a.value / b)))
 end

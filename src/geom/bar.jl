@@ -278,7 +278,7 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         aes2 = Gadfly.Aesthetics()
         values = getfield(aes, var)
         minvalue, maxvalue = minimum(values), maximum(values)
-        T = typeof(maxvalue - minvalue)
+        T = typeof((maxvalue - minvalue) / 1.0)
 
         span = zero(T)
         unique_count = length(Set(values))
