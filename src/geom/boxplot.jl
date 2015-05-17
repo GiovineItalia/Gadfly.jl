@@ -26,7 +26,13 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
     aes = inherit(aes, default_aes)
 
     n = length(aes.lower_hinge)
+
     bw = 1w / n - theme.boxplot_spacing # boxplot width
+    if length(aes.x) > 1
+        minspan = minimum([xj - xi for (xi, xj) in zip(aes.x, aes.x[2:end])])
+        bw = Measure(cx=minspan) - theme.boxplot_spacing
+    end
+
     fw = 2/3 * bw # fence width
     xs = [Measure(cx=x) for x in takestrict(cycle(aes.x), n)]
     cs = takestrict(cycle(aes.color), n)

@@ -847,6 +847,22 @@ function apply_statistic(stat::BoxplotStatistic,
         end
     end
 
+    if length(aes.x) > 1 && (haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale))
+        xmin, xmax = minimum(aes.x), maximum(aes.x)
+        minspan = minimum([xj - xi for (xi, xj) in zip(aes.x, aes.x[2:end])])
+
+        xviewmin = xmin - minspan / 2
+        xviewmax = xmax + minspan / 2
+
+        if aes.xviewmin === nothing || aes.xviewmin > xviewmin
+            aes.xviewmin = xviewmin
+        end
+
+        if aes.xviewmax === nothing || aes.xviewmax < xviewmax
+            aes.xviewmax = xviewmax
+        end
+    end
+
     if isa(aes_x, PooledDataArray)
         aes.x = PooledDataArray(aes.x, aes_x.pool)
     end

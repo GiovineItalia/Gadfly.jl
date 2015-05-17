@@ -233,8 +233,22 @@ function concat(aess::Aesthetics...)
     cataes = Aesthetics()
     for aes in aess
         for var in fieldnames(Aesthetics)
-            setfield!(cataes, var,
-                      cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
+            if var in [:xviewmin, :yviewmin]
+                mu, mv = getfield(cataes, var), getfield(aes, var)
+                setfield!(cataes, var,
+                          mu === nothing ? mv :
+                             mv == nothing ? mu :
+                                 min(mu, mv))
+            elseif var in [:xviewmax, :yviewmax]
+                mu, mv = getfield(cataes, var), getfield(aes, var)
+                setfield!(cataes, var,
+                          mu === nothing ? mv :
+                             mv == nothing ? mu :
+                                 max(mu, mv))
+            else
+                setfield!(cataes, var,
+                          cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
+            end
         end
     end
     cataes
