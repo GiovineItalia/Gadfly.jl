@@ -542,7 +542,7 @@ const xticks = XTicks
 
 
 function default_statistic(guide::XTicks)
-    return Stat.xticks(guide.ticks)
+    return Stat.xticks(ticks=guide.ticks)
 end
 
 
@@ -710,7 +710,7 @@ const yticks = YTicks
 
 
 function default_statistic(guide::YTicks)
-    Stat.yticks(guide.ticks)
+    Stat.yticks(ticks=guide.ticks)
 end
 
 

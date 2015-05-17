@@ -522,12 +522,16 @@ immutable TickStatistic <: Gadfly.StatisticElement
 end
 
 
-function xticks(ticks::Union(Nothing, AbstractArray)=nothing)
+@deprecate xticks(ticks) xticks(ticks=ticks)
+
+function xticks(; ticks::Union(Nothing, AbstractArray)=nothing)
     TickStatistic([:x, :xmin, :xmax, :xintercept], "x", ticks)
 end
 
 
-function yticks(ticks::Union(Nothing, AbstractArray)=nothing)
+@deprecate yticks(ticks) yticks(ticks=ticks)
+
+function yticks(; ticks::Union(Nothing, AbstractArray)=nothing)
     TickStatistic(
         [:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge,
          :lower_fence, :upper_fence], "y", ticks)
