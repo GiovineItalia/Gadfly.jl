@@ -41,6 +41,27 @@ function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::Float64)
 end
 
 
+# Tally elements in xs into an array of counts.
+#
+# Args:
+#   bincounts: count per bin
+#   xs: values being tallied
+#   x_min: minimum value in xs
+#   binwidth: width of each bin
+#   numbins: number of bins
+#
+function bin!(bincounts::Vector, xs, x_min, binwidth, numbins)
+    bincounts[1:numbins] = 0
+    for x in xs
+        if !isconcrete(x)
+            continue
+        end
+        idx = 1 + @compat floor(Int, (x - x_min) / binwidth)
+        bincounts[min(numbins, idx)] += 1
+    end
+end
+
+
 # Optimize the number of bins for a regular one dimensional histogram.
 #
 # Args:
@@ -73,15 +94,7 @@ function choose_bin_count_1d(xs::AbstractVector, d_min=1, d_max=150)
     # small to plot, this is pretty quick and very simple.
     for d in d_min:d_max
         binwidth = span / d
-        bincounts[1:d] = 0
-
-        for x in xs
-            if !isconcrete(x)
-                continue
-            end
-            bincounts[max(1, min(d, (@compat ceil(Int, (x - x_min) / binwidth))))] += 1
-        end
-
+        bin!(bincounts, xs, x_min, binwidth, d)
         pll = bincount_pll(d, n, bincounts, binwidth)
 
         if pll > pll_best
@@ -90,14 +103,8 @@ function choose_bin_count_1d(xs::AbstractVector, d_min=1, d_max=150)
         end
     end
 
-    bincounts[1:d_best] = 0
     binwidth = span / d_best
-    for x in xs
-        if !isconcrete(x)
-            continue
-        end
-        bincounts[max(1, min(d_best, (@compat ceil(Int, (x - x_min) / binwidth))))] += 1
-    end
+    bin!(bincounts, xs, x_min, binwidth, d_best)
 
     return d_best, bincounts, x_max
 end
@@ -159,15 +166,7 @@ function choose_bin_count_1d_discrete(xs::AbstractArray, xs_set::AbstractArray,
             break
         end
 
-        bincounts[1:d] = 0
-        for x in xs
-            if !isconcrete(x)
-                continue
-            end
-            idx = @compat ceil(Int, (x - x_min) / binwidth)
-            bincounts[max(1, min(d, idx))] += 1
-        end
-
+        bin!(bincounts, xs, x_min, binwidth, d)
         pll = bincount_pll(d, n, bincounts, binwidth)
 
         if pll > pll_best
@@ -179,14 +178,7 @@ function choose_bin_count_1d_discrete(xs::AbstractArray, xs_set::AbstractArray,
     d = d_best
     binwidth = ceil(span / d / mingap) * mingap
     x_max = x_min + binwidth * d
-    bincounts[1:d_best] = 0
-    for x in xs
-        if !isconcrete(x)
-            continue
-        end
-        idx = @compat ceil(Int, (x - x_min) / binwidth)
-        bincounts[max(1, min(d_best, idx))] += 1
-    end
+    bin!(bincounts, xs, x_min, binwidth, d_best)
 
     return d_best, bincounts, x_max
 end
@@ -226,8 +218,8 @@ function choose_bin_count_2d(xs::AbstractVector, ys::AbstractVector,
             continue
         end
 
-        i = max(1, min(dx, (@compat ceil(Int, (x - x_min) / wx))))
-        j = max(1, min(dy, (@compat ceil(Int, (y - y_min) / wy))))
+        i = max(1, min(dx, 1 + (@compat floor(Int, (x - x_min) / wx))))
+        j = max(1, min(dy, 1 + (@compat floor(Int, (y - y_min) / wy))))
         bincounts[j, i] += 1
     end
 
