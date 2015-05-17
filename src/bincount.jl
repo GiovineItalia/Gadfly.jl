@@ -134,8 +134,7 @@ function choose_bin_count_1d_discrete(xs::AbstractArray, xs_set::AbstractArray,
     # minimum distance between two values
     mingap = zero(eltype(xs))
     for (i, j) in zip(1:length(xs_set)-1, 2:length(xs_set))
-        a, b = xs_set[i], xs_set[j]
-        gap = abs(a - b)
+        gap = xs_set[j] - xs_set[i]
         if isconcrete(gap) && gap > zero(eltype(xs))
             if mingap == zero(eltype(xs))
                 mingap = gap
