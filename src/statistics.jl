@@ -517,6 +517,11 @@ immutable TickStatistic <: Gadfly.StatisticElement
     in_vars::Vector{Symbol}
     out_var::String
 
+    granularity_weight::Float64
+    simplicity_weight::Float64
+    coverage_weight::Float64
+    niceness_weight::Float64
+
     # fixed ticks, or nothing
     ticks::Union(Nothing, AbstractArray)
 end
@@ -524,17 +529,29 @@ end
 
 @deprecate xticks(ticks) xticks(ticks=ticks)
 
-function xticks(; ticks::Union(Nothing, AbstractArray)=nothing)
-    TickStatistic([:x, :xmin, :xmax, :xintercept], "x", ticks)
+function xticks(; ticks::Union(Nothing, AbstractArray)=nothing,
+                  granularity_weight::Float64=1/4,
+                  simplicity_weight::Float64=1/6,
+                  coverage_weight::Float64=1/3,
+                  niceness_weight::Float64=1/4)
+    TickStatistic([:x, :xmin, :xmax, :xintercept], "x",
+                  granularity_weight, simplicity_weight,
+                  coverage_weight, niceness_weight, ticks)
 end
 
 
 @deprecate yticks(ticks) yticks(ticks=ticks)
 
-function yticks(; ticks::Union(Nothing, AbstractArray)=nothing)
+function yticks(; ticks::Union(Nothing, AbstractArray)=nothing,
+                  granularity_weight::Float64=1/4,
+                  simplicity_weight::Float64=1/6,
+                  coverage_weight::Float64=1/3,
+                  niceness_weight::Float64=1/4)
     TickStatistic(
         [:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge,
-         :lower_fence, :upper_fence], "y", ticks)
+         :lower_fence, :upper_fence], "y",
+        granularity_weight, simplicity_weight,
+        coverage_weight, niceness_weight, ticks)
 end
 
 
@@ -670,7 +687,12 @@ function apply_statistic(stat::TickStatistic,
         minval, maxval = promote(minval, maxval)
 
         ticks, viewmin, viewmax =
-            Gadfly.optimize_ticks(minval, maxval, extend_ticks=true)
+            Gadfly.optimize_ticks(minval, maxval, extend_ticks=true,
+                                  granularity_weight=stat.granularity_weight,
+                                  simplicity_weight=stat.simplicity_weight,
+                                  coverage_weight=stat.coverage_weight,
+                                  niceness_weight=stat.niceness_weight)
+
         grids = ticks
         multiticks = Gadfly.multilevel_ticks(viewmin - (viewmax - viewmin),
                                              viewmax + (viewmax - viewmin))

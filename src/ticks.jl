@@ -55,14 +55,22 @@ optimize_ticks() = Any[]
 function optimize_ticks{T}(x_min::T, x_max::T; extend_ticks::Bool=false,
                            Q=[(1.0,1.0), (5.0, 0.9), (2.0, 0.7), (2.5, 0.5), (3.0, 0.2)],
                            k_min::Int=2, k_max::Int=10, k_ideal::Int=5,
+                           granularity_weight::Float64=1/4, simplicity_weight::Float64=1/6,
+                           coverage_weight::Float64=1/3, niceness_weight::Float64=1/4,
                            strict_span=false)
 
     Qv = [((@compat Float64(q[1])), (@compat Float64(q[2]))) for q in Q]
-    optimize_ticks_typed(x_min, x_max, extend_ticks, Qv, k_min, k_max, k_ideal, strict_span)
+    optimize_ticks_typed(x_min, x_max, extend_ticks, Qv, k_min, k_max, k_ideal,
+                         granularity_weight, simplicity_weight,
+                         coverage_weight, niceness_weight, strict_span)
 end
 
-function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(@compat Tuple{Float64,Float64})}, k_min,
-                           k_max, k_ideal, strict_span)
+function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks,
+                           Q::Vector{(@compat Tuple{Float64,Float64})}, k_min,
+                           k_max, k_ideal,
+                           granularity_weight::Float64, simplicity_weight::Float64,
+                           coverage_weight::Float64, niceness_weight::Float64,
+                           strict_span)
     one_t = one(T)
     if x_max - x_min < eps()*one_t
         R = typeof(1.0 * one_t)
@@ -107,7 +115,10 @@ function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks, Q::Vector{(@c
                     # coverage
                     c = 1.5 * xspan/span
 
-                    score = (1/4)g + (1/6)s + (1/3)c + (1/4)qscore
+                    score = granularity_weight * g +
+                            simplicity_weight * s +
+                            coverage_weight * c +
+                            niceness_weight * qscore
 
                     # strict limits on coverage
                     if strict_span && span > xspan
@@ -152,16 +163,18 @@ end
 
 
 function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
-                        k_min=nothing, k_max=nothing,
-                        scale=:auto)
+                        k_min=nothing, k_max=nothing, scale=:auto,
+                        granularity_weight=nothing, simplicity_weight=nothing,
+                        coverage_weight=nothing, niceness_weight=nothing)
     return optimize_ticks(convert(DateTime, x_min), convert(DateTime, x_max),
                           extend_ticks=extend_ticks, scale=scale)
 end
 
 
 function optimize_ticks(x_min::DateTime, x_max::DateTime; extend_ticks::Bool=false,
-                        k_min=nothing, k_max=nothing,
-                        scale=:auto)
+                        k_min=nothing, k_max=nothing, scale=:auto,
+                        granularity_weight=nothing, simplicity_weight=nothing,
+                        coverage_weight=nothing, niceness_weight=nothing)
     if x_min == x_max
         x_max += Second(1)
     end
