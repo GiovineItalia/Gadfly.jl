@@ -124,7 +124,7 @@ end
     key_color_gradations, Int,            40
 
     # Spacing between bars for Geom.bar.
-    bar_spacing,           Measure,         0.0mm
+    bar_spacing,           Measure,         -0.05mm
 
     # Spacing between boxplots in Geom.boxplot.
     boxplot_spacing,       Measure,         1mm
