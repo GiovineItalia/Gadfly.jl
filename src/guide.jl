@@ -249,7 +249,7 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                         [xpad], [y*cy - swatch_size/2 for y in 1:nrows],
                         [swatch_size], [swatch_size])
                 elseif theme.colorkey_swatch_shape == :circle
-                    swatches_shapes = circle([0.5cy], 1:nrows .- 0.5, [swatch_size/2])
+                    swatches_shapes = circle([0.5cy], 1:nrows, [swatch_size/2])
                 end
                 cs = colors[m+1:m+nrows]
                 swatches = compose!(
