@@ -189,10 +189,11 @@ function render_discrete_color_key(colors::Vector{ColorValue},
                                    title_width::Measure,
                                    theme::Gadfly.Theme)
 
+    n = length(colors)
+
     # only consider layouts with a reasonable number of columns
     maxcols = theme.key_max_columns < 1 ? 1 : theme.key_max_columns
-
-    n = length(colors)
+    maxcols = min(n, maxcols)
 
     extents = text_extents(theme.key_label_font,
                            theme.key_label_font_size,
