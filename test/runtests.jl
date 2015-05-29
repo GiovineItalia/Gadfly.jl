@@ -92,7 +92,8 @@ tests = [
     ("subplot_grid_free_y_2",                 10cm,  30cm),
     ("violin",                                6inch, 3inch),
     ("single_violin",                         6inch, 3inch),
-    ("polygon",                               6inch, 3inch)
+    ("polygon",                               6inch, 3inch),
+    ("jitter",                                6inch, 3inch),
 ]
 
 

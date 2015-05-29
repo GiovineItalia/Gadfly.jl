@@ -672,9 +672,9 @@ function apply_statistic(stat::TickStatistic,
         tickvisible = fill(true, length(ticks))
         tickscale = fill(1.0, length(ticks))
     elseif categorical
-        ticks = Set()
+        ticks = Set{Int}()
         for val in in_values
-            push!(ticks, val)
+            push!(ticks, round(Int, val))
         end
         ticks = Int[t for t in ticks]
         sort!(ticks)
@@ -1405,6 +1405,65 @@ function apply_statistic(stat::ViolinStatistic,
     aes.width .*= 1 - pad
     aes.width ./= maxwidth
 end
+
+
+immutable JitterStatistic <: Gadfly.StatisticElement
+    vars::Vector{Symbol}
+    range::Float64
+    seed::Uint32
+
+    function JitterStatistic(vars::Vector{Symbol}; range=0.8, seed=0x0af5a1f7)
+        return new(vars, range, seed)
+    end
+end
+
+
+x_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:x], range=range, seed=seed)
+y_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:y], range=range, seed=seed)
+
+
+function element_aesthetics(stat::JitterStatistic)
+    return stat.vars
+end
+
+function apply_statistic(stat::JitterStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    # find the minimum span between points
+    span = nothing
+    for var in stat.vars
+        data = getfield(aes, var)
+        if length(data) < 2
+            continue
+        end
+        dataspan = data[2] - data[1]
+        z = zero(eltype(data))
+        sorteddata = sort(data)
+        for (u, v) in partition(sorteddata, 2, 1)
+            δ = v - u
+            if δ != z && (δ < dataspan || dataspan == z)
+                dataspan = δ
+            end
+        end
+
+        if span == nothing || (dataspan != nothing && dataspan < span)
+            span = dataspan
+        end
+    end
+
+    if span == nothing
+        return
+    end
+
+    rng = MersenneTwister(stat.seed)
+    for var in stat.vars
+        data = getfield(aes, var)
+        data .+= stat.range * (rand(rng, length(data)) - 0.5) .* span
+        setfield!(aes, var, data)
+    end
+end
+
 
 end # module Stat
 
