@@ -132,6 +132,11 @@ function add_plot_element{T<:Element}(lyrs::Vector{Layer}, arg::T)
 end
 
 
+function add_plot_element(lyrs::Vector{Layer}, arg::ScaleElement)
+    error("Scales cannot be passed to layers, they must be specified at the plot level.")
+end
+
+
 function add_plot_element(lyrs::Vector{Layer}, arg::GeometryElement)
     if ! is(lyrs[end].geom, Geom.nil())
         push!(lyrs, copy(lyrs[end]))
