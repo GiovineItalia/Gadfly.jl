@@ -123,9 +123,10 @@ Snap.plugin(function (Snap, Element, Paper, global) {
     // through eve.
     Element.prototype.attribute = function(key, val) {
         if (val === undefined) {
-            return this.node.getAttribute(key, val);
+            return this.node.getAttribute(key);
         } else {
-            return this.node.setAttribute(key, val);
+            this.node.setAttribute(key, val);
+            return this;
         }
     };
 });
@@ -140,18 +141,18 @@ Gadfly.plot_mouseover = function(event) {
         ygridlines = root.select(".ygridlines");
 
     xgridlines.data("unfocused_strokedash",
-                    xgridlines.attr("stroke-dasharray").replace(/px/g, "mm"))
+                    xgridlines.attribute("stroke-dasharray").replace(/(\d)(,|$)/g, "$1mm$2"));
     ygridlines.data("unfocused_strokedash",
-                    ygridlines.attr("stroke-dasharray").replace(/px/g, "mm"))
+                    ygridlines.attribute("stroke-dasharray").replace(/(\d)(,|$)/g, "$1mm$2"));
 
     // emphasize grid lines
     var destcolor = root.data("focused_xgrid_color");
-    xgridlines.attr("stroke-dasharray", "none")
+    xgridlines.attribute("stroke-dasharray", "none")
               .selectAll("path")
               .animate({stroke: destcolor}, 250);
 
     destcolor = root.data("focused_ygrid_color");
-    ygridlines.attr("stroke-dasharray", "none")
+    ygridlines.attribute("stroke-dasharray", "none")
               .selectAll("path")
               .animate({stroke: destcolor}, 250);
 
@@ -169,12 +170,12 @@ Gadfly.plot_mouseout = function(event) {
 
     var destcolor = root.data("unfocused_xgrid_color");
 
-    xgridlines.attr("stroke-dasharray", xgridlines.data("unfocused_strokedash"))
+    xgridlines.attribute("stroke-dasharray", xgridlines.data("unfocused_strokedash"))
               .selectAll("path")
               .animate({stroke: destcolor}, 250);
 
     destcolor = root.data("unfocused_ygrid_color");
-    ygridlines.attr("stroke-dasharray", ygridlines.data("unfocused_strokedash"))
+    ygridlines.attribute("stroke-dasharray", ygridlines.data("unfocused_strokedash"))
               .selectAll("path")
               .animate({stroke: destcolor}, 250);
 
