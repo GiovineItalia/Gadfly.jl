@@ -116,7 +116,7 @@ function layer(data_source::Union(AbstractDataFrame, Nothing),
     end
     lyrs = Layer[lyr]
     for element in elements
-        add_plot_element(lyrs, element)
+        add_plot_element!(lyrs, element)
     end
     lyrs
 end
@@ -127,17 +127,17 @@ function layer(elements::ElementOrFunction...; mapping...)
 end
 
 
-function add_plot_element{T<:Element}(lyrs::Vector{Layer}, arg::T)
+function add_plot_element!{T<:Element}(lyrs::Vector{Layer}, arg::T)
     error("Layers can't be used with elements of type $(typeof(arg))")
 end
 
 
-function add_plot_element(lyrs::Vector{Layer}, arg::ScaleElement)
+function add_plot_element!(lyrs::Vector{Layer}, arg::ScaleElement)
     error("Scales cannot be passed to layers, they must be specified at the plot level.")
 end
 
 
-function add_plot_element(lyrs::Vector{Layer}, arg::GeometryElement)
+function add_plot_element!(lyrs::Vector{Layer}, arg::GeometryElement)
     if ! is(lyrs[end].geom, Geom.nil())
         push!(lyrs, copy(lyrs[end]))
     end
@@ -145,17 +145,17 @@ function add_plot_element(lyrs::Vector{Layer}, arg::GeometryElement)
 end
 
 
-function add_plot_element(lyrs::Vector{Layer}, arg::Base.Callable)
-    add_plot_element(lyrs::Vector{Layer}, arg())
+function add_plot_element!(lyrs::Vector{Layer}, arg::Base.Callable)
+    add_plot_element!(lyrs::Vector{Layer}, arg())
 end
 
 
-function add_plot_element(lyrs::Vector{Layer}, arg::StatisticElement)
+function add_plot_element!(lyrs::Vector{Layer}, arg::StatisticElement)
     [lyr.statistic = arg for lyr in lyrs]
 end
 
 
-function add_plot_element(lyrs::Vector{Layer}, arg::Theme)
+function add_plot_element!(lyrs::Vector{Layer}, arg::Theme)
     [lyr.theme = arg for lyr in lyrs]
 end
 
@@ -186,12 +186,12 @@ function layers(p::Plot)
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Function)
-    add_plot_element(p, data, arg())
+function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::Function)
+    add_plot_element!(p, data, arg())
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement)
+function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::GeometryElement)
     if !isempty(p.layers) && isa(p.layers[end].geom, Geom.Nil)
         p.layers[end].geom = arg
     else
@@ -202,12 +202,12 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GeometryElement
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
+function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
     push!(p.scales, arg)
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElement)
+function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::StatisticElement)
     if isempty(p.layers)
         push!(p.layers, Layer())
     end
@@ -216,32 +216,32 @@ function add_plot_element(p::Plot, data::AbstractDataFrame, arg::StatisticElemen
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
+function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
     p.coord = arg
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::GuideElement)
+function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::GuideElement)
     push!(p.guides, arg)
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Layer)
+function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::Layer)
     push!(p.layers, arg)
 end
 
 
-function add_plot_element(p::Plot, data::AbstractDataFrame, arg::Vector{Layer})
+function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::Vector{Layer})
     append!(p.layers, arg)
 end
 
 
-function add_plot_element{T <: Element}(p::Plot, data::AbstractDataFrame, f::Type{T})
-    add_plot_element(p, data, f())
+function add_plot_element!{T <: Element}(p::Plot, data::AbstractDataFrame, f::Type{T})
+    add_plot_element!(p, data, f())
 end
 
 
-function add_plot_element(p::Plot, ::AbstractDataFrame, theme::Theme)
+function add_plot_element!(p::Plot, ::AbstractDataFrame, theme::Theme)
     p.theme = theme
 end
 
@@ -346,10 +346,10 @@ function plot(data_source::AbstractDataFrame, elements::ElementOrFunctionOrLayer
     end
 
     for element in elements
-        add_plot_element(p, data_source, element)
+        add_plot_element!(p, data_source, element)
     end
 
-    p
+    return p
 end
 
 
@@ -375,7 +375,7 @@ end
 function plot(data_source::AbstractDataFrame, mapping::Dict, elements::ElementOrFunctionOrLayers...)
     p = Plot()
     for element in elements
-        add_plot_element(p, data_source, element)
+        add_plot_element!(p, data_source, element)
     end
 
     for (var, value) in mapping
@@ -384,11 +384,17 @@ function plot(data_source::AbstractDataFrame, mapping::Dict, elements::ElementOr
     p.mapping = mapping
     p.data_source = data_source
 
-    p
+    return p
 end
 
 
 include("poetry.jl")
+
+
+function Base.push!(p::Plot, element::ElementOrFunctionOrLayers)
+    add_plot_element!(p, p.data_source, element)
+    return p
+end
 
 
 # Turn a graph specification into a graphic.
