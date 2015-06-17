@@ -1465,6 +1465,75 @@ function apply_statistic(stat::JitterStatistic,
 end
 
 
+
+# Bin mean returns the mean of x and y in n bins of x
+
+
+immutable BinMeanStatistic <: Gadfly.StatisticElement
+    n::Int
+    function BinMeanStatistic(;n=20)
+        new(n)
+    end
+end
+
+
+const binmean = BinMeanStatistic
+
+element_aesthetics(::BinMeanStatistic) = [:x, :y]
+
+
+
+function apply_statistic(stat::BinMeanStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+
+    Gadfly.assert_aesthetics_defined("Stat.binmean", aes, :x, :y)
+
+    breaks = quantile(aes.x, [1:stat.n;]/stat.n)
+
+    if aes.color === nothing
+        (aes.x, aes.y) = mean_by_group(aes.x, aes.y, breaks)
+    else
+        groups = Dict()
+        for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
+            if !haskey(groups, c)
+                groups[c] = Array[[Float64[x]], [Float64[y]]]
+            else
+                push!(groups[c][1], x)
+                push!(groups[c][2], y)
+            end
+        end
+        colors = Array(RGB{Float32}, 0)
+        aes.x = Array(Float64, 0)
+        aes.y = Array(Float64, 0)
+        for (c, v) in groups
+            (fx, fy) = mean_by_group(v[1], v[2], breaks)
+            append!(aes.x, fx)
+            append!(aes.y, fy)
+            for _ in 1:length(fx)
+                push!(colors, c)
+            end
+        end
+        aes.color = PooledDataArray(colors)
+    end
+end
+
+function mean_by_group{Tx, Ty}(x::Vector{Tx}, y::Vector{Ty}, breaks::Vector{Float64})
+    count = zeros(Int64, length(breaks))
+    totalx = zeros(Tx, length(breaks))
+    totaly = zeros(Ty, length(breaks))
+    for i in 1:length(x)
+        refs = searchsortedfirst(breaks, x[i]) 
+        count[refs] += 1
+        totalx[refs] += x[i]
+        totaly[refs] += y[i]
+    end
+    subset = count .> 0
+    count = count[subset]
+    return (totalx[subset] ./ count, totaly[subset] ./ count)
+end
+
 end # module Stat
 
 
