@@ -7,7 +7,7 @@ order: 1002
 
 Draw an vertical and/or horizontal error bars.
 
-# Asthetics
+# Aesthetics
 
   * `x`: X-position of the bar.
   * `ymin`: Lower Y-position.
