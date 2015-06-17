@@ -1482,7 +1482,6 @@ const binmean = BinMeanStatistic
 element_aesthetics(::BinMeanStatistic) = [:x, :y]
 
 
-
 function apply_statistic(stat::BinMeanStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
@@ -1490,7 +1489,10 @@ function apply_statistic(stat::BinMeanStatistic,
 
     Gadfly.assert_aesthetics_defined("Stat.binmean", aes, :x, :y)
 
-    breaks = quantile(aes.x, [1:stat.n;]/stat.n)
+    breaks = quantile(aes.x, collect(1:stat.n)/stat.n)
+
+    Tx = eltype(aes.x)
+    Ty = eltype(aes.y)
 
     if aes.color === nothing
         (aes.x, aes.y) = mean_by_group(aes.x, aes.y, breaks)
@@ -1498,15 +1500,15 @@ function apply_statistic(stat::BinMeanStatistic,
         groups = Dict()
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
             if !haskey(groups, c)
-                groups[c] = Array[[Float64[x]], [Float64[y]]]
+                groups[c] = Array[[Tx[x]], [Ty[y]]]
             else
                 push!(groups[c][1], x)
                 push!(groups[c][2], y)
             end
         end
         colors = Array(RGB{Float32}, 0)
-        aes.x = Array(Float64, 0)
-        aes.y = Array(Float64, 0)
+        aes.x = Array(Tx, 0)
+        aes.y = Array(Ty, 0)
         for (c, v) in groups
             (fx, fy) = mean_by_group(v[1], v[2], breaks)
             append!(aes.x, fx)

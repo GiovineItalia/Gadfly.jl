@@ -1,11 +1,11 @@
 ---
-title: qq
+title: binmean
 author: Matthieu Gomez
 part: Statistic
 order: 1005
 ...
 
-Plot the mean of `y` against the mean of `x` within bins of `x`. 
+Plot the mean of `y` against the mean of `x` within `n` quantile bins of `x`.
 
 # Aesthetics
 
