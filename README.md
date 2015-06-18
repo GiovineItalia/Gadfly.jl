@@ -7,6 +7,8 @@ Julia 0.4 [![Gadfly](http://pkg.julialang.org/badges/Gadfly_nightly.svg)](http:/
 
 [![DOI](https://zenodo.org/badge/6322/dcjones/Gadfly.jl.png)](http://dx.doi.org/10.5281/zenodo.11876) [![Build Status](http://img.shields.io/travis/dcjones/Gadfly.jl.svg)](https://travis-ci.org/dcjones/Gadfly.jl) [![Coverage Status](http://img.shields.io/coveralls/dcjones/Gadfly.jl.svg)](https://coveralls.io/r/dcjones/Gadfly.jl)
 
+[![Join the chat at https://gitter.im/dcjones/Gadfly.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dcjones/Gadfly.jl?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 **Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
 
