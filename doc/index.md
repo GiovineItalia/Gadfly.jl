@@ -197,19 +197,18 @@ Ordering of layers can be controlled with the `order` keyword. A higher order
 number will cause a layer to be drawn on top of any layers with a lower number.
 If not specifiel, default order for a layer is 0.
 
-```.{julia execute="false"}
+```{.julia execute="false"}
 plot(layer(x=rand(10), y=rand(10), Geom.point, order=1),
      layer(x=rand(10), y=rand(10), Geom.line, order=2))
 ```
 
-Guide attributes may be added to a multi-layer plot:
-```.{julia execute="false"}
-plt=plot( [ layer(x=rand(10), y=rand(10), Geom.point),
-            layer(x=rand(10), y=rand(10), Geom.line)  ],
-            Guide.XLabel("XLabel"), 
-            Guide.YLabel("YLabel"),
-            Guide.Title("Title")
-         );
+Guide attributes may be added to a multi-layer plots:
+```{.julia execute="false"}
+plt=plot(layer(x=rand(10), y=rand(10), Geom.point),
+         layer(x=rand(10), y=rand(10), Geom.line),
+         Guide.XLabel("XLabel"),
+         Guide.YLabel("YLabel"),
+         Guide.Title("Title"));
 ```
 
 # Stacking
