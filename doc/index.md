@@ -202,6 +202,15 @@ plot(layer(x=rand(10), y=rand(10), Geom.point, order=1),
      layer(x=rand(10), y=rand(10), Geom.line, order=2))
 ```
 
+Guide attributes may be added to a multi-layer plot:
+```.{julia execute="false"}
+plt=plot( [ layer(x=rand(10), y=rand(10), Geom.point),
+            layer(x=rand(10), y=rand(10), Geom.line)  ],
+            Guide.XLabel("XLabel"), 
+            Guide.YLabel("YLabel"),
+            Guide.Title("Title")
+         );
+```
 
 # Stacking
 
