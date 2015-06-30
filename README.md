@@ -14,7 +14,7 @@ Julia 0.4 [![Gadfly](http://pkg.julialang.org/badges/Gadfly_nightly.svg)](http:/
 
 It's influenced heavily by Leland Wilkinson's book
 [The Grammar of Graphics](http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html)
-and Hadley Wickham's refinment of that grammar in
+and Hadley Wickham's refinement of that grammar in
 [ggplot2](http://ggplot2.org/).
 
 It renders publication quality graphics to PNG, Postscript, PDF, SVG. The SVG
