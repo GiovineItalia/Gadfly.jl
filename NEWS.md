@@ -3,6 +3,28 @@ This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
 
+# Version 0.3.13
+
+  * Add a `push!` function allowing plots to be built incrementally.
+
+  * Add `Stat.x_jitter` and `Stat.y_jitter`
+
+  * Fix a missing key with `colorkey_swatch_shape=:circle`.
+
+  * Fix grid lines breaking on repeated mouseovers.
+
+  * Fix some histogram binning issues.
+
+# Version 0.3.12
+
+  * Add `Geom.polygon`
+
+  * Add `Geom.violin`.
+
+  * Add support for opacity (AlphaColorValue) in various places.
+
+  * Fix infinite loop when the span of data is very small.
+
 # Version 0.3.11
 
   * Options to statically position `Geom.label` labels. (Issue #542)
