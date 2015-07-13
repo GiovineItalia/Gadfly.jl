@@ -794,7 +794,7 @@ end
 
 function apply_scale(scale::IdentityScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-    for (aes, data) in zip (aess, datas)
+    for (aes, data) in zip(aess, datas)
         if getfield(data, scale.var) === nothing
             continue
         end
