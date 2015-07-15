@@ -113,9 +113,9 @@ function render_colorful_stacked_bar(geom::BarGeometry,
             ctx,
             rectangle(
                 stack_height,
-                [aes.ymin[i]*cy - theme.bar_spacing/2 for i in idxs],
+                [aes.ymin[i]*cy + theme.bar_spacing/2 for i in idxs],
                 [aes.x[i] for i in idxs],
-                [(aes.ymax[i] - aes.ymin[i])*cy + theme.bar_spacing for i in idxs]))
+                [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs]))
     elseif orientation == :vertical
         stack_height_dict = Dict()
         for x in aes.xmin
@@ -181,7 +181,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
 
         dodge_pos = Array(Measure, length(idxs))
         for (i, j) in enumerate(idxs)
-            dodge_pos[i] = dodge_pos_dict[aes.ymin[j]] - theme.bar_spacing/2
+            dodge_pos[i] = dodge_pos_dict[aes.ymin[j]] + theme.bar_spacing/2
             dodge_pos_dict[aes.ymin[j]] += dodge_height[aes.ymin[j]]
         end
 
@@ -191,7 +191,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
                 [0.0],
                 dodge_pos,
                 [aes.x[i] for i in idxs],
-                [((aes.ymax[i] - aes.ymin[i])*cy + theme.bar_spacing) / dodge_count[aes.ymin[i]]
+                [((aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing) / dodge_count[aes.ymin[i]]
                  for i in idxs]))
     elseif orientation == :vertical
         dodge_count = DefaultDict(() -> 0)
