@@ -53,22 +53,26 @@ function render_colorless_bar(geom::BarGeometry,
                               aes::Gadfly.Aesthetics,
                               orientation::Symbol)
     if orientation == :horizontal
+        XT = eltype(aes.x)
+        xz = zero(XT)
         ctx = compose!(
             context(),
-            rectangle([0.0],
+            rectangle([min(xz, x) for x in aes.x],
                       [Measure(cy=ymin) + theme.bar_spacing/2 for ymin in aes.ymin],
-                      aes.x,
+                      abs(aes.x),
                       [Measure(cy=(ymax - ymin)) - theme.bar_spacing
                        for (ymin, ymax) in zip(aes.ymin, aes.ymax)]),
             svgclass("geometry"))
     else
+        YT = eltype(aes.y)
+        yz = zero(YT)
         ctx = compose!(
             context(),
             rectangle([Measure(cx=xmin) + theme.bar_spacing/2 for xmin in aes.xmin],
-                      [0.0],
+                      [min(yz, y) for y in aes.y],
                       [Measure(cx=(xmax - xmin)) - theme.bar_spacing
                        for (xmin, xmax) in zip(aes.xmin, aes.xmax)],
-                      aes.y),
+                      abs(aes.y)),
             svgclass("geometry"))
     end
 
@@ -185,12 +189,16 @@ function render_colorful_dodged_bar(geom::BarGeometry,
             dodge_pos_dict[aes.ymin[j]] += dodge_height[aes.ymin[j]]
         end
 
+        XT = eltype(aes.x)
+        xz = zero(XT)
+
+        aes_x = aes.x[idxs]
         compose!(
             ctx,
             rectangle(
-                [0.0],
+                [min(xz, x) for x in aes_x],
                 dodge_pos,
-                [aes.x[i] for i in idxs],
+                abs(aes_x),
                 [((aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing) / dodge_count[aes.ymin[i]]
                  for i in idxs]))
     elseif orientation == :vertical
@@ -213,14 +221,18 @@ function render_colorful_dodged_bar(geom::BarGeometry,
             dodge_pos_dict[aes.xmin[j]] += dodge_width[aes.xmin[j]]
         end
 
+        YT = eltype(aes.y)
+        yz = zero(YT)
+
+        aes_y = aes.y[idxs]
         compose!(
             ctx,
             rectangle(
                 dodge_pos,
-                [0.0],
+                [min(yz, y) for y in aes_y],
                 [((aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing) / dodge_count[aes.xmin[i]]
                  for i in idxs],
-                [aes.y[i] for i in idxs]))
+                abs(aes_y)))
     else
         error("Orientation must be :horizontal or :vertical")
     end
