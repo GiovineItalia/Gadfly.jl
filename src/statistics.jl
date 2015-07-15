@@ -577,6 +577,11 @@ function apply_statistic(stat::TickStatistic,
         error("TickStatistic cannot be applied to subplot coordinates.")
     end
 
+    # don't clobber existing ticks
+    if getfield(aes, symbol(string(stat.out_var, "tick"))) != nothing
+        return
+    end
+
     in_group_var = symbol(string(stat.out_var, "group"))
     minval, maxval = nothing, nothing
     in_values = Any[]
