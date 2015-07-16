@@ -20,6 +20,6 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```julia
-volcano = float(array(dataset("datasets", "volcano")))
+volcano = float(convert(Array, dataset("datasets", "volcano")))
 plot(z=volcano, Geom.contour, Guide.colorkey("Elevation"))
 ```
