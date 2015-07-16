@@ -174,7 +174,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                 continue
             end
 
-            if i > 1 && c != points_colors[end]
+            if isempty(points_colors) || c != points_colors[end]
                 first_point = true
             end
 
