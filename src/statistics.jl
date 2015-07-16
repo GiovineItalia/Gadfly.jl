@@ -1431,11 +1431,8 @@ function element_aesthetics(stat::JitterStatistic)
     return stat.vars
 end
 
-function apply_statistic(stat::JitterStatistic,
-                         scales::Dict{Symbol, Gadfly.ScaleElement},
-                         coord::Gadfly.CoordinateElement,
-                         aes::Gadfly.Aesthetics)
-    # find the minimum span between points
+
+function minimum_span(vars::Vector{Symbol}, aes::Gadfly.Aesthetics)
     span = nothing
     for var in stat.vars
         data = getfield(aes, var)
@@ -1456,7 +1453,14 @@ function apply_statistic(stat::JitterStatistic,
             span = dataspan
         end
     end
+end
 
+
+function apply_statistic(stat::JitterStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    span = minimum_span(stat.vars, aes)
     if span == nothing
         return
     end
