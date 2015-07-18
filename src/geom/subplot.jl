@@ -359,7 +359,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         # copy over the correct units, since we are reparenting the children
         for u in 1:size(subtbl, 1), v in 1:size(subtbl, 2)
             for child in subtbl[u, v]
-                if child.units == Compose.nil_unit_box
+                if isnull(child.units)
                     child.units = subtbl.units
                 end
             end
