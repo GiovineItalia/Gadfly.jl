@@ -1434,7 +1434,7 @@ end
 
 function minimum_span(vars::Vector{Symbol}, aes::Gadfly.Aesthetics)
     span = nothing
-    for var in stat.vars
+    for var in vars
         data = getfield(aes, var)
         if length(data) < 2
             continue
