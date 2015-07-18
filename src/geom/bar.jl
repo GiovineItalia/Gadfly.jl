@@ -63,9 +63,9 @@ function render_colorless_bar(geom::BarGeometry,
         ctx = compose!(
             context(),
             rectangle([min(xz, x) for x in aes.x],
-                      [Measure(cy=ymin) + theme.bar_spacing/2 for ymin in aes.ymin],
+                      [ymin*cy + theme.bar_spacing/2 for ymin in aes.ymin],
                       abs(aes.x),
-                      [Measure(cy=(ymax - ymin)) - theme.bar_spacing
+                      [(ymax - ymin)*cy - theme.bar_spacing
                        for (ymin, ymax) in zip(aes.ymin, aes.ymax)], geom.tag),
             svgclass("geometry"))
     else
@@ -73,9 +73,9 @@ function render_colorless_bar(geom::BarGeometry,
         yz = convert(YT, zero(YT))
         ctx = compose!(
             context(),
-            rectangle([Measure(cx=xmin) + theme.bar_spacing/2 for xmin in aes.xmin],
+            rectangle([xmin*cx + theme.bar_spacing/2 for xmin in aes.xmin],
                       [min(yz, y) for y in aes.y],
-                      [Measure(cx=(xmax - xmin)) - theme.bar_spacing
+                      [(xmax - xmin)*cx - theme.bar_spacing
                        for (xmin, xmax) in zip(aes.xmin, aes.xmax)],
                       abs(aes.y), geom.tag),
             svgclass("geometry"))

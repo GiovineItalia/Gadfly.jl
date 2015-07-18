@@ -7,6 +7,7 @@ using Compose
 using DataArrays
 using DataStructures
 using Gadfly
+using Measures
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
 import Gadfly: render, layers, element_aesthetics, inherit, escape_id,

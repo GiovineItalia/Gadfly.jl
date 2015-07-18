@@ -289,7 +289,7 @@ end
 Maybe(T) = @compat(Union{T, (@compat Void)})
 
 
-function lerp(x::Float64, a::Float64, b::Float64)
+function lerp(x::Float64, a, b)
     a + (b - a) * max(min(x, 1.0), 0.0)
 end
 

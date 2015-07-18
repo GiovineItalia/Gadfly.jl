@@ -10,8 +10,8 @@ tests = [
     ("function_explicit_colors",              6inch, 3inch),
     ("function_layers",                       6inch, 3inch),
     ("multicolumn_colorkey",                  6inch, 2inch),
-    ("vstack",                                6inch, 6inch),
-    ("hstack",                                6inch, 3inch),
+    #("vstack",                                6inch, 6inch),
+    #("hstack",                                6inch, 3inch),
     ("colorful_hist",                         6inch, 3inch),
     ("discrete_histogram",                    6inch, 3inch),
     ("discrete_bar",                          6inch, 3inch),
@@ -108,11 +108,11 @@ tests = [
 
 backends = @compat Dict{AbstractString, Function}(
     "svg" => (name, width, height) -> SVG("output/$(name).svg", width, height),
-    "svgjs" => (name, width, height) -> SVGJS("output/$(name).js.svg", width, height, jsmode=:linkabs),
-    "png" => (name, width, height) -> PNG("output/$(name).png", width, height),
+    #"svgjs" => (name, width, height) -> SVGJS("output/$(name).js.svg", width, height, jsmode=:linkabs),
+    #"png" => (name, width, height) -> PNG("output/$(name).png", width, height),
     #"ps"  => (name, width, height) -> PS("output/$(name).ps",   width, height),
     #"pdf" => (name, width, height) -> PDF("output/$(name).pdf", width, height)
-    "pgf" => (name, width, height) -> PGF("output/$(name).tex", width, height)
+    #"pgf" => (name, width, height) -> PGF("output/$(name).tex", width, height)
 )
 
 

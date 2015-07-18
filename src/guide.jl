@@ -202,7 +202,7 @@ function render_discrete_color_key{C<:Color}(colors::Vector{C},
                            values(labels)...)
 
     ypad = 1.0mm
-    title_height = title_ctx.box.height
+    title_height = title_ctx.box.a[2]
     entry_height = maximum([height for (width, height) in extents]) + ypad
     swatch_size = entry_height / 2
 
@@ -1100,8 +1100,8 @@ function layout_guides(plot_context::Context,
     i = 1
     for (ctxs, order) in guides[top_guide_position]
         for ctx in ctxs
-            if ctx.units == Compose.nil_unit_box
-                ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
+            if isnull(ctx.units) && !isnull(plot_units)
+                ctx.units = UnitBox(get(plot_units), toppad=0mm, bottompad=0mm)
             end
         end
 
@@ -1111,8 +1111,8 @@ function layout_guides(plot_context::Context,
     i += 1
     for (ctxs, order) in guides[bottom_guide_position]
         for ctx in ctxs
-            if ctx.units == Compose.nil_unit_box
-                ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
+            if isnull(ctx.units) && !isnull(plot_units)
+                ctx.units = UnitBox(get(plot_units), toppad=0mm, bottompad=0mm)
             end
         end
 
@@ -1123,8 +1123,8 @@ function layout_guides(plot_context::Context,
     j = 1
     for (ctxs, order) in guides[left_guide_position]
         for ctx in ctxs
-            if ctx.units == Compose.nil_unit_box
-                ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
+            if isnull(ctx.units) && !isnull(plot_units)
+                ctx.units = UnitBox(get(plot_units), leftpad=0mm, rightpad=0mm)
             end
         end
 
@@ -1134,8 +1134,8 @@ function layout_guides(plot_context::Context,
     j += 1
     for (ctxs, order) in guides[right_guide_position]
         for ctx in ctxs
-            if ctx.units == Compose.nil_unit_box
-                ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
+            if isnull(ctx.units) && !isnull(plot_units)
+                ctx.units = UnitBox(get(plot_units), leftpad=0mm, rightpad=0mm)
             end
         end
 
