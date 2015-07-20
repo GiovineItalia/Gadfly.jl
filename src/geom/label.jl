@@ -22,6 +22,13 @@ default_statistic(::LabelGeometry) = Gadfly.Stat.identity()
 const label = LabelGeometry
 
 
+# True if two boxes overlap
+function overlaps(a::Absolute2DBox, b::Absolute2DBox)
+    a.x0[1] + a.a[1] >= b.x0[1] && a.x0[1] <= b.x0[1] + b.a[1] &&
+    a.x0[2] + a.a[2] >= b.x0[2] && a.x0[2] <= b.x0[2] + b.a[2]
+end
+
+
 # A deferred context function for labeling points in a plot. Optimizing label
 # placement depends on knowing the absolute size of the containing context.
 function deferred_label_context(geom::LabelGeometry,
@@ -60,8 +67,8 @@ function deferred_label_context(geom::LabelGeometry,
     extents = text_extents(theme.point_label_font,
                            theme.point_label_font_size,
                            aes.label...)
-    extents = [(width + padding, height + padding)
-               for (width, height) in extents]
+    extents = AbsoluteVec2[(width + padding, height + padding)
+                           for (width, height) in extents]
 
     positions = Absolute2DBox[]
     for (i, (text_width, text_height)) in enumerate(extents)
@@ -84,22 +91,8 @@ function deferred_label_context(geom::LabelGeometry,
                        (2*extents[i][1], 2*extents[i][2]))
     end
 
-    # True if two boxes overlap
-    function overlaps(a, b)
-        if a === nothing || b === nothing
-            return false
-        end
-
-        a.x0[1] + a.a[1] >= b.x0[1] && a.x0[1] <= b.x0[1] + b.a[1] &&
-        a.x0[2] + a.a[2] >= b.x0[2] && a.x0[2] <= b.x0[2] + b.a[2]
-    end
-
     # True if a is fully contained in box.
-    function box_contains(a)
-        if a === nothing
-            return true
-        end
-
+    function box_contains(a::Absolute2DBox)
         0mm < a.x0[1] && a.x0[1] + a.a[1] < parent_box.a[1] &&
         0mm < a.x0[2] - a.a[2] && a.x0[2] < parent_box.a[2]
     end
@@ -137,7 +130,7 @@ function deferred_label_context(geom::LabelGeometry,
     # This variable holds the value of the objective function we wish to
     # minimize. A label overlap is a penalty of 1. Other penaties (out of bounds
     # labels, hidden labels) or calibrated to that.
-    total_penalty = 0
+    total_penalty = 0.0
 
     for i in 1:n
         if !box_contains(positions[i])
@@ -163,11 +156,14 @@ function deferred_label_context(geom::LabelGeometry,
         j = rand(1:n)
 
         new_total_penalty = total_penalty
+        pos = BoundingBox(0mm, 0mm, 0mm, 0mm)
+        propose_hide = false
 
         # Propose flipping the visibility of the label.
         if label_visibility[j] && geom.hide_overlaps && rand() < theme.label_visibility_flip_pr
-            pos = nothing
             new_total_penalty += theme.label_hidden_penalty
+
+            propose_hide = true
 
         # Propose a change to label placement.
         else
@@ -180,6 +176,8 @@ function deferred_label_context(geom::LabelGeometry,
             xspan = extents[j][1]
             yspan = extents[j][2]
 
+            # TODO: it doesn't know what xspan, yspan are. That's the major
+            # source of slowness.
             if rand() < 0.5
                 xpos = Gadfly.lerp(rand(),
                                    (point_x - 7xspan/8),
@@ -214,17 +212,17 @@ function deferred_label_context(geom::LabelGeometry,
             new_total_penalty -= theme.label_out_of_bounds_penalty
         end
 
-        if !box_contains(pos)
+        if !propose_hide && !box_contains(pos)
             new_total_penalty += theme.label_out_of_bounds_penalty
         end
 
         for i in possible_overlaps[j]
-            if overlaps(positions[i], positions[j]) &&
-                    label_visibility[i] && label_visibility[j]
+            if label_visibility[i] && label_visibility[j] &&
+                overlaps(positions[i], positions[j])
                 new_total_penalty -= 1
             end
 
-            if overlaps(positions[i], pos) && label_visibility[i]
+            if  label_visibility[i] && overlaps(positions[i], pos)
                 new_total_penalty += 1
             end
         end
@@ -233,7 +231,7 @@ function deferred_label_context(geom::LabelGeometry,
 
         T = 0.1 * (1.0 - (k / (1 + num_iterations)))
         if improvement >= 0 || rand() < exp(improvement / T)
-            if pos === nothing
+            if propose_hide
                 label_visibility[j] = false
             else
                 label_visibility[j] = true
