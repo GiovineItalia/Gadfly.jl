@@ -235,24 +235,14 @@ function apply_scale(scale::ContinuousScale,
             end
 
             T = Any
-            for (i, d) in enumerate(vals)
+            for d in vals
                 if isconcrete(d)
                     T = typeof(scale.trans.f(d))
                     break
                 end
             end
 
-            hasna = false
-            if isa(vals, AbstractDataArray)
-                for d in vals
-                    if isna(d)
-                        hasna = true
-                        break
-                    end
-                end
-            end
-
-            ds = hasna ? DataArray(T, length(vals)) : Array(T, length(vals))
+            ds = Gadfly.hasna(vals) ? DataArray(T, length(vals)) : Array(T, length(vals))
             apply_scale_typed!(ds, vals, scale)
 
             if var == :xviewmin || var == :xviewmax ||
@@ -294,13 +284,9 @@ function apply_scale(scale::ContinuousScale,
 end
 
 function apply_scale_typed!(ds, field, scale::ContinuousScale)
-    for (i, d) in enumerate(field)
-        if isconcrete(d)
-            ds[i] = scale.trans.f(d)
-            i += 1
-        else
-            ds[i] = d
-        end
+    for i in 1:length(field)
+        d = field[i]
+        ds[i] = isconcrete(d) ? scale.trans.f(d) : d
     end
 end
 

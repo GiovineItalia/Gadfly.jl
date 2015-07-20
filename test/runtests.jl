@@ -127,7 +127,7 @@ function run_tests(output_filename)
             println(STDERR, "Rendering $(name) on $(backend_name) backend.")
             try
                 p = evalfile(joinpath(testdir, "$(name).jl"))
-                draw(backend(name, width, height), p)
+                @time draw(backend(name, width, height), p)
             catch
                 println(STDERR, "FAILED!")
                 rethrow()
@@ -172,5 +172,8 @@ end
 
 
 run_tests("output/test.html")
+#@time run_tests("output/test.html")
+#@profile run_tests("output/test.html")
+#Profile.print()
 
 

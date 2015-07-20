@@ -3,13 +3,31 @@ function isconcrete{T<:Number}(x::T)
     !isna(x) && isfinite(x)
 end
 
+
 function isconcrete(x::MathConst)
     return true
 end
 
+
 function isconcrete(x)
     !isna(x)
 end
+
+
+function hasna(xs)
+    return false
+end
+
+
+function hasna(xs::AbstractDataArray)
+    for x in xs
+        if isna(x)
+            return true
+        end
+    end
+    return false
+end
+
 
 
 function isallconcrete(xs)
