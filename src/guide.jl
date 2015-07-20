@@ -316,7 +316,7 @@ function render_continuous_color_key(colors::Dict,
                                                  values(labels)...)
 
     numlabels = length(labels)
-    title_height = title_context.box.height
+    title_height = title_context.box.a[2]
     total_height = 1.5 * numlabels * entry_height + title_height
     swatch_width = entry_height / 2
     xoff = 2mm
@@ -1060,7 +1060,8 @@ function layout_guides(plot_context::Context,
     aspect_ratio = nothing
     if isa(coord, Gadfly.Coord.cartesian)
         if coord.fixed
-            aspect_ratio = abs(plot_context.units.width / plot_context.units.height)
+            aspect_ratio = isnull(plot_context.units) ? 1.0 :
+                     abs(get(plot_context.units).width / get(plot_context.units).height)
         elseif coord.aspect_ratio != nothing
             aspect_ratio = coord.aspect_ratio
         end

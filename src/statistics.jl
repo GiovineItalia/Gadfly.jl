@@ -1509,7 +1509,7 @@ function apply_statistic(stat::BinMeanStatistic,
         groups = Dict()
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
             if !haskey(groups, c)
-                groups[c] = Array[[Tx[x]], [Ty[y]]]
+                groups[c] = Array[collect(Tx, x), collect(Ty, y)]
             else
                 push!(groups[c][1], x)
                 push!(groups[c][2], y)
@@ -1535,7 +1535,7 @@ function mean_by_group{Tx, Ty}(x::Vector{Tx}, y::Vector{Ty}, breaks::Vector{Floa
     totalx = zeros(Tx, length(breaks))
     totaly = zeros(Ty, length(breaks))
     for i in 1:length(x)
-        refs = searchsortedfirst(breaks, x[i]) 
+        refs = searchsortedfirst(breaks, x[i])
         count[refs] += 1
         totalx[refs] += x[i]
         totaly[refs] += y[i]
