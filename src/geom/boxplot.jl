@@ -35,11 +35,11 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
     bw = 1w / n - theme.boxplot_spacing # boxplot width
     if length(aes.x) > 1
         minspan = minimum([xj - xi for (xi, xj) in zip(aes.x, aes.x[2:end])])
-        bw = Measure(cx=minspan) - theme.boxplot_spacing
+        bw = minspan*cx - theme.boxplot_spacing
     end
 
     fw = 2/3 * bw # fence width
-    xs = [Measure(cx=x) for x in takestrict(cycle(aes.x), n)]
+    xs = [x*cx for x in takestrict(cycle(aes.x), n)]
     cs = takestrict(cycle(aes.color), n)
 
     # We allow lower_hinge > upper_hinge, and lower_fence > upper_fence. So we
