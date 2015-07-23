@@ -13,7 +13,7 @@ import Gadfly: element_aesthetics, isconcrete, concrete_length,
                nonzero_length
 import Distributions: Distribution
 
-include("color.jl")
+include("color_misc.jl")
 
 
 # Return true if var is categorical.

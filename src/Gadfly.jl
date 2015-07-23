@@ -49,7 +49,7 @@ abstract StatisticElement   <: Element
 
 include("misc.jl")
 include("ticks.jl")
-include("color.jl")
+include("color_misc.jl")
 include("varset.jl")
 include("theme.jl")
 include("data.jl")
