@@ -106,7 +106,7 @@ backends = @compat Dict{String, Function}(
     "png" => (name, width, height) -> PNG("output/$(name).png", width, height),
     #"ps"  => (name, width, height) -> PS("output/$(name).ps",   width, height),
     #"pdf" => (name, width, height) -> PDF("output/$(name).pdf", width, height)
-    #"pgf" => (name, width, height) -> PGF("output/$(name).tex", width, height)
+    "pgf" => (name, width, height) -> PGF("output/$(name).tex", width, height)
 )
 
 
