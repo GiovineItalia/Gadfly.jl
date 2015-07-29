@@ -30,6 +30,7 @@
     yviewmin
     yviewmax
     size
+    shape
     xsize
     ysize
     color
