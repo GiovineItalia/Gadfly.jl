@@ -409,6 +409,11 @@ function group_discrete(; labels=nothing, levels=nothing, order=nothing)
 end
 
 
+function shape_discrete(; labels=nothing, levels=nothing, order=nothing)
+    return DiscreteScale([:shape], labels=labels, levels=levels, order=order)
+end
+
+
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                      datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)

@@ -172,6 +172,9 @@ end
     # True if bars in bar plots should be stroked. Stroke color is
     bar_highlight,         Union(Nothing, Function, ColorValue),   nothing
 
+    # Symbol forms used for the shape aesthetic
+    shapes,               Vector{Function},  [circle, square, diamond, cross]
+
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.
 

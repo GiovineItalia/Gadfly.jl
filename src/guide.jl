@@ -461,6 +461,17 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
                                          title_width, theme)
     end
 
+    if aes.shape != nothing
+        # TODO: Draw key for shapes. We need to think about how to make this
+        # work. Do we need to optimize number of columns for shape and size
+        # keys? I'm guessing it's not worth it.
+        #
+        # In that case I think we'll have different paths depending on whether
+        # there is a color key or not. If there is, we need to position shape
+        # and size keys in the deferred contexts. If there isn't we lay them out
+        # statically with hstack.
+    end
+
     position = right_guide_position
     if theme.key_position == :left
         position = left_guide_position
