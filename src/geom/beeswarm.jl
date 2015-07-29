@@ -53,22 +53,19 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
             permute!(aes.color, p)
         end
 
-        point_dist = (2*theme.default_point_size + geom.padding).abs
+        point_dist = (2*theme.default_point_size + geom.padding).value
+        offsets = Array(Length{:mm}, length(val))
         positions = Array(Compose.Measure, length(val))
 
         n = length(val)
         overlaps = Array(Bool, n)
         absvals = Array(Float64, n)
         for (i, v) in enumerate(val)
-            if geom.orientation == :horizontal
-                absvals[i] = Compose.absolute_x_position(v * cx, draw_context.t,
-                                                         draw_context.units,
-                                                         draw_context.box)
-            else
-                absvals[i] = Compose.absolute_y_position(v * cy, draw_context.t,
-                                                         draw_context.units,
-                                                         draw_context.box)
-            end
+            absvals[i] = Compose.resolve_position(
+                    draw_context.box,
+                    draw_context.units,
+                    draw_context.t,
+                    geom.orientation == :horizontal ? v * cx : v * cy).value
         end
 
         for (i, gi) in enumerate(takestrict(cycle(grp), n))
@@ -95,7 +92,7 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
                 has_zero_overlap = false
                 for j in firstoverlap:(i-1)
                     if !overlaps[j] continue end
-                    if sqrt((absvals[i] - absvals[j])^2 + positions[j].abs^2) < point_dist
+                    if sqrt((absvals[i] - absvals[j])^2 + offsets[j].value^2) < point_dist
                         has_zero_overlap = true
                         break
                     end
@@ -112,12 +109,12 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
                     d = sqrt(point_dist^2 - (absvals[i] - absvals[j])^2)
 
                     for s in [1, -1]
-                        candidate_off = positions[j].abs + s * d
+                        candidate_off = offsets[j].value + s * d
                         candidate_has_overlap = false
                         for k in firstoverlap:(i-1)
                             if !overlaps[k] continue end
 
-                            if sqrt((candidate_off - positions[k].abs)^2 +
+                            if sqrt((candidate_off - offsets[k].value)^2 +
                                     (absvals[i] - absvals[k])^2) < point_dist
                                 candidate_has_overlap = true
                                 break
@@ -137,6 +134,7 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
             end
 
             @label offset_found
+            offsets[i] = off
             positions[i] = gi * cu + off
         end
 
