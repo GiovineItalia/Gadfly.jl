@@ -5,6 +5,7 @@ using RDatasets, Gadfly, Compat
 tests = [
     ("points",                                6inch, 3inch),
     ("noticks",                               6inch, 3inch),
+    ("point_shape",                           6inch, 6inch),
     ("colored_points",                        6inch, 3inch),
     ("function_plots",                        6inch, 3inch),
     ("function_explicit_colors",              6inch, 3inch),

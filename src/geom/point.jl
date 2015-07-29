@@ -13,7 +13,7 @@ const point = PointGeometry
 
 
 function element_aesthetics(::PointGeometry)
-    [:x, :y, :size, :color]
+    [:x, :y, :size, :color, :shape]
 end
 
 
@@ -39,11 +39,39 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     aes_x, aes_y = concretize(aes.x, aes.y)
 
-    ctx = compose!(
-        context(),
-        circle(aes.x, aes.y, aes.size, geom.tag),
-        fill(aes.color),
-        linewidth(theme.highlight_width))
+    ctx = context()
+    if aes.shape != nothing
+        xs = Array(eltype(aes_x), 0)
+        ys = Array(eltype(aes_y), 0)
+        cs = Array(eltype(aes.color), 0)
+        size = Array(eltype(aes.size), 0)
+        shape_max = maximum(aes.shape)
+        if shape_max > length(theme.shapes)
+            error("Too many values for the shape aesthetic. Define more shapes in Theme.shapes")
+        end
+
+        for shape in 1:maximum(aes.shape)
+            for (x, y, c, sz, sh) in Compose.cyclezip(aes.x, aes.y, aes.color,
+                                                      aes.size, aes.shape)
+                if sh == shape
+                    push!(xs, x)
+                    push!(ys, y)
+                    push!(cs, c)
+                    push!(size, sz)
+                end
+            end
+            compose!(ctx, (context(), theme.shapes[shape](xs, ys, size), fill(cs)))
+            empty!(xs)
+            empty!(ys)
+            empty!(cs)
+            empty!(size)
+        end
+    else
+        compose!(ctx,
+            circle(aes.x, aes.y, aes.size, geom.tag),
+            fill(aes.color))
+    end
+    compose!(ctx, linewidth(theme.highlight_width))
 
     if aes.color_key_continuous != nothing && aes.color_key_continuous
         compose!(ctx,

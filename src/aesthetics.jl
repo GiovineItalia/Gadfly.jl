@@ -15,6 +15,7 @@ typealias NumericalAesthetic
     y,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
     z,            @compat(Union{(@compat Void), Function, Matrix})
     size,         Maybe(Vector{Measure})
+    shape,        CategoricalAesthetic
     color,        Maybe(@compat(Union{AbstractVector{RGBA{Float32}},
                               AbstractVector{RGB{Float32}}}))
     label,        CategoricalAesthetic
