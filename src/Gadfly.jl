@@ -13,7 +13,8 @@ using Showoff
 import Iterators
 import Iterators: distinct, drop, chain
 import Compose: draw, hstack, vstack, gridstack, isinstalled
-import Base: copy, push!, start, next, done, show, getindex, cat,
+import Base: +, -, /, *,
+             copy, push!, start, next, done, show, getindex, cat,
              writemime, isfinite, display
 import Distributions: Distribution
 
