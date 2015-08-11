@@ -54,7 +54,7 @@ function render_colorless_bar(geom::BarGeometry,
                               orientation::Symbol)
     if orientation == :horizontal
         XT = eltype(aes.x)
-        xz = zero(XT)
+        xz = convert(XT, zero(XT))
         ctx = compose!(
             context(),
             rectangle([min(xz, x) for x in aes.x],
@@ -65,7 +65,7 @@ function render_colorless_bar(geom::BarGeometry,
             svgclass("geometry"))
     else
         YT = eltype(aes.y)
-        yz = zero(YT)
+        yz = convert(YT, zero(YT))
         ctx = compose!(
             context(),
             rectangle([Measure(cx=xmin) + theme.bar_spacing/2 for xmin in aes.xmin],
@@ -103,8 +103,10 @@ function render_colorful_stacked_bar(geom::BarGeometry,
     ctx = context()
     if orientation == :horizontal
         stack_height_dict = Dict()
+        T = eltype(aes.x)
+        z = convert(T, zero(T))
         for y in aes.ymin
-            stack_height_dict[y] = zero(eltype(aes.x))
+            stack_height_dict[y] = z
         end
         stack_height = zeros(eltype(aes.x), length(idxs))
 
@@ -122,8 +124,10 @@ function render_colorful_stacked_bar(geom::BarGeometry,
                 [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs]))
     elseif orientation == :vertical
         stack_height_dict = Dict()
+        T = eltype(aes.y)
+        z = convert(T, zero(T))
         for x in aes.xmin
-            stack_height_dict[x] = zero(eltype(aes.y))
+            stack_height_dict[x] = z
         end
         stack_height = zeros(eltype(aes.y), length(idxs))
 
@@ -190,7 +194,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
         end
 
         XT = eltype(aes.x)
-        xz = zero(XT)
+        xz = convert(XT, zero(XT))
 
         aes_x = aes.x[idxs]
         compose!(
@@ -222,7 +226,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
         end
 
         YT = eltype(aes.y)
-        yz = zero(YT)
+        yz = convert(YT, zero(YT))
 
         aes_y = aes.y[idxs]
         compose!(
@@ -292,14 +296,14 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         minvalue, maxvalue = minimum(values), maximum(values)
         T = typeof((maxvalue - minvalue) / 1.0)
 
-        span = zero(T)
+        span = convert(T, zero(T))
         unique_count = length(Set(values))
         if unique_count > 1
             span = (maximum(values) - minimum(values)) / convert(Float64, (unique_count - 1))
         end
 
-        if span == zero(T)
-            span = one(T)
+        if span == convert(T, zero(T))
+            span = convert(T, one(T))
         end
 
         T = promote_type(eltype(values), typeof(span/2.0))

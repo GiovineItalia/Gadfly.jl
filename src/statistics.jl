@@ -1440,7 +1440,8 @@ function minimum_span(vars::Vector{Symbol}, aes::Gadfly.Aesthetics)
             continue
         end
         dataspan = data[2] - data[1]
-        z = zero(eltype(data))
+        T = eltype(data)
+        z = convert(T, zero(T))
         sorteddata = sort(data)
         for (u, v) in partition(sorteddata, 2, 1)
             δ = v - u

@@ -132,18 +132,20 @@ end
 function choose_bin_count_1d_discrete(xs::AbstractArray, xs_set::AbstractArray,
                                       d_min=1, d_max=150)
     n = length(xs_set)
+    T = eltype(xs)
     if n == 0
         return 1, Int[0], 0
     elseif n == 1
-        return 1, Int[length(xs)], xs[1] + one(eltype(xs))
+        return 1, Int[length(xs)], xs[1] + convert(T, one(T))
     end
 
     # minimum distance between two values
-    mingap = zero(eltype(xs))
+    T = eltype(xs)
+    mingap = convert(T, zero(T))
     for (i, j) in zip(1:length(xs_set)-1, 2:length(xs_set))
         gap = xs_set[j] - xs_set[i]
-        if isconcrete(gap) && gap > zero(eltype(xs))
-            if mingap == zero(eltype(xs))
+        if isconcrete(gap) && gap > zero(T)
+            if mingap == convert(T, zero(T))
                 mingap = gap
             else
                 mingap = min(gap, mingap)
