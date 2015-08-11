@@ -45,7 +45,7 @@ The specification of each layer has
 - **mappings** to associate aesthetics of the geometry with elements of the data source (e.g.  `:color => :Cut`)
 - layer-wise **statistics** (optional) to be applied to the layer's data 
 
-All layers of the a plot share the same
+All layers of a plot share the same
 
 - **coordinate system** for the geometry (e.g. cartesian, polar, etc.)
 - axis **scales** (e.g. loglog, semilog, etc.)
@@ -54,7 +54,7 @@ All layers of the a plot share the same
 
 A full plot specification must describe these shared elements as well as all the layer specifications.
 In the example above, we see that only the data source, statistics, geometry, and mapping are specified.
-The missing elements are either infered from the data (e.g. categorical values in `df[:Cut]` implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale).
+The missing elements are either inferred from the data (e.g. categorical values in `df[:Cut]` implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale).
 For example, invoking `plot` with all the elements will look something like
 
 ```{.julia execute="false"}
