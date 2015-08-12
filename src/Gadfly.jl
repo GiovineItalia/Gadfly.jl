@@ -30,8 +30,10 @@ export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
 export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, vstack, hstack
 
 
-# Define an XML namespace for custom attributes
-Compose.xmlns["gadfly"] = "http://www.gadflyjl.org/ns"
+function __init__()
+    # Define an XML namespace for custom attributes
+    Compose.xmlns["gadfly"] = "http://www.gadflyjl.org/ns"
+end
 
 
 typealias ColorOrNothing Union(ColorValue, AlphaColorValue, Nothing)
@@ -769,7 +771,7 @@ function render(plot::Plot)
                                    layer_subplot_datas,
                                    scales, guides)
 
-    ctx =  pad_inner(root_context, 5mm)
+    ctx =  pad_inner(root_context, plot.theme.plot_padding)
 
     if plot.theme.background_color != nothing
         compose!(ctx, (context(order=-1000000),

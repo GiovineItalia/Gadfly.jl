@@ -25,6 +25,7 @@ overrides the default theme's value.
     Nothing)
   * `background_color`: Background color for the entire plot. If nothing, no
     background. (ColorValue or Nothing)
+  * `plot_padding`: How much padding should be put around the plot as a whole (Measure)
   * `grid_color`: Color of grid lines. (ColorValue or Nothing)
   * `grid_color_focused`: In the D3 backend, mousing over the plot makes the
     grid lines emphasised by transitioning to this color. (ColorValue or Nothing)

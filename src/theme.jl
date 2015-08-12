@@ -85,6 +85,9 @@ end
     # Background of the entire plot
     background_color,      ColorOrNothing,  nothing
 
+    # Padding around the entire plot
+    plot_padding,          Measure,         5mm
+
     # Grid line color.
     grid_color,            ColorOrNothing,  color("#D0D0E0")
     grid_strokedash,       Maybe(Vector),   [0.5mm, 0.5mm]
