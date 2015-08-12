@@ -1,3 +1,6 @@
+
+VERSION >= v"0.4.0-dev+6641" && __precompile__()
+
 module Gadfly
 
 using Codecs
