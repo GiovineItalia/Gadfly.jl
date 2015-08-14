@@ -1105,27 +1105,63 @@ function apply_statistic(stat::StepStatistic,
     Gadfly.assert_aesthetics_defined("StepStatistic", aes, :y)
     Gadfly.assert_aesthetics_equal_length("StepStatistic", aes, :x, :y)
 
-    points = collect(zip(aes.x, aes.y))
-    sort!(points, by=first)
-    n = length(points)
-    x_step = Array(eltype(aes.x), 2n - 1)
-    y_step = Array(eltype(aes.y), 2n - 1)
+    p = sortperm(aes.x, alg=MergeSort)
+    permute!(aes.x, p)
+    permute!(aes.y, p)
+    aes.group != nothing && permute!(aes.group, p)
+    aes.color != nothing && permute!(aes.color, p)
 
-    for i in 1:(2n-1)
-        if isodd(i)
-            x_step[i] = points[div(i-1,2)+1][1]
-            y_step[i] = points[div(i-1,2)+1][2]
-        elseif stat.direction == :hv
-            x_step[i] = points[div(i-1,2)+2][1]
-            y_step[i] = points[div(i-1,2)+1][2]
+    if aes.group != nothing
+        Gadfly.assert_aesthetics_equal_length("StepStatistic", aes, :x, :group)
+        permute!(aes.x, p)
+        permute!(aes.y, p)
+        permute!(aes.group, p)
+        aes.color != nothing && permute!(aes.color, p)
+    end
+
+    if aes.color != nothing
+        Gadfly.assert_aesthetics_equal_length("StepStatistic", aes, :x, :color)
+        sortperm!(p, aes.color, alg=MergeSort, lt=Gadfly.color_isless)
+        permute!(aes.x, p)
+        permute!(aes.y, p)
+        permute!(aes.color, p)
+        aes.group != nothing && permute!(aes.group, p)
+    end
+
+    x_step = Array(eltype(aes.x), 0)
+    y_step = Array(eltype(aes.y), 0)
+    color_step = aes.color == nothing ? nothing : Array(eltype(aes.color), 0)
+    group_step = aes.group == nothing ? nothing : Array(eltype(aes.group), 0)
+
+    i = 1
+    i_offset = 1
+    while true
+        u = i_offset + div(i - 1, 2) + (isodd(i) || stat.direction != :hv ? 0 : 1)
+        v = i_offset + div(i - 1, 2) + (isodd(i) || stat.direction != :vh ? 0 : 1)
+
+        if u > length(aes.x) || v > length(aes.y)
+            break
+        end
+
+        if (aes.color != nothing &&
+             (aes.color[u] != aes.color[i_offset] || aes.color[v] != aes.color[i_offset])) ||
+           (aes.group != nothing &&
+             (aes.group[u] != aes.color[i_offset] || aes.color[v] != aes.group[i_offset]))
+            i_offset = max(u, v)
+            i = 1
         else
-            x_step[i] = points[div(i-1,2)+1][1]
-            y_step[i] = points[div(i-1,2)+2][2]
+            push!(x_step, aes.x[u])
+            push!(y_step, aes.y[v])
+            aes.color != nothing && push!(color_step, aes.color[i_offset])
+            aes.group != nothing && push!(group_step, aes.group[i_offset])
+            i += 1
         end
     end
 
     aes.x = x_step
     aes.y = y_step
+    aes.color = color_step
+    aes.group = group_step
 end
 
 

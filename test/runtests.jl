@@ -96,6 +96,7 @@ tests = [
     ("polygon",                               6inch, 3inch),
     ("jitter",                                6inch, 3inch),
     ("stat_binmean",                          6inch, 12inch),
+    ("step",                                  6inch, 3inch)
 ]
 
 

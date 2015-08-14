@@ -15,8 +15,8 @@ typealias NumericalAesthetic
     y,            Union(NumericalOrCategoricalAesthetic, Distribution)
     z,            Union(Nothing, Function, Matrix)
     size,         Maybe(Vector{Measure})
-    color,        Maybe(Union(AbstractDataVector{RGBA{Float32}},
-                              AbstractDataVector{RGB{Float32}}))
+    color,        Maybe(Union(AbstractVector{RGBA{Float32}},
+                              AbstractVector{RGB{Float32}}))
     label,        CategoricalAesthetic
     group,        CategoricalAesthetic
 
