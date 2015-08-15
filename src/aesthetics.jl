@@ -158,18 +158,18 @@ end
 
 
 function assert_aesthetics_equal_length(who::String, aes::Aesthetics, vars::Symbol...)
-    defined_vars = Symbol[]
-    for var in filter(var -> !(getfield(aes, var) === nothing), vars)
-        push!(defined_vars, var)
-    end
+    defined_vars = filter(var -> !(getfield(aes, var) === nothing), vars)
 
-    n = length(getfield(aes, vars[1]))
-    for i in 2:length(vars)
-        if length(getfield(aes, vars[i])) != n
-            error(@sprintf("The following aesthetics are required by %s to be of equal length: %s\n",
-                           who, join(vars, ", ")))
+    if !isempty(defined_vars)
+        n = length(getfield(aes, first(defined_vars)))
+        for var in defined_vars
+            if length(getfield(aes, var)) != n
+                error(@sprintf("The following aesthetics are required by %s to be of equal length: %s\n",
+                               who, join(vars, ", ")))
+            end
         end
     end
+    nothing
 end
 
 
