@@ -165,7 +165,7 @@ function assert_aesthetics_equal_length(who::String, aes::Aesthetics, vars::Symb
         for var in defined_vars
             if length(getfield(aes, var)) != n
                 error(@sprintf("The following aesthetics are required by %s to be of equal length: %s\n",
-                               who, join(vars, ", ")))
+                               who, join(defined_vars, ", ")))
             end
         end
     end
