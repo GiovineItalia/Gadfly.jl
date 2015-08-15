@@ -165,7 +165,7 @@ function assert_aesthetics_equal_length(who::String, aes::Aesthetics, vars::Symb
 
     n = length(getfield(aes, vars[1]))
     for i in 2:length(vars)
-        if length(getfield(aes, vars[1])) != n
+        if length(getfield(aes, vars[i])) != n
             error(@sprintf("The following aesthetics are required by %s to be of equal length: %s\n",
                            who, join(vars, ", ")))
         end
@@ -449,5 +449,3 @@ function inherit!(a::Aesthetics, b::Aesthetics;
     end
     nothing
 end
-
-
