@@ -1338,6 +1338,7 @@ function apply_statistic(stat::QQStatistic,
                          aes::Gadfly.Aesthetics)
 
     Gadfly.assert_aesthetics_defined("Stat.qq", aes, :x, :y)
+    Gadfly.assert_aesthetics_undefined("State.qq", aes, :color)
 
     # NOTES:
     #

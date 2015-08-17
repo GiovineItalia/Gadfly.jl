@@ -33,8 +33,5 @@ pl8 = plot(x=z, y=Exponential(), Stat.qq, Geom.point, Scale.x_log, Scale.y_log)
 # (y value is log(exp(x), or y=x)
 #plot(xmin=[1], xmax=[15], y=[exp], Stat.func, Geom.line, Scale.y_log)
 
-# Binding other aesthetics
-pl9 = plot(x=x, y=Normal(), color=rand(length(x)), Stat.qq, Geom.point)
-
-vstack(pl1, pl2, pl3, pl4, pl5, pl6, pl7, pl8, pl9)
+vstack(pl1, pl2, pl3, pl4, pl5, pl6, pl7, pl8)
 

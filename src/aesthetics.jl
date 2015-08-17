@@ -148,10 +148,20 @@ function undefined_aesthetics(aes::Aesthetics, vars::Symbol...)
     setdiff(Set(vars), defined_aesthetics(aes))
 end
 
+
 function assert_aesthetics_defined(who::String, aes::Aesthetics, vars::Symbol...)
     undefined_vars = undefined_aesthetics(aes, vars...)
     if !isempty(undefined_vars)
         error(@sprintf("The following aesthetics are required by %s but are not defined: %s\n",
+                       who, join(undefined_vars, ", ")))
+    end
+end
+
+
+function assert_aesthetics_undefined(who::String, aes::Aesthetics, vars::Symbol...)
+    defined_vars = intersect(Set(vars), defined_aesthetics(aes))
+    if !isempty(defined_vars)
+        error(@sprintf("The following aesthetics are defined but incompatible with %s: %s\n",
                        who, join(undefined_vars, ", ")))
     end
 end
