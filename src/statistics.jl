@@ -1121,7 +1121,9 @@ function apply_statistic(stat::StepStatistic,
 
     if aes.color != nothing
         Gadfly.assert_aesthetics_equal_length("StepStatistic", aes, :x, :color)
-        sortperm!(p, aes.color, alg=MergeSort, lt=Gadfly.color_isless)
+        # TODO: use this when we switch to 0.4
+        # sortperm!(p, aes.color, alg=MergeSort, lt=Gadfly.color_isless)
+        p = sortperm(aes.color, alg=MergeSort, lt=Gadfly.color_isless)
         permute!(aes.x, p)
         permute!(aes.y, p)
         permute!(aes.color, p)
