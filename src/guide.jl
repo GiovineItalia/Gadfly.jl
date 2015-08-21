@@ -2,7 +2,7 @@
 module Guide
 
 using Compat
-using Color
+using Colors
 using Compose
 using DataStructures
 using Gadfly
@@ -182,8 +182,8 @@ const colorkey = ColorKey
 
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
-function render_discrete_color_key(colors::Vector{ColorValue},
-                                   labels::OrderedDict{ColorValue, String},
+function render_discrete_color_key(colors::Vector{OpaqueColor},
+                                   labels::OrderedDict{OpaqueColor, String},
                                    aes_color_label,
                                    title_ctx::Context,
                                    title_width::Measure,
@@ -305,7 +305,7 @@ end
 # A helper for render(::ColorKey) for rendering guides for continuous color
 # scales.
 function render_continuous_color_key(colors::Dict,
-                                     labels::OrderedDict{ColorValue, String},
+                                     labels::OrderedDict{OpaqueColor, String},
                                      color_function::Function,
                                      title_context::Context,
                                      title_width::Measure,
@@ -345,7 +345,7 @@ function render_continuous_color_key(colors::Dict,
          (context(),
           line([[(0, 1 - y), (swatch_width, 1 - y)] for y in values(colors)]),
           linewidth(theme.grid_line_width),
-          stroke(color("white"))),
+          stroke(parse(Color, "white"))),
 
          fill([color_function((i-1) / (theme.key_color_gradations - 1))
                for i in 1:theme.key_color_gradations]),
@@ -403,9 +403,9 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         return PositionedGuide[]
     end
 
-    used_colors = Set{ColorValue}()
-    colors = Array(ColorValue, 0) # to preserve ordering
-    labels = OrderedDict{ColorValue, Set{String}}()
+    used_colors = Set{OpaqueColor}()
+    colors = Array(OpaqueColor, 0) # to preserve ordering
+    labels = OrderedDict{OpaqueColor, Set{String}}()
 
     continuous_guide = false
     guide_title = guide.title
@@ -436,7 +436,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         guide_title = "Color"
     end
 
-    pretty_labels = OrderedDict{ColorValue, String}()
+    pretty_labels = OrderedDict{OpaqueColor, String}()
     for (color, label) in labels
         pretty_labels[color] = join(labels[color], ", ")
     end
@@ -504,8 +504,8 @@ function render(guide::ManualColorKey, theme::Gadfly.Theme,
 
     title_context, title_width = render_colorkey_title(guide_title, theme)
 
-    colors = ColorValue[color(c) for c in guide.colors]
-    labels = OrderedDict{ColorValue, String}()
+    colors = OpaqueColor[color(c) for c in guide.colors]
+    labels = OrderedDict{OpaqueColor, String}()
     for (c, l) in zip(colors, guide.labels)
         labels[c] = l
     end
@@ -1155,4 +1155,3 @@ end
 
 
 end # module Guide
-

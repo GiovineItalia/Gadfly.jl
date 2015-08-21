@@ -4,7 +4,7 @@ VERSION >= v"0.4.0-dev+6641" && __precompile__()
 module Gadfly
 
 using Codecs
-using Color
+using Colors
 using Compat
 using Compose
 using DataArrays
@@ -36,7 +36,7 @@ function __init__()
 end
 
 
-typealias ColorOrNothing Union(ColorValue, AlphaColorValue, Nothing)
+typealias ColorOrNothing Union(OpaqueColor, TransparentColor, Nothing)
 
 
 element_aesthetics(::Any) = []
@@ -1154,4 +1154,3 @@ const x_axis_label_aesthetics = [:x, :xmin, :xmax]
 const y_axis_label_aesthetics = [:y, :ymin, :ymax]
 
 end # module Gadfly
-

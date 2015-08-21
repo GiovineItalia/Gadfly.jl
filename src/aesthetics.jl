@@ -414,7 +414,7 @@ function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
                 else
                     if !applicable(convert, typeof(vals), staging[i, j])
                         T = eltype(vals)
-                        if T <: ColorValue T = ColorValue end
+                        if T <: OpaqueColor T = OpaqueColor end
                         da = DataArray(T, length(staging[i, j]))
                         copy!(da, staging[i, j])
                         setfield!(aes_grid[i, j], var, da)

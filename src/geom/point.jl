@@ -55,5 +55,3 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     return compose!(context(order=4), svgclass("geometry"), ctx)
 end
-
-
