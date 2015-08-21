@@ -24,6 +24,3 @@ pl = plot(df, x = "RN", y = "Dens",
              layer(Geom.smooth, Theme(default_color=color("red"))),
              Guide.xticks(ticks=[0, 25, 50, 75, 100])
          ))
-
-
-

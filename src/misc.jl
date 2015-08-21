@@ -526,12 +526,12 @@ end
 
 
 # Arbitrarily order colors
-function color_isless(a::ColorValue, b::ColorValue)
+function color_isless(a::OpaqueColor, b::OpaqueColor)
     return color_isless(convert(RGB{Float32}, a), convert(RGB{Float32}, b))
 end
 
 
-function color_isless(a::AlphaColorValue, b::AlphaColorValue)
+function color_isless(a::TransparentColor, b::TransparentColor)
     return color_isless(convert(RGBA{Float32}, a), convert(RGBA{Float32}, b))
 end
 
@@ -554,9 +554,9 @@ end
 
 
 function color_isless(a::RGBA{Float32}, b::RGBA{Float32})
-    if a.c < b.c
+    if opaquecolor(a) < opaquecolor(b)
         return true
-    elseif a.c == b.c
+    elseif opaquecolor(a) == opaquecolor(b)
         return a.alpha < b.alpha
     else
         return false
@@ -564,7 +564,7 @@ function color_isless(a::RGBA{Float32}, b::RGBA{Float32})
 end
 
 
-function group_color_isless{S, T <: ColorValue}(a::(@compat Tuple{S, T}),
+function group_color_isless{S, T <: OpaqueColor}(a::(@compat Tuple{S, T}),
                                                 b::(@compat Tuple{S, T}))
     if a[1] < b[1]
         return true

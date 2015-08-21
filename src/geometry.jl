@@ -1,7 +1,7 @@
 
 module Geom
 
-using Color
+using Colors
 using Compat
 using Compose
 using DataArrays

@@ -1,11 +1,11 @@
 
 immutable HLineGeometry <: Gadfly.GeometryElement
-    color::Union(ColorValue, Nothing)
+    color::Union(OpaqueColor, Nothing)
     size::Union(Measure, Nothing)
 
     function HLineGeometry(; color=nothing,
                            size::Union(Measure, Nothing)=nothing)
-        new(color === nothing ? nothing : Color.color(color),
+        new(color === nothing ? nothing : Colors.color(color),
             size)
     end
 end
