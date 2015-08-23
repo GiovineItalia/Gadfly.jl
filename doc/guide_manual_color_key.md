@@ -26,7 +26,7 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 ```julia
 points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))
 line = DataFrame(val=rand(1:10,11), index = [0:10])
-pointLayer = layer(points, x="index", y="val", Geom.point,Theme(default_color=color("green")))
+pointLayer = layer(points, x="index", y="val", Geom.point,Theme(default_color=colorant"green"))
 lineLayer = layer(line, x="index", y="val", Geom.line)
 plot(pointLayer, lineLayer, Guide.manual_color_key("Legend", ["Points", "Line"], ["green", "deepskyblue"]))
 ```
