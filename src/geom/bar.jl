@@ -79,7 +79,7 @@ function render_colorless_bar(geom::BarGeometry,
     compose!(ctx, fill(theme.default_color))
     if isa(theme.bar_highlight, Function)
         compose!(ctx, stroke(theme.bar_highlight(theme.default_color)))
-    elseif isa(theme.bar_highlight, ColorValue)
+    elseif isa(theme.bar_highlight, Color)
         compose!(ctx, stroke(theme.bar_highlight))
     else
         compose!(ctx, stroke(nothing))
@@ -151,7 +151,7 @@ function render_colorful_stacked_bar(geom::BarGeometry,
     compose!(ctx, fill(cs), svgclass("geometry"))
     if isa(theme.bar_highlight, Function)
         compose!(ctx, stroke([theme.bar_highlight(c) for c in cs]))
-    elseif isa(theme.bar_highlight, ColorValue)
+    elseif isa(theme.bar_highlight, Color)
         compose!(ctx, stroke(theme.bar_highlight))
     else
         compose!(ctx, stroke(nothing))
@@ -245,7 +245,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
     compose!(ctx, fill(cs), svgclass("geometry"))
     if isa(theme.bar_highlight, Function)
         compose!(ctx, stroke([theme.bar_highlight(c) for c in cs]))
-    elseif isa(theme.bar_highlight, ColorValue)
+    elseif isa(theme.bar_highlight, Color)
         compose!(ctx, stroke(theme.bar_highlight))
     else
         compose!(ctx, stroke(nothing))

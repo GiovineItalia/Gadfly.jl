@@ -1,7 +1,7 @@
 
 module Scale
 
-using Color
+using Colors
 using Compat
 using Compose
 using DataArrays
@@ -502,8 +502,8 @@ end
 function color_discrete_hue(; levels=nothing, order=nothing,
                             preserve_order=true)
     DiscreteColorScale(
-        h -> convert(Vector{ColorValue},
-             distinguishable_colors(h, ColorValue[LCHab(70, 60, 240)],
+        h -> convert(Vector{Color},
+             distinguishable_colors(h, Color[LCHab(70, 60, 240)],
                                     transform=c -> deuteranopic(c, 0.5),
                                     lchoices=Float64[65, 70, 75, 80],
                                     cchoices=Float64[0, 50, 60, 70],
@@ -520,7 +520,7 @@ const color_discrete = color_discrete_hue
 
 
 function color_discrete_manual(colors...; levels=nothing, order=nothing)
-    cs = ColorValue[color(c) for c in colors]
+    cs = Color[color(c) for c in colors]
     function f(n)
         distinguishable_colors(n, cs)
     end
@@ -689,8 +689,8 @@ function apply_scale(scale::ContinuousColorScale,
         aes.color = DataArray(RGB{Float32}, length(data.color))
         apply_scale_typed!(aes.color, data.color, scale, cmin, cspan)
 
-        color_key_colors = Dict{ColorValue, Float64}()
-        color_key_labels = Dict{ColorValue, String}()
+        color_key_colors = Dict{Color, Float64}()
+        color_key_labels = Dict{Color, String}()
 
         tick_labels = identity_formatter(ticks)
         for (i, j, label) in zip(ticks, ticks[2:end], tick_labels)

@@ -3,7 +3,7 @@ module Stat
 import Gadfly
 import StatsBase
 import Contour
-using Color
+using Colors
 using Compat
 using Compose
 using DataArrays
@@ -827,7 +827,7 @@ function apply_statistic(stat::BoxplotStatistic,
         end
 
         if !is(aes.color, nothing)
-            aes.color = PooledDataArray(ColorValue[c for (x, c) in groups],
+            aes.color = PooledDataArray(Color[c for (x, c) in groups],
                                         levels(aes.color))
         end
 

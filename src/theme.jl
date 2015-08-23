@@ -5,60 +5,60 @@ const title_font_desc = "'PT Sans','Helvetica Neue','Helvetica',sans-serif"
 const label_font_desc = "'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif"
 
 # Choose highlight color by darkening the fill color
-function default_discrete_highlight_color(fill_color::ColorValue)
+function default_discrete_highlight_color(fill_color::Color)
     return RGB(1, 1, 1)
 end
 
-function default_discrete_highlight_color(fill_color::AlphaColorValue)
-    return AlphaColorValue{RGB{Float32}, Float32}(
-        default_discrete_highlight_color(fill_color.c),
+function default_discrete_highlight_color(fill_color::TransparentColor)
+    return RGBA{Float32}(
+        default_discrete_highlight_color(color(fill_color)),
         fill_color.alpha)
 end
 
-function default_continuous_highlight_color(fill_color::ColorValue)
+function default_continuous_highlight_color(fill_color::Color)
     c = convert(LCHab, fill_color)
     return LCHab(max(0, c.l - 40), c.c, c.h)
 end
 
-function default_continuous_highlight_color(fill_color::AlphaColorValue)
-    return AlphaColorValue{RGB{Float32}, Float32}(
-        default_continuous_highlight_color(fill_color.c),
+function default_continuous_highlight_color(fill_color::TransparentColor)
+    return RGBA{Float32}(
+        default_continuous_highlight_color(color(fill_color)),
         fill_color.alpha)
 end
 
-function default_stroke_color(fill_color::ColorValue)
+function default_stroke_color(fill_color::Color)
     fill_color = convert(LCHab, fill_color)
     c = LCHab(fill_color.l, fill_color.c, fill_color.h)
     LCHab(c.l - 15, c.c, c.h)
 end
 
-function default_stroke_color(fill_color::AlphaColorValue)
-    return AlphaColorValue{RGB{Float32}, Float32}(
-        default_stroke_color(fill_color.c),
+function default_stroke_color(fill_color::TransparentColor)
+    return RGBA{Float32}(
+        default_stroke_color(color(fill_color)),
         fill_color.alpha)
 end
 
-function default_lowlight_color(fill_color::ColorValue)
+function default_lowlight_color(fill_color::Color)
     fill_color = convert(LCHab, fill_color)
     c = LCHab(fill_color.l, fill_color.c, fill_color.h)
     LCHab(90, 20, c.h)
 end
 
-function default_lowlight_color(fill_color::AlphaColorValue)
-    return AlphaColorValue{RGB{Float32}, Float32}(
-        default_lowlight_color(fill_color.c),
+function default_lowlight_color(fill_color::TransparentColor)
+    return RGBA{Float32}(
+        default_lowlight_color(color(fill_color)),
         fill_color.alpha)
 end
 
 # Choose a middle color by darkening the fill color
-function default_middle_color(fill_color::ColorValue)
+function default_middle_color(fill_color::Color)
     fill_color = convert(LCHab, fill_color)
     LCHab(fill_color.l + 40, fill_color.c, fill_color.h)
 end
 
-function default_middle_color(fill_color::AlphaColorValue)
-    return AlphaColorValue{RGB{Float32}, Float32}(
-        default_middle_color(fill_color.c),
+function default_middle_color(fill_color::TransparentColor)
+    return RGBA{Float32}(
+        default_middle_color(color(fill_color)),
         fill_color.alpha)
 end
 
@@ -89,11 +89,11 @@ end
     plot_padding,          Measure,         5mm
 
     # Grid line color.
-    grid_color,            ColorOrNothing,  color("#D0D0E0")
+    grid_color,            ColorOrNothing,  colorant"#D0D0E0"
     grid_strokedash,       Maybe(Vector),   [0.5mm, 0.5mm]
 
     # Grid lines for focused item.
-    grid_color_focused,    ColorOrNothing,  color("#A0A0A0")
+    grid_color_focused,    ColorOrNothing,  colorant"#A0A0A0"
 
     # Width of grid lines
     grid_line_width,       Measure,         0.2mm
@@ -101,27 +101,27 @@ end
     # Font name, size, and color used for tick labels, entries in keys, etc.
     minor_label_font,      String,          label_font_desc
     minor_label_font_size, Measure,         8pt
-    minor_label_color,     ColorOrNothing,  color("#6c606b")
+    minor_label_color,     ColorOrNothing,  colorant"#6c606b"
 
     # Font name, size and color used for axis labels, key title, etc.
     major_label_font,      String,          title_font_desc
     major_label_font_size, Measure,         11pt
-    major_label_color,     ColorOrNothing,  color("#564a55")
+    major_label_color,     ColorOrNothing,  colorant"#564a55"
 
     # Font name, size and color used for labels on plot elements.
     point_label_font,      String,          label_font_desc
     point_label_font_size, Measure,         8pt
-    point_label_color,     ColorOrNothing,  color("#4c404b")
+    point_label_color,     ColorOrNothing,  colorant"#4c404b"
 
     # Font name, size and color used for key titles
     key_title_font,      String,          title_font_desc
     key_title_font_size, Measure,         11pt
-    key_title_color,     ColorOrNothing,  color("#362a35")
+    key_title_color,     ColorOrNothing,  colorant"#362a35"
 
     # Font name, size and color used for key entries.
     key_label_font,      String,          title_font_desc
     key_label_font_size, Measure,         8pt
-    key_label_color,     ColorOrNothing,  color("#4c404b")
+    key_label_color,     ColorOrNothing,  colorant"#4c404b"
 
     # How many gradations to show in a continuous color key.
     key_color_gradations, Int,            40
@@ -173,7 +173,7 @@ end
     key_position,          Symbol,          :right
 
     # True if bars in bar plots should be stroked. Stroke color is
-    bar_highlight,         Union(Nothing, Function, ColorValue),   nothing
+    bar_highlight,         Union(Nothing, Function, Color),   nothing
 
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.
