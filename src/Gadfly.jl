@@ -38,6 +38,12 @@ end
 
 typealias ColorOrNothing Union(Color, TransparentColor, Nothing)
 
+# Allow users to supply strings without deprecation warnings
+# Note this strips any transparency; is this desirable?
+parse_color(c::Colorant) = color(c)
+parse_color(str::AbstractString) = color(parse(Colorant, str))
+parse_color_vec(c...) = to_vec(map(parse_color, c)...)
+@noinline to_vec(c...) = [c...]
 
 element_aesthetics(::Any) = []
 default_scales(::Any) = []

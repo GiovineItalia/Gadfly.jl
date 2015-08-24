@@ -182,7 +182,7 @@ const colorkey = ColorKey
 
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
-function render_discrete_color_key(colors::Vector{Color},
+function render_discrete_color_key{C<:Color}(colors::Vector{C},
                                    labels::OrderedDict{Color, String},
                                    aes_color_label,
                                    title_ctx::Context,
@@ -476,12 +476,14 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
 end
 
 
-immutable ManualColorKey <: Gadfly.GuideElement
+immutable ManualColorKey{C<:Color} <: Gadfly.GuideElement
     title::Union(String, Nothing)
     labels::Vector{String}
-    colors::Vector
+    colors::Vector{C}
 end
 
+ManualColorKey{C<:Color}(title, labels, colors::Vector{C}) = ManualColorKey{C}(title, labels, colors)
+ManualColorKey(title, labels, colors) = ManualColorKey(title, labels, Gadfly.parse_color_vec(colors...))
 
 const manual_color_key = ManualColorKey
 
@@ -504,13 +506,12 @@ function render(guide::ManualColorKey, theme::Gadfly.Theme,
 
     title_context, title_width = render_colorkey_title(guide_title, theme)
 
-    colors = Color[color(c) for c in guide.colors]
     labels = OrderedDict{Color, String}()
-    for (c, l) in zip(colors, guide.labels)
+    for (c, l) in zip(guide.colors, guide.labels)
         labels[c] = l
     end
 
-    ctxs = render_discrete_color_key(colors, labels, nothing, title_context, title_width, theme)
+    ctxs = render_discrete_color_key(guide.colors, labels, nothing, title_context, title_width, theme)
 
     position = right_guide_position
     if theme.key_position == :left

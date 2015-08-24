@@ -40,11 +40,11 @@ end
 #   n: number of colors
 #
 function lab_rainbow(l, c, h0, n)
-    Color[LCHab(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
+    [LCHab(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
 end
 
 function luv_rainbow(l, c, h0, n)
-    Color[LCHuv(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
+    [LCHuv(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
 end
 
 # Helpful for Experimenting

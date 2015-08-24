@@ -503,7 +503,7 @@ function color_discrete_hue(; levels=nothing, order=nothing,
                             preserve_order=true)
     DiscreteColorScale(
         h -> convert(Vector{Color},
-             distinguishable_colors(h, Color[LCHab(70, 60, 240)],
+             distinguishable_colors(h, [LCHab(70, 60, 240)],
                                     transform=c -> deuteranopic(c, 0.5),
                                     lchoices=Float64[65, 70, 75, 80],
                                     cchoices=Float64[0, 50, 60, 70],
@@ -519,8 +519,10 @@ const color_discrete = color_discrete_hue
 @deprecate discrete_color(; levels=nothing, order=nothing, preserve_order=true) color_discrete(; levels=levels, order=order, preserve_order=preserve_order)
 
 
-function color_discrete_manual(colors...; levels=nothing, order=nothing)
-    cs = Color[color(c) for c in colors]
+color_discrete_manual(colors...; levels=nothing, order=nothing) = color_discrete_manual(map(Gadfly.parse_color, colors)...; levels=levels, order=order)
+
+function color_discrete_manual(colors::Color...; levels=nothing, order=nothing)
+    cs = [colors...]
     function f(n)
         distinguishable_colors(n, cs)
     end
@@ -811,4 +813,3 @@ end
 
 
 end # module Scale
-
