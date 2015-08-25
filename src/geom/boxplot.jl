@@ -39,7 +39,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
     end
 
     fw = 2/3 * bw # fence width
-    xs = [x*cx for x in takestrict(cycle(aes.x), n)]
+    xs = Measure[x*cx for x in takestrict(cycle(aes.x), n)]
     cs = takestrict(cycle(aes.color), n)
 
     # We allow lower_hinge > upper_hinge, and lower_fence > upper_fence. So we
