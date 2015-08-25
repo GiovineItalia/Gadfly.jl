@@ -12,7 +12,7 @@
 #   A weighted mean color of type T.
 #
 function weighted_color_mean{S <: Number}(
-        cs::AbstractArray{LAB{Float64},1}, ws::AbstractArray{S,1})
+        cs::AbstractArray{Lab{Float64},1}, ws::AbstractArray{S,1})
     l = 0.0
     a = 0.0
     b = 0.0
@@ -23,7 +23,7 @@ function weighted_color_mean{S <: Number}(
         a += w * c.a
         b += w * c.b
     end
-    LAB(l, a, b)
+    Lab(l, a, b)
 end
 
 
@@ -40,15 +40,15 @@ end
 #   n: number of colors
 #
 function lab_rainbow(l, c, h0, n)
-    ColorValue[LCHab(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
+    [LCHab(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
 end
 
 function luv_rainbow(l, c, h0, n)
-    ColorValue[LCHuv(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
+    [LCHuv(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
 end
 
 # Helpful for Experimenting
-function plot_color_scale{T <: ColorValue}(colors::Vector{T})
+function plot_color_scale{T <: Color}(colors::Vector{T})
     println(colors)
     canvas(UnitBox(length(colors), 1)) <<
             (compose([rectangle(i-1, 0, 1, 1) << fill(c)
@@ -62,12 +62,12 @@ end
 # Generate a gradient between n >= 2, colors.
 
 # Then functions return functions suitable for ContinuousColorScales.
-function lab_gradient(cs::ColorValue...)
+function lab_gradient(cs::Color...)
     if length(cs) < 2
         error("Two or more colors are needed for gradients")
     end
 
-    cs_lab = [convert(LAB, c) for c in cs]
+    cs_lab = [convert(Lab, c) for c in cs]
     n = length(cs_lab)
     function f(p::Float64)
         @assert 0.0 <= p <= 1.0

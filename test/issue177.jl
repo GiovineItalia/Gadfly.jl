@@ -19,11 +19,11 @@ BLEChannelStrs = [(ix < 10)?"0$ix":"$ix" for ix=BLEChannels]
 df = DataFrame(frequency=x, value=BLEValues, channel=BLEChannels)
 
 plot(
-    layer(x=x, y=WiFiPlots[:, 1], Geom.line, Theme(default_color=color("#95a5b5"), line_width=7px)),
-    layer(x=x, y=WiFiPlots[:, 2], Geom.line, Theme(default_color=color("#95a5b5"), line_width=7px)),
-    layer(x=x, y=WiFiPlots[:, 3], Geom.line, Theme(default_color=color("#95a5b5"), line_width=7px)),
+    layer(x=x, y=WiFiPlots[:, 1], Geom.line, Theme(default_color=colorant"#95a5b5", line_width=7px)),
+    layer(x=x, y=WiFiPlots[:, 2], Geom.line, Theme(default_color=colorant"#95a5b5", line_width=7px)),
+    layer(x=x, y=WiFiPlots[:, 3], Geom.line, Theme(default_color=colorant"#95a5b5", line_width=7px)),
     layer(df, x="frequency", y="value", color="channel", Geom.bar,
-          Theme(default_color=color("#ff8585"), default_point_size=5px)),
+          Theme(default_color=colorant"#ff8585", default_point_size=5px)),
      Scale.y_sqrt
 )
 

@@ -75,8 +75,8 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
         end
     else
         XT, YT = eltype(aes.x), eltype(aes.y)
-        xs = DefaultDict(ColorValue, Vector{XT}, () -> XT[])
-        ys = DefaultDict(ColorValue, Vector{YT}, () -> YT[])
+        xs = DefaultDict(Color, Vector{XT}, () -> XT[])
+        ys = DefaultDict(Color, Vector{YT}, () -> YT[])
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
             push!(xs[c], x)
             push!(ys[c], y)

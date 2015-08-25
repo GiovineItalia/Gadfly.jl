@@ -3,7 +3,7 @@ module Stat
 import Gadfly
 import StatsBase
 import Contour
-using Color
+using Colors
 using Compat
 using Compose
 using DataArrays
@@ -827,7 +827,7 @@ function apply_statistic(stat::BoxplotStatistic,
         end
 
         if !is(aes.color, nothing)
-            aes.color = PooledDataArray(ColorValue[c for (x, c) in groups],
+            aes.color = PooledDataArray([c for (x, c) in groups],
                                         levels(aes.color))
         end
 
@@ -1575,7 +1575,7 @@ function mean_by_group{Tx, Ty}(x::Vector{Tx}, y::Vector{Ty}, breaks::Vector{Floa
     totalx = zeros(Tx, length(breaks))
     totaly = zeros(Ty, length(breaks))
     for i in 1:length(x)
-        refs = searchsortedfirst(breaks, x[i]) 
+        refs = searchsortedfirst(breaks, x[i])
         count[refs] += 1
         totalx[refs] += x[i]
         totaly[refs] += y[i]
@@ -1586,5 +1586,3 @@ function mean_by_group{Tx, Ty}(x::Vector{Tx}, y::Vector{Ty}, breaks::Vector{Floa
 end
 
 end # module Stat
-
-

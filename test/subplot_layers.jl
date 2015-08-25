@@ -14,14 +14,14 @@ df = DataFrame(
 
 pl = plot(df, x = "RN", y = "Dens",
          ygroup="Type",
-         Theme(panel_stroke=color("grey"), stroke_color=identity),
+         Theme(panel_stroke=colorant"grey", stroke_color=identity),
          Guide.xlabel("Cambial age (years)"),
          Guide.ylabel("Wood density (kg m<sup>3</sup>)"),
          Scale.x_continuous(minvalue=0, maxvalue=100, format=:plain),
          Scale.y_continuous(minvalue=300, maxvalue=900),
          Geom.subplot_grid(
-             layer(Geom.point, Theme(default_color=color("gray"))),
-             layer(Geom.smooth, Theme(default_color=color("red"))),
+             layer(Geom.point, Theme(default_color=colorant"gray")),
+             layer(Geom.smooth, Theme(default_color=colorant"red")),
              Guide.xticks(ticks=[0, 25, 50, 75, 100])
          ))
 
