@@ -52,10 +52,14 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
         compose!(ctx,
             stroke(map(theme.continuous_highlight_color, aes.color)))
     else
-        compose!(ctx,
-            stroke(map(theme.discrete_highlight_color, aes.color)),
-            svgclass([svg_color_class_from_label(escape_id(aes.color_label([c])[1]))
-                      for c in aes.color]))
+        stroke_colors =
+            Gadfly.pooled_map(RGBA{Float32}, theme.discrete_highlight_color, aes.color)
+        classes =
+            Gadfly.pooled_map(ASCIIString,
+                c -> svg_color_class_from_label(escape_id(aes.color_label([c])[1])),
+                aes.color)
+
+        compose!(ctx, stroke(stroke_colors), svgclass(classes))
     end
 
     return compose!(context(order=4), svgclass("geometry"), ctx)
