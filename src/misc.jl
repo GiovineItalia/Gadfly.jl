@@ -374,6 +374,15 @@ function svg_color_class_from_label(label::String)
 end
 
 
+"""
+A faster map function for PooledDataVector
+"""
+function pooled_map(T::Type, f::Function, xs::PooledDataVector)
+    newpool = T[f(x) for x in xs.pool]
+    return T[newpool[i] for i in xs.refs]
+end
+
+
 # TODO: Delete when 0.3 compatibility is dropped
 if VERSION < v"0.4-dev"
     using Dates
