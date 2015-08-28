@@ -26,6 +26,6 @@ srand(1234)
 ```
 
 ```julia
-plot(x=rang(500), y=rand(1:4, 500), Stat.y_jitter(range=0.5), Geom.point)
+plot(x=rand(500), y=rand(1:4, 500), Stat.y_jitter(range=0.5), Geom.point)
 ```
 

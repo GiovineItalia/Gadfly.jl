@@ -31,7 +31,7 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```julia
-plot(z=(x,y) -> x*exp(-(x-int(x))^2-y^2),
+plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),
      x=linspace(-8,8,150), y=linspace(-2,2,150), Geom.contour)
 ```
 
@@ -45,5 +45,6 @@ plot(z=volcano, Geom.contour(levels=[110.0, 150.0, 180.0, 190.0]))
 ```
 
 ```julia
-plot(z=volcano, x=[0.0:10:860.0], y=[0.0:10:600.0], Geom.contour(levels=2))
+plot(z=volcano, x=collect(0.0:10:860.0), y=collect(0.0:10:600.0),
+     Geom.contour(levels=2))
 ```

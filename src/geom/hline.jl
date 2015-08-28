@@ -5,7 +5,7 @@ immutable HLineGeometry <: Gadfly.GeometryElement
 
     function HLineGeometry(; color=nothing,
                            size::Union(Measure, Nothing)=nothing)
-        new(color === nothing ? nothing : Colors.color(color),
+        new(color === nothing ? nothing : parse(Colorant, color),
             size)
     end
 end

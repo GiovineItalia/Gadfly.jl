@@ -96,8 +96,14 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         end
 
         # organize x, y pairs into lines
-        p = sortperm(collect((@compat Tuple{GT, CT}),zip(aes_group, aes_color)),
-                     lt=Gadfly.group_color_isless)
+        if length(aes_group) > length(aes_color)
+            p = sortperm(aes_group)
+        elseif length(aes_color) > length(aes_group)
+            p = sortperm(aes_color, lt=Gadfly.color_isless)
+        else
+            p = sortperm(collect((@compat Tuple{GT, CT}),zip(aes_group, aes_color)),
+                         lt=Gadfly.group_color_isless)
+        end
         permute!(aes_group, p)
         permute!(aes_color, p)
         permute!(aes_x, p)
@@ -108,7 +114,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         points_groups = GT[]
 
         first_point = true
-        for (i, (x, y, c, g)) in enumerate(zip(aes_x, aes_y, aes_color, aes_group))
+        for (i, (x, y, c, g)) in enumerate(zip(aes_x, aes_y, cycle(aes_color), aes_group))
             if !isconcrete(x) || !isconcrete(y)
                 first_point = true
                 continue
