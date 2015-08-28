@@ -28,8 +28,8 @@ Define a custom color scale for a grid:
 
 ```julia
 using Colors
-x = repeat([1:10], inner=[10])
-y = repeat([1:10], outer=[10])
+x = repeat(collect(1:10), inner=[10])
+y = repeat(collect(1:10), outer=[10])
 plot(x=x,y=y,color=x+y, Geom.rectbin, Scale.ContinuousColorScale(p -> RGB(0,p,0)))
 ```
 
