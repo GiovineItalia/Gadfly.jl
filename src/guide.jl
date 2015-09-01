@@ -58,6 +58,7 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
 
     return [PositionedGuide([back], 0, under_guide_position)]
 end
+Base.precompile(render, (PanelBackground,Gadfly.Theme,Gadfly.Aesthetics))
 
 
 immutable ZoomSlider <: Gadfly.GuideElement
@@ -166,6 +167,7 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
 
     return [PositionedGuide([root], 0, over_guide_position)]
 end
+Base.precompile(render, (ZoomSlider,Gadfly.Theme,Gadfly.Aesthetics))
 
 
 immutable ColorKey <: Gadfly.GuideElement
@@ -693,6 +695,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                             bottom_guide_position),
             PositionedGuide([grid_lines], 0, under_guide_position)]
 end
+Base.precompile(render, (XTicks,Gadfly.Theme,Gadfly.Aesthetics))
 
 
 immutable YTicks <: Gadfly.GuideElement
@@ -862,6 +865,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                             left_guide_position),
             PositionedGuide([grid_lines], 0, under_guide_position)]
 end
+Base.precompile(render, (YTicks,Gadfly.Theme,Gadfly.Aesthetics))
 
 
 # X-axis label Guide
@@ -927,6 +931,7 @@ function render(guide::XLabel, theme::Gadfly.Theme,
 
     return [PositionedGuide(contexts, 0, bottom_guide_position)]
 end
+Base.precompile(render, (XLabel,Gadfly.Theme,Gadfly.Aesthetics))
 
 
 # Y-axis label Guide
@@ -986,6 +991,7 @@ function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     return [PositionedGuide(contexts, 0, left_guide_position)]
 end
+Base.precompile(render, (YLabel,Gadfly.Theme,Gadfly.Aesthetics))
 
 # Title Guide
 immutable Title <: Gadfly.GuideElement
