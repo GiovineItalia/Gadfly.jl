@@ -1,9 +1,8 @@
 !["Alice looked up at the Rocking-horse-fly with great interest, and made up her
 mind that it must have been just repainted, it looked so bright and sticky."](http://dcjones.github.com/Gadfly.jl/rockinghorsefly.png)
 
-Julia 0.3 [![Gadfly](http://pkg.julialang.org/badges/Gadfly_release.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=release)
-
-Julia 0.4 [![Gadfly](http://pkg.julialang.org/badges/Gadfly_nightly.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=nightly)
+[![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.3.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.3)
+[![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.4.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.4)
 
 [![DOI](https://zenodo.org/badge/6322/dcjones/Gadfly.jl.png)](http://dx.doi.org/10.5281/zenodo.11876) [![Build Status](http://img.shields.io/travis/dcjones/Gadfly.jl.svg)](https://travis-ci.org/dcjones/Gadfly.jl) [![Coverage Status](http://img.shields.io/coveralls/dcjones/Gadfly.jl.svg)](https://coveralls.io/r/dcjones/Gadfly.jl)
 
