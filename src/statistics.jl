@@ -141,10 +141,21 @@ function apply_statistic(stat::HistogramStatistic,
         end
     else
         isdiscrete = false
-        value_set = collect(Set(values[Bool[Gadfly.isconcrete(v) for v in values]]))
-        sort!(value_set)
+        # Sample enough values to decide whether we're effectively
+        # continuous (defined as >90% of the sampled values are unique)
+        # By looking at a subset we ensure this isn't a bottleneck
+        uvalues = Set{eltype(values)}()
+        n_sampled = n_tried = 0
+        while n_sampled < 15 && n_tried < length(values)
+            v = values[rand(1:length(values))]
+            n_tried += 1
+            Gadfly.isconcrete(v) || continue
+            n_sampled += 1
+            push!(uvalues, v)
+        end
 
-        if  length(value_set) / length(values) < 0.9
+        if length(uvalues) <= 0.9*n_sampled
+            value_set = sort!(collect(Set(values[Bool[Gadfly.isconcrete(v) for v in values]])))
             d, bincounts, x_max = choose_bin_count_1d_discrete(
                         values, value_set, stat.minbincount, stat.maxbincount)
         else

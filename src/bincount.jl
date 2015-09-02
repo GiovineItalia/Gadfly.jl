@@ -92,14 +92,17 @@ function choose_bin_count_1d(xs::AbstractVector, d_min=1, d_max=150)
 
     # Brute force optimization: since the number of bins has to be reasonably
     # small to plot, this is pretty quick and very simple.
-    for d in d_min:d_max
-        binwidth = span / d
-        bin!(bincounts, xs, x_min, binwidth, d)
-        pll = bincount_pll(d, n, bincounts, binwidth)
+    d_best = d_min
+    if d_min < d_max
+        for d in d_min:d_max
+            binwidth = span / d
+            bin!(bincounts, xs, x_min, binwidth, d)
+            pll = bincount_pll(d, n, bincounts, binwidth)
 
-        if pll > pll_best
-            d_best = d
-            pll_best = pll
+            if pll > pll_best
+                d_best = d
+                pll_best = pll
+            end
         end
     end
 
