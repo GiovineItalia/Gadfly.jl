@@ -530,12 +530,15 @@ end
 
 immutable XTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::Union(Nothing, AbstractArray)
+    ticks::Union(Nothing, Symbol, AbstractArray)
     orientation::Symbol
 
     function XTicks(; label::Bool=true,
-                      ticks::Union(Nothing, AbstractArray)=nothing,
+                      ticks::Union(Nothing, Symbol, AbstractArray)=:auto,
                       orientation::Symbol=:auto)
+        if isa(ticks, Symbol) && ticks != :auto
+            error("$(ticks) is not a valid value for the `ticks` parameter")
+        end
         return new(label, ticks, orientation)
     end
 end
@@ -544,12 +547,19 @@ const xticks = XTicks
 
 
 function default_statistic(guide::XTicks)
-    return Stat.xticks(ticks=guide.ticks)
+    if guide.ticks == nothing
+        return Stat.identity()
+    else
+        return Stat.xticks(ticks=guide.ticks)
+    end
 end
 
 
 function render(guide::XTicks, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
+    if guide.ticks == nothing
+        return PositionedGuide[]
+    end
 
     if Gadfly.issomething(aes.xtick)
         ticks = aes.xtick
@@ -697,12 +707,15 @@ end
 
 immutable YTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::Union(Nothing, AbstractArray)
+    ticks::Union(Nothing, Symbol, AbstractArray)
     orientation::Symbol
 
     function YTicks(; label::Bool=true,
-                      ticks::Union(Nothing, AbstractArray)=nothing,
+                      ticks::Union(Nothing, Symbol, AbstractArray)=:auto,
                       orientation::Symbol=:horizontal)
+        if isa(ticks, Symbol) && ticks != :auto
+            error("$(ticks) is not a valid value for the `ticks` parameter")
+        end
         new(label, ticks, orientation)
     end
 end
@@ -712,12 +725,19 @@ const yticks = YTicks
 
 
 function default_statistic(guide::YTicks)
-    Stat.yticks(ticks=guide.ticks)
+    if guide.ticks == nothing
+        return Stat.identity()
+    else
+        return Stat.yticks(ticks=guide.ticks)
+    end
 end
 
 
 function render(guide::YTicks, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
+    if guide.ticks == nothing
+        return PositionedGuide[]
+    end
 
     if Gadfly.issomething(aes.ytick)
         ticks = aes.ytick

@@ -523,13 +523,13 @@ immutable TickStatistic <: Gadfly.StatisticElement
     niceness_weight::Float64
 
     # fixed ticks, or nothing
-    ticks::Union(Nothing, AbstractArray)
+    ticks::Union(Symbol, AbstractArray)
 end
 
 
 @deprecate xticks(ticks) xticks(ticks=ticks)
 
-function xticks(; ticks::Union(Nothing, AbstractArray)=nothing,
+function xticks(; ticks::Union(Symbol, AbstractArray)=:auto,
                   granularity_weight::Float64=1/4,
                   simplicity_weight::Float64=1/6,
                   coverage_weight::Float64=1/3,
@@ -542,7 +542,7 @@ end
 
 @deprecate yticks(ticks) yticks(ticks=ticks)
 
-function yticks(; ticks::Union(Nothing, AbstractArray)=nothing,
+function yticks(; ticks::Union(Symbol, AbstractArray)=:auto,
                   granularity_weight::Float64=1/4,
                   simplicity_weight::Float64=1/6,
                   coverage_weight::Float64=1/3,
@@ -572,6 +572,10 @@ function apply_statistic(stat::TickStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
+
+    if isa(stat.ticks, Symbol) && stat.ticks != :auto
+        error("Invalid value $(stat.ticks) for ticks parameter.")
+    end
 
     if isa(coord, Coord.SubplotGrid)
         error("TickStatistic cannot be applied to subplot coordinates.")
@@ -624,7 +628,7 @@ function apply_statistic(stat::TickStatistic,
     in_values = chain(in_values...)
 
     # consider forced tick marks
-    if stat.ticks != nothing
+    if stat.ticks != :auto
         minval = min(minval, minimum(stat.ticks))
         maxval = max(maxval, maximum(stat.ticks))
     end
@@ -670,7 +674,7 @@ function apply_statistic(stat::TickStatistic,
     end
 
     # all the input values in order.
-    if stat.ticks != nothing
+    if stat.ticks != :auto
         grids = ticks = stat.ticks
         viewmin = minval
         viewmax = maxval
