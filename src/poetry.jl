@@ -63,27 +63,36 @@ end
 # Plot a single function using a contour plot
 function plot(f::Function, xmin, xmax, ymin, ymax,
               elements::ElementOrFunction...; mapping...)
+    default_elements = ElementOrFunction[]
+    element_types = Set(map(typeof, elements))
+
+    if !in(Guide.xlabel, element_types)
+        push!(default_elements, Guide.xlabel("x"))
+    end
+
+    if !in(Guide.ylabel, element_types)
+        push!(default_elements, Guide.ylabel("y"))
+    end
+
+    if !in(Guide.ColorKey, element_types) && !in(Guide.ManualColorKey, element_types)
+        push!(default_elements, Guide.colorkey("f(x,y)"))
+    end
+
+    push!(default_elements, Coord.cartesian(xflip=xmin > xmax, yflip=ymin > ymax))
+
+    plot(layer(f, xmin, xmax, ymin, ymax,
+               elements...; mapping...), default_elements...)
+end
+
+
+function layer(f::Function, xmin, xmax, ymin, ymax,
+               elements::ElementOrFunction...; mapping...)
     if isempty(elements)
         elements = ElementOrFunction[]
     elseif isa(elements, Tuple)
         elements = ElementOrFunction[elements...]
     end
 
-    element_types = Set(map(typeof, elements))
-
-    if !in(Guide.xlabel, element_types)
-        push!(elements, Guide.xlabel("x"))
-    end
-
-    if !in(Guide.ylabel, element_types)
-        push!(elements, Guide.ylabel("y"))
-    end
-
-    if !in(Guide.ColorKey, element_types) && !in(Guide.ManualColorKey, element_types)
-        push!(elements, Guide.colorkey("f(x,y)"))
-    end
-
-    push!(elements, Coord.cartesian(xflip=xmin > xmax, yflip=ymin > ymax))
 
     mappingdict = @compat Dict{Symbol, Any}(:z    => f, :xmin => [xmin], :xmax => [xmax],
                                             :ymin => [ymin], :ymax => [ymax])
@@ -91,7 +100,7 @@ function plot(f::Function, xmin, xmax, ymin, ymax,
         mappingdict[k] = v
     end
 
-    plot(Geom.contour, elements...; mappingdict...)
+    layer(Geom.contour, elements...; mappingdict...)
 end
 
 
