@@ -11,8 +11,8 @@
 # Returns:
 #   A weighted mean color of type T.
 #
-function weighted_color_mean{S <: Number}(
-        cs::AbstractArray{Lab{Float64},1}, ws::AbstractArray{S,1})
+function weighted_color_mean{S <: Number,T}(
+        cs::AbstractArray{Lab{T},1}, ws::AbstractArray{S,1})
     l = 0.0
     a = 0.0
     b = 0.0
