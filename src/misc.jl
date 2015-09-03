@@ -554,7 +554,7 @@ end
 
 
 function color_isless(a::RGBA{Float32}, b::RGBA{Float32})
-    if color(a) < color(b)
+    if color_isless(color(a), color(b))
         return true
     elseif color(a) == color(b)
         return a.alpha < b.alpha
@@ -564,8 +564,8 @@ function color_isless(a::RGBA{Float32}, b::RGBA{Float32})
 end
 
 
-function group_color_isless{S, T <: Color}(a::(@compat Tuple{S, T}),
-                                                b::(@compat Tuple{S, T}))
+function group_color_isless{S, T <: Colorant}(a::(@compat Tuple{S, T}),
+                                              b::(@compat Tuple{S, T}))
     if a[1] < b[1]
         return true
     elseif a[1] == b[1]
@@ -574,5 +574,3 @@ function group_color_isless{S, T <: Color}(a::(@compat Tuple{S, T}),
         return false
     end
 end
-
-
