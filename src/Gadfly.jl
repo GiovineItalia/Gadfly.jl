@@ -1159,4 +1159,11 @@ end
 const x_axis_label_aesthetics = [:x, :xmin, :xmax]
 const y_axis_label_aesthetics = [:y, :ymin, :ymax]
 
+let
+    x = 1:10; y = cumsum(randn(10));
+    p = plot(x=x, y=y, Geom.point, Geom.line)
+    render(p)
+    nothing
+end
+
 end # module Gadfly
