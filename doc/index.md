@@ -195,7 +195,7 @@ layer(another_dataframe, x="col1", y="col2", Geom.point)
 
 Ordering of layers can be controlled with the `order` keyword. A higher order
 number will cause a layer to be drawn on top of any layers with a lower number.
-If not specifiel, default order for a layer is 0.
+If not specified, default order for a layer is 0.
 
 ```{.julia execute="false"}
 plot(layer(x=rand(10), y=rand(10), Geom.point, order=1),
