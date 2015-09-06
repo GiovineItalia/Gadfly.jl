@@ -8,9 +8,11 @@ immutable LineGeometry <: Gadfly.GeometryElement
 
     order::Int
 
+    tag::Symbol
+
     function LineGeometry(default_statistic=Gadfly.Stat.identity();
-                          preserve_order=false, order=2)
-        new(default_statistic, preserve_order, order)
+                          preserve_order=false, order=2, tag=empty_tag)
+        new(default_statistic, preserve_order, order, tag)
     end
 end
 
@@ -131,7 +133,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         classes = [string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
                    for (c, g) in zip(points_colors, points_groups)]
 
-        ctx = compose!(ctx, Compose.line(points),
+        ctx = compose!(ctx, Compose.line(points,geom.tag),
                       stroke(points_colors),
                       svgclass(classes))
 
@@ -143,7 +145,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
             sort!(points, by=first)
         end
 
-        ctx = compose!(ctx, Compose.line(points),
+        ctx = compose!(ctx, Compose.line(points,geom.tag),
                        stroke(aes.color[1]),
                        svgclass("geometry"))
     else
@@ -190,12 +192,10 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         classes = [string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
                    for c in points_colors]
 
-        ctx = compose!(ctx, Compose.line(points),
+        ctx = compose!(ctx, Compose.line(points,geom.tag),
                       stroke(points_colors),
                       svgclass(classes))
     end
 
     return compose!(ctx, fill(nothing), linewidth(theme.line_width))
 end
-
-

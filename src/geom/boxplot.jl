@@ -1,5 +1,10 @@
 
 immutable BoxplotGeometry <: Gadfly.GeometryElement
+    tag::Symbol
+
+    function BoxplotGeometry(; tag::Symbol=empty_tag)
+        new(tag)
+    end
 end
 
 
@@ -62,8 +67,12 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         end
     end
 
+    tbox, tlw, tuw, tlf, tuf, to, tm =
+        subtags(geom.tag, :box, :lower_whisker, :upper_whisker,
+                          :lower_fence, :upper_fence, :outliers, :middle)
+
     ctx = compose!(
-        context(),
+        context(tag=geom.tag),
         fill(collect(cs)),
         stroke(collect(cs)),
         linewidth(theme.line_width),
@@ -74,24 +83,24 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
             rectangle(
                 [x - bw/2 for x in xs],
                 lower_hinge, [bw],
-                [uh - lh for (lh, uh) in zip(lower_hinge, upper_hinge)]),
+                [uh - lh for (lh, uh) in zip(lower_hinge, upper_hinge)], tbox),
 
             (
                 context(),
 
                  # Whiskers
                 Compose.line([[(x, lh), (x, lf)]
-                              for (x, lh, lf) in zip(xs, lower_hinge, lower_fence)]),
+                              for (x, lh, lf) in zip(xs, lower_hinge, lower_fence)], tlw),
 
                 Compose.line([[(x, uh), (x, uf)]
-                              for (x, uh, uf) in zip(xs, upper_hinge, upper_fence)]),
+                              for (x, uh, uf) in zip(xs, upper_hinge, upper_fence)], tuw),
 
                 # Fences
                 Compose.line([[(x - fw/2, lf), (x + fw/2, lf)]
-                              for (x, lf) in zip(xs, lower_fence)]),
+                              for (x, lf) in zip(xs, lower_fence)], tlf),
 
                 Compose.line([[(x - fw/2, uf), (x + fw/2, uf)]
-                              for (x, uf) in zip(xs, upper_fence)]),
+                              for (x, uf) in zip(xs, upper_fence)], tuf),
 
                 stroke(collect(cs))
             ),
@@ -107,7 +116,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
             (context(),
              circle([x for (x, y, c) in xys],
                     [y for (x, y, c) in xys],
-                    [theme.default_point_size]),
+                    [theme.default_point_size], to),
              stroke([theme.discrete_highlight_color(c) for (x, y, c) in xys]),
              fill([c for (x, y, c) in xys])))
     end
@@ -117,7 +126,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         compose!(ctx, (
            context(order=1),
            Compose.line([[(x - fw/2, mid), (x + fw/2, mid)]
-                         for (x, mid) in zip(xs, aes.middle)]),
+                         for (x, mid) in zip(xs, aes.middle)], tm),
            linewidth(theme.middle_width),
            stroke([theme.middle_color(c) for c in cs])
         ))
@@ -125,5 +134,3 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
 
     return ctx
 end
-
-

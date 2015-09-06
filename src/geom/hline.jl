@@ -2,11 +2,13 @@
 immutable HLineGeometry <: Gadfly.GeometryElement
     color::Union(Color, Nothing)
     size::Union(Measure, Nothing)
+    tag::Symbol
 
     function HLineGeometry(; color=nothing,
-                           size::Union(Measure, Nothing)=nothing)
+                           size::Union(Measure, Nothing)=nothing,
+                           tag::Symbol=empty_tag)
         new(color === nothing ? nothing : Colors.color(color),
-            size)
+            size, tag)
     end
 end
 
@@ -27,9 +29,8 @@ function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     return compose!(
         context(),
-        Compose.line([[(0w, y), (1w, y)] for y in aes.yintercept]),
+        Compose.line([[(0w, y), (1w, y)] for y in aes.yintercept], geom.tag),
         stroke(color),
         linewidth(size),
         svgclass("xfixed"))
 end
-

@@ -13,9 +13,13 @@ immutable BarGeometry <: Gadfly.GeometryElement
 
     default_statistic::Gadfly.StatisticElement
 
+    tag::Symbol
+
     function BarGeometry(default_statistic=Gadfly.Stat.identity();
-                         position::Symbol=:stack, orientation::Symbol=:vertical)
-        new(position, orientation, default_statistic)
+                         position::Symbol=:stack,
+                         orientation::Symbol=:vertical,
+                         tag::Symbol=empty_tag)
+        new(position, orientation, default_statistic, tag)
     end
 end
 
@@ -61,7 +65,7 @@ function render_colorless_bar(geom::BarGeometry,
                       [Measure(cy=ymin) + theme.bar_spacing/2 for ymin in aes.ymin],
                       abs(aes.x),
                       [Measure(cy=(ymax - ymin)) - theme.bar_spacing
-                       for (ymin, ymax) in zip(aes.ymin, aes.ymax)]),
+                       for (ymin, ymax) in zip(aes.ymin, aes.ymax)], geom.tag),
             svgclass("geometry"))
     else
         YT = eltype(aes.y)
@@ -72,7 +76,7 @@ function render_colorless_bar(geom::BarGeometry,
                       [min(yz, y) for y in aes.y],
                       [Measure(cx=(xmax - xmin)) - theme.bar_spacing
                        for (xmin, xmax) in zip(aes.xmin, aes.xmax)],
-                      abs(aes.y)),
+                      abs(aes.y), geom.tag),
             svgclass("geometry"))
     end
 
@@ -121,7 +125,7 @@ function render_colorful_stacked_bar(geom::BarGeometry,
                 stack_height,
                 [aes.ymin[i]*cy + theme.bar_spacing/2 for i in idxs],
                 [aes.x[i] for i in idxs],
-                [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs]))
+                [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs], geom.tag))
     elseif orientation == :vertical
         stack_height_dict = Dict()
         T = eltype(aes.y)
@@ -142,7 +146,7 @@ function render_colorful_stacked_bar(geom::BarGeometry,
                 [aes.xmin[i]*cx + theme.bar_spacing/2 for i in idxs],
                 stack_height,
                 [(aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing for i in idxs],
-                [aes.y[i] for i in idxs]))
+                [aes.y[i] for i in idxs], geom.tag))
     else
         error("Orientation must be :horizontal or :vertical")
     end
@@ -204,7 +208,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
                 dodge_pos,
                 abs(aes_x),
                 [((aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing) / dodge_count[aes.ymin[i]]
-                 for i in idxs]))
+                 for i in idxs], geom.tag))
     elseif orientation == :vertical
         dodge_count = DefaultDict(() -> 0)
         for i in idxs
@@ -236,7 +240,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
                 [min(yz, y) for y in aes_y],
                 [((aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing) / dodge_count[aes.xmin[i]]
                  for i in idxs],
-                abs(aes_y)))
+                abs(aes_y), geom.tag))
     else
         error("Orientation must be :horizontal or :vertical")
     end
@@ -333,5 +337,3 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         linewidth(theme.highlight_width),
         svgattribute("shape-rendering", "crispEdges"))
 end
-
-

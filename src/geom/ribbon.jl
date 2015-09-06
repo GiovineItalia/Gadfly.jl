@@ -1,9 +1,11 @@
 
 immutable RibbonGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
+    tag::Symbol
 
-    function RibbonGeometry(default_statistic=Gadfly.Stat.identity())
-        new(default_statistic)
+    function RibbonGeometry(default_statistic=Gadfly.Stat.identity();
+                            tag::Symbol=empty_tag)
+        new(default_statistic, tag)
     end
 end
 
@@ -69,7 +71,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
         ctx = compose!(
             context(),
             Compose.polygon([collect((@compat Tuple{XT, YT}), chain(min_points[c], max_points[c]))
-                     for c in keys(max_points)]),
+                     for c in keys(max_points)], geom.tag),
             fill([theme.lowlight_color(c) for c in keys(max_points)]))
     end
 
@@ -79,4 +81,3 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
         stroke(nothing),
         linewidth(theme.line_width))
 end
-
