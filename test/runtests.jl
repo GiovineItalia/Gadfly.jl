@@ -64,6 +64,8 @@ tests = [
     ("layer_themes",                          6inch, 3inch),
     ("layer_guide",                           6inch, 3inch),
     ("discrete_color_manual",                 6inch, 3inch),
+    ("lab_gradient",                          6inch, 3inch),
+    ("contour_color_none",                    6inch, 3inch),
     ("ordered_line",                          6inch, 3inch),
     ("nan_skipping",                          6inch, 3inch),
     ("hexbin",                                6inch, 3inch),
