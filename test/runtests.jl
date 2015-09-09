@@ -77,6 +77,7 @@ tests = [
     ("aspect_ratio",                          6inch, 3inch),
     ("contour_function",                      6inch, 3inch),
     ("contour_matrix",                        6inch, 3inch),
+    ("contour_layers",                        6inch, 3inch),
     ("stat_qq",                               6inch, 16inch),
     ("line_histogram",                        6inch, 3inch),
     ("layer_data",                            6inch, 3inch),
