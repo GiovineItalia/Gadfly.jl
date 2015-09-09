@@ -11,8 +11,8 @@
 # Returns:
 #   A weighted mean color of type T.
 #
-function weighted_color_mean{S <: Number}(
-        cs::AbstractArray{Lab{Float64},1}, ws::AbstractArray{S,1})
+function weighted_color_mean{S <: Number,T}(
+        cs::AbstractArray{Lab{T},1}, ws::AbstractArray{S,1})
     l = 0.0
     a = 0.0
     b = 0.0
@@ -71,7 +71,7 @@ function lab_gradient(cs::Color...)
     n = length(cs_lab)
     function f(p::Float64)
         @assert 0.0 <= p <= 1.0
-        i = 1 + min(n - 2, max(0, int(floor(p*(n-1)))))
+        i = 1 + min(n - 2, max(0, floor(Int, p*(n-1))))
         w = p*(n-1) + 1 - i
         weighted_color_mean([cs_lab[i], cs_lab[i+1]], [1.0 - w, w])
     end

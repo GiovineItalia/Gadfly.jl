@@ -40,8 +40,6 @@ srand(1234)
 ```
 
 ```julia
-# Tread numerical y data as categories
-plot(x=rand(10), y=rand(5), Scale.y_discrete)
+# Treat numerical y data as categories
+plot(x=rand(10), y=rand(10), Scale.y_discrete)
 ```
-
-

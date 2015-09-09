@@ -96,6 +96,9 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         end
 
         # organize x, y pairs into lines
+        if length(aes_color) < length(aes_group)
+            aes_color = collect(take(cycle(aes_color), length(aes_group)))
+        end
         p = sortperm(collect((@compat Tuple{GT, CT}),zip(aes_group, aes_color)),
                      lt=Gadfly.group_color_isless)
         permute!(aes_group, p)
@@ -197,5 +200,3 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     return compose!(ctx, fill(nothing), linewidth(theme.line_width))
 end
-
-

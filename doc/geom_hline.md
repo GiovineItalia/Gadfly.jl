@@ -35,6 +35,5 @@ plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
 # `color` and `size` aesthetics.
 plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
 	 yintercept=[2.5, 4.0], Geom.point,
-	 Geom.hline(color="orange", size=2mm))
+	 Geom.hline(color=colorant"orange", size=2mm))
 ```
-
