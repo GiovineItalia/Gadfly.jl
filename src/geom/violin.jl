@@ -1,9 +1,10 @@
 
 immutable ViolinGeometry <: Gadfly.GeometryElement
     order::Int
+    tag::Symbol
 
-    function ViolinGeometry(; order=1)
-        new(order)
+    function ViolinGeometry(; order=1, tag::Symbol=empty_tag)
+        new(order, tag)
     end
 end
 
@@ -40,7 +41,7 @@ function render(geom::ViolinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     compose!(ctx,
              Compose.polygon([vcat([(x - w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])],
                                    reverse!([(x + w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])]))
-                              for x in keys(grouped_y)]))
+                              for x in keys(grouped_y)], geom.tag))
 
 
     return compose!(ctx,

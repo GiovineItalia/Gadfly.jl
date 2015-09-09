@@ -1,10 +1,12 @@
 
 immutable RectangularBinGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
+    tag::Symbol
 
     function RectangularBinGeometry(
-            default_statistic::Gadfly.StatisticElement=Gadfly.Stat.identity())
-        new(default_statistic)
+            default_statistic::Gadfly.StatisticElement=Gadfly.Stat.identity();
+            tag::Symbol=empty_tag)
+        new(default_statistic, tag)
     end
 end
 
@@ -121,11 +123,9 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
 
     return compose!(
         context(),
-        rectangle(xmin, ymin, xwidths, ywidths),
+        rectangle(xmin, ymin, xwidths, ywidths, geom.tag),
         fill(cs),
         stroke(nothing),
         svgclass("geometry"),
         svgattribute("shape-rendering", "crispEdges"))
 end
-
-
