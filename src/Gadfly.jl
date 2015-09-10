@@ -434,7 +434,7 @@ end
 # Returns:
 #   A compose Canvas containing the graphic.
 #
-function render(plot::Plot)
+function render_prepare(plot::Plot)
     if isempty(plot.layers)
         layer = Layer()
         layer.geom = Geom.point()
@@ -772,6 +772,16 @@ function render(plot::Plot)
         end
     end
 
+    return (plot, coord, plot_aes,
+            layer_aess, layer_stats, layer_subplot_aess, layer_subplot_datas,
+            scales, guides)
+end
+
+function render(plot::Plot)
+    (plot, coord, plot_aes,
+     layer_aess, layer_stats, layer_subplot_aess, layer_subplot_datas,
+     scales, guides) = render_prepare(plot)
+
     root_context = render_prepared(plot, coord, plot_aes, layer_aess,
                                    layer_stats, layer_subplot_aess,
                                    layer_subplot_datas,
@@ -823,7 +833,8 @@ function render_prepared(plot::Plot,
                          layer_subplot_datas::Vector{Vector{Data}},
                          scales::Dict{Symbol, ScaleElement},
                          guides::Vector{GuideElement};
-                         table_only=false)
+                         table_only=false,
+                         dynamic=true)
     # III. Coordinates
     plot_context = Coord.apply_coordinate(coord, vcat(plot_aes,
                                           layer_aess), scales)
@@ -844,7 +855,7 @@ function render_prepared(plot::Plot,
     # V. Guides
     guide_contexts = Any[]
     for guide in guides
-        guide_context = render(guide, plot.theme, plot_aes)
+        guide_context = render(guide, plot.theme, plot_aes, dynamic)
         if guide_context != nothing
             append!(guide_contexts, guide_context)
         end

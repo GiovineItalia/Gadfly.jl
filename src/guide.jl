@@ -45,6 +45,10 @@ end
 
 const background = PanelBackground
 
+function render(guide::Gadfly.GuideElement, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, dynamic::Bool=true)
+    render(guide, theme, aes)
+end
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
@@ -556,7 +560,7 @@ end
 
 
 function render(guide::XTicks, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, dynamic::Bool=true)
     if guide.ticks == nothing
         return PositionedGuide[]
     end
@@ -603,21 +607,24 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         strokedash(theme.grid_strokedash),
         svgclass("guide xgridlines yfixed"))
 
-    dynamic_grid_lines = compose!(
-        context(withjs=true),
-        line([[(t, 0h), (t, 1h)] for t in grids]),
-        visible(gridvisibility),
-        stroke(theme.grid_color),
-        linewidth(theme.grid_line_width),
-        strokedash(theme.grid_strokedash),
-        svgclass("guide xgridlines yfixed"),
-        svgattribute("gadfly:scale", scale),
-        jsplotdata("focused_xgrid_color",
-                   "\"#$(hex(theme.grid_color_focused))\""),
-        jsplotdata("unfocused_xgrid_color",
-                   "\"#$(hex(theme.grid_color))\""))
-
-    grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
+    if dynamic
+        dynamic_grid_lines = compose!(
+            context(withjs=true),
+            line([[(t, 0h), (t, 1h)] for t in grids]),
+            visible(gridvisibility),
+            stroke(theme.grid_color),
+            linewidth(theme.grid_line_width),
+            strokedash(theme.grid_strokedash),
+            svgclass("guide xgridlines yfixed"),
+            svgattribute("gadfly:scale", scale),
+            jsplotdata("focused_xgrid_color",
+                       "\"#$(hex(theme.grid_color_focused))\""),
+            jsplotdata("unfocused_xgrid_color",
+                       "\"#$(hex(theme.grid_color))\""))
+        grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
+    else
+        grid_lines = compose!(context(), static_grid_lines)
+    end
 
     if !guide.label
         return [PositionedGuide([grid_lines], 0, under_guide_position)]
@@ -734,7 +741,7 @@ end
 
 
 function render(guide::YTicks, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, dynamic::Bool=true)
     if guide.ticks == nothing
         return PositionedGuide[]
     end
@@ -780,21 +787,24 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         strokedash(theme.grid_strokedash),
         svgclass("guide ygridlines xfixed"))
 
-    dynamic_grid_lines = compose!(
-        context(withjs=true),
-        line([[(0w, t), (1w, t)] for t in grids]),
-        visible(gridvisibility),
-        stroke(theme.grid_color),
-        linewidth(theme.grid_line_width),
-        strokedash(theme.grid_strokedash),
-        svgclass("guide ygridlines xfixed"),
-        svgattribute("gadfly:scale", scale),
-        jsplotdata("focused_ygrid_color",
-                   "\"#$(hex(theme.grid_color_focused))\""),
-        jsplotdata("unfocused_ygrid_color",
+    if dynamic
+        dynamic_grid_lines = compose!(
+            context(withjs=true),
+            line([[(0w, t), (1w, t)] for t in grids]),
+            visible(gridvisibility),
+            stroke(theme.grid_color),
+            linewidth(theme.grid_line_width),
+            strokedash(theme.grid_strokedash),
+            svgclass("guide ygridlines xfixed"),
+            svgattribute("gadfly:scale", scale),
+            jsplotdata("focused_ygrid_color",
+                   "\"#$(    hex(theme.grid_color_focused))\""),
+            jsplotdata("unfocused_ygrid_color",
                    "\"#$(hex(theme.grid_color))\""))
-
-    grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
+        grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
+    else
+        grid_lines = compose!(context(), static_grid_lines)
+    end
 
     if !guide.label
         return [PositionedGuide([grid_lines], 0, under_guide_position)]
