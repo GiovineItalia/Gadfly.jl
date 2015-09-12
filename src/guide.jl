@@ -487,7 +487,7 @@ immutable ManualColorKey{C<:Color} <: Gadfly.GuideElement
 end
 
 ManualColorKey{C<:Color}(title, labels, colors::Vector{C}) = ManualColorKey{C}(title, labels, colors)
-ManualColorKey(title, labels, colors) = ManualColorKey(title, labels, Gadfly.parse_color_vec(colors...))
+ManualColorKey(title, labels, colors) = ManualColorKey(title, labels, Gadfly.parse_colorant_vec(colors...))
 
 const manual_color_key = ManualColorKey
 
