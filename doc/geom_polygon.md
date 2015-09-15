@@ -1,5 +1,5 @@
 ---
-title: violin
+title: polygon
 author: Daniel C. Jones
 part: Geometry
 order: 1017
