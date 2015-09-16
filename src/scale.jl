@@ -519,7 +519,7 @@ const color_discrete = color_discrete_hue
 @deprecate discrete_color(; levels=nothing, order=nothing, preserve_order=true) color_discrete(; levels=levels, order=order, preserve_order=preserve_order)
 
 
-color_discrete_manual(colors...; levels=nothing, order=nothing) = color_discrete_manual(map(Gadfly.parse_color, colors)...; levels=levels, order=order)
+color_discrete_manual(colors...; levels=nothing, order=nothing) = color_discrete_manual(map(Gadfly.parse_colorant, colors)...; levels=levels, order=order)
 
 function color_discrete_manual(colors::Color...; levels=nothing, order=nothing)
     cs = [colors...]

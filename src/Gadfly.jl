@@ -15,7 +15,7 @@ using Showoff
 
 import Iterators
 import Iterators: distinct, drop, chain
-import Compose: draw, hstack, vstack, gridstack, isinstalled
+import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant, parse_colorant_vec
 import Base: +, -, /, *,
              copy, push!, start, next, done, show, getindex, cat,
              writemime, isfinite, display
@@ -36,14 +36,7 @@ function __init__()
 end
 
 
-typealias ColorOrNothing Union(Color, TransparentColor, Nothing)
-
-# Allow users to supply strings without deprecation warnings
-# Note this strips any transparency; is this desirable?
-parse_color(c::Colorant) = color(c)
-parse_color(str::AbstractString) = color(parse(Colorant, str))
-parse_color_vec(c...) = to_vec(map(parse_color, c)...)
-@noinline to_vec(c...) = [c...]
+typealias ColorOrNothing Union(Colorant, Nothing)
 
 element_aesthetics(::Any) = []
 default_scales(::Any) = []
