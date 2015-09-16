@@ -58,6 +58,92 @@ end
 const identity = Identity
 
 
+immutable BarStatistic <: Gadfly.StatisticElement
+    position::Symbol # :dodge or :stack
+    orientation::Symbol # :horizontal or :vertical
+end
+
+
+function BarStatistic(; position::Symbol=:stack,
+                        orientation::Symbol=:vertical)
+    return BarStatistic(position, orientation)
+end
+
+
+element_aesthetics(::BarStatistic) = [:x, :y]
+
+
+function default_scales(stat::BarStatistic)
+    if stat.orientation == :vertical
+        return [Gadfly.Scale.y_continuous()]
+    else
+        return [Gadfly.Scale.x_continuous()]
+    end
+end
+
+
+const bar = BarStatistic
+
+
+function apply_statistic(stat::BarStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("BarStatistic", aes, :x, :y)
+
+    if stat.orientation == :horizontal
+        var = :y
+        othervar = :x
+        minvar = :ymin
+        maxvar = :ymax
+        viewminvar = :xviewmin
+        viewmaxvar = :xviewmax
+        labelvar = :x_label
+    else
+        var = :x
+        othervar = :y
+        minvar = :xmin
+        maxvar = :xmax
+        viewminvar = :yviewmin
+        viewmaxvar = :yviewmax
+        labelvar = :y_label
+    end
+
+    values = getfield(aes, var)
+    minvalue, maxvalue = minimum(values), maximum(values)
+    span_type = typeof((maxvalue - minvalue) / 1.0)
+    barspan = one(span_type)
+
+    if haskey(scales, var) && isa(scales[var], Scale.ContinuousScale) && length(values) > 1
+        p = sortperm(getfield(aes, var))
+        permute!(getfield(aes, var), p)
+        permute!(getfield(aes, othervar), p)
+
+        z = values[2] - values[1]
+        minspan = z
+        for i in 2:length(values)
+            span = values[i] - values[i-1]
+            if minspan == z || span > z && span < minspan
+                minspan = span
+            end
+        end
+
+        barspan = minspan
+    end
+
+    position_type = promote_type(typeof(barspan/2.0), eltype(values))
+    minvals = Array(position_type, length(values))
+    setfield!(aes, minvar, minvals)
+    maxvals = Array(position_type, length(values))
+    setfield!(aes, maxvar, maxvals)
+
+    for (i, x) in enumerate(values)
+        minvals[i] = x - barspan/2.0
+        maxvals[i] = x + barspan/2.0
+    end
+end
+
+
 immutable HistogramStatistic <: Gadfly.StatisticElement
     minbincount::Int
     maxbincount::Int
@@ -139,7 +225,11 @@ function apply_statistic(stat::HistogramStatistic,
         for x in values
             bincounts[x - x_min + 1] += 1
         end
+        x_min -= 0.5 # adjust the left side of the bar
+        binwidth = 1.0
     else
+        x_min = Gadfly.concrete_minimum(values)
+
         isdiscrete = false
         # Sample enough values to decide whether we're effectively
         # continuous (defined as >90% of the sampled values are unique)
@@ -169,26 +259,21 @@ function apply_statistic(stat::HistogramStatistic,
             binwidth = span / d
             bincounts ./= sum(bincounts) * binwidth
         end
+
+        binwidth = (x_max - x_min) / d
     end
 
-    x_min = Gadfly.concrete_minimum(values)
-    binwidth = isdiscrete ? 1 : (x_max - x_min) / d
-
     if aes.color === nothing
+        T = typeof(x_min + 1*binwidth)
         setfield!(aes, othervar, Array(Float64, d))
-        if isdiscrete
-            setfield!(aes, var, collect(Int, 1:d))
-            setfield!(aes, othervar, bincounts)
-        else
-            setfield!(aes, minvar, Array(isdiscrete ? Int : Float64, d))
-            setfield!(aes, maxvar, Array(isdiscrete ? Int : Float64, d))
-            setfield!(aes, var, Array(isdiscrete ? Int : Float64, d))
-            for j in 1:d
-                getfield(aes, minvar)[j] = x_min + (j - 1) * binwidth
-                getfield(aes, maxvar)[j] = x_min + j * binwidth
-                getfield(aes, var)[j] = x_min + (j - 0.5) * binwidth
-                getfield(aes, othervar)[j] = bincounts[j]
-            end
+        setfield!(aes, minvar, Array(T, d))
+        setfield!(aes, maxvar, Array(T, d))
+        setfield!(aes, var, Array(T, d))
+        for j in 1:d
+            getfield(aes, minvar)[j] = x_min + (j - 1) * binwidth
+            getfield(aes, maxvar)[j] = x_min + j * binwidth
+            getfield(aes, var)[j] = x_min + (j - 0.5) * binwidth
+            getfield(aes, othervar)[j] = bincounts[j]
         end
     else
         groups = Dict()
@@ -203,19 +288,14 @@ function apply_statistic(stat::HistogramStatistic,
                 push!(groups[c], x)
             end
         end
-
-        if isdiscrete
-            setfield!(aes, var, Array(Int, d * length(groups)))
-        else
-            setfield!(aes, minvar, Array(isdiscrete ? Int : Float64, d * length(groups)))
-            setfield!(aes, maxvar, Array(isdiscrete ? Int : Float64, d * length(groups)))
-            setfield!(aes, var, Array(isdiscrete ? Int : Float64, d * length(groups)))
-        end
+        T = typeof(x_min + 1*binwidth)
+        setfield!(aes, minvar, Array(T, d * length(groups)))
+        setfield!(aes, maxvar, Array(T, d * length(groups)))
+        setfield!(aes, var, Array(T, d * length(groups)))
 
         setfield!(aes, othervar, Array(Float64, d * length(groups)))
         colors = Array(RGB{Float32}, d * length(groups))
 
-        x_min = Gadfly.concrete_minimum(values)
         x_span = x_max - x_min
         stack_height = zeros(Int, d)
         for (i, (c, xs)) in enumerate(groups)

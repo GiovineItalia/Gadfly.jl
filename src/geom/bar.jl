@@ -14,30 +14,31 @@ immutable BarGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
 
     tag::Symbol
-
-    function BarGeometry(default_statistic=Gadfly.Stat.identity();
-                         position::Symbol=:stack,
-                         orientation::Symbol=:vertical,
-                         tag::Symbol=empty_tag)
-        new(position, orientation, default_statistic, tag)
-    end
 end
 
 
-const bar = BarGeometry
+function bar(; position::Symbol=:stack, orientation::Symbol=:vertical,
+             tag::Symbol=empty_tag)
+    return BarGeometry(
+        position, orientation,
+        Gadfly.Stat.bar(position=position, orientation=orientation), tag)
+end
+
 
 function histogram(; position=:stack, bincount=nothing,
                    minbincount=3, maxbincount=150,
                    orientation::Symbol=:vertical,
-                   density::Bool=false)
-    BarGeometry(Gadfly.Stat.histogram(bincount=bincount,
-                                      minbincount=minbincount,
-                                      maxbincount=maxbincount,
-                                      position=position,
-                                      orientation=orientation,
-                                      density=density),
-                position=position,
-                orientation=orientation)
+                   density::Bool=false,
+                   tag::Symbol=empty_tag)
+    return BarGeometry(
+        position, orientation,
+        Gadfly.Stat.histogram(bincount=bincount,
+                              minbincount=minbincount,
+                              maxbincount=maxbincount,
+                              position=position,
+                              orientation=orientation,
+                              density=density),
+        tag)
 end
 
 
@@ -270,55 +271,17 @@ end
 #
 function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     if geom.orientation == :horizontal
-        if (is(aes.ymin, nothing) || is(aes.ymax, nothing)) && is(aes.y, nothing)
-            error("Geom.bar required \"y\" to be bound or both \"y_min\" and \"y_max\".")
-        end
-        if (aes.y != nothing && length(aes.y) != length(aes.x)) ||
-           (aes.ymin != nothing && (length(aes.ymin) != length(aes.x) || length(aes.ymax) != length(aes.x)))
-            error("Geom.bar requires x and y to be of equal length.")
-        end
-
+        Gadfly.assert_aesthetics_defined("BarGeometry", aes, :ymin, :ymax, :x)
+        Gadfly.assert_aesthetics_equal_length("BarGeometry", aes, :ymin, :ymax, :x)
         var = :y
         minvar = :ymin
         maxvar = :ymax
     else
-        if (is(aes.xmin, nothing) || is(aes.xmax, nothing)) && is(aes.x, nothing)
-            error("Geom.bar required \"x\" to be bound or both \"x_min\" and \"x_max\".")
-        end
-        if (aes.x != nothing && length(aes.x) != length(aes.y)) &&
-           (aes.xmin != nothing && (length(aes.xmin) != length(aes.y) || length(aes.xmax) != length(aes.y)))
-            error("Geom.bar requires x and y to be of equal length.")
-        end
+        Gadfly.assert_aesthetics_defined("BarGeometry", aes, :xmin, :xmax, :y)
+        Gadfly.assert_aesthetics_equal_length("BarGeometry", aes, :xmin, :xmax, :y)
         var = :x
         minvar = :xmin
         maxvar = :xmax
-    end
-
-    if getfield(aes, minvar) === nothing
-        aes2 = Gadfly.Aesthetics()
-        values = getfield(aes, var)
-        minvalue, maxvalue = minimum(values), maximum(values)
-        T = typeof((maxvalue - minvalue) / 1.0)
-
-        span = convert(T, zero(T))
-        unique_count = length(Set(values))
-        if unique_count > 1
-            span = (maximum(values) - minimum(values)) / convert(Float64, (unique_count - 1))
-        end
-
-        if span == convert(T, zero(T))
-            span = convert(T, one(T))
-        end
-
-        T = promote_type(eltype(values), typeof(span/2.0))
-        setfield!(aes2, minvar, Array(T, length(values)))
-        setfield!(aes2, maxvar, Array(T, length(values)))
-
-        for (i, x) in enumerate(values)
-            getfield(aes2, minvar)[i] = x - span/2.0
-            getfield(aes2, maxvar)[i] = x + span/2.0
-        end
-        aes = inherit(aes, aes2)
     end
 
     if aes.color === nothing
