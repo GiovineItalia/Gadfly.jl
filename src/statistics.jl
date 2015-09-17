@@ -1341,11 +1341,14 @@ function apply_statistic(stat::FunctionStatistic,
     elseif length(aes.y) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
         data.color = Array(String, length(aes.y) * stat.num_samples)
+        groups = DataArray(Int, length(aes.y) * stat.num_samples)
         for i in 1:length(aes.y)
             fname = "f<sub>$(i)</sub>"
             data.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = fname
+            groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
         Scale.apply_scale(scales[:color], [aes], data)
+        aes.group = PooledDataArray(groups)
     end
 
     data = Gadfly.Data()
