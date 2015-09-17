@@ -512,6 +512,25 @@ function render_prepare(plot::Plot)
             [default_statistic(layer.geom)] : layer.statistics
     end
 
+    # auto-enumeration: add Stat.x/y_enumerate when x and y is needed but only
+    # one defined
+    for (i, layer) in enumerate(plot.layers)
+        layer_needed_aes = element_aesthetics(layer.geom)
+        layer_defined_aes = Set{Symbol}()
+        union!(layer_defined_aes, keys(layer.mapping))
+        for stat in layer.statistics
+            union!(layer_defined_aes, output_aesthetics(stat))
+        end
+
+        if :x in layer_needed_aes && :y in layer_needed_aes
+            if !(:x in layer_defined_aes)
+                unshift!(layer_stats[i], Stat.x_enumerate)
+            elseif !(:y in layer_defined_aes)
+                unshift!(layer_stats[i], Stat.y_enumerate)
+            end
+        end
+    end
+
     used_aesthetics = Set{Symbol}()
     for layer in plot.layers
         union!(used_aesthetics, element_aesthetics(layer.geom))

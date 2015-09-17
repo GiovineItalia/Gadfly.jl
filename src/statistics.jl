@@ -1839,8 +1839,6 @@ function apply_statistic(stat::EnumerateStatistic,
         aes.x = collect(1:length(aes.y))
     elseif stat.var == :y && !has_y && has_x
         aes.y = collect(1:length(aes.x))
-    else
-        error("EnumerateStatistic is only defined for the x or y aesthetics")
     end
 end
 
