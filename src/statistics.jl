@@ -1705,4 +1705,45 @@ function mean_by_group{Tx, Ty}(x::Vector{Tx}, y::Vector{Ty}, breaks::Vector{Floa
     return (totalx[subset] ./ count, totaly[subset] ./ count)
 end
 
+
+immutable EnumerateStatistic <: Gadfly.StatisticElement
+    var::Symbol
+end
+
+
+element_aesthetics(stat::EnumerateStatistic) = [stat.var]
+
+
+function default_scales(stat::EnumerateStatistic)
+    if stat.var == :y
+        return [Gadfly.Scale.y_continuous()]
+    elseif stat.var == :x
+        return [Gadfly.Scale.x_continuous()]
+    else
+        return Gadfly.ScaleElement[]
+    end
+end
+
+
+const x_enumerate = EnumerateStatistic(:x)
+const y_enumerate = EnumerateStatistic(:y)
+
+
+function apply_statistic(stat::EnumerateStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    has_x = aes.x != nothing
+    has_y = aes.y != nothing
+
+    if stat.var == :x && !has_x && has_y
+        aes.x = collect(1:length(aes.y))
+    elseif stat.var == :y && !has_y && has_x
+        aes.y = collect(1:length(aes.x))
+    else
+        error("EnumerateStatistic is only defined for the x or y aesthetics")
+    end
+end
+
+
 end # module Stat

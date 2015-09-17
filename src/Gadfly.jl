@@ -165,8 +165,6 @@ function add_plot_element!(lyrs::Vector{Layer}, arg::Theme)
 end
 
 
-
-
 # A full plot specification.
 type Plot
     layers::Vector{Layer}
