@@ -98,6 +98,8 @@ function apply_statistic(stat::BarStatistic,
         maxvar = :ymax
         viewminvar = :xviewmin
         viewmaxvar = :xviewmax
+        other_viewminvar = :yviewmin
+        other_viewmaxvar = :yviewmax
         labelvar = :x_label
     else
         var = :x
@@ -106,6 +108,8 @@ function apply_statistic(stat::BarStatistic,
         maxvar = :xmax
         viewminvar = :yviewmin
         viewmaxvar = :yviewmax
+        other_viewminvar = :xviewmin
+        other_viewmaxvar = :xviewmax
         labelvar = :y_label
     end
 
@@ -140,6 +144,21 @@ function apply_statistic(stat::BarStatistic,
     for (i, x) in enumerate(values)
         minvals[i] = x - barspan/2.0
         maxvals[i] = x + barspan/2.0
+    end
+
+    z = zero(eltype(getfield(aes, othervar)))
+    if getfield(aes, viewminvar) == nothing && z < minimum(getfield(aes, othervar))
+        setfield!(aes, viewminvar, z)
+    elseif getfield(aes, viewmaxvar) == nothing && z > maximum(getfield(aes, othervar))
+        setfield!(aes, viewmaxvar, z)
+    end
+
+    if getfield(aes, other_viewminvar) == nothing || getfield(aes, other_viewminvar) > minvals[1]
+        setfield!(aes, other_viewminvar, minvals[1])
+    end
+
+    if getfield(aes, other_viewmaxvar) == nothing || getfield(aes, other_viewmaxvar) > maxvals[end]
+        setfield!(aes, other_viewmaxvar, maxvals[end])
     end
 end
 
@@ -774,7 +793,10 @@ function apply_statistic(stat::TickStatistic,
     elseif categorical
         ticks = Set{Int}()
         for val in in_values
-            push!(ticks, round(Int, val))
+            t = round(Int, val)
+            if t > 0
+                push!(ticks, t)
+            end
         end
         ticks = Int[t for t in ticks]
         sort!(ticks)

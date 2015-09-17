@@ -228,26 +228,8 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
         ymax = 1.0
     end
 
-    # A bit of kludge. We need to extend a bit to be able to fit bars when
-    # using discrete scales. TODO: Think more carefully about this. Is there a
-    # way for the geometry to let the coordinates know that a little extra room
-    # is needed to draw everything?
-
-    if Scale.iscategorical(scales, :x)
-        xmin -= 0.5
-        xmax += 0.5
-        xpadding = 0mm
-    else
-        xpadding = 2mm
-    end
-
-    if Scale.iscategorical(scales, :y)
-        ymin -= 0.5
-        ymax += 0.5
-        ypadding = 0mm
-    else
-        ypadding = 2mm
-    end
+    xpadding = Scale.iscategorical(scales, :x) ? 0mm : 2mm
+    ypadding = Scale.iscategorical(scales, :y) ? 0mm : 2mm
 
     width  = xmax - xmin
     height = ymax - ymin
