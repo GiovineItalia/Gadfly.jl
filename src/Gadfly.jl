@@ -88,19 +88,19 @@ end
 type Layer <: Element
     data_source::Union(AbstractDataFrame, Nothing)
     mapping::Dict
-    statistic::StatisticElement
+    statistics::Vector{StatisticElement}
     geom::GeometryElement
     theme::Union(Nothing, Theme)
     order::Int
 
     function Layer()
-        new(nothing, Dict(), Stat.nil(), Geom.nil(), nothing, 0)
+        new(nothing, Dict(), StatisticElement[], Geom.nil(), nothing, 0)
     end
 
     function Layer(lyr::Layer)
         new(lyr.data_source,
             lyr.mapping,
-            lyr.statistic,
+            lyr.statistics,
             lyr.geom,
             lyr.theme)
     end
@@ -153,12 +153,14 @@ end
 
 
 function add_plot_element!(lyrs::Vector{Layer}, arg::Base.Callable)
-    add_plot_element!(lyrs::Vector{Layer}, arg())
+    add_plot_element!(lyrs, arg())
 end
 
 
 function add_plot_element!(lyrs::Vector{Layer}, arg::StatisticElement)
-    [lyr.statistic = arg for lyr in lyrs]
+    for lyr in lyrs
+        push!(lyr.statistics, arg)
+    end
 end
 
 
@@ -217,7 +219,7 @@ function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::StatisticEleme
         push!(p.layers, Layer())
     end
 
-    p.layers[end].statistic = arg
+    push!(p.layers[end].statistics, arg)
 end
 
 
@@ -504,10 +506,10 @@ function render_prepare(plot::Plot)
     end
 
     # Add default statistics for geometries.
-    layer_stats = Array(StatisticElement, length(plot.layers))
+    layer_stats = Array(Vector{StatisticElement}, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
-        layer_stats[i] = typeof(layer.statistic) == Stat.nil ?
-            default_statistic(layer.geom) : layer.statistic
+        layer_stats[i] = isempty(layer.statistics) ?
+            [default_statistic(layer.geom)] : layer.statistics
     end
 
     used_aesthetics = Set{Symbol}()
@@ -515,8 +517,10 @@ function render_prepare(plot::Plot)
         union!(used_aesthetics, element_aesthetics(layer.geom))
     end
 
-    for stat in layer_stats
-        union!(used_aesthetics, input_aesthetics(stat))
+    for stats in layer_stats
+        for stat in stats
+            union!(used_aesthetics, input_aesthetics(stat))
+        end
     end
 
     mapped_aesthetics = Set(keys(plot.mapping))
@@ -547,7 +551,7 @@ function render_prepare(plot::Plot)
     unscaled_aesthetics = setdiff(used_aesthetics, scaled_aesthetics)
 
     # Add default scales for statistics.
-    for element in chain(plot.statistics, layer_stats, [l.geom for l in plot.layers])
+    for element in chain(plot.statistics, [l.geom for l in plot.layers], layer_stats...)
         for scale in default_scales(element)
             # Use the statistics default scale only when it covers some
             # aesthetic that is not already scaled.
@@ -723,8 +727,8 @@ function render_prepare(plot::Plot)
     end
 
     # IIa. Layer-wise statistics
-    for (layer_stat, aes) in zip(layer_stats, layer_aess)
-        Stat.apply_statistics(StatisticElement[layer_stat], scales, coord, aes)
+    for (stats, aes) in zip(layer_stats, layer_aess)
+        Stat.apply_statistics(stats, scales, coord, aes)
     end
 
     # IIb. Plot-wise Statistics
@@ -821,7 +825,7 @@ function render_prepared(plot::Plot,
                          coord::CoordinateElement,
                          plot_aes::Aesthetics,
                          layer_aess::Vector{Aesthetics},
-                         layer_stats::Vector{StatisticElement},
+                         layer_stats::Vector{Vector{StatisticElement}},
                          layer_subplot_aess::Vector{Vector{Aesthetics}},
                          layer_subplot_datas::Vector{Vector{Data}},
                          scales::Dict{Symbol, ScaleElement},

@@ -171,8 +171,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     coord = Coord.cartesian()
     plot_stats = Gadfly.StatisticElement[stat for stat in geom.statistics]
-    layer_stats = Gadfly.StatisticElement[typeof(layer.statistic) == Stat.nil ?
-                       Geom.default_statistic(layer.geom) : layer.statistic
+    layer_stats = [isempty(layer.statistics) ?
+                        Gadfly.StatisticElement[Geom.default_statistic(layer.geom)] : layer.statistics
                    for layer in geom.layers]
 
     for i in 1:n, j in 1:m
@@ -182,9 +182,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                            Gadfly.Data[layer_data_grid[k][i, j]
                                        for k in 1:length(geom.layers)]...)
 
-        for (k, layer_stat) in enumerate(layer_stats)
-            Stat.apply_statistics(Gadfly.StatisticElement[layer_stat],
-                                  scales, coord, layer_aes_grid[k][i, j])
+        for (k, stats) in enumerate(layer_stats)
+            Stat.apply_statistics(stats, scales, coord, layer_aes_grid[k][i, j])
         end
     end
 
