@@ -9,6 +9,7 @@
     xmax
     ymin
     ymax
+    width
     xintercept
     yintercept
     middle

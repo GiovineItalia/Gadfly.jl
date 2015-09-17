@@ -39,6 +39,8 @@ end
 typealias ColorOrNothing Union(Colorant, Nothing)
 
 element_aesthetics(::Any) = []
+input_aesthetics(::Any) = []
+output_aesthetics(::Any) = []
 default_scales(::Any) = []
 default_statistic(::Any) = Stat.identity()
 element_coordinate_type(::Any) = Coord.cartesian
@@ -514,7 +516,7 @@ function render_prepare(plot::Plot)
     end
 
     for stat in layer_stats
-        union!(used_aesthetics, element_aesthetics(stat))
+        union!(used_aesthetics, input_aesthetics(stat))
     end
 
     mapped_aesthetics = Set(keys(plot.mapping))

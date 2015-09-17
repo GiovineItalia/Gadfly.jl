@@ -11,8 +11,8 @@ using DataStructures
 using Hexagons
 using Loess
 
-import Gadfly: Scale, Coord, element_aesthetics, default_scales, isconcrete,
-               nonzero_length, setfield!
+import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
+               default_scales, isconcrete, nonzero_length, setfield!
 import KernelDensity
 import Distributions: Uniform, Distribution, qqbuild
 import Iterators: chain, cycle, product, partition, distinct
@@ -70,7 +70,14 @@ function BarStatistic(; position::Symbol=:stack,
 end
 
 
-element_aesthetics(::BarStatistic) = [:x, :y]
+function input_aesthetics(stat::BarStatistic)
+    return stat.orientation == :vertical ? [:x] : [:y]
+end
+
+
+function input_aesthetics(stat::BarStatistic)
+    return stat.orientation == :vertical ? [:ymin, :ymax] : [:xmin, :xmax]
+end
 
 
 function default_scales(stat::BarStatistic)
@@ -185,7 +192,15 @@ immutable HistogramStatistic <: Gadfly.StatisticElement
 end
 
 
-element_aesthetics(::HistogramStatistic) = [:x]
+function input_aesthetics(stat::HistogramStatistic)
+    return stat.orientation == :vertical ? [:x] : [:y]
+end
+
+
+function output_aesthetics(stat::HistogramStatistic)
+    return stat.orientation == :vertical ? [:x, :y, :ymin, :ymax] : [:y, :x, :xmin, :xmax]
+end
+
 
 function default_scales(stat::HistogramStatistic)
     if stat.orientation == :vertical
@@ -422,7 +437,15 @@ end
 const density = DensityStatistic
 
 
-element_aesthetics(::DensityStatistic) = [:x, :y]
+function input_aesthetics(stat::DensityStatistic)
+    return [:x]
+end
+
+
+function output_aesthetics(stat::DensityStatistic)
+    return [:x, :y]
+end
+
 
 default_scales(::DensityStatistic) = [Gadfly.Scale.y_continuous()]
 
@@ -500,7 +523,14 @@ immutable Histogram2DStatistic <: Gadfly.StatisticElement
 end
 
 
-element_aesthetics(::Histogram2DStatistic) = [:x, :y, :color]
+function input_aesthetics(stat::Histogram2DStatistic)
+    return [:x, :y]
+end
+
+
+function output_aesthetics(stat::Histogram2DStatistic)
+    return [:xmin, :ymax, :ymin, :ymax, :color]
+end
 
 
 default_scales(::Histogram2DStatistic) = [Gadfly.Scale.color_continuous()]
@@ -923,7 +953,14 @@ immutable BoxplotStatistic <: Gadfly.StatisticElement
 end
 
 
-element_aesthetics(::BoxplotStatistic) = [:x, :y]
+function input_aesthetics(stat::BoxplotStatistic)
+    return [:x, :y]
+end
+
+
+function output_aesthetics(stat::BoxplotStatistic)
+    return [:x, :middle, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers]
+end
 
 
 const boxplot = BoxplotStatistic
@@ -1038,7 +1075,14 @@ end
 const smooth = SmoothStatistic
 
 
-element_aesthetics(::SmoothStatistic) = [:x, :y]
+function input_aesthetics(::SmoothStatistic)
+    return [:x, :y]
+end
+
+
+function output_aesthetics(::SmoothStatistic)
+    return [:x, :y]
+end
 
 
 function apply_statistic(stat::SmoothStatistic,
@@ -1209,7 +1253,12 @@ end
 const step = StepStatistic
 
 
-function element_aesthetics(::StepStatistic)
+function input_aesthetics(::StepStatistic)
+    return [:x, :y]
+end
+
+
+function output_aesthetics(::StepStatistic)
     return [:x, :y]
 end
 
@@ -1302,8 +1351,13 @@ function default_scales(::FunctionStatistic)
 end
 
 
-function element_aesthetics(::FunctionStatistic)
-    return [:y, :xmin, :xmax, :ymin, :ymax]
+function input_aesthetics(::FunctionStatistic)
+    return [:y, :xmin, :xmax]
+end
+
+
+function output_aesthetics(::FunctionStatistic)
+    return [:x, :y, :group]
 end
 
 
@@ -1356,6 +1410,7 @@ function apply_statistic(stat::FunctionStatistic,
     Scale.apply_scale(scales[:y], [aes], data)
 end
 
+
 immutable ContourStatistic <: Gadfly.StatisticElement
     levels
     samples::Int
@@ -1370,7 +1425,14 @@ immutable ContourStatistic <: Gadfly.StatisticElement
 end
 
 
-element_aesthetics(::ContourStatistic) = [:z, :xmin, :xmax, :ymin, :ymax]
+function input_aesthetics(::ContourStatistic)
+    return [:z, :xmin, :xmax, :ymin, :ymax]
+end
+
+
+function output_aesthetics(::ContourStatistic)
+    return [:x, :y, :color, :group]
+end
 
 
 const contour = ContourStatistic
@@ -1446,7 +1508,16 @@ end
 immutable QQStatistic <: Gadfly.StatisticElement
 end
 
-element_aesthetics(::QQStatistic) = [:x, :y]
+
+function input_aesthetics(::QQStatistic)
+    return [:x, :y]
+end
+
+
+function output_aesthetics(::QQStatistic)
+    return [:x, :y]
+end
+
 
 const qq = QQStatistic
 
@@ -1523,7 +1594,15 @@ immutable ViolinStatistic <: Gadfly.StatisticElement
 end
 
 
-element_aesthetics(::ViolinStatistic) = [:x, :y]
+function input_aesthetics(::ViolinStatistic)
+    return [:x, :y]
+end
+
+
+function input_aesthetics(::ViolinStatistic)
+    return [:x, :y, :width]
+end
+
 
 const violin = ViolinStatistic
 
@@ -1586,7 +1665,12 @@ x_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:x], range=range, seed
 y_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:y], range=range, seed=seed)
 
 
-function element_aesthetics(stat::JitterStatistic)
+function input_aesthetics(stat::JitterStatistic)
+    return stat.vars
+end
+
+
+function output_aesthetics(stat::JitterStatistic)
     return stat.vars
 end
 
@@ -1648,7 +1732,15 @@ end
 
 const binmean = BinMeanStatistic
 
-element_aesthetics(::BinMeanStatistic) = [:x, :y]
+
+function input_aesthetics(::BinMeanStatistic)
+    return [:x, :y]
+end
+
+
+function output_aesthetics(::BinMeanStatistic)
+    return [:x, :y]
+end
 
 
 function apply_statistic(stat::BinMeanStatistic,
@@ -1711,7 +1803,14 @@ immutable EnumerateStatistic <: Gadfly.StatisticElement
 end
 
 
-element_aesthetics(stat::EnumerateStatistic) = [stat.var]
+function input_aesthetics(stat::EnumerateStatistic)
+    return [stat.var]
+end
+
+
+function output_aesthetics(stat::EnumerateStatistic)
+    return [stat.var == :x ? :y : :x]
+end
 
 
 function default_scales(stat::EnumerateStatistic)
