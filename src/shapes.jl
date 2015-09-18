@@ -167,7 +167,6 @@ function hexagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     r = rs[mod1(i, length(rs))]
     u = 0.6r
 
-    # make a "plus sign"
     polys[i] = Tuple{Compose.Measure, Compose.Measure}[
       (x-r, y-u), (x-r, y+u), # L edge
       (x, y+r),               # B
@@ -189,7 +188,6 @@ function octagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     r = rs[mod1(i, length(rs))]
     u = 0.4r
 
-    # make a "plus sign"
     polys[i] = Tuple{Measure, Measure}[
       (x-r, y-u), (x-r, y+u), # L edge
       (x-u, y+r), (x+u, y+r), # B edge
