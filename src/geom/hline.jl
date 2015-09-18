@@ -27,10 +27,13 @@ function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
 
+    line_style = theme.line_style == nothing ? [] : [strokedash(Gadfly.getStrokeVector(theme.line_style))]
+
     return compose!(
         context(),
         Compose.line([[(0w, y), (1w, y)] for y in aes.yintercept], geom.tag),
         stroke(color),
         linewidth(size),
-        svgclass("xfixed"))
+        svgclass("xfixed"),
+        line_style...)
 end
