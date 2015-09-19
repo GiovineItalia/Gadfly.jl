@@ -129,6 +129,9 @@ end
     # Spacing between bars for Geom.bar.
     bar_spacing,           Measure,         -0.05mm
 
+    # Opacity of bars for Geom.bar.
+    bar_opacity,           Float64,        1.0
+
     # Spacing between boxplots in Geom.boxplot.
     boxplot_spacing,       Measure,         1mm
 
