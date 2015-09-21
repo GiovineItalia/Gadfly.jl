@@ -1,19 +1,19 @@
 
 
 typealias NumericalOrCategoricalAesthetic
-    Union(Nothing, Vector, DataArray, PooledDataArray)
+    Union((@compat Void), Vector, DataArray, PooledDataArray)
 
 typealias CategoricalAesthetic
-    Union(Nothing, PooledDataArray)
+    Union((@compat Void), PooledDataArray)
 
 typealias NumericalAesthetic
-    Union(Nothing, Matrix, Vector, DataArray)
+    Union((@compat Void), Matrix, Vector, DataArray)
 
 
 @varset Aesthetics begin
     x,            Union(NumericalOrCategoricalAesthetic, Distribution)
     y,            Union(NumericalOrCategoricalAesthetic, Distribution)
-    z,            Union(Nothing, Function, Matrix)
+    z,            Union((@compat Void), Function, Matrix)
     size,         Maybe(Vector{Measure})
     color,        Maybe(Union(AbstractVector{RGBA{Float32}},
                               AbstractVector{RGB{Float32}}))
@@ -52,10 +52,10 @@ typealias NumericalAesthetic
     xgrid,        NumericalAesthetic
     ygrid,        NumericalAesthetic
     color_key_colors,     Maybe(Associative)
-    color_key_title,      Maybe(String)
+    color_key_title,      Maybe(AbstractString)
     color_key_continuous, Maybe(Bool)
     color_function,       Maybe(Function)
-    titles,               Maybe(Dict{Symbol, String})
+    titles,               Maybe(Dict{Symbol, AbstractString})
 
     # mark some ticks as initially invisible
     xtickvisible,         Maybe(Vector{Bool})
@@ -117,7 +117,7 @@ const aesthetic_aliases =
 
 
 # Index as if this were a data frame
-function getindex(aes::Aesthetics, i::Integer, j::String)
+function getindex(aes::Aesthetics, i::Integer, j::AbstractString)
     getfield(aes, symbol(j))[i]
 end
 
@@ -149,7 +149,7 @@ function undefined_aesthetics(aes::Aesthetics, vars::Symbol...)
 end
 
 
-function assert_aesthetics_defined(who::String, aes::Aesthetics, vars::Symbol...)
+function assert_aesthetics_defined(who::AbstractString, aes::Aesthetics, vars::Symbol...)
     undefined_vars = undefined_aesthetics(aes, vars...)
     if !isempty(undefined_vars)
         error(@sprintf("The following aesthetics are required by %s but are not defined: %s\n",
@@ -158,7 +158,7 @@ function assert_aesthetics_defined(who::String, aes::Aesthetics, vars::Symbol...
 end
 
 
-function assert_aesthetics_undefined(who::String, aes::Aesthetics, vars::Symbol...)
+function assert_aesthetics_undefined(who::AbstractString, aes::Aesthetics, vars::Symbol...)
     defined_vars = intersect(Set(vars), defined_aesthetics(aes))
     if !isempty(defined_vars)
         error(@sprintf("The following aesthetics are defined but incompatible with %s: %s\n",
@@ -167,7 +167,7 @@ function assert_aesthetics_undefined(who::String, aes::Aesthetics, vars::Symbol.
 end
 
 
-function assert_aesthetics_equal_length(who::String, aes::Aesthetics, vars::Symbol...)
+function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, vars::Symbol...)
     defined_vars = filter(var -> !(getfield(aes, var) === nothing), vars)
 
     if !isempty(defined_vars)
@@ -265,9 +265,9 @@ function concat(aess::Aesthetics...)
 end
 
 
-cat_aes_var!(a::Nothing, b::Nothing) = a
-cat_aes_var!(a::Nothing, b) = copy(b)
-cat_aes_var!(a, b::Nothing) = a
+cat_aes_var!(a::(@compat Void), b::(@compat Void)) = a
+cat_aes_var!(a::(@compat Void), b) = copy(b)
+cat_aes_var!(a, b::(@compat Void)) = a
 cat_aes_var!(a::Function, b::Function) = a === string || a == showoff ? b : a
 
 

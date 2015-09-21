@@ -29,7 +29,7 @@
 # Returns:
 #   Log-likelihood with Birge's penalty applied.
 #
-function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::FloatingPoint)
+function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::AbstractFloat)
     ll = 0
     for i in 1:d
         if bincounts[i] > 0

@@ -34,7 +34,7 @@
     group
     label
     func
-    titles, Dict{Symbol, String}, Dict{Symbol, String}()
+    titles, Dict{Symbol, AbstractString}, Dict{Symbol, AbstractString}()
 end
 
 

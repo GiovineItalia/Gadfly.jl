@@ -1,11 +1,11 @@
 
 immutable HLineGeometry <: Gadfly.GeometryElement
-    color::Union(Color, Nothing)
-    size::Union(Measure, Nothing)
+    color::Union(Color, (@compat Void))
+    size::Union(Measure, (@compat Void))
     tag::Symbol
 
     function HLineGeometry(; color=nothing,
-                           size::Union(Measure, Nothing)=nothing,
+                           size::Union(Measure, (@compat Void))=nothing,
                            tag::Symbol=empty_tag)
         new(color === nothing ? nothing : Colors.color(color),
             size, tag)

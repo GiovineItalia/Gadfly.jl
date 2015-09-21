@@ -2,6 +2,7 @@
 module Coord
 
 using Gadfly
+using Compat
 using Compose
 using DataArrays
 import Gadfly.Maybe
@@ -30,7 +31,7 @@ immutable Cartesian <: Gadfly.CoordinateElement
     xflip::Bool
     yflip::Bool
     fixed::Bool
-    aspect_ratio::Union(Nothing, Float64)
+    aspect_ratio::Union((@compat Void), Float64)
     raster::Bool
 
     function Cartesian(

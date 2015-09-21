@@ -36,7 +36,7 @@ function __init__()
 end
 
 
-typealias ColorOrNothing Union(Colorant, Nothing)
+typealias ColorOrNothing Union(Colorant, (@compat Void))
 
 element_aesthetics(::Any) = []
 input_aesthetics(::Any) = []
@@ -86,11 +86,11 @@ end
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 type Layer <: Element
-    data_source::Union(AbstractDataFrame, Nothing)
+    data_source::Union(AbstractDataFrame, (@compat Void))
     mapping::Dict
     statistics::Vector{StatisticElement}
     geom::GeometryElement
-    theme::Union(Nothing, Theme)
+    theme::Union((@compat Void), Theme)
     order::Int
 
     function Layer()
@@ -112,7 +112,7 @@ end
 
 
 
-function layer(data_source::Union(AbstractDataFrame, Nothing),
+function layer(data_source::Union(AbstractDataFrame, (@compat Void)),
                elements::ElementOrFunction...; mapping...)
     mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
@@ -172,11 +172,11 @@ end
 # A full plot specification.
 type Plot
     layers::Vector{Layer}
-    data_source::Union(Nothing, AbstractDataFrame)
+    data_source::Union((@compat Void), AbstractDataFrame)
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
-    coord::Union(Nothing, CoordinateElement)
+    coord::Union((@compat Void), CoordinateElement)
     guides::Vector{GuideElement}
     theme::Theme
     mapping::Dict
@@ -267,7 +267,7 @@ end
 function set_mapped_data!(data::Data, data_source::AbstractDataFrame, k::Symbol, v)
     setfield!(data, k, eval_plot_mapping(data_source, v))
 
-    if isa(v, String) || isa(v, Symbol)
+    if isa(v, AbstractString) || isa(v, Symbol)
         data.titles[k] = string(v)
     else
         data.titles[k] = string(k)
@@ -309,7 +309,7 @@ end
 
 # Evaluate a mapping.
 eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[arg]
-eval_plot_mapping(data::AbstractDataFrame, arg::String) = eval_plot_mapping(data, symbol(arg))
+eval_plot_mapping(data::AbstractDataFrame, arg::AbstractString) = eval_plot_mapping(data, symbol(arg))
 eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
 eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
 eval_plot_mapping(data::AbstractDataFrame, arg::AbstractArray) = arg
@@ -317,7 +317,7 @@ eval_plot_mapping(data::AbstractDataFrame, arg::Function) = arg
 eval_plot_mapping(data::AbstractDataFrame, arg::Distribution) = arg
 
 # Acceptable types of values that can be bound to aesthetics.
-typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
+typealias AestheticValue Union((@compat Void), Symbol, AbstractString, Integer, Expr,
                                AbstractArray, Function, Distribution)
 
 
@@ -1149,7 +1149,7 @@ const default_aes_scales = @compat Dict{Symbol, Dict}(
 
 # Determine whether the input is categorical or numerical
 
-typealias CategoricalType Union(String, Bool, Symbol)
+typealias CategoricalType Union(AbstractString, Bool, Symbol)
 
 
 function classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N})

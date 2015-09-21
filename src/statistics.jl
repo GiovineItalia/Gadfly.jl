@@ -655,7 +655,7 @@ end
 # Find reasonable places to put tick marks and grid lines.
 immutable TickStatistic <: Gadfly.StatisticElement
     in_vars::Vector{Symbol}
-    out_var::String
+    out_var::AbstractString
 
     granularity_weight::Float64
     simplicity_weight::Float64
@@ -1394,7 +1394,7 @@ function apply_statistic(stat::FunctionStatistic,
         aes.group = PooledDataArray(groups)
     elseif length(aes.y) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
-        data.color = Array(String, length(aes.y) * stat.num_samples)
+        data.color = Array(AbstractString, length(aes.y) * stat.num_samples)
         groups = DataArray(Int, length(aes.y) * stat.num_samples)
         for i in 1:length(aes.y)
             fname = "f<sub>$(i)</sub>"
@@ -1653,7 +1653,7 @@ end
 immutable JitterStatistic <: Gadfly.StatisticElement
     vars::Vector{Symbol}
     range::Float64
-    seed::Uint32
+    seed::UInt32
 
     function JitterStatistic(vars::Vector{Symbol}; range=0.8, seed=0x0af5a1f7)
         return new(vars, range, seed)

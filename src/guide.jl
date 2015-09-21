@@ -173,7 +173,7 @@ end
 
 
 immutable ColorKey <: Gadfly.GuideElement
-    title::Union(String, Nothing)
+    title::Union(AbstractString, (@compat Void))
 
     function ColorKey(title=nothing)
         new(title)
@@ -187,7 +187,7 @@ const colorkey = ColorKey
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
 function render_discrete_color_key{C<:Color}(colors::Vector{C},
-                                   labels::OrderedDict{Color, String},
+                                   labels::OrderedDict{Color, AbstractString},
                                    aes_color_label,
                                    title_ctx::Context,
                                    title_width::Measure,
@@ -309,7 +309,7 @@ end
 # A helper for render(::ColorKey) for rendering guides for continuous color
 # scales.
 function render_continuous_color_key(colors::Dict,
-                                     labels::OrderedDict{Color, String},
+                                     labels::OrderedDict{Color, AbstractString},
                                      color_function::Function,
                                      title_context::Context,
                                      title_width::Measure,
@@ -372,7 +372,7 @@ function render_continuous_color_key(colors::Dict,
 end
 
 
-function render_colorkey_title(title::String, theme::Gadfly.Theme)
+function render_colorkey_title(title::AbstractString, theme::Gadfly.Theme)
     title_width, title_height = max_text_extents(theme.key_title_font,
                                                  theme.key_title_font_size,
                                                  title)
@@ -409,7 +409,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
 
     used_colors = Set{Color}()
     colors = Array(Color, 0) # to preserve ordering
-    labels = OrderedDict{Color, Set{String}}()
+    labels = OrderedDict{Color, Set{AbstractString}}()
 
     continuous_guide = false
     guide_title = guide.title
@@ -429,7 +429,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         if !in(color, used_colors)
             push!(used_colors, color)
             push!(colors, color)
-            labels[color] = Set{String}()
+            labels[color] = Set{AbstractString}()
             push!(labels[color], label)
         else
             push!(labels[color], label)
@@ -440,7 +440,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         guide_title = "Color"
     end
 
-    pretty_labels = OrderedDict{Color, String}()
+    pretty_labels = OrderedDict{Color, AbstractString}()
     for (color, label) in labels
         pretty_labels[color] = join(labels[color], ", ")
     end
@@ -481,8 +481,8 @@ end
 
 
 immutable ManualColorKey{C<:Color} <: Gadfly.GuideElement
-    title::Union(String, Nothing)
-    labels::Vector{String}
+    title::Union(AbstractString, (@compat Void))
+    labels::Vector{AbstractString}
     colors::Vector{C}
 end
 
@@ -510,7 +510,7 @@ function render(guide::ManualColorKey, theme::Gadfly.Theme,
 
     title_context, title_width = render_colorkey_title(guide_title, theme)
 
-    labels = OrderedDict{Color, String}()
+    labels = OrderedDict{Color, AbstractString}()
     for (c, l) in zip(guide.colors, guide.labels)
         labels[c] = l
     end
@@ -534,11 +534,11 @@ end
 
 immutable XTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::Union(Nothing, Symbol, AbstractArray)
+    ticks::Union((@compat Void), Symbol, AbstractArray)
     orientation::Symbol
 
     function XTicks(; label::Bool=true,
-                      ticks::Union(Nothing, Symbol, AbstractArray)=:auto,
+                      ticks::Union((@compat Void), Symbol, AbstractArray)=:auto,
                       orientation::Symbol=:auto)
         if isa(ticks, Symbol) && ticks != :auto
             error("$(ticks) is not a valid value for the `ticks` parameter")
@@ -571,12 +571,12 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         scale = aes.xtickscale
 
         T = eltype(aes.xtick)
-        labels = String[]
+        labels = AbstractString[]
         for scale_ticks in groupby(x -> x[1], zip(scale, ticks))
             append!(labels, aes.xtick_label(T[t for (s, t) in scale_ticks]))
         end
     else
-        labels = String[]
+        labels = AbstractString[]
         ticks = Any[]
         tickvisibility = Bool[]
         scale = Any[]
@@ -714,11 +714,11 @@ end
 
 immutable YTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::Union(Nothing, Symbol, AbstractArray)
+    ticks::Union((@compat Void), Symbol, AbstractArray)
     orientation::Symbol
 
     function YTicks(; label::Bool=true,
-                      ticks::Union(Nothing, Symbol, AbstractArray)=:auto,
+                      ticks::Union((@compat Void), Symbol, AbstractArray)=:auto,
                       orientation::Symbol=:horizontal)
         if isa(ticks, Symbol) && ticks != :auto
             error("$(ticks) is not a valid value for the `ticks` parameter")
@@ -751,12 +751,12 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         tickvisibility = aes.ytickvisible
         scale = aes.ytickscale
         T = eltype(aes.ytick)
-        labels = String[]
+        labels = AbstractString[]
         for scale_ticks in groupby(x -> x[1], zip(scale, ticks))
             append!(labels, aes.ytick_label(T[t for (s, t) in scale_ticks]))
         end
     else
-        labels = String[]
+        labels = AbstractString[]
         ticks = Any[]
         tickvisibility = Bool[]
         scale = Any[]
@@ -896,7 +896,7 @@ end
 
 # X-axis label Guide
 immutable XLabel <: Gadfly.GuideElement
-    label::Union(Nothing, String)
+    label::Union((@compat Void), AbstractString)
     orientation::Symbol
 
     function XLabel(label; orientation::Symbol=:auto)
@@ -961,7 +961,7 @@ end
 
 # Y-axis label Guide
 immutable YLabel <: Gadfly.GuideElement
-    label::Union(Nothing, String)
+    label::Union((@compat Void), AbstractString)
     orientation::Symbol
 
     function YLabel(label; orientation::Symbol=:auto)
@@ -1019,7 +1019,7 @@ end
 
 # Title Guide
 immutable Title <: Gadfly.GuideElement
-    label::Union(Nothing, String)
+    label::Union((@compat Void), AbstractString)
 end
 
 const title = Title
