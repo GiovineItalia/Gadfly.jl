@@ -1160,6 +1160,7 @@ function layout_guides(plot_context::Context,
                     """
                     mouseenter(Gadfly.plot_mouseover)
                     .mouseleave(Gadfly.plot_mouseout)
+                    .dblclick(Gadfly.plot_dblclick)
                     .mousewheel(Gadfly.guide_background_scroll)
                     .drag(Gadfly.guide_background_drag_onmove,
                           Gadfly.guide_background_drag_onstart,
