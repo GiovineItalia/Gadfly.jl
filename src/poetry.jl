@@ -133,8 +133,8 @@ function spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...)
          Scale.color_continuous,
          Scale.x_continuous,
          Scale.y_continuous,
+         Stat.rectbin,
          Geom.rectbin,
-         Stat.identity,
          elements...;
          mapping...)
 end

@@ -58,6 +58,89 @@ end
 const identity = Identity
 
 
+# Determine bounds of bars positioned at the given values.
+function barminmax(values, iscontinuous::Bool)
+    minvalue, maxvalue = minimum(values), maximum(values)
+    span_type = typeof((maxvalue - minvalue) / 1.0)
+    barspan = one(span_type)
+
+    if iscontinuous && length(values) > 1
+        sorted_values = sort(values)
+        z = sorted_values[2] - sorted_values[1]
+        minspan = z
+        for i in 2:length(values)
+            span = sorted_values[i] - sorted_values[i-1]
+            if minspan == z || span > z && span < minspan
+                minspan = span
+            end
+        end
+        barspan = minspan
+    end
+    position_type = promote_type(typeof(barspan/2.0), eltype(values))
+    minvals = Array(position_type, length(values))
+    maxvals = Array(position_type, length(values))
+
+    for (i, x) in enumerate(values)
+        minvals[i] = x - barspan/2.0
+        maxvals[i] = x + barspan/2.0
+    end
+
+    return minvals, maxvals
+end
+
+
+immutable RectbinStatistic <: Gadfly.StatisticElement
+end
+
+
+const rectbin = RectbinStatistic
+
+
+function input_aesthetics(stat::RectbinStatistic)
+    return [:x, :y]
+end
+
+
+function output_aesthetics(stat::RectbinStatistic)
+    return [:xmin, :xmax, :ymin, :ymax]
+end
+
+
+function apply_statistic(stat::RectbinStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("RectbinStatistic", aes, :x, :y)
+
+    isxcontinuous = haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale)
+    isycontinuous = haskey(scales, :y) && isa(scales[:y], Scale.ContinuousScale)
+
+    xminvals, xmaxvals = barminmax(aes.x, isxcontinuous)
+    yminvals, ymaxvals = barminmax(aes.y, isxcontinuous)
+
+    aes.xmin = xminvals
+    aes.xmax = xmaxvals
+    aes.ymin = yminvals
+    aes.ymax = ymaxvals
+
+    if aes.xviewmin == nothing || aes.xviewmin > xminvals[1]
+        aes.xviewmin = xminvals[1]
+    end
+
+    if aes.xviewmax == nothing || aes.xviewmax < xmaxvals[end]
+        aes.xviewmax = xmaxvals[end]
+    end
+
+    if aes.yviewmin == nothing || aes.yviewmin > yminvals[1]
+        aes.yviewmin = yminvals[1]
+    end
+
+    if aes.yviewmax == nothing || aes.yviewmax < ymaxvals[end]
+        aes.yviewmax = ymaxvals[end]
+    end
+end
+
+
 immutable BarStatistic <: Gadfly.StatisticElement
     position::Symbol # :dodge or :stack
     orientation::Symbol # :horizontal or :vertical
@@ -75,7 +158,7 @@ function input_aesthetics(stat::BarStatistic)
 end
 
 
-function input_aesthetics(stat::BarStatistic)
+function output_aesthetics(stat::BarStatistic)
     return stat.orientation == :vertical ? [:ymin, :ymax] : [:xmin, :xmax]
 end
 
@@ -121,37 +204,11 @@ function apply_statistic(stat::BarStatistic,
     end
 
     values = getfield(aes, var)
-    minvalue, maxvalue = minimum(values), maximum(values)
-    span_type = typeof((maxvalue - minvalue) / 1.0)
-    barspan = one(span_type)
+    iscontinuous = haskey(scales, var) && isa(scales[var], Scale.ContinuousScale) 
+    minvals, maxvals = barminmax(values, iscontinuous)
 
-    if haskey(scales, var) && isa(scales[var], Scale.ContinuousScale) && length(values) > 1
-        p = sortperm(getfield(aes, var))
-        permute!(getfield(aes, var), p)
-        permute!(getfield(aes, othervar), p)
-
-        z = values[2] - values[1]
-        minspan = z
-        for i in 2:length(values)
-            span = values[i] - values[i-1]
-            if minspan == z || span > z && span < minspan
-                minspan = span
-            end
-        end
-
-        barspan = minspan
-    end
-
-    position_type = promote_type(typeof(barspan/2.0), eltype(values))
-    minvals = Array(position_type, length(values))
     setfield!(aes, minvar, minvals)
-    maxvals = Array(position_type, length(values))
     setfield!(aes, maxvar, maxvals)
-
-    for (i, x) in enumerate(values)
-        minvals[i] = x - barspan/2.0
-        maxvals[i] = x + barspan/2.0
-    end
 
     z = zero(eltype(getfield(aes, othervar)))
     if getfield(aes, viewminvar) == nothing && z < minimum(getfield(aes, othervar))
@@ -640,10 +697,12 @@ function apply_statistic(stat::Histogram2DStatistic,
     end
 
     if x_categorial
+        aes.xmin, aes.xmax = barminmax(aes.x, false)
         aes.x = PooledDataArray(aes.x)
     end
 
     if y_categorial
+        aes.ymin, aes.ymax = barminmax(aes.y, false)
         aes.y = PooledDataArray(aes.y)
     end
 

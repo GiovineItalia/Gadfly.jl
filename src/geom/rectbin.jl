@@ -4,7 +4,7 @@ immutable RectangularBinGeometry <: Gadfly.GeometryElement
     tag::Symbol
 
     function RectangularBinGeometry(
-            default_statistic::Gadfly.StatisticElement=Gadfly.Stat.identity();
+            default_statistic::Gadfly.StatisticElement=Gadfly.Stat.rectbin();
             tag::Symbol=empty_tag)
         new(default_statistic, tag)
     end
@@ -52,48 +52,20 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
     default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
-    if aes.x === nothing && (aes.xmin === nothing || aes.xmax === nothing)
-        error("Geom.rectbin requires either x or both xmin and xmax be defined.")
-    end
+    Gadfly.assert_aesthetics_defined("RectangularBinGeometry", aes, :xmin, :xmax, :ymin, :ymax)
+    Gadfly.assert_aesthetics_equal_length("RectangularBinGeometry", aes, :xmin, :xmax, :ymin, :ymax)
 
-    if aes.y === nothing && (aes.ymin === nothing || aes.ymax === nothing)
-        error("Geom.rectbin requires either y or both ymin and ymax be defined.")
-    end
-
-    if aes.xmin != nothing && length(aes.xmin) != length(aes.xmax)
-        error("Geom.rectbin requires that xmin and xmax be of equal length.")
-    end
-
-    if aes.ymin != nothing && length(aes.ymin) != length(aes.ymax)
-        error("Geom.rectbin requires that ymin and ymax be of equal length.")
-    end
-
-    nx = aes.xmin === nothing ? length(aes.x) : length(aes.xmin)
-    ny = aes.ymin === nothing ? length(aes.y) : length(aes.ymin)
-
-    if nx != ny
-        error("""Geom.rectbin requires an equal number of x (or xmin/xmax) and
-                 y (or ymin/ymax) values.""")
-    end
+    nx = length(aes.xmin)
+    ny = length(aes.ymin)
     n = nx
 
-    if aes.xmin === nothing
-        xmin = [x - 0.5 for x in aes.x]
-        xwidths = [1.0*cx - theme.bar_spacing]
-    else
-        xmin = aes.xmin
-        xwidths = [(x1 - x0)*cx - theme.bar_spacing
-                   for (x0, x1) in zip(aes.xmin, aes.xmax)]
-    end
+    xmin = aes.xmin
+    xwidths = [(x1 - x0)*cx - theme.bar_spacing
+               for (x0, x1) in zip(aes.xmin, aes.xmax)]
 
-    if aes.ymin === nothing
-        ymin = [y - 0.5 for y in aes.y]
-        ywidths = [1.0*cy - theme.bar_spacing]
-    else
-        ymin = aes.ymin
-        ywidths = [(y1 - y0)*cy - theme.bar_spacing
-                   for (y0, y1) in zip(aes.ymin, aes.ymax)]
-    end
+    ymin = aes.ymin
+    ywidths = [(y1 - y0)*cy - theme.bar_spacing
+               for (y0, y1) in zip(aes.ymin, aes.ymax)]
 
     if length(aes.color) == n
         cs = aes.color
