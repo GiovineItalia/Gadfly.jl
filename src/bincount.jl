@@ -41,6 +41,25 @@ function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::Abstract
 end
 
 
+# Estimate proportion of values that are distinct
+#
+# Sample enough values to decide whether we're effectively
+# continuous (defined as >90% of the sampled values are unique)
+# By looking at a subset we ensure this isn't a bottleneck
+function estimate_distinct_proportion{T}(values::AbstractArray{T})
+    uvalues = Set{T}()
+    n_sampled = n_tried = 0
+    while n_sampled < 15 && n_tried < length(values)
+        v = values[rand(1:length(values))]
+        n_tried += 1
+        Gadfly.isconcrete(v) || continue
+        n_sampled += 1
+        push!(uvalues, v)
+    end
+    return length(uvalues) / n_sampled
+end
+
+
 # Tally elements in xs into an array of counts.
 #
 # Args:
@@ -210,8 +229,19 @@ function choose_bin_count_2d(xs::AbstractVector, ys::AbstractVector,
     x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)
     y_min, y_max = Gadfly.concrete_minimum(ys), Gadfly.concrete_maximum(ys)
 
-    dx, _ = choose_bin_count_1d(xs, xminbincount, xmaxbincount)
-    dy, _ = choose_bin_count_1d(ys, yminbincount, ymaxbincount)
+    if estimate_distinct_proportion(xs) < 0.9
+        value_set = sort!(collect(Set(xs[Bool[Gadfly.isconcrete(v) for v in xs]])))
+        dx, _ = choose_bin_count_1d_discrete(xs, value_set, xminbincount, xmaxbincount)
+    else
+        dx, _ = choose_bin_count_1d(xs, xminbincount, xmaxbincount)
+    end
+
+    if estimate_distinct_proportion(ys) < 0.9
+        value_set = sort!(collect(Set(ys[Bool[Gadfly.isconcrete(v) for v in ys]])))
+        dy, _ = choose_bin_count_1d_discrete(ys, value_set, yminbincount, ymaxbincount)
+    else
+        dy, _ = choose_bin_count_1d(ys, yminbincount, ymaxbincount)
+    end
 
     # bin widths
     wx = (x_max - x_min) / dx
