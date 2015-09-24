@@ -173,7 +173,7 @@ end
 
 
 immutable ColorKey <: Gadfly.GuideElement
-    title::Union(AbstractString, (@compat Void))
+    title::@compat(Union{AbstractString, (@compat Void)})
 
     function ColorKey(title=nothing)
         new(title)
@@ -481,7 +481,7 @@ end
 
 
 immutable ManualColorKey{C<:Color} <: Gadfly.GuideElement
-    title::Union(AbstractString, (@compat Void))
+    title::@compat(Union{AbstractString, (@compat Void)})
     labels::Vector{AbstractString}
     colors::Vector{C}
 end
@@ -534,11 +534,11 @@ end
 
 immutable XTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::Union((@compat Void), Symbol, AbstractArray)
+    ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})
     orientation::Symbol
 
     function XTicks(; label::Bool=true,
-                      ticks::Union((@compat Void), Symbol, AbstractArray)=:auto,
+                      ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})=:auto,
                       orientation::Symbol=:auto)
         if isa(ticks, Symbol) && ticks != :auto
             error("$(ticks) is not a valid value for the `ticks` parameter")
@@ -714,11 +714,11 @@ end
 
 immutable YTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::Union((@compat Void), Symbol, AbstractArray)
+    ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})
     orientation::Symbol
 
     function YTicks(; label::Bool=true,
-                      ticks::Union((@compat Void), Symbol, AbstractArray)=:auto,
+                      ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})=:auto,
                       orientation::Symbol=:horizontal)
         if isa(ticks, Symbol) && ticks != :auto
             error("$(ticks) is not a valid value for the `ticks` parameter")
@@ -896,7 +896,7 @@ end
 
 # X-axis label Guide
 immutable XLabel <: Gadfly.GuideElement
-    label::Union((@compat Void), AbstractString)
+    label::@compat(Union{(@compat Void), AbstractString})
     orientation::Symbol
 
     function XLabel(label; orientation::Symbol=:auto)
@@ -961,7 +961,7 @@ end
 
 # Y-axis label Guide
 immutable YLabel <: Gadfly.GuideElement
-    label::Union((@compat Void), AbstractString)
+    label::@compat(Union{(@compat Void), AbstractString})
     orientation::Symbol
 
     function YLabel(label; orientation::Symbol=:auto)
@@ -1019,7 +1019,7 @@ end
 
 # Title Guide
 immutable Title <: Gadfly.GuideElement
-    label::Union((@compat Void), AbstractString)
+    label::@compat(Union{(@compat Void), AbstractString})
 end
 
 const title = Title

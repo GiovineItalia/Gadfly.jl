@@ -127,7 +127,7 @@ immutable ContinuousScale <: Gadfly.ScaleElement
     maxvalue
     minticks
     maxticks
-    labels::Union((@compat Void), Function)
+    labels::@compat(Union{(@compat Void), Function})
     format
     scalable
 
@@ -373,14 +373,14 @@ immutable DiscreteScale <: Gadfly.ScaleElement
     # an array of string labels, a vector of string labels of the same length
     # as the number of unique values in the discrete data, or nothing to use
     # the default labels.
-    labels::Union((@compat Void), Function)
+    labels::@compat(Union{(@compat Void), Function})
 
     # If non-nothing, give values for the scale. Order will be respected and
     # anything in the data that's not represented in values will be set to NA.
-    levels::Union((@compat Void), AbstractVector)
+    levels::@compat(Union{(@compat Void), AbstractVector})
 
     # If non-nothing, a permutation of the pool of values.
-    order::Union((@compat Void), AbstractVector)
+    order::@compat(Union{(@compat Void), AbstractVector})
 
     function DiscreteScale(vals::Vector{Symbol};
                            labels=nothing, levels=nothing, order=nothing)
@@ -478,10 +478,10 @@ immutable DiscreteColorScale <: Gadfly.ScaleElement
 
     # If non-nothing, give values for the scale. Order will be respected and
     # anything in the data that's not represented in values will be set to NA.
-    levels::Union((@compat Void), AbstractVector)
+    levels::@compat(Union{(@compat Void), AbstractVector})
 
     # If non-nothing, a permutation of the pool of values.
-    order::Union((@compat Void), AbstractVector)
+    order::@compat(Union{(@compat Void), AbstractVector})
 
     # If true, order levels as they appear in the data
     preserve_order::Bool

@@ -709,13 +709,13 @@ immutable TickStatistic <: Gadfly.StatisticElement
     niceness_weight::Float64
 
     # fixed ticks, or nothing
-    ticks::Union(Symbol, AbstractArray)
+    ticks::@compat(Union{Symbol, AbstractArray})
 end
 
 
 @deprecate xticks(ticks) xticks(ticks=ticks)
 
-function xticks(; ticks::Union(Symbol, AbstractArray)=:auto,
+function xticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
                   granularity_weight::Float64=1/4,
                   simplicity_weight::Float64=1/6,
                   coverage_weight::Float64=1/3,
@@ -728,7 +728,7 @@ end
 
 @deprecate yticks(ticks) yticks(ticks=ticks)
 
-function yticks(; ticks::Union(Symbol, AbstractArray)=:auto,
+function yticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
                   granularity_weight::Float64=1/4,
                   simplicity_weight::Float64=1/6,
                   coverage_weight::Float64=1/3,
@@ -1591,7 +1591,7 @@ function apply_statistic(stat::QQStatistic,
     # NumericalOrCategoricalAesthetic.  The .x and .y fields are the _only_
     # place where this type is used, but I'm not sure if there's a reason that
     # changing this typealias would be a bad idea...for now I've just used a
-    # direct `Union(NumericalOrCategoricalAesthetic, Distribution)`.
+    # direct `@compat(Union{NumericalOrCategoricalAesthetic, Distribution})`.
     #
     # TODO:
     #
