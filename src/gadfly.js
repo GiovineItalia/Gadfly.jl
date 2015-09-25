@@ -137,10 +137,7 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             .mousewheel(Gadfly.guide_background_scroll)
             .drag(Gadfly.guide_background_drag_onmove,
                   Gadfly.guide_background_drag_onstart,
-                  Gadfly.guide_background_drag_onend)
-            .drag(Gadfly.guide_background_boxzoom_onmove,
-                  Gadfly.guide_background_boxzoom_onstart,
-                  Gadfly.guide_background_boxzoom_onend);
+                  Gadfly.guide_background_drag_onend);
         var plot = this;
         this.node.addEventListener("statechanged", statechanged);
         window.addEventListener("keydown", function(e) { keyfunction(plot, e); });
@@ -588,10 +585,13 @@ var init_pan_zoom = function(root) {
 };
 
 
-// Panning
-Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
-    var root = this.plotroot();
-    if (root.data("can_pan")) {
+var panning = {
+    start: function(root, x, y, event) {
+        root.data("dx", 0);
+        root.data("dy", 0);
+        init_pan_zoom(root);
+    },
+    update: function(root, dx, dy, x, y, event) {
         var px_per_mm = root.data("px_per_mm");
         dx /= px_per_mm;
         dy /= px_per_mm;
@@ -612,31 +612,16 @@ Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
             ty = ty0 + dy;
 
         set_plot_pan_zoom(root, tx, ty, root.data("scale"));
+    },
+    end: function(root, event) {
+
     }
 };
-
-
-Gadfly.guide_background_drag_onstart = function(x, y, event) {
-    var root = this.plotroot();
-    if (root.data("can_pan")) {
-        root.data("dx", 0);
-        root.data("dy", 0);
-        init_pan_zoom(root);
-    }
-};
-
-
-Gadfly.guide_background_drag_onend = function(event) {
-    var root = this.plotroot();
-};
-
 
 var box;
 
-
-Gadfly.guide_background_boxzoom_onstart = function(x, y, event) {
-    var root = this.plotroot();
-    if (root.data("can_zoom")) {
+var zooming = {
+    start: function(root, x, y, event) {
         var bounds = root.plotbounds();
         var width = bounds.x1 - bounds.x0,
             height = bounds.y1 - bounds.y0;
@@ -649,13 +634,8 @@ Gadfly.guide_background_boxzoom_onstart = function(x, y, event) {
             "opacity": 0.25
         });
         box.data("ratio", ratio);
-    }
-};
-
-
-Gadfly.guide_background_boxzoom_onmove = function(dx, dy, x, y, event) {
-    var root = this.plotroot();
-    if (root.data("can_zoom")) {
+    },
+    update: function(root, dx, dy, x, y, event) {
         var px_per_mm = root.data("px_per_mm");
         var bounds = root.plotbounds();
         x /= px_per_mm;
@@ -690,12 +670,8 @@ Gadfly.guide_background_boxzoom_onmove = function(dx, dy, x, y, event) {
         box.transform("T" + xoffset + "," + yoffset);
         box.attr("width", dx);
         box.attr("height", dy);
-    }
-};
-
-Gadfly.guide_background_boxzoom_onend = function(event) {
-    var root = this.plotroot();
-    if (root.data("can_zoom")) {
+    },
+    end: function(root, event) {
         var px_per_mm = root.data("px_per_mm");
         var zoom_bounds = box.getBBox();
         if (zoom_bounds.width * zoom_bounds.height <= 0) {
@@ -707,6 +683,37 @@ Gadfly.guide_background_boxzoom_onend = function(event) {
             ty = (root.data("ty") - zoom_bounds.y) * zoom_factor + plot_bounds.y0;
         set_plot_pan_zoom(root, tx, ty, root.data("scale") * zoom_factor);
         box.remove();
+    }
+};
+
+
+// Panning
+Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
+    var root = this.plotroot();
+    if (root.data("can_pan")) {
+        panning.update(root, dx, dy, x, y, event);
+    }
+    if (root.data("can_zoom")) {
+        zooming.update(root, dx, dy, x, y, event);
+    }
+};
+
+
+Gadfly.guide_background_drag_onstart = function(x, y, event) {
+    var root = this.plotroot();
+    if (root.data("can_pan")) {
+        panning.start(root, x, y, event);
+    }
+    if (root.data("can_zoom")) {
+        zooming.start(root, x, y, event);
+    }
+};
+
+
+Gadfly.guide_background_drag_onend = function(event) {
+    var root = this.plotroot();
+    if (root.data("can_zoom")) {
+        zooming.end(root, event);
     }
 };
 
