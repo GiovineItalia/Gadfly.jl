@@ -707,33 +707,36 @@ var zooming = {
 
 
 // Panning
-Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
+Gadfly.guide_background_drag_onstart = function(x, y, event) {
     var root = this.plotroot();
     if (root.data("can_pan")) {
-        panning.update(root, dx, dy, x, y, event);
+        root.data("state", "is_panning");
+        panning.start(root, x, y, event);
     }
     if (root.data("can_zoom")) {
-        zooming.update(root, dx, dy, x, y, event);
+        root.data("state", "is_zooming");
+        zooming.start(root, x, y, event);
     }
 };
 
 
-Gadfly.guide_background_drag_onstart = function(x, y, event) {
+Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
     var root = this.plotroot();
-    if (root.data("can_pan")) {
-        panning.start(root, x, y, event);
+    if (root.data("state") == "is_panning") {
+        panning.update(root, dx, dy, x, y, event);
     }
-    if (root.data("can_zoom")) {
-        zooming.start(root, x, y, event);
+    if (root.data("state") == "is_zooming") {
+        zooming.update(root, dx, dy, x, y, event);
     }
 };
 
 
 Gadfly.guide_background_drag_onend = function(event) {
     var root = this.plotroot();
-    if (root.data("can_zoom")) {
+    if (root.data("state") == "is_zooming") {
         zooming.end(root, event);
     }
+    root.data("state", undefined);
 };
 
 
