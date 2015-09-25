@@ -87,7 +87,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         if !geom.preserve_order
             p = sortperm(aes.x)
             aes_group = aes.group[p]
-            aes_color = aes.color[p]
+            aes_color = length(aes.color) > 1 ? aes.color[p] : aes.color
             aes_x = aes.x[p]
             aes_y = aes.y[p]
         else

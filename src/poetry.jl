@@ -15,7 +15,7 @@
 # Returns:
 #   A plot objects.
 #
-function plot(fs::Array, a, b, elements::ElementOrFunction...; mapping...)
+function plot{T <: Base.Callable}(fs::Vector{T}, a, b, elements::ElementOrFunction...; mapping...)
     # Catch a common misuse of this function
     if isa(b, ElementOrFunction)
         error(
