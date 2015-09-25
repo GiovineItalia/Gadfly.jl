@@ -31,7 +31,7 @@ immutable Cartesian <: Gadfly.CoordinateElement
     xflip::Bool
     yflip::Bool
     fixed::Bool
-    aspect_ratio::Union((@compat Void), Float64)
+    aspect_ratio::@compat(Union{(@compat Void), Float64})
     raster::Bool
 
     function Cartesian(
@@ -109,7 +109,7 @@ end
 #   A common type.
 function aesthetics_type(aess::Vector{Gadfly.Aesthetics},
                               vars::Vector{Symbol})
-    T = None
+    T = @compat(Union{})
     for var in vars
         for aes in aess
             vals = getfield(aes, var)
@@ -263,4 +263,3 @@ end
 const subplot_grid = SubplotGrid
 
 end # module Coord
-

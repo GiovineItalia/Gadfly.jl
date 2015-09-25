@@ -286,7 +286,7 @@ function has{T,N}(xs::AbstractArray{T,N}, y::T)
     return false
 end
 
-Maybe(T) = Union(T, (@compat Void))
+Maybe(T) = @compat(Union{T, (@compat Void)})
 
 
 function lerp(x::Float64, a::Float64, b::Float64)
@@ -378,7 +378,7 @@ end
 if VERSION < v"0.4-dev"
     using Dates
 
-    function Showoff.showoff{T <: Union(Date, DateTime)}(ds::AbstractArray{T}, style=:none)
+    function Showoff.showoff{T <: @compat(Union{Date, DateTime})}(ds::AbstractArray{T}, style=:none)
         years = Set()
         months = Set()
         days = Set()

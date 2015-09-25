@@ -36,7 +36,7 @@ function __init__()
 end
 
 
-typealias ColorOrNothing Union(Colorant, (@compat Void))
+typealias ColorOrNothing @compat(Union{Colorant, (@compat Void)})
 
 element_aesthetics(::Any) = []
 input_aesthetics(::Any) = []
@@ -65,7 +65,7 @@ include("aesthetics.jl")
 
 # The layer and plot functions can also take functions that are evaluated with
 # no arguments and are expected to produce an element.
-typealias ElementOrFunction{T <: Element} Union(Element, Base.Callable, Theme)
+typealias ElementOrFunction{T <: Element} @compat(Union{Element, Base.Callable, Theme})
 
 const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 
@@ -86,11 +86,11 @@ end
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 type Layer <: Element
-    data_source::Union(AbstractDataFrame, (@compat Void))
+    data_source::@compat(Union{AbstractDataFrame, (@compat Void)})
     mapping::Dict
     statistics::Vector{StatisticElement}
     geom::GeometryElement
-    theme::Union((@compat Void), Theme)
+    theme::@compat(Union{(@compat Void), Theme})
     order::Int
 
     function Layer()
@@ -112,7 +112,7 @@ end
 
 
 
-function layer(data_source::Union(AbstractDataFrame, (@compat Void)),
+function layer(data_source::@compat(Union{AbstractDataFrame, (@compat Void)}),
                elements::ElementOrFunction...; mapping...)
     mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
@@ -172,11 +172,11 @@ end
 # A full plot specification.
 type Plot
     layers::Vector{Layer}
-    data_source::Union((@compat Void), AbstractDataFrame)
+    data_source::@compat(Union{(@compat Void), AbstractDataFrame})
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
-    coord::Union((@compat Void), CoordinateElement)
+    coord::@compat(Union{(@compat Void), CoordinateElement})
     guides::Vector{GuideElement}
     theme::Theme
     mapping::Dict
@@ -317,8 +317,8 @@ eval_plot_mapping(data::AbstractDataFrame, arg::Function) = arg
 eval_plot_mapping(data::AbstractDataFrame, arg::Distribution) = arg
 
 # Acceptable types of values that can be bound to aesthetics.
-typealias AestheticValue Union((@compat Void), Symbol, AbstractString, Integer, Expr,
-                               AbstractArray, Function, Distribution)
+typealias AestheticValue @compat(Union{(@compat Void), Symbol, AbstractString, Integer, Expr,
+                               AbstractArray, Function, Distribution})
 
 
 # Create a new plot.
@@ -342,7 +342,7 @@ typealias AestheticValue Union((@compat Void), Symbol, AbstractString, Integer, 
 # because a call to layer() expands to a vector of layers (one for each Geom
 # supplied), we need to allow Vector{Layer} to count as an Element for the
 # purposes of plot().
-typealias ElementOrFunctionOrLayers Union(ElementOrFunction, Vector{Layer})
+typealias ElementOrFunctionOrLayers @compat(Union{ElementOrFunction, Vector{Layer}})
 
 function plot(data_source::AbstractDataFrame, elements::ElementOrFunctionOrLayers...; mapping...)
     p = Plot()
@@ -1149,7 +1149,7 @@ const default_aes_scales = @compat Dict{Symbol, Dict}(
 
 # Determine whether the input is categorical or numerical
 
-typealias CategoricalType Union(AbstractString, Bool, Symbol)
+typealias CategoricalType @compat(Union{AbstractString, Bool, Symbol})
 
 
 function classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N})

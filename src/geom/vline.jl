@@ -1,11 +1,11 @@
 
 immutable VLineGeometry <: Gadfly.GeometryElement
-    color::Union(Color, (@compat Void))
-    size::Union(Measure, (@compat Void))
+    color::@compat(Union{Color, (@compat Void)})
+    size::@compat(Union{Measure, (@compat Void)})
     tag::Symbol
 
     function VLineGeometry(; color=nothing,
-                           size::Union(Measure, (@compat Void))=nothing,
+                           size::@compat(Union{Measure, (@compat Void)})=nothing,
                            tag::Symbol=empty_tag)
         new(color === nothing ? nothing : Colors.color(color), size, tag)
     end
