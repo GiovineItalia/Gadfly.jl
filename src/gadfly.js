@@ -138,10 +138,28 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             .drag(Gadfly.guide_background_drag_onmove,
                   Gadfly.guide_background_drag_onstart,
                   Gadfly.guide_background_drag_onend);
+        var plot = this;
+        this.node.addEventListener("statechanged", statechanged);
+        window.addEventListener("keydown", function(e) { keyfunction(plot, e); });
+        window.addEventListener("keyup", function(e) { keyfunction(plot, e); });
         return this;
     };
 });
 
+var modifiers;
+
+var statechanged = function(event) {
+    var root = Snap(this).plotroot();
+};
+
+var keyfunction = function(plot, event) {
+    modifiers = {
+        altKey: event.altKey,
+        ctrlKey: event.ctrlKey,
+        shiftKey: event.shiftKey
+    };
+    plot.node.dispatchEvent(new Event("statechanged"));
+};
 
 // When the plot is moused over, emphasize the grid lines.
 Gadfly.plot_mouseover = function(event) {
