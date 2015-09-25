@@ -62,6 +62,22 @@ function default_middle_color(fill_color::TransparentColor)
         fill_color.alpha)
 end
 
+ 
+get_stroke_vector(::Void) = []
+get_stroke_vector(vec::AbstractVector) = vec
+function get_stroke_vector(linestyle::Symbol)
+  dash = 12 * Compose.mm
+  dot = 3 * Compose.mm
+  gap = 2 * Compose.mm
+  linestyle == :solid && return []
+  linestyle == :dash && return [dash, gap]
+  linestyle == :dot && return [dot, gap]
+  linestyle == :dashdot && return [dash, gap, dot, gap]
+  linestyle == :dashdotdot && return [dash, gap, dot, gap, dot, gap]
+  error("unsupported linestyle: ", linestyle)
+end
+
+
 @varset Theme begin
     # If the color aesthetic is not mapped to anything, this is the color that
     # is used.
@@ -72,6 +88,10 @@ end
 
     # Width of lines in the line geometry.
     line_width,            Measure,         0.3mm
+
+    # type of dash style (a Compose.StrokeDash object which takes a vector of sold/missing/solid/missing/... 
+    # lengths which are applied cyclically)
+    line_style,            Maybe(Vector),   nothing
 
     # Background color of the plot.
     panel_fill,            ColorOrNothing,  nothing
