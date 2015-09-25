@@ -150,6 +150,7 @@ var modifiers;
 
 var statechanged = function(event) {
     var root = Snap(this).plotroot();
+    root.data("can_zoom", !modifiers.altKey && !modifiers.ctrlKey && modifiers.shiftKey);
 };
 
 var keyfunction = function(plot, event) {
@@ -623,8 +624,8 @@ Gadfly.guide_background_drag_onend = function(event) {
 
 
 Gadfly.guide_background_scroll = function(event) {
-    if (event.shiftKey) {
-        var root = this.plotroot();
+    var root = this.plotroot();
+    if (root.data("can_zoom")) {
         init_pan_zoom(root);
         var new_scale = root.data("scale") * Math.pow(2, 0.002 * event.wheelDelta);
         new_scale = Math.max(
