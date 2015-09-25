@@ -129,6 +129,17 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             return this;
         }
     };
+
+    Element.prototype.init_gadfly = function() {
+        this.mouseenter(Gadfly.plot_mouseover)
+            .mouseleave(Gadfly.plot_mouseout)
+            .dblclick(Gadfly.plot_dblclick)
+            .mousewheel(Gadfly.guide_background_scroll)
+            .drag(Gadfly.guide_background_drag_onmove,
+                  Gadfly.guide_background_drag_onstart,
+                  Gadfly.guide_background_drag_onend);
+        return this;
+    };
 });
 
 

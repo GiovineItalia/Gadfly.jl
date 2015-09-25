@@ -1156,16 +1156,7 @@ function layout_guides(plot_context::Context,
                       [c for (c, o) in guides[over_guide_position]]...],
                   (context(order=0),
                      plot_context),
-                  jscall(
-                    """
-                    mouseenter(Gadfly.plot_mouseover)
-                    .mouseleave(Gadfly.plot_mouseout)
-                    .dblclick(Gadfly.plot_dblclick)
-                    .mousewheel(Gadfly.guide_background_scroll)
-                    .drag(Gadfly.guide_background_drag_onmove,
-                          Gadfly.guide_background_drag_onstart,
-                          Gadfly.guide_background_drag_onend)
-                    """))]
+                  jscall("init_gadfly()"))]
 
     return tbl
 end
