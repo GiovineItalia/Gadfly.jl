@@ -202,7 +202,6 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         ctx = compose!(ctx, Compose.line(points,geom.tag),
                       stroke(points_colors),
                       strokedash(line_style),
-                      Gadfly.get_stroke_vector(theme.line_style),
                       svgclass(classes))
     end
 
