@@ -2,6 +2,7 @@
 
 module Col
 
+using Compat
 import Iterators
 
 
