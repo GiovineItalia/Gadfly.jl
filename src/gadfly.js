@@ -161,6 +161,17 @@ var keyfunction = function(plot, event) {
         shiftKey: event.shiftKey
     };
     plot.node.dispatchEvent(new Event("statechanged"));
+    var root = plot.plotroot();
+    if (event.which == 27) { // esc key pressed
+        if (root.data("state") == "is_panning") {
+            root.data("state", undefined);
+            panning.cancel(root);
+        }
+        if (root.data("state") == "is_zooming") {
+            root.data("state", undefined);
+            zooming.cancel(root);
+        }
+    }
 };
 
 // When the plot is moused over, emphasize the grid lines.
@@ -589,6 +600,8 @@ var panning = {
     start: function(root, x, y, event) {
         root.data("dx", 0);
         root.data("dy", 0);
+        root.data("tx0", root.data("tx"));
+        root.data("ty0", root.data("ty"));
         init_pan_zoom(root);
     },
     update: function(root, dx, dy, x, y, event) {
@@ -615,6 +628,9 @@ var panning = {
     },
     end: function(root, event) {
 
+    },
+    cancel: function(root) {
+        set_plot_pan_zoom(root, root.data("tx0"), root.data("ty0"), root.data("scale"));
     }
 };
 
@@ -682,6 +698,9 @@ var zooming = {
         var tx = (root.data("tx") - zoom_bounds.x) * zoom_factor + plot_bounds.x0,
             ty = (root.data("ty") - zoom_bounds.y) * zoom_factor + plot_bounds.y0;
         set_plot_pan_zoom(root, tx, ty, root.data("scale") * zoom_factor);
+        box.remove();
+    },
+    cancel: function(root) {
         box.remove();
     }
 };
