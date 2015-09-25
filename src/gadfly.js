@@ -151,6 +151,7 @@ var modifiers;
 var statechanged = function(event) {
     var root = Snap(this).plotroot();
     root.data("can_zoom", !modifiers.altKey && !modifiers.ctrlKey && modifiers.shiftKey);
+    root.data("can_pan", !modifiers.altKey && !modifiers.ctrlKey && !modifiers.shiftKey);
 };
 
 var keyfunction = function(plot, event) {
@@ -587,34 +588,38 @@ var init_pan_zoom = function(root) {
 // Panning
 Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
     var root = this.plotroot();
-    var px_per_mm = root.data("px_per_mm");
-    dx /= px_per_mm;
-    dy /= px_per_mm;
+    if (root.data("can_pan")) {
+        var px_per_mm = root.data("px_per_mm");
+        dx /= px_per_mm;
+        dy /= px_per_mm;
 
-    var tx0 = root.data("tx"),
-        ty0 = root.data("ty");
+        var tx0 = root.data("tx"),
+            ty0 = root.data("ty");
 
-    var dx0 = root.data("dx"),
-        dy0 = root.data("dy");
+        var dx0 = root.data("dx"),
+            dy0 = root.data("dy");
 
-    root.data("dx", dx);
-    root.data("dy", dy);
+        root.data("dx", dx);
+        root.data("dy", dy);
 
-    dx = dx - dx0;
-    dy = dy - dy0;
+        dx = dx - dx0;
+        dy = dy - dy0;
 
-    var tx = tx0 + dx,
-        ty = ty0 + dy;
+        var tx = tx0 + dx,
+            ty = ty0 + dy;
 
-    set_plot_pan_zoom(root, tx, ty, root.data("scale"));
+        set_plot_pan_zoom(root, tx, ty, root.data("scale"));
+    }
 };
 
 
 Gadfly.guide_background_drag_onstart = function(x, y, event) {
     var root = this.plotroot();
-    root.data("dx", 0);
-    root.data("dy", 0);
-    init_pan_zoom(root);
+    if (root.data("can_pan")) {
+        root.data("dx", 0);
+        root.data("dy", 0);
+        init_pan_zoom(root);
+    }
 };
 
 
