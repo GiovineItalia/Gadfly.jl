@@ -137,7 +137,10 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             .mousewheel(Gadfly.guide_background_scroll)
             .drag(Gadfly.guide_background_drag_onmove,
                   Gadfly.guide_background_drag_onstart,
-                  Gadfly.guide_background_drag_onend);
+                  Gadfly.guide_background_drag_onend)
+            .drag(Gadfly.guide_background_boxzoom_onmove,
+                  Gadfly.guide_background_boxzoom_onstart,
+                  Gadfly.guide_background_boxzoom_onend);
         var plot = this;
         this.node.addEventListener("statechanged", statechanged);
         window.addEventListener("keydown", function(e) { keyfunction(plot, e); });
@@ -625,6 +628,86 @@ Gadfly.guide_background_drag_onstart = function(x, y, event) {
 
 Gadfly.guide_background_drag_onend = function(event) {
     var root = this.plotroot();
+};
+
+
+var box;
+
+
+Gadfly.guide_background_boxzoom_onstart = function(x, y, event) {
+    var root = this.plotroot();
+    if (root.data("can_zoom")) {
+        var bounds = root.plotbounds();
+        var width = bounds.x1 - bounds.x0,
+            height = bounds.y1 - bounds.y0;
+        var ratio = width / height;
+        var px_per_mm = root.data("px_per_mm");
+        x /= px_per_mm;
+        y /= px_per_mm;
+        box = root.rect(x, y, 0, 0).attr({
+            "fill": "#000",
+            "opacity": 0.25
+        });
+        box.data("ratio", ratio);
+    }
+};
+
+
+Gadfly.guide_background_boxzoom_onmove = function(dx, dy, x, y, event) {
+    var root = this.plotroot();
+    if (root.data("can_zoom")) {
+        var px_per_mm = root.data("px_per_mm");
+        var bounds = root.plotbounds();
+        x /= px_per_mm;
+        x = Math.max(bounds.x0, x);
+        x = Math.min(bounds.x1, x);
+        y /= px_per_mm;
+        y = Math.max(bounds.y0, y);
+        y = Math.min(bounds.y1, y);
+        dx = x - box.attr("x");
+        dy = y - box.attr("y");
+        var ratio = box.data("ratio");
+        var width = Math.min(Math.abs(dx), ratio * Math.abs(dy));
+        var height = Math.min(Math.abs(dy), Math.abs(dx) / ratio);
+        dx = width * dx / Math.abs(dx);
+        dy = height * dy / Math.abs(dy);
+        var xoffset = 0,
+            yoffset = 0;
+        if (dx < 0) {
+            xoffset = dx;
+            dx = -1 * dx;
+        }
+        if (dy < 0) {
+            yoffset = dy;
+            dy = -1 * dy;
+        }
+        if (isNaN(dy)) {
+            dy = 0.0;
+        }
+        if (isNaN(dx)) {
+            dx = 0.0;
+        }
+        box.transform("T" + xoffset + "," + yoffset);
+        box.attr("width", dx);
+        box.attr("height", dy);
+    }
+};
+
+Gadfly.guide_background_boxzoom_onend = function(event) {
+    var root = this.plotroot();
+    if (root.data("can_zoom")) {
+        var px_per_mm = root.data("px_per_mm");
+        var zoom_bounds = box.getBBox();
+        if (zoom_bounds.width * zoom_bounds.height <= 0) {
+            return;
+        }
+        var plot_bounds = root.plotbounds();
+        var zoom_factor = (plot_bounds.y1 - plot_bounds.y0) / zoom_bounds.height;
+        var tx = (root.data("tx") - zoom_bounds.x) * zoom_factor + plot_bounds.x0,
+            ty = (root.data("ty") - zoom_bounds.y) * zoom_factor + plot_bounds.y0;
+        set_plot_pan_zoom(root, tx, ty, root.data("scale") * zoom_factor);
+        box.remove();
+    }
 };
 
 
