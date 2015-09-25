@@ -637,7 +637,7 @@ Gadfly.guide_background_scroll = function(event) {
             root.data("min_scale"),
             Math.min(root.data("max_scale"), new_scale))
         update_plot_scale(root, new_scale);
-        event.stopPropagation();
+        event.preventDefault();
     }
 };
 
