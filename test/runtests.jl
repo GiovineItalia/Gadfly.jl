@@ -105,7 +105,7 @@ tests = [
 ]
 
 
-backends = @compat Dict{String, Function}(
+backends = @compat Dict{AbstractString, Function}(
     "svg" => (name, width, height) -> SVG("output/$(name).svg", width, height),
     "svgjs" => (name, width, height) -> SVGJS("output/$(name).js.svg", width, height, jsmode=:linkabs),
     "png" => (name, width, height) -> PNG("output/$(name).png", width, height),

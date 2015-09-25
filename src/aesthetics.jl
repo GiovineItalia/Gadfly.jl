@@ -1,22 +1,22 @@
 
 
 typealias NumericalOrCategoricalAesthetic
-    Union((@compat Void), Vector, DataArray, PooledDataArray)
+    @compat(Union{(@compat Void), Vector, DataArray, PooledDataArray})
 
 typealias CategoricalAesthetic
-    Union((@compat Void), PooledDataArray)
+    @compat(Union{(@compat Void), PooledDataArray})
 
 typealias NumericalAesthetic
-    Union((@compat Void), Matrix, Vector, DataArray)
+    @compat(Union{(@compat Void), Matrix, Vector, DataArray})
 
 
 @varset Aesthetics begin
-    x,            Union(NumericalOrCategoricalAesthetic, Distribution)
-    y,            Union(NumericalOrCategoricalAesthetic, Distribution)
-    z,            Union((@compat Void), Function, Matrix)
+    x,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
+    y,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
+    z,            @compat(Union{(@compat Void), Function, Matrix})
     size,         Maybe(Vector{Measure})
-    color,        Maybe(Union(AbstractVector{RGBA{Float32}},
-                              AbstractVector{RGB{Float32}}))
+    color,        Maybe(@compat(Union{AbstractVector{RGBA{Float32}},
+                              AbstractVector{RGB{Float32}}}))
     label,        CategoricalAesthetic
     group,        CategoricalAesthetic
 
@@ -352,7 +352,7 @@ end
 #   A Array{Aesthetics} of size max(1, length(xgroup)) by
 #   max(1, length(ygroup))
 #
-function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
+function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygroup,
                                                    num_xgroups, num_ygroups)
     @assert xgroup === nothing || ygroup === nothing ||
             length(xgroup) == length(ygroup)

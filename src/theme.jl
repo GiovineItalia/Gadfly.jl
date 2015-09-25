@@ -173,7 +173,7 @@ end
     key_position,          Symbol,          :right
 
     # True if bars in bar plots should be stroked. Stroke color is
-    bar_highlight,         Union((@compat Void), Function, Color),   nothing
+    bar_highlight,         @compat(Union{(@compat Void), Function, Color}),   nothing
 
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.
