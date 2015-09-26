@@ -148,6 +148,16 @@ Snap.plugin(function (Snap, Element, Paper, global) {
 Gadfly.plot_mouseover = function(event) {
     var root = this.plotroot();
 
+    var keyboard_zoom = function(event) {
+        if (event.which == 187) { // plus
+            set_zoom(root, root.data("scale") * 1.5, true);
+        } else if (event.which == 189) { // minus
+            set_zoom(root, root.data("scale") / 1.5, true);
+        }
+    };
+    root.data("keyboard_zoom", keyboard_zoom);
+    window.addEventListener("keyup", keyboard_zoom);
+
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
 
@@ -180,6 +190,10 @@ Gadfly.plot_dblclick = function(event) {
 // Unemphasize grid lines on mouse out.
 Gadfly.plot_mouseout = function(event) {
     var root = this.plotroot();
+
+    window.removeEventListener("keyup", root.data("keyboard_zoom"));
+    root.data("keyboard_zoom", undefined);
+
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
 
