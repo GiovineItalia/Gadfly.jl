@@ -138,42 +138,10 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             .drag(Gadfly.guide_background_drag_onmove,
                   Gadfly.guide_background_drag_onstart,
                   Gadfly.guide_background_drag_onend);
-        var plot = this;
-        this.node.addEventListener("statechanged", statechanged);
-        window.addEventListener("keydown", function(e) { keyfunction(plot, e); });
-        window.addEventListener("keyup", function(e) { keyfunction(plot, e); });
         return this;
     };
 });
 
-var modifiers;
-
-var statechanged = function(event) {
-    var root = Snap(this).plotroot();
-    var scalable = root.hasClass("xscalable") || root.hasClass("xscalable");
-    root.data("can_zoom", !modifiers.altKey && !modifiers.ctrlKey && modifiers.shiftKey && scalable);
-    root.data("can_pan", !modifiers.altKey && !modifiers.ctrlKey && !modifiers.shiftKey && scalable);
-};
-
-var keyfunction = function(plot, event) {
-    modifiers = {
-        altKey: event.altKey,
-        ctrlKey: event.ctrlKey,
-        shiftKey: event.shiftKey
-    };
-    plot.node.dispatchEvent(new Event("statechanged"));
-    var root = plot.plotroot();
-    if (event.which == 27) { // esc key pressed
-        if (root.data("state") == "is_panning") {
-            root.data("state", undefined);
-            panning.cancel(root);
-        }
-        if (root.data("state") == "is_zooming") {
-            root.data("state", undefined);
-            zooming.cancel(root);
-        }
-    }
-};
 
 // When the plot is moused over, emphasize the grid lines.
 Gadfly.plot_mouseover = function(event) {
@@ -734,34 +702,35 @@ var zooming = {
 // Panning
 Gadfly.guide_background_drag_onstart = function(x, y, event) {
     var root = this.plotroot();
-    if (root.data("can_pan")) {
-        root.data("state", "is_panning");
-        panning.start(root, x, y, event);
-    }
-    if (root.data("can_zoom")) {
-        root.data("state", "is_zooming");
-        zooming.start(root, x, y, event);
+    var scalable = root.hasClass("xscalable") || root.hasClass("xscalable");
+    var zoomable = !event.altKey && !event.ctrlKey && event.shiftKey && scalable;
+    var panable = !event.altKey && !event.ctrlKey && !event.shiftKey && scalable;
+    var drag_action = zoomable ? zooming :
+                      panable  ? panning :
+                                 undefined;
+    root.data("drag_action", drag_action);
+    if (drag_action) {
+        drag_action.start(root, x, y, event);
     }
 };
 
 
 Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
     var root = this.plotroot();
-    if (root.data("state") == "is_panning") {
-        panning.update(root, dx, dy, x, y, event);
-    }
-    if (root.data("state") == "is_zooming") {
-        zooming.update(root, dx, dy, x, y, event);
+    var drag_action = root.data("drag_action");
+    if (drag_action) {
+        drag_action.update(root, dx, dy, x, y, event);
     }
 };
 
 
 Gadfly.guide_background_drag_onend = function(event) {
     var root = this.plotroot();
-    if (root.data("state") == "is_zooming") {
-        zooming.end(root, event);
+    var drag_action = root.data("drag_action");
+    if (drag_action) {
+        drag_action.end(root, event);
     }
-    root.data("state", undefined);
+    root.data("drag_action", undefined);
 };
 
 
