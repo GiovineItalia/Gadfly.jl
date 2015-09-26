@@ -709,6 +709,14 @@ Gadfly.guide_background_drag_onstart = function(x, y, event) {
                                  undefined;
     root.data("drag_action", drag_action);
     if (drag_action) {
+        var cancel_drag_action = function(event) {
+            if (event.which == 27) { // esc key
+                drag_action.cancel(root);
+                root.data("drag_action", undefined);
+            }
+        };
+        window.addEventListener("keyup", cancel_drag_action);
+        root.data("cancel_drag_action", cancel_drag_action);
         drag_action.start(root, x, y, event);
     }
 };
@@ -725,6 +733,8 @@ Gadfly.guide_background_drag_onmove = function(dx, dy, x, y, event) {
 
 Gadfly.guide_background_drag_onend = function(event) {
     var root = this.plotroot();
+    window.removeEventListener("keyup", root.data("cancel_drag_action"));
+    root.data("cancel_drag_action", undefined);
     var drag_action = root.data("drag_action");
     if (drag_action) {
         drag_action.end(root, event);
