@@ -746,10 +746,7 @@ Gadfly.guide_background_scroll = function(event) {
     if (event.shiftKey) {
         var root = this.plotroot();
         var new_scale = root.data("scale") * Math.pow(2, 0.002 * event.wheelDelta);
-        new_scale = Math.max(
-            root.data("min_scale"),
-            Math.min(root.data("max_scale"), new_scale))
-        update_plot_scale(root, new_scale);
+        set_zoom(root, new_scale);
         event.preventDefault();
     }
 };
@@ -769,30 +766,13 @@ Gadfly.zoomslider_button_mouseout = function(event) {
 
 Gadfly.zoomslider_zoomout_click = function(event) {
     var root = this.plotroot();
-    var min_scale = root.data("min_scale"),
-        scale = root.data("scale");
-    Snap.animate(
-        scale,
-        Math.max(min_scale, scale / 1.5),
-        function (new_scale) {
-            update_plot_scale(root, new_scale);
-        },
-        200);
+    set_zoom(root, root.data("scale") / 1.5, true);
 };
 
 
 Gadfly.zoomslider_zoomin_click = function(event) {
     var root = this.plotroot();
-    var max_scale = root.data("max_scale"),
-        scale = root.data("scale");
-
-    Snap.animate(
-        scale,
-        Math.min(max_scale, scale * 1.5),
-        function (new_scale) {
-            update_plot_scale(root, new_scale);
-        },
-        200);
+    set_zoom(root, root.data("scale") * 1.5, true);
 };
 
 
@@ -818,6 +798,25 @@ var slider_position_from_scale = function(scale, min_scale, max_scale) {
     }
     else {
         return 0.5 * (Math.log(scale) - Math.log(min_scale)) / (0 - Math.log(min_scale));
+    }
+}
+
+
+var set_zoom = function(root, scale, animate) {
+    var min_scale = root.data("min_scale"),
+        max_scale = root.data("max_scale"),
+        old_scale = root.data("scale");
+    var new_scale = Math.max(min_scale, Math.min(scale, max_scale));
+    if (animate) {
+        Snap.animate(
+            old_scale,
+            new_scale,
+            function (new_scale) {
+                update_plot_scale(root, new_scale);
+            },
+            200);
+    } else {
+        update_plot_scale(root, new_scale);
     }
 }
 
