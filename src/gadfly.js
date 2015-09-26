@@ -854,7 +854,7 @@ var update_plot_scale = function(root, new_scale) {
 };
 
 
-Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y) {
+Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y, event) {
     var root = this.plotroot();
     var min_pos = this.data("min_pos"),
         max_pos = this.data("max_pos"),
@@ -882,18 +882,21 @@ Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y) {
     new_scale = Math.min(max_scale, Math.max(min_scale, new_scale));
 
     update_plot_scale(root, new_scale);
+    event.stopPropagation();
 };
 
 
-Gadfly.zoomslider_thumb_dragstart = function(event) {
+Gadfly.zoomslider_thumb_dragstart = function(x, y, event) {
     var root = this.plotroot();
 
     // keep track of what the scale was when we started dragging
     root.data("old_scale", root.data("scale"));
+    event.stopPropagation();
 };
 
 
 Gadfly.zoomslider_thumb_dragend = function(event) {
+    event.stopPropagation();
 };
 
 
