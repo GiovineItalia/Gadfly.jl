@@ -138,6 +138,7 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             .drag(Gadfly.guide_background_drag_onmove,
                   Gadfly.guide_background_drag_onstart,
                   Gadfly.guide_background_drag_onend);
+        init_pan_zoom(this.plotroot());
         return this;
     };
 });
@@ -146,7 +147,6 @@ Snap.plugin(function (Snap, Element, Paper, global) {
 // When the plot is moused over, emphasize the grid lines.
 Gadfly.plot_mouseover = function(event) {
     var root = this.plotroot();
-    init_pan_zoom(root);
 
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
@@ -572,7 +572,6 @@ var pan_action = {
         root.data("dy", 0);
         root.data("tx0", root.data("tx"));
         root.data("ty0", root.data("ty"));
-        init_pan_zoom(root);
     },
     update: function(root, dx, dy, x, y, event) {
         var px_per_mm = root.data("px_per_mm");
@@ -746,7 +745,6 @@ Gadfly.guide_background_drag_onend = function(event) {
 Gadfly.guide_background_scroll = function(event) {
     if (event.shiftKey) {
         var root = this.plotroot();
-        init_pan_zoom(root);
         var new_scale = root.data("scale") * Math.pow(2, 0.002 * event.wheelDelta);
         new_scale = Math.max(
             root.data("min_scale"),
@@ -771,7 +769,6 @@ Gadfly.zoomslider_button_mouseout = function(event) {
 
 Gadfly.zoomslider_zoomout_click = function(event) {
     var root = this.plotroot();
-    init_pan_zoom(root);
     var min_scale = root.data("min_scale"),
         scale = root.data("scale");
     Snap.animate(
@@ -786,7 +783,6 @@ Gadfly.zoomslider_zoomout_click = function(event) {
 
 Gadfly.zoomslider_zoomin_click = function(event) {
     var root = this.plotroot();
-    init_pan_zoom(root);
     var max_scale = root.data("max_scale"),
         scale = root.data("scale");
 
@@ -878,7 +874,6 @@ Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y) {
 
 Gadfly.zoomslider_thumb_dragstart = function(event) {
     var root = this.plotroot();
-    init_pan_zoom(root);
 
     // keep track of what the scale was when we started dragging
     root.data("old_scale", root.data("scale"));
