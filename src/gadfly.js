@@ -565,7 +565,8 @@ var init_pan_zoom = function(root) {
 };
 
 
-var panning = {
+// drag actions, i.e. zooming and panning
+var pan_action = {
     start: function(root, x, y, event) {
         root.data("dx", 0);
         root.data("dy", 0);
@@ -603,9 +604,8 @@ var panning = {
     }
 };
 
-var box;
-
-var zooming = {
+var zoom_box;
+var zoom_action = {
     start: function(root, x, y, event) {
         var bounds = root.plotbounds();
         var width = bounds.x1 - bounds.x0,
@@ -618,11 +618,11 @@ var zooming = {
         y = yscalable ? y / px_per_mm : bounds.y0;
         var w = xscalable ? 0 : width;
         var h = yscalable ? 0 : height;
-        box = root.rect(x, y, w, h).attr({
+        zoom_box = root.rect(x, y, w, h).attr({
             "fill": "#000",
             "opacity": 0.25
         });
-        box.data("ratio", ratio);
+        zoom_box.data("ratio", ratio);
     },
     update: function(root, dx, dy, x, y, event) {
         var xscalable = root.hasClass("xscalable"),
@@ -644,10 +644,10 @@ var zooming = {
             x = bounds.x1;
         }
 
-        dx = x - box.attr("x");
-        dy = y - box.attr("y");
+        dx = x - zoom_box.attr("x");
+        dy = y - zoom_box.attr("y");
         if (xscalable && yscalable) {
-            var ratio = box.data("ratio");
+            var ratio = zoom_box.data("ratio");
             var width = Math.min(Math.abs(dx), ratio * Math.abs(dy));
             var height = Math.min(Math.abs(dy), Math.abs(dx) / ratio);
             dx = width * dx / Math.abs(dx);
@@ -669,15 +669,15 @@ var zooming = {
         if (isNaN(dx)) {
             dx = 0.0;
         }
-        box.transform("T" + xoffset + "," + yoffset);
-        box.attr("width", dx);
-        box.attr("height", dy);
+        zoom_box.transform("T" + xoffset + "," + yoffset);
+        zoom_box.attr("width", dx);
+        zoom_box.attr("height", dy);
     },
     end: function(root, event) {
         var xscalable = root.hasClass("xscalable"),
             yscalable = root.hasClass("yscalable");
         var px_per_mm = root.data("px_per_mm");
-        var zoom_bounds = box.getBBox();
+        var zoom_bounds = zoom_box.getBBox();
         if (zoom_bounds.width * zoom_bounds.height <= 0) {
             return;
         }
@@ -691,22 +691,21 @@ var zooming = {
         var tx = (root.data("tx") - zoom_bounds.x) * zoom_factor + plot_bounds.x0,
             ty = (root.data("ty") - zoom_bounds.y) * zoom_factor + plot_bounds.y0;
         set_plot_pan_zoom(root, tx, ty, root.data("scale") * zoom_factor);
-        box.remove();
+        zoom_box.remove();
     },
     cancel: function(root) {
-        box.remove();
+        zoom_box.remove();
     }
 };
 
 
-// Panning
 Gadfly.guide_background_drag_onstart = function(x, y, event) {
     var root = this.plotroot();
     var scalable = root.hasClass("xscalable") || root.hasClass("xscalable");
     var zoomable = !event.altKey && !event.ctrlKey && event.shiftKey && scalable;
     var panable = !event.altKey && !event.ctrlKey && !event.shiftKey && scalable;
-    var drag_action = zoomable ? zooming :
-                      panable  ? panning :
+    var drag_action = zoomable ? zoom_action :
+                      panable  ? pan_action :
                                  undefined;
     root.data("drag_action", drag_action);
     if (drag_action) {
