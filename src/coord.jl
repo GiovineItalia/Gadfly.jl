@@ -232,6 +232,16 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     xpadding = Scale.iscategorical(scales, :x) ? 0mm : 2mm
     ypadding = Scale.iscategorical(scales, :y) ? 0mm : 2mm
 
+    if Scale.iscategorical(scales, :x)
+        xmin -= 0.5
+        xmax += 0.5
+    end
+
+    if Scale.iscategorical(scales, :y)
+        ymin -= 0.5
+        ymax += 0.5
+    end
+
     width  = xmax - xmin
     height = ymax - ymin
 
