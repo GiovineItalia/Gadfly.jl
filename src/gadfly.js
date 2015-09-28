@@ -714,7 +714,7 @@ var zoom_action = {
 
 Gadfly.guide_background_drag_onstart = function(x, y, event) {
     var root = this.plotroot();
-    var scalable = root.hasClass("xscalable") || root.hasClass("xscalable");
+    var scalable = root.hasClass("xscalable") || root.hasClass("yscalable");
     var zoomable = !event.altKey && !event.ctrlKey && event.shiftKey && scalable;
     var panable = !event.altKey && !event.ctrlKey && !event.shiftKey && scalable;
     var drag_action = zoomable ? zoom_action :
