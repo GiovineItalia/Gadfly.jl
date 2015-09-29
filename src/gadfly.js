@@ -138,7 +138,9 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             .drag(Gadfly.guide_background_drag_onmove,
                   Gadfly.guide_background_drag_onstart,
                   Gadfly.guide_background_drag_onend);
-        init_pan_zoom(this.plotroot());
+        this.mouseenter(function (event) {
+            init_pan_zoom(this.plotroot());
+        });
         return this;
     };
 });
