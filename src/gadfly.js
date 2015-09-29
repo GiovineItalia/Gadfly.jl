@@ -691,7 +691,6 @@ var zoom_action = {
     end: function(root, event) {
         var xscalable = root.hasClass("xscalable"),
             yscalable = root.hasClass("yscalable");
-        var px_per_mm = root.data("px_per_mm");
         var zoom_bounds = zoom_box.getBBox();
         if (zoom_bounds.width * zoom_bounds.height <= 0) {
             return;
