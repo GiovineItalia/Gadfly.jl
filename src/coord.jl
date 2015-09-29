@@ -141,6 +141,25 @@ end
 #
 function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
                           scales::Dict{Symbol, Gadfly.ScaleElement})
+    pad_categorical_x = Nullable{Bool}()
+    pad_categorical_y = Nullable{Bool}()
+    for aes in aess
+        if !isnull(aes.pad_categorical_x)
+            if isnull(pad_categorical_x)
+                pad_categorical_x = aes.pad_categorical_x
+            else
+                pad_categorical_x = Nullable(get(pad_categorical_x) || get(aes.pad_categorical_x))
+            end
+        end
+        if !isnull(aes.pad_categorical_y)
+            if isnull(pad_categorical_y)
+                pad_categorical_y = aes.pad_categorical_y
+            else
+                pad_categorical_y = Nullable(get(pad_categorical_y) || get(aes.pad_categorical_y))
+            end
+        end
+    end
+
     xmin = xmax = first_concrete_aesthetic_value(aess, coord.xvars)
 
     if xmin != nothing
@@ -208,10 +227,10 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
         end
     end
 
-    xmax = xviewmax === nothing ? xmax : xviewmax
-    xmin = xviewmin === nothing ? xmin : xviewmin
-    ymax = yviewmax === nothing ? ymax : yviewmax
-    ymin = yviewmin === nothing ? ymin : yviewmin
+    xmax = xviewmax === nothing ? xmax : max(xmax, xviewmax)
+    xmin = xviewmin === nothing ? xmin : min(xmin, xviewmin)
+    ymax = yviewmax === nothing ? ymax : max(ymax, yviewmax)
+    ymin = yviewmin === nothing ? ymin : min(ymin, yviewmin)
 
     # Hard limits set in Coord should override everything else
     xmin = coord.xmin === nothing ? xmin : coord.xmin
@@ -232,12 +251,12 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     xpadding = Scale.iscategorical(scales, :x) ? 0mm : 2mm
     ypadding = Scale.iscategorical(scales, :y) ? 0mm : 2mm
 
-    if Scale.iscategorical(scales, :x)
+    if Scale.iscategorical(scales, :x) && (isnull(pad_categorical_x) || get(pad_categorical_x))
         xmin -= 0.5
         xmax += 0.5
     end
 
-    if Scale.iscategorical(scales, :y)
+    if Scale.iscategorical(scales, :y) && (isnull(pad_categorical_y) || get(pad_categorical_y))
         ymin -= 0.5
         ymax += 0.5
     end

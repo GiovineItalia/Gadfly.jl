@@ -79,6 +79,10 @@ typealias NumericalAesthetic
     color_label,  Function, showoff
     xgroup_label, Function, showoff
     ygroup_label, Function, showoff
+
+    # pseudo-aesthetics
+    pad_categorical_x, Nullable{Bool}, Nullable{Bool}()
+    pad_categorical_y, Nullable{Bool}, Nullable{Bool}()
 end
 
 

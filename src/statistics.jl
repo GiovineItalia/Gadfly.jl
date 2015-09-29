@@ -116,7 +116,7 @@ function apply_statistic(stat::RectbinStatistic,
     isycontinuous = haskey(scales, :y) && isa(scales[:y], Scale.ContinuousScale)
 
     xminvals, xmaxvals = barminmax(aes.x, isxcontinuous)
-    yminvals, ymaxvals = barminmax(aes.y, isxcontinuous)
+    yminvals, ymaxvals = barminmax(aes.y, isycontinuous)
 
     aes.xmin = xminvals
     aes.xmax = xmaxvals
@@ -137,6 +137,13 @@ function apply_statistic(stat::RectbinStatistic,
 
     if aes.yviewmax == nothing || aes.yviewmax < ymaxvals[end]
         aes.yviewmax = ymaxvals[end]
+    end
+
+    if !isxcontinuous
+        aes.pad_categorical_x = Nullable(false)
+    end
+    if !isycontinuous
+        aes.pad_categorical_y = Nullable(false)
     end
 end
 
@@ -204,7 +211,7 @@ function apply_statistic(stat::BarStatistic,
     end
 
     values = getfield(aes, var)
-    iscontinuous = haskey(scales, var) && isa(scales[var], Scale.ContinuousScale) 
+    iscontinuous = haskey(scales, var) && isa(scales[var], Scale.ContinuousScale)
     minvals, maxvals = barminmax(values, iscontinuous)
 
     setfield!(aes, minvar, minvals)
@@ -223,6 +230,14 @@ function apply_statistic(stat::BarStatistic,
 
     if getfield(aes, other_viewmaxvar) == nothing || getfield(aes, other_viewmaxvar) > maxvals[end]
         setfield!(aes, other_viewmaxvar, maxvals[end])
+    end
+
+    if !iscontinuous
+        if stat.orientation == :horizontal
+            aes.pad_categorical_y = Nullable(false)
+        else
+            aes.pad_categorical_x = Nullable(false)
+        end
     end
 end
 
@@ -587,7 +602,6 @@ function apply_statistic(stat::Histogram2DStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-
     Gadfly.assert_aesthetics_defined("Histogram2DStatistic", aes, :x, :y)
 
     x_min, x_max = Gadfly.concrete_minimum(aes.x), Gadfly.concrete_maximum(aes.x)
@@ -686,11 +700,13 @@ function apply_statistic(stat::Histogram2DStatistic,
     if x_categorial
         aes.xmin, aes.xmax = barminmax(aes.x, false)
         aes.x = PooledDataArray(aes.x)
+        aes.pad_categorical_x = Nullable(false)
     end
 
     if y_categorial
         aes.ymin, aes.ymax = barminmax(aes.y, false)
         aes.y = PooledDataArray(aes.y)
+        aes.pad_categorical_y = Nullable(false)
     end
 
     Scale.apply_scale(color_scale, [aes], data)
@@ -869,9 +885,8 @@ function apply_statistic(stat::TickStatistic,
     elseif categorical
         ticks = Set{Int}()
         for val in in_values
-            t = round(Int, val)
-            if t > 0
-                push!(ticks, t)
+            if isinteger(val) && val > 0
+                push!(ticks, round(Int, val))
             end
         end
         ticks = Int[t for t in ticks]
