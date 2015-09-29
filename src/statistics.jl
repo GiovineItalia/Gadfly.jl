@@ -123,22 +123,6 @@ function apply_statistic(stat::RectbinStatistic,
     aes.ymin = yminvals
     aes.ymax = ymaxvals
 
-    if aes.xviewmin == nothing || aes.xviewmin > xminvals[1]
-        aes.xviewmin = xminvals[1]
-    end
-
-    if aes.xviewmax == nothing || aes.xviewmax < xmaxvals[end]
-        aes.xviewmax = xmaxvals[end]
-    end
-
-    if aes.yviewmin == nothing || aes.yviewmin > yminvals[1]
-        aes.yviewmin = yminvals[1]
-    end
-
-    if aes.yviewmax == nothing || aes.yviewmax < ymaxvals[end]
-        aes.yviewmax = ymaxvals[end]
-    end
-
     if !isxcontinuous
         aes.pad_categorical_x = Nullable(false)
     end
@@ -222,14 +206,6 @@ function apply_statistic(stat::BarStatistic,
         setfield!(aes, viewminvar, z)
     elseif getfield(aes, viewmaxvar) == nothing && z > maximum(getfield(aes, othervar))
         setfield!(aes, viewmaxvar, z)
-    end
-
-    if getfield(aes, other_viewminvar) == nothing || getfield(aes, other_viewminvar) > minvals[1]
-        setfield!(aes, other_viewminvar, minvals[1])
-    end
-
-    if getfield(aes, other_viewmaxvar) == nothing || getfield(aes, other_viewmaxvar) > maxvals[end]
-        setfield!(aes, other_viewmaxvar, maxvals[end])
     end
 
     if !iscontinuous
@@ -839,39 +815,44 @@ function apply_statistic(stat::TickStatistic,
 
     n = Gadfly.concrete_length(in_values)
 
-    # take into account a forced viewport in cartesian coordinates.
-    if typeof(coord) == Coord.Cartesian
-        if stat.out_var == "x"
-            if !is(coord.xmin, nothing)
-                minval = min(minval, coord.xmin)
-            end
-            if !is(coord.xmax, nothing)
-                maxval = max(maxval, coord.xmax)
-            end
-        elseif stat.out_var == "y"
-            if !is(coord.ymin, nothing)
-                minval = min(minval, coord.ymin)
-            end
-            if !is(coord.ymax, nothing)
-                maxval = max(maxval, coord.ymax)
-            end
-        end
-    end
-
     # check the x/yviewmin/max pesudo-aesthetics
     if stat.out_var == "x"
         if aes.xviewmin != nothing
-            minval = aes.xviewmin
+            minval = min(minval, aes.xviewmin)
         end
         if aes.xviewmax != nothing
-            maxval = aes.xviewmax
+            maxval = max(maxval, aes.xviewmax)
         end
     elseif stat.out_var == "y"
         if aes.yviewmin != nothing
-            minval = aes.yviewmin
+            minval = min(minval, aes.yviewmin)
         end
         if aes.yviewmax != nothing
-            maxval = aes.yviewmax
+            maxval = max(maxval, aes.yviewmax)
+        end
+    end
+
+    # take into account a forced viewport in cartesian coordinates.
+    strict_span = false
+    if typeof(coord) == Coord.Cartesian
+        if stat.out_var == "x"
+            if !is(coord.xmin, nothing)
+                minval = coord.xmin
+                strict_span = true
+            end
+            if !is(coord.xmax, nothing)
+                maxval = coord.xmax
+                strict_span = true
+            end
+        elseif stat.out_var == "y"
+            if !is(coord.ymin, nothing)
+                minval = coord.ymin
+                strict_span = true
+            end
+            if !is(coord.ymax, nothing)
+                maxval = coord.ymax
+                strict_span = true
+            end
         end
     end
 
@@ -904,8 +885,8 @@ function apply_statistic(stat::TickStatistic,
                                   granularity_weight=stat.granularity_weight,
                                   simplicity_weight=stat.simplicity_weight,
                                   coverage_weight=stat.coverage_weight,
-                                  niceness_weight=stat.niceness_weight)
-
+                                  niceness_weight=stat.niceness_weight,
+                                  strict_span=strict_span)
         grids = ticks
         multiticks = Gadfly.multilevel_ticks(viewmin - (viewmax - viewmin),
                                              viewmax + (viewmax - viewmin))

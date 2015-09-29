@@ -23,6 +23,8 @@
     ytick
     xtick_labels
     ytick_labels
+    xlim
+    ylim
     xviewmin
     xviewmax
     yviewmin

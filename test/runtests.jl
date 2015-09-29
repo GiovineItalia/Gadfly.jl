@@ -101,7 +101,8 @@ tests = [
     ("jitter",                                6inch, 3inch),
     ("stat_binmean",                          6inch, 12inch),
     ("step",                                  6inch, 3inch),
-    ("auto_enumerate",                        6inch, 3inch)
+    ("auto_enumerate",                        6inch, 3inch),
+    ("coord_limits",                          6inch, 6inch)
 ]
 
 

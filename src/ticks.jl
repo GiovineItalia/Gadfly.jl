@@ -158,7 +158,12 @@ function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks,
         viewmin, viewmax = S[1], S[end]
     end
 
-    S, viewmin, viewmax
+    if strict_span
+        viewmin = max(viewmin, x_min)
+        viewmax = min(viewmax, x_max)
+    end
+
+    return S, viewmin, viewmax
 end
 
 
