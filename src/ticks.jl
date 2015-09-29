@@ -170,7 +170,8 @@ end
 function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
                         k_min=nothing, k_max=nothing, scale=:auto,
                         granularity_weight=nothing, simplicity_weight=nothing,
-                        coverage_weight=nothing, niceness_weight=nothing)
+                        coverage_weight=nothing, niceness_weight=nothing,
+                        strict_span=false)
     return optimize_ticks(convert(DateTime, x_min), convert(DateTime, x_max),
                           extend_ticks=extend_ticks, scale=scale)
 end
@@ -179,7 +180,8 @@ end
 function optimize_ticks(x_min::DateTime, x_max::DateTime; extend_ticks::Bool=false,
                         k_min=nothing, k_max=nothing, scale=:auto,
                         granularity_weight=nothing, simplicity_weight=nothing,
-                        coverage_weight=nothing, niceness_weight=nothing)
+                        coverage_weight=nothing, niceness_weight=nothing,
+                        strict_span=false)
     if x_min == x_max
         x_max += Second(1)
     end

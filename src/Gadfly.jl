@@ -277,7 +277,7 @@ end
 # purposes of plot().
 typealias ElementOrFunctionOrLayers @compat(Union{ElementOrFunction, Vector{Layer}})
 
-function plot(data_source::Union{AbstractMatrix, AbstractDataFrame},
+function plot(data_source::@compat(Union{AbstractMatrix, AbstractDataFrame}),
               elements::ElementOrFunctionOrLayers...; mapping...)
     mappingdict = Dict{Symbol, Any}(mapping)
     return plot(data_source, mappingdict, elements...)
@@ -304,7 +304,7 @@ end
 # Returns:
 #   A Plot object.
 #
-function plot(data_source::Union{Nothing, AbstractMatrix, AbstractDataFrame},
+function plot(data_source::@compat(Union{Nothing, AbstractMatrix, AbstractDataFrame}),
               mapping::Dict, elements::ElementOrFunctionOrLayers...)
     mapping = cleanmapping(mapping)
     p = Plot()
