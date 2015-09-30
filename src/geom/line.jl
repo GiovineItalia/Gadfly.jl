@@ -81,6 +81,8 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     XT, YT, CT = eltype(aes.x), eltype(aes.y), eltype(aes.color)
     XYT = @compat Tuple{XT, YT}
 
+    line_style = Gadfly.get_stroke_vector(theme.line_style)
+
     if aes.group != nothing
         GT = eltype(aes.group)
 
@@ -138,6 +140,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
         ctx = compose!(ctx, Compose.line(points,geom.tag),
                       stroke(points_colors),
+                      strokedash(line_style),
                       svgclass(classes))
 
     elseif length(aes.color) == 1 &&
@@ -150,6 +153,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
         ctx = compose!(ctx, Compose.line(points,geom.tag),
                        stroke(aes.color[1]),
+                       strokedash(line_style),
                        svgclass("geometry"))
     else
         if !geom.preserve_order
@@ -197,6 +201,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
         ctx = compose!(ctx, Compose.line(points,geom.tag),
                       stroke(points_colors),
+                      strokedash(line_style),
                       svgclass(classes))
     end
 
