@@ -100,8 +100,8 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
             .mouseenter(Gadfly.zoomslider_button_mouseover)
             .mouseleave(Gadfly.zoomslider_button_mouseout)
             """),
-        jsdata("mouseout_color", "\"$(foreground_color)\""),
-        jsdata("mouseover_color", "\"$(highlight_color)\""))
+        jsdata("mouseout_color", "\"#$(hex(foreground_color))\""),
+        jsdata("mouseover_color", "\"#$(hex(highlight_color))\""))
 
     slider_width = 2mm
     slider_xpos = 1w - edge_pad - button_size - slider_size + slide_pad
@@ -129,8 +129,8 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
             .mousedown(Gadfly.zoomslider_thumb_mousedown)
             .mouseup(Gadfly.zoomslider_thumb_mouseup)
             """),
-         jsdata("mouseout_color", "\"$(foreground_color)\""),
-         jsdata("mouseover_color", "\"$(highlight_color)\""),
+         jsdata("mouseout_color", "\"#$(hex(foreground_color))\""),
+         jsdata("mouseover_color", "\"#$(hex(highlight_color))\""),
          jsdata("min_pos", "%x", Measure[slider_min_pos]),
          jsdata("max_pos", "%x", Measure[slider_max_pos])))
 
@@ -155,8 +155,8 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
             .mouseenter(Gadfly.zoomslider_button_mouseover)
             .mouseleave(Gadfly.zoomslider_button_mouseout)
             """),
-        jsdata("mouseout_color", "\"$(foreground_color)\""),
-        jsdata("mouseover_color", "\"$(highlight_color)\""))
+        jsdata("mouseout_color", "\"#$(hex(foreground_color))\""),
+        jsdata("mouseover_color", "\"#$(hex(highlight_color))\""))
 
     root = compose!(
         context(withjs=true, units=UnitBox()),
@@ -1156,16 +1156,7 @@ function layout_guides(plot_context::Context,
                       [c for (c, o) in guides[over_guide_position]]...],
                   (context(order=0),
                      plot_context),
-                  jscall(
-                    """
-                    mouseenter(Gadfly.plot_mouseover)
-                    .mouseleave(Gadfly.plot_mouseout)
-                    .dblclick(Gadfly.plot_dblclick)
-                    .mousewheel(Gadfly.guide_background_scroll)
-                    .drag(Gadfly.guide_background_drag_onmove,
-                          Gadfly.guide_background_drag_onstart,
-                          Gadfly.guide_background_drag_onend)
-                    """))]
+                  jscall("init_gadfly()"))]
 
     return tbl
 end
