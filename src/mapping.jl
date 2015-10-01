@@ -3,11 +3,23 @@
 module Col
 
 using Compat
+using DataFrames
 import Iterators
 
 
 immutable GroupedColumn
     columns::Nullable{Vector}
+end
+
+
+function Base.hash(colgroup::GroupedColumn, h::UInt64)
+    return hash(colgroup.columns, h)
+end
+
+
+function Base.(:(==))(a::GroupedColumn, b::GroupedColumn)
+    return (isnull(a.columns) && isnull(b.columns)) ||
+        (!isnull(a.columns) && !isnull(b.columns) && get(a.columns) == get(b.columns))
 end
 
 
@@ -21,8 +33,8 @@ function index()
 end
 
 
-function index(xs::Int...)
-    return GroupedColumn(Nullable(collect(Int, xs)))
+function index{T <: (@compat Union{Int, Symbol})}(xs::T...)
+    return GroupedColumn(Nullable(collect(T, xs)))
 end
 
 
@@ -41,8 +53,8 @@ function value()
 end
 
 
-function value(xs::Int...)
-    return GroupedColumnValue(Nullable(collect(Int, xs)))
+function value{T <: (@compat Union{Int, Symbol})}(xs::T...)
+    return GroupedColumnValue(Nullable(collect(T, xs)))
 end
 
 
@@ -88,6 +100,97 @@ immutable MeltedData
 end
 
 
+function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
+    um, un = size(U)
+
+    colgroups = Set(colgroups_)
+
+    # Figure out the size of the new melted matrix
+    allcolumns = Set{Symbol}(names(U))
+
+    vm = um
+    grouped_columns = Set{Symbol}()
+    for colgroup in colgroups
+        if isnull(colgroup.columns) # null => group all columns
+            vm *= un
+            grouped_columns = copy(allcolumns)
+        else
+            for j in get(colgroup.columns)
+                if !isa(j, Symbol)
+                    error("DataFrame columns can only be grouped by (Symbol) names")
+                end
+                push!(grouped_columns, j)
+            end
+            vm *= length(get(colgroup.columns))
+        end
+    end
+
+    ungrouped_columns = setdiff(allcolumns, grouped_columns)
+    vn = length(colgroups) + length(ungrouped_columns)
+
+    V = AbstractArray[]
+    vnames = Symbol[]
+    colmap = Dict{Any, Int}()
+
+    # allocate vectors for grouped columns
+    for (j, colgroup) in enumerate(colgroups)
+        cols = isnull(colgroup.columns) ? allcolumns : get(colgroup.columns)
+
+        # figure the grouped common column type
+        firstcol = U[first(cols)]
+        eltyp = eltype(firstcol)
+        vectyp = isa(firstcol, Vector) ? Vector : DataVector
+        for col in cols
+            eltyp = promote_type(eltyp, typeof(U[col]))
+            if !isa(U[col], Vector)
+                vectyp = DataVector
+            end
+        end
+
+        push!(V, eltyp == Vector ? Array(eltyp, vm) : DataArray(eltyp, vm))
+        name = gensym()
+        push!(vnames, name)
+        colmap[colgroup] = j
+    end
+
+    # allocate vectors for ungrouped columns
+    for (j, col) in enumerate(ungrouped_columns)
+        push!(V, similar(U[col], vm))
+        colmap[col] = j + length(colgroups)
+        push!(vnames, col)
+    end
+
+    # Indicator columns for each colgroup
+    indicators = Array(Symbol, (vm, length(colgroups)))
+
+    colidxs = [isnull(colgroup.columns) ? collect(allcolumns) : get(colgroup.columns)
+               for colgroup in colgroups]
+
+    vi = 1
+    for ui in 1:um
+        for colidx in Iterators.product(colidxs...)
+            # copy grouped columns
+            for (vj, uj) in enumerate(colidx)
+                V[vj][vi] = U[ui, uj]
+                indicators[vi, vj] = uj
+            end
+
+            # copy ungrouped columns
+            for (vj, uj) in enumerate(ungrouped_columns)
+                V[vj + length(colgroups)][vi] = U[ui, uj]
+            end
+
+            vi += 1
+        end
+    end
+
+    df = DataFrame(; collect(zip(vnames, V))...)
+    return MeltedData(U, df, indicators, colmap)
+end
+
+
+# TODO: The is too elaborate. All matrix melts should const of all column, and
+# we should reserve this elaborate melting logic for data frames.
 function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
     um, un = size(U)
 
@@ -125,14 +228,14 @@ function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
 
     vi = 1
     for ui in 1:um
-        for colidx = Iterators.product(colidxs...)
+        for colidx in Iterators.product(colidxs...)
             # copy grouped columns
             for (vj, uj) in enumerate(colidx)
                 V[vi, vj] = U[ui, uj]
                 indicators[vi, vj] = uj
             end
 
-            # copy uncolumns
+            # copy ungrouped columns
             for (vj, uj) in enumerate(ungrouped_columns)
                 V[vi, vj + length(colgroups)] = U[ui, uj]
             end
