@@ -342,6 +342,14 @@ function cat_aes_var!{T}(xs::PooledDataVector{T}, ys::PooledDataVector{T})
 end
 
 
+function cat_aes_var!{T, U}(xs::PooledDataVector{T}, ys::PooledDataVector{U})
+    V = promote_type(T, U)
+    newpool = V[x for x in union(Set(xs.pool), Set(ys.pool))]
+    newdata = vcat(V[x for x in xs], V[y for y in ys])
+    PooledDataArray(newdata, newpool, [false for _ in newdata])
+end
+
+
 # Summarizing aesthetics
 
 # Produce a matrix of Aesthetic or Data objects partitioning the original
