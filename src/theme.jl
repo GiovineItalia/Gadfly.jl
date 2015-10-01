@@ -63,7 +63,7 @@ function default_middle_color(fill_color::TransparentColor)
 end
 
  
-get_stroke_vector(::Void) = []
+get_stroke_vector(::@compat(Void)) = []
 get_stroke_vector(vec::AbstractVector) = vec
 function get_stroke_vector(linestyle::Symbol)
   dash = 12 * Compose.mm
