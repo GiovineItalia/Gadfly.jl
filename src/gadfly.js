@@ -806,14 +806,22 @@ Gadfly.zoomslider_thumb_mouseup = function(event) {
 };
 
 
-// compute the position in [0, 1] of the zoom slider thumb from the current scale
+// Map slider position x to scale y using the function y = a*exp(b*x)+c.
+// The constants a, b, and c are solved using the constraint that the function
+// should go through the points (0; min_scale), (0.5; 1), and (1; max_scale).
+var scale_from_slider_position = function(position, min_scale, max_scale) {
+    var a = (1 - 2 * min_scale + min_scale * min_scale) / (min_scale + max_scale - 2),
+        b = 2 * Math.log((max_scale - 1) / (1 - min_scale)),
+        c = (min_scale * max_scale - 1) / (min_scale + max_scale - 2);
+    return a * Math.exp(b * position) + c;
+}
+
+// inverse of scale_from_slider_position
 var slider_position_from_scale = function(scale, min_scale, max_scale) {
-    if (scale >= 1.0) {
-        return 0.5 + 0.5 * (Math.log(scale) / Math.log(max_scale));
-    }
-    else {
-        return 0.5 * (Math.log(scale) - Math.log(min_scale)) / (0 - Math.log(min_scale));
-    }
+    var a = (1 - 2 * min_scale + min_scale * min_scale) / (min_scale + max_scale - 2),
+        b = 2 * Math.log((max_scale - 1) / (1 - min_scale)),
+        c = (min_scale * max_scale - 1) / (min_scale + max_scale - 2);
+    return 1 / b * Math.log((scale - c) / a);
 }
 
 
@@ -872,14 +880,7 @@ Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y, event) {
                    dx / (max_pos - min_pos);
 
     // compute the new scale
-    var new_scale;
-    if (xpos >= 0.5) {
-        new_scale = Math.exp(2.0 * (xpos - 0.5) * Math.log(max_scale));
-    }
-    else {
-        new_scale = Math.exp(2.0 * xpos * (0 - Math.log(min_scale)) +
-                        Math.log(min_scale));
-    }
+    var new_scale = scale_from_slider_position(xpos, min_scale, max_scale);
     new_scale = Math.min(max_scale, Math.max(min_scale, new_scale));
 
     update_plot_scale(root, new_scale);
