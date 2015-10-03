@@ -796,16 +796,6 @@ Gadfly.zoomslider_track_click = function(event) {
 };
 
 
-Gadfly.zoomslider_thumb_mousedown = function(event) {
-    this.animate({fill: this.data("mouseover_color")}, 100);
-};
-
-
-Gadfly.zoomslider_thumb_mouseup = function(event) {
-    this.animate({fill: this.data("mouseout_color")}, 100);
-};
-
-
 // compute the position in [0, 1] of the zoom slider thumb from the current scale
 var slider_position_from_scale = function(scale, min_scale, max_scale) {
     if (scale >= 1.0) {
@@ -888,6 +878,7 @@ Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y, event) {
 
 
 Gadfly.zoomslider_thumb_dragstart = function(x, y, event) {
+    this.animate({fill: this.data("mouseover_color")}, 100);
     var root = this.plotroot();
 
     // keep track of what the scale was when we started dragging
@@ -897,6 +888,7 @@ Gadfly.zoomslider_thumb_dragstart = function(x, y, event) {
 
 
 Gadfly.zoomslider_thumb_dragend = function(event) {
+    this.animate({fill: this.data("mouseout_color")}, 100);
     event.stopPropagation();
 };
 

@@ -126,8 +126,6 @@ function render(guide::ZoomSlider, theme::Gadfly.Theme,
             drag(Gadfly.zoomslider_thumb_dragmove,
                  Gadfly.zoomslider_thumb_dragstart,
                  Gadfly.zoomslider_thumb_dragend)
-            .mousedown(Gadfly.zoomslider_thumb_mousedown)
-            .mouseup(Gadfly.zoomslider_thumb_mouseup)
             """),
          jsdata("mouseout_color", "\"#$(hex(foreground_color))\""),
          jsdata("mouseover_color", "\"#$(hex(highlight_color))\""),
