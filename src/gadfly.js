@@ -151,11 +151,21 @@ Gadfly.plot_mouseover = function(event) {
     var root = this.plotroot();
 
     var keyboard_zoom = function(event) {
-        if (event.which == 187) { // plus
-            set_zoom(root, root.data("scale") * 1.5, true);
-        } else if (event.which == 189) { // minus
-            set_zoom(root, root.data("scale") / 1.5, true);
+        if (event.which != 187 && event.which != 189) {
+            return;
         }
+        var scale = root.data("scale"),
+            min_scale = root.data("min_scale"),
+            max_scale = root.data("max_scale");
+        var position = slider_position_from_scale(scale, min_scale, max_scale);
+
+        if (event.which == 187) { // plus
+            position += 0.1;
+        } else if (event.which == 189) { // minus
+            position -= 0.1;
+        }
+        scale = scale_from_slider_position(position, min_scale, max_scale);
+        set_zoom(root, scale, true);
     };
     root.data("keyboard_zoom", keyboard_zoom);
     window.addEventListener("keyup", keyboard_zoom);
@@ -760,8 +770,14 @@ Gadfly.guide_background_drag_onend = function(event) {
 Gadfly.guide_background_scroll = function(event) {
     if (event.shiftKey) {
         var root = this.plotroot();
-        var new_scale = root.data("scale") * Math.pow(2, 0.002 * event.wheelDelta);
-        set_zoom(root, new_scale);
+        var scale = root.data("scale"),
+            min_scale = root.data("min_scale"),
+            max_scale = root.data("max_scale");
+        var position = slider_position_from_scale(scale, min_scale, max_scale);
+        position += 0.001 * event.wheelDelta;
+        // var new_scale = root.data("scale") * Math.pow(2, 0.002 * event.wheelDelta);
+        scale = scale_from_slider_position(position, min_scale, max_scale);
+        set_zoom(root, scale, false);
         event.preventDefault();
     }
 };
@@ -781,13 +797,25 @@ Gadfly.zoomslider_button_mouseout = function(event) {
 
 Gadfly.zoomslider_zoomout_click = function(event) {
     var root = this.plotroot();
-    set_zoom(root, root.data("scale") / 1.5, true);
+    var scale = root.data("scale"),
+        min_scale = root.data("min_scale"),
+        max_scale = root.data("max_scale");
+    var position = slider_position_from_scale(scale, min_scale, max_scale);
+    position -= 0.1;
+    scale = scale_from_slider_position(position, min_scale, max_scale);
+    set_zoom(root, scale, true);
 };
 
 
 Gadfly.zoomslider_zoomin_click = function(event) {
     var root = this.plotroot();
-    set_zoom(root, root.data("scale") * 1.5, true);
+    var scale = root.data("scale"),
+        min_scale = root.data("min_scale"),
+        max_scale = root.data("max_scale");
+    var position = slider_position_from_scale(scale, min_scale, max_scale);
+    position += 0.1;
+    scale = scale_from_slider_position(position, min_scale, max_scale);
+    set_zoom(root, scale, true);
 };
 
 
