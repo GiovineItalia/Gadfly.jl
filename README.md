@@ -20,6 +20,9 @@ It renders publication quality graphics to PNG, Postscript, PDF, SVG. The SVG
 backend uses embedded javascript, powered by [Snap.svg](http://snapsvg.io/) to
 add interactivity like panning, zooming, and toggling.
 
+Other interactive features like selecting and inspecting values are available
+through [Immerse.jl](https://github.com/JuliaGraphics/Immerse.jl).
+
 Check out the [manual](http://gadflyjl.org) for more details and
 examples.
 
