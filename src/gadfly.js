@@ -792,16 +792,6 @@ Gadfly.zoomslider_track_click = function(event) {
 };
 
 
-Gadfly.zoomslider_thumb_mousedown = function(event) {
-    this.animate({fill: this.data("mouseover_color")}, 100);
-};
-
-
-Gadfly.zoomslider_thumb_mouseup = function(event) {
-    this.animate({fill: this.data("mouseout_color")}, 100);
-};
-
-
 // Map slider position x to scale y using the function y = a*exp(b*x)+c.
 // The constants a, b, and c are solved using the constraint that the function
 // should go through the points (0; min_scale), (0.5; 1), and (1; max_scale).
@@ -894,6 +884,7 @@ Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y, event) {
 
 
 Gadfly.zoomslider_thumb_dragstart = function(x, y, event) {
+    this.animate({fill: this.data("mouseover_color")}, 100);
     var root = this.plotroot();
 
     // keep track of what the scale was when we started dragging
@@ -903,6 +894,7 @@ Gadfly.zoomslider_thumb_dragstart = function(x, y, event) {
 
 
 Gadfly.zoomslider_thumb_dragend = function(event) {
+    this.animate({fill: this.data("mouseout_color")}, 100);
     event.stopPropagation();
 };
 
