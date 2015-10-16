@@ -217,35 +217,30 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     end
 
     Stat.apply_statistics(geom_stats, scales, coord, geom_aes)
-    aes_grid = [copy(geom_aes) for i in 1:n, j in 1:m]
+    aes_grid = [geom_aes for i in 1:n, j in 1:m]
 
     # if either axis is on a free scale, we need to apply row/column-wise
     # tick statistics.
-    if (geom.free_x_axis)
+    if geom.free_x_axis
         for j in 1:m
             col_aes = Gadfly.concat([layer_aes_grid[k][i, j]
                                      for i in 1:n, k in 1:length(geom.layers)]...)
+            Gadfly.inherit!(col_aes, geom_aes)
             Stat.apply_statistic(Stat.xticks(), scales, coord, col_aes)
-            for i in 1:n, k in 1:length(geom.layers)
-                Gadfly.inherit!(layer_aes_grid[k][i, j], col_aes,
-                                clobber=[:xgrid, :xtick, :xtickvisible, :xtickscale])
-                Gadfly.inherit!(aes_grid[i, j], col_aes,
-                                clobber=[:xgrid, :xtick, :xtickvisible, :xtickscale])
-            end
+
+            aes_grid[:, j] = col_aes
         end
     end
 
-    if (geom.free_y_axis)
+    if geom.free_y_axis
         for i in 1:n
             row_aes = Gadfly.concat([layer_aes_grid[k][i, j]
                                      for j in 1:m, k in 1:length(geom.layers)]...)
-
+            Gadfly.inherit!(row_aes, geom_aes)
             Stat.apply_statistic(Stat.yticks(), scales, coord, row_aes)
-            for j in 1:m, k in 1:length(geom.layers)
-                Gadfly.inherit!(layer_aes_grid[k][i, j], row_aes,
-                                clobber=[:ygrid, :ytick, :ytickvisible, :ytickscale])
-                Gadfly.inherit!(aes_grid[i, j], row_aes,
-                                clobber=[:ygrid, :ytick, :ytickvisible, :ytickscale])
+
+            for j in 1:m
+                aes_grid[i, j] = Gadfly.inherit(row_aes, aes_grid[i, j])
             end
         end
     end
