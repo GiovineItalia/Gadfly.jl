@@ -68,9 +68,9 @@ function barminmax(values, iscontinuous::Bool)
         sorted_values = sort(values)
         z = sorted_values[2] - sorted_values[1]
         minspan = z
-        for i in 2:length(values)
+        for i in 3:length(values)
             span = sorted_values[i] - sorted_values[i-1]
-            if minspan == z || span > z && span < minspan
+            if span > z && span < minspan
                 minspan = span
             end
         end
