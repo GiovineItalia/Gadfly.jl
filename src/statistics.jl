@@ -1739,6 +1739,8 @@ function minimum_span(vars::Vector{Symbol}, aes::Gadfly.Aesthetics)
             span = dataspan
         end
     end
+
+    return span
 end
 
 
