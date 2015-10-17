@@ -29,7 +29,7 @@
 # Returns:
 #   Log-likelihood with Birge's penalty applied.
 #
-function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::FloatingPoint)
+function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::AbstractFloat)
     ll = 0
     for i in 1:d
         if bincounts[i] > 0
@@ -38,6 +38,25 @@ function bincount_pll(d::Int, n::Int, bincounts::Vector{Int}, binwidth::Floating
     end
 
     ll - (d - 1 + log(d)^2.5)
+end
+
+
+# Estimate proportion of values that are distinct
+#
+# Sample enough values to decide whether we're effectively
+# continuous (defined as >90% of the sampled values are unique)
+# By looking at a subset we ensure this isn't a bottleneck
+function estimate_distinct_proportion{T}(values::AbstractArray{T})
+    uvalues = Set{T}()
+    n_sampled = n_tried = 0
+    while n_sampled < 15 && n_tried < length(values)
+        v = values[rand(1:length(values))]
+        n_tried += 1
+        Gadfly.isconcrete(v) || continue
+        n_sampled += 1
+        push!(uvalues, v)
+    end
+    return length(uvalues) / n_sampled
 end
 
 
@@ -92,14 +111,17 @@ function choose_bin_count_1d(xs::AbstractVector, d_min=1, d_max=150)
 
     # Brute force optimization: since the number of bins has to be reasonably
     # small to plot, this is pretty quick and very simple.
-    for d in d_min:d_max
-        binwidth = span / d
-        bin!(bincounts, xs, x_min, binwidth, d)
-        pll = bincount_pll(d, n, bincounts, binwidth)
+    d_best = d_min
+    if d_min < d_max
+        for d in d_min:d_max
+            binwidth = span / d
+            bin!(bincounts, xs, x_min, binwidth, d)
+            pll = bincount_pll(d, n, bincounts, binwidth)
 
-        if pll > pll_best
-            d_best = d
-            pll_best = pll
+            if pll > pll_best
+                d_best = d
+                pll_best = pll
+            end
         end
     end
 
@@ -207,8 +229,19 @@ function choose_bin_count_2d(xs::AbstractVector, ys::AbstractVector,
     x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)
     y_min, y_max = Gadfly.concrete_minimum(ys), Gadfly.concrete_maximum(ys)
 
-    dx, _ = choose_bin_count_1d(xs, xminbincount, xmaxbincount)
-    dy, _ = choose_bin_count_1d(ys, yminbincount, ymaxbincount)
+    if estimate_distinct_proportion(xs) < 0.9
+        value_set = sort!(collect(Set(xs[Bool[Gadfly.isconcrete(v) for v in xs]])))
+        dx, _ = choose_bin_count_1d_discrete(xs, value_set, xminbincount, xmaxbincount)
+    else
+        dx, _ = choose_bin_count_1d(xs, xminbincount, xmaxbincount)
+    end
+
+    if estimate_distinct_proportion(ys) < 0.9
+        value_set = sort!(collect(Set(ys[Bool[Gadfly.isconcrete(v) for v in ys]])))
+        dy, _ = choose_bin_count_1d_discrete(ys, value_set, yminbincount, ymaxbincount)
+    else
+        dy, _ = choose_bin_count_1d(ys, yminbincount, ymaxbincount)
+    end
 
     # bin widths
     wx = (x_max - x_min) / dx

@@ -9,6 +9,7 @@
     xmax
     ymin
     ymax
+    width
     xintercept
     yintercept
     middle
@@ -22,6 +23,8 @@
     ytick
     xtick_labels
     ytick_labels
+    xlim
+    ylim
     xviewmin
     xviewmax
     yviewmin
@@ -33,7 +36,7 @@
     group
     label
     func
-    titles, Dict{Symbol, String}, Dict{Symbol, String}()
+    titles, Dict{Symbol, AbstractString}, Dict{Symbol, AbstractString}()
 end
 
 

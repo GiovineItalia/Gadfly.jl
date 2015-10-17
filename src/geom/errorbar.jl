@@ -1,11 +1,26 @@
 
 immutable ErrorBarGeometry <: Gadfly.GeometryElement
+    tag::Symbol
+
+    function ErrorBarGeometry(; tag::Symbol=empty_tag)
+        new(tag)
+    end
 end
 
 immutable XErrorBarGeometry <: Gadfly.GeometryElement
+    tag::Symbol
+
+    function XErrorBarGeometry(; tag::Symbol=empty_tag)
+        new(tag)
+    end
 end
 
 immutable YErrorBarGeometry <: Gadfly.GeometryElement
+    tag::Symbol
+
+    function YErrorBarGeometry(; tag::Symbol=empty_tag)
+        new(tag)
+    end
 end
 
 const errorbar = ErrorBarGeometry
@@ -61,21 +76,22 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
     default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
     caplen = theme.errorbar_cap_length/2
+    ttc, teb, tbc = subtags(geom.tag, :top_cap, :error_bar, :bottom_cap)
 
     return compose!(
-        context(order=3),
+        context(order=3; tag=geom.tag),
 
         # top cap
         Compose.line([[(x*cx - caplen, ymax), (x*cx + caplen, ymax)]
-                      for (x, ymax) in zip(aes.x, aes.ymax)]),
+                      for (x, ymax) in zip(aes.x, aes.ymax)], ttc),
 
         # error bar
         Compose.line([[(x*cx, ymax), (x*cx, ymin)]
-                      for (x, ymin, ymax) in zip(aes.x, aes.ymin, aes.ymax)]),
+                      for (x, ymin, ymax) in zip(aes.x, aes.ymin, aes.ymax)], teb),
 
         # bottom cap
         Compose.line([[(x*cx - caplen, ymin), (x*cx + caplen, ymin)]
-                      for (x, ymin) in zip(aes.x, aes.ymin)]),
+                      for (x, ymin) in zip(aes.x, aes.ymin)], tbc),
 
         stroke([theme.stroke_color(c) for c in aes.color]),
         linewidth(theme.line_width),
@@ -96,21 +112,22 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
     default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
     caplen = theme.errorbar_cap_length/2
+    tlc, teb, trc = subtags(geom.tag, :left_cap, :error_bar, :right_cap)
 
     return compose!(
-        context(order=3),
+        context(order=3, tag=geom.tag),
 
-        # top cap
+        # left cap
         Compose.line([[(xmin, y*cy - caplen), (xmin, y*cy + caplen)]
-                      for (xmin, y) in zip(aes.xmin, aes.y)]),
+                      for (xmin, y) in zip(aes.xmin, aes.y)], tlc),
 
         # error bar
         Compose.line([[(xmin, y*cy), (xmax, y*cy)]
-                      for (xmin, xmax, y) in zip(aes.xmin, aes.xmax, aes.y)]),
+                      for (xmin, xmax, y) in zip(aes.xmin, aes.xmax, aes.y)], teb),
 
         # right cap
         Compose.line([[(xmax, y*cy - caplen), (xmax, y*cy + caplen)]
-                      for (xmax, y) in zip(aes.xmax, aes.y)]),
+                      for (xmax, y) in zip(aes.xmax, aes.y)], trc),
 
         stroke([theme.stroke_color(c) for c in aes.color]),
         linewidth(theme.line_width),

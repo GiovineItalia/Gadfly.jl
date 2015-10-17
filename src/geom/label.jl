@@ -7,8 +7,10 @@ immutable LabelGeometry <: Gadfly.GeometryElement
     # lael layout.
     hide_overlaps::Bool
 
-    function LabelGeometry(;position=:dynamic, hide_overlaps::Bool=true)
-        new(position, hide_overlaps)
+    tag::Symbol
+
+    function LabelGeometry(;position=:dynamic, hide_overlaps::Bool=true, tag::Symbol=empty_tag)
+        new(position, hide_overlaps, tag)
     end
 end
 
@@ -247,7 +249,7 @@ function deferred_label_context(geom::LabelGeometry,
         text([positions[i].x0[1] + extents[i][1]/2 + parent_box.x0[1] for i in 1:n],
              [positions[i].x0[2] + extents[i][2]/2 + parent_box.x0[2] for i in 1:n],
              aes.label,
-             [hcenter], [vcenter]),
+             [hcenter], [vcenter]; tag=geom.tag),
         visible(label_visibility),
         font(theme.point_label_font),
         fontsize(theme.point_label_font_size),
@@ -286,7 +288,7 @@ function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
             text([Compose.x_measure(x) + xoff for x in aes.x],
                  [Compose.y_measure(y) + yoff for y in aes.y],
                  aes.label,
-                 [hpos], [vpos]),
+                 [hpos], [vpos]; tag=geom.tag),
             font(theme.point_label_font),
             fontsize(theme.point_label_font_size),
             fill(theme.point_label_color),
@@ -294,6 +296,3 @@ function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
             svgclass("geometry"))
     end
 end
-
-
-

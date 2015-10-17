@@ -15,13 +15,13 @@ using Showoff
 
 import Iterators
 import Iterators: distinct, drop, chain
-import Compose: draw, hstack, vstack, gridstack, isinstalled
+import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant, parse_colorant_vec
 import Base: +, -, /, *,
              copy, push!, start, next, done, show, getindex, cat,
              writemime, isfinite, display
 import Distributions: Distribution
 
-export Plot, Layer, Theme, Scale, Coord, Geom, Guide, Stat, render, plot,
+export Plot, Layer, Theme, Col, Scale, Coord, Geom, Guide, Stat, render, plot,
        layer, spy, set_default_plot_size, set_default_plot_format,
        prepare_display
 
@@ -36,16 +36,11 @@ function __init__()
 end
 
 
-typealias ColorOrNothing Union(Color, TransparentColor, Nothing)
-
-# Allow users to supply strings without deprecation warnings
-# Note this strips any transparency; is this desirable?
-parse_color(c::Colorant) = color(c)
-parse_color(str::AbstractString) = color(parse(Colorant, str))
-parse_color_vec(c...) = to_vec(map(parse_color, c)...)
-@noinline to_vec(c...) = [c...]
+typealias ColorOrNothing @compat(Union{Colorant, (@compat Void)})
 
 element_aesthetics(::Any) = []
+input_aesthetics(::Any) = []
+output_aesthetics(::Any) = []
 default_scales(::Any) = []
 default_statistic(::Any) = Stat.identity()
 element_coordinate_type(::Any) = Coord.cartesian
@@ -66,11 +61,12 @@ include("varset.jl")
 include("theme.jl")
 include("data.jl")
 include("aesthetics.jl")
+include("mapping.jl")
 
 
 # The layer and plot functions can also take functions that are evaluated with
 # no arguments and are expected to produce an element.
-typealias ElementOrFunction{T <: Element} Union(Element, Base.Callable, Theme)
+typealias ElementOrFunction{T <: Element} @compat(Union{Element, Base.Callable, Theme})
 
 const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 
@@ -91,21 +87,21 @@ end
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 type Layer <: Element
-    data_source::Union(AbstractDataFrame, Nothing)
+    data_source::@compat(Union{(@compat Void), MeltedData, AbstractMatrix, AbstractDataFrame})
     mapping::Dict
-    statistic::StatisticElement
+    statistics::Vector{StatisticElement}
     geom::GeometryElement
-    theme::Union(Nothing, Theme)
+    theme::@compat(Union{(@compat Void), Theme})
     order::Int
 
     function Layer()
-        new(nothing, Dict(), Stat.nil(), Geom.nil(), nothing, 0)
+        new(nothing, Dict(), StatisticElement[], Geom.nil(), nothing, 0)
     end
 
     function Layer(lyr::Layer)
         new(lyr.data_source,
             lyr.mapping,
-            lyr.statistic,
+            lyr.statistics,
             lyr.geom,
             lyr.theme)
     end
@@ -117,12 +113,12 @@ end
 
 
 
-function layer(data_source::Union(AbstractDataFrame, Nothing),
+function layer(data_source::@compat(Union{AbstractDataFrame, (@compat Void)}),
                elements::ElementOrFunction...; mapping...)
     mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
     lyr.data_source = data_source
-    lyr.mapping = clean_mapping(mapping)
+    lyr.mapping = cleanmapping(mapping)
     if haskey(mapping, :order)
         lyr.order = mapping[:order]
     end
@@ -158,12 +154,14 @@ end
 
 
 function add_plot_element!(lyrs::Vector{Layer}, arg::Base.Callable)
-    add_plot_element!(lyrs::Vector{Layer}, arg())
+    add_plot_element!(lyrs, arg())
 end
 
 
 function add_plot_element!(lyrs::Vector{Layer}, arg::StatisticElement)
-    [lyr.statistic = arg for lyr in lyrs]
+    for lyr in lyrs
+        push!(lyr.statistics, arg)
+    end
 end
 
 
@@ -172,16 +170,14 @@ function add_plot_element!(lyrs::Vector{Layer}, arg::Theme)
 end
 
 
-
-
 # A full plot specification.
 type Plot
     layers::Vector{Layer}
-    data_source::Union(Nothing, AbstractDataFrame)
+    data_source::@compat(Union{(@compat Void), MeltedData, AbstractMatrix, AbstractDataFrame})
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
-    coord::Union(Nothing, CoordinateElement)
+    coord::@compat(Union{(@compat Void), CoordinateElement})
     guides::Vector{GuideElement}
     theme::Theme
     mapping::Dict
@@ -198,12 +194,12 @@ function layers(p::Plot)
 end
 
 
-function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::Function)
-    add_plot_element!(p, data, arg())
+function add_plot_element!(p::Plot, arg::Function)
+    add_plot_element!(p, arg())
 end
 
 
-function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::GeometryElement)
+function add_plot_element!(p::Plot, arg::GeometryElement)
     if !isempty(p.layers) && isa(p.layers[end].geom, Geom.Nil)
         p.layers[end].geom = arg
     else
@@ -214,116 +210,48 @@ function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::GeometryElemen
 end
 
 
-function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::ScaleElement)
+function add_plot_element!(p::Plot, arg::ScaleElement)
     push!(p.scales, arg)
 end
 
 
-function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::StatisticElement)
+function add_plot_element!(p::Plot, arg::StatisticElement)
     if isempty(p.layers)
         push!(p.layers, Layer())
     end
 
-    p.layers[end].statistic = arg
+    push!(p.layers[end].statistics, arg)
 end
 
 
-function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::CoordinateElement)
+function add_plot_element!(p::Plot, arg::CoordinateElement)
     p.coord = arg
 end
 
 
-function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::GuideElement)
+function add_plot_element!(p::Plot, arg::GuideElement)
     push!(p.guides, arg)
 end
 
 
-function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::Layer)
+function add_plot_element!(p::Plot, arg::Layer)
     push!(p.layers, arg)
 end
 
 
-function add_plot_element!(p::Plot, data::AbstractDataFrame, arg::Vector{Layer})
+function add_plot_element!(p::Plot, arg::Vector{Layer})
     append!(p.layers, arg)
 end
 
 
-function add_plot_element!{T <: Element}(p::Plot, data::AbstractDataFrame, f::Type{T})
-    add_plot_element!(p, data, f())
+function add_plot_element!{T <: Element}(p::Plot, f::Type{T})
+    add_plot_element!(p, f())
 end
 
 
-function add_plot_element!(p::Plot, ::AbstractDataFrame, theme::Theme)
+function add_plot_element!(p::Plot, theme::Theme)
     p.theme = theme
 end
-
-
-# Evaluate a plot mapping, and update the Data structure appropriately.
-#
-# Args:
-#   data: Data object to be updated.
-#   data_source: data frame in which context of which the mapping is evaluated.
-#   k: key
-#   v: value
-#
-# Modifies:
-#   data
-#
-function set_mapped_data!(data::Data, data_source::AbstractDataFrame, k::Symbol, v)
-    setfield!(data, k, eval_plot_mapping(data_source, v))
-
-    if isa(v, String) || isa(v, Symbol)
-        data.titles[k] = string(v)
-    else
-        data.titles[k] = string(k)
-    end
-end
-
-
-# Handle aesthetics aliases and warn about unrecognized aesthetics.
-#
-# Returns:
-#   A new mapping with aliases evaluated and unrecognized aesthetics removed.
-#
-function clean_mapping(mapping)
-    cleaned = Dict{Symbol, AestheticValue}()
-    for (key, val) in mapping
-        # skip the "order" pesudo-aesthetic, used to order layers
-        if key == :order
-            continue
-        end
-
-        if haskey(aesthetic_aliases, key)
-            key = aesthetic_aliases[key]
-        elseif !in(key, fieldnames(Aesthetics))
-            warn("$(string(key)) is not a recognized aesthetic. Ignoring.")
-            continue
-        end
-
-        if !(typeof(val) <: AestheticValue)
-            error(
-            """Aesthetic $(key) is mapped to a value of type $(typeof(val)).
-               It must be mapped to a string, symbol, array, or expression.""")
-        end
-
-        cleaned[key] = val
-    end
-    cleaned
-end
-
-
-# Evaluate a mapping.
-eval_plot_mapping(data::AbstractDataFrame, arg::Symbol) = data[arg]
-eval_plot_mapping(data::AbstractDataFrame, arg::String) = eval_plot_mapping(data, symbol(arg))
-eval_plot_mapping(data::AbstractDataFrame, arg::Integer) = data[arg]
-eval_plot_mapping(data::AbstractDataFrame, arg::Expr) = with(data, arg)
-eval_plot_mapping(data::AbstractDataFrame, arg::AbstractArray) = arg
-eval_plot_mapping(data::AbstractDataFrame, arg::Function) = arg
-eval_plot_mapping(data::AbstractDataFrame, arg::Distribution) = arg
-
-# Acceptable types of values that can be bound to aesthetics.
-typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
-                               AbstractArray, Function, Distribution)
 
 
 # Create a new plot.
@@ -347,26 +275,18 @@ typealias AestheticValue Union(Nothing, Symbol, String, Integer, Expr,
 # because a call to layer() expands to a vector of layers (one for each Geom
 # supplied), we need to allow Vector{Layer} to count as an Element for the
 # purposes of plot().
-typealias ElementOrFunctionOrLayers Union(ElementOrFunction, Vector{Layer})
+typealias ElementOrFunctionOrLayers @compat(Union{ElementOrFunction, Vector{Layer}})
 
-function plot(data_source::AbstractDataFrame, elements::ElementOrFunctionOrLayers...; mapping...)
-    p = Plot()
-    p.mapping = clean_mapping(mapping)
-    p.data_source = data_source
-    for (k, v) in p.mapping
-        set_mapped_data!(p.data, data_source, k, v)
-    end
-
-    for element in elements
-        add_plot_element!(p, data_source, element)
-    end
-
-    return p
+function plot(data_source::@compat(Union{AbstractMatrix, AbstractDataFrame}),
+              elements::ElementOrFunctionOrLayers...; mapping...)
+    mappingdict = Dict{Symbol, Any}(mapping)
+    return plot(data_source, mappingdict, elements...)
 end
 
 
 function plot(elements::ElementOrFunctionOrLayers...; mapping...)
-    plot(DataFrame(), elements...; mapping...)
+    mappingdict = Dict{Symbol, Any}(mapping)
+    plot(nothing, mappingdict, elements...)
 end
 
 
@@ -384,17 +304,16 @@ end
 # Returns:
 #   A Plot object.
 #
-function plot(data_source::AbstractDataFrame, mapping::Dict, elements::ElementOrFunctionOrLayers...)
+function plot(data_source::@compat(Union{Void, AbstractMatrix, AbstractDataFrame}),
+              mapping::Dict, elements::ElementOrFunctionOrLayers...)
+    mapping = cleanmapping(mapping)
     p = Plot()
     for element in elements
-        add_plot_element!(p, data_source, element)
+        add_plot_element!(p, element)
     end
 
-    for (var, value) in mapping
-        set_mapped_data!(p.data, data_source, var, value)
-    end
+    p.data_source = evalmapping!(mapping, data_source, p.data)
     p.mapping = mapping
-    p.data_source = data_source
 
     return p
 end
@@ -404,7 +323,7 @@ include("poetry.jl")
 
 
 function Base.push!(p::Plot, element::ElementOrFunctionOrLayers)
-    add_plot_element!(p, p.data_source, element)
+    add_plot_element!(p, element)
     return p
 end
 
@@ -434,7 +353,7 @@ end
 # Returns:
 #   A compose Canvas containing the graphic.
 #
-function render(plot::Plot)
+function render_prepare(plot::Plot)
     if isempty(plot.layers)
         layer = Layer()
         layer.geom = Geom.point()
@@ -469,9 +388,7 @@ function render(plot::Plot)
                 layer.mapping = plot.mapping
             end
 
-            for (k, v) in layer.mapping
-                set_mapped_data!(datas[i], layer.data_source, k, v)
-            end
+            evalmapping!(layer.mapping, layer.data_source, datas[i])
         end
     end
 
@@ -491,9 +408,7 @@ function render(plot::Plot)
                     subplot_layer.mapping = layer.mapping
                 end
 
-                for (k, v) in subplot_layer.mapping
-                    set_mapped_data!(subplot_data, subplot_layer.data_source, k, v)
-                end
+                evalmapping!(subplot_layer.mapping, subplot_layer.data_source, subplot_data)
                 push!(subplot_datas, subplot_data)
             end
         end
@@ -511,10 +426,29 @@ function render(plot::Plot)
     end
 
     # Add default statistics for geometries.
-    layer_stats = Array(StatisticElement, length(plot.layers))
+    layer_stats = Array(Vector{StatisticElement}, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
-        layer_stats[i] = typeof(layer.statistic) == Stat.nil ?
-            default_statistic(layer.geom) : layer.statistic
+        layer_stats[i] = isempty(layer.statistics) ?
+            [default_statistic(layer.geom)] : layer.statistics
+    end
+
+    # auto-enumeration: add Stat.x/y_enumerate when x and y is needed but only
+    # one defined
+    for (i, layer) in enumerate(plot.layers)
+        layer_needed_aes = element_aesthetics(layer.geom)
+        layer_defined_aes = Set{Symbol}()
+        union!(layer_defined_aes, keys(layer.mapping))
+        for stat in layer.statistics
+            union!(layer_defined_aes, output_aesthetics(stat))
+        end
+
+        if :x in layer_needed_aes && :y in layer_needed_aes
+            if !(:x in layer_defined_aes)
+                unshift!(layer_stats[i], Stat.x_enumerate)
+            elseif !(:y in layer_defined_aes)
+                unshift!(layer_stats[i], Stat.y_enumerate)
+            end
+        end
     end
 
     used_aesthetics = Set{Symbol}()
@@ -522,8 +456,10 @@ function render(plot::Plot)
         union!(used_aesthetics, element_aesthetics(layer.geom))
     end
 
-    for stat in layer_stats
-        union!(used_aesthetics, element_aesthetics(stat))
+    for stats in layer_stats
+        for stat in stats
+            union!(used_aesthetics, input_aesthetics(stat))
+        end
     end
 
     mapped_aesthetics = Set(keys(plot.mapping))
@@ -554,7 +490,7 @@ function render(plot::Plot)
     unscaled_aesthetics = setdiff(used_aesthetics, scaled_aesthetics)
 
     # Add default scales for statistics.
-    for element in chain(plot.statistics, layer_stats, [l.geom for l in plot.layers])
+    for element in chain(plot.statistics, [l.geom for l in plot.layers], layer_stats...)
         for scale in default_scales(element)
             # Use the statistics default scale only when it covers some
             # aesthetic that is not already scaled.
@@ -730,8 +666,8 @@ function render(plot::Plot)
     end
 
     # IIa. Layer-wise statistics
-    for (layer_stat, aes) in zip(layer_stats, layer_aess)
-        Stat.apply_statistics(StatisticElement[layer_stat], scales, coord, aes)
+    for (stats, aes) in zip(layer_stats, layer_aess)
+        Stat.apply_statistics(stats, scales, coord, aes)
     end
 
     # IIb. Plot-wise Statistics
@@ -771,6 +707,16 @@ function render(plot::Plot)
             end
         end
     end
+
+    return (plot, coord, plot_aes,
+            layer_aess, layer_stats, layer_subplot_aess, layer_subplot_datas,
+            scales, guides)
+end
+
+function render(plot::Plot)
+    (plot, coord, plot_aes,
+     layer_aess, layer_stats, layer_subplot_aess, layer_subplot_datas,
+     scales, guides) = render_prepare(plot)
 
     root_context = render_prepared(plot, coord, plot_aes, layer_aess,
                                    layer_stats, layer_subplot_aess,
@@ -818,12 +764,13 @@ function render_prepared(plot::Plot,
                          coord::CoordinateElement,
                          plot_aes::Aesthetics,
                          layer_aess::Vector{Aesthetics},
-                         layer_stats::Vector{StatisticElement},
+                         layer_stats::Vector{Vector{StatisticElement}},
                          layer_subplot_aess::Vector{Vector{Aesthetics}},
                          layer_subplot_datas::Vector{Vector{Data}},
                          scales::Dict{Symbol, ScaleElement},
                          guides::Vector{GuideElement};
-                         table_only=false)
+                         table_only=false,
+                         dynamic=true)
     # III. Coordinates
     plot_context = Coord.apply_coordinate(coord, vcat(plot_aes,
                                           layer_aess), scales)
@@ -844,7 +791,7 @@ function render_prepared(plot::Plot,
     # V. Guides
     guide_contexts = Any[]
     for guide in guides
-        guide_context = render(guide, plot.theme, plot_aes)
+        guide_context = render(guide, plot.theme, plot_aes, dynamic)
         if guide_context != nothing
             append!(guide_contexts, guide_context)
         end
@@ -1122,7 +1069,7 @@ const default_aes_scales = @compat Dict{Symbol, Dict}(
 
 # Determine whether the input is categorical or numerical
 
-typealias CategoricalType Union(String, Bool, Symbol)
+typealias CategoricalType @compat(Union{AbstractString, Bool, Symbol})
 
 
 function classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N})
@@ -1158,5 +1105,10 @@ end
 # preference.
 const x_axis_label_aesthetics = [:x, :xmin, :xmax]
 const y_axis_label_aesthetics = [:y, :ymin, :ymax]
+
+#if VERSION >= v"0.4.0-dev+5512"
+    #include("precompile.jl")
+    #_precompile_()
+#end
 
 end # module Gadfly

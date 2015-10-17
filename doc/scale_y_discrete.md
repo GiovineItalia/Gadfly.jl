@@ -43,5 +43,3 @@ srand(1234)
 # Treat numerical y data as categories
 plot(x=rand(20), y=rand(1:3, 20), Scale.y_discrete, Geom.point)
 ```
-
-

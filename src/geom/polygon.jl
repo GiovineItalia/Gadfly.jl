@@ -3,10 +3,12 @@ immutable PolygonGeometry <: Gadfly.GeometryElement
     order::Int
     fill::Bool
     preserve_order::Bool
+    tag::Symbol
 
     function PolygonGeometry(; order::Int=0, fill::Bool=false,
-                               preserve_order::Bool=false)
-        return new(order, fill, preserve_order)
+                               preserve_order::Bool=false,
+                               tag::Symbol=empty_tag)
+        return new(order, fill, preserve_order, tag)
     end
 end
 
@@ -55,7 +57,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
 
         compose!(ctx,
             Compose.polygon([polygon_points(xs[(c,g)], ys[(c,g)], geom.preserve_order)
-                             for (c,g) in keys(xs)]))
+                             for (c,g) in keys(xs)], geom.tag))
         cs = [c for (c,g) in keys(xs)]
         if geom.fill
             compose!(ctx, fill(cs),
@@ -65,7 +67,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
         end
     elseif length(aes.color) == 1 &&
             !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
-        compose!(ctx, Compose.polygon(polygon_points(aes.x, aes.y, geom.preserve_order)))
+        compose!(ctx, Compose.polygon(polygon_points(aes.x, aes.y, geom.preserve_order), geom.tag))
         if geom.fill
             compose!(ctx, fill(aes.color[1]),
                      stroke(theme.discrete_highlight_color(aes.color[1])))
@@ -84,7 +86,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
 
         compose!(ctx,
             Compose.polygon([polygon_points(xs[c], ys[c], geom.preserve_order)
-                             for c in keys(xs)]))
+                             for c in keys(xs)], geom.tag))
         cs = collect(keys(xs))
         if geom.fill
             compose!(ctx, fill(cs),
@@ -96,4 +98,3 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
 
     return compose!(ctx, linewidth(theme.line_width), svgclass("geometry"))
 end
-

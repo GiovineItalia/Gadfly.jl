@@ -4,6 +4,7 @@ using RDatasets, Gadfly, Compat
 
 tests = [
     ("points",                                6inch, 3inch),
+    ("noticks",                               6inch, 3inch),
     ("colored_points",                        6inch, 3inch),
     ("function_plots",                        6inch, 3inch),
     ("function_explicit_colors",              6inch, 3inch),
@@ -63,6 +64,8 @@ tests = [
     ("layer_themes",                          6inch, 3inch),
     ("layer_guide",                           6inch, 3inch),
     ("discrete_color_manual",                 6inch, 3inch),
+    ("lab_gradient",                          6inch, 3inch),
+    ("contour_color_none",                    6inch, 3inch),
     ("ordered_line",                          6inch, 3inch),
     ("nan_skipping",                          6inch, 3inch),
     ("hexbin",                                6inch, 3inch),
@@ -76,6 +79,7 @@ tests = [
     ("aspect_ratio",                          6inch, 3inch),
     ("contour_function",                      6inch, 3inch),
     ("contour_matrix",                        6inch, 3inch),
+    ("contour_layers",                        6inch, 3inch),
     ("stat_qq",                               6inch, 16inch),
     ("line_histogram",                        6inch, 3inch),
     ("layer_data",                            6inch, 3inch),
@@ -96,11 +100,13 @@ tests = [
     ("polygon",                               6inch, 3inch),
     ("jitter",                                6inch, 3inch),
     ("stat_binmean",                          6inch, 12inch),
-    ("step",                                  6inch, 3inch)
+    ("step",                                  6inch, 3inch),
+    ("auto_enumerate",                        6inch, 3inch),
+    ("coord_limits",                          6inch, 6inch)
 ]
 
 
-backends = @compat Dict{String, Function}(
+backends = @compat Dict{AbstractString, Function}(
     "svg" => (name, width, height) -> SVG("output/$(name).svg", width, height),
     "svgjs" => (name, width, height) -> SVGJS("output/$(name).js.svg", width, height, jsmode=:linkabs),
     "png" => (name, width, height) -> PNG("output/$(name).png", width, height),

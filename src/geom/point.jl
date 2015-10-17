@@ -1,6 +1,11 @@
 
 # Geometry which displays points at given (x, y) positions.
 immutable PointGeometry <: Gadfly.GeometryElement
+    tag::Symbol
+
+    function PointGeometry(; tag::Symbol=empty_tag)
+        new(tag)
+    end
 end
 
 
@@ -32,14 +37,11 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     default_aes.size = Measure[theme.default_point_size]
     aes = inherit(aes, default_aes)
 
-    lw_hover_scale = 10
-    lw_ratio = theme.line_width / aes.size[1]
-
     aes_x, aes_y = concretize(aes.x, aes.y)
 
     ctx = compose!(
         context(),
-        circle(aes.x, aes.y, aes.size),
+        circle(aes.x, aes.y, aes.size, geom.tag),
         fill(aes.color),
         linewidth(theme.highlight_width))
 
@@ -59,5 +61,3 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     return compose!(context(order=4), svgclass("geometry"), ctx)
 end
-
-

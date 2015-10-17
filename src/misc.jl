@@ -4,7 +4,7 @@ function isconcrete{T<:Number}(x::T)
 end
 
 
-function isconcrete(x::MathConst)
+function isconcrete(x::(@compat Irrational))
     return true
 end
 
@@ -286,7 +286,7 @@ function has{T,N}(xs::AbstractArray{T,N}, y::T)
     return false
 end
 
-Maybe(T) = Union(T, Nothing)
+Maybe(T) = @compat(Union{T, (@compat Void)})
 
 
 function lerp(x::Float64, a, b)
@@ -306,7 +306,7 @@ end
 
 
 # Remove any markup or whitespace from a string.
-function escape_id(s::String)
+function escape_id(s::AbstractString)
     s = replace(s, r"<[^>]*>", "")
     s = replace(s, r"\s", "_")
     s
@@ -315,7 +315,7 @@ end
 
 # Can a numerical value be treated as an integer
 is_int_compatable(::Integer) = true
-is_int_compatable{T <: FloatingPoint}(x::T) = abs(x) < maxintfloat(T) && float(int(x)) == x
+is_int_compatable{T <: AbstractFloat}(x::T) = abs(x) < maxintfloat(T) && float(int(x)) == x
 is_int_compatable(::Any) = false
 
 
@@ -352,7 +352,7 @@ end
 
 
 # Construct a jscall to store arbitrary data in the element
-function jsdata(key::String, value::String, arg::Vector{Measure}=Measure[])
+function jsdata(key::AbstractString, value::AbstractString, arg::Vector{Measure}=Measure[])
     return jscall(
         """
         data("$(escape_string(key))", $(value))
@@ -361,7 +361,7 @@ end
 
 
 # Construct jscall properties to store arbitrary data in plotroot elements.
-function jsplotdata(key::String, value::String, arg::Vector{Measure}=Measure[])
+function jsplotdata(key::AbstractString, value::AbstractString, arg::Vector{Measure}=Measure[])
     return jscall(
         """
         plotroot().data("$(escape_string(key))", $(value))
@@ -369,7 +369,7 @@ function jsplotdata(key::String, value::String, arg::Vector{Measure}=Measure[])
 end
 
 
-function svg_color_class_from_label(label::String)
+function svg_color_class_from_label(label::AbstractString)
     return @sprintf("color_%s", escape_id(label))
 end
 
@@ -387,7 +387,7 @@ end
 if VERSION < v"0.4-dev"
     using Dates
 
-    function Showoff.showoff{T <: Union(Date, DateTime)}(ds::AbstractArray{T}, style=:none)
+    function Showoff.showoff{T <: @compat(Union{Date, DateTime})}(ds::AbstractArray{T}, style=:none)
         years = Set()
         months = Set()
         days = Set()
@@ -436,7 +436,7 @@ if VERSION < v"0.4-dev"
             first_label_format = f1
         end
 
-        labels = Array(String, length(ds))
+        labels = Array(AbstractString, length(ds))
         labels[1] = Dates.format(ds[1], first_label_format)
         d_last = ds[1]
         for (i, d) in enumerate(ds[2:end])
@@ -490,7 +490,7 @@ end
 if !method_exists(/, (Dates.Day, Real))
     /(a::Dates.Day, b::Real) = Dates.Day(round(Integer, (a.value / b)))
 end
-/(a::Dates.Day, b::FloatingPoint) = convert(Dates.Millisecond, a) / b
+/(a::Dates.Day, b::AbstractFloat) = convert(Dates.Millisecond, a) / b
 
 if !method_exists(/, (Dates.Millisecond, Dates.Millisecond))
     /(a::Dates.Millisecond, b::Dates.Millisecond) = a.value / b.value
@@ -499,7 +499,7 @@ end
 if !method_exists(/, (Dates.Millisecond, Real))
     /(a::Dates.Millisecond, b::Real) = Dates.Millisecond(round(Integer, (a.value / b)))
 end
-/(a::Dates.Millisecond, b::FloatingPoint) = Dates.Millisecond(round(Integer, (a.value / b)))
+/(a::Dates.Millisecond, b::AbstractFloat) = Dates.Millisecond(round(Integer, (a.value / b)))
 
 
 if !method_exists(-, (Dates.Date, Dates.DateTime))
@@ -526,11 +526,11 @@ for T in [Dates.Hour, Dates.Minute, Dates.Second, Dates.Millisecond]
 end
 
 
-#if !method_exists(*, (FloatingPoint, Dates.Day))
-    *(a::FloatingPoint, b::Dates.Day) = Dates.Day(round(Integer, (a * b.value)))
-    *(a::Dates.Day, b::FloatingPoint) = b * a
-    *(a::FloatingPoint, b::Dates.Millisecond) = Dates.Millisecond(round(Integer, (a * b.value)))
-    *(a::Dates.Millisecond, b::FloatingPoint) = b * a
+#if !method_exists(*, (AbstractFloat, Dates.Day))
+    *(a::AbstractFloat, b::Dates.Day) = Dates.Day(round(Integer, (a * b.value)))
+    *(a::Dates.Day, b::AbstractFloat) = b * a
+    *(a::AbstractFloat, b::Dates.Millisecond) = Dates.Millisecond(round(Integer, (a * b.value)))
+    *(a::Dates.Millisecond, b::AbstractFloat) = b * a
 #end
 
 
@@ -563,7 +563,7 @@ end
 
 
 function color_isless(a::RGBA{Float32}, b::RGBA{Float32})
-    if color(a) < color(b)
+    if color_isless(color(a), color(b))
         return true
     elseif color(a) == color(b)
         return a.alpha < b.alpha
@@ -573,8 +573,8 @@ function color_isless(a::RGBA{Float32}, b::RGBA{Float32})
 end
 
 
-function group_color_isless{S, T <: Color}(a::(@compat Tuple{S, T}),
-                                                b::(@compat Tuple{S, T}))
+function group_color_isless{S, T <: Colorant}(a::(@compat Tuple{S, T}),
+                                              b::(@compat Tuple{S, T}))
     if a[1] < b[1]
         return true
     elseif a[1] == b[1]
@@ -583,5 +583,3 @@ function group_color_isless{S, T <: Color}(a::(@compat Tuple{S, T}),
         return false
     end
 end
-
-

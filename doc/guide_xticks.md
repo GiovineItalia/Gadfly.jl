@@ -8,7 +8,8 @@ order: 3002
 Formats the tick marks and labels for the x-axis
 
 # Arguments
-  * `ticks`: Array of tick locations on the x-axis
+  * `ticks`: Array of tick locations on the x-axis, `:auto` to automatically
+    select ticks, or `nothing` to supress x-axis ticks.
   * `label`: Determines if the ticks are labeled, either
     `true` (default) or `false`
   * `orientation`: Label orientation

@@ -2,6 +2,19 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 0.3.16
+
+  * Fix a precompilation error when Cairo is not installed.
+
+# Version 0.3.14-0.3.15
+
+  * Miscellaneous performance improvements and bug fixes.
+
+  * Precompilation support on julia 0.4.
+
+  * Switch from the Color package to the new Colors package.
+
+  * Add `Geom.beeswarm`
 
 # Version 0.3.13
 

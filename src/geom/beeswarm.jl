@@ -4,9 +4,12 @@ immutable BeeswarmGeometry <: Gadfly.GeometryElement
     # :vertical or :horizontal
     orientation::Symbol
     padding::Measure
+    tag::Symbol
 
-    function BeeswarmGeometry(; orientation::Symbol=:vertical, padding::Measure=0.1mm)
-        new(orientation, padding)
+    function BeeswarmGeometry(; orientation::Symbol=:vertical,
+                                padding::Measure=0.1mm,
+                                tag::Symbol=empty_tag)
+        new(orientation, padding, tag)
     end
 end
 
@@ -136,9 +139,9 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
         end
 
         if geom.orientation == :horizontal
-            f = circle(val, positions, aes.size)
+            f = circle(val, positions, aes.size, geom.tag)
         else
-            f = circle(positions, val, aes.size)
+            f = circle(positions, val, aes.size, geom.tag)
         end
 
         return compose(context(), f, fill(aes.color),
@@ -147,5 +150,3 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
 
     return compose!(context(order=4), svgclass("geometry"), ctxp)
 end
-
-

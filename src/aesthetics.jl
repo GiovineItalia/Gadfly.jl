@@ -1,22 +1,22 @@
 
 
 typealias NumericalOrCategoricalAesthetic
-    Union(Nothing, Vector, DataArray, PooledDataArray)
+    @compat(Union{(@compat Void), Vector, DataArray, PooledDataArray})
 
 typealias CategoricalAesthetic
-    Union(Nothing, PooledDataArray)
+    @compat(Union{(@compat Void), PooledDataArray})
 
 typealias NumericalAesthetic
-    Union(Nothing, Matrix, Vector, DataArray)
+    @compat(Union{(@compat Void), Matrix, Vector, DataArray})
 
 
 @varset Aesthetics begin
-    x,            Union(NumericalOrCategoricalAesthetic, Distribution)
-    y,            Union(NumericalOrCategoricalAesthetic, Distribution)
-    z,            Union(Nothing, Function, Matrix)
+    x,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
+    y,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
+    z,            @compat(Union{(@compat Void), Function, Matrix})
     size,         Maybe(Vector{Measure})
-    color,        Maybe(Union(AbstractVector{RGBA{Float32}},
-                              AbstractVector{RGB{Float32}}))
+    color,        Maybe(@compat(Union{AbstractVector{RGBA{Float32}},
+                              AbstractVector{RGB{Float32}}}))
     label,        CategoricalAesthetic
     group,        CategoricalAesthetic
 
@@ -52,10 +52,10 @@ typealias NumericalAesthetic
     xgrid,        NumericalAesthetic
     ygrid,        NumericalAesthetic
     color_key_colors,     Maybe(Associative)
-    color_key_title,      Maybe(String)
+    color_key_title,      Maybe(AbstractString)
     color_key_continuous, Maybe(Bool)
     color_function,       Maybe(Function)
-    titles,               Maybe(Dict{Symbol, String})
+    titles,               Maybe(Dict{Symbol, AbstractString})
 
     # mark some ticks as initially invisible
     xtickvisible,         Maybe(Vector{Bool})
@@ -79,6 +79,10 @@ typealias NumericalAesthetic
     color_label,  Function, showoff
     xgroup_label, Function, showoff
     ygroup_label, Function, showoff
+
+    # pseudo-aesthetics
+    pad_categorical_x, Nullable{Bool}, Nullable{Bool}()
+    pad_categorical_y, Nullable{Bool}, Nullable{Bool}()
 end
 
 
@@ -117,7 +121,7 @@ const aesthetic_aliases =
 
 
 # Index as if this were a data frame
-function getindex(aes::Aesthetics, i::Integer, j::String)
+function getindex(aes::Aesthetics, i::Integer, j::AbstractString)
     getfield(aes, symbol(j))[i]
 end
 
@@ -149,7 +153,7 @@ function undefined_aesthetics(aes::Aesthetics, vars::Symbol...)
 end
 
 
-function assert_aesthetics_defined(who::String, aes::Aesthetics, vars::Symbol...)
+function assert_aesthetics_defined(who::AbstractString, aes::Aesthetics, vars::Symbol...)
     undefined_vars = undefined_aesthetics(aes, vars...)
     if !isempty(undefined_vars)
         error(@sprintf("The following aesthetics are required by %s but are not defined: %s\n",
@@ -158,7 +162,7 @@ function assert_aesthetics_defined(who::String, aes::Aesthetics, vars::Symbol...
 end
 
 
-function assert_aesthetics_undefined(who::String, aes::Aesthetics, vars::Symbol...)
+function assert_aesthetics_undefined(who::AbstractString, aes::Aesthetics, vars::Symbol...)
     defined_vars = intersect(Set(vars), defined_aesthetics(aes))
     if !isempty(defined_vars)
         error(@sprintf("The following aesthetics are defined but incompatible with %s: %s\n",
@@ -167,7 +171,7 @@ function assert_aesthetics_undefined(who::String, aes::Aesthetics, vars::Symbol.
 end
 
 
-function assert_aesthetics_equal_length(who::String, aes::Aesthetics, vars::Symbol...)
+function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, vars::Symbol...)
     defined_vars = filter(var -> !(getfield(aes, var) === nothing), vars)
 
     if !isempty(defined_vars)
@@ -265,9 +269,9 @@ function concat(aess::Aesthetics...)
 end
 
 
-cat_aes_var!(a::Nothing, b::Nothing) = a
-cat_aes_var!(a::Nothing, b) = copy(b)
-cat_aes_var!(a, b::Nothing) = a
+cat_aes_var!(a::(@compat Void), b::(@compat Void)) = a
+cat_aes_var!(a::(@compat Void), b) = copy(b)
+cat_aes_var!(a, b::(@compat Void)) = a
 cat_aes_var!(a::Function, b::Function) = a === string || a == showoff ? b : a
 
 
@@ -338,6 +342,14 @@ function cat_aes_var!{T}(xs::PooledDataVector{T}, ys::PooledDataVector{T})
 end
 
 
+function cat_aes_var!{T, U}(xs::PooledDataVector{T}, ys::PooledDataVector{U})
+    V = promote_type(T, U)
+    newpool = V[x for x in union(Set(xs.pool), Set(ys.pool))]
+    newdata = vcat(V[x for x in xs], V[y for y in ys])
+    PooledDataArray(newdata, newpool, [false for _ in newdata])
+end
+
+
 # Summarizing aesthetics
 
 # Produce a matrix of Aesthetic or Data objects partitioning the original
@@ -352,7 +364,7 @@ end
 #   A Array{Aesthetics} of size max(1, length(xgroup)) by
 #   max(1, length(ygroup))
 #
-function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
+function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygroup,
                                                    num_xgroups, num_ygroups)
     @assert xgroup === nothing || ygroup === nothing ||
             length(xgroup) == length(ygroup)
@@ -434,6 +446,12 @@ function by_xy_group{T <: Union(Data, Aesthetics)}(aes::T, xgroup, ygroup,
     aes_grid
 end
 
+function inherit(a::Aesthetics, b::Aesthetics;
+                 clobber=[])
+    acopy = copy(a)
+    inherit!(acopy, b, clobber=clobber)
+    return acopy
+end
 
 function inherit!(a::Aesthetics, b::Aesthetics;
                   clobber=[])

@@ -3,14 +3,16 @@ using Hexagons
 
 immutable HexagonalBinGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
+    tag::Symbol
 
     function HexagonalBinGeometry(
-            default_statistic::Gadfly.StatisticElement=Gadfly.Stat.identity())
-        new(default_statistic)
+            default_statistic::Gadfly.StatisticElement=Gadfly.Stat.identity();
+            tag::Symbol=empty_tag)
+        new(default_statistic, tag)
     end
 
-    function HexagonalBinGeometry(; xbincount=200, ybincount=200)
-        new(Gadfly.Stat.hexbin(xbincount=xbincount, ybincount=ybincount))
+    function HexagonalBinGeometry(; xbincount=200, ybincount=200, tag::Symbol=empty_tag)
+        new(Gadfly.Stat.hexbin(xbincount=xbincount, ybincount=ybincount), tag)
     end
 end
 
@@ -49,11 +51,9 @@ function render(geom::HexagonalBinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aes
 
     return compose!(
         context(),
-        Compose.polygon([hexpoints(xs[i], ys[i], xsizes[i], ysizes[i]) for i in 1:n]),
+        Compose.polygon([hexpoints(xs[i], ys[i], xsizes[i], ysizes[i]) for i in 1:n], geom.tag),
         linewidth(0.1mm), # pad the hexagons so they ovelap a little
         fill(cs),
         stroke(cs),
         svgclass("geometry"))
 end
-
-

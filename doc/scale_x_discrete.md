@@ -40,8 +40,6 @@ srand(1234)
 ```
 
 ```julia
-# Tread numerical x data as categories
+# Treat numerical x data as categories
 plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)
 ```
-
-

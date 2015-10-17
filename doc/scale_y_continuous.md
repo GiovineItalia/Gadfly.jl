@@ -9,8 +9,8 @@ Map numerical data to y positions in cartesian coordinates.
 
 # Arguments
 
-  * `minvalue`: Force the plot viewport to a minimum y value.
-  * `maxvalue`: Force the plot viewport to a maximum y value.
+  * `minvalue`: Set scale lower bound to be ≤ this value.
+  * `maxvalue`: Set scale lower bound to be ≥ this value.
   * `labels`: Either a `Function` or `nothing`. When a
     function is given, values are formatted using this function. The function
     should map a value in `x` to a string giving its label. If the scale

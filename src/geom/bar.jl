@@ -13,27 +13,32 @@ immutable BarGeometry <: Gadfly.GeometryElement
 
     default_statistic::Gadfly.StatisticElement
 
-    function BarGeometry(default_statistic=Gadfly.Stat.identity();
-                         position::Symbol=:stack, orientation::Symbol=:vertical)
-        new(position, orientation, default_statistic)
-    end
+    tag::Symbol
 end
 
 
-const bar = BarGeometry
+function bar(; position::Symbol=:stack, orientation::Symbol=:vertical,
+             tag::Symbol=empty_tag)
+    return BarGeometry(
+        position, orientation,
+        Gadfly.Stat.bar(position=position, orientation=orientation), tag)
+end
+
 
 function histogram(; position=:stack, bincount=nothing,
                    minbincount=3, maxbincount=150,
                    orientation::Symbol=:vertical,
-                   density::Bool=false)
-    BarGeometry(Gadfly.Stat.histogram(bincount=bincount,
-                                      minbincount=minbincount,
-                                      maxbincount=maxbincount,
-                                      position=position,
-                                      orientation=orientation,
-                                      density=density),
-                position=position,
-                orientation=orientation)
+                   density::Bool=false,
+                   tag::Symbol=empty_tag)
+    return BarGeometry(
+        position, orientation,
+        Gadfly.Stat.histogram(bincount=bincount,
+                              minbincount=minbincount,
+                              maxbincount=maxbincount,
+                              position=position,
+                              orientation=orientation,
+                              density=density),
+        tag)
 end
 
 
@@ -61,7 +66,7 @@ function render_colorless_bar(geom::BarGeometry,
                       [ymin*cy + theme.bar_spacing/2 for ymin in aes.ymin],
                       abs(aes.x),
                       [(ymax - ymin)*cy - theme.bar_spacing
-                       for (ymin, ymax) in zip(aes.ymin, aes.ymax)]),
+                       for (ymin, ymax) in zip(aes.ymin, aes.ymax)], geom.tag),
             svgclass("geometry"))
     else
         YT = eltype(aes.y)
@@ -72,7 +77,7 @@ function render_colorless_bar(geom::BarGeometry,
                       [min(yz, y) for y in aes.y],
                       [(xmax - xmin)*cx - theme.bar_spacing
                        for (xmin, xmax) in zip(aes.xmin, aes.xmax)],
-                      abs(aes.y)),
+                      abs(aes.y), geom.tag),
             svgclass("geometry"))
     end
 
@@ -121,7 +126,7 @@ function render_colorful_stacked_bar(geom::BarGeometry,
                 stack_height,
                 [aes.ymin[i]*cy + theme.bar_spacing/2 for i in idxs],
                 [aes.x[i] for i in idxs],
-                [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs]))
+                [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs], geom.tag))
     elseif orientation == :vertical
         stack_height_dict = Dict()
         T = eltype(aes.y)
@@ -142,7 +147,7 @@ function render_colorful_stacked_bar(geom::BarGeometry,
                 [aes.xmin[i]*cx + theme.bar_spacing/2 for i in idxs],
                 stack_height,
                 [(aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing for i in idxs],
-                [aes.y[i] for i in idxs]))
+                [aes.y[i] for i in idxs], geom.tag))
     else
         error("Orientation must be :horizontal or :vertical")
     end
@@ -204,7 +209,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
                 dodge_pos,
                 abs(aes_x),
                 [((aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing) / dodge_count[aes.ymin[i]]
-                 for i in idxs]))
+                 for i in idxs], geom.tag))
     elseif orientation == :vertical
         dodge_count = DefaultDict(() -> 0)
         for i in idxs
@@ -236,7 +241,7 @@ function render_colorful_dodged_bar(geom::BarGeometry,
                 [min(yz, y) for y in aes_y],
                 [((aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing) / dodge_count[aes.xmin[i]]
                  for i in idxs],
-                abs(aes_y)))
+                abs(aes_y), geom.tag))
     else
         error("Orientation must be :horizontal or :vertical")
     end
@@ -266,55 +271,17 @@ end
 #
 function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     if geom.orientation == :horizontal
-        if (is(aes.ymin, nothing) || is(aes.ymax, nothing)) && is(aes.y, nothing)
-            error("Geom.bar required \"y\" to be bound or both \"y_min\" and \"y_max\".")
-        end
-        if (aes.y != nothing && length(aes.y) != length(aes.x)) ||
-           (aes.ymin != nothing && (length(aes.ymin) != length(aes.x) || length(aes.ymax) != length(aes.x)))
-            error("Geom.bar requires x and y to be of equal length.")
-        end
-
+        Gadfly.assert_aesthetics_defined("BarGeometry", aes, :ymin, :ymax, :x)
+        Gadfly.assert_aesthetics_equal_length("BarGeometry", aes, :ymin, :ymax, :x)
         var = :y
         minvar = :ymin
         maxvar = :ymax
     else
-        if (is(aes.xmin, nothing) || is(aes.xmax, nothing)) && is(aes.x, nothing)
-            error("Geom.bar required \"x\" to be bound or both \"x_min\" and \"x_max\".")
-        end
-        if (aes.x != nothing && length(aes.x) != length(aes.y)) &&
-           (aes.xmin != nothing && (length(aes.xmin) != length(aes.y) || length(aes.xmax) != length(aes.y)))
-            error("Geom.bar requires x and y to be of equal length.")
-        end
+        Gadfly.assert_aesthetics_defined("BarGeometry", aes, :xmin, :xmax, :y)
+        Gadfly.assert_aesthetics_equal_length("BarGeometry", aes, :xmin, :xmax, :y)
         var = :x
         minvar = :xmin
         maxvar = :xmax
-    end
-
-    if getfield(aes, minvar) === nothing
-        aes2 = Gadfly.Aesthetics()
-        values = getfield(aes, var)
-        minvalue, maxvalue = minimum(values), maximum(values)
-        T = typeof((maxvalue - minvalue) / 1.0)
-
-        span = convert(T, zero(T))
-        unique_count = length(Set(values))
-        if unique_count > 1
-            span = (maximum(values) - minimum(values)) / convert(Float64, (unique_count - 1))
-        end
-
-        if span == convert(T, zero(T))
-            span = convert(T, one(T))
-        end
-
-        T = promote_type(eltype(values), typeof(span/2.0))
-        setfield!(aes2, minvar, Array(T, length(values)))
-        setfield!(aes2, maxvar, Array(T, length(values)))
-
-        for (i, x) in enumerate(values)
-            getfield(aes2, minvar)[i] = x - span/2.0
-            getfield(aes2, maxvar)[i] = x + span/2.0
-        end
-        aes = inherit(aes, aes2)
     end
 
     if aes.color === nothing
@@ -333,5 +300,3 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         linewidth(theme.highlight_width),
         svgattribute("shape-rendering", "crispEdges"))
 end
-
-

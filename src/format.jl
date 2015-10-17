@@ -3,7 +3,7 @@
 
 # Print a floating point number at fixed precision. Pretty much equivalent to
 # @sprintf("%0.$(precision)f", x), without the macro issues.
-function format_fixed(x::FloatingPoint, precision::Integer)
+function format_fixed(x::AbstractFloat, precision::Integer)
     @assert precision >= 0
 
     if x == Inf
@@ -16,7 +16,7 @@ function format_fixed(x::FloatingPoint, precision::Integer)
 
     Base.Grisu.@grisu_ccall x Base.Grisu.FIXED precision
     point, len, digits = (Base.Grisu.POINT[1], Base.Grisu.LEN[1], Base.Grisu.DIGITS)
-    ss = Uint8[]
+    ss = UInt8[]
     if x < 0
         push!(ss, '-')
     end
@@ -57,7 +57,7 @@ end
 
 # Print a floating point number in scientific notation at fixed precision. Sort of equivalent
 # to @sprintf("%0.$(precision)e", x), but prettier printing.
-function format_fixed_scientific(x::FloatingPoint, precision::Integer,
+function format_fixed_scientific(x::AbstractFloat, precision::Integer,
                                  engineering::Bool)
     if x == 0.0
         return "0"
@@ -120,7 +120,7 @@ formatter() = string
 
 
 # Nicely format an print some numbers.
-function formatter{T<:FloatingPoint}(xs::AbstractArray{T}; fmt=:auto)
+function formatter{T<:AbstractFloat}(xs::AbstractArray{T}; fmt=:auto)
     if length(xs) <= 1
         return string
     end

@@ -62,6 +62,22 @@ function default_middle_color(fill_color::TransparentColor)
         fill_color.alpha)
 end
 
+ 
+get_stroke_vector(::@compat(Void)) = []
+get_stroke_vector(vec::AbstractVector) = vec
+function get_stroke_vector(linestyle::Symbol)
+  dash = 12 * Compose.mm
+  dot = 3 * Compose.mm
+  gap = 2 * Compose.mm
+  linestyle == :solid && return []
+  linestyle == :dash && return [dash, gap]
+  linestyle == :dot && return [dot, gap]
+  linestyle == :dashdot && return [dash, gap, dot, gap]
+  linestyle == :dashdotdot && return [dash, gap, dot, gap, dot, gap]
+  error("unsupported linestyle: ", linestyle)
+end
+
+
 @varset Theme begin
     # If the color aesthetic is not mapped to anything, this is the color that
     # is used.
@@ -72,6 +88,10 @@ end
 
     # Width of lines in the line geometry.
     line_width,            Measure,         0.3mm
+
+    # type of dash style (a Compose.StrokeDash object which takes a vector of sold/missing/solid/missing/... 
+    # lengths which are applied cyclically)
+    line_style,            Maybe(Vector),   nothing
 
     # Background color of the plot.
     panel_fill,            ColorOrNothing,  nothing
@@ -99,27 +119,27 @@ end
     grid_line_width,       Measure,         0.2mm
 
     # Font name, size, and color used for tick labels, entries in keys, etc.
-    minor_label_font,      String,          label_font_desc
+    minor_label_font,      AbstractString,          label_font_desc
     minor_label_font_size, Measure,         8pt
     minor_label_color,     ColorOrNothing,  colorant"#6c606b"
 
     # Font name, size and color used for axis labels, key title, etc.
-    major_label_font,      String,          title_font_desc
+    major_label_font,      AbstractString,          title_font_desc
     major_label_font_size, Measure,         11pt
     major_label_color,     ColorOrNothing,  colorant"#564a55"
 
     # Font name, size and color used for labels on plot elements.
-    point_label_font,      String,          label_font_desc
+    point_label_font,      AbstractString,          label_font_desc
     point_label_font_size, Measure,         8pt
     point_label_color,     ColorOrNothing,  colorant"#4c404b"
 
     # Font name, size and color used for key titles
-    key_title_font,      String,          title_font_desc
+    key_title_font,      AbstractString,          title_font_desc
     key_title_font_size, Measure,         11pt
     key_title_color,     ColorOrNothing,  colorant"#362a35"
 
     # Font name, size and color used for key entries.
-    key_label_font,      String,          title_font_desc
+    key_label_font,      AbstractString,          title_font_desc
     key_label_font_size, Measure,         8pt
     key_label_color,     ColorOrNothing,  colorant"#4c404b"
 
@@ -173,7 +193,7 @@ end
     key_position,          Symbol,          :right
 
     # True if bars in bar plots should be stroked. Stroke color is
-    bar_highlight,         Union(Nothing, Function, Color),   nothing
+    bar_highlight,         @compat(Union{(@compat Void), Function, Color}),   nothing
 
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.

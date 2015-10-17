@@ -1,9 +1,8 @@
 !["Alice looked up at the Rocking-horse-fly with great interest, and made up her
 mind that it must have been just repainted, it looked so bright and sticky."](http://dcjones.github.com/Gadfly.jl/rockinghorsefly.png)
 
-Julia 0.3 [![Gadfly](http://pkg.julialang.org/badges/Gadfly_release.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=release)
-
-Julia 0.4 [![Gadfly](http://pkg.julialang.org/badges/Gadfly_nightly.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=nightly)
+[![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.3.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.3)
+[![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.4.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.4)
 
 [![DOI](https://zenodo.org/badge/6322/dcjones/Gadfly.jl.png)](http://dx.doi.org/10.5281/zenodo.11876) [![Build Status](http://img.shields.io/travis/dcjones/Gadfly.jl.svg)](https://travis-ci.org/dcjones/Gadfly.jl) [![Coverage Status](http://img.shields.io/coveralls/dcjones/Gadfly.jl.svg)](https://coveralls.io/r/dcjones/Gadfly.jl)
 
@@ -20,6 +19,9 @@ and Hadley Wickham's refinement of that grammar in
 It renders publication quality graphics to PNG, Postscript, PDF, SVG. The SVG
 backend uses embedded javascript, powered by [Snap.svg](http://snapsvg.io/) to
 add interactivity like panning, zooming, and toggling.
+
+Other interactive features like selecting and inspecting values are available
+through [Immerse.jl](https://github.com/JuliaGraphics/Immerse.jl).
 
 Check out the [manual](http://gadflyjl.org) for more details and
 examples.
