@@ -304,7 +304,7 @@ end
 # Returns:
 #   A Plot object.
 #
-function plot(data_source::@compat(Union{Nothing, AbstractMatrix, AbstractDataFrame}),
+function plot(data_source::@compat(Union{(@compat Void), AbstractMatrix, AbstractDataFrame}),
               mapping::Dict, elements::ElementOrFunctionOrLayers...)
     mapping = cleanmapping(mapping)
     p = Plot()
