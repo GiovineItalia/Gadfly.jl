@@ -196,7 +196,9 @@ end
     bar_highlight,         @compat(Union{(@compat Void), Function, Color}),   nothing
 
     # Symbol forms used for the shape aesthetic
-    shapes,               Vector{Function},  [circle, square, diamond, cross]
+    shapes,               Vector{Function},  [circle, square, diamond, cross,
+                                              xcross, utriangle, dtriangle,
+                                              star1, star2, hexagon, octagon]
 
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.
