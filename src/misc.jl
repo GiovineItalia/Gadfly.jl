@@ -475,65 +475,6 @@ else
 end
 
 
-# TODO: This is a clusterfuck. I should really just wrap Date types to force
-# them to behave how I want.
-
-if !method_exists(/, (Dates.Day, Dates.Day))
-    /(a::Dates.Day, b::Dates.Day) = a.value / b.value
-end
-
-if VERSION < v"0.4.0-dev"
-    Base.convert(::Type{Dates.Millisecond}, d::Dates.Day) =
-        Dates.Millisecond(24 * 60 * 60 * 1000 * Dates.value(d))
-end
-
-if !method_exists(/, (Dates.Day, Real))
-    /(a::Dates.Day, b::Real) = Dates.Day(round(Integer, (a.value / b)))
-end
-/(a::Dates.Day, b::AbstractFloat) = convert(Dates.Millisecond, a) / b
-
-if !method_exists(/, (Dates.Millisecond, Dates.Millisecond))
-    /(a::Dates.Millisecond, b::Dates.Millisecond) = a.value / b.value
-end
-
-if !method_exists(/, (Dates.Millisecond, Real))
-    /(a::Dates.Millisecond, b::Real) = Dates.Millisecond(round(Integer, (a.value / b)))
-end
-/(a::Dates.Millisecond, b::AbstractFloat) = Dates.Millisecond(round(Integer, (a.value / b)))
-
-
-if !method_exists(-, (Dates.Date, Dates.DateTime))
-    -(a::Dates.Date, b::Dates.DateTime) = convert(Dates.DateTime, a) - b
-end
-
-+(a::Dates.Date, b::Dates.Millisecond) = convert(Dates.DateTime, a) + b
-
-if !method_exists(-, (Dates.DateTime, Dates.Date))
-    -(a::Dates.DateTime, b::Dates.Date) = a - convert(Dates.DateTime, b)
-end
-
-
-if !method_exists(/, (Dates.Day, Dates.Millisecond))
-    /(a::Dates.Day, b::Dates.Millisecond) = convert(Dates.Millisecond, a) / b
-end
-
-for T in [Dates.Hour, Dates.Minute, Dates.Second, Dates.Millisecond]
-    if !method_exists(-, (Dates.Date, T))
-        @eval begin
-            -(a::Dates.Date, b::$(T)) = convert(Dates.DateTime, a) - b
-        end
-    end
-end
-
-
-#if !method_exists(*, (AbstractFloat, Dates.Day))
-    *(a::AbstractFloat, b::Dates.Day) = Dates.Day(round(Integer, (a * b.value)))
-    *(a::Dates.Day, b::AbstractFloat) = b * a
-    *(a::AbstractFloat, b::Dates.Millisecond) = Dates.Millisecond(round(Integer, (a * b.value)))
-    *(a::Dates.Millisecond, b::AbstractFloat) = b * a
-#end
-
-
 # Arbitrarily order colors
 function color_isless(a::Color, b::Color)
     return color_isless(convert(RGB{Float32}, a), convert(RGB{Float32}, b))
