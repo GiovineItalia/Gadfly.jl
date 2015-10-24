@@ -118,7 +118,7 @@ backends = @compat Dict{AbstractString, Function}(
 
 
 function run_tests(output_filename)
-    testdir = Pkg.dir("Gadfly", "test")
+    testdir = dirname(@__FILE__)
     whitelist = Set()
     if !isempty(ARGS)
         union!(whitelist, ARGS)
