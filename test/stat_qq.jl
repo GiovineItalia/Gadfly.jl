@@ -1,4 +1,3 @@
-
 using Gadfly
 using Distributions
 
@@ -34,4 +33,3 @@ pl8 = plot(x=z, y=Exponential(), Stat.qq, Geom.point, Scale.x_log, Scale.y_log)
 #plot(xmin=[1], xmax=[15], y=[exp], Stat.func, Geom.line, Scale.y_log)
 
 vstack(pl1, pl2, pl3, pl4, pl5, pl6, pl7, pl8)
-

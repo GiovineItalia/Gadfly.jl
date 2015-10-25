@@ -1,4 +1,3 @@
-
 using Gadfly, DataFrames
 
 #demonstration of BLE channel hopping noise avoidance
@@ -8,8 +7,8 @@ function gaussian(x, mu, sigmaSquared)
 end
 
 WiFiFreqs = [2412, 2437, 2462]
-BLEFreqs = vcat([2404 : 2 : 2424], [2428 : 2 : 2478])
-x = [2400 : 1 : 2500]
+BLEFreqs = vcat(2404:2:2424, 2428:2:2478)
+x = [2400:1:2500;]
 
 WiFiPlots = [2.0 * gaussian(ix, iy, 40.0) for ix=x, iy=WiFiFreqs]
 
@@ -26,5 +25,3 @@ plot(
           Theme(default_color=colorant"#ff8585", default_point_size=5px)),
      Scale.y_sqrt
 )
-
-

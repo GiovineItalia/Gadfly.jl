@@ -1,23 +1,16 @@
-language: cpp
-compiler:
-    - clang
+language: julia
+os:
+  - linux
+  - osx
+julia:
+  - 0.4
+  - nightly
 notifications:
-    email: false
-env:
-    - JULIAVERSION="juliareleases"
-    - JULIAVERSION="julianightlies"
-branches:
-    only:
-        - master
-before_install:
-    - sudo add-apt-repository ppa:staticfloat/julia-deps -y
-    - sudo add-apt-repository ppa:staticfloat/${JULIAVERSION} -y
-    - sudo apt-get update -qq -y
-    - sudo apt-get install git libpcre3-dev julia -y
-    - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  email: false
 script:
-    - julia -e 'Pkg.init(); Pkg.clone(pwd())'
-    - julia -e 'Pkg.checkout("Compose")'
-    - julia -e 'Pkg.test("Gadfly", coverage=true)'
+  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  - julia -e 'Pkg.clone(pwd()); Pkg.build("Gadfly");'
+  - julia -e 'Pkg.checkout("Compose")'
+  - julia --check-bounds=yes -e 'Pkg.test("Gadfly", coverage=true)'
 after_success:
-    - julia -e 'cd(Pkg.dir("Gadfly")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  - julia -e 'cd(Pkg.dir("Gadfly")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
