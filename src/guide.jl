@@ -1056,6 +1056,49 @@ function render(guide::Title, theme::Gadfly.Theme,
 end
 
 
+immutable XRug <: Gadfly.GuideElement
+end
+
+const xrug = XRug
+
+
+function render(guide::XRug, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("Guide.xrug", aes, :x)
+    padding = 0.4mm
+
+    ctx = compose!(context(minheight=theme.rug_size),
+        (context(clip=true),
+         line([[(x, 0h + padding), (x, 1h - padding)] for x in aes.x]),
+         stroke(theme.default_color),
+         linewidth(theme.line_width),
+         svgclass("guide yfixed")))
+
+    return [PositionedGuide([ctx], 20, bottom_guide_position)]
+end
+
+
+immutable YRug <: Gadfly.GuideElement
+end
+
+const yrug = YRug
+
+
+function render(guide::YRug, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("Guide.yrug", aes, :y)
+    padding = 0.4mm
+
+    ctx = compose!(context(minwidth=theme.rug_size, clip=true),
+        line([[(0w + padding, y), (1w - padding, y)] for y in aes.y]),
+        stroke(theme.default_color),
+        linewidth(theme.line_width),
+        svgclass("guide xfixed"))
+
+    return [PositionedGuide([ctx], 20, right_guide_position)]
+end
+
+
 # Arrange a plot with its guides
 #
 # Args:

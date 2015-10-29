@@ -200,6 +200,8 @@ end
                                               xcross, utriangle, dtriangle,
                                               star1, star2, hexagon, octagon]
 
+    rug_size,             Measure,          2.0mm
+
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.
 
