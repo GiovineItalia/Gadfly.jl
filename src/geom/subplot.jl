@@ -60,16 +60,22 @@ function add_subplot_element{T <: Gadfly.Element}(subplot::SubplotGeometry,
 end
 
 
+function add_subplot_element(subplot::SubplotGeometry, coord::Gadfly.CoordinateElement)
+    subplot.coord = coord
+end
+
+
 function add_subplot_element(subplot::SubplotGeometry, arg)
     error("Subplots do not support elements of type $(typeof(arg))")
 end
 
 
-immutable SubplotGrid <: SubplotGeometry
+type SubplotGrid <: SubplotGeometry
     layers::Vector{Gadfly.Layer}
     statistics::Vector{Gadfly.StatisticElement}
     scales::Vector{Gadfly.ScaleElement}
     guides::Dict{Type, Gadfly.GuideElement}
+    coord::Gadfly.CoordinateElement
     free_x_axis::Bool
     free_y_axis::Bool
 
@@ -78,7 +84,8 @@ immutable SubplotGrid <: SubplotGeometry
     function SubplotGrid(elements::Gadfly.ElementOrFunctionOrLayers...;
                          free_x_axis=false, free_y_axis=false)
         subplot = new(Gadfly.Layer[], Gadfly.ScaleElement[], Gadfly.StatisticElement[],
-                      Dict{Type, Gadfly.GuideElement}(), free_x_axis, free_y_axis)
+                      Dict{Type, Gadfly.GuideElement}(), Coord.cartesian(),
+                      free_x_axis, free_y_axis)
 
         for element in elements
             add_subplot_element(subplot, element)
@@ -169,7 +176,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         layer_data_grid[i] = Gadfly.by_xy_group(data, aes.xgroup, aes.ygroup, m, n)
     end
 
-    coord = Coord.cartesian()
+    coord = geom.coord
     plot_stats = Gadfly.StatisticElement[stat for stat in geom.statistics]
     layer_stats = [isempty(layer.statistics) ?
                         Gadfly.StatisticElement[Geom.default_statistic(layer.geom)] : layer.statistics
