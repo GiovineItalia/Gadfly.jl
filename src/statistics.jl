@@ -609,7 +609,7 @@ function apply_statistic(stat::Histogram2DStatistic,
                                             yminbincount, ymaxbincount)
 
     wx = x_categorial ? 1 : (x_max - x_min) / dx
-    wy = y_categorial ? 1 : (y_max - y_min) / dx
+    wy = y_categorial ? 1 : (y_max - y_min) / dy
 
     n = 0
     for cnt in bincounts
