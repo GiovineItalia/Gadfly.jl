@@ -10,6 +10,7 @@ using Gadfly
 using Measures
 
 import Compose.combine # Prevent DataFrame.combine from taking over.
+using Compose.parse_colorant
 import Gadfly: render, layers, element_aesthetics, inherit, escape_id,
                default_statistic, default_scales, element_coordinate_type,
                ScaleElement, svg_color_class_from_label, isconcrete,
