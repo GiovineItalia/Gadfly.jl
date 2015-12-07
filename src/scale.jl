@@ -104,7 +104,7 @@ const ln_transform =
 
 
 function asinh_formatter(xs::AbstractArray, format=:plain)
-    [@sprintf("asinh(%s)", x) for x in showoff(xs, format)]
+    [@sprintf("sinh(%s)", x) for x in showoff(xs, format)]
 end
 
 const asinh_transform =
