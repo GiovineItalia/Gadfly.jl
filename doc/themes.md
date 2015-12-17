@@ -85,3 +85,9 @@ srand(12345)
 plot(x=rand(10), y=rand(10),
      Theme(panel_fill=colorant"black", default_color=colorant"orange"))
 ```
+
+Setting the font to Computer Modern to create a LaTeX-like look, and choosing a font size:
+```julia
+plot(x=rand(10), y=rand(10),
+     Theme(major_label_font="CMU Serif",minor_label_font="CMU Serif",major_label_font_size=16pt,minor_label_font_size=14pt))
+```
