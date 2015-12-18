@@ -56,7 +56,7 @@ overrides the default theme's value.
   * `highlight_color`: Color used to outline plot geometry. This is a function
     that alters (e.g. darkens) the fill color of the geometry. (Function)
   * `lowlight_color`: Color used to draw background geometry, such as
-    `Geom.ribbon`. This is a function tha altern the fill color of the geometry.
+    `Geom.ribbon`. This is a function that alters the fill color of the geometry.
     (Function)
   * `lowlight_opacity`: Opacity of background geometry such as `Geom.ribbon`.
     (Float64)
