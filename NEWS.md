@@ -2,6 +2,10 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 0.4.1
+
+  * Add transformed continuous color scales (`Scale.color_{log,log10,log2,asinh,sqrt}`).
+
 # Version 0.3.16
 
   * Fix a precompilation error when Cairo is not installed.
