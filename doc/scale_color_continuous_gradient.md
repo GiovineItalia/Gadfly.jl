@@ -16,6 +16,15 @@ Create a continuous color scale that the plot will use.
 
 ```continuous_color``` and ```continuous_color_gradient``` are two names for the same thing.
 
+A number of transformed continuous scales are provided.
+
+  * `Scale.color_continuous` (scale without any transformation).
+  * `Scale.color_log10`
+  * `Scale.color_log2`
+  * `Scale.color_log`
+  * `Scale.color_asinh`
+  * `Scale.color_sqrt`
+
 # Aesthetics Acted On
 
 `color`
