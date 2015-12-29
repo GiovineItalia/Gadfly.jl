@@ -119,24 +119,67 @@ end
 
 # Simple heatmap plots of matrices.
 #
+# It is a wrapper around the `plot()` function using the `rectbin` geometry.
+# It also applies a sane set of defaults to make sure that the plots look nice
+# by default. Specifically
+#   - the aspect ratio of the coordinate system is fixed Coord.cartesian(fixed=true),
+#     so that the rectangles become squares
+#   - the axes run from 0.5 to N+0.5, because the first row/column is drawn to
+#     (0.5, 1.5) and the last one to (N-0.5, N+0.5).
+#   - the y-direction is flipped, so that the [1,1] of a matrix is in the top
+#     left corner, as is customary
+#   - NaNs are not drawn. `spy` leaves "holes" instead into the heatmap.
+#
 # Args:
 #   M: A matrix.
 #
 # Returns:
 #   A plot object.
 #
+# Known bugs:
+#   - If the matrix is only NaNs, then it throws an `ArgumentError`, because
+#     an empty collection gets passed to the `plot` function / `rectbin` geometry.
+#
 function spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...)
-    is, js, values = findnz(M)
-    df = DataFrame(i=is, j=js, value=values)
-    plot(df, x="j", y="i", color="value",
-         Coord.cartesian(yflip=true),
-         Scale.color_continuous,
-         Scale.x_continuous,
-         Scale.y_continuous,
-         Stat.rectbin,
-         Geom.rectbin,
-         elements...;
-         mapping...)
+    is, js, values = _findnz(x->!isnan(x), M)
+    n,m = size(M)
+    df = DataFrames.DataFrame(i=is, j=js, value=values)
+    plot(df, x=:j, y=:i, color=:value,
+        Coord.cartesian(yflip=true, fixed=true, xmin=0.5, xmax=m+.5, ymin=0.5, ymax=n+.5),
+        Scale.color_continuous,
+        Geom.rectbin,
+        Scale.x_continuous,
+        Scale.y_continuous,
+        elements...; mapping...)
 end
 
-
+# Finds the subscripts and values where the predicate returns true.
+#
+# It takes a predicate (`testf`), a matrix (`A`) and returns a tuple `(is, js, zs)`,
+# where `is`,'js' and 'zs' are arrays of subscripts and values where the predicate
+# returned true.
+#
+# This function is used by spy()
+# Hopefully at some point something like this will be in the standard library
+# and then this can be removed (https://github.com/JuliaLang/julia/pull/9340).
+#
+function _findnz{T}(testf::Function, A::AbstractMatrix{T})
+    N = Base.count(testf, A)
+    is = zeros(Int, N)
+    js = zeros(Int, N)
+    zs = Array(T, N)
+    if N == 0
+        return (is, js, zs)
+    end
+    count = 1
+    for j=1:size(A,2), i=1:size(A,1)
+        Aij = A[i,j]
+        if testf(Aij)
+            is[count] = i
+            js[count] = j
+            zs[count] = Aij
+            count += 1
+        end
+    end
+    return (is, js, zs)
+end
