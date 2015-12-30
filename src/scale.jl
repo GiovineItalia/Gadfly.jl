@@ -622,8 +622,8 @@ function continuous_color_scale_partial(trans::ContinuousScaleTransform)
         end
     end
 
-    function f(; minvalue=nothing, maxvalue=nothing)
-        ContinuousColorScale(lch_diverge2(), trans, minvalue=minvalue, maxvalue=maxvalue)
+    function f(; minvalue=nothing, maxvalue=nothing, colormap=lch_diverge2())
+        ContinuousColorScale(colormap, trans, minvalue=minvalue, maxvalue=maxvalue)
     end
 end
 
