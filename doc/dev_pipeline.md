@@ -26,7 +26,7 @@ p = plot(df,
 
 actually get turned into the following plot?
 
-```{.julia hide="true"}
+```{.julia hide="true" results="block"}
 df = dataset("ggplot2", "diamonds")
 p = plot(df,
          x = :Price, color = :Cut,
