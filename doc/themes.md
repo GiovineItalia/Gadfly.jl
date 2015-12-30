@@ -7,7 +7,7 @@ order: 2
 Many parameters controlling the appearance of plots can be overridden by passing
 a `Theme` object to the `plot` function.
 
-The constructor for `Theme` takes zero or more named argument each of which
+The constructor for `Theme` takes zero or more named arguments each of which
 overrides the default theme's value.
 
 

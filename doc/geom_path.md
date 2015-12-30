@@ -32,6 +32,6 @@ plot(x=cumsum(xjumps),y=cumsum(yjumps),Geom.path())
 Here's a spiral:
 
 ```julia
-t = [0:0.2:8pi]
+t = 0:0.2:8pi
 plot(x=t.*cos(t), y=t.*sin(t), Geom.path)
 ```

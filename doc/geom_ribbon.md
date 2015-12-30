@@ -5,7 +5,7 @@ part: Geometry
 order: 1014
 ...
 
-Draw a ribbon bounded above and below by `ymin` and `ymin`, respectively.
+Draw a ribbon bounded above and below by `ymin` and `ymax`, respectively.
 
 # Aesthetics
 

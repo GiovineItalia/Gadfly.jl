@@ -18,10 +18,6 @@ overlap, and hides any that would overlap.
 
 # Arguments
 
-```{.julia execute="false"}
-Geom.label(;hide_overlaps=true)
-```
-
   * `position`: One of `:dynamic`, `:left`, `:right`, `:above`, `:below`,
     `:centered`. If `:dynamic` is used, label positions will be adjusted to
     avoid overaps. Otherwise, labels will be statically positioned left, right,

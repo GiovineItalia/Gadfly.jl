@@ -22,8 +22,8 @@ Or
   * x
   * y
 
-In the former case, an rectangles defined by `x_min`, `x_max`, `y_min`, `y_max`
-are drawn, in the latter, equal sizes sequares are centered at `x` and `y`
+In the former case, rectangles defined by `x_min`, `x_max`, `y_min`, `y_max`
+are drawn, in the latter, equal sizes squares are centered at `x` and `y`
 positions.
 
 # See Also
