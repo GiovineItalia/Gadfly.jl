@@ -104,7 +104,7 @@ const ln_transform =
 
 
 function asinh_formatter(xs::AbstractArray, format=:plain)
-    [@sprintf("asinh(%s)", x) for x in showoff(xs, format)]
+    [@sprintf("sinh(%s)", x) for x in showoff(xs, format)]
 end
 
 const asinh_transform =
@@ -203,7 +203,7 @@ end
 # Apply a continuous scale.
 #
 # Args:
-#   scale: A continuos scale.
+#   scale: A continuous scale.
 #   datas: Zero or more data objects.
 #   aess: Aesthetics (of the same length as datas) to update with scaled data.
 #
@@ -599,23 +599,18 @@ end
 immutable ContinuousColorScale <: Gadfly.ScaleElement
     # A function of the form f(p) where 0 <= p <= 1, that returns a color.
     f::Function
+    trans::ContinuousScaleTransform
 
     minvalue
     maxvalue
 
-    function ContinuousColorScale(f::Function; minvalue=nothing, maxvalue=nothing)
-        new(f, minvalue, maxvalue)
+    function ContinuousColorScale(f::Function, trans::ContinuousScaleTransform=identity_transform; minvalue=nothing, maxvalue=nothing)
+        new(f, trans, minvalue, maxvalue)
     end
 end
 
 
-element_aesthetics(::ContinuousColorScale) = [:color]
-
-
-function color_continuous_gradient(;minvalue=nothing, maxvalue=nothing)
-
-    # TODO: this should be made more general purpose. I.e. define some
-    # more color scales.
+function continuous_color_scale_partial(trans::ContinuousScaleTransform)
     function lch_diverge2(l0=30, l1=100, c=40, h0=260, h1=10, hmid=20, power=1.5)
         lspan = l1 - l0
         hspan1 = hmid - h0
@@ -627,15 +622,27 @@ function color_continuous_gradient(;minvalue=nothing, maxvalue=nothing)
         end
     end
 
-    ContinuousColorScale(
-        lch_diverge2(),
-        minvalue=minvalue, maxvalue=maxvalue)
+    function f(; minvalue=nothing, maxvalue=nothing)
+        ContinuousColorScale(lch_diverge2(), trans, minvalue=minvalue, maxvalue=maxvalue)
+    end
 end
 
+
+# Commonly used scales.
+const color_continuous = continuous_color_scale_partial(identity_transform)
+const color_log10      = continuous_color_scale_partial(log10_transform)
+const color_log2       = continuous_color_scale_partial(log2_transform)
+const color_log        = continuous_color_scale_partial(ln_transform)
+const color_asinh      = continuous_color_scale_partial(asinh_transform)
+const color_sqrt       = continuous_color_scale_partial(sqrt_transform)
+
+const color_continuous_gradient = color_continuous
+
+
+element_aesthetics(::ContinuousColorScale) = [:color]
+
+
 @deprecate continuous_color_gradient(;minvalue=nothing, maxvalue=nothing) color_continuous_gradient(;minvalue=minvalue, maxvalue=maxvalue)
-
-
-const color_continuous = color_continuous_gradient
 
 @deprecate continuous_color(;minvalue=nothing, maxvalue=nothing) color_continuous(;minvalue=nothing, maxvalue=nothing)
 
@@ -679,6 +686,9 @@ function apply_scale(scale::ContinuousColorScale,
 
     cmin, cmax = promote(cmin, cmax)
 
+    cmin = scale.trans.f(cmin)
+    cmax = scale.trans.f(cmax)
+
     ticks, viewmin, viewmax = Gadfly.optimize_ticks(cmin, cmax)
     if ticks[1] == 0 && cmin >= 1
         ticks[1] = 1
@@ -699,7 +709,7 @@ function apply_scale(scale::ContinuousColorScale,
         color_key_colors = Dict{Color, Float64}()
         color_key_labels = Dict{Color, AbstractString}()
 
-        tick_labels = identity_formatter(ticks)
+        tick_labels = scale.trans.label(ticks)
         for (i, j, label) in zip(ticks, ticks[2:end], tick_labels)
             r = (i - cmin) / cspan
             c = scale.f(r)
@@ -726,7 +736,7 @@ function apply_scale_typed!(ds, field, scale::ContinuousColorScale,
                             cmin::Float64, cspan::Float64)
     for (i, d) in enumerate(field)
         if isconcrete(d)
-            ds[i] = convert(RGB{Float32}, scale.f((convert(Float64, d) - cmin) / cspan))
+            ds[i] = convert(RGB{Float32}, scale.f((convert(Float64, scale.trans.f(d)) - cmin) / cspan))
         else
             ds[i] = NA
         end
