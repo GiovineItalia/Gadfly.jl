@@ -5,16 +5,13 @@ graphics system for Julia. Though currently far from complete, some basics are
 up and running. This document will show some examples of what currently works
 while giving you a feel for the overall system.
 
-To begin, we need some data. The data Gadfly plots is always given in the form
+To begin, we need some data. The data Gadfly plots can be given in the form
 of a DataFrame. We'll pick and choose some examples from the RDatasets packages.
 
 Fisher's iris data set is a good starting point.
 
 ```julia
-load("Gadfly")
 using Gadfly
-
-load("RDatasets")
 using RDatasets
 
 iris = data("datasets", "iris")
@@ -34,34 +31,30 @@ grammar.
 Let's get to it.
 
 ```julia
-p = plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"}, Geom.point)
+p = plot(iris, x="SepalLength", y="SepalWidth", Geom.point)
 ```
 
-This produces a `Plot` object. We can turn it into a graphic by calling `render`
-on it, and this can then in turn be drawn on one or more backends.
+This produces a `Plot` object. It can be drawn on one or more backends using `draw`.
 
 ```julia
-g = render(p)
-
 img = SVG("iris_plot.svg", 6inch, 4inch)
-draw(img, g)
-finish(img)
+draw(img, p)
 ```
 
 Now we have the following charming little SVG image.
 
 ![Iris Plot 1](http://dcjones.github.com/gadfly/iris1.svg)
 
-For the rest of the demonstrations, we'll omit the `render` and `draw` calls for
+For the rest of the demonstrations, we'll omit the `draw` call for
 brevity.
 
-In this plot we've mapped the x aesthetic to the `Sepal.Length` column and the y
-aesthetic to the `Sepal.Width`. The last argument, `Geom.point`, is a geometry
+In this plot we've mapped the x aesthetic to the `SepalLength` column and the y
+aesthetic to the `SepalWidth`. The last argument, `Geom.point`, is a geometry
 element which takes bound aesthetics and render delightful figures. Adding other
 geometries produces layers, which may or may not result in a coherent plot.
 
 ```julia
-p = plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"},
+p = plot(iris, x="SepalLength", y="SepalWidth",
          Geom.point, Geom.line)
 ```
 
@@ -75,7 +68,7 @@ furiously". It is valid grammar, but not particularly meaningful.
 Let's do add something meaningful by mapping the color aesthetic.
 
 ```julia
-p = plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width", :color => "Species"},
+p = plot(iris, x="SepalLength", y="SepalWidth", color="Species",
          Geom.point)
 ```
 
@@ -95,7 +88,7 @@ useful.
 
 ```julia
 mammals = data("MASS", "mammals")
-p = plot(mammals, {:x => "body", :y => "brain"}, Geom.point)
+p = plot(mammals, x="body", y="brain", Geom.point)
 ```
 
 ![Mammal Plot 1](http://dcjones.github.com/gadfly/mammals1.svg)
@@ -104,7 +97,7 @@ This is no good, the whales are ruining things for us. Putting both axis on a
 log-scale clears things up.
 
 ```julia
-p = plot(mammals, {:x => "body", :y => "brain"},
+p = plot(mammals, x="body", y="brain",
          Geom.point, Scale.x_log10, Scale.y_log10)
 ```
 
@@ -118,14 +111,12 @@ crack at the latter using some fuel efficiency data.
 ```julia
 gasoline = data("Ecdat", "Gasoline")
 
-p = plot(gasoline, {:x => "year", :y => "lgaspcar", :color => "country"},
+p = plot(gasoline, x="year", y="lgaspcar", color="country",
          Geom.point, Geom.line)
 
 # Make this image wider so the axis labels fit
-g = render(p)
 img = SVG("gasoline_plot.svg", 9inch, 4inch)
-draw(img, g)
-finish(img)
+draw(img, p)
 ```
 
 ![Gasoline Plot 1](http://dcjones.github.com/gadfly/gasoline1.svg)
@@ -134,7 +125,7 @@ We could have added `Scale.x_discrete` explicitly, but this is detected and the
 right default is chosen. This is the case with most of elements in the grammar:
 we've omitted `Scale.x_continuous` and `Scale.y_continuous` in the previous
 plots, as well as `Coord.cartesian`, and guide elements such as
-`Guide.color_key`, `Guide.x_ticks`, `Guide.XLabel`, and so on. As much as
+`Guide.colorkey`, `Guide.xticks`, `Guide.xlabel`, and so on. As much as
 possible the system tries to fill in the gaps with reasonable defaults.
 
 ### Rendering
@@ -149,14 +140,12 @@ Building graphics declaratively let's you do some fun things. Like stick two
 plots together:
 
 ```julia
-fig1a = render(plot(iris, {:x => "Sepal.Length", :y => "Sepal.Width"},
-                    Geom.point))
-fig1b = render(plot(iris, {:x => "Sepal.Width"}, Geom.bar))
+fig1a = plot(iris, x="SepalLength", y="SepalWidth", Geom.point)
+fig1b = plot(iris, x="SepalWidth", Geom.bar)
 fig1 = hstack(fig1a, fig1b)
 
 img = SVG("fig1.svg", 9inch, 4inch)
 draw(img, fig1)
-finish(img)
 ```
 
 ![Fig1](http://dcjones.github.com/gadfly/fig1.svg)
