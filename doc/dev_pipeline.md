@@ -24,9 +24,9 @@ p = plot(df,
 		 Geom.bar)
 ```
 
-actually get turned into following plot?
+actually get turned into the following plot?
 
-```{.julia hide="true"}
+```{.julia hide="true" results="block"}
 df = dataset("ggplot2", "diamonds")
 p = plot(df,
          x = :Price, color = :Cut,
@@ -43,7 +43,7 @@ The specification of each layer has
 - a **data source** (e.g. `dataset("ggplot2", "diamonds")`)
 - a **geometry** to represent the layer's data (e.g. point, line, etc.)
 - **mappings** to associate aesthetics of the geometry with elements of the data source (e.g.  `:color => :Cut`)
-- layer-wise **statistics** (optional) to be applied to the layer's data 
+- layer-wise **statistics** (optional) to be applied to the layer's data
 
 All layers of a plot share the same
 

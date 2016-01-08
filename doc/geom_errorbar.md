@@ -5,7 +5,7 @@ part: Geometry
 order: 1002
 ...
 
-Draw an vertical and/or horizontal error bars.
+Draw vertical and/or horizontal error bars.
 
 # Aesthetics
 

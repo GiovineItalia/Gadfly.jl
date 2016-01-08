@@ -5,16 +5,16 @@ part: Geometry
 order: 1011
 ...
 
-Draw multiple subplots in a grid orginized by one or two categorial vectors.
+Draw multiple subplots in a grid organized by one or two categorial vectors.
 
 
 # Aesthetics
 
   * `xgroup` (optional): Arrange subplots on the X-axis by categorial data.
   * `ygroup` (optional): Arrange subplots on the Y-axis by categorial data.
-  * `free_y_axis` (optional): Whether the y-axis scales can differ across 
+  * `free_y_axis` (optional): Whether the y-axis scales can differ across
   the subplots. Defaults to `false`. If `true`, scales are set appropriately for individual subplots.
-  * `free_x_axis` (optional): Whether the x-axis scales can differ across 
+  * `free_x_axis` (optional): Whether the x-axis scales can differ across
   the subplots. Defaults to `false`. If `true`, scales are set appropriately for individual subplots.
 
 

@@ -130,7 +130,7 @@ plot(data::AbstractDataFrame, elements::Element...; mapping...)
 The [RDatasets](https://github.com/johnmyleswhite/RDatasets.jl) package collects
 example data sets from R packages. We'll use that here to generate some example
 plots on realistic data sets. An example data set is loaded into a data frame
-usinge the `data` function.
+using the `dataset` function.
 
 
 ```julia

@@ -21,7 +21,7 @@ Draw histograms. An alias for `Geom.bar` with `Stat.histogram`.
   * `orientation`: Either `:vertical` (default) or `:horizontal`. If
     `:horizontal`, then the required aesthetic is `y` instead of `x`.
   * `bincount`: Number of bins to use. If unspecified, an optimization method
-    be used to deterimine a reasonable value.
+    is used to determine a reasonable value.
   * `minbincount`: Set a lower limit when automatically choosing a bin count.
   * `maxbincount`: Set an upper limit when automatically choosing a bin count.
   * `density`: If true, use density rather that counts.

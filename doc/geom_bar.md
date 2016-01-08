@@ -7,7 +7,7 @@ order: 1003
 
 Draw bar plots. This geometry works on pre-summarized data such as counts. To
 draw histograms from a series of observations, add `Stat.histogram` to the plot,
-or use the conevient geometry `Geom.histogram`.
+or use the convenient geometry `Geom.histogram`.
 
 # Aesthetics
 

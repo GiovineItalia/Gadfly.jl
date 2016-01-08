@@ -23,7 +23,7 @@ Aesthetics used directly:
   * `upper_fence`
   * `outliers`
 
-With default statistic `Stat.boxplot`, only the following aesthetics need b
+With default statistic `Stat.boxplot`, only the following aesthetics need to be
 defined:
 
   * `x` (optional): Group categorically on the X-axis.
