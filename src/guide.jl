@@ -635,8 +635,38 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         grid_lines = compose!(context(), static_grid_lines)
     end
 
+    # tick marks
+    tick_length = 0.01*max(w,h)
+    static_tick_marks = compose!(
+        context(withoutjs=true),
+        stroke(theme.tick_color),
+        linewidth(theme.grid_line_width),
+        svgclass("guide xticks yfixed"),
+        (context(),line([[(t, 0h), (t, 0h + tick_length)] for t in grids])),
+        (context(),line([[(t, 1h), (t, 1h - tick_length)] for t in grids])))
+
+    if dynamic
+        dynamic_tick_marks = compose!(
+            context(withjs=true),
+            visible(gridvisibility),
+            stroke(theme.tick_color),
+            linewidth(theme.grid_line_width),
+            svgclass("guide xticks yfixed"),
+            svgattribute("gadfly:scale", scale),
+            jsplotdata("focused_xtick_color",
+                       "\"#$(hex(theme.grid_color_focused))\""),
+            jsplotdata("unfocused_xtick_color",
+                       "\"#$(hex(theme.grid_color))\""),
+            (context(),line([[(t, 0h), (t, 0h + tick_length)] for t in grids])),
+            (context(),line([[(t, 1h), (t, 1h - tick_length)] for t in grids])))
+        tick_marks = compose!(context(), static_tick_marks, dynamic_tick_marks)
+    else
+        tick_marks = compose!(context(), static_tick_marks)
+    end
+
     if !guide.label
-        return [PositionedGuide([grid_lines], 0, under_guide_position)]
+        return [PositionedGuide([grid_lines], 0, under_guide_position),
+                PositionedGuide([tick_marks], 1, under_guide_position)]
     end
 
     label_sizes = text_extents(theme.minor_label_font,
@@ -717,7 +747,8 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
     return [PositionedGuide(contexts, 10,
                             bottom_guide_position),
-            PositionedGuide([grid_lines], 0, under_guide_position)]
+            PositionedGuide([grid_lines], 0, under_guide_position),
+            PositionedGuide([tick_marks], 1, under_guide_position)]
 end
 
 
@@ -807,7 +838,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
             svgclass("guide ygridlines xfixed"),
             svgattribute("gadfly:scale", scale),
             jsplotdata("focused_ygrid_color",
-                   "\"#$(    hex(theme.grid_color_focused))\""),
+                   "\"#$(hex(theme.grid_color_focused))\""),
             jsplotdata("unfocused_ygrid_color",
                    "\"#$(hex(theme.grid_color))\""))
         grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
@@ -815,8 +846,38 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         grid_lines = compose!(context(), static_grid_lines)
     end
 
+    # tick marks
+    tick_length = 0.01*max(w,h)
+    static_tick_marks = compose!(
+        context(withoutjs=true),
+        stroke(theme.tick_color),
+        linewidth(theme.grid_line_width),
+        svgclass("guide yticks xfixed"),
+        (context(),line([[(0w, t), (0w + tick_length, t)] for t in grids])),
+        (context(),line([[(1w, t), (1w - tick_length, t)] for t in grids])))
+
+    if dynamic
+        dynamic_tick_marks = compose!(
+            context(withjs=true),
+            visible(gridvisibility),
+            stroke(theme.tick_color),
+            linewidth(theme.grid_line_width),
+            svgclass("guide yticks xfixed"),
+            svgattribute("gadfly:scale", scale),
+            jsplotdata("focused_ytick_color",
+                       "\"#$(hex(theme.grid_color_focused))\""),
+            jsplotdata("unfocused_ytick_color",
+                       "\"#$(hex(theme.grid_color))\""),
+            (context(),line([[(0w, t), (0w + tick_length, t)] for t in grids])),
+            (context(),line([[(1w, t), (1w - tick_length, t)] for t in grids])))
+        tick_marks = compose!(context(), static_tick_marks, dynamic_tick_marks)
+    else
+        tick_marks = compose!(context(), static_tick_marks)
+    end
+
     if !guide.label
-        return [PositionedGuide([grid_lines], 0, under_guide_position)]
+        return [PositionedGuide([grid_lines], 0, under_guide_position),
+                PositionedGuide([tick_marks], 1, under_guide_position)]
     end
 
     label_sizes = text_extents(theme.minor_label_font,
@@ -856,7 +917,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                          penalty=hpenalty), hlayout)
 
     vlayout = ctxpromise() do draw_context
-        static_grid_lines = compose!(
+        static_labels = compose!(
             context(),
             text([1.0w - padding], ticks[tickvisibility], labels[tickvisibility],
                  [hcenter], [vbottom],
@@ -867,7 +928,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
             fontsize(theme.minor_label_font_size),
             svgclass("guide ylabels"))
 
-        dynamic_grid_lines = compose!(
+        dynamic_labels = compose!(
             context(),
             text([1.0w - padding], ticks, labels,
                  [hcenter], [vbottom],
@@ -880,7 +941,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
             svgattribute("gadfly:scale", scale),
             svgclass("guide ylabels"))
 
-        return compose!(context(), static_grid_lines, dynamic_grid_lines)
+        return compose!(context(), static_labels, dynamic_labels)
     end
     vlayout_context =
         compose!(context(minwidth=maximum(label_heights[tickvisibility]),
@@ -899,7 +960,8 @@ function render(guide::YTicks, theme::Gadfly.Theme,
 
     return [PositionedGuide(contexts, 10,
                             left_guide_position),
-            PositionedGuide([grid_lines], 0, under_guide_position)]
+            PositionedGuide([grid_lines], 0, under_guide_position),
+            PositionedGuide([tick_marks], 1, under_guide_position)]
 end
 
 
