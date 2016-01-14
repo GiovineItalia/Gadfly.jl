@@ -56,6 +56,7 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
                     rectangle(),
                     svgclass("guide background"),
                     stroke(theme.panel_stroke),
+                    linewidth(theme.line_width),
                     fill(theme.panel_fill),
                     fillopacity(theme.panel_opacity),
                     svgattribute("pointer-events", "visible"))
@@ -614,13 +615,13 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         linewidth(theme.grid_line_width),
         svgclass("guide xgridlines yfixed"),
         (context(),
+            stroke(theme.tick_color),
+            line([[(t, 0h), (t, 0h + tick_length)] for t in grids[gridvisibility]]),
+            line([[(t, 1h), (t, 1h - tick_length)] for t in grids[gridvisibility]])),
+        (context(),
             line([[(t, 0h), (t, 1h)] for t in grids[gridvisibility]]),
             stroke(theme.grid_color),
-            strokedash(theme.grid_strokedash)),
-        (context(),
-            stroke(theme.tick_color),
-            (context(),line([[(t, 0h), (t, 0h + tick_length)] for t in grids[gridvisibility]])),
-            (context(),line([[(t, 1h), (t, 1h - tick_length)] for t in grids[gridvisibility]]))))
+            strokedash(theme.grid_strokedash)))
 
     if dynamic
         dynamic_grid_lines = compose!(
@@ -630,17 +631,17 @@ function render(guide::XTicks, theme::Gadfly.Theme,
             svgclass("guide xgridlines yfixed"),
             svgattribute("gadfly:scale", scale),
             (context(),
+                stroke(theme.tick_color),
+                line([[(t, 0h), (t, 0h + tick_length)] for t in grids]),
+                line([[(t, 1h), (t, 1h - tick_length)] for t in grids])),
+            (context(),
                 line([[(t, 0h), (t, 1h)] for t in grids]),
                 stroke(theme.grid_color),
                 strokedash(theme.grid_strokedash),
                 jsplotdata("focused_xgrid_color",
                            "\"#$(hex(theme.grid_color_focused))\""),
                 jsplotdata("unfocused_xgrid_color",
-                           "\"#$(hex(theme.grid_color))\"")),
-            (context(),
-                stroke(theme.tick_color),
-                (context(),line([[(t, 0h), (t, 0h + tick_length)] for t in grids])),
-                (context(),line([[(t, 1h), (t, 1h - tick_length)] for t in grids]))))
+                           "\"#$(hex(theme.grid_color))\"")))
         grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
     else
         grid_lines = compose!(context(), static_grid_lines)
@@ -804,13 +805,15 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         context(withoutjs=true),
         linewidth(theme.grid_line_width),
         svgclass("guide ygridlines xfixed"),
-        (context(), line([[(0w, t), (1w, t)] for t in grids[gridvisibility]]),
-            stroke(theme.grid_color),
-            strokedash(theme.grid_strokedash)),
         (context(),
             stroke(theme.tick_color),
-            (context(),line([[(0w, t), (0w + tick_length, t)] for t in grids[gridvisibility]])),
-            (context(),line([[(1w, t), (1w - tick_length, t)] for t in grids[gridvisibility]]))))
+            line([[(0w, t), (0w + tick_length, t)] for t in grids[gridvisibility]]),
+            line([[(1w, t), (1w - tick_length, t)] for t in grids[gridvisibility]])),
+        (context(),
+            line([[(0w, t), (1w, t)] for t in grids[gridvisibility]]),
+            stroke(theme.grid_color),
+            strokedash(theme.grid_strokedash)))
+
 
     if dynamic
         dynamic_grid_lines = compose!(
@@ -819,17 +822,18 @@ function render(guide::YTicks, theme::Gadfly.Theme,
             linewidth(theme.grid_line_width),
             svgclass("guide ygridlines xfixed"),
             svgattribute("gadfly:scale", scale),
-            jsplotdata("focused_ygrid_color",
-                   "\"#$(hex(theme.grid_color_focused))\""),
-            jsplotdata("unfocused_ygrid_color",
-                   "\"#$(hex(theme.grid_color))\""),
-            (context(), line([[(0w, t), (1w, t)] for t in grids]),
-                stroke(theme.grid_color),
-                strokedash(theme.grid_strokedash)),
             (context(),
                 stroke(theme.tick_color),
-                (context(),line([[(0w, t), (0w + tick_length, t)] for t in grids])),
-                (context(),line([[(1w, t), (1w - tick_length, t)] for t in grids]))))
+                line([[(0w, t), (0w + tick_length, t)] for t in grids]),
+                line([[(1w, t), (1w - tick_length, t)] for t in grids])),
+            (context(),
+                line([[(0w, t), (1w, t)] for t in grids]),
+                stroke(theme.grid_color),
+                strokedash(theme.grid_strokedash),
+                jsplotdata("focused_ygrid_color",
+                       "\"#$(hex(theme.grid_color_focused))\""),
+                jsplotdata("unfocused_ygrid_color",
+                       "\"#$(hex(theme.grid_color))\"")))
         grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
     else
         grid_lines = compose!(context(), static_grid_lines)
