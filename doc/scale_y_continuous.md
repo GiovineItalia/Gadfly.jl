@@ -9,7 +9,7 @@ Map numerical data to y positions in cartesian coordinates.
 
 # Arguments
 
-  * `minvalue`: Set scale lower bound to be ≤ this value.
+  * `minvalue`: Set scale lower bound to be ≤ this value. If you need to strictly set plot limits use `Coord.cartesian` instead.
   * `maxvalue`: Set scale lower bound to be ≥ this value.
   * `labels`: Either a `Function` or `nothing`. When a
     function is given, values are formatted using this function. The function
