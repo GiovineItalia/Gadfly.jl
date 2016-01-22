@@ -7,7 +7,6 @@ order: 3001
 
 ```{.julia hide="true"}
 using DataFrames
-using Color
 using Compose
 using RDatasets
 using Showoff
