@@ -33,26 +33,6 @@ export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colora
 function __init__()
     # Define an XML namespace for custom attributes
     Compose.xmlns["gadfly"] = "http://www.gadflyjl.org/ns"
-
-    # writemime for signals of Plots
-    if isinstalled("Patchwork", v"0.1.2") && isinstalled("Reactive")
-
-        eval(Expr(:import, :Reactive))
-
-        if isdefined(Main, :IJulia)
-            eval(Expr(:import, :IJulia))
-            IJulia.metadata(::Reactive.Signal{Plot}) = Dict()
-        end
-
-        function writemime(io::IO, m::MIME"text/html", ctx::Reactive.Signal{Plot})
-            writemime(io, m, Reactive.lift(c -> draw(
-                Patchable(
-                    Compose.default_graphic_width,
-                    Compose.default_graphic_height
-                ), c), ctx))
-        end
-
-    end
 end
 
 
