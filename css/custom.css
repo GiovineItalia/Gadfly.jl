@@ -8,10 +8,11 @@
 }
 
 #topbar {
-    background-color: #333;
+    background-color: #303030;
     position: relative;
-    color: white;
-    font-family: "PT Sans", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+    color: #fffaea;
+    font-family: "Quire Sans", "Source Sans", sans-serif;
+    font-weight: normal;
 }
 
 #topbar ul {
@@ -30,7 +31,7 @@
     position: relative;
     display: inline-block;
     padding: 3px 15px;
-    color: white;
+    color: #fffaea;
     font-weight: normal;
     font-size: 10pt;
 }
@@ -45,16 +46,17 @@ pre {
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
-    background-color: inherit;
-    color: inherit;
-    margin: 0.5em 1.5em;
+    margin: 20px;
     font-family: "Source Code Pro", "monospace";
-    font-size: 9pt;
+    font-weight: light;
+    font-size: 10pt;
+    margin-bottom: 1em;
+    padding-bottom: 1em;
 }
 
 code {
     font-family: "Source Code Pro", "monospace";
-    font-size: 9pt;
+    font-size: 10pt;
     background-color: #f5f5f5;
     color: inherit;
 }
@@ -88,9 +90,9 @@ h4 {
 }
 
 h1, h2, h3, h4, h5 {
-    margin-bottom: 1.0pt;
-    font-family: "PT Sans", "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
-    color: #504545;
+    margin-top: 1.5em;
+    margin-bottom: 8.0pt;
+    color: #333;
 }
 
 h1 a, h2 a, h3 a, h4 a, h5 a {
@@ -98,9 +100,12 @@ h1 a, h2 a, h3 a, h4 a, h5 a {
 }
 
 body {
-    font-family: "Source Sans Pro", "sans-serif";
-    font-size: 10.5pt;
-    background-color: #fff;
+    text-rendering: optimizeLegibility;
+    font-family: "Quire Sans", "Source Sans Pro", sans-serif;
+    font-size: 11.5pt;
+    color: #333;
+    background-color: #fafafa;
+    position: relative;
 }
 
 a:hover {
@@ -108,7 +113,7 @@ a:hover {
 }
 
 a {
-    font-weight: bolder;
+    font-weight: bold;
     color: #444;
 }
 
@@ -118,7 +123,7 @@ a {
 }
 
 #body-content {
-    background-color: #fff;
+    margin-top: 1em;
 }
 
 #table-of-contents {
@@ -127,10 +132,11 @@ a {
     width: 100%;
     height: 100%;
     top: 0;
-    border-left: 1px solid #f0f0f0;
+    /*border-left: 1px solid #f0f0f0;*/
     overflow-y: scroll;
     overflow-x: hidden;
     z-index: 2;
+    /*font-style: italic;*/
 }
 
 #table-of-contents-content {
@@ -144,30 +150,41 @@ a {
 }
 
 #title-block {
+    background-color: #303030;
     padding-bottom: 1em;
+    padding-right: 1em;
     text-align: right;
 }
 
 #title-block h1 {
+    color: #f4e6d6;
     font-size: 16pt;
-    font-weight: bolder;
+    font-weight: normal;
+}
+
+#table-of-contents input {
+    font-style: normal;
 }
 
 #table-of-contents ul {
   list-style: none;
   padding: 0;
   padding-left: 1em;
+  line-height: 110%;
 }
 
 #table-of-contents > li {
   position: relative;
   display: block;
+  margin-bottom: 0;
+  margin-top: 0;
 }
 
-#table-of-contents li > a {
+ul.nav > li > a.toc-item {
     font-weight: normal;
     display: block;
     color: #435C71;
+    padding: 5px 0px;
 }
 
 #table-of-contents li a:hover,
@@ -182,7 +199,8 @@ a {
 }
 
 .toc-current-doc a {
-    font-weight: bolder;
+    font-family: "Quire Sans", "Source Sans Pro", sans-serif;
+    font-weight: bold;
     display: block;
     color: #435C71;
 }
@@ -196,5 +214,28 @@ a {
     list-style: none;
 }
 
+div.judo-result {
+    margin: 20px;
+    /*background-color: #303030;*/
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 1em;
+}
 
+pre + div.judo-result {
+    margin-top: -1em;
+}
+
+
+input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    margin: 1em;
+}
+
+input:focus {
+    border: 0;
+    outline: 0;
+}
 
