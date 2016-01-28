@@ -268,7 +268,8 @@ const label_layouts = @compat Dict(
 )
 
 
-function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::LabelGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, coord::Coord.cartesian)
     Gadfly.assert_aesthetics_defined("Geom.Label", aes, :label, :x, :y)
 
     if geom.position == :dynamic

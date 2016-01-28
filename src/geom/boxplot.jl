@@ -17,7 +17,8 @@ element_aesthetics(::BoxplotGeometry) = [:x, :y, :color,
 
 default_statistic(::BoxplotGeometry) = Gadfly.Stat.boxplot()
 
-function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::BoxplotGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, coord::Coord.cartesian)
     Gadfly.assert_aesthetics_defined("Geom.bar", aes,
                                      :lower_fence, :lower_hinge,
                                      :upper_hinge, :upper_fence,)

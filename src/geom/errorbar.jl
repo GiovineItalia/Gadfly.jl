@@ -51,7 +51,8 @@ end
 # Returns:
 #   A compose Form.
 #
-function render(geom::ErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::ErrorBarGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, coord::Coord.cartesian)
     # check for X and Y error bar aesthetics
     if isempty(Gadfly.undefined_aesthetics(aes, element_aesthetics(xerrorbar())...))
         xctx = render(xerrorbar(), theme, aes)

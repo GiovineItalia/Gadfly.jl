@@ -34,6 +34,7 @@ end
 const nil = Nil
 
 function render(geom::Nil, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
+                coord::Gadfly.CoordinateElement,
                 data::Gadfly.Data, scales::Dict{Symbol, ScaleElement},
                 subplot_layer_aess::Vector{Gadfly.Aesthetics})
 end
@@ -41,11 +42,12 @@ end
 
 # Subplot geometries require some more arguments to render. A simpler render
 # function is defined and passed through to here for non-subplot geometries.
-function render(geom::Gadfly.GeometryElement, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
+function render(geom::Gadfly.GeometryElement, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement,
                 subplot_layer_aess::@compat(Union{(@compat Void), Vector{Gadfly.Aesthetics}}),
                 subplot_layer_datas::@compat(Union{(@compat Void), Vector{Gadfly.Data}}),
                 scales::Dict{Symbol, ScaleElement})
-    render(geom, theme, aes)
+    render(geom, theme, aes, coord)
 end
 
 

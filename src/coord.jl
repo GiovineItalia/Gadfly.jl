@@ -360,12 +360,13 @@ function apply_coordinate(coord::Polar, aess::Vector{Gadfly.Aesthetics},
         end
     end
 
+    xmin = xmax = ymin = ymax = nothing
     rhomin = rhomax = first_concrete_aesthetic_value(aess, coord.rhovars)
     phimin = phimax = first_concrete_aesthetic_value(aess, coord.phivars)
-    xmin, ymin = polar_to_cartesian(rhomin, phimin)
-    xmax, ymax = polar_to_cartesian(rhomax, phimax)
 
-    if rhomin != nothings
+    if rhomin != nothing && phimin != nothing
+        xmin, ymin = polar_to_cartesian(rhomin, phimin)
+        xmax, ymax = polar_to_cartesian(rhomax, phimax)
         for rhovar in coord.rhovars, phivar in coord.phivars
             for aes in aess
                 rhovals = getfield(aes, rhovar)
@@ -382,7 +383,7 @@ function apply_coordinate(coord::Polar, aess::Vector{Gadfly.Aesthetics},
                 end
 
                 if length(rhovals) != length(phivals)
-                    error("Aesthetics for rho and phi must have the same length.")
+                    error("Radial and angular aesthetics must have the same length.")
                 end
 
                 xvals = [ρ * cos(ϕ) for (ρ, ϕ) in zip(rhovals, phivals)]

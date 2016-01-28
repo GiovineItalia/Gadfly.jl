@@ -734,6 +734,31 @@ function yticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
 end
 
 
+function rhoticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
+                  granularity_weight::Float64=1/4,
+                  simplicity_weight::Float64=1/6,
+                  coverage_weight::Float64=1/3,
+                  niceness_weight::Float64=1/4)
+    TickStatistic([:rho], "rho",
+                  granularity_weight, simplicity_weight,
+                  coverage_weight, niceness_weight, ticks)
+end
+
+
+# FIXME: angular ticks should be treated differently
+function phiticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
+                  granularity_weight::Float64=1/4,
+                  simplicity_weight::Float64=1/6,
+                  coverage_weight::Float64=1/3,
+                  niceness_weight::Float64=1/4)
+    if ticks === nothing
+        ticks = 0:pi/6:11pi/6
+    end
+    TickStatistic([:phi], "phi",
+                  granularity_weight, simplicity_weight,
+                  coverage_weight, niceness_weight, ticks)
+end
+
 
 # Apply a tick statistic.
 #
@@ -816,7 +841,7 @@ function apply_statistic(stat::TickStatistic,
 
     n = Gadfly.concrete_length(in_values)
 
-    # check the x/yviewmin/max pesudo-aesthetics
+    # check the x/yviewmin/max pseudo-aesthetics
     if stat.out_var == "x"
         if aes.xviewmin != nothing
             minval = min(minval, aes.xviewmin)

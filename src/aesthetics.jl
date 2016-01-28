@@ -14,6 +14,8 @@ typealias NumericalAesthetic
     x,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
     y,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
     z,            @compat(Union{(@compat Void), Function, Matrix})
+    rho,          NumericalAesthetic
+    phi,          NumericalAesthetic
     size,         Maybe(Vector{Measure})
     shape,        CategoricalAesthetic
     color,        Maybe(@compat(Union{AbstractVector{RGBA{Float32}},
@@ -50,8 +52,12 @@ typealias NumericalAesthetic
     # guides
     xtick,        NumericalAesthetic
     ytick,        NumericalAesthetic
+    rhotick,      NumericalAesthetic
+    phitick,      NumericalAesthetic
     xgrid,        NumericalAesthetic
     ygrid,        NumericalAesthetic
+    rhogrid,      NumericalAesthetic
+    phigrid,      NumericalAesthetic
     color_key_colors,     Maybe(Associative)
     color_key_title,      Maybe(AbstractString)
     color_key_continuous, Maybe(Bool)
@@ -61,25 +67,37 @@ typealias NumericalAesthetic
     # mark some ticks as initially invisible
     xtickvisible,         Maybe(Vector{Bool})
     ytickvisible,         Maybe(Vector{Bool})
+    rhotickvisible,       Maybe(Vector{Bool})
+    phitickvisible,       Maybe(Vector{Bool})
 
     # scale at which ticks should become visible
     xtickscale,           Maybe(Vector{Float64})
     ytickscale,           Maybe(Vector{Float64})
+    rhotickscale,         Maybe(Vector{Float64})
+    phitickscale,         Maybe(Vector{Float64})
 
     # plot viewport extents
     xviewmin,     Any
     xviewmax,     Any
     yviewmin,     Any
     yviewmax,     Any
+    rhoviewmin,   Any
+    rhoviewmax,   Any
+    phiviewmin,   Any
+    phiviewmax,   Any
 
     # labeling functions
-    x_label,      Function, showoff
-    y_label,      Function, showoff
-    xtick_label,  Function, showoff
-    ytick_label,  Function, showoff
-    color_label,  Function, showoff
-    xgroup_label, Function, showoff
-    ygroup_label, Function, showoff
+    x_label,        Function, showoff
+    y_label,        Function, showoff
+    rho_label,      Function, showoff
+    phi_label,      Function, showoff
+    xtick_label,    Function, showoff
+    ytick_label,    Function, showoff
+    rhotick_label,  Function, showoff
+    phitick_label,  Function, showoff
+    color_label,    Function, showoff
+    xgroup_label,   Function, showoff
+    ygroup_label,   Function, showoff
 
     # pseudo-aesthetics
     pad_categorical_x, Nullable{Bool}, Nullable{Bool}()
@@ -103,6 +121,9 @@ end
 # Alternate aesthetic names
 const aesthetic_aliases =
     @compat Dict{Symbol, Symbol}(:colour        => :color,
+                                 :r             => :rho,
+                                 :ρ             => :rho,
+                                 :ϕ             => :phi,
                                  :x_min         => :xmin,
                                  :x_max         => :xmax,
                                  :y_min         => :ymin,
