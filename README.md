@@ -1,6 +1,3 @@
-!["Alice looked up at the Rocking-horse-fly with great interest, and made up her
-mind that it must have been just repainted, it looked so bright and sticky."](http://dcjones.github.com/Gadfly.jl/rockinghorsefly.png)
-
 [![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.3.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.3)
 [![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.4.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.4)
 
@@ -23,7 +20,7 @@ add interactivity like panning, zooming, and toggling.
 Other interactive features like selecting and inspecting values are available
 through [Immerse.jl](https://github.com/JuliaGraphics/Immerse.jl).
 
-Check out the [manual](http://gadflyjl.org) for more details and
+Check out the [manual](http://dcjones.github.io/Gadfly.jl/) for more details and
 examples.
 
 # Installation
