@@ -1,11 +1,5 @@
-
 using Gadfly, DataArrays, DataFrames, RDatasets
-
-if VERSION < v"0.4-dev"
-    using Dates
-else
-    using Base.Dates
-end
+using Base.Dates
 
 y = 1973
 airquality = dataset("datasets", "airquality")
@@ -18,6 +12,3 @@ airquality[:Date] = dates
 airquality = airquality[airquality[:Month] .== 6, :]
 
 p = plot(airquality, x=:Date, y=:Temp, Geom.line)
-
-
-

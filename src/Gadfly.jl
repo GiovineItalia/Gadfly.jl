@@ -1,5 +1,4 @@
-
-VERSION >= v"0.4.0-dev+6641" && __precompile__()
+__precompile__()
 
 module Gadfly
 
@@ -1087,9 +1086,7 @@ end
 const x_axis_label_aesthetics = [:x, :xmin, :xmax]
 const y_axis_label_aesthetics = [:y, :ymin, :ymax]
 
-if VERSION >= v"0.4.0-dev+5512"
-    include("precompile.jl")
-    _precompile_()
-end
+include("precompile.jl")
+_precompile_()
 
 end # module Gadfly

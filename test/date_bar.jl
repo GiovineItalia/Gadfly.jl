@@ -1,11 +1,5 @@
-
 using Gadfly
-
-if VERSION < v"0.4-dev"
-    using Dates
-else
-    using Base.Dates
-end
+using Base.Dates
 
 dates = Array(Date,40)
 dates[1] = today()
@@ -14,5 +8,3 @@ for i=2:length(dates)
 end
 
 plot(x=dates,y=sort(rand(40)*40),Geom.bar)
-
-
