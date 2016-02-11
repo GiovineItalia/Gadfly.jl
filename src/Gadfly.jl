@@ -74,12 +74,24 @@ const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 
 # Set prefereed canvas size when rendering a plot without an explicit call to
 # `draw`.
+"""
+```
+set_default_plot_size(width::Compose.MeasureOrNumber, height::Compose.MeasureOrNumber)
+```
+Sets preferred canvas size when rendering a plot without an explicit call to draw
+"""
 function set_default_plot_size(width::Compose.MeasureOrNumber,
                                height::Compose.MeasureOrNumber)
     Compose.set_default_graphic_size(width, height)
 end
 
 
+"""
+```
+set_default_plot_format(fmt::Symbol)
+```
+Sets the default plot format
+"""
 function set_default_plot_format(fmt::Symbol)
     Compose.set_default_graphic_format(fmt)
 end
@@ -114,6 +126,21 @@ end
 
 
 
+"""
+```
+layer(data_source::@compat(Union{AbstractDataFrame, (@compat Void)}),
+               elements::ElementOrFunction...; mapping...)
+```
+Creates layers based on elements
+
+### Args
+* data_source: The data source as a dataframe
+* elements: The elements 
+* mapping: mapping
+
+### Returns
+An array of layers
+"""
 function layer(data_source::@compat(Union{AbstractDataFrame, (@compat Void)}),
                elements::ElementOrFunction...; mapping...)
     mapping = Dict{Symbol, Any}(mapping)
@@ -278,6 +305,30 @@ end
 # purposes of plot().
 typealias ElementOrFunctionOrLayers @compat(Union{ElementOrFunction, Vector{Layer}})
 
+
+"""
+```
+    function plot(data_source::@compat(Union{AbstractMatrix, AbstractDataFrame}),
+              elements::ElementOrFunctionOrLayers...; mapping...)
+```
+
+Create a new plot.
+
+Grammar of graphics style plotting consists of specifying a dataset, one or
+more plot elements (scales, coordinates, geometries, etc), and binding of
+aesthetics to columns or expressions of the dataset.
+
+For example, a simple scatter plot would look something like:
+
+plot(my_data, Geom.point, x="time", y="price")
+
+Where "time" and "price" are the names of columns in my_data.
+
+### Args:
+* data_source: Data to be bound to aesthetics.
+* elements: Geometries, statistics, etc.
+* mapping: Aesthetics symbols (e.g. :x, :y, :color) mapped to names of columns in the data frame or other expressions.
+"""
 function plot(data_source::@compat(Union{AbstractMatrix, AbstractDataFrame}),
               elements::ElementOrFunctionOrLayers...; mapping...)
     mappingdict = Dict{Symbol, Any}(mapping)
@@ -305,6 +356,25 @@ end
 # Returns:
 #   A Plot object.
 #
+"""
+```
+function plot(data_source::@compat(Union{(@compat Void), AbstractMatrix, AbstractDataFrame}),
+              mapping::Dict, elements::ElementOrFunctionOrLayers...)
+```
+The old fashioned (pre named arguments) version of plot.
+
+This version takes an explicit mapping dictionary, mapping aesthetics symbols
+to expressions or columns in the data frame.
+
+### Args:
+* data_source: Data to be bound to aesthetics.
+* mapping: Dictionary of aesthetics symbols (e.g. :x, :y, :color) to
+            names of columns in the data frame or other expressions.
+*   elements: Geometries, statistics, etc.
+
+### Returns:
+A Plot object.
+"""
 function plot(data_source::@compat(Union{(@compat Void), AbstractMatrix, AbstractDataFrame}),
               mapping::Dict, elements::ElementOrFunctionOrLayers...)
     mapping = cleanmapping(mapping)
@@ -714,6 +784,18 @@ function render_prepare(plot::Plot)
             scales, guides)
 end
 
+"""
+```
+render(plot::Plot)
+```
+Render a plot based on the Plot object
+
+### Args
+*   plot: Plot to be rendered.
+
+### Returns
+A Compose context containing the rendered plot.
+"""
 function render(plot::Plot)
     (plot, coord, plot_aes,
      layer_aess, layer_stats, layer_subplot_aess, layer_subplot_datas,
@@ -818,17 +900,45 @@ end
 
 
 # A convenience version of Compose.draw that let's you skip the call to render.
+"""
+```
+draw(backend::Compose.Backend, p::Plot)
+```
+A convenience version of Compose.draw without having to call render
+
+### Args
+* backend: The Compose.Backend object
+* p: The Plot object
+"""
 function draw(backend::Compose.Backend, p::Plot)
     draw(backend, render(p))
 end
 
 
 # Convenience stacking functions
+"""
+```
+vstack(ps::Plot...) = vstack(Context[render(p) for p in ps]...)
+vstack(ps::Vector{Plot}) = vstack(Context[render(p) for p in ps]...)
+vstack(p::Plot, c::Context) = vstack(render(p), c)
+vstack(c::Context, p::Plot) = vstack(c, render(p))
+```
+Plots can be stacked vertically to allow more customization in regards to tick marks, axis labeling, and other plot details than what is available with subplot_grid
+"""
 vstack(ps::Plot...) = vstack(Context[render(p) for p in ps]...)
 vstack(ps::Vector{Plot}) = vstack(Context[render(p) for p in ps]...)
 vstack(p::Plot, c::Context) = vstack(render(p), c)
 vstack(c::Context, p::Plot) = vstack(c, render(p))
 
+"""
+```
+hstack(ps::Plot...) = hstack(Context[render(p) for p in ps]...)
+hstack(ps::Vector{Plot}) = hstack(Context[render(p) for p in ps]...)
+hstack(p::Plot, c::Context) = hstack(render(p), c)
+hstack(c::Context, p::Plot) = hstack(c, render(p))
+```
+Plots can be stacked horizontally to allow more customization in regards to tick marks, axis labeling, and other plot details than what is available with subplot_grid
+"""
 hstack(ps::Plot...) = hstack(Context[render(p) for p in ps]...)
 hstack(ps::Vector{Plot}) = hstack(Context[render(p) for p in ps]...)
 hstack(p::Plot, c::Context) = hstack(render(p), c)
