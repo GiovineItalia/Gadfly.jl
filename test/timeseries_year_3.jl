@@ -1,11 +1,5 @@
-
 using Gadfly, DataArrays, RDatasets
-
-if VERSION < v"0.4-dev"
-    using Dates
-else
-    using Base.Dates
-end
+using Base.Dates
 
 approval = dataset("Zelig", "approval")
 dates = Date[Date(y, m)
@@ -13,5 +7,3 @@ dates = Date[Date(y, m)
 approval[:Date] = dates
 
 p = plot(approval, x="Date", y="Approve", Geom.line)
-
-

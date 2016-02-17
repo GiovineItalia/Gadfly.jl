@@ -1,12 +1,7 @@
 #!/usr/bin/env julia
 
 using Gadfly, DataFrames
-
-if VERSION < v"0.4-dev"
-    using Dates
-else
-    using Base.Dates
-end
+using Base.Dates
 
 a = collect(Date("2013-01-01"):Day(1):Date("2014-01-01"))
 b = collect(Date("2012-01-01"):Day(1):Date("2016-01-01"))
@@ -28,5 +23,3 @@ df2 = DataFrame(
 df = vcat(df1, df2)
 
 plot(df, x = :x, y = :y, color=:label, Geom.line)
-
-
