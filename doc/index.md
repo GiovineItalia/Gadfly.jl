@@ -284,7 +284,7 @@ set_default_plot_size(12cm, 8cm)
 This is a new and fairly complex piece of software. [Filing an
 issue](https://github.com/dcjones/Gadfly.jl/issues/new) to report a bug,
 counterintuitive behavior, or even to request a feature is extremely valuable in
-helping me prioritize what to work on, so don't hestitate.
+helping me prioritize what to work on, so don't hesitate.
 
 
 
