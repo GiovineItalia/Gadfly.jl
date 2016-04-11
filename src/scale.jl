@@ -162,10 +162,10 @@ function make_labeler(scale::ContinuousScale)
 end
 
 
-const x_vars = [:x, :xmin, :xmax, :xintercept, :xviewmin, :xviewmax]
+const x_vars = [:x, :xmin, :xmax, :xintercept, :xviewmin, :xviewmax, :xend]
 const y_vars = [:y, :ymin, :ymax, :yintercept, :middle,
                 :upper_fence, :lower_fence, :upper_hinge, :lower_hinge,
-                :yviewmin, :yviewmax]
+    :yviewmin, :yviewmax, :yend]
 
 function continuous_scale_partial(vars::Vector{Symbol},
                                   trans::ContinuousScaleTransform)

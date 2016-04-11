@@ -14,6 +14,8 @@ typealias NumericalAesthetic
     x,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
     y,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
     z,            @compat(Union{(@compat Void), Function, Matrix})
+    xend,         NumericalAesthetic
+    yend,         NumericalAesthetic
     size,         Maybe(Vector{Measure})
     shape,        CategoricalAesthetic
     color,        Maybe(@compat(Union{AbstractVector{RGBA{Float32}},
