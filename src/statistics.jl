@@ -196,6 +196,14 @@ function apply_statistic(stat::BarStatistic,
     end
 
     values = getfield(aes, var)
+    if isempty(getfield(aes, var))
+      setfield!(aes, minvar, Float64[1.0])
+      setfield!(aes, maxvar, Float64[1.0])
+      setfield!(aes, var, Float64[1.0])
+      setfield!(aes, othervar, Float64[0.0])
+      return
+    end
+
     iscontinuous = haskey(scales, var) && isa(scales[var], Scale.ContinuousScale)
     minvals, maxvals = barminmax(values, iscontinuous)
 
