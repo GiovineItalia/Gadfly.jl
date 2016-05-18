@@ -123,7 +123,7 @@ const aesthetic_aliases =
 
 # Index as if this were a data frame
 function getindex(aes::Aesthetics, i::Integer, j::AbstractString)
-    getfield(aes, symbol(j))[i]
+    getfield(aes, Symbol(j))[i]
 end
 
 
@@ -186,18 +186,6 @@ function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, va
     end
     nothing
 end
-
-
-# Create a shallow copy of an Aesthetics instance.
-#
-# Args:
-#   a: aesthetics to copy
-#
-# Returns:
-#   Copied aesthetics.
-#
-copy(a::Aesthetics) = Aesthetics(a)
-
 
 # Replace values in a with non-nothing values in b.
 #
@@ -270,9 +258,9 @@ function concat(aess::Aesthetics...)
 end
 
 
-cat_aes_var!(a::(@compat Void), b::(@compat Void)) = a
-cat_aes_var!(a::(@compat Void), b) = copy(b)
-cat_aes_var!(a, b::(@compat Void)) = a
+cat_aes_var!(a::Void, b::Void) = a
+cat_aes_var!(a::Void, b::Union{Function,String}) = b
+cat_aes_var!(a::Void, b) = copy(b)
 cat_aes_var!(a::Function, b::Function) = a === string || a == showoff ? b : a
 
 
@@ -365,7 +353,7 @@ end
 #   A Array{Aesthetics} of size max(1, length(xgroup)) by
 #   max(1, length(ygroup))
 #
-function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygroup,
+function by_xy_group{T <: Union{Data, Aesthetics}}(aes::T, xgroup, ygroup,
                                                    num_xgroups, num_ygroups)
     @assert xgroup === nothing || ygroup === nothing ||
             length(xgroup) == length(ygroup)
@@ -386,12 +374,12 @@ function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygro
         return aes_grid
     end
 
-    function make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},
+    function make_pooled_data_array{X, U, V}(::Type{PooledDataArray{X,U,V}},
                                              arr::AbstractArray)
-        PooledDataArray(convert(Array{T}, arr))
+        PooledDataArray(convert(Array{X}, arr))
     end
-    make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},
-                                    arr::PooledDataArray{T, U, V}) = arr
+    make_pooled_data_array{X, U, V}(::Type{PooledDataArray{X,U,V}},
+                                    arr::PooledDataArray{X, U, V}) = arr
 
     for var in fieldnames(T)
         # Skipped aesthetics. Don't try to partition aesthetics for which it
@@ -426,9 +414,9 @@ function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygro
                               make_pooled_data_array(typeof(vals), staging[i, j]))
                 else
                     if !applicable(convert, typeof(vals), staging[i, j])
-                        T = eltype(vals)
-                        if T <: Color T = Color end
-                        da = DataArray(T, length(staging[i, j]))
+                        S = eltype(vals)
+                        if S <: Color S = Color end
+                        da = DataArray(S, length(staging[i, j]))
                         copy!(da, staging[i, j])
                         setfield!(aes_grid[i, j], var, da)
                     else

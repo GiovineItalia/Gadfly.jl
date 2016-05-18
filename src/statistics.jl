@@ -761,11 +761,11 @@ function apply_statistic(stat::TickStatistic,
     end
 
     # don't clobber existing ticks
-    if getfield(aes, symbol(string(stat.out_var, "tick"))) != nothing
+    if getfield(aes, Symbol(string(stat.out_var, "tick"))) != nothing
         return
     end
 
-    in_group_var = symbol(string(stat.out_var, "group"))
+    in_group_var = Symbol(string(stat.out_var, "group"))
     minval, maxval = nothing, nothing
     in_values = Any[]
     categorical = (:x in stat.in_vars && Scale.iscategorical(scales, :x)) ||
@@ -913,21 +913,21 @@ function apply_statistic(stat::TickStatistic,
 
     # We use the first label function we find for any of the aesthetics. I'm not
     # positive this is the right thing to do, or would would be.
-    labeler = getfield(aes, symbol(string(stat.out_var, "_label")))
+    labeler = getfield(aes, Symbol(string(stat.out_var, "_label")))
 
-    setfield!(aes, symbol(string(stat.out_var, "tick")), ticks)
-    setfield!(aes, symbol(string(stat.out_var, "grid")), grids)
-    setfield!(aes, symbol(string(stat.out_var, "tick_label")), labeler)
-    setfield!(aes, symbol(string(stat.out_var, "tickvisible")), tickvisible)
-    setfield!(aes, symbol(string(stat.out_var, "tickscale")), tickscale)
+    setfield!(aes, Symbol(string(stat.out_var, "tick")), ticks)
+    setfield!(aes, Symbol(string(stat.out_var, "grid")), grids)
+    setfield!(aes, Symbol(string(stat.out_var, "tick_label")), labeler)
+    setfield!(aes, Symbol(string(stat.out_var, "tickvisible")), tickvisible)
+    setfield!(aes, Symbol(string(stat.out_var, "tickscale")), tickscale)
 
-    viewmin_var = symbol(string(stat.out_var, "viewmin"))
+    viewmin_var = Symbol(string(stat.out_var, "viewmin"))
     if getfield(aes, viewmin_var) === nothing ||
        getfield(aes, viewmin_var) > viewmin
         setfield!(aes, viewmin_var, viewmin)
     end
 
-    viewmax_var = symbol(string(stat.out_var, "viewmax"))
+    viewmax_var = Symbol(string(stat.out_var, "viewmax"))
     if getfield(aes, viewmax_var) === nothing ||
        getfield(aes, viewmax_var) < viewmax
         setfield!(aes, viewmax_var, viewmax)
@@ -1458,10 +1458,6 @@ immutable ContourStatistic <: Gadfly.StatisticElement
     levels
     samples::Int
 
-    function ContourStatistic(; n=15, samples=150)
-        new(n, samples)
-    end
-
     function ContourStatistic(; levels=15, samples=150)
         new(levels, samples)
     end
@@ -1635,12 +1631,6 @@ immutable ViolinStatistic <: Gadfly.StatisticElement
         new(n)
     end
 end
-
-
-function input_aesthetics(::ViolinStatistic)
-    return [:x, :y]
-end
-
 
 function input_aesthetics(::ViolinStatistic)
     return [:x, :y, :width]

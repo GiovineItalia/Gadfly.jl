@@ -149,13 +149,13 @@ end
 
 function make_labeler(scale::ContinuousScale)
     if scale.labels != nothing
-        function f(xs)
+        function (xs)
             return [scale.labels(x) for x in xs]
         end
     elseif scale.format == nothing
         scale.trans.label
     else
-        function f(xs)
+        function (xs)
             return scale.trans.label(xs, scale.format)
         end
     end
@@ -257,7 +257,7 @@ function apply_scale(scale::ContinuousScale,
             elseif var in y_vars
                 label_var = :y_label
             else
-                label_var = symbol(@sprintf("%s_label", string(var)))
+                label_var = Symbol(@sprintf("%s_label", string(var)))
             end
 
             if in(label_var, Set(fieldnames(aes)))
@@ -418,7 +418,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                      datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
-            label_var = symbol(@sprintf("%s_label", string(var)))
+            label_var = Symbol(@sprintf("%s_label", string(var)))
 
             if getfield(data, var) === nothing
                 continue
