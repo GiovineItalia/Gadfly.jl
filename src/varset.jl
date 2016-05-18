@@ -45,6 +45,10 @@ macro varset(name::Symbol, table)
         type $(name)
             $(vars...)
 
+            function $(name)()
+                new($(defaults...))
+            end
+
             function $(name)($(parameters_expr))
                 $(new_with_defaults)
             end

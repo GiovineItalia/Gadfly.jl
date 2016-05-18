@@ -1072,10 +1072,10 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Plot)
           </head>
             <body>
             <script charset="utf-8">
-                $(readstring(Compose.snapsvgjs))
+                $(readall(Compose.snapsvgjs))
             </script>
             <script charset="utf-8">
-                $(readstring(gadflyjs))
+                $(readall(gadflyjs))
             </script>
 
             $(plotsvg)
@@ -1196,11 +1196,7 @@ end
 const x_axis_label_aesthetics = [:x, :xmin, :xmax]
 const y_axis_label_aesthetics = [:y, :ymin, :ymax]
 
-if VERSION < v"0.5.0-dev"
-    include("precompile0.4.jl")
-else
-    include("precompile0.5.jl")
-end
+include("precompile.jl")
 _precompile_()
 
 end # module Gadfly

@@ -17,13 +17,13 @@ import Gadfly: render, layers, element_aesthetics, inherit, escape_id,
 import Iterators
 import Iterators: cycle, product, distinct, takestrict, chain, repeated
 
-const empty_tag = Symbol("")
+const empty_tag = symbol("")
 
 function subtags(parent_tag, suffixes...)
     if parent_tag == empty_tag
         return map(s->empty_tag, suffixes)
     end
-    return map(s->Symbol(string(parent_tag, "#", s)), suffixes)
+    return map(s->symbol(string(parent_tag, "#", s)), suffixes)
 end
 
 
