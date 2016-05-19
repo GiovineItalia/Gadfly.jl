@@ -5,6 +5,8 @@
     x
     y
     z
+    rho
+    phi
     xmin
     xmax
     ymin

@@ -28,7 +28,7 @@ macro varset(name::Symbol, table)
             typ = row.args[2]
             default = length(row.args) > 2 ? row.args[3] : :nothing
         else
-            error("Bad varset systax")
+            error("Bad varset syntax")
         end
 
         push!(names, var)

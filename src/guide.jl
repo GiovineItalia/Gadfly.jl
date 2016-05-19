@@ -46,12 +46,13 @@ end
 const background = PanelBackground
 
 function render(guide::Gadfly.GuideElement, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, dynamic::Bool=true)
-    render(guide, theme, aes)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement,
+                dynamic::Bool=true)
+    render(guide, theme, aes, coord)
 end
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement)
     back = compose!(context(order=-1),
                     rectangle(),
                     svgclass("guide background"),
@@ -71,7 +72,7 @@ const zoomslider = ZoomSlider
 
 
 function render(guide::ZoomSlider, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement)
 
     edge_pad = 3mm
     slide_pad = 0.5mm
@@ -399,7 +400,7 @@ end
 
 
 function render(guide::ColorKey, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement)
 
     if theme.key_position == :none
         return PositionedGuide[]
@@ -502,7 +503,7 @@ const manual_color_key = ManualColorKey
 
 
 function render(guide::ManualColorKey, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement)
     if theme.key_position == :none
         return PositionedGuide[]
     end
@@ -569,7 +570,8 @@ end
 
 
 function render(guide::XTicks, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, dynamic::Bool=true)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement,
+                dynamic::Bool=true)
     if guide.ticks == nothing
         return PositionedGuide[]
     end
@@ -712,7 +714,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
     elseif guide.orientation == :auto
         contexts = [hlayout_context, vlayout_context]
     else
-        error("$(guide.layout) is not a valid orientation for Guide.yticks")
+        error("$(guide.layout) is not a valid orientation for Guide.xticks")
     end
 
     return [PositionedGuide(contexts, 10,
@@ -750,7 +752,8 @@ end
 
 
 function render(guide::YTicks, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, dynamic::Bool=true)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement,
+                dynamic::Bool=true)
     if guide.ticks == nothing
         return PositionedGuide[]
     end
@@ -903,6 +906,372 @@ function render(guide::YTicks, theme::Gadfly.Theme,
 end
 
 
+immutable RhoTicks <: Gadfly.GuideElement
+    label::Bool
+    ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})
+    orientation::Symbol
+
+    function RhoTicks(; label::Bool=true,
+                      ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})=:auto,
+                      orientation::Symbol=:auto)
+        if isa(ticks, Symbol) && ticks != :auto
+            error("$(ticks) is not a valid value for the `ticks` parameter")
+        end
+        return new(label, ticks, orientation)
+    end
+end
+
+const rhoticks = RhoTicks
+
+
+function default_statistic(guide::RhoTicks)
+    if guide.ticks == nothing
+        return Stat.identity()
+    else
+        return Stat.rhoticks(ticks=guide.ticks)
+    end
+end
+
+
+function render(guide::RhoTicks, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, coord::Coord.polar,
+                dynamic::Bool=true)
+    if guide.ticks == nothing
+        return PositionedGuide[]
+    end
+
+    if Gadfly.issomething(aes.rhotick)
+        ticks = aes.rhotick
+        tickvisibility = aes.rhotickvisible
+        scale = aes.rhotickscale
+
+        T = eltype(aes.rhotick)
+        labels = AbstractString[]
+        for scale_ticks in groupby(x -> x[1], zip(scale, ticks))
+            append!(labels, aes.rhotick_label(T[t for (s, t) in scale_ticks]))
+        end
+    else
+        labels = AbstractString[]
+        ticks = Any[]
+        tickvisibility = Bool[]
+        scale = Any[]
+    end
+
+    if Gadfly.issomething(aes.rhogrid)
+        grids = aes.rhogrid
+        if length(grids) < length(ticks)
+            gridvisibility = tickvisibility[2:end]
+        else
+            gridvisibility = tickvisibility
+        end
+    else
+        grids = Any[]
+        gridvisibility = Bool[]
+    end
+
+    if sum(gridvisibility) == 0 && sum(tickvisibility) == 0
+        return PositionedGuide[]
+    end
+
+    # grid lines (ellipses)
+    static_grid_lines = compose!(
+        context(withoutjs=true),
+        circle([0], [0], grids[gridvisibility]),
+        stroke(theme.grid_color),
+        fill(nothing),
+        linewidth(theme.grid_line_width),
+        strokedash(theme.grid_strokedash),
+        svgclass("guide xgridlines yfixed"))
+
+    if dynamic
+        dynamic_grid_lines = compose!(
+            context(withjs=true),
+            circle([0], [0], grids),
+            fill(nothing),
+            visible(gridvisibility),
+            stroke(theme.grid_color),
+            linewidth(theme.grid_line_width),
+            strokedash(theme.grid_strokedash),
+            svgclass("guide xgridlines yfixed"),
+            svgattribute("gadfly:scale", scale),
+            jsplotdata("focused_xgrid_color",
+                       "\"#$(hex(theme.grid_color_focused))\""),
+            jsplotdata("unfocused_xgrid_color",
+                       "\"#$(hex(theme.grid_color))\""))
+        grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
+    else
+        grid_lines = compose!(context(), static_grid_lines)
+    end
+
+    if !guide.label
+        return [PositionedGuide([grid_lines], 0, under_guide_position)]
+    end
+
+    label_sizes = text_extents(theme.minor_label_font,
+                               theme.minor_label_font_size,
+                               labels...)
+    label_widths = [width for (width, height) in label_sizes]
+    label_heights = [height for (width, height) in label_sizes]
+
+    padding = 1mm
+
+    hlayout = ctxpromise() do draw_context
+        static_labels = compose!(
+            context(withoutjs=true),
+            text(ticks[tickvisibility], [0h + padding], labels[tickvisibility],
+                 [hcenter], [vtop]),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgclass("guide xlabels"))
+
+        dynamic_labels = compose!(
+            context(withjs=true),
+            text(ticks, [1h - padding], labels, [hcenter], [vbottom]),
+            visible(tickvisibility),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgattribute("gadfly:scale", scale),
+            svgclass("guide xlabels"))
+
+        return compose!(context(), static_labels, dynamic_labels)
+    end
+    hlayout_context = compose!(context(minwidth=sum(label_widths[tickvisibility]),
+                                       minheight=2*padding + maximum(label_heights[tickvisibility])),
+                               hlayout)
+
+    vlayout = ctxpromise() do draw_context
+        static_labels = compose!(
+            context(withoutjs=true),
+            text(ticks[tickvisibility],
+                 [padding],
+                 labels[tickvisibility],
+                 [hright], [vcenter],
+                 [Rotation(-0.5pi, tick, padding) for tick in ticks[tickvisibility]]),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgclass("guide xlabels"))
+
+        dynamic_labels = compose!(
+            context(withjs=true),
+            text(ticks, [padding], labels, [hright], [vbottom],
+                 [Rotation(-0.5pi, tick, padding) for tick in ticks]),
+            visible(tickvisibility),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgattribute("gadfly:scale", scale),
+            svgclass("guide xlabels"))
+
+        return compose!(context(), static_labels, dynamic_labels)
+
+    end
+    vpenalty = 3
+    vlayout_context = compose!(context(minwidth=sum(label_heights[tickvisibility]),
+                                       minheight=2padding + maximum(label_widths[tickvisibility]),
+                                       penalty=vpenalty), vlayout)
+
+    if guide.orientation == :horizontal
+        contexts = [hlayout_context]
+    elseif guide.orientation == :vertical
+        contexts = [vlayout_context]
+    elseif guide.orientation == :auto
+        contexts = [hlayout_context, vlayout_context]
+    else
+        error("$(guide.layout) is not a valid orientation for Guide.rhoticks")
+    end
+
+    return [PositionedGuide(contexts, 10,
+                            bottom_guide_position),
+            PositionedGuide([grid_lines], 0, under_guide_position)]
+end
+
+
+immutable PhiTicks <: Gadfly.GuideElement
+    label::Bool
+    ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})
+    orientation::Symbol
+
+    function PhiTicks(; label::Bool=true,
+                      ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})=:auto,
+                      orientation::Symbol=:auto)
+        if isa(ticks, Symbol) && ticks != :auto
+            error("$(ticks) is not a valid value for the `ticks` parameter")
+        end
+        return new(label, ticks, orientation)
+    end
+end
+
+const phiticks = PhiTicks
+
+
+function default_statistic(guide::PhiTicks)
+    if guide.ticks == nothing
+        return Stat.identity()
+    else
+        return Stat.rhoticks(ticks=guide.ticks)
+    end
+end
+
+
+function render(guide::PhiTicks, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, coord::Coord.polar,
+                dynamic::Bool=true)
+    if guide.ticks == nothing
+        return PositionedGuide[]
+    end
+
+    if Gadfly.issomething(aes.phitick)
+        ticks = aes.phitick
+        tickvisibility = aes.phitickvisible
+        scale = aes.phitickscale
+
+        T = eltype(aes.phitick)
+        labels = AbstractString[]
+        for scale_ticks in groupby(x -> x[1], zip(scale, ticks))
+            append!(labels, aes.phitick_label(T[t for (s, t) in scale_ticks]))
+        end
+    else
+        labels = AbstractString[]
+        ticks = Any[]
+        tickvisibility = Bool[]
+        scale = Any[]
+    end
+
+    if Gadfly.issomething(aes.phigrid)
+        grids = aes.phigrid
+        if length(grids) < length(ticks)
+            gridvisibility = tickvisibility[2:end]
+        else
+            gridvisibility = tickvisibility
+        end
+    else
+        grids = Any[]
+        gridvisibility = Bool[]
+    end
+
+    if sum(gridvisibility) == 0 && sum(tickvisibility) == 0
+        return PositionedGuide[]
+    end
+
+    # grid lines
+    static_grid_lines = compose!(
+        context(withoutjs=true),
+        line([[(0, 0), (cos(t), sin(t))] for t in grids[gridvisibility]]),
+        stroke(theme.grid_color),
+        linewidth(theme.grid_line_width),
+        strokedash(theme.grid_strokedash),
+        svgclass("guide ygridlines xfixed"))
+
+    if dynamic
+        dynamic_grid_lines = compose!(
+            context(withjs=true),
+            line([[(0, 0), (cos(t), sin(t))] for t in grids]),
+            visible(gridvisibility),
+            stroke(theme.grid_color),
+            linewidth(theme.grid_line_width),
+            strokedash(theme.grid_strokedash),
+            svgclass("guide ygridlines xfixed"),
+            svgattribute("gadfly:scale", scale),
+            jsplotdata("focused_ygrid_color",
+                   "\"#$(    hex(theme.grid_color_focused))\""),
+            jsplotdata("unfocused_ygrid_color",
+                   "\"#$(hex(theme.grid_color))\""))
+        grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
+    else
+        grid_lines = compose!(context(), static_grid_lines)
+    end
+
+    if !guide.label
+        return [PositionedGuide([grid_lines], 0, under_guide_position)]
+    end
+
+    label_sizes = text_extents(theme.minor_label_font,
+                               theme.minor_label_font_size,
+                               labels...)
+    label_widths = [width for (width, height) in label_sizes]
+    label_heights = [height for (width, height) in label_sizes]
+    padding = 1mm
+
+    hlayout = ctxpromise() do draw_context
+        static_labels = compose!(
+            context(withoutjs=true),
+            text([1.0w - padding], ticks[tickvisibility], labels[tickvisibility],
+                 [hright], [vcenter]),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgclass("guide ylabels"))
+
+        dynamic_labels = compose!(
+            context(withjs=true),
+            text([1.0w - padding], ticks, labels,
+                 [hright], [vcenter]),
+            visible(tickvisibility),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgattribute("gadfly:scale", scale),
+            svgclass("guide ylabels"))
+
+        return compose!(context(), static_labels, dynamic_labels)
+    end
+    hpenalty = 3
+    hlayout_context =
+        compose!(context(minwidth=maximum(label_widths[tickvisibility]) + 2padding,
+                         minheight=sum(label_heights[tickvisibility]),
+                         penalty=hpenalty), hlayout)
+
+    vlayout = ctxpromise() do draw_context
+        static_grid_lines = compose!(
+            context(),
+            text([1.0w - padding], ticks[tickvisibility], labels[tickvisibility],
+                 [hcenter], [vbottom],
+                 [Rotation(-0.5pi, (1.0w - padding, tick))
+                  for tick in ticks[tickvisibility]]),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgclass("guide ylabels"))
+
+        dynamic_grid_lines = compose!(
+            context(),
+            text([1.0w - padding], ticks, labels,
+                 [hcenter], [vbottom],
+                 [Rotation(-0.5pi, (1.0w - padding, tick))
+                  for tick in ticks[tickvisibility]]),
+            visible(tickvisibility),
+            fill(theme.minor_label_color),
+            font(theme.minor_label_font),
+            fontsize(theme.minor_label_font_size),
+            svgattribute("gadfly:scale", scale),
+            svgclass("guide ylabels"))
+
+        return compose!(context(), static_grid_lines, dynamic_grid_lines)
+    end
+    vlayout_context =
+        compose!(context(minwidth=maximum(label_heights[tickvisibility]),
+                         minheight=sum(label_widths[tickvisibility])),
+                 vlayout)
+
+    if guide.orientation == :horizontal
+        contexts = [hlayout_context]
+    elseif guide.orientation == :vertical
+        contexts = [vlayout_context]
+    elseif guide.orientation == :auto
+        contexts = [hlayout_context, vlayout_context]
+    else
+        error("$(guide.layout) is not a valid orientation for Guide.phiticks")
+    end
+
+    return [PositionedGuide(contexts, 10,
+                            left_guide_position),
+            PositionedGuide([grid_lines], 0, under_guide_position)]
+end
+
+
 # X-axis label Guide
 immutable XLabel <: Gadfly.GuideElement
     label::@compat(Union{(@compat Void), AbstractString})
@@ -917,7 +1286,7 @@ const xlabel = XLabel
 
 
 function render(guide::XLabel, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement)
     if guide.label === nothing || isempty(guide.label)
         return nothing
     end
@@ -981,7 +1350,8 @@ end
 const ylabel = YLabel
 
 
-function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(guide::YLabel, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement)
     if guide.label === nothing || isempty(guide.label)
         return nothing
     end
@@ -1034,7 +1404,7 @@ end
 const title = Title
 
 function render(guide::Title, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement)
     if guide.label === nothing || isempty(guide.label)
         return nothing
     end
@@ -1063,7 +1433,7 @@ const xrug = XRug
 
 
 function render(guide::XRug, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement)
     Gadfly.assert_aesthetics_defined("Guide.xrug", aes, :x)
     padding = 0.4mm
 
@@ -1085,7 +1455,7 @@ const yrug = YRug
 
 
 function render(guide::YRug, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement)
     Gadfly.assert_aesthetics_defined("Guide.yrug", aes, :y)
     padding = 0.4mm
 
@@ -1224,7 +1594,7 @@ const annotation = Annotation
 
 
 function render(guide::Annotation, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, coord::Gadfly.CoordinateElement)
     ctx = compose(context(), svgclass("geometry"), guide.ctx)
     return [PositionedGuide([ctx], 0, over_guide_position)]
 end

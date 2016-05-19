@@ -269,7 +269,8 @@ end
 # Returns
 #   A compose form.
 #
-function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::BarGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, coord::Coord.cartesian)
     if geom.orientation == :horizontal
         Gadfly.assert_aesthetics_defined("BarGeometry", aes, :ymin, :ymax, :x)
         Gadfly.assert_aesthetics_equal_length("BarGeometry", aes, :ymin, :ymax, :x)

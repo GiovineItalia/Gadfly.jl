@@ -129,7 +129,7 @@ function default_scales(geom::SubplotGrid)
 end
 
 
-function element_coordinate_type(::SubplotGrid)
+function element_coordinate_type(::SubplotGrid, ::Any)
     return Gadfly.Coord.subplot_grid
 end
 

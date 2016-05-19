@@ -42,7 +42,7 @@ input_aesthetics(::Any) = []
 output_aesthetics(::Any) = []
 default_scales(::Any) = []
 default_statistic(::Any) = Stat.identity()
-element_coordinate_type(::Any) = Coord.cartesian
+element_coordinate_type(::Any, ::Any) = Coord.cartesian
 
 
 abstract Element
@@ -486,8 +486,10 @@ function render_prepare(plot::Plot)
 
     # Figure out the coordinates
     coord = plot.coord
+    coord_type = typeof(plot.coord)
     for layer in plot.layers
-        coord_type = element_coordinate_type(layer.geom)
+        mapped_aesthetics = Set(keys(layer.mapping))
+        coord_type = element_coordinate_type(layer.geom, mapped_aesthetics)
         if coord === nothing
             coord = coord_type()
         elseif typeof(coord) != coord_type
@@ -662,12 +664,24 @@ function render_prepare(plot::Plot)
             push!(guides, Guide.zoomslider())
         end
 
-        if !in(Guide.XTicks, explicit_guide_types)
-            push!(guides, Guide.xticks())
-        end
+        if isa(coord, Coord.cartesian)
+            if !in(Guide.XTicks, explicit_guide_types)
+                push!(guides, Guide.xticks())
+            end
 
-        if !in(Guide.YTicks, explicit_guide_types)
-            push!(guides, Guide.yticks())
+            if !in(Guide.YTicks, explicit_guide_types)
+                push!(guides, Guide.yticks())
+            end
+
+        elseif isa(coord, Coord.polar)
+
+            if !in(Guide.RhoTicks, explicit_guide_types)
+                push!(guides, Guide.rhoticks())
+            end
+
+            if !in(Guide.PhiTicks, explicit_guide_types)
+                push!(guides, Guide.phiticks())
+            end
         end
     end
 
@@ -862,7 +876,7 @@ function render_prepared(plot::Plot,
                    for layer in plot.layers]
 
     compose!(plot_context,
-             [compose(context(order=layer.order), render(layer.geom, theme, aes,
+             [compose(context(order=layer.order), render(layer.geom, theme, aes, coord,
                                                          subplot_aes, subplot_data,
                                                          scales))
               for (layer, aes, subplot_aes, subplot_data, theme) in zip(plot.layers, layer_aess,
@@ -873,7 +887,7 @@ function render_prepared(plot::Plot,
     # V. Guides
     guide_contexts = Any[]
     for guide in guides
-        guide_context = render(guide, plot.theme, plot_aes, dynamic)
+        guide_context = render(guide, plot.theme, plot_aes, coord, dynamic)
         if guide_context != nothing
             append!(guide_contexts, guide_context)
         end
@@ -1133,6 +1147,8 @@ const default_aes_scales = @compat Dict{Symbol, Dict}(
                                         :lower_fence => Scale.y_continuous(),
                                         :upper_hinge => Scale.y_continuous(),
                                         :lower_hinge => Scale.y_continuous(),
+                                        :rho         => Scale.rho_continuous(),
+                                        :phi         => Scale.phi_continuous(),
                                         :xgroup      => Scale.xgroup(),
                                         :ygroup      => Scale.ygroup(),
                                         :color       => Scale.color_continuous(),

@@ -36,7 +36,7 @@ end
 
 # Render polygon geometry.
 function render(geom::PolygonGeometry, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
+                aes::Gadfly.Aesthetics, coord::Coord.cartesian)
     Gadfly.assert_aesthetics_defined("Geom.polygon", aes, :x, :y)
 
     default_aes = Gadfly.Aesthetics()

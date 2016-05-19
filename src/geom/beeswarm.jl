@@ -22,7 +22,8 @@ function element_aesthetics(geom::BeeswarmGeometry)
 end
 
 
-function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+function render(geom::BeeswarmGeometry, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, coord::Coord.cartesian)
     Gadfly.assert_aesthetics_defined("Geom.point", aes, :x, :y)
     Gadfly.assert_aesthetics_equal_length("Geom.point", aes,
                                           element_aesthetics(geom)...)

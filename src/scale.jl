@@ -192,6 +192,9 @@ const y_asinh      = continuous_scale_partial(y_vars, asinh_transform)
 const x_sqrt       = continuous_scale_partial(x_vars, sqrt_transform)
 const y_sqrt       = continuous_scale_partial(y_vars, sqrt_transform)
 
+const rho_continuous = continuous_scale_partial([:rho], identity_transform)
+const phi_continuous = continuous_scale_partial([:phi], identity_transform)
+
 const size_continuous = continuous_scale_partial([:size], identity_transform)
 
 
