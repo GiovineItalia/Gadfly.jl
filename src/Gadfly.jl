@@ -24,6 +24,8 @@ export Plot, Layer, Theme, Col, Scale, Coord, Geom, Guide, Stat, render, plot,
        layer, spy, set_default_plot_size, set_default_plot_format,
        prepare_display
 
+export scatterplotmatdata
+
 
 # Re-export some essentials from Compose
 export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack
@@ -62,6 +64,7 @@ include("theme.jl")
 include("data.jl")
 include("aesthetics.jl")
 include("mapping.jl")
+include("scatterplotmat.jl")
 
 
 # The layer and plot functions can also take functions that are evaluated with

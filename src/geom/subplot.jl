@@ -247,6 +247,10 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             Stat.apply_statistic(Stat.yticks(), scales, coord, row_aes)
 
             for j in 1:m
+                if geom.free_x_axis
+                    row_aes.x = aes_grid[i,j].x
+                end
+
                 aes_grid[i, j] = Gadfly.inherit(row_aes, aes_grid[i, j])
             end
         end
