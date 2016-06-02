@@ -969,16 +969,20 @@ end
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
     function writemime(io::IO, ::MIME"image/png", p::Plot)
-        draw(PNG(io, Compose.default_graphic_width,
-                 Compose.default_graphic_height), p)
+        png = PNG(io, Compose.default_graphic_width,
+                 Compose.default_graphic_height)
+        png.emit_on_finish = false
+        draw(png, p)
     end
 end
 
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
     function writemime(io::IO, ::MIME"application/postscript", p::Plot)
-        draw(PS(io, Compose.default_graphic_width,
-             Compose.default_graphic_height), p)
+        ps = PS(io, Compose.default_graphic_width,
+             Compose.default_graphic_height)
+        ps.emit_on_finish = false
+        draw(ps, p)
     end
 end
 
