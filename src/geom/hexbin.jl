@@ -6,7 +6,7 @@ immutable HexagonalBinGeometry <: Gadfly.GeometryElement
     tag::Symbol
 
     function HexagonalBinGeometry(
-            default_statistic::Gadfly.StatisticElement=Gadfly.Stat.identity();
+            default_statistic::Gadfly.StatisticElement;
             tag::Symbol=empty_tag)
         new(default_statistic, tag)
     end

@@ -149,13 +149,13 @@ end
 
 function make_labeler(scale::ContinuousScale)
     if scale.labels != nothing
-        function f(xs)
+        function(xs)
             return [scale.labels(x) for x in xs]
         end
     elseif scale.format == nothing
         scale.trans.label
     else
-        function f(xs)
+        function(xs)
             return scale.trans.label(xs, scale.format)
         end
     end
@@ -169,7 +169,7 @@ const y_vars = [:y, :ymin, :ymax, :yintercept, :middle,
 
 function continuous_scale_partial(vars::Vector{Symbol},
                                   trans::ContinuousScaleTransform)
-    function f(; minvalue=nothing, maxvalue=nothing, labels=nothing, format=nothing, minticks=2,
+    function f1(; minvalue=nothing, maxvalue=nothing, labels=nothing, format=nothing, minticks=2,
                  maxticks=10, scalable=true)
         ContinuousScale(vars, trans, minvalue=minvalue, maxvalue=maxvalue,
                         labels=labels, format=format, minticks=minticks,
@@ -257,7 +257,7 @@ function apply_scale(scale::ContinuousScale,
             elseif var in y_vars
                 label_var = :y_label
             else
-                label_var = symbol(@sprintf("%s_label", string(var)))
+                label_var = Symbol(var, "_label")
             end
 
             if in(label_var, Set(fieldnames(aes)))
@@ -418,7 +418,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
                      datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
-            label_var = symbol(@sprintf("%s_label", string(var)))
+            label_var = Symbol(var, "_label")
 
             if getfield(data, var) === nothing
                 continue
@@ -528,7 +528,7 @@ color_discrete_manual(colors...; levels=nothing, order=nothing) = color_discrete
 
 function color_discrete_manual(colors::Color...; levels=nothing, order=nothing)
     cs = [colors...]
-    function f(n)
+    f = function(n)
         distinguishable_colors(n, cs)
     end
     DiscreteColorScale(f, levels=levels, order=order)
@@ -564,7 +564,7 @@ function apply_scale(scale::DiscreteColorScale,
     end
     colors = convert(Vector{RGB{Float32}}, scale.f(length(scale_levels)))
 
-    color_map = @compat Dict([color => string(label)
+    color_map = @compat Dict([(color, string(label))
                               for (label, color) in zip(scale_levels, colors)])
     function labeler(xs)
         [color_map[x] for x in xs]
@@ -611,18 +611,18 @@ end
 
 
 function continuous_color_scale_partial(trans::ContinuousScaleTransform)
-    function lch_diverge2(l0=30, l1=100, c=40, h0=260, h1=10, hmid=20, power=1.5)
+    lch_diverge2 = function f3(l0=30, l1=100, c=40, h0=260, h1=10, hmid=20, power=1.5)
         lspan = l1 - l0
         hspan1 = hmid - h0
         hspan0 = h1 - hmid
-        function f(r)
+        function(r)
             r2 = 2r - 1
             return LCHab(min(80, l1 - lspan * abs(r2)^power), max(10, c * abs(r2)),
                          (1-r)*h0 + r * h1)
         end
     end
 
-    function f(; minvalue=nothing, maxvalue=nothing, colormap=lch_diverge2())
+    function f2(; minvalue=nothing, maxvalue=nothing, colormap=lch_diverge2())
         ContinuousColorScale(colormap, trans, minvalue=minvalue, maxvalue=maxvalue)
     end
 end

@@ -15,9 +15,9 @@ using Showoff
 import Iterators
 import Iterators: distinct, drop, chain
 import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant, parse_colorant_vec
-import Base: +, -, /, *,
+@compat import Base: +, -, /, *,
              copy, push!, start, next, done, show, getindex, cat,
-             writemime, isfinite, display
+             show, isfinite, display
 import Distributions: Distribution
 
 export Plot, Layer, Theme, Col, Scale, Coord, Geom, Guide, Stat, render, plot,
@@ -675,11 +675,11 @@ function render_prepare(plot::Plot)
         push!(statistics, default_statistic(guide))
     end
 
-    function mapped_and_used(vs)
-        any([in(v, mapped_aesthetics) && in(v, used_aesthetics) for v in vs])
+    mapped_and_used = function(vs)
+        any(Bool[in(v, mapped_aesthetics) && in(v, used_aesthetics) for v in vs])
     end
 
-    function choose_name(vs, fallback)
+    choose_name = function(vs, fallback)
         for v in vs
             if haskey(plot.data.titles, v)
                 return plot.data.titles[v]
@@ -861,14 +861,16 @@ function render_prepared(plot::Plot,
     themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
                    for layer in plot.layers]
 
+    zips = zip(plot.layers, layer_aess,
+                                                   layer_subplot_aess,
+                                                   layer_subplot_datas,
+               themes)
+
     compose!(plot_context,
              [compose(context(order=layer.order), render(layer.geom, theme, aes,
                                                          subplot_aes, subplot_data,
                                                          scales))
-              for (layer, aes, subplot_aes, subplot_data, theme) in zip(plot.layers, layer_aess,
-                                                   layer_subplot_aess,
-                                                   layer_subplot_datas,
-                                                   themes)]...)
+              for (layer, aes, subplot_aes, subplot_data, theme) in zips]...)
 
     # V. Guides
     guide_contexts = Any[]
@@ -945,30 +947,30 @@ hstack(c::Context, p::Plot) = hstack(c, render(p))
 
 gridstack(ps::Matrix{Plot}) = gridstack(map(render, ps))
 
-# writemime functions for all supported compose backends.
+# show functions for all supported compose backends.
 
 
-function writemime(io::IO, m::MIME"text/html", p::Plot)
+@compat function show(io::IO, m::MIME"text/html", p::Plot)
     buf = IOBuffer()
     svg = SVGJS(buf, Compose.default_graphic_width,
                 Compose.default_graphic_height, false)
     draw(svg, p)
-    writemime(io, m, svg)
+    show(io, m, svg)
 end
 
 
-function writemime(io::IO, m::MIME"image/svg+xml", p::Plot)
+@compat function show(io::IO, m::MIME"image/svg+xml", p::Plot)
     buf = IOBuffer()
     svg = SVG(buf, Compose.default_graphic_width,
               Compose.default_graphic_height, false)
     draw(svg, p)
-    writemime(io, m, svg)
+    show(io, m, svg)
 end
 
 
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
-    function writemime(io::IO, ::MIME"image/png", p::Plot)
+    @compat function show(io::IO, ::MIME"image/png", p::Plot)
         draw(PNG(io, Compose.default_graphic_width,
                  Compose.default_graphic_height), p)
     end
@@ -976,13 +978,13 @@ end
 
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
-    function writemime(io::IO, ::MIME"application/postscript", p::Plot)
+    @compat function show(io::IO, ::MIME"application/postscript", p::Plot)
         draw(PS(io, Compose.default_graphic_width,
              Compose.default_graphic_height), p)
     end
 end
 
-function writemime(io::IO, ::MIME"text/plain", p::Plot)
+@compat function show(io::IO, ::MIME"text/plain", p::Plot)
     write(io, "Plot(...)")
 end
 
