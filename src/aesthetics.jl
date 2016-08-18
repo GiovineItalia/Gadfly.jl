@@ -123,7 +123,7 @@ const aesthetic_aliases =
 
 # Index as if this were a data frame
 function getindex(aes::Aesthetics, i::Integer, j::AbstractString)
-    getfield(aes, symbol(j))[i]
+    getfield(aes, Symbol(j))[i]
 end
 
 
@@ -186,17 +186,6 @@ function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, va
     end
     nothing
 end
-
-
-# Create a shallow copy of an Aesthetics instance.
-#
-# Args:
-#   a: aesthetics to copy
-#
-# Returns:
-#   Copied aesthetics.
-#
-copy(a::Aesthetics) = Aesthetics(a)
 
 
 # Replace values in a with non-nothing values in b.
@@ -271,6 +260,7 @@ end
 
 
 cat_aes_var!(a::(@compat Void), b::(@compat Void)) = a
+cat_aes_var!(a::(@compat Void), b::Union{Function,AbstractString}) = b
 cat_aes_var!(a::(@compat Void), b) = copy(b)
 cat_aes_var!(a, b::(@compat Void)) = a
 cat_aes_var!(a::Function, b::Function) = a === string || a == showoff ? b : a
@@ -426,9 +416,9 @@ function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygro
                               make_pooled_data_array(typeof(vals), staging[i, j]))
                 else
                     if !applicable(convert, typeof(vals), staging[i, j])
-                        T = eltype(vals)
-                        if T <: Color T = Color end
-                        da = DataArray(T, length(staging[i, j]))
+                        T2 = eltype(vals)
+                        if T2 <: Color T2 = Color end
+                        da = DataArray(T2, length(staging[i, j]))
                         copy!(da, staging[i, j])
                         setfield!(aes_grid[i, j], var, da)
                     else

@@ -761,11 +761,11 @@ function apply_statistic(stat::TickStatistic,
     end
 
     # don't clobber existing ticks
-    if getfield(aes, symbol(string(stat.out_var, "tick"))) != nothing
+    if getfield(aes, Symbol(stat.out_var, "tick")) != nothing
         return
     end
 
-    in_group_var = symbol(string(stat.out_var, "group"))
+    in_group_var = Symbol(stat.out_var, "group")
     minval, maxval = nothing, nothing
     in_values = Any[]
     categorical = (:x in stat.in_vars && Scale.iscategorical(scales, :x)) ||
@@ -913,21 +913,21 @@ function apply_statistic(stat::TickStatistic,
 
     # We use the first label function we find for any of the aesthetics. I'm not
     # positive this is the right thing to do, or would would be.
-    labeler = getfield(aes, symbol(string(stat.out_var, "_label")))
+    labeler = getfield(aes, Symbol(stat.out_var, "_label"))
 
-    setfield!(aes, symbol(string(stat.out_var, "tick")), ticks)
-    setfield!(aes, symbol(string(stat.out_var, "grid")), grids)
-    setfield!(aes, symbol(string(stat.out_var, "tick_label")), labeler)
-    setfield!(aes, symbol(string(stat.out_var, "tickvisible")), tickvisible)
-    setfield!(aes, symbol(string(stat.out_var, "tickscale")), tickscale)
+    setfield!(aes, Symbol(stat.out_var, "tick"), ticks)
+    setfield!(aes, Symbol(stat.out_var, "grid"), grids)
+    setfield!(aes, Symbol(stat.out_var, "tick_label"), labeler)
+    setfield!(aes, Symbol(stat.out_var, "tickvisible"), tickvisible)
+    setfield!(aes, Symbol(stat.out_var, "tickscale"), tickscale)
 
-    viewmin_var = symbol(string(stat.out_var, "viewmin"))
+    viewmin_var = Symbol(stat.out_var, "viewmin")
     if getfield(aes, viewmin_var) === nothing ||
        getfield(aes, viewmin_var) > viewmin
         setfield!(aes, viewmin_var, viewmin)
     end
 
-    viewmax_var = symbol(string(stat.out_var, "viewmax"))
+    viewmax_var = Symbol(stat.out_var, "viewmax")
     if getfield(aes, viewmax_var) === nothing ||
        getfield(aes, viewmax_var) < viewmax
         setfield!(aes, viewmax_var, viewmax)
@@ -1077,7 +1077,7 @@ function apply_statistic(stat::BoxplotStatistic,
 
     if length(aes.x) > 1 && (haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale))
         xmin, xmax = minimum(aes.x), maximum(aes.x)
-        minspan = minimum([xj - xi for (xi, xj) in zip(aes.x, aes.x[2:end])])
+        minspan = minimum([xj - xi for (xi, xj) in zip(aes.x[1:end-1], aes.x[2:end])])
 
         xviewmin = xmin - minspan / 2
         xviewmax = xmax + minspan / 2
@@ -1458,10 +1458,6 @@ immutable ContourStatistic <: Gadfly.StatisticElement
     levels
     samples::Int
 
-    function ContourStatistic(; n=15, samples=150)
-        new(n, samples)
-    end
-
     function ContourStatistic(; levels=15, samples=150)
         new(levels, samples)
     end
@@ -1528,13 +1524,14 @@ function apply_statistic(stat::ContourStatistic,
 
     groups = PooledDataArray(Int[])
     group = 0
-    for contour in Contour.contours(xs, ys, zs, stat.levels)
-        for curve in contour.lines
-            for v in curve.vertices
-                push!(contour_xs, v[1])
-                push!(contour_ys, v[2])
-                push!(levels, contour.level)
+    for level in Contour.levels(Contour.contours(xs, ys, zs, stat.levels))
+        for line in Contour.lines(level)
+            xc, yc = Contour.coordinates(line)
+            append!(contour_xs, xc)
+            append!(contour_ys, yc)
+            for _ in 1:length(xc)
                 push!(groups, group)
+                push!(levels, Contour.level(level))
             end
             group += 1
         end
@@ -1638,11 +1635,6 @@ end
 
 
 function input_aesthetics(::ViolinStatistic)
-    return [:x, :y]
-end
-
-
-function input_aesthetics(::ViolinStatistic)
     return [:x, :y, :width]
 end
 
@@ -1688,8 +1680,8 @@ function apply_statistic(stat::ViolinStatistic,
 
     pad = 0.1
     maxwidth = maximum(aes.width)
-    aes.width .*= 1 - pad
-    aes.width ./= maxwidth
+    broadcast!(*, aes.width, aes.width, 1 - pad)
+    broadcast!(/, aes.width, aes.width, maxwidth)
 end
 
 
@@ -1757,7 +1749,7 @@ function apply_statistic(stat::JitterStatistic,
     rng = MersenneTwister(stat.seed)
     for var in stat.vars
         data = getfield(aes, var)
-        data .+= stat.range * (rand(rng, length(data)) - 0.5) .* span
+        broadcast!(+, data, data, stat.range * (rand(rng, length(data)) - 0.5) .* span)
         setfield!(aes, var, data)
     end
 end
@@ -1806,7 +1798,9 @@ function apply_statistic(stat::BinMeanStatistic,
         groups = Dict()
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
             if !haskey(groups, c)
-                groups[c] = Array[collect(Tx, x), collect(Ty, y)]
+                xs = append!(Tx[], collect(Tx, aes.x))
+                ys = append!(Ty[], collect(Ty, aes.y))
+                groups[c] = Array[xs, ys]
             else
                 push!(groups[c][1], x)
                 push!(groups[c][2], y)

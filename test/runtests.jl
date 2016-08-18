@@ -104,7 +104,8 @@ tests = [
     ("step",                                  6inch, 3inch),
     ("auto_enumerate",                        6inch, 3inch),
     ("coord_limits",                          6inch, 6inch),
-    ("rug",                                   6inch, 3inch)
+    ("rug",                                   6inch, 3inch),
+    ("beeswarm",                              6inch, 3inch)
 ]
 
 

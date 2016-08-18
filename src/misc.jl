@@ -433,3 +433,18 @@ function group_color_isless{S, T <: Colorant}(a::(@compat Tuple{S, T}),
         return false
     end
 end
+
+
+"""
+trim longer arrays to the size of the smallest one
+and zip the arrays.
+"""
+function trim_zip(xs...)
+    mx = max(map(length, xs)...)
+    mn = min(map(length, xs)...)
+    if mx == mn
+        zip(xs...)
+    else
+        zip([length(x) == mn ? x : x[1:mn] for x in xs]...)
+    end
+end

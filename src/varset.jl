@@ -9,16 +9,15 @@ macro varset(name::Symbol, table)
 
     names = Any[]
     vars = Any[]
-    defaults = Any[]
     parameters = Any[]
     parameters_expr = Expr(:parameters)
 
     for row in table
-        if typeof(row) == Expr && row.head == :line
+        if isa(row, Expr) && row.head == :line
             continue
         end
 
-        if typeof(row) == Symbol
+        if isa(row, Symbol)
             var = row
             typ = :Any
             default = :nothing
@@ -33,7 +32,6 @@ macro varset(name::Symbol, table)
 
         push!(names, var)
         push!(vars, :($(var)::$(typ)))
-        push!(defaults, default)
         push!(parameters, Expr(:kw, var, default))
         parameters_expr = Expr(:parameters, parameters...)
     end
@@ -44,10 +42,6 @@ macro varset(name::Symbol, table)
     quote
         type $(name)
             $(vars...)
-
-            function $(name)()
-                new($(defaults...))
-            end
 
             function $(name)($(parameters_expr))
                 $(new_with_defaults)
@@ -70,5 +64,3 @@ macro varset(name::Symbol, table)
 
     esc(ex)
 end
-
-

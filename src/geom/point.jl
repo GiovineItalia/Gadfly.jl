@@ -83,7 +83,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
         stroke_colors =
             Gadfly.pooled_map(RGBA{Float32}, theme.discrete_highlight_color, aes.color)
         classes =
-            Gadfly.pooled_map(ASCIIString,
+            Gadfly.pooled_map(Compat.ASCIIString,
                 c -> svg_color_class_from_label(escape_id(aes.color_label([c])[1])),
                 aes.color)
 

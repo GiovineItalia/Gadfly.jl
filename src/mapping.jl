@@ -1,11 +1,9 @@
-
-
 module Col
 
 using Compat
 using DataFrames
 import Iterators
-
+import Base: ==
 
 immutable GroupedColumn
     columns::Nullable{Vector}
@@ -17,7 +15,7 @@ function Base.hash(colgroup::GroupedColumn, h::UInt64)
 end
 
 
-function Base.(:(==))(a::GroupedColumn, b::GroupedColumn)
+function ==(a::GroupedColumn, b::GroupedColumn)
     return (isnull(a.columns) && isnull(b.columns)) ||
         (!isnull(a.columns) && !isnull(b.columns) && get(a.columns) == get(b.columns))
 end
@@ -263,7 +261,7 @@ evalmapping(source, arg::Function) = arg
 evalmapping(source, arg::Distribution) = arg
 
 evalmapping(source::AbstractDataFrame, arg::Symbol) = source[arg]
-evalmapping(source::AbstractDataFrame, arg::AbstractString) = evalmapping(source, symbol(arg))
+evalmapping(source::AbstractDataFrame, arg::AbstractString) = evalmapping(source, Symbol(arg))
 evalmapping(source::AbstractDataFrame, arg::Integer) = source[arg]
 evalmapping(source::AbstractDataFrame, arg::Expr) = with(source, arg)
 

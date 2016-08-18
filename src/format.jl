@@ -51,7 +51,7 @@ function format_fixed(x::AbstractFloat, precision::Integer)
         push!(ss, '0')
     end
 
-    bytestring(ss)
+    Compat.String(ss)
 end
 
 
