@@ -1679,8 +1679,8 @@ function apply_statistic(stat::ViolinStatistic,
 
     pad = 0.1
     maxwidth = maximum(aes.width)
-    aes.width .*= 1 - pad
-    aes.width ./= maxwidth
+    broadcast!(*, aes.width, aes.width, 1 - pad)
+    broadcast!(/, aes.width, aes.width, maxwidth)
 end
 
 
@@ -1748,7 +1748,7 @@ function apply_statistic(stat::JitterStatistic,
     rng = MersenneTwister(stat.seed)
     for var in stat.vars
         data = getfield(aes, var)
-        data .+= stat.range * (rand(rng, length(data)) - 0.5) .* span
+        broadcast!(+, data, data, stat.range * (rand(rng, length(data)) - 0.5) .* span)
         setfield!(aes, var, data)
     end
 end
