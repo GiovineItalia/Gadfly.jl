@@ -860,8 +860,7 @@ function render_prepared(plot::Plot,
     # IV. Geometries
     themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
                    for layer in plot.layers]
-
-    zips = zip(plot.layers, layer_aess,
+    zips = trim_zip(plot.layers, layer_aess,
                                                    layer_subplot_aess,
                                                    layer_subplot_datas,
                themes)

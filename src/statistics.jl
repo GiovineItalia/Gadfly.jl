@@ -1077,7 +1077,7 @@ function apply_statistic(stat::BoxplotStatistic,
 
     if length(aes.x) > 1 && (haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale))
         xmin, xmax = minimum(aes.x), maximum(aes.x)
-        minspan = minimum([xj - xi for (xi, xj) in zip(aes.x, aes.x[2:end])])
+        minspan = minimum([xj - xi for (xi, xj) in zip(aes.x[1:end-1], aes.x[2:end])])
 
         xviewmin = xmin - minspan / 2
         xviewmax = xmax + minspan / 2

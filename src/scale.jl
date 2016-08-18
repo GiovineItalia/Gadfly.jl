@@ -710,7 +710,7 @@ function apply_scale(scale::ContinuousColorScale,
         color_key_labels = Dict{Color, AbstractString}()
 
         tick_labels = scale.trans.label(ticks)
-        for (i, j, label) in zip(ticks, ticks[2:end], tick_labels)
+        for (i, j, label) in zip(ticks, ticks[2:end], tick_labels[1:end-1])
             r = (i - cmin) / cspan
             c = scale.f(r)
             color_key_colors[c] = r
