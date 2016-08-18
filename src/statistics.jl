@@ -1529,8 +1529,10 @@ function apply_statistic(stat::ContourStatistic,
             xc, yc = Contour.coordinates(line)
             append!(contour_xs, xc)
             append!(contour_ys, yc)
-            for _ in 1:length(xc); push!(groups, group); end
-            push!(levels, Contour.level(level))
+            for _ in 1:length(xc)
+                push!(groups, group)
+                push!(levels, Contour.level(level))
+            end
             group += 1
         end
     end
