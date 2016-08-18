@@ -1797,7 +1797,9 @@ function apply_statistic(stat::BinMeanStatistic,
         groups = Dict()
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
             if !haskey(groups, c)
-                groups[c] = Array[collect(Tx, x), collect(Ty, y)]
+                xs = append!(Tx[], collect(Tx, aes.x))
+                ys = append!(Ty[], collect(Ty, aes.y))
+                groups[c] = Array[xs, ys]
             else
                 push!(groups[c][1], x)
                 push!(groups[c][2], y)
