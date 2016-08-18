@@ -1528,13 +1528,14 @@ function apply_statistic(stat::ContourStatistic,
 
     groups = PooledDataArray(Int[])
     group = 0
-    for contour in Contour.contours(xs, ys, zs, stat.levels)
-        for curve in contour.lines
-            for v in curve.vertices
-                push!(contour_xs, v[1])
-                push!(contour_ys, v[2])
-                push!(levels, contour.level)
-                push!(groups, group)
+    for level in Contour.levels(Contour.contours(xs, ys, zs, stat.levels))
+        for line in Contour.lines(level)
+            xc, yc = Contour.coordinates(line)
+            append!(contour_xs, xc)
+            append!(contour_ys, yc)
+            for _ in 1:length(xc) 
+              push!(groups, group)
+              push!(levels, Contour.level(level))
             end
             group += 1
         end
