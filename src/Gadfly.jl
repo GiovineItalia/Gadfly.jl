@@ -1023,14 +1023,14 @@ end
 
 
 function open_file(filename)
-    if OS_NAME == :Darwin
+    if is_apple()
         run(`open $(filename)`)
-    elseif OS_NAME == :Linux || OS_NAME == :FreeBSD
+    elseif is_linux() || is_bsd()
         run(`xdg-open $(filename)`)
-    elseif OS_NAME == :Windows
+    elseif is_windows()
         run(`$(ENV["COMSPEC"]) /c start $(filename)`)
     else
-        warn("Showing plots is not supported on OS $(string(OS_NAME))")
+        warn("Showing plots is not supported on OS $(string(Compat.KERNEL))")
     end
 end
 
@@ -1073,10 +1073,10 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Plot)
           </head>
             <body>
             <script charset="utf-8">
-                $(readall(Compose.snapsvgjs))
+                $(readstring(Compose.snapsvgjs))
             </script>
             <script charset="utf-8">
-                $(readall(gadflyjs))
+                $(readstring(gadflyjs))
             </script>
 
             $(plotsvg)
