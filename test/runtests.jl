@@ -105,7 +105,8 @@ tests = [
     ("auto_enumerate",                        6inch, 3inch),
     ("coord_limits",                          6inch, 6inch),
     ("rug",                                   6inch, 3inch),
-    ("beeswarm",                              6inch, 3inch)
+    ("beeswarm",                              6inch, 3inch),
+    ("issue871",                              6inch, 3inch)
 ]
 
 
@@ -185,5 +186,3 @@ run_tests("output/test.html")
 #@time run_tests("output/test.html")
 #@profile run_tests("output/test.html")
 #Profile.print()
-
-

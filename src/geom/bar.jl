@@ -14,16 +14,22 @@ immutable BarGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
 
     tag::Symbol
+
+    function BarGeometry(; position::Symbol=:stack,
+                         orientation::Symbol=:vertical,
+                         tag::Symbol=empty_tag)
+        new(position, orientation, Gadfly.Stat.bar(position=position,
+            orientation = orientation), tag)
+    end
+
+    function BarGeometry(position::Symbol, orientation::Symbol,
+                         default_statistic::Gadfly.StatisticElement,
+                         tag::Symbol)
+        new(position, orientation, default_statistic, tag)
+    end
 end
 
-
-function bar(; position::Symbol=:stack, orientation::Symbol=:vertical,
-             tag::Symbol=empty_tag)
-    return BarGeometry(
-        position, orientation,
-        Gadfly.Stat.bar(position=position, orientation=orientation), tag)
-end
-
+const bar = BarGeometry
 
 function histogram(; position=:stack, bincount=nothing,
                    minbincount=3, maxbincount=150,
