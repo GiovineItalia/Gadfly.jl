@@ -1,5 +1,7 @@
 [![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.3.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.3)
 [![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.4.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.4)
+[![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.5.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.5)
+
 
 [![DOI](https://zenodo.org/badge/6322/dcjones/Gadfly.jl.png)](http://dx.doi.org/10.5281/zenodo.11876) [![Build Status](http://img.shields.io/travis/dcjones/Gadfly.jl.svg)](https://travis-ci.org/dcjones/Gadfly.jl) [![Coverage Status](http://img.shields.io/coveralls/dcjones/Gadfly.jl.svg)](https://coveralls.io/r/dcjones/Gadfly.jl)
 
