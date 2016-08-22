@@ -1045,8 +1045,8 @@ function render(guide::Title, theme::Gadfly.Theme,
 
     padding = 2mm
     ctx = compose!(
-        context(minwidth=text_width, minheight=text_height + 2padding),
-        text(0.5w, 1h - padding, guide.label, hcenter, vbottom),
+        context(minwidth=text_width, minheight=text_height + padding),
+        text(0.5w, 1h - text_height - padding, guide.label, hcenter, vtop),
         stroke(nothing),
         fill(theme.major_label_color),
         font(theme.major_label_font),
