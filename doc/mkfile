@@ -1,7 +1,0 @@
-
-html:V:
-    /Users/dcjones/src/julia-0.4/julia -e 'using Judo; Judo.collate("Gadfly", template=Pkg.dir("Gadfly", "doc", "template"))'
-
-deploy:V:
-    scp -r html/* badfigure:public_html/gadflyjl
-
