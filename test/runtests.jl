@@ -106,7 +106,8 @@ tests = [
     ("coord_limits",                          6inch, 6inch),
     ("rug",                                   6inch, 3inch),
     ("beeswarm",                              6inch, 3inch),
-    ("issue871",                              6inch, 3inch)
+    ("issue871",                              6inch, 3inch),
+    ("issue882",                              6inch, 3inch)
 ]
 
 

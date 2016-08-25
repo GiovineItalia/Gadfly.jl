@@ -15,16 +15,7 @@
 # Returns:
 #   A plot objects.
 #
-function plot{T <: Base.Callable}(fs::Vector{T}, a, b, elements::ElementOrFunction...; mapping...)
-    # Catch a common misuse of this function
-    if isa(b, ElementOrFunction)
-        error(
-        """
-        Invalid plot usage:
-            plot(xs, ys, ...) should be plot(x=xs, y=ys, ...)
-        """)
-    end
-
+function plot{T <: Base.Callable}(fs::Vector{T}, a::Number, b::Number, elements::ElementOrFunction...; mapping...)
     if isempty(elements)
         elements = ElementOrFunction[]
     elseif isa(elements, Tuple)
@@ -55,13 +46,13 @@ end
 
 
 # Plot a single function.
-function plot(f::Function, a, b, elements::ElementOrFunction...; mapping...)
+function plot(f::Function, a::Number, b::Number, elements::ElementOrFunction...; mapping...)
     plot(Function[f], a, b, elements...; mapping...)
 end
 
 
 # Plot a single function using a contour plot
-function plot(f::Function, xmin, xmax, ymin, ymax,
+function plot(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,
               elements::ElementOrFunction...; mapping...)
     default_elements = ElementOrFunction[]
     element_types = Set(map(typeof, elements))
@@ -85,7 +76,7 @@ function plot(f::Function, xmin, xmax, ymin, ymax,
 end
 
 
-function layer(f::Function, xmin, xmax, ymin, ymax,
+function layer(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,
                elements::ElementOrFunction...; mapping...)
     if isempty(elements)
         elements = ElementOrFunction[]
@@ -106,13 +97,13 @@ end
 
 
 # Create a layer from a list of functions or expressions.
-function layer(fs::Array, a, b, elements::ElementOrFunction...)
+function layer(fs::Array, a::Number, b::Number, elements::ElementOrFunction...)
     layer(y=fs, xmin=[a], xmax=[b], Stat.func, Geom.line, elements...)
 end
 
 
 # Create a layer from a single function.
-function layer(f::Function, a, b, elements::ElementOrFunction...)
+function layer(f::Function, a::Number, b::Number, elements::ElementOrFunction...)
     layer([f], a, b, elements...)
 end
 
