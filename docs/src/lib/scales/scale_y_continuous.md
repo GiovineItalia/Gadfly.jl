@@ -39,6 +39,7 @@ A number of transformed continuous scales are provided.
 using RDatasets # hide
 using Gadfly # hide
 srand(1234) # hide
+nothing # hide
 ```
 
 ```@example 1

@@ -30,6 +30,7 @@ A number of transformed continuous scales are provided.
 ```@example 1
 using Gadfly # hide
 srand(1234) # hide
+nothing # hide
 ```
 
 ```@example 1

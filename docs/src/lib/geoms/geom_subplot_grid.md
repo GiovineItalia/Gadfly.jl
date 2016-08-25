@@ -56,7 +56,7 @@ using RDatasets # hid
 using DataFrames
 set_default_plot_size(8cm, 12cm)
 
-widedf = DataFrame(x = [1:10], var1 = [1:10], var2 = [1:10].^2)
+widedf = DataFrame(x = collect(1:10), var1 = collect(1:10), var2 = collect(1:10).^2)
 longdf = stack(widedf, [:var1, :var2])
 nothing # hide
 ```

@@ -15,6 +15,7 @@ alias for [Scale.color_discrete_hue](@ref).
 ```@example 1
 using Gadfly # hide
 srand(1234) # hide
+nothing # hide
 ```
 
 This forces the use of a discrete scale on data that would otherwise receive a continuous scale:

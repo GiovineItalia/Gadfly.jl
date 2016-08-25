@@ -23,6 +23,7 @@ using RDatasets # hide
 using Gadfly # hide
 Gadfly.set_default_plot_size(14cm, 8cm) # hide
 srand(1234) # hide
+nothing # hide
 ```
 
 ```@example 1

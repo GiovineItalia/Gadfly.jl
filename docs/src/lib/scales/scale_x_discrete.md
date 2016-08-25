@@ -29,8 +29,8 @@ easiest way to get that data to plot appropriately.
 ```@example 1
 using RDatasets # hide
 using Gadfly # hide
-Gadfly.set_default_plot_size(12cm, 8cm) # hide
 srand(1234) # hide
+Gadfly.set_default_plot_size(12cm, 8cm) # hide
 ```
 
 ```@example 1
