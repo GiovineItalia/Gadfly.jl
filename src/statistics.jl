@@ -1749,8 +1749,9 @@ function apply_statistic(stat::JitterStatistic,
     rng = MersenneTwister(stat.seed)
     for var in stat.vars
         data = getfield(aes, var)
-        broadcast!(+, data, data, stat.range * (rand(rng, length(data)) - 0.5) .* span)
-        setfield!(aes, var, data)
+        outdata = Array(Float64, size(data))
+        broadcast!(+, outdata, data, stat.range * (rand(rng, length(data)) - 0.5) .* span)
+        setfield!(aes, var, outdata)
     end
 end
 
