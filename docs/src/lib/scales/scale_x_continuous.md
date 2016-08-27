@@ -4,9 +4,15 @@ Map numerical data to x positions in cartesian coordinates.
 
 ## Arguments
 
-  * `minvalue`: Set scale lower bound to be ≤ this value. If you need to strictly set plot
-    limits use [Coord.cartesian](@ref) instead.
+  * `minvalue`: Set scale lower bound to be ≤ this value.
   * `maxvalue`: Set scale lower bound to be ≥ this value.
+
+!!! note
+
+    `minvalue` and `maxvalue` here are soft bounds, Gadfly may choose to ignore
+    them when constructing an optimal plot. Use [Coord.cartesian](@ref) to enforce
+    a hard bound.
+
   * `labels`: Either a `Function` or `nothing`. When a
     function is given, values are formatted using this function. The function
     should map a value in `x` to a string giving its label. If the scale

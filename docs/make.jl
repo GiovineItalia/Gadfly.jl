@@ -4,7 +4,7 @@ load_dir(x) = map(file -> joinpath("lib", x, file), readdir(joinpath(Base.source
 
 makedocs(
     modules = [Gadfly],
-    clean = true,
+    clean = false,
     format = Documenter.Formats.HTML,
     sitename = "Gadfly.jl",
     pages = Any[

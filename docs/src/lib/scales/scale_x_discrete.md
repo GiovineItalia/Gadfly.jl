@@ -1,11 +1,11 @@
 # Scale.x_discrete
 
-Map data categorical to Cartesian coordinates. Unlike `Scale.x_continuous`, each
+Map data categorical to Cartesian coordinates. Unlike [Scale.x_continuous](@ref), each
 unique x value will be mapped to a equally spaced positions, regardless of
 value.
 
 By default continuous scales are applied to numerical data. If data consists of
-numbers specifying categories, explicitly adding `Scale.x_discrete` is the
+numbers specifying categories, explicitly adding [Scale.x_discrete](@ref) is the
 easiest way to get that data to plot appropriately.
 
 ## Arguments
