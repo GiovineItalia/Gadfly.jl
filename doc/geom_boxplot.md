@@ -7,7 +7,7 @@ order: 1000
 
 Draw boxplots.
 
-# Default Stastitic
+# Default Statistic
 
 `Stat.boxplot`
 
