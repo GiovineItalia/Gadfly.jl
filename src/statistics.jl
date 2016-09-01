@@ -205,10 +205,13 @@ function apply_statistic(stat::BarStatistic,
     end
 
     iscontinuous = haskey(scales, var) && isa(scales[var], Scale.ContinuousScale)
-    minvals, maxvals = barminmax(values, iscontinuous)
 
-    setfield!(aes, minvar, minvals)
-    setfield!(aes, maxvar, maxvals)
+    if getfield(aes, minvar) == nothing || getfield(aes, maxvar) == nothing
+        minvals, maxvals = barminmax(values, iscontinuous)
+
+        setfield!(aes, minvar, minvals)
+        setfield!(aes, maxvar, maxvals)
+    end
 
     z = zero(eltype(getfield(aes, othervar)))
     if getfield(aes, viewminvar) == nothing && z < minimum(getfield(aes, othervar))
