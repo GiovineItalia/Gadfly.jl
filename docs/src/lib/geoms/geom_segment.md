@@ -1,13 +1,16 @@
----
-title: segment
-author: Mattriks
-part: Geometry
-order: 1019
-...
-Draw separate line segments/vectors/arrows.
-Note that if you want arrows, then you need to provide a `Scale` object for both axes. See example below. 
+# Geom.segment
 
-# Aesthetics
+```@meta
+Author = "Mattriks"
+```
+
+Draw separate line segments/vectors/arrows.
+
+!!! note
+
+    If you want arrows, then you need to provide a `Scale` object for both axes. See example below.
+
+## Aesthetics
 
   * `x`: Start of line segment.
   * `y`: Start of line segment.
@@ -15,22 +18,20 @@ Note that if you want arrows, then you need to provide a `Scale` object for both
   * `yend`: End of line segment.
   * `color` (optional): Color of line segments.
 
-# Arguments
+## Arguments
 
-  * `arrow`: Default behavior for `Geom.segment` is to draw line segments without arrows.
-  `Geom.vector()` is `Geom.segment(arrow=true)`.
+  * `arrow`: Default behavior for `Geom.segment` is to draw line segments without arrows. `Geom.vector` is `Geom.segment(arrow=true)`.
 
 
-# Examples
+## Examples
 
-```{.julia hide="true" results="none"}
-using RDatasets
-using Gadfly
-
-Gadfly.set_default_plot_size(6.6inch, 6.6inch)
+```@example 1
+using RDatasets # hide
+using Gadfly # hide
+Gadfly.set_default_plot_size(14cm, 14cm) # hide
 ```
 
-```julia
+```@example 1
 seals = RDatasets.dataset("ggplot2","seals")
 seals[:Latb] = seals[:Lat] + seals[:DeltaLat]
 seals[:Longb] = seals[:Long] + seals[:DeltaLong]
@@ -46,4 +47,3 @@ layer1 = layer(seals, x=:Long, y=:Lat, xend=:Longb, yend=:Latb, Geom.vector, col
 
 plot(layer1, xsc, ysc, colsc, coord)
 ```
-
