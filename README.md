@@ -221,9 +221,9 @@ to be included inline in the HTML page, or included with an object tag, like.
 
 # Reporting Bugs
 
-This is a new and fairly complex piece of software. [File an
+This is a new and fairly complex piece of software. [Filing an
 issue](https://github.com/dcjones/Gadfly.jl/issues/new) to report a bug,
 counterintuitive behavior, or even requesting a feature is extremely valuable in
-helping me prioritize what to work on, so don't hestitate.
+helping me prioritize what to work on, so don't hesitate.
 
 
