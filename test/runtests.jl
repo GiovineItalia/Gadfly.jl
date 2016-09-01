@@ -107,7 +107,8 @@ tests = [
     ("rug",                                   6inch, 3inch),
     ("beeswarm",                              6inch, 3inch),
     ("issue871",                              6inch, 3inch),
-    ("issue882",                              6inch, 3inch)
+    ("issue882",                              6inch, 3inch),
+    ("vector",                                3.3inch, 3.3inch)
 ]
 
 

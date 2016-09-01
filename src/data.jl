@@ -5,6 +5,8 @@
     x
     y
     z
+    xend
+    yend
     xmin
     xmax
     ymin

@@ -70,5 +70,6 @@ include("geom/ribbon.jl")
 include("geom/violin.jl")
 include("geom/polygon.jl")
 include("geom/beeswarm.jl")
+include("geom/segment.jl")
 
 end # module Geom
