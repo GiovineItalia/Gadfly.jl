@@ -15,10 +15,10 @@ Manually define a color key
 
 Combine two layers into a plot, and set a custom color of one layer.  Add a manual color key with labels that match the two layers.  (Note that "deepskyblue" is the default color for Geom.line and others.)
 
-```@example 1
-using DataFrames # hide
-using Gadfly # hide
-Gadfly.set_default_plot_size(14cm, 8cm) # hide
+```@setup 1
+using DataFrames
+using Gadfly
+Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```@example 1

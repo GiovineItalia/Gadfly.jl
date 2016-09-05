@@ -45,11 +45,10 @@ A number of transformed continuous scales are provided.
 
 ## Examples
 
-```@example 1
-using RDatasets # hide
-using Gadfly # hide
-srand(1234) # hide
-nothing # hide
+```@setup 1
+using RDatasets
+using Gadfly
+srand(1234)
 ```
 
 ```@example 1

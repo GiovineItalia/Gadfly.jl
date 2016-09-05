@@ -1,5 +1,5 @@
 ```@meta
-Author = "Daniel Jones"
+Author = "Daniel C. Jones"
 ```
 
 # Geom.bar
@@ -36,10 +36,10 @@ If `x` is given, a bar will be drawn at each x value, specifying both `xmin` and
 
 ## Examples
 
-```@example 1
-using RDatasets # hide
-using Gadfly # hide
-Gadfly.set_default_plot_size(12cm, 8cm) # hide
+```@setup 1
+using RDatasets
+using Gadfly
+Gadfly.set_default_plot_size(12cm, 8cm)
 ```
 
 ```@example 1

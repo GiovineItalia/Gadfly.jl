@@ -17,12 +17,11 @@ Nudge values on the x-axis to avoid overplotting.
 
 ## Examples
 
-```@example 1
-using Distributions # hide
-using Gadfly # hide
-Gadfly.set_default_plot_size(12cm, 8cm) # hide
-srand(1234) # hide
-nothing # hide
+```@setup 1
+using Distributions
+using Gadfly
+Gadfly.set_default_plot_size(12cm, 8cm)
+srand(1234)
 ```
 
 ```@example 1

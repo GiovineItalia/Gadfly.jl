@@ -18,8 +18,8 @@ Author = "Daniel C. Jones"
 
 ## Examples
 
-```@example 1
-using Gadfly # hide
+```@setup 1
+using Gadfly
 ```
 
 ```@example 1

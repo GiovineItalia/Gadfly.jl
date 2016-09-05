@@ -29,11 +29,11 @@ easiest way to get that data to plot appropriately.
 
 ## Examples
 
-```@example 1
-using RDatasets # hide
-using Gadfly # hide
-srand(1234) # hide
-Gadfly.set_default_plot_size(12cm, 8cm) # hide
+```@setup 1
+using RDatasets
+using Gadfly
+Gadfly.set_default_plot_size(12cm, 8cm)
+srand(1234)
 ```
 
 ```@example 1

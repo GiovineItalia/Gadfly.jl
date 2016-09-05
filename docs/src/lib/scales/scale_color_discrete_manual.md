@@ -1,5 +1,5 @@
 ```@meta
-Author = "Daniel C. Jones"
+Author = "David Chudzicki"
 ```
 
 # Scale.color_discrete_manual
@@ -20,10 +20,9 @@ Create a discrete color scale to be used for the plot.
 
 ## Examples
 
-```@example 1
-using Gadfly # hide
-srand(1234) # hide
-nothing # hide
+```@setup 1
+using Gadfly
+srand(1234)
 ```
 
 ```@example 1

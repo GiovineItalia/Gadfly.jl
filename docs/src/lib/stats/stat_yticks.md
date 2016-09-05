@@ -22,11 +22,10 @@ All y-axis aesthetics are considered, and ticks are output to the `ytick` and
 
 ## Examples
 
-```@example 1
-using Gadfly # hide
-Gadfly.set_default_plot_size(12cm, 8cm) # hide
-srand(1234) # hide
-nothing # hide
+```@setup 1
+using Gadfly
+Gadfly.set_default_plot_size(12cm, 8cm)
+srand(1234)
 ```
 
 ```@example 1

@@ -22,12 +22,11 @@ With the later a vertical error bar is drawn, and the former, a horizontal bar.
 ## Examples
 
 
-```@example 1
-using RDatasets # hide
-using Gadfly # hide
-Gadfly.set_default_plot_size(14cm, 8cm) # hide
-srand(1234) # hide
-nothing # hide
+```@setup 1
+using RDatasets
+using Gadfly
+Gadfly.set_default_plot_size(14cm, 8cm)
+srand(1234)
 ```
 
 ```@example 1

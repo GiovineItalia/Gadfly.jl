@@ -3,13 +3,13 @@ Author = "Darwin Darakananda"
 ```
 # Rendering Pipeline
 
-```@example 1
-using DataFrames # hide
-using Colors # hide
-using Compose # hide
-using RDatasets # hide
-using Showoff # hide
-using Gadfly # hide
+```@setup 1
+using DataFrames
+using Colors
+using Compose
+using RDatasets
+using Showoff
+using Gadfly
 ```
 
 How does the function call
@@ -24,13 +24,16 @@ p = plot(df,
 
 actually get turned into the following plot?
 
+```@setup 1
+df = dataset("ggplot2", "diamonds")
+p = plot(df,
+         x = :Price, color = :Cut,
+		 Stat.histogram,
+		 Geom.bar)
+```
+
 ```@example 1
-df = dataset("ggplot2", "diamonds") # hide
-p = plot(df, # hide
-         x = :Price, color = :Cut, # hide
-		 Stat.histogram, # hide
-		 Geom.bar) # hide
-p_rendered = deepcopy(p) # hide
+p # hide
 ```
 
 ## The 10,000-foot View

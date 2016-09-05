@@ -15,9 +15,9 @@ alias for [Geom.line](@ref) with `preserve_order=true`.
 
 ## Examples
 
-```@example 1
-using Gadfly # hide
-Gadfly.set_default_plot_size(14cm, 8cm) # hide
+```@setup 1
+using Gadfly
+Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 Here's a random walk in 2D:
 

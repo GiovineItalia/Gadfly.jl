@@ -15,9 +15,10 @@ Draw a ribbon bounded above and below by `ymin` and `ymax`, respectively.
 
 ## Examples
 
-```@example 1
-using Gadfly, DataFrames # hide
-Gadfly.set_default_plot_size(14cm, 8cm) # hide
+```@setup 1
+using Gadfly
+using DataFrames
+Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```@example 1

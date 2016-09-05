@@ -23,9 +23,9 @@ colors hexagons according to count. To override this, pass [Stat.identity](@ref)
 
 ## Examples
 
-```@example 1
-using Gadfly, Distributions # hide
-Gadfly.set_default_plot_size(14cm, 8cm) # hide
+```@setup 1
+using Gadfly, Distributions
+Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```@example 1

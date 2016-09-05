@@ -23,9 +23,9 @@ If no plot elements are defined, point geometry is added by default. The point
 geometry takes as input the `x` and `y` aesthetics. So all that's needed to draw
 a scatterplot is to bind `x` and `y`.
 
-```@example 1
-srand(12345) # hide
-using Gadfly; # hide
+```@setup 1
+using Gadfly
+srand(12345)
 ```
 
 ```@example 1

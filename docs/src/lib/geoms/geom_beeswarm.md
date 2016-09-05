@@ -1,5 +1,5 @@
 ```@meta
-Author = "Daniel Jones"
+Author = "Daniel C. Jones"
 ```
 
 # Geom.beeswarm
@@ -21,10 +21,10 @@ Plot points, shifting them on the x- or y-axis to avoid overlaps.
 
 ## Examples
 
-```@example 1
-using RDatasets # hide
-using Gadfly # hide
-Gadfly.set_default_plot_size(14cm, 8cm) # hide
+```@setup 1
+using RDatasets
+using Gadfly
+Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```@example 1

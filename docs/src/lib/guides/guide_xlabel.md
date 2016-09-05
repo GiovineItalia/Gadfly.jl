@@ -16,9 +16,9 @@ the default label.
 
 ## Examples
 
-```@example 1
-using Gadfly # hide
-Gadfly.set_default_plot_size(14cm, 8cm) # hide
+```@setup 1
+using Gadfly
+Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
 ```@example 1

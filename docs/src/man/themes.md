@@ -74,12 +74,11 @@ overrides the default theme's value.
 
 ## Examples
 
-```@example 1
-using RDatasets # hide
-using Gadfly # hide
-Gadfly.set_default_plot_size(12cm, 8cm) # hide
-srand(12345) # hide
-nothing # hide
+```@setup 1
+using RDatasets
+using Gadfly
+Gadfly.set_default_plot_size(12cm, 8cm)
+srand(12345)
 ```
 
 ```@example 1
