@@ -9,7 +9,8 @@ Formats the tick marks and labels for the y-axis
 
 # Arguments
   * `ticks`: Array of tick locations on the y-axis, `:auto` to automatically
-    select ticks, or `nothing` to supress y-axis ticks.
+    select ticks, or `nothing` to supress y-axis ticks.  Note that any ticks 
+    set here will be overwritten by any set in `Stat.yticks`.
   * `label`: Determines if the ticks are labeled, either
     `true` (default) or `false`
   * `orientation`: Label orientation

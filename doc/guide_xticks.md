@@ -9,7 +9,8 @@ Formats the tick marks and labels for the x-axis
 
 # Arguments
   * `ticks`: Array of tick locations on the x-axis, `:auto` to automatically
-    select ticks, or `nothing` to supress x-axis ticks.
+    select ticks, or `nothing` to supress x-axis ticks.  Note that any ticks 
+    set here will be overwritten by any set in `Stat.xticks`.  
   * `label`: Determines if the ticks are labeled, either
     `true` (default) or `false`
   * `orientation`: Label orientation
