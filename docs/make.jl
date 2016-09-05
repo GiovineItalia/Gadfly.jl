@@ -30,3 +30,9 @@ makedocs(
         ]
     ]
 )
+
+deploydocs(
+    repo   = "github.com/dcjones/Gadfly.jl.git",
+    julia  = "0.5",
+    osname = "linux"
+)

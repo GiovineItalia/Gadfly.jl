@@ -15,3 +15,5 @@ script:
   - julia --check-bounds=yes -e 'Pkg.test("Gadfly", coverage=true)'
 after_success:
   - julia -e 'cd(Pkg.dir("Gadfly")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  - julia -e 'Pkg.add("Documenter")'
+  - julia -e 'cd(Pkg.dir("Gadfly")); include(joinpath("docs", "make.jl"))'
