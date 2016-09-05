@@ -49,8 +49,9 @@ overrides the default theme's value.
   * `errorbar_cap_length`: Length of caps on error bars. (Measure)
   * `highlight_width`: Width of lines drawn around plot geometry like points,
     and boxplot rectangles. (Measure)
-  * `highlight_color`: Color used to outline plot geometry. This is a function
-    that alters (e.g. darkens) the fill color of the geometry. (Function)
+  * `discrete_highlight_color` and `continuous_highlight_color`: Color used
+    to outline plot geometry. This is a function that alters (e.g. darkens) the
+    fill color of the geometry. (Function)
   * `lowlight_color`: Color used to draw background geometry, such as
     `Geom.ribbon`. This is a function that alters the fill color of the geometry.
     (Function)
