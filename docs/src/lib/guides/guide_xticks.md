@@ -1,3 +1,7 @@
+```@meta
+Author = "Darwin Darakananda"
+```
+
 # Guide.xticks
 
 Formats the tick marks and labels for the x-axis

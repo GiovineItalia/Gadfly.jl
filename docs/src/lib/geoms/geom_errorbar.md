@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.errorbar
 
 Draw vertical and/or horizontal error bars.

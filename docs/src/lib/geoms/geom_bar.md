@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel Jones"
+```
+
 # Geom.bar
 
 Draw bar plots. This geometry works on pre-summarized data such as counts. To

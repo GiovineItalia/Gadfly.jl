@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Plotting
 
 Most interaction with Gadfly is through the `plot` function. Plots are described

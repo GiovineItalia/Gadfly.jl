@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Scale.color_discrete_manual
 
 Create a discrete color scale to be used for the plot.

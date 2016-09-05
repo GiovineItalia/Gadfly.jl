@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Guide.colorkey
 
 Set the title for the plot legend

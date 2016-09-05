@@ -1,3 +1,7 @@
+```@meta
+Author = "Darwin Darakananda"
+```
+
 # Guide.yticks
 
 Formats the tick marks and labels for the y-axis

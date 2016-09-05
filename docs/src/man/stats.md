@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Statistics
 
 Statistics are functions taking as input one or more aesthetics, operating on

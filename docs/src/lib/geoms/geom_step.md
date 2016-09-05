@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.step
 
 Connect points using a stepwise function. Equivalent to [Geom.line](@ref) with

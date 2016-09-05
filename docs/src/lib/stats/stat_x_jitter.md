@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Stat.x_jitter
 
 Nudge values on the x-axis to avoid overplotting.

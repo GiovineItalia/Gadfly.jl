@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Scale.color_none
 
 Suppress a default color scale. Some statistics impose a default color scale.

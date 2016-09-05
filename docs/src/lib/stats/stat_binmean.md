@@ -1,3 +1,7 @@
+```@meta
+Author = "Matthieu Gomez"
+```
+
 # Stat.binmean
 
 Plot the mean of `y` against the mean of `x` within `n` quantile bins of `x`.

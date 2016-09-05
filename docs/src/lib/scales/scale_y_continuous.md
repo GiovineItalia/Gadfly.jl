@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Scale.y_continuous
 
 Map numerical data to y positions in cartesian coordinates.

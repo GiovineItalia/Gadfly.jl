@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Guide.annotation
 
 Overlay a plot with an arbitrary [Compose](http://composejl.org/) graphic. The

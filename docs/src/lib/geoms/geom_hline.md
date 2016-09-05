@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.hline
 
 Draw horizontal lines across the plot canvas.

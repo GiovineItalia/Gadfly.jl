@@ -1,8 +1,8 @@
-# Geom.segment
-
 ```@meta
 Author = "Mattriks"
 ```
+
+# Geom.segment
 
 Draw separate line segments/vectors/arrows.
 

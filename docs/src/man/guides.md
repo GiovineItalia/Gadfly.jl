@@ -1,3 +1,8 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
+
 # Guides
 
 Very similar to [Geometries](@ref) are guides, which draw graphics supporting the

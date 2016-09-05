@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Scales
 
 Scales, similarly to [Statistics](@ref), apply a transformation to the original

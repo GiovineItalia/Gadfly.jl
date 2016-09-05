@@ -1,3 +1,7 @@
+```@meta
+Author = "Darwin Darakananda"
+```
+
 # Guide.title
 
 Set the plot tile

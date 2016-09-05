@@ -1,3 +1,7 @@
+```@meta
+Author = "Alex Ryckman Mellnik"
+```
+
 # Guide.manual_color_key
 
 Manually define a color key

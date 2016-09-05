@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.subplot_grid
 
 Draw multiple subplots in a grid organized by one or two categorial vectors.

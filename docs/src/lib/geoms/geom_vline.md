@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.vline
 
 Draw vertical lines across the plot canvas.

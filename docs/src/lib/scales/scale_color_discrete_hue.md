@@ -1,3 +1,7 @@
+```@meta
+Author = "David Chudzicki"
+```
+
 # Scale.color_discrete_hue
 
 Create a discrete color scale to be used for the plot. `Scale.discrete_color` is an

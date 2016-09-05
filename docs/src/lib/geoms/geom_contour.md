@@ -1,3 +1,7 @@
+```@meta
+Author = "Darwin Darakananda"
+```
+
 # Geom.contour
 
 Draw contours of a 2D function or a matrix.

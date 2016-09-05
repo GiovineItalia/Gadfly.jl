@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.hexbin
 
 Bin data into tiled hexagonal bins and color by count.

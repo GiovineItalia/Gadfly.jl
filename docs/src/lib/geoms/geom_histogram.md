@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.histogram
 
 Draw histograms. An alias for [Geom.bar](@ref) with [Stat.histogram](@ref).

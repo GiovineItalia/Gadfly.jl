@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel Jones"
+```
+
 # Geom.beeswarm
 
 Plot points, shifting them on the x- or y-axis to avoid overlaps.

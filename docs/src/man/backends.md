@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones, Tamas Nagy"
+```
+
 # Backends
 
 **Gadfly** supports writing to the SVG and SVGJS backends out of the box. However,

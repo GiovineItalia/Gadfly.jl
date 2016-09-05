@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Stat.step
 
 Perform stepwise interpolation between points. If `x` and `y` define a a series

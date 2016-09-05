@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Guide.yrug
 
 Draw a rug plot along the y-axis of a plot.

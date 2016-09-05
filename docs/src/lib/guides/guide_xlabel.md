@@ -1,3 +1,7 @@
+```@meta
+Author = "Darwin Darakananda"
+```
+
 # Guide.xlabel
 
 Sets the x-axis label for the plot.

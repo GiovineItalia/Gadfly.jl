@@ -1,3 +1,7 @@
+```@meta
+Author = "David Chudzicki"
+```
+
 # Scale.color_continuous
 
 Create a continuous color scale that the plot will use.

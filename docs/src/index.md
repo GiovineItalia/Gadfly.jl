@@ -1,3 +1,7 @@
+```@meta
+Author = "Tamas Nagy"
+```
+
 # Gadfly.jl
 
 Gadfly is a system for plotting and visualization written in [Julia](https://julialang.org).
@@ -43,3 +47,7 @@ Pages = [
 ]
 Depth = 1
 ```
+
+## Credits
+
+Gadfly is predominantly the work of Daniel C. Jones who initiated the project and built out most of the infrastructure. The current package maintainers are Shashi Gowda and Tamas Nagy. Important contributions have also been made by Godisemo, Tim Holy, Darwin Darakananda, Shashi Gowda, Tamas Nagy, Simon Leblanc, Iain Dunning, Keno Fischer, Mattriks, and others.

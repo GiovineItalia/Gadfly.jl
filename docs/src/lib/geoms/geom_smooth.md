@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.smooth
 
 Plot a smooth function estimated from data. An alias for [Geom.line](@ref) with [Stat.smooth](@ref).

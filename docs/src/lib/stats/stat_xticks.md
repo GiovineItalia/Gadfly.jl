@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Stat.xticks
 
 Compute an appealing set of ticks that encompass the data.

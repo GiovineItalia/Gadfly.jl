@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Stacks and Layers
 
 **Gadfly** also supports more advanced plot composition techniques like stacking

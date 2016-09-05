@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.density
 
 Draw a kernel density estimate from data. An alias for [Geom.line](@ref) with

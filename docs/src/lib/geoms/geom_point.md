@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.point
 
 The point geometry is used to draw various types of scatterplots.

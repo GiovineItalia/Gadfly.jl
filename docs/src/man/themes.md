@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Themes
 
 Many parameters controlling the appearance of plots can be overridden by passing

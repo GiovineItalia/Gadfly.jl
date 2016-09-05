@@ -1,3 +1,7 @@
+```@meta
+Author = "Dave Kleinschmidt"
+```
+
 # Stat.qq
 
 Generates quantile-quantile plots for `x` and `y`.  If each is a numeric vector,

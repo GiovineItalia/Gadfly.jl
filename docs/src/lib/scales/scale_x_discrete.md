@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Scale.x_discrete
 
 Map data categorical to Cartesian coordinates. Unlike [Scale.x_continuous](@ref), each

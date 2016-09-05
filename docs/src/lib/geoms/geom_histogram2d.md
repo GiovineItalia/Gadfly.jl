@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.histogram2d
 
 Bin data in rectangles and indicate density with color. As in heatmaps, etc.

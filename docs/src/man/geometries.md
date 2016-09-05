@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geometries
 
 Geometries are responsible for actually doing the drawing. A geometry takes

@@ -1,3 +1,6 @@
+```@meta
+Author = "Darwin Darakananda"
+```
 # Rendering Pipeline
 
 ```@example 1

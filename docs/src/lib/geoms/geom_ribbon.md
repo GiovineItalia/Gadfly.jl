@@ -1,3 +1,7 @@
+```@meta
+Author = "Daniel C. Jones"
+```
+
 # Geom.ribbon
 
 Draw a ribbon bounded above and below by `ymin` and `ymax`, respectively.

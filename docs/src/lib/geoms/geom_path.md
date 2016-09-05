@@ -1,3 +1,7 @@
+```@meta
+Author = "David Chudzicki"
+```
+
 # Geom.path
 
 Draw lines between points in the order they appear in the data. This is an
