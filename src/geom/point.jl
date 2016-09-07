@@ -42,11 +42,14 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     aes_x, aes_y = concretize(aes.x, aes.y)
 
+    idcolor = PooledDataArray([color(x) for x in aes.color])
+    alpha_color = PooledDataArray([theme.alpha_color(x) for x in aes.color])
+
     ctx = context()
     if aes.shape != nothing
         xs = Array(eltype(aes_x), 0)
         ys = Array(eltype(aes_y), 0)
-        cs = Array(eltype(aes.color), 0)
+        cs = Array(eltype(alpha_color), 0)
         size = Array(eltype(aes.size), 0)
         shape_max = maximum(aes.shape)
         if shape_max > length(theme.shapes)
@@ -54,7 +57,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
         end
 
         for shape in 1:maximum(aes.shape)
-            for (x, y, c, sz, sh) in Compose.cyclezip(aes.x, aes.y, aes.color,
+            for (x, y, c, sz, sh) in Compose.cyclezip(aes.x, aes.y, alpha_color,
                                                       aes.size, aes.shape)
                 if sh == shape
                     push!(xs, x)
@@ -72,20 +75,20 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     else
         compose!(ctx,
             circle(aes.x, aes.y, aes.size, geom.tag),
-            fill(aes.color))
+            fill(alpha_color))
     end
     compose!(ctx, linewidth(theme.highlight_width))
 
     if aes.color_key_continuous != nothing && aes.color_key_continuous
         compose!(ctx,
-            stroke(map(theme.continuous_highlight_color, aes.color)))
+            stroke(map(theme.continuous_highlight_color, alpha_color)))
     else
         stroke_colors =
-            Gadfly.pooled_map(RGBA{Float32}, theme.discrete_highlight_color, aes.color)
+            Gadfly.pooled_map(RGBA{Float32}, theme.discrete_highlight_color, alpha_color)
         classes =
             Gadfly.pooled_map(Compat.ASCIIString,
                 c -> svg_color_class_from_label(escape_id(aes.color_label([c])[1])),
-                aes.color)
+                idcolor)
 
         compose!(ctx, stroke(stroke_colors), svgclass(classes))
     end
