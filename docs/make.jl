@@ -37,4 +37,5 @@ deploydocs(
     osname = "linux",
     deps = nothing,
     make = nothing,
+    target = "build",
 )
