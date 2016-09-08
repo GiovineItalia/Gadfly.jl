@@ -1,229 +1,69 @@
-[![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.3.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.3)
-[![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.4.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.4)
-[![Gadfly](http://pkg.julialang.org/badges/Gadfly_0.5.svg)](http://pkg.julialang.org/?pkg=Gadfly&ver=0.5)
+<div align="center">
+<img src="docs/src/assets/logo.svg" alt="Gadfly Logo" width="210"></img>
+</div>
 
-
-[![DOI](https://zenodo.org/badge/6322/dcjones/Gadfly.jl.png)](http://dx.doi.org/10.5281/zenodo.11876) [![Build Status](http://img.shields.io/travis/dcjones/Gadfly.jl.svg)](https://travis-ci.org/dcjones/Gadfly.jl) [![Coverage Status](http://img.shields.io/coveralls/dcjones/Gadfly.jl.svg)](https://coveralls.io/r/dcjones/Gadfly.jl)
-
-[![Join the chat at https://gitter.im/dcjones/Gadfly.jl](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dcjones/Gadfly.jl?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+| **Documentation**                                                               | **PackageEvaluator**                                            | **Build Status**                                                                                |
+|:------------------------:|:-------------------------------------------------------------------------------------:|:------------------------------------------------:|
+| [![][docs-stable-img]][docs-stable-url] | [![][pkg-0.4-img]][pkg-0.4-url] [![][pkg-0.5-img]][pkg-0.5-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] |
 
 **Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
 
-It's influenced heavily by Leland Wilkinson's book
-[The Grammar of Graphics](http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html)
-and Hadley Wickham's refinement of that grammar in
-[ggplot2](http://ggplot2.org/).
+It's influenced heavily by Leland Wilkinson's book [The Grammar of Graphics][gog-book]
+and Hadley Wickham's refinement of that grammar in [ggplot2](http://ggplot2.org/).
 
-It renders publication quality graphics to PNG, Postscript, PDF, SVG. The SVG
-backend uses embedded javascript, powered by [Snap.svg](http://snapsvg.io/) to
-add interactivity like panning, zooming, and toggling.
+If you use **Gadfly** in a publication please consider citing it: [![DOI][citation-img]][citation-url]
 
-Other interactive features like selecting and inspecting values are available
-through [Immerse.jl](https://github.com/JuliaGraphics/Immerse.jl).
+## Package features
 
-Check out the [manual](http://dcjones.github.io/Gadfly.jl/) for more details and
-examples.
+- Renders publication quality graphics to SVG, PNG, Postscript, and PDF
+- Intuitive and consistent plotting interface
+- Works with [IJulia](https://github.com/JuliaLang/IJulia.jl) out of the box
+- Tight integration with [DataFrames.jl](https://github.com/JuliaStats/DataFrames.jl)
+- Interactivity like panning, zooming, toggling powered by [Snap.svg](http://snapsvg.io/)
+- Supports a large number of common plot types
 
-# Installation
+## Installation
 
-From the Julia REPL a reasonably up to date version can be installed with
+**Gadfly** is registered on `METADATA.jl` and so can be installed using `Pkg.add`.
 
 ```julia
 Pkg.add("Gadfly")
 ```
 
-This will likely result in two dozen or so other packages also being
-installed.
+## Documentation
 
-## Optional: cairo, pango, and fontconfig
+- [**STABLE**][docs-stable-url] &mdash; **most recently tagged version of the documentation.**
+- [**LATEST**][docs-latest-url] &mdash; *in-development version of the documentation.*
 
-Gadfly works best with the C libraries cairo, pango, and fontconfig installed.
-The PNG, PS, and PDF backends require cairo, but without it the SVG backends
-(`SVG` and `SVGJS`) are still available.
-
-Complex layouts involving text are also somewhat more accurate when pango and
-fontconfig are available.
-
-Julia's Cairo bindings can be installed with
-
-```julia
-Pkg.add("Cairo")
-```
-
-# Three Invocations
-
-All interaction with Gadfly is through the `plot` function, which takes three
-major forms.
-
-
-## Orthodox
-
-```julia
-plot(data::AbstractDataFrame, elements::Element...; mapping...)
-```
-
-This form is the standard "grammar of graphics" method of plotting. Data is
-supplied in the form of a
-[dataframe](https://github.com/juliastats/dataframes.jl), columns of the data
-are bound to *aesthetics*, and plot elements including **scales**,
-**coordinates**, **statistics**, **guides**, and **geometries** are added to the
-plot.
-
-All of the examples that follow will be plotting data from
-[RDatasets](https://github.com/johnmyleswhite/RDatasets.jl).
-
-To render these plots to a file, call `draw` on the resulting plot.
-
-```julia
-draw(SVG("myplot.svg", 6inch, 3inch), plot(...))
-```
-
-A few examples now.
-
-
-```julia
-# E.g.
-plot(dataset("datasets", "iris"),x="SepalLength", y="SepalWidth", Geom.point)
-```
-
-![Iris](http://homes.cs.washington.edu/~dcjones/gadfly/iris.svg)
-
-```julia
-# E.g.
-plot(dataset("car", "SLID"), x="Wages", color="Language", Geom.histogram)
-```
-
-![Car](http://homes.cs.washington.edu/~dcjones/gadfly/car.svg)
-
-A catalog of plot elements is given later in this document.
-
-
-## Heretical
-
-```julia
-plot(elements::Element...; mapping...)
-```
-
-Along with the orthodox invocation of `plot`, some relaxed invocations of the
-grammar exist as a "slang of graphics". This form of `plot` omits the the data
-frame. Instead, plain old arrays are bound to aesthetics.
-
-```julia
-# E.g.
-plot(x=collect(1:100), y=sort(rand(100)))
-```
-
-![Points](http://homes.cs.washington.edu/~dcjones/gadfly/points.svg)
-
-If no geometry is specified, like in the example above, a `Geom.point` is stuck
-into your plot.
-
-This `plot` otherwise works the same. We might want to name these axis, for
-example.
-
-```julia
-# E.g.
-plot(x=collect(1:100), y=sort(rand(100)),
-     Guide.XLabel("Index"), Guide.YLabel("Step"))
-```
-
-![Labeled_points](http://homes.cs.washington.edu/~dcjones/gadfly/labeled_points.svg)
-
-
-## Functions and Expressions
-
-```julia
-plot(f::Function, a, b, elements::Element...)
-
-plot(fs::Array, a, b, elements::Element...)
-```
-
-Some special forms of `plot` exist for quickly generating 2d plots of functions.
-
-```julia
-# E.g.
-plot([sin, cos], 0, 25)
-```
-
-![Sin/Cos](http://homes.cs.washington.edu/~dcjones/gadfly/sin_cos.svg)
-
-
-# Elements
-
-Plot elements in Gadfly are statistics, scales, geometries, and guides. Each
-operates on data bound to aesthetics, but in different ways.
-
-### Statistics
-
-Statistics are functions taking as input one or more aesthetics, operating on
-those values, then output to one or more aesthetics. For example, drawing of
-boxplots typically uses the boxplot statistic (Stat.boxplot) that takes as input
-the `x` and `y` aesthetic, and outputs the middle, and upper and lower hinge,
-and upper and lower fence aesthetics.
-
-### Scales
-
-Scales, similarly to statistics, apply a transformation to the original data,
-typically mapping one aesthetic to the same aesthetic, while retaining the
-original value. The `Scale.x_log10` aesthetic maps the `x` aesthetic back to
-the `x` aesthetic after applying a log10 transformation, but keeps track of
-the original value so that data points are properly identified.
-
-### Geometries
-
-Finally, geometries are responsible for actually doing the drawing. A geometry
-takes as input one or more aesthetics, and used data bound to these aesthetics
-to draw things. The `Geom.point` geometry draws points using the `x` and `y`
-aesthetics, the `Geom.line` geometry draws lines, and so on.
-
-### Guides
-
-Very similar to geometries are guides, which draw graphics supporting the actual
-visualization, such as axis ticks and labels and color keys. The major
-distinction is that geometries always draw within the rectangular plot frame,
-while guides have some special layout considerations.
-
-# Drawing to backends
-
-Gadfly plots can be rendered to number of formats. Without cairo, or any
-non-julia libraries, it can produce SVG. Installing cairo gives you access to
-the `PNG`, `PDF`, and `PS` backends. Rendering to a backend works the same for
-any of these.
-
-```julia
-some_plot = plot(x=[1,2,3], y=[4,5,6])
-draw(PNG("myplot.png", 6inch, 3inch), some_plot)
-```
-
-## Using the SVGJS backend
-
-The `SVGJS` backend writes SVG with embedded javascript. There are a couple
-subtleties with using the output from this backend.
-
-Drawing to the backend works like any other.
-
-```julia
-draw(SVGJS("mammals.js.svg", 6inch, 6inch), p)
-```
-
-If included with an `<img>` tag, it will display as a static SVG image.
-```html
-<img src="mammals.js.svg"/>
-```
-
-For the interactive javascript features to be enabled, the output either needs
-to be included inline in the HTML page, or included with an object tag, like.
-
-```html
-<object data="mammals.js.svg" type="image/svg+xml"></object>
-```
-
-# Reporting Bugs
+## Contributing and Questions
 
 This is a new and fairly complex piece of software. [Filing an
 issue](https://github.com/dcjones/Gadfly.jl/issues/new) to report a bug,
 counterintuitive behavior, or even requesting a feature is extremely valuable in
-helping me prioritize what to work on, so don't hesitate.
+helping us prioritize what to work on, so don't hesitate.
 
+If you have a question then you can ask for help in the [Gitter chat room][gitter-url].
 
+[docs-latest-img]: https://img.shields.io/badge/docs-latest-blue.svg
+[docs-latest-url]: https://dcjones.github.io/Gadfly.jl/latest
+
+[docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
+[docs-stable-url]: https://dcjones.github.io/Gadfly.jl/stable
+
+[pkg-0.4-img]: http://pkg.julialang.org/badges/Gadfly_0.4.svg
+[pkg-0.4-url]: http://pkg.julialang.org/?pkg=Gadfly
+[pkg-0.5-img]: http://pkg.julialang.org/badges/Gadfly_0.5.svg
+[pkg-0.5-url]: http://pkg.julialang.org/?pkg=Gadfly
+
+[travis-img]: http://img.shields.io/travis/dcjones/Gadfly.jl.svg
+[travis-url]: https://travis-ci.org/dcjones/Gadfly.jl
+[codecov-img]: http://img.shields.io/coveralls/dcjones/Gadfly.jl.svg
+[codecov-url]: https://coveralls.io/r/dcjones/Gadfly.jl
+
+[citation-img]: https://zenodo.org/badge/6322/dcjones/Gadfly.jl.png
+[citation-url]: http://dx.doi.org/10.5281/zenodo.11876
+
+[gog-book]: http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html
+
+[gitter-url]: https://gitter.im/dcjones/Gadfly.jl
