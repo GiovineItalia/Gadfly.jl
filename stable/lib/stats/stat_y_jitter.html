@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>- · Gadfly.jl documentation</title><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script></head><body><nav class="toc"><a href><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Stacks &amp; Layers</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li><li><a class="toctext" href="../../man/geometries.html">Geometries</a></li><li><a class="toctext" href="../../man/guides.html">Guides</a></li><li><a class="toctext" href="../../man/stats.html">Statistics</a></li><li><a class="toctext" href="../../man/coords.html">Coords</a></li><li><a class="toctext" href="../../man/scales.html">Scales</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">-</a></li><li><span class="toctext">geoms</span><ul><li><a class="toctext" href="../geoms/geom_bar.html">-</a></li><li><a class="toctext" href="../geoms/geom_beeswarm.html">-</a></li><li><a class="toctext" href="../geoms/geom_boxplot.html">-</a></li><li><a class="toctext" href="../geoms/geom_contour.html">-</a></li><li><a class="toctext" href="../geoms/geom_density.html">-</a></li><li><a class="toctext" href="../geoms/geom_errorbar.html">-</a></li><li><a class="toctext" href="../geoms/geom_hexbin.html">-</a></li><li><a class="toctext" href="../geoms/geom_histogram2d.html">-</a></li><li><a class="toctext" href="../geoms/geom_histogram.html">-</a></li><li><a class="toctext" href="../geoms/geom_hline.html">-</a></li><li><a class="toctext" href="../geoms/geom_label.html">-</a></li><li><a class="toctext" href="../geoms/geom_line.html">-</a></li><li><a class="toctext" href="../geoms/geom_path.html">-</a></li><li><a class="toctext" href="../geoms/geom_point.html">-</a></li><li><a class="toctext" href="../geoms/geom_polygon.html">-</a></li><li><a class="toctext" href="../geoms/geom_rectbin.html">-</a></li><li><a class="toctext" href="../geoms/geom_ribbon.html">-</a></li><li><a class="toctext" href="../geoms/geom_segment.html">-</a></li><li><a class="toctext" href="../geoms/geom_smooth.html">-</a></li><li><a class="toctext" href="../geoms/geom_step.html">-</a></li><li><a class="toctext" href="../geoms/geom_subplot_grid.html">-</a></li><li><a class="toctext" href="../geoms/geom_violin.html">-</a></li><li><a class="toctext" href="../geoms/geom_vline.html">-</a></li></ul></li><li><span class="toctext">guides</span><ul><li><a class="toctext" href="../guides/guide_annotation.html">-</a></li><li><a class="toctext" href="../guides/guide_colorkey.html">-</a></li><li><a class="toctext" href="../guides/guide_manual_color_key.html">-</a></li><li><a class="toctext" href="../guides/guide_title.html">-</a></li><li><a class="toctext" href="../guides/guide_xlabel.html">-</a></li><li><a class="toctext" href="../guides/guide_xrug.html">-</a></li><li><a class="toctext" href="../guides/guide_xticks.html">-</a></li><li><a class="toctext" href="../guides/guide_ylabel.html">-</a></li><li><a class="toctext" href="../guides/guide_yrug.html">-</a></li><li><a class="toctext" href="../guides/guide_yticks.html">-</a></li></ul></li><li><span class="toctext">stats</span><ul><li><a class="toctext" href="stat_binmean.html">-</a></li><li><a class="toctext" href="stat_qq.html">-</a></li><li><a class="toctext" href="stat_step.html">-</a></li><li><a class="toctext" href="stat_x_jitter.html">-</a></li><li><a class="toctext" href="stat_xticks.html">-</a></li><li class="current"><a class="toctext" href="stat_y_jitter.html">-</a><ul class="internal"><li class="toplevel"><a class="toctext" href="#Stat.y_jitter-1">Stat.y_jitter</a></li><li><a class="toctext" href="#Asethetics-1">Asethetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li><li><a class="toctext" href="stat_yticks.html">-</a></li></ul></li><li><span class="toctext">coords</span><ul><li><a class="toctext" href="../coords/coord_cartesian.html">-</a></li></ul></li><li><span class="toctext">scales</span><ul><li><a class="toctext" href="../scales/scale_color_continuous.html">-</a></li><li><a class="toctext" href="../scales/scale_color_discrete_hue.html">-</a></li><li><a class="toctext" href="../scales/scale_color_discrete_manual.html">-</a></li><li><a class="toctext" href="../scales/scale_color_none.html">-</a></li><li><a class="toctext" href="../scales/scale_x_continuous.html">-</a></li><li><a class="toctext" href="../scales/scale_x_discrete.html">-</a></li><li><a class="toctext" href="../scales/scale_y_continuous.html">-</a></li><li><a class="toctext" href="../scales/scale_y_discrete.html">-</a></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li>stats</li><li><a href="stat_y_jitter.html">-</a></li></ul><a class="edit-page" href="https://github.com/dcjones/Gadfly.jl/tree/99aaa7693f9dffb7d4e4ffd8ced43c3f2ee37cf5/docs/src/lib/stats/stat_y_jitter.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Stat.y_jitter-1" href="#Stat.y_jitter-1">Stat.y_jitter</a></h1><p>Nudge values on the y-axis to avoid overplotting.</p><h2><a class="nav-anchor" id="Asethetics-1" href="#Asethetics-1">Asethetics</a></h2><ul><li><p><code>y</code>: Data to nudge.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>range</code>: Maximum jitter is this number times the resolution of the data, where the &quot;resolution&quot; is the smallest non-zero difference between two points.</p></li><li><p><code>seed</code>: Seed for RNG used to randomly jitter values.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(x=rand(500), y=rand(1:4, 500), Stat.y_jitter(range=0.5), Geom.point)</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:gadfly="http://www.gadflyjl.org/ns"
+     version="1.2"
+     width="120mm" height="80mm" viewBox="0 0 120 80"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+     font-size="3.88"
+>
+<g class="plotroot xscalable yscalable" id="img-532b1050-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-532b1050-2">
+    <text x="64.74" y="68.39" text-anchor="middle" dy="0.6em">x</text>
+  </g>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-532b1050-3">
+    <text x="16.48" y="61.72" text-anchor="middle" dy="0.6em">0.0</text>
+    <text x="64.74" y="61.72" text-anchor="middle" dy="0.6em">0.5</text>
+    <text x="113" y="61.72" text-anchor="middle" dy="0.6em">1.0</text>
+  </g>
+<g clip-path="url(#img-532b1050-4)">
+  <g id="img-532b1050-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-532b1050-6">
+      <rect x="14.48" y="5" width="100.52" height="55.72"/>
+    </g>
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-532b1050-7">
+      <path fill="none" d="M14.48,58.71 L 115 58.71"/>
+      <path fill="none" d="M14.48,48.37 L 115 48.37"/>
+      <path fill="none" d="M14.48,38.03 L 115 38.03"/>
+      <path fill="none" d="M14.48,27.69 L 115 27.69"/>
+      <path fill="none" d="M14.48,17.34 L 115 17.34"/>
+      <path fill="none" d="M14.48,7 L 115 7"/>
+    </g>
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-532b1050-8">
+      <path fill="none" d="M16.48,5 L 16.48 60.72"/>
+      <path fill="none" d="M64.74,5 L 64.74 60.72"/>
+      <path fill="none" d="M113,5 L 113 60.72"/>
+    </g>
+    <g class="plotpanel" id="img-532b1050-9">
+      <g class="geometry" id="img-532b1050-10">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" fill="#00BFFF" id="img-532b1050-11">
+          <use xlink:href="#img-532b1050-12" x="73.51" y="27.8"/>
+          <use xlink:href="#img-532b1050-12" x="90.49" y="37.65"/>
+          <use xlink:href="#img-532b1050-12" x="71.13" y="47.26"/>
+          <use xlink:href="#img-532b1050-12" x="60.89" y="28.49"/>
+          <use xlink:href="#img-532b1050-12" x="93.12" y="46.72"/>
+          <use xlink:href="#img-532b1050-12" x="98.92" y="38.25"/>
+          <use xlink:href="#img-532b1050-12" x="35.84" y="29.92"/>
+          <use xlink:href="#img-532b1050-12" x="45.3" y="27.97"/>
+          <use xlink:href="#img-532b1050-12" x="40.3" y="16.61"/>
+          <use xlink:href="#img-532b1050-12" x="72.43" y="39.1"/>
+          <use xlink:href="#img-532b1050-12" x="79.11" y="45.84"/>
+          <use xlink:href="#img-532b1050-12" x="17.53" y="17.76"/>
+          <use xlink:href="#img-532b1050-12" x="22.89" y="27.48"/>
+          <use xlink:href="#img-532b1050-12" x="108.83" y="18"/>
+          <use xlink:href="#img-532b1050-12" x="78.9" y="17.73"/>
+          <use xlink:href="#img-532b1050-12" x="27.34" y="16.33"/>
+          <use xlink:href="#img-532b1050-12" x="43.12" y="26.65"/>
+          <use xlink:href="#img-532b1050-12" x="79.38" y="35.8"/>
+          <use xlink:href="#img-532b1050-12" x="21.95" y="29.08"/>
+          <use xlink:href="#img-532b1050-12" x="97.82" y="16.95"/>
+          <use xlink:href="#img-532b1050-12" x="108.22" y="15.56"/>
+          <use xlink:href="#img-532b1050-12" x="109.59" y="17.87"/>
+          <use xlink:href="#img-532b1050-12" x="107.77" y="26"/>
+          <use xlink:href="#img-532b1050-12" x="92.72" y="36.75"/>
+          <use xlink:href="#img-532b1050-12" x="95.74" y="35.8"/>
+          <use xlink:href="#img-532b1050-12" x="19.78" y="49.02"/>
+          <use xlink:href="#img-532b1050-12" x="25.6" y="40.56"/>
+          <use xlink:href="#img-532b1050-12" x="46.88" y="50.83"/>
+          <use xlink:href="#img-532b1050-12" x="28.82" y="40.03"/>
+          <use xlink:href="#img-532b1050-12" x="52.6" y="48.46"/>
+          <use xlink:href="#img-532b1050-12" x="106.35" y="29.72"/>
+          <use xlink:href="#img-532b1050-12" x="58.85" y="17.98"/>
+          <use xlink:href="#img-532b1050-12" x="40.31" y="28.93"/>
+          <use xlink:href="#img-532b1050-12" x="17.62" y="25.44"/>
+          <use xlink:href="#img-532b1050-12" x="20.92" y="18.12"/>
+          <use xlink:href="#img-532b1050-12" x="64.37" y="29.77"/>
+          <use xlink:href="#img-532b1050-12" x="87.13" y="25.51"/>
+          <use xlink:href="#img-532b1050-12" x="45.34" y="47.77"/>
+          <use xlink:href="#img-532b1050-12" x="59.83" y="48.5"/>
+          <use xlink:href="#img-532b1050-12" x="100.94" y="18.99"/>
+          <use xlink:href="#img-532b1050-12" x="20.95" y="19.81"/>
+          <use xlink:href="#img-532b1050-12" x="83.89" y="19.46"/>
+          <use xlink:href="#img-532b1050-12" x="51.72" y="19.13"/>
+          <use xlink:href="#img-532b1050-12" x="45.67" y="16.77"/>
+          <use xlink:href="#img-532b1050-12" x="52.44" y="17.72"/>
+          <use xlink:href="#img-532b1050-12" x="31.01" y="26.62"/>
+          <use xlink:href="#img-532b1050-12" x="30.7" y="16.36"/>
+          <use xlink:href="#img-532b1050-12" x="43.83" y="48.46"/>
+          <use xlink:href="#img-532b1050-12" x="55.57" y="26.63"/>
+          <use xlink:href="#img-532b1050-12" x="64.69" y="48.04"/>
+          <use xlink:href="#img-532b1050-12" x="80.07" y="17.64"/>
+          <use xlink:href="#img-532b1050-12" x="66.25" y="36.82"/>
+          <use xlink:href="#img-532b1050-12" x="41.64" y="26.7"/>
+          <use xlink:href="#img-532b1050-12" x="73.96" y="16.75"/>
+          <use xlink:href="#img-532b1050-12" x="44.71" y="30.21"/>
+          <use xlink:href="#img-532b1050-12" x="44.33" y="36.04"/>
+          <use xlink:href="#img-532b1050-12" x="76.14" y="39.69"/>
+          <use xlink:href="#img-532b1050-12" x="80.59" y="28.1"/>
+          <use xlink:href="#img-532b1050-12" x="89.21" y="37.52"/>
+          <use xlink:href="#img-532b1050-12" x="20.04" y="35.6"/>
+          <use xlink:href="#img-532b1050-12" x="78.61" y="28.03"/>
+          <use xlink:href="#img-532b1050-12" x="55.22" y="15.08"/>
+          <use xlink:href="#img-532b1050-12" x="67.16" y="16.42"/>
+          <use xlink:href="#img-532b1050-12" x="75.55" y="39.13"/>
+          <use xlink:href="#img-532b1050-12" x="58.23" y="28.86"/>
+          <use xlink:href="#img-532b1050-12" x="24.41" y="48.85"/>
+          <use xlink:href="#img-532b1050-12" x="35.69" y="16.95"/>
+          <use xlink:href="#img-532b1050-12" x="72.08" y="15.16"/>
+          <use xlink:href="#img-532b1050-12" x="37.54" y="38.57"/>
+          <use xlink:href="#img-532b1050-12" x="51.42" y="50.66"/>
+          <use xlink:href="#img-532b1050-12" x="36.24" y="35.83"/>
+          <use xlink:href="#img-532b1050-12" x="106.53" y="19.38"/>
+          <use xlink:href="#img-532b1050-12" x="96.33" y="25.22"/>
+          <use xlink:href="#img-532b1050-12" x="26.06" y="16.19"/>
+          <use xlink:href="#img-532b1050-12" x="77.7" y="37.69"/>
+          <use xlink:href="#img-532b1050-12" x="29.29" y="49.14"/>
+          <use xlink:href="#img-532b1050-12" x="91.3" y="38.69"/>
+          <use xlink:href="#img-532b1050-12" x="100.38" y="49.49"/>
+          <use xlink:href="#img-532b1050-12" x="20.3" y="46.22"/>
+          <use xlink:href="#img-532b1050-12" x="92.77" y="46.26"/>
+          <use xlink:href="#img-532b1050-12" x="58.1" y="46.32"/>
+          <use xlink:href="#img-532b1050-12" x="29.77" y="39.55"/>
+          <use xlink:href="#img-532b1050-12" x="75.17" y="15.12"/>
+          <use xlink:href="#img-532b1050-12" x="41.1" y="27.81"/>
+          <use xlink:href="#img-532b1050-12" x="64.62" y="36.9"/>
+          <use xlink:href="#img-532b1050-12" x="25.56" y="39.74"/>
+          <use xlink:href="#img-532b1050-12" x="67.16" y="35.86"/>
+          <use xlink:href="#img-532b1050-12" x="42.11" y="15.57"/>
+          <use xlink:href="#img-532b1050-12" x="27.11" y="36.88"/>
+          <use xlink:href="#img-532b1050-12" x="97.01" y="27.57"/>
+          <use xlink:href="#img-532b1050-12" x="77.62" y="29"/>
+          <use xlink:href="#img-532b1050-12" x="49.09" y="28.62"/>
+          <use xlink:href="#img-532b1050-12" x="27.38" y="29.13"/>
+          <use xlink:href="#img-532b1050-12" x="92.05" y="28.49"/>
+          <use xlink:href="#img-532b1050-12" x="97.37" y="50.61"/>
+          <use xlink:href="#img-532b1050-12" x="24.96" y="29.86"/>
+          <use xlink:href="#img-532b1050-12" x="53.79" y="39.85"/>
+          <use xlink:href="#img-532b1050-12" x="48.39" y="28.6"/>
+          <use xlink:href="#img-532b1050-12" x="88.68" y="35.76"/>
+          <use xlink:href="#img-532b1050-12" x="42.11" y="37.63"/>
+          <use xlink:href="#img-532b1050-12" x="44.57" y="27.82"/>
+          <use xlink:href="#img-532b1050-12" x="75.61" y="35.63"/>
+          <use xlink:href="#img-532b1050-12" x="84.6" y="27.19"/>
+          <use xlink:href="#img-532b1050-12" x="65.55" y="16.11"/>
+          <use xlink:href="#img-532b1050-12" x="62.09" y="50.27"/>
+          <use xlink:href="#img-532b1050-12" x="75.6" y="27.65"/>
+          <use xlink:href="#img-532b1050-12" x="35.07" y="36.24"/>
+          <use xlink:href="#img-532b1050-12" x="98.63" y="28.59"/>
+          <use xlink:href="#img-532b1050-12" x="108.37" y="49.4"/>
+          <use xlink:href="#img-532b1050-12" x="93.22" y="27.09"/>
+          <use xlink:href="#img-532b1050-12" x="61.66" y="46.69"/>
+          <use xlink:href="#img-532b1050-12" x="25.67" y="17.81"/>
+          <use xlink:href="#img-532b1050-12" x="86.72" y="35.61"/>
+          <use xlink:href="#img-532b1050-12" x="111.31" y="36.78"/>
+          <use xlink:href="#img-532b1050-12" x="57.7" y="47.16"/>
+          <use xlink:href="#img-532b1050-12" x="61.65" y="37.55"/>
+          <use xlink:href="#img-532b1050-12" x="98.42" y="28.62"/>
+          <use xlink:href="#img-532b1050-12" x="70.4" y="50.2"/>
+          <use xlink:href="#img-532b1050-12" x="94.41" y="16.06"/>
+          <use xlink:href="#img-532b1050-12" x="17.77" y="28.07"/>
+          <use xlink:href="#img-532b1050-12" x="50.67" y="47.25"/>
+          <use xlink:href="#img-532b1050-12" x="29.31" y="50.53"/>
+          <use xlink:href="#img-532b1050-12" x="45.51" y="39.89"/>
+          <use xlink:href="#img-532b1050-12" x="35.25" y="39.41"/>
+          <use xlink:href="#img-532b1050-12" x="101.78" y="38.82"/>
+          <use xlink:href="#img-532b1050-12" x="23.02" y="46.46"/>
+          <use xlink:href="#img-532b1050-12" x="19.26" y="18.14"/>
+          <use xlink:href="#img-532b1050-12" x="70.98" y="25.45"/>
+          <use xlink:href="#img-532b1050-12" x="74.28" y="38.75"/>
+          <use xlink:href="#img-532b1050-12" x="45.79" y="46.13"/>
+          <use xlink:href="#img-532b1050-12" x="64.81" y="47.79"/>
+          <use xlink:href="#img-532b1050-12" x="56.05" y="15.14"/>
+          <use xlink:href="#img-532b1050-12" x="30.6" y="47.42"/>
+          <use xlink:href="#img-532b1050-12" x="78.94" y="27.87"/>
+          <use xlink:href="#img-532b1050-12" x="112.86" y="19.26"/>
+          <use xlink:href="#img-532b1050-12" x="64.29" y="38.77"/>
+          <use xlink:href="#img-532b1050-12" x="79.63" y="38.98"/>
+          <use xlink:href="#img-532b1050-12" x="97.07" y="46.9"/>
+          <use xlink:href="#img-532b1050-12" x="56.6" y="37.88"/>
+          <use xlink:href="#img-532b1050-12" x="34.12" y="19.06"/>
+          <use xlink:href="#img-532b1050-12" x="97.22" y="37.79"/>
+          <use xlink:href="#img-532b1050-12" x="58.79" y="17.56"/>
+          <use xlink:href="#img-532b1050-12" x="83.08" y="37.8"/>
+          <use xlink:href="#img-532b1050-12" x="52.41" y="18.89"/>
+          <use xlink:href="#img-532b1050-12" x="44.94" y="27.03"/>
+          <use xlink:href="#img-532b1050-12" x="83.69" y="26.22"/>
+          <use xlink:href="#img-532b1050-12" x="48.56" y="39.49"/>
+          <use xlink:href="#img-532b1050-12" x="56.54" y="40.58"/>
+          <use xlink:href="#img-532b1050-12" x="74.74" y="29.9"/>
+          <use xlink:href="#img-532b1050-12" x="20.76" y="16.03"/>
+          <use xlink:href="#img-532b1050-12" x="104.86" y="36.1"/>
+          <use xlink:href="#img-532b1050-12" x="52.42" y="26.81"/>
+          <use xlink:href="#img-532b1050-12" x="27.39" y="49.77"/>
+          <use xlink:href="#img-532b1050-12" x="81.16" y="48.19"/>
+          <use xlink:href="#img-532b1050-12" x="30.04" y="36.47"/>
+          <use xlink:href="#img-532b1050-12" x="24.33" y="19.6"/>
+          <use xlink:href="#img-532b1050-12" x="61.83" y="50.81"/>
+          <use xlink:href="#img-532b1050-12" x="112.42" y="26.78"/>
+          <use xlink:href="#img-532b1050-12" x="50.82" y="15.42"/>
+          <use xlink:href="#img-532b1050-12" x="32.42" y="27.82"/>
+          <use xlink:href="#img-532b1050-12" x="82.36" y="50.89"/>
+          <use xlink:href="#img-532b1050-12" x="94.34" y="35.74"/>
+          <use xlink:href="#img-532b1050-12" x="84.82" y="36.56"/>
+          <use xlink:href="#img-532b1050-12" x="66.23" y="47.15"/>
+          <use xlink:href="#img-532b1050-12" x="75.22" y="28.37"/>
+          <use xlink:href="#img-532b1050-12" x="102.19" y="37.9"/>
+          <use xlink:href="#img-532b1050-12" x="64.24" y="27.17"/>
+          <use xlink:href="#img-532b1050-12" x="25.12" y="50.69"/>
+          <use xlink:href="#img-532b1050-12" x="49.42" y="27.73"/>
+          <use xlink:href="#img-532b1050-12" x="67.03" y="46.29"/>
+          <use xlink:href="#img-532b1050-12" x="80.36" y="15.79"/>
+          <use xlink:href="#img-532b1050-12" x="96.88" y="26"/>
+          <use xlink:href="#img-532b1050-12" x="64.63" y="48.3"/>
+          <use xlink:href="#img-532b1050-12" x="107" y="15.49"/>
+          <use xlink:href="#img-532b1050-12" x="108.84" y="48.47"/>
+          <use xlink:href="#img-532b1050-12" x="75.38" y="48.62"/>
+          <use xlink:href="#img-532b1050-12" x="19.34" y="49.99"/>
+          <use xlink:href="#img-532b1050-12" x="82.63" y="48.76"/>
+          <use xlink:href="#img-532b1050-12" x="81.83" y="49.53"/>
+          <use xlink:href="#img-532b1050-12" x="83.63" y="47.41"/>
+          <use xlink:href="#img-532b1050-12" x="23.06" y="36.82"/>
+          <use xlink:href="#img-532b1050-12" x="36.86" y="15.1"/>
+          <use xlink:href="#img-532b1050-12" x="33.43" y="15.04"/>
+          <use xlink:href="#img-532b1050-12" x="32.98" y="46.95"/>
+          <use xlink:href="#img-532b1050-12" x="62.99" y="27.46"/>
+          <use xlink:href="#img-532b1050-12" x="99.96" y="38.7"/>
+          <use xlink:href="#img-532b1050-12" x="42" y="47.24"/>
+          <use xlink:href="#img-532b1050-12" x="99.61" y="27.7"/>
+          <use xlink:href="#img-532b1050-12" x="97.91" y="16.89"/>
+          <use xlink:href="#img-532b1050-12" x="64.15" y="48.19"/>
+          <use xlink:href="#img-532b1050-12" x="47.78" y="36.3"/>
+          <use xlink:href="#img-532b1050-12" x="88.57" y="50.51"/>
+          <use xlink:href="#img-532b1050-12" x="65.67" y="17.29"/>
+          <use xlink:href="#img-532b1050-12" x="105.2" y="28.33"/>
+          <use xlink:href="#img-532b1050-12" x="32.7" y="49.69"/>
+          <use xlink:href="#img-532b1050-12" x="74.94" y="25.93"/>
+          <use xlink:href="#img-532b1050-12" x="91.59" y="14.8"/>
+          <use xlink:href="#img-532b1050-12" x="31" y="19.26"/>
+          <use xlink:href="#img-532b1050-12" x="49.72" y="25.47"/>
+          <use xlink:href="#img-532b1050-12" x="52.91" y="25.18"/>
+          <use xlink:href="#img-532b1050-12" x="30.86" y="15.19"/>
+          <use xlink:href="#img-532b1050-12" x="68.45" y="29.91"/>
+          <use xlink:href="#img-532b1050-12" x="52.12" y="48.41"/>
+          <use xlink:href="#img-532b1050-12" x="64.77" y="28.9"/>
+          <use xlink:href="#img-532b1050-12" x="49.76" y="18.16"/>
+          <use xlink:href="#img-532b1050-12" x="106.23" y="17.58"/>
+          <use xlink:href="#img-532b1050-12" x="66.74" y="38.4"/>
+          <use xlink:href="#img-532b1050-12" x="75.65" y="47.32"/>
+          <use xlink:href="#img-532b1050-12" x="30.44" y="25.99"/>
+          <use xlink:href="#img-532b1050-12" x="61.38" y="18.59"/>
+          <use xlink:href="#img-532b1050-12" x="19.12" y="38.39"/>
+          <use xlink:href="#img-532b1050-12" x="21.97" y="49.04"/>
+          <use xlink:href="#img-532b1050-12" x="97.65" y="37.8"/>
+          <use xlink:href="#img-532b1050-12" x="110.08" y="15.39"/>
+          <use xlink:href="#img-532b1050-12" x="42.97" y="36.83"/>
+          <use xlink:href="#img-532b1050-12" x="24.62" y="35.54"/>
+          <use xlink:href="#img-532b1050-12" x="32.19" y="28.8"/>
+          <use xlink:href="#img-532b1050-12" x="111" y="18.06"/>
+          <use xlink:href="#img-532b1050-12" x="20.76" y="40.22"/>
+          <use xlink:href="#img-532b1050-12" x="56.99" y="50.37"/>
+          <use xlink:href="#img-532b1050-12" x="105.77" y="50.48"/>
+          <use xlink:href="#img-532b1050-12" x="99.69" y="27.39"/>
+          <use xlink:href="#img-532b1050-12" x="109.07" y="18.49"/>
+          <use xlink:href="#img-532b1050-12" x="21.95" y="29.66"/>
+          <use xlink:href="#img-532b1050-12" x="36.23" y="16.1"/>
+          <use xlink:href="#img-532b1050-12" x="18.97" y="47.51"/>
+          <use xlink:href="#img-532b1050-12" x="79" y="18.07"/>
+          <use xlink:href="#img-532b1050-12" x="102.76" y="37.2"/>
+          <use xlink:href="#img-532b1050-12" x="48.8" y="27.61"/>
+          <use xlink:href="#img-532b1050-12" x="46.16" y="25.51"/>
+          <use xlink:href="#img-532b1050-12" x="28.97" y="14.85"/>
+          <use xlink:href="#img-532b1050-12" x="86.74" y="37.84"/>
+          <use xlink:href="#img-532b1050-12" x="47.64" y="18.34"/>
+          <use xlink:href="#img-532b1050-12" x="71.91" y="29.95"/>
+          <use xlink:href="#img-532b1050-12" x="83.53" y="18.4"/>
+          <use xlink:href="#img-532b1050-12" x="67.03" y="48.75"/>
+          <use xlink:href="#img-532b1050-12" x="38.01" y="25.33"/>
+          <use xlink:href="#img-532b1050-12" x="100.75" y="15.32"/>
+          <use xlink:href="#img-532b1050-12" x="77.01" y="36.14"/>
+          <use xlink:href="#img-532b1050-12" x="88.54" y="29.95"/>
+          <use xlink:href="#img-532b1050-12" x="104.14" y="45.97"/>
+          <use xlink:href="#img-532b1050-12" x="71.65" y="47.73"/>
+          <use xlink:href="#img-532b1050-12" x="87.03" y="37.68"/>
+          <use xlink:href="#img-532b1050-12" x="108.7" y="19.54"/>
+          <use xlink:href="#img-532b1050-12" x="86.47" y="39.25"/>
+          <use xlink:href="#img-532b1050-12" x="22.78" y="29.46"/>
+          <use xlink:href="#img-532b1050-12" x="76.3" y="37.45"/>
+          <use xlink:href="#img-532b1050-12" x="44.41" y="19.12"/>
+          <use xlink:href="#img-532b1050-12" x="24.1" y="40.1"/>
+          <use xlink:href="#img-532b1050-12" x="29.93" y="38.75"/>
+          <use xlink:href="#img-532b1050-12" x="46.36" y="47.63"/>
+          <use xlink:href="#img-532b1050-12" x="46.26" y="37.48"/>
+          <use xlink:href="#img-532b1050-12" x="109.58" y="19.9"/>
+          <use xlink:href="#img-532b1050-12" x="94.7" y="46.94"/>
+          <use xlink:href="#img-532b1050-12" x="58.06" y="46.54"/>
+          <use xlink:href="#img-532b1050-12" x="100.1" y="17.7"/>
+          <use xlink:href="#img-532b1050-12" x="40.89" y="38.46"/>
+          <use xlink:href="#img-532b1050-12" x="69.79" y="39.03"/>
+          <use xlink:href="#img-532b1050-12" x="106.53" y="35.87"/>
+          <use xlink:href="#img-532b1050-12" x="24.98" y="19.11"/>
+          <use xlink:href="#img-532b1050-12" x="55.5" y="38.79"/>
+          <use xlink:href="#img-532b1050-12" x="22.79" y="18.31"/>
+          <use xlink:href="#img-532b1050-12" x="103.51" y="14.9"/>
+          <use xlink:href="#img-532b1050-12" x="68.53" y="30.12"/>
+          <use xlink:href="#img-532b1050-12" x="48.64" y="19.12"/>
+          <use xlink:href="#img-532b1050-12" x="86.96" y="16.99"/>
+          <use xlink:href="#img-532b1050-12" x="50.65" y="38.46"/>
+          <use xlink:href="#img-532b1050-12" x="90.22" y="25.21"/>
+          <use xlink:href="#img-532b1050-12" x="94.87" y="18.61"/>
+          <use xlink:href="#img-532b1050-12" x="35.75" y="16.37"/>
+          <use xlink:href="#img-532b1050-12" x="42.35" y="27.88"/>
+          <use xlink:href="#img-532b1050-12" x="68.3" y="17.16"/>
+          <use xlink:href="#img-532b1050-12" x="98.43" y="37.99"/>
+          <use xlink:href="#img-532b1050-12" x="75.45" y="26.91"/>
+          <use xlink:href="#img-532b1050-12" x="56.09" y="36.5"/>
+          <use xlink:href="#img-532b1050-12" x="99.75" y="16.44"/>
+          <use xlink:href="#img-532b1050-12" x="94.14" y="36"/>
+          <use xlink:href="#img-532b1050-12" x="59.81" y="49.38"/>
+          <use xlink:href="#img-532b1050-12" x="33.21" y="40.55"/>
+          <use xlink:href="#img-532b1050-12" x="54.37" y="18.34"/>
+          <use xlink:href="#img-532b1050-12" x="85.23" y="38.72"/>
+          <use xlink:href="#img-532b1050-12" x="51.27" y="50.88"/>
+          <use xlink:href="#img-532b1050-12" x="107.43" y="27.77"/>
+          <use xlink:href="#img-532b1050-12" x="22.14" y="37.35"/>
+          <use xlink:href="#img-532b1050-12" x="27.33" y="17.12"/>
+          <use xlink:href="#img-532b1050-12" x="107.76" y="28.41"/>
+          <use xlink:href="#img-532b1050-12" x="59.64" y="36.9"/>
+          <use xlink:href="#img-532b1050-12" x="27.77" y="19.54"/>
+          <use xlink:href="#img-532b1050-12" x="65.54" y="27.38"/>
+          <use xlink:href="#img-532b1050-12" x="112.91" y="47.56"/>
+          <use xlink:href="#img-532b1050-12" x="98.45" y="27.21"/>
+          <use xlink:href="#img-532b1050-12" x="35.1" y="38.15"/>
+          <use xlink:href="#img-532b1050-12" x="84.5" y="49.5"/>
+          <use xlink:href="#img-532b1050-12" x="43.92" y="19.39"/>
+          <use xlink:href="#img-532b1050-12" x="84.19" y="28.59"/>
+          <use xlink:href="#img-532b1050-12" x="44.55" y="40.19"/>
+          <use xlink:href="#img-532b1050-12" x="63.5" y="27.52"/>
+          <use xlink:href="#img-532b1050-12" x="54.17" y="37.31"/>
+          <use xlink:href="#img-532b1050-12" x="48.35" y="27.24"/>
+          <use xlink:href="#img-532b1050-12" x="20.74" y="50.47"/>
+          <use xlink:href="#img-532b1050-12" x="24.39" y="14.93"/>
+          <use xlink:href="#img-532b1050-12" x="57.67" y="29.22"/>
+          <use xlink:href="#img-532b1050-12" x="36.91" y="40.27"/>
+          <use xlink:href="#img-532b1050-12" x="84.76" y="40.22"/>
+          <use xlink:href="#img-532b1050-12" x="47.76" y="48.08"/>
+          <use xlink:href="#img-532b1050-12" x="38.94" y="15.6"/>
+          <use xlink:href="#img-532b1050-12" x="111.46" y="39.72"/>
+          <use xlink:href="#img-532b1050-12" x="74.47" y="26.25"/>
+          <use xlink:href="#img-532b1050-12" x="87.2" y="39.29"/>
+          <use xlink:href="#img-532b1050-12" x="79.52" y="16.24"/>
+          <use xlink:href="#img-532b1050-12" x="61.02" y="27.07"/>
+          <use xlink:href="#img-532b1050-12" x="20.42" y="49.56"/>
+          <use xlink:href="#img-532b1050-12" x="68.35" y="18.82"/>
+          <use xlink:href="#img-532b1050-12" x="43.12" y="38.08"/>
+          <use xlink:href="#img-532b1050-12" x="17.8" y="38.5"/>
+          <use xlink:href="#img-532b1050-12" x="81.39" y="39.46"/>
+          <use xlink:href="#img-532b1050-12" x="69.45" y="47.81"/>
+          <use xlink:href="#img-532b1050-12" x="29.9" y="29.1"/>
+          <use xlink:href="#img-532b1050-12" x="107.29" y="48.15"/>
+          <use xlink:href="#img-532b1050-12" x="41.97" y="48.92"/>
+          <use xlink:href="#img-532b1050-12" x="24.04" y="17.7"/>
+          <use xlink:href="#img-532b1050-12" x="38.02" y="45.81"/>
+          <use xlink:href="#img-532b1050-12" x="103.33" y="47.29"/>
+          <use xlink:href="#img-532b1050-12" x="37.7" y="37.82"/>
+          <use xlink:href="#img-532b1050-12" x="75.97" y="38.89"/>
+          <use xlink:href="#img-532b1050-12" x="60.2" y="49.19"/>
+          <use xlink:href="#img-532b1050-12" x="54.44" y="37.35"/>
+          <use xlink:href="#img-532b1050-12" x="19.37" y="15.97"/>
+          <use xlink:href="#img-532b1050-12" x="93.81" y="28.03"/>
+          <use xlink:href="#img-532b1050-12" x="56.66" y="15.85"/>
+          <use xlink:href="#img-532b1050-12" x="53.8" y="28.72"/>
+          <use xlink:href="#img-532b1050-12" x="68.06" y="38.87"/>
+          <use xlink:href="#img-532b1050-12" x="20.74" y="28.29"/>
+          <use xlink:href="#img-532b1050-12" x="16.67" y="49.03"/>
+          <use xlink:href="#img-532b1050-12" x="46.94" y="46.78"/>
+          <use xlink:href="#img-532b1050-12" x="77.62" y="29.66"/>
+          <use xlink:href="#img-532b1050-12" x="19.21" y="39.57"/>
+          <use xlink:href="#img-532b1050-12" x="20.65" y="36.14"/>
+          <use xlink:href="#img-532b1050-12" x="95.86" y="29.35"/>
+          <use xlink:href="#img-532b1050-12" x="111.51" y="47.71"/>
+          <use xlink:href="#img-532b1050-12" x="53.41" y="26.82"/>
+          <use xlink:href="#img-532b1050-12" x="35.89" y="29.88"/>
+          <use xlink:href="#img-532b1050-12" x="80.89" y="50.93"/>
+          <use xlink:href="#img-532b1050-12" x="81.51" y="14.92"/>
+          <use xlink:href="#img-532b1050-12" x="30.53" y="35.96"/>
+          <use xlink:href="#img-532b1050-12" x="108.19" y="28.44"/>
+          <use xlink:href="#img-532b1050-12" x="53.31" y="50.26"/>
+          <use xlink:href="#img-532b1050-12" x="108.82" y="25.67"/>
+          <use xlink:href="#img-532b1050-12" x="24.76" y="35.65"/>
+          <use xlink:href="#img-532b1050-12" x="109.91" y="28.51"/>
+          <use xlink:href="#img-532b1050-12" x="37.97" y="19.01"/>
+          <use xlink:href="#img-532b1050-12" x="53.32" y="16.01"/>
+          <use xlink:href="#img-532b1050-12" x="27.16" y="18.51"/>
+          <use xlink:href="#img-532b1050-12" x="65.07" y="18.43"/>
+          <use xlink:href="#img-532b1050-12" x="19.39" y="49.71"/>
+          <use xlink:href="#img-532b1050-12" x="92.21" y="17.04"/>
+          <use xlink:href="#img-532b1050-12" x="30.39" y="16.14"/>
+          <use xlink:href="#img-532b1050-12" x="82.3" y="47.81"/>
+          <use xlink:href="#img-532b1050-12" x="109.34" y="27.61"/>
+          <use xlink:href="#img-532b1050-12" x="107.6" y="36.55"/>
+          <use xlink:href="#img-532b1050-12" x="76.14" y="40.54"/>
+          <use xlink:href="#img-532b1050-12" x="19.92" y="48.26"/>
+          <use xlink:href="#img-532b1050-12" x="107.92" y="48.65"/>
+          <use xlink:href="#img-532b1050-12" x="38.57" y="16.93"/>
+          <use xlink:href="#img-532b1050-12" x="34.7" y="49.74"/>
+          <use xlink:href="#img-532b1050-12" x="20.46" y="17.08"/>
+          <use xlink:href="#img-532b1050-12" x="32.11" y="28.16"/>
+          <use xlink:href="#img-532b1050-12" x="102.73" y="27.96"/>
+          <use xlink:href="#img-532b1050-12" x="91.09" y="26.49"/>
+          <use xlink:href="#img-532b1050-12" x="33.94" y="48.4"/>
+          <use xlink:href="#img-532b1050-12" x="62.78" y="46.31"/>
+          <use xlink:href="#img-532b1050-12" x="19.22" y="39.07"/>
+          <use xlink:href="#img-532b1050-12" x="93.17" y="37.74"/>
+          <use xlink:href="#img-532b1050-12" x="98.23" y="29.49"/>
+          <use xlink:href="#img-532b1050-12" x="48.47" y="16.02"/>
+          <use xlink:href="#img-532b1050-12" x="70.56" y="16.42"/>
+          <use xlink:href="#img-532b1050-12" x="79.69" y="29.29"/>
+          <use xlink:href="#img-532b1050-12" x="43.32" y="36.18"/>
+          <use xlink:href="#img-532b1050-12" x="18.28" y="38.23"/>
+          <use xlink:href="#img-532b1050-12" x="84.91" y="16.04"/>
+          <use xlink:href="#img-532b1050-12" x="55.4" y="25.31"/>
+          <use xlink:href="#img-532b1050-12" x="58.2" y="38.28"/>
+          <use xlink:href="#img-532b1050-12" x="101.7" y="37.96"/>
+          <use xlink:href="#img-532b1050-12" x="34.74" y="49.53"/>
+          <use xlink:href="#img-532b1050-12" x="44.75" y="16.95"/>
+          <use xlink:href="#img-532b1050-12" x="103.43" y="50.32"/>
+          <use xlink:href="#img-532b1050-12" x="98.49" y="49.34"/>
+          <use xlink:href="#img-532b1050-12" x="95.43" y="15.2"/>
+          <use xlink:href="#img-532b1050-12" x="24" y="38.85"/>
+          <use xlink:href="#img-532b1050-12" x="36.19" y="38.95"/>
+          <use xlink:href="#img-532b1050-12" x="28.52" y="16.18"/>
+          <use xlink:href="#img-532b1050-12" x="56.14" y="40.29"/>
+          <use xlink:href="#img-532b1050-12" x="25.81" y="29.05"/>
+          <use xlink:href="#img-532b1050-12" x="83.92" y="18.79"/>
+          <use xlink:href="#img-532b1050-12" x="49.13" y="17.62"/>
+          <use xlink:href="#img-532b1050-12" x="36.38" y="28.04"/>
+          <use xlink:href="#img-532b1050-12" x="24.07" y="16.64"/>
+          <use xlink:href="#img-532b1050-12" x="61.91" y="50.72"/>
+          <use xlink:href="#img-532b1050-12" x="68.64" y="19.4"/>
+          <use xlink:href="#img-532b1050-12" x="96.47" y="16"/>
+          <use xlink:href="#img-532b1050-12" x="61.38" y="28.73"/>
+          <use xlink:href="#img-532b1050-12" x="21.33" y="15.51"/>
+          <use xlink:href="#img-532b1050-12" x="91.28" y="37.52"/>
+          <use xlink:href="#img-532b1050-12" x="26.64" y="46.79"/>
+          <use xlink:href="#img-532b1050-12" x="27.45" y="49.76"/>
+          <use xlink:href="#img-532b1050-12" x="47.49" y="46.15"/>
+          <use xlink:href="#img-532b1050-12" x="73.7" y="19.6"/>
+          <use xlink:href="#img-532b1050-12" x="84.91" y="40.07"/>
+          <use xlink:href="#img-532b1050-12" x="79" y="39.08"/>
+          <use xlink:href="#img-532b1050-12" x="37.85" y="27.4"/>
+          <use xlink:href="#img-532b1050-12" x="36.99" y="36.78"/>
+          <use xlink:href="#img-532b1050-12" x="59.79" y="46.38"/>
+          <use xlink:href="#img-532b1050-12" x="98.49" y="15.28"/>
+          <use xlink:href="#img-532b1050-12" x="109.01" y="35.6"/>
+          <use xlink:href="#img-532b1050-12" x="74.39" y="14.81"/>
+          <use xlink:href="#img-532b1050-12" x="73.57" y="36.42"/>
+          <use xlink:href="#img-532b1050-12" x="35.3" y="37.61"/>
+          <use xlink:href="#img-532b1050-12" x="71.5" y="47.02"/>
+          <use xlink:href="#img-532b1050-12" x="50.9" y="36.19"/>
+          <use xlink:href="#img-532b1050-12" x="76.67" y="40.42"/>
+          <use xlink:href="#img-532b1050-12" x="84.15" y="39.94"/>
+          <use xlink:href="#img-532b1050-12" x="94.62" y="30.03"/>
+          <use xlink:href="#img-532b1050-12" x="79.98" y="47.14"/>
+          <use xlink:href="#img-532b1050-12" x="73.75" y="47.74"/>
+          <use xlink:href="#img-532b1050-12" x="68.53" y="47.49"/>
+          <use xlink:href="#img-532b1050-12" x="111.12" y="36.45"/>
+          <use xlink:href="#img-532b1050-12" x="57.74" y="48.49"/>
+          <use xlink:href="#img-532b1050-12" x="46.73" y="35.95"/>
+          <use xlink:href="#img-532b1050-12" x="23.72" y="46.79"/>
+          <use xlink:href="#img-532b1050-12" x="76.31" y="45.95"/>
+          <use xlink:href="#img-532b1050-12" x="50.57" y="16.44"/>
+          <use xlink:href="#img-532b1050-12" x="49.99" y="25.13"/>
+          <use xlink:href="#img-532b1050-12" x="46.17" y="37.99"/>
+          <use xlink:href="#img-532b1050-12" x="45.02" y="29.42"/>
+          <use xlink:href="#img-532b1050-12" x="87.42" y="26.02"/>
+          <use xlink:href="#img-532b1050-12" x="41.21" y="29.78"/>
+          <use xlink:href="#img-532b1050-12" x="101.08" y="19.01"/>
+          <use xlink:href="#img-532b1050-12" x="84.19" y="16.14"/>
+          <use xlink:href="#img-532b1050-12" x="92.28" y="37.31"/>
+          <use xlink:href="#img-532b1050-12" x="47.5" y="18.28"/>
+          <use xlink:href="#img-532b1050-12" x="32.88" y="48.04"/>
+          <use xlink:href="#img-532b1050-12" x="95.8" y="37.58"/>
+          <use xlink:href="#img-532b1050-12" x="57.99" y="38.13"/>
+          <use xlink:href="#img-532b1050-12" x="65.91" y="25.44"/>
+          <use xlink:href="#img-532b1050-12" x="39.3" y="47.04"/>
+          <use xlink:href="#img-532b1050-12" x="19.36" y="26.14"/>
+          <use xlink:href="#img-532b1050-12" x="39.28" y="28.12"/>
+          <use xlink:href="#img-532b1050-12" x="28.2" y="28.95"/>
+          <use xlink:href="#img-532b1050-12" x="71.73" y="25.15"/>
+          <use xlink:href="#img-532b1050-12" x="53.62" y="27.51"/>
+          <use xlink:href="#img-532b1050-12" x="55.02" y="17.81"/>
+          <use xlink:href="#img-532b1050-12" x="45.89" y="26.89"/>
+          <use xlink:href="#img-532b1050-12" x="24.22" y="15.87"/>
+          <use xlink:href="#img-532b1050-12" x="31.25" y="15.37"/>
+          <use xlink:href="#img-532b1050-12" x="99.55" y="47.02"/>
+          <use xlink:href="#img-532b1050-12" x="47.15" y="29"/>
+          <use xlink:href="#img-532b1050-12" x="98.43" y="17.45"/>
+          <use xlink:href="#img-532b1050-12" x="109.73" y="16.21"/>
+          <use xlink:href="#img-532b1050-12" x="72.81" y="37.72"/>
+          <use xlink:href="#img-532b1050-12" x="17.15" y="17.96"/>
+          <use xlink:href="#img-532b1050-12" x="102.85" y="37.07"/>
+          <use xlink:href="#img-532b1050-12" x="102.65" y="48.34"/>
+          <use xlink:href="#img-532b1050-12" x="19.9" y="27.5"/>
+          <use xlink:href="#img-532b1050-12" x="34.56" y="40.53"/>
+          <use xlink:href="#img-532b1050-12" x="30.58" y="36.02"/>
+          <use xlink:href="#img-532b1050-12" x="75.22" y="18.41"/>
+          <use xlink:href="#img-532b1050-12" x="36.98" y="40.57"/>
+          <use xlink:href="#img-532b1050-12" x="19.98" y="38.48"/>
+          <use xlink:href="#img-532b1050-12" x="32.16" y="16.07"/>
+          <use xlink:href="#img-532b1050-12" x="86.77" y="37.28"/>
+          <use xlink:href="#img-532b1050-12" x="109.52" y="19.1"/>
+          <use xlink:href="#img-532b1050-12" x="52.43" y="26.52"/>
+          <use xlink:href="#img-532b1050-12" x="61.99" y="39.77"/>
+          <use xlink:href="#img-532b1050-12" x="79.43" y="26.29"/>
+          <use xlink:href="#img-532b1050-12" x="51.63" y="29.89"/>
+          <use xlink:href="#img-532b1050-12" x="76.33" y="50.21"/>
+          <use xlink:href="#img-532b1050-12" x="79.42" y="27.54"/>
+          <use xlink:href="#img-532b1050-12" x="108.73" y="26.9"/>
+          <use xlink:href="#img-532b1050-12" x="97.83" y="27.56"/>
+          <use xlink:href="#img-532b1050-12" x="100.28" y="48.59"/>
+          <use xlink:href="#img-532b1050-12" x="62.43" y="28.26"/>
+          <use xlink:href="#img-532b1050-12" x="112.13" y="38.33"/>
+          <use xlink:href="#img-532b1050-12" x="92.12" y="30.21"/>
+          <use xlink:href="#img-532b1050-12" x="63.1" y="38.32"/>
+          <use xlink:href="#img-532b1050-12" x="55.77" y="39.7"/>
+          <use xlink:href="#img-532b1050-12" x="76.43" y="26.61"/>
+          <use xlink:href="#img-532b1050-12" x="67.08" y="26.61"/>
+          <use xlink:href="#img-532b1050-12" x="84.61" y="40.3"/>
+          <use xlink:href="#img-532b1050-12" x="104.6" y="25.77"/>
+          <use xlink:href="#img-532b1050-12" x="50.72" y="29.33"/>
+          <use xlink:href="#img-532b1050-12" x="83.53" y="50.51"/>
+          <use xlink:href="#img-532b1050-12" x="50.41" y="48.11"/>
+          <use xlink:href="#img-532b1050-12" x="35.53" y="18.02"/>
+          <use xlink:href="#img-532b1050-12" x="28.49" y="39.62"/>
+          <use xlink:href="#img-532b1050-12" x="97.61" y="25.45"/>
+          <use xlink:href="#img-532b1050-12" x="68.28" y="37.29"/>
+          <use xlink:href="#img-532b1050-12" x="102.19" y="16.06"/>
+          <use xlink:href="#img-532b1050-12" x="20.94" y="40.11"/>
+          <use xlink:href="#img-532b1050-12" x="102.18" y="26.74"/>
+          <use xlink:href="#img-532b1050-12" x="58.17" y="26.35"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</g>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-532b1050-13">
+    <text x="13.48" y="58.71" text-anchor="end" dy="0.35em">0</text>
+    <text x="13.48" y="48.37" text-anchor="end" dy="0.35em">1</text>
+    <text x="13.48" y="38.03" text-anchor="end" dy="0.35em">2</text>
+    <text x="13.48" y="27.69" text-anchor="end" dy="0.35em">3</text>
+    <text x="13.48" y="17.34" text-anchor="end" dy="0.35em">4</text>
+    <text x="13.48" y="7" text-anchor="end" dy="0.35em">5</text>
+  </g>
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-532b1050-14">
+    <text x="8.81" y="32.86" text-anchor="end" dy="0.35em">y</text>
+  </g>
+</g>
+<defs>
+  <clipPath id="img-532b1050-4">
+  <path d="M14.48,5 L 115 5 115 60.72 14.48 60.72" />
+</clipPath>
+  <g id="img-532b1050-12">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+</defs>
+</svg>
+</div><footer><hr/><a class="previous" href="stat_xticks.html"><span class="direction">Previous</span><span class="title">-</span></a><a class="next" href="stat_yticks.html"><span class="direction">Next</span><span class="title">-</span></a></footer></article></body></html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>- · Gadfly.jl documentation</title><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script></head><body><nav class="toc"><a href><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Stacks &amp; Layers</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li><li><a class="toctext" href="../../man/geometries.html">Geometries</a></li><li><a class="toctext" href="../../man/guides.html">Guides</a></li><li><a class="toctext" href="../../man/stats.html">Statistics</a></li><li><a class="toctext" href="../../man/coords.html">Coords</a></li><li><a class="toctext" href="../../man/scales.html">Scales</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">-</a></li><li><span class="toctext">geoms</span><ul><li><a class="toctext" href="../geoms/geom_bar.html">-</a></li><li><a class="toctext" href="../geoms/geom_beeswarm.html">-</a></li><li><a class="toctext" href="../geoms/geom_boxplot.html">-</a></li><li><a class="toctext" href="../geoms/geom_contour.html">-</a></li><li><a class="toctext" href="../geoms/geom_density.html">-</a></li><li><a class="toctext" href="../geoms/geom_errorbar.html">-</a></li><li><a class="toctext" href="../geoms/geom_hexbin.html">-</a></li><li><a class="toctext" href="../geoms/geom_histogram2d.html">-</a></li><li><a class="toctext" href="../geoms/geom_histogram.html">-</a></li><li><a class="toctext" href="../geoms/geom_hline.html">-</a></li><li><a class="toctext" href="../geoms/geom_label.html">-</a></li><li><a class="toctext" href="../geoms/geom_line.html">-</a></li><li><a class="toctext" href="../geoms/geom_path.html">-</a></li><li><a class="toctext" href="../geoms/geom_point.html">-</a></li><li><a class="toctext" href="../geoms/geom_polygon.html">-</a></li><li><a class="toctext" href="../geoms/geom_rectbin.html">-</a></li><li><a class="toctext" href="../geoms/geom_ribbon.html">-</a></li><li><a class="toctext" href="../geoms/geom_segment.html">-</a></li><li><a class="toctext" href="../geoms/geom_smooth.html">-</a></li><li><a class="toctext" href="../geoms/geom_step.html">-</a></li><li><a class="toctext" href="../geoms/geom_subplot_grid.html">-</a></li><li><a class="toctext" href="../geoms/geom_violin.html">-</a></li><li><a class="toctext" href="../geoms/geom_vline.html">-</a></li></ul></li><li><span class="toctext">guides</span><ul><li><a class="toctext" href="../guides/guide_annotation.html">-</a></li><li><a class="toctext" href="../guides/guide_colorkey.html">-</a></li><li><a class="toctext" href="../guides/guide_manual_color_key.html">-</a></li><li><a class="toctext" href="../guides/guide_title.html">-</a></li><li><a class="toctext" href="../guides/guide_xlabel.html">-</a></li><li><a class="toctext" href="../guides/guide_xrug.html">-</a></li><li><a class="toctext" href="../guides/guide_xticks.html">-</a></li><li><a class="toctext" href="../guides/guide_ylabel.html">-</a></li><li><a class="toctext" href="../guides/guide_yrug.html">-</a></li><li><a class="toctext" href="../guides/guide_yticks.html">-</a></li></ul></li><li><span class="toctext">stats</span><ul><li class="current"><a class="toctext" href="stat_binmean.html">-</a><ul class="internal"><li class="toplevel"><a class="toctext" href="#Stat.binmean-1">Stat.binmean</a></li><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li><li><a class="toctext" href="stat_qq.html">-</a></li><li><a class="toctext" href="stat_step.html">-</a></li><li><a class="toctext" href="stat_x_jitter.html">-</a></li><li><a class="toctext" href="stat_xticks.html">-</a></li><li><a class="toctext" href="stat_y_jitter.html">-</a></li><li><a class="toctext" href="stat_yticks.html">-</a></li></ul></li><li><span class="toctext">coords</span><ul><li><a class="toctext" href="../coords/coord_cartesian.html">-</a></li></ul></li><li><span class="toctext">scales</span><ul><li><a class="toctext" href="../scales/scale_color_continuous.html">-</a></li><li><a class="toctext" href="../scales/scale_color_discrete_hue.html">-</a></li><li><a class="toctext" href="../scales/scale_color_discrete_manual.html">-</a></li><li><a class="toctext" href="../scales/scale_color_none.html">-</a></li><li><a class="toctext" href="../scales/scale_x_continuous.html">-</a></li><li><a class="toctext" href="../scales/scale_x_discrete.html">-</a></li><li><a class="toctext" href="../scales/scale_y_continuous.html">-</a></li><li><a class="toctext" href="../scales/scale_y_discrete.html">-</a></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li>stats</li><li><a href="stat_binmean.html">-</a></li></ul><a class="edit-page" href="https://github.com/dcjones/Gadfly.jl/tree/99aaa7693f9dffb7d4e4ffd8ced43c3f2ee37cf5/docs/src/lib/stats/stat_binmean.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Stat.binmean-1" href="#Stat.binmean-1">Stat.binmean</a></h1><p>Plot the mean of <code>y</code> against the mean of <code>x</code> within <code>n</code> quantile bins of <code>x</code>.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>x</code>: Data to be plotted on the x-axis.</p></li><li><p><code>y</code>: Data to be plotted on the y-axis.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>n</code>: Number of bins</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">p1 = plot(dataset(&quot;datasets&quot;, &quot;iris&quot;), x=&quot;SepalLength&quot;, y=&quot;SepalWidth&quot;, Stat.binmean, Geom.point)</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:gadfly="http://www.gadflyjl.org/ns"
+     version="1.2"
+     width="120mm" height="80mm" viewBox="0 0 120 80"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+     font-size="3.88"
+>
+<g class="plotroot xscalable yscalable" id="img-152402e7-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-152402e7-2">
+    <text x="67.65" y="68.39" text-anchor="middle" dy="0.6em">SepalLength</text>
+  </g>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-152402e7-3">
+    <text x="22.3" y="61.72" text-anchor="middle" dy="0.6em">4</text>
+    <text x="44.98" y="61.72" text-anchor="middle" dy="0.6em">5</text>
+    <text x="67.65" y="61.72" text-anchor="middle" dy="0.6em">6</text>
+    <text x="90.33" y="61.72" text-anchor="middle" dy="0.6em">7</text>
+    <text x="113" y="61.72" text-anchor="middle" dy="0.6em">8</text>
+  </g>
+<g clip-path="url(#img-152402e7-4)">
+  <g id="img-152402e7-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-152402e7-6">
+      <rect x="20.3" y="5" width="94.7" height="55.72"/>
+    </g>
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-152402e7-7">
+      <path fill="none" d="M20.3,58.72 L 115 58.72"/>
+      <path fill="none" d="M20.3,41.48 L 115 41.48"/>
+      <path fill="none" d="M20.3,24.24 L 115 24.24"/>
+      <path fill="none" d="M20.3,7 L 115 7"/>
+    </g>
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-152402e7-8">
+      <path fill="none" d="M22.3,5 L 22.3 60.72"/>
+      <path fill="none" d="M44.98,5 L 44.98 60.72"/>
+      <path fill="none" d="M67.65,5 L 67.65 60.72"/>
+      <path fill="none" d="M90.33,5 L 90.33 60.72"/>
+      <path fill="none" d="M113,5 L 113 60.72"/>
+    </g>
+    <g class="plotpanel" id="img-152402e7-9">
+      <g class="geometry" id="img-152402e7-10">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" fill="#00BFFF" id="img-152402e7-11">
+          <use xlink:href="#img-152402e7-12" x="33.39" y="36.11"/>
+          <use xlink:href="#img-152402e7-12" x="39.8" y="28.67"/>
+          <use xlink:href="#img-152402e7-12" x="44.13" y="37.6"/>
+          <use xlink:href="#img-152402e7-12" x="47.25" y="8.53"/>
+          <use xlink:href="#img-152402e7-12" x="49.51" y="12.17"/>
+          <use xlink:href="#img-152402e7-12" x="55.02" y="27.19"/>
+          <use xlink:href="#img-152402e7-12" x="58.58" y="54.12"/>
+          <use xlink:href="#img-152402e7-12" x="60.85" y="34.58"/>
+          <use xlink:href="#img-152402e7-12" x="63.12" y="49.36"/>
+          <use xlink:href="#img-152402e7-12" x="65.39" y="36.88"/>
+          <use xlink:href="#img-152402e7-12" x="68.79" y="55.84"/>
+          <use xlink:href="#img-152402e7-12" x="72.19" y="53.54"/>
+          <use xlink:href="#img-152402e7-12" x="74.45" y="51.44"/>
+          <use xlink:href="#img-152402e7-12" x="76.72" y="44.43"/>
+          <use xlink:href="#img-152402e7-12" x="78.99" y="41.48"/>
+          <use xlink:href="#img-152402e7-12" x="83.07" y="39.41"/>
+          <use xlink:href="#img-152402e7-12" x="87.09" y="36.55"/>
+          <use xlink:href="#img-152402e7-12" x="93.5" y="27.69"/>
+          <use xlink:href="#img-152402e7-12" x="104.5" y="35.44"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</g>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-152402e7-13">
+    <text x="19.3" y="58.72" text-anchor="end" dy="0.35em">2.75</text>
+    <text x="19.3" y="41.48" text-anchor="end" dy="0.35em">3.00</text>
+    <text x="19.3" y="24.24" text-anchor="end" dy="0.35em">3.25</text>
+    <text x="19.3" y="7" text-anchor="end" dy="0.35em">3.50</text>
+  </g>
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-152402e7-14">
+    <text x="8.81" y="30.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 32.86)">SepalWidth</text>
+  </g>
+</g>
+<defs>
+  <clipPath id="img-152402e7-4">
+  <path d="M20.3,5 L 115 5 115 60.72 20.3 60.72" />
+</clipPath>
+  <g id="img-152402e7-12">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+</defs>
+</svg>
+</div><footer><hr/><a class="previous" href="../guides/guide_yticks.html"><span class="direction">Previous</span><span class="title">-</span></a><a class="next" href="stat_qq.html"><span class="direction">Next</span><span class="title">-</span></a></footer></article></body></html>

@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>- · Gadfly.jl documentation</title><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script></head><body><nav class="toc"><a href><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Stacks &amp; Layers</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li><li><a class="toctext" href="../../man/geometries.html">Geometries</a></li><li><a class="toctext" href="../../man/guides.html">Guides</a></li><li><a class="toctext" href="../../man/stats.html">Statistics</a></li><li><a class="toctext" href="../../man/coords.html">Coords</a></li><li><a class="toctext" href="../../man/scales.html">Scales</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">-</a></li><li><span class="toctext">geoms</span><ul><li><a class="toctext" href="geom_bar.html">-</a></li><li><a class="toctext" href="geom_beeswarm.html">-</a></li><li><a class="toctext" href="geom_boxplot.html">-</a></li><li><a class="toctext" href="geom_contour.html">-</a></li><li><a class="toctext" href="geom_density.html">-</a></li><li><a class="toctext" href="geom_errorbar.html">-</a></li><li><a class="toctext" href="geom_hexbin.html">-</a></li><li><a class="toctext" href="geom_histogram2d.html">-</a></li><li><a class="toctext" href="geom_histogram.html">-</a></li><li><a class="toctext" href="geom_hline.html">-</a></li><li class="current"><a class="toctext" href="geom_label.html">-</a><ul class="internal"><li class="toplevel"><a class="toctext" href="#Geom.label-1">Geom.label</a></li><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li><li><a class="toctext" href="geom_line.html">-</a></li><li><a class="toctext" href="geom_path.html">-</a></li><li><a class="toctext" href="geom_point.html">-</a></li><li><a class="toctext" href="geom_polygon.html">-</a></li><li><a class="toctext" href="geom_rectbin.html">-</a></li><li><a class="toctext" href="geom_ribbon.html">-</a></li><li><a class="toctext" href="geom_segment.html">-</a></li><li><a class="toctext" href="geom_smooth.html">-</a></li><li><a class="toctext" href="geom_step.html">-</a></li><li><a class="toctext" href="geom_subplot_grid.html">-</a></li><li><a class="toctext" href="geom_violin.html">-</a></li><li><a class="toctext" href="geom_vline.html">-</a></li></ul></li><li><span class="toctext">guides</span><ul><li><a class="toctext" href="../guides/guide_annotation.html">-</a></li><li><a class="toctext" href="../guides/guide_colorkey.html">-</a></li><li><a class="toctext" href="../guides/guide_manual_color_key.html">-</a></li><li><a class="toctext" href="../guides/guide_title.html">-</a></li><li><a class="toctext" href="../guides/guide_xlabel.html">-</a></li><li><a class="toctext" href="../guides/guide_xrug.html">-</a></li><li><a class="toctext" href="../guides/guide_xticks.html">-</a></li><li><a class="toctext" href="../guides/guide_ylabel.html">-</a></li><li><a class="toctext" href="../guides/guide_yrug.html">-</a></li><li><a class="toctext" href="../guides/guide_yticks.html">-</a></li></ul></li><li><span class="toctext">stats</span><ul><li><a class="toctext" href="../stats/stat_binmean.html">-</a></li><li><a class="toctext" href="../stats/stat_qq.html">-</a></li><li><a class="toctext" href="../stats/stat_step.html">-</a></li><li><a class="toctext" href="../stats/stat_x_jitter.html">-</a></li><li><a class="toctext" href="../stats/stat_xticks.html">-</a></li><li><a class="toctext" href="../stats/stat_y_jitter.html">-</a></li><li><a class="toctext" href="../stats/stat_yticks.html">-</a></li></ul></li><li><span class="toctext">coords</span><ul><li><a class="toctext" href="../coords/coord_cartesian.html">-</a></li></ul></li><li><span class="toctext">scales</span><ul><li><a class="toctext" href="../scales/scale_color_continuous.html">-</a></li><li><a class="toctext" href="../scales/scale_color_discrete_hue.html">-</a></li><li><a class="toctext" href="../scales/scale_color_discrete_manual.html">-</a></li><li><a class="toctext" href="../scales/scale_color_none.html">-</a></li><li><a class="toctext" href="../scales/scale_x_continuous.html">-</a></li><li><a class="toctext" href="../scales/scale_x_discrete.html">-</a></li><li><a class="toctext" href="../scales/scale_y_continuous.html">-</a></li><li><a class="toctext" href="../scales/scale_y_discrete.html">-</a></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li>geoms</li><li><a href="geom_label.html">-</a></li></ul><a class="edit-page" href="https://github.com/dcjones/Gadfly.jl/tree/99aaa7693f9dffb7d4e4ffd8ced43c3f2ee37cf5/docs/src/lib/geoms/geom_label.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.label-1" href="#Geom.label-1">Geom.label</a></h1><p>Label positions on the plot frame.</p><p>This geometry attemps to optimize label positioning so that labels do not overlap, and hides any that would overlap.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>x</code>: X-axis position.</p></li><li><p><code>y</code>: Y-axis position.</p></li><li><p><code>label</code>: Text to render.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>position</code>: One of <code>:dynamic</code>, <code>:left</code>, <code>:right</code>, <code>:above</code>, <code>:below</code>, <code>:centered</code>. If <code>:dynamic</code> is used, label positions will be adjusted to avoid overaps. Otherwise, labels will be statically positioned left, right, above, below, or centered relative to the point.</p></li><li><p><code>hide_overlaps</code>: If true, and dynamic positioning is used, labels that would otherwise overlap another label or be drawn outside the plot panel are hidden. (default: true)</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(dataset(&quot;ggplot2&quot;, &quot;mpg&quot;), x=&quot;Cty&quot;, y=&quot;Hwy&quot;, label=&quot;Model&quot;, Geom.point, Geom.label)</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:gadfly="http://www.gadflyjl.org/ns"
+     version="1.2"
+     width="140mm" height="100mm" viewBox="0 0 140 100"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+     font-size="3.88"
+>
+<g class="plotroot xscalable yscalable" id="img-356cfee9-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-356cfee9-2">
+    <text x="76.48" y="88.39" text-anchor="middle" dy="0.6em">Cty</text>
+  </g>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-356cfee9-3">
+    <text x="19.96" y="81.72" text-anchor="middle" dy="0.6em">0</text>
+    <text x="48.22" y="81.72" text-anchor="middle" dy="0.6em">10</text>
+    <text x="76.48" y="81.72" text-anchor="middle" dy="0.6em">20</text>
+    <text x="104.74" y="81.72" text-anchor="middle" dy="0.6em">30</text>
+    <text x="133" y="81.72" text-anchor="middle" dy="0.6em">40</text>
+  </g>
+<g clip-path="url(#img-356cfee9-4)">
+  <g id="img-356cfee9-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-356cfee9-6">
+      <rect x="17.96" y="5" width="117.04" height="75.72"/>
+    </g>
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-356cfee9-7">
+      <path fill="none" d="M17.96,78.71 L 135 78.71"/>
+      <path fill="none" d="M17.96,64.37 L 135 64.37"/>
+      <path fill="none" d="M17.96,50.03 L 135 50.03"/>
+      <path fill="none" d="M17.96,35.69 L 135 35.69"/>
+      <path fill="none" d="M17.96,21.34 L 135 21.34"/>
+      <path fill="none" d="M17.96,7 L 135 7"/>
+    </g>
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-356cfee9-8">
+      <path fill="none" d="M19.96,5 L 19.96 80.72"/>
+      <path fill="none" d="M48.22,5 L 48.22 80.72"/>
+      <path fill="none" d="M76.48,5 L 76.48 80.72"/>
+      <path fill="none" d="M104.74,5 L 104.74 80.72"/>
+      <path fill="none" d="M133,5 L 133 80.72"/>
+    </g>
+    <g class="plotpanel" id="img-356cfee9-9">
+      <g class="geometry" stroke="#000000" stroke-opacity="0.000" fill="#4C404B" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" id="img-356cfee9-10">
+        <g visibility="hidden" id="img-356cfee9-11">
+          <text x="72.73" y="34.78" text-anchor="middle" dy="0.35em">a4</text>
+          <text x="77.8" y="34.78" text-anchor="middle" dy="0.35em">a4</text>
+          <text x="81.96" y="38.02" text-anchor="middle" dy="0.35em">a4</text>
+          <text x="67.83" y="41.88" text-anchor="middle" dy="0.35em">a4</text>
+          <text x="72.76" y="39.09" text-anchor="middle" dy="0.35em">a4</text>
+          <text x="68.17" y="40.18" text-anchor="middle" dy="0.35em">a4</text>
+          <text x="79.07" y="43.76" text-anchor="middle" dy="0.35em">a4 quattro</text>
+          <text x="56.93" y="42.23" text-anchor="middle" dy="0.35em">a4 quattro</text>
+          <text x="68.23" y="37.81" text-anchor="middle" dy="0.35em">a4 quattro</text>
+          <text x="81.9" y="42.33" text-anchor="middle" dy="0.35em">a4 quattro</text>
+          <text x="54.1" y="42.09" text-anchor="middle" dy="0.35em">a4 quattro</text>
+          <text x="76.25" y="45.19" text-anchor="middle" dy="0.35em">a4 quattro</text>
+          <text x="59.75" y="43.78" text-anchor="middle" dy="0.35em">a4 quattro</text>
+          <text x="54.1" y="42.23" text-anchor="middle" dy="0.35em">a4 quattro</text>
+          <text x="57.77" y="46.63" text-anchor="middle" dy="0.35em">a6 quattro</text>
+          <text x="59.75" y="41.81" text-anchor="middle" dy="0.35em">a6 quattro</text>
+          <text x="56.93" y="44.89" text-anchor="middle" dy="0.35em">a6 quattro</text>
+          <text x="74.9" y="50" text-anchor="middle" dy="0.35em">c1500 suburban 2wd</text>
+          <text x="66.42" y="59.54" text-anchor="middle" dy="0.35em">c1500 suburban 2wd</text>
+          <text x="44.14" y="49.13" text-anchor="middle" dy="0.35em">c1500 suburban 2wd</text>
+          <text x="41.32" y="53.43" text-anchor="middle" dy="0.35em">c1500 suburban 2wd</text>
+          <text x="38.49" y="54.5" text-anchor="middle" dy="0.35em">c1500 suburban 2wd</text>
+          <text x="58.42" y="41.09" text-anchor="middle" dy="0.35em">corvette</text>
+          <text x="55.59" y="44.85" text-anchor="middle" dy="0.35em">corvette</text>
+          <text x="58.42" y="42.17" text-anchor="middle" dy="0.35em">corvette</text>
+          <text x="69.11" y="45.19" text-anchor="middle" dy="0.35em">corvette</text>
+          <text x="66.43" y="46.63" text-anchor="middle" dy="0.35em">corvette</text>
+          <text x="72.41" y="53.8" text-anchor="middle" dy="0.35em">k1500 tahoe 4wd</text>
+          <text x="59.58" y="60.97" text-anchor="middle" dy="0.35em">k1500 tahoe 4wd</text>
+          <text x="63.93" y="59.54" text-anchor="middle" dy="0.35em">k1500 tahoe 4wd</text>
+          <text x="72.41" y="56.67" text-anchor="middle" dy="0.35em">k1500 tahoe 4wd</text>
+          <text x="69.7" y="37.65" text-anchor="middle" dy="0.35em">malibu</text>
+          <text x="88" y="38.02" text-anchor="middle" dy="0.35em">malibu</text>
+          <text x="66.86" y="39.09" text-anchor="middle" dy="0.35em">malibu</text>
+          <text x="64.95" y="37.18" text-anchor="middle" dy="0.35em">malibu</text>
+          <text x="73.87" y="43.76" text-anchor="middle" dy="0.35em">malibu</text>
+          <text x="80.55" y="46.63" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="77.72" y="46.63" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="74.9" y="49.5" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="55.45" y="47.04" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="58.28" y="43.87" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="58.28" y="44.38" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="44.85" y="52" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="52.63" y="48.02" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="72.07" y="50.93" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="55.45" y="44.91" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="74.9" y="48.06" text-anchor="middle" dy="0.35em">caravan 2wd</text>
+          <text x="76.52" y="51.32" text-anchor="middle" dy="0.35em">dakota pickup 4wd</text>
+          <text x="73.7" y="55.23" text-anchor="middle" dy="0.35em">dakota pickup 4wd</text>
+          <text x="70.87" y="56.67" text-anchor="middle" dy="0.35em">dakota pickup 4wd</text>
+          <text x="73.7" y="56.67" text-anchor="middle" dy="0.35em">dakota pickup 4wd</text>
+          <text x="73.7" y="53.8" text-anchor="middle" dy="0.35em">dakota pickup 4wd</text>
+          <text x="73.7" y="50.83" text-anchor="middle" dy="0.35em">dakota pickup 4wd</text>
+          <text x="36.06" y="59.17" text-anchor="middle" dy="0.35em">dakota pickup 4wd</text>
+          <text x="36.87" y="53.57" text-anchor="middle" dy="0.35em">dakota pickup 4wd</text>
+          <text x="65.22" y="59.54" text-anchor="middle" dy="0.35em">dakota pickup 4wd</text>
+          <text x="66.85" y="56.67" text-anchor="middle" dy="0.35em">durango 4wd</text>
+          <text x="66.85" y="56.67" text-anchor="middle" dy="0.35em">durango 4wd</text>
+          <text x="55.54" y="63.84" text-anchor="middle" dy="0.35em">durango 4wd</text>
+          <text x="66.85" y="56.67" text-anchor="middle" dy="0.35em">durango 4wd</text>
+          <text x="43.5" y="53.43" text-anchor="middle" dy="0.35em">durango 4wd</text>
+          <text x="66.85" y="55.23" text-anchor="middle" dy="0.35em">durango 4wd</text>
+          <text x="61.19" y="58.11" text-anchor="middle" dy="0.35em">durango 4wd</text>
+          <text x="38.02" y="56.75" text-anchor="middle" dy="0.35em">ram 1500 pickup 4wd</text>
+          <text x="61.24" y="62.31" text-anchor="middle" dy="0.35em">ram 1500 pickup 4wd</text>
+          <text x="72.55" y="54.39" text-anchor="middle" dy="0.35em">ram 1500 pickup 4wd</text>
+          <text x="40.85" y="54.06" text-anchor="middle" dy="0.35em">ram 1500 pickup 4wd</text>
+          <text x="38.02" y="55.47" text-anchor="middle" dy="0.35em">ram 1500 pickup 4wd</text>
+          <text x="61.24" y="62.41" text-anchor="middle" dy="0.35em">ram 1500 pickup 4wd</text>
+          <text x="66.89" y="59.54" text-anchor="middle" dy="0.35em">ram 1500 pickup 4wd</text>
+          <text x="66.89" y="58.1" text-anchor="middle" dy="0.35em">ram 1500 pickup 4wd</text>
+          <text x="72.55" y="54.5" text-anchor="middle" dy="0.35em">ram 1500 pickup 4wd</text>
+          <text x="66.89" y="59.54" text-anchor="middle" dy="0.35em">ram 1500 pickup 4wd</text>
+          <text x="39.17" y="54.91" text-anchor="middle" dy="0.35em">expedition 2wd</text>
+          <text x="62.92" y="56.67" text-anchor="middle" dy="0.35em">expedition 2wd</text>
+          <text x="46.51" y="50.56" text-anchor="middle" dy="0.35em">expedition 2wd</text>
+          <text x="69.69" y="54.65" text-anchor="middle" dy="0.35em">explorer 4wd</text>
+          <text x="72.52" y="51.52" text-anchor="middle" dy="0.35em">explorer 4wd</text>
+          <text x="69.69" y="56.67" text-anchor="middle" dy="0.35em">explorer 4wd</text>
+          <text x="51.44" y="49.13" text-anchor="middle" dy="0.35em">explorer 4wd</text>
+          <text x="66.87" y="53.8" text-anchor="middle" dy="0.35em">explorer 4wd</text>
+          <text x="66.87" y="56.67" text-anchor="middle" dy="0.35em">explorer 4wd</text>
+          <text x="71.95" y="56.67" text-anchor="middle" dy="0.35em">f150 pickup 4wd</text>
+          <text x="71.95" y="56.67" text-anchor="middle" dy="0.35em">f150 pickup 4wd</text>
+          <text x="69.12" y="58.1" text-anchor="middle" dy="0.35em">f150 pickup 4wd</text>
+          <text x="69.12" y="58.1" text-anchor="middle" dy="0.35em">f150 pickup 4wd</text>
+          <text x="65.11" y="56.67" text-anchor="middle" dy="0.35em">f150 pickup 4wd</text>
+          <text x="38.62" y="57.24" text-anchor="middle" dy="0.35em">f150 pickup 4wd</text>
+          <text x="69.12" y="56.67" text-anchor="middle" dy="0.35em">f150 pickup 4wd</text>
+          <text x="66.41" y="39.09" text-anchor="middle" dy="0.35em">mustang</text>
+          <text x="77.95" y="45.19" text-anchor="middle" dy="0.35em">mustang</text>
+          <text x="62.87" y="39.09" text-anchor="middle" dy="0.35em">mustang</text>
+          <text x="72.3" y="46.63" text-anchor="middle" dy="0.35em">mustang</text>
+          <text x="55.22" y="47.63" text-anchor="middle" dy="0.35em">mustang</text>
+          <text x="69.48" y="49.5" text-anchor="middle" dy="0.35em">mustang</text>
+          <text x="69.48" y="48.06" text-anchor="middle" dy="0.35em">mustang</text>
+          <text x="55.22" y="46.38" text-anchor="middle" dy="0.35em">mustang</text>
+          <text x="66.65" y="51.16" text-anchor="middle" dy="0.35em">mustang</text>
+          <text x="91.93" y="35.15" text-anchor="middle" dy="0.35em">civic</text>
+          <text x="94.75" y="35.15" text-anchor="middle" dy="0.35em">civic</text>
+          <text x="89.1" y="39.46" text-anchor="middle" dy="0.35em">civic</text>
+          <text x="85.62" y="30.48" text-anchor="middle" dy="0.35em">civic</text>
+          <text x="96.43" y="27.61" text-anchor="middle" dy="0.35em">civic</text>
+          <text x="83.45" y="36.6" text-anchor="middle" dy="0.35em">civic</text>
+          <text x="65.12" y="40.85" text-anchor="middle" dy="0.35em">sonata</text>
+          <text x="76.53" y="42.33" text-anchor="middle" dy="0.35em">sonata</text>
+          <text x="85.01" y="38.02" text-anchor="middle" dy="0.35em">sonata</text>
+          <text x="75.26" y="31.92" text-anchor="middle" dy="0.35em">sonata</text>
+          <text x="76.53" y="43.76" text-anchor="middle" dy="0.35em">sonata</text>
+          <text x="65.12" y="40.33" text-anchor="middle" dy="0.35em">sonata</text>
+          <text x="79.36" y="37.55" text-anchor="middle" dy="0.35em">sonata</text>
+          <text x="79.8" y="43.76" text-anchor="middle" dy="0.35em">tiburon</text>
+          <text x="79.8" y="37.6" text-anchor="middle" dy="0.35em">tiburon</text>
+          <text x="72.61" y="36.22" text-anchor="middle" dy="0.35em">tiburon</text>
+          <text x="82.62" y="42.33" text-anchor="middle" dy="0.35em">tiburon</text>
+          <text x="74.14" y="46.63" text-anchor="middle" dy="0.35em">tiburon</text>
+          <text x="59.03" y="43.19" text-anchor="middle" dy="0.35em">tiburon</text>
+          <text x="71.83" y="46.63" text-anchor="middle" dy="0.35em">tiburon</text>
+          <text x="83.15" y="49.5" text-anchor="middle" dy="0.35em">grand cherokee 4wd</text>
+          <text x="77.5" y="51.15" text-anchor="middle" dy="0.35em">grand cherokee 4wd</text>
+          <text x="77.5" y="52.37" text-anchor="middle" dy="0.35em">grand cherokee 4wd</text>
+          <text x="74.68" y="56.67" text-anchor="middle" dy="0.35em">grand cherokee 4wd</text>
+          <text x="60.55" y="63.84" text-anchor="middle" dy="0.35em">grand cherokee 4wd</text>
+          <text x="74.68" y="51.06" text-anchor="middle" dy="0.35em">grand cherokee 4wd</text>
+          <text x="41.54" y="52.7" text-anchor="middle" dy="0.35em">grand cherokee 4wd</text>
+          <text x="66.2" y="60.97" text-anchor="middle" dy="0.35em">grand cherokee 4wd</text>
+          <text x="60" y="59.54" text-anchor="middle" dy="0.35em">range rover</text>
+          <text x="62.83" y="55.23" text-anchor="middle" dy="0.35em">range rover</text>
+          <text x="48.46" y="50.56" text-anchor="middle" dy="0.35em">range rover</text>
+          <text x="55.85" y="59.54" text-anchor="middle" dy="0.35em">range rover</text>
+          <text x="61.99" y="56.67" text-anchor="middle" dy="0.35em">navigator 2wd</text>
+          <text x="44.82" y="58.1" text-anchor="middle" dy="0.35em">navigator 2wd</text>
+          <text x="42.92" y="52.41" text-anchor="middle" dy="0.35em">navigator 2wd</text>
+          <text x="72.85" y="56.67" text-anchor="middle" dy="0.35em">mountaineer 4wd</text>
+          <text x="65.22" y="49.13" text-anchor="middle" dy="0.35em">mountaineer 4wd</text>
+          <text x="70.02" y="51.87" text-anchor="middle" dy="0.35em">mountaineer 4wd</text>
+          <text x="70.02" y="56.67" text-anchor="middle" dy="0.35em">mountaineer 4wd</text>
+          <text x="75.46" y="34.78" text-anchor="middle" dy="0.35em">altima</text>
+          <text x="79.12" y="42.33" text-anchor="middle" dy="0.35em">altima</text>
+          <text x="90.42" y="36.59" text-anchor="middle" dy="0.35em">altima</text>
+          <text x="90.42" y="33.3" text-anchor="middle" dy="0.35em">altima</text>
+          <text x="70.89" y="37.65" text-anchor="middle" dy="0.35em">altima</text>
+          <text x="79.12" y="43.76" text-anchor="middle" dy="0.35em">altima</text>
+          <text x="66.34" y="39.09" text-anchor="middle" dy="0.35em">maxima</text>
+          <text x="80.25" y="45.19" text-anchor="middle" dy="0.35em">maxima</text>
+          <text x="80.25" y="45.19" text-anchor="middle" dy="0.35em">maxima</text>
+          <text x="71.16" y="56.67" text-anchor="middle" dy="0.35em">pathfinder 4wd</text>
+          <text x="73.98" y="56.67" text-anchor="middle" dy="0.35em">pathfinder 4wd</text>
+          <text x="47.89" y="49.01" text-anchor="middle" dy="0.35em">pathfinder 4wd</text>
+          <text x="47.29" y="55.23" text-anchor="middle" dy="0.35em">pathfinder 4wd</text>
+          <text x="78.98" y="43.76" text-anchor="middle" dy="0.35em">grand prix</text>
+          <text x="59.79" y="43.76" text-anchor="middle" dy="0.35em">grand prix</text>
+          <text x="66.17" y="36.22" text-anchor="middle" dy="0.35em">grand prix</text>
+          <text x="73.32" y="45.19" text-anchor="middle" dy="0.35em">grand prix</text>
+          <text x="80.57" y="45.19" text-anchor="middle" dy="0.35em">forester awd</text>
+          <text x="80.57" y="46.63" text-anchor="middle" dy="0.35em">forester awd</text>
+          <text x="86.22" y="40.36" text-anchor="middle" dy="0.35em">forester awd</text>
+          <text x="83.39" y="45.19" text-anchor="middle" dy="0.35em">forester awd</text>
+          <text x="86.22" y="43.76" text-anchor="middle" dy="0.35em">forester awd</text>
+          <text x="80.57" y="48.06" text-anchor="middle" dy="0.35em">forester awd</text>
+          <text x="89.21" y="43.76" text-anchor="middle" dy="0.35em">impreza awd</text>
+          <text x="83.56" y="43.76" text-anchor="middle" dy="0.35em">impreza awd</text>
+          <text x="83.56" y="41.41" text-anchor="middle" dy="0.35em">impreza awd</text>
+          <text x="83.56" y="43.76" text-anchor="middle" dy="0.35em">impreza awd</text>
+          <text x="86.38" y="45.19" text-anchor="middle" dy="0.35em">impreza awd</text>
+          <text x="86.38" y="40.11" text-anchor="middle" dy="0.35em">impreza awd</text>
+          <text x="83.56" y="45.19" text-anchor="middle" dy="0.35em">impreza awd</text>
+          <text x="86.38" y="42.33" text-anchor="middle" dy="0.35em">impreza awd</text>
+          <text x="72.14" y="50.87" text-anchor="middle" dy="0.35em">4runner 4wd</text>
+          <text x="74.96" y="52.37" text-anchor="middle" dy="0.35em">4runner 4wd</text>
+          <text x="72.14" y="53.8" text-anchor="middle" dy="0.35em">4runner 4wd</text>
+          <text x="72.14" y="54.54" text-anchor="middle" dy="0.35em">4runner 4wd</text>
+          <text x="74.96" y="52.37" text-anchor="middle" dy="0.35em">4runner 4wd</text>
+          <text x="69.31" y="56.67" text-anchor="middle" dy="0.35em">4runner 4wd</text>
+          <text x="84.5" y="37.6" text-anchor="middle" dy="0.35em">camry</text>
+          <text x="84.5" y="40.6" text-anchor="middle" dy="0.35em">camry</text>
+          <text x="74.12" y="33.18" text-anchor="middle" dy="0.35em">camry</text>
+          <text x="82.76" y="31.92" text-anchor="middle" dy="0.35em">camry</text>
+          <text x="65.64" y="41.29" text-anchor="middle" dy="0.35em">camry</text>
+          <text x="76.02" y="43.76" text-anchor="middle" dy="0.35em">camry</text>
+          <text x="78.84" y="40.89" text-anchor="middle" dy="0.35em">camry</text>
+          <text x="89.15" y="42.33" text-anchor="middle" dy="0.35em">camry solara</text>
+          <text x="69.46" y="37.13" text-anchor="middle" dy="0.35em">camry solara</text>
+          <text x="74.29" y="31.92" text-anchor="middle" dy="0.35em">camry solara</text>
+          <text x="91.97" y="33.53" text-anchor="middle" dy="0.35em">camry solara</text>
+          <text x="80.67" y="42.27" text-anchor="middle" dy="0.35em">camry solara</text>
+          <text x="60.98" y="40.93" text-anchor="middle" dy="0.35em">camry solara</text>
+          <text x="80.67" y="42.33" text-anchor="middle" dy="0.35em">camry solara</text>
+          <text x="93.61" y="33.72" text-anchor="middle" dy="0.35em">corolla</text>
+          <text x="97.77" y="26.18" text-anchor="middle" dy="0.35em">corolla</text>
+          <text x="99.27" y="28.59" text-anchor="middle" dy="0.35em">corolla</text>
+          <text x="40.93" y="59.54" text-anchor="middle" dy="0.35em">land cruiser wagon 4wd</text>
+          <text x="74.33" y="55.23" text-anchor="middle" dy="0.35em">land cruiser wagon 4wd</text>
+          <text x="76.75" y="50.62" text-anchor="middle" dy="0.35em">toyota tacoma 4wd</text>
+          <text x="79.58" y="51.12" text-anchor="middle" dy="0.35em">toyota tacoma 4wd</text>
+          <text x="82.4" y="49.5" text-anchor="middle" dy="0.35em">toyota tacoma 4wd</text>
+          <text x="76.75" y="56.67" text-anchor="middle" dy="0.35em">toyota tacoma 4wd</text>
+          <text x="76.75" y="53.8" text-anchor="middle" dy="0.35em">toyota tacoma 4wd</text>
+          <text x="76.75" y="55.23" text-anchor="middle" dy="0.35em">toyota tacoma 4wd</text>
+          <text x="79.58" y="50.93" text-anchor="middle" dy="0.35em">toyota tacoma 4wd</text>
+          <text x="82.21" y="39.46" text-anchor="middle" dy="0.35em">gti</text>
+          <text x="76.55" y="43.76" text-anchor="middle" dy="0.35em">gti</text>
+          <text x="77.33" y="34.78" text-anchor="middle" dy="0.35em">gti</text>
+          <text x="85.03" y="36.03" text-anchor="middle" dy="0.35em">gti</text>
+          <text x="66.48" y="41.96" text-anchor="middle" dy="0.35em">gti</text>
+          <text x="83.55" y="37.2" text-anchor="middle" dy="0.35em">jetta</text>
+          <text x="77.9" y="43.76" text-anchor="middle" dy="0.35em">jetta</text>
+          <text x="85.03" y="39.46" text-anchor="middle" dy="0.35em">jetta</text>
+          <text x="83.55" y="39.46" text-anchor="middle" dy="0.35em">jetta</text>
+          <text x="83.55" y="39.46" text-anchor="middle" dy="0.35em">jetta</text>
+          <text x="83.55" y="37.16" text-anchor="middle" dy="0.35em">jetta</text>
+          <text x="60.93" y="44.85" text-anchor="middle" dy="0.35em">jetta</text>
+          <text x="71.05" y="46.63" text-anchor="middle" dy="0.35em">jetta</text>
+          <text x="88.11" y="36.03" text-anchor="middle" dy="0.35em">new beetle</text>
+          <text x="82.46" y="43.76" text-anchor="middle" dy="0.35em">new beetle</text>
+          <text x="67.68" y="37.75" text-anchor="middle" dy="0.35em">new beetle</text>
+          <text x="67.68" y="36.92" text-anchor="middle" dy="0.35em">new beetle</text>
+          <text x="76.12" y="34.78" text-anchor="middle" dy="0.35em">passat</text>
+          <text x="76.33" y="39.46" text-anchor="middle" dy="0.35em">passat</text>
+          <text x="69.71" y="36.22" text-anchor="middle" dy="0.35em">passat</text>
+          <text x="73.8" y="35.97" text-anchor="middle" dy="0.35em">passat</text>
+          <text x="62.18" y="39.09" text-anchor="middle" dy="0.35em">passat</text>
+          <text x="76.33" y="43.76" text-anchor="middle" dy="0.35em">passat</text>
+          <text x="62.49" y="41.38" text-anchor="middle" dy="0.35em">passat</text>
+        </g>
+        <g visibility="visible" id="img-356cfee9-12">
+          <text x="73.82" y="33.68" text-anchor="middle" dy="0.35em">a4</text>
+          <text x="103.23" y="31.99" text-anchor="middle" dy="0.35em">civic</text>
+          <text x="93.63" y="24.74" text-anchor="middle" dy="0.35em">civic</text>
+          <text x="83.64" y="26.59" text-anchor="middle" dy="0.35em">civic</text>
+          <text x="61.99" y="37.65" text-anchor="middle" dy="0.35em">grand prix</text>
+          <text x="91.71" y="38.02" text-anchor="middle" dy="0.35em">corolla</text>
+          <text x="104.92" y="26.28" text-anchor="middle" dy="0.35em">corolla</text>
+          <text x="110.79" y="17.94" text-anchor="middle" dy="0.35em">jetta</text>
+          <text x="125.39" y="17.94" text-anchor="middle" dy="0.35em">new beetle</text>
+          <text x="93.11" y="19.23" text-anchor="middle" dy="0.35em">new beetle</text>
+        </g>
+      </g>
+      <g class="geometry" id="img-356cfee9-13">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" fill="#00BFFF" id="img-356cfee9-14">
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="34.25"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="35.69"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="38.55"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="45.73"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="57.2"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="53.87" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="45.73"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="58.63"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="57.2"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="82.13" y="35.69"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="47.16"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="47.16"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="47.16"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="48.59"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="45.73"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="45.73"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="52.9"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="45.39" y="61.5"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="57.2"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="45.39" y="61.5"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="55.77"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="52.9"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="57.2"/>
+          <use xlink:href="#img-356cfee9-15" x="53.87" y="55.77"/>
+          <use xlink:href="#img-356cfee9-15" x="45.39" y="61.5"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="53.87" y="55.77"/>
+          <use xlink:href="#img-356cfee9-15" x="45.39" y="61.5"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="57.2"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="55.77"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="57.2"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="53.87" y="52.9"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="55.77"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="55.77"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="57.2"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="48.59"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="47.16"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="45.73"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="47.16"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="99.09" y="31.38"/>
+          <use xlink:href="#img-356cfee9-15" x="87.78" y="32.82"/>
+          <use xlink:href="#img-356cfee9-15" x="90.61" y="32.82"/>
+          <use xlink:href="#img-356cfee9-15" x="84.96" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="87.78" y="32.82"/>
+          <use xlink:href="#img-356cfee9-15" x="93.44" y="29.95"/>
+          <use xlink:href="#img-356cfee9-15" x="90.61" y="27.08"/>
+          <use xlink:href="#img-356cfee9-15" x="87.78" y="27.08"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="35.69"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="34.25"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="38.55"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="38.55"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="47.16"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="45.39" y="61.5"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="52.9"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="58.63"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="57.2"/>
+          <use xlink:href="#img-356cfee9-15" x="53.87" y="52.9"/>
+          <use xlink:href="#img-356cfee9-15" x="53.87" y="52.9"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="57.2"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="55.77"/>
+          <use xlink:href="#img-356cfee9-15" x="53.87" y="52.9"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="84.96" y="34.25"/>
+          <use xlink:href="#img-356cfee9-15" x="84.96" y="32.82"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="53.87" y="52.9"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="38.55"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="45.73"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="42.86"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="59.52" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="34.25"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="34.25"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="38.55"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="34.25"/>
+          <use xlink:href="#img-356cfee9-15" x="82.13" y="34.25"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="39.99"/>
+          <use xlink:href="#img-356cfee9-15" x="87.78" y="35.69"/>
+          <use xlink:href="#img-356cfee9-15" x="87.78" y="31.38"/>
+          <use xlink:href="#img-356cfee9-15" x="93.44" y="28.51"/>
+          <use xlink:href="#img-356cfee9-15" x="99.09" y="25.65"/>
+          <use xlink:href="#img-356cfee9-15" x="93.44" y="28.51"/>
+          <use xlink:href="#img-356cfee9-15" x="51.04" y="57.2"/>
+          <use xlink:href="#img-356cfee9-15" x="56.7" y="52.9"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="47.16"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="54.33"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="51.46"/>
+          <use xlink:href="#img-356cfee9-15" x="62.35" y="52.9"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="50.03"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="82.13" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="113.22" y="15.61"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="82.13" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="45.73"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="44.29"/>
+          <use xlink:href="#img-356cfee9-15" x="118.87" y="15.61"/>
+          <use xlink:href="#img-356cfee9-15" x="101.91" y="19.91"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="38.55"/>
+          <use xlink:href="#img-356cfee9-15" x="76.48" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="73.65" y="38.55"/>
+          <use xlink:href="#img-356cfee9-15" x="79.31" y="37.12"/>
+          <use xlink:href="#img-356cfee9-15" x="65.18" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="70.83" y="41.42"/>
+          <use xlink:href="#img-356cfee9-15" x="68" y="41.42"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</g>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-356cfee9-16">
+    <text x="16.96" y="78.71" text-anchor="end" dy="0.35em">0</text>
+    <text x="16.96" y="64.37" text-anchor="end" dy="0.35em">10</text>
+    <text x="16.96" y="50.03" text-anchor="end" dy="0.35em">20</text>
+    <text x="16.96" y="35.69" text-anchor="end" dy="0.35em">30</text>
+    <text x="16.96" y="21.34" text-anchor="end" dy="0.35em">40</text>
+    <text x="16.96" y="7" text-anchor="end" dy="0.35em">50</text>
+  </g>
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-356cfee9-17">
+    <text x="8.81" y="40.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 42.86)">Hwy</text>
+  </g>
+</g>
+<defs>
+  <clipPath id="img-356cfee9-4">
+  <path d="M17.96,5 L 135 5 135 80.72 17.96 80.72" />
+</clipPath>
+  <g id="img-356cfee9-15">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+</defs>
+</svg>
+</div><div><pre><code class="language-julia">plot(dataset(&quot;MASS&quot;, &quot;mammals&quot;), x=&quot;Body&quot;, y=&quot;Brain&quot;, label=1,
+     Scale.x_log10, Scale.y_log10, Geom.point, Geom.label)</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:gadfly="http://www.gadflyjl.org/ns"
+     version="1.2"
+     width="140mm" height="100mm" viewBox="0 0 140 100"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+     font-size="3.88"
+>
+<g class="plotroot xscalable yscalable" id="img-187cefc4-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-187cefc4-2">
+    <text x="77.87" y="88.39" text-anchor="middle" dy="0.6em">Body</text>
+  </g>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-187cefc4-3">
+    <text x="22.74" y="80.38" text-anchor="middle" dy="0.6em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">-4</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="50.31" y="80.38" text-anchor="middle" dy="0.6em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">-2</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="77.87" y="80.38" text-anchor="middle" dy="0.6em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">0</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="105.44" y="80.38" text-anchor="middle" dy="0.6em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">2</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="133" y="80.38" text-anchor="middle" dy="0.6em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">4</tspan><tspan dy="0.498000em"></tspan></text>
+  </g>
+<g clip-path="url(#img-187cefc4-4)">
+  <g id="img-187cefc4-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-187cefc4-6">
+      <rect x="20.74" y="5" width="114.26" height="74.38"/>
+    </g>
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-187cefc4-7">
+      <path fill="none" d="M20.74,77.38 L 135 77.38"/>
+      <path fill="none" d="M20.74,63.3 L 135 63.3"/>
+      <path fill="none" d="M20.74,49.23 L 135 49.23"/>
+      <path fill="none" d="M20.74,35.15 L 135 35.15"/>
+      <path fill="none" d="M20.74,21.08 L 135 21.08"/>
+      <path fill="none" d="M20.74,7 L 135 7"/>
+    </g>
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-187cefc4-8">
+      <path fill="none" d="M22.74,5 L 22.74 79.38"/>
+      <path fill="none" d="M50.31,5 L 50.31 79.38"/>
+      <path fill="none" d="M77.87,5 L 77.87 79.38"/>
+      <path fill="none" d="M105.44,5 L 105.44 79.38"/>
+      <path fill="none" d="M133,5 L 133 79.38"/>
+    </g>
+    <g class="plotpanel" id="img-187cefc4-9">
+      <g class="geometry" stroke="#000000" stroke-opacity="0.000" fill="#4C404B" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" id="img-187cefc4-10">
+        <text x="77.56" y="40.46" text-anchor="middle" dy="0.35em" visibility="visible">Arctic fox</text>
+        <text x="63.85" y="45.73" text-anchor="middle" dy="0.35em" visibility="visible">Owl monkey</text>
+        <text x="92.43" y="52.85" text-anchor="middle" dy="0.35em" visibility="hidden">Mountain beaver</text>
+        <text x="118.59" y="26.56" text-anchor="middle" dy="0.35em" visibility="visible">Cow</text>
+        <text x="106.92" y="36.4" text-anchor="middle" dy="0.35em" visibility="hidden">Grey wolf</text>
+        <text x="101.97" y="36.63" text-anchor="middle" dy="0.35em" visibility="hidden">Goat</text>
+        <text x="86.84" y="34.76" text-anchor="middle" dy="0.35em" visibility="hidden">Roe deer</text>
+        <text x="86.6" y="55.22" text-anchor="middle" dy="0.35em" visibility="hidden">Guinea pig</text>
+        <text x="92.01" y="40.82" text-anchor="middle" dy="0.35em" visibility="hidden">Verbet</text>
+        <text x="67.08" y="54.29" text-anchor="middle" dy="0.35em" visibility="hidden">Chinchilla</text>
+        <text x="56.36" y="52.49" text-anchor="middle" dy="0.35em" visibility="hidden">Ground squirrel</text>
+        <text x="93.49" y="55" text-anchor="middle" dy="0.35em" visibility="hidden">Arctic ground squirrel</text>
+        <text x="96.6" y="54.1" text-anchor="middle" dy="0.35em" visibility="hidden">African giant pouched rat</text>
+        <text x="64.78" y="75.7" text-anchor="middle" dy="0.35em" visibility="hidden">Lesser short-tailed shrew</text>
+        <text x="73.52" y="65.64" text-anchor="middle" dy="0.35em" visibility="hidden">Star-nosed mole</text>
+        <text x="102.48" y="48.96" text-anchor="middle" dy="0.35em" visibility="hidden">Nine-banded armadillo</text>
+        <text x="90.36" y="50.3" text-anchor="middle" dy="0.35em" visibility="hidden">Tree hyrax</text>
+        <text x="91.4" y="54.39" text-anchor="middle" dy="0.35em" visibility="hidden">N.A. opossum</text>
+        <text x="116.47" y="9.41" text-anchor="middle" dy="0.35em" visibility="hidden">Asian elephant</text>
+        <text x="66.03" y="73" text-anchor="middle" dy="0.35em" visibility="hidden">Big brown bat</text>
+        <text x="103" y="26.95" text-anchor="middle" dy="0.35em" visibility="hidden">Donkey</text>
+        <text x="120.32" y="26" text-anchor="middle" dy="0.35em" visibility="hidden">Horse</text>
+        <text x="91.49" y="57.98" text-anchor="middle" dy="0.35em" visibility="hidden">European hedgehog</text>
+        <text x="80.95" y="35.46" text-anchor="middle" dy="0.35em" visibility="visible">Patas monkey</text>
+        <text x="82.6" y="41.14" text-anchor="middle" dy="0.35em" visibility="hidden">Cat</text>
+        <text x="64.58" y="51.13" text-anchor="middle" dy="0.35em" visibility="visible">Galago</text>
+        <text x="85.03" y="48.14" text-anchor="middle" dy="0.35em" visibility="hidden">Genet</text>
+        <text x="121.02" y="25.77" text-anchor="middle" dy="0.35em" visibility="hidden">Giraffe</text>
+        <text x="115.37" y="26.15" text-anchor="middle" dy="0.35em" visibility="hidden">Gorilla</text>
+        <text x="111.79" y="27.93" text-anchor="middle" dy="0.35em" visibility="hidden">Grey seal</text>
+        <text x="86.13" y="50.3" text-anchor="middle" dy="0.35em" visibility="hidden">Rock hyrax-a</text>
+        <text x="96.57" y="19.04" text-anchor="middle" dy="0.35em" visibility="visible">Human</text>
+        <text x="143.1" y="10.03" text-anchor="middle" dy="0.35em" visibility="hidden">African elephant</text>
+        <text x="93.51" y="52.65" text-anchor="middle" dy="0.35em" visibility="visible">Water opossum</text>
+        <text x="77.44" y="30.72" text-anchor="middle" dy="0.35em" visibility="visible">Rhesus monkey</text>
+        <text x="104.76" y="41.03" text-anchor="middle" dy="0.35em" visibility="visible">Kangaroo</text>
+        <text x="103.29" y="46.48" text-anchor="middle" dy="0.35em" visibility="visible">Yellow-bellied marmot</text>
+        <text x="77.25" y="63.51" text-anchor="middle" dy="0.35em" visibility="visible">Golden hamster</text>
+        <text x="52.31" y="66.57" text-anchor="middle" dy="0.35em" visibility="visible">Mouse</text>
+        <text x="59.36" y="74.11" text-anchor="middle" dy="0.35em" visibility="visible">Little brown bat</text>
+        <text x="72.06" y="47.44" text-anchor="middle" dy="0.35em" visibility="hidden">Slow loris</text>
+        <text x="107.93" y="23.1" text-anchor="middle" dy="0.35em" visibility="visible">Okapi</text>
+        <text x="88.89" y="47.01" text-anchor="middle" dy="0.35em" visibility="hidden">Rabbit</text>
+        <text x="107.21" y="34.07" text-anchor="middle" dy="0.35em" visibility="hidden">Sheep</text>
+        <text x="100.01" y="33.38" text-anchor="middle" dy="0.35em" visibility="hidden">Jaguar</text>
+        <text x="91.95" y="25.45" text-anchor="middle" dy="0.35em" visibility="visible">Chimpanzee</text>
+        <text x="88.53" y="29.24" text-anchor="middle" dy="0.35em" visibility="hidden">Baboon</text>
+        <text x="87.25" y="60.29" text-anchor="middle" dy="0.35em" visibility="hidden">Desert hedgehog</text>
+        <text x="114.16" y="36.24" text-anchor="middle" dy="0.35em" visibility="visible">Giant armadillo</text>
+        <text x="91.15" y="42.35" text-anchor="middle" dy="0.35em" visibility="hidden">Rock hyrax-b</text>
+        <text x="82.14" y="38.54" text-anchor="middle" dy="0.35em" visibility="hidden">Raccoon</text>
+        <text x="68.58" y="61.72" text-anchor="middle" dy="0.35em" visibility="hidden">Rat</text>
+        <text x="75.44" y="64.52" text-anchor="middle" dy="0.35em" visibility="hidden">E. American mole</text>
+        <text x="61.11" y="58.92" text-anchor="middle" dy="0.35em" visibility="hidden">Mole rat</text>
+        <text x="68.9" y="69.35" text-anchor="middle" dy="0.35em" visibility="visible">Musk shrew</text>
+        <text x="112.54" y="31.43" text-anchor="middle" dy="0.35em" visibility="visible">Pig</text>
+        <text x="90.98" y="44.3" text-anchor="middle" dy="0.35em" visibility="hidden">Echidna</text>
+        <text x="119" y="34.28" text-anchor="middle" dy="0.35em" visibility="hidden">Brazilian tapir</text>
+        <text x="82.98" y="58.42" text-anchor="middle" dy="0.35em" visibility="visible">Tenrec</text>
+        <text x="72.71" y="47.93" text-anchor="middle" dy="0.35em" visibility="hidden">Phalanger</text>
+        <text x="55.66" y="58.55" text-anchor="middle" dy="0.35em" visibility="visible">Tree shrew</text>
+        <text x="92.81" y="41.68" text-anchor="middle" dy="0.35em" visibility="hidden">Red fox</text>
+      </g>
+      <g class="geometry" id="img-187cefc4-11">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" fill="#00BFFF" id="img-187cefc4-12">
+          <use xlink:href="#img-187cefc4-13" x="85.17" y="40.1"/>
+          <use xlink:href="#img-187cefc4-13" x="73.48" y="46.55"/>
+          <use xlink:href="#img-187cefc4-13" x="79.67" y="50.52"/>
+          <use xlink:href="#img-187cefc4-13" x="114.64" y="26.34"/>
+          <use xlink:href="#img-187cefc4-13" x="99.38" y="34.06"/>
+          <use xlink:href="#img-187cefc4-13" x="97.74" y="34.3"/>
+          <use xlink:href="#img-187cefc4-13" x="94.01" y="35.26"/>
+          <use xlink:href="#img-187cefc4-13" x="78.11" y="52.88"/>
+          <use xlink:href="#img-187cefc4-13" x="86.45" y="38.48"/>
+          <use xlink:href="#img-187cefc4-13" x="72.75" y="51.96"/>
+          <use xlink:href="#img-187cefc4-13" x="64.15" y="54.83"/>
+          <use xlink:href="#img-187cefc4-13" x="77.37" y="52.66"/>
+          <use xlink:href="#img-187cefc4-13" x="77.87" y="51.77"/>
+          <use xlink:href="#img-187cefc4-13" x="46.16" y="75.32"/>
+          <use xlink:href="#img-187cefc4-13" x="61.03" y="63.3"/>
+          <use xlink:href="#img-187cefc4-13" x="85.37" y="48.76"/>
+          <use xlink:href="#img-187cefc4-13" x="82.02" y="47.96"/>
+          <use xlink:href="#img-187cefc4-13" x="81.05" y="52.05"/>
+          <use xlink:href="#img-187cefc4-13" x="124.81" y="11.74"/>
+          <use xlink:href="#img-187cefc4-13" x="55.29" y="70.66"/>
+          <use xlink:href="#img-187cefc4-13" x="109.19" y="26.39"/>
+          <use xlink:href="#img-187cefc4-13" x="115.32" y="23.66"/>
+          <use xlink:href="#img-187cefc4-13" x="76.42" y="55.64"/>
+          <use xlink:href="#img-187cefc4-13" x="91.65" y="34.3"/>
+          <use xlink:href="#img-187cefc4-13" x="85.02" y="43.48"/>
+          <use xlink:href="#img-187cefc4-13" x="68.24" y="53.46"/>
+          <use xlink:href="#img-187cefc4-13" x="79.93" y="45.81"/>
+          <use xlink:href="#img-187cefc4-13" x="115.41" y="23.43"/>
+          <use xlink:href="#img-187cefc4-13" x="109.79" y="26.59"/>
+          <use xlink:href="#img-187cefc4-13" x="104.46" y="27.95"/>
+          <use xlink:href="#img-187cefc4-13" x="76.15" y="47.96"/>
+          <use xlink:href="#img-187cefc4-13" x="102.58" y="19.38"/>
+          <use xlink:href="#img-187cefc4-13" x="130.56" y="10.42"/>
+          <use xlink:href="#img-187cefc4-13" x="85.37" y="54.98"/>
+          <use xlink:href="#img-187cefc4-13" x="89.35" y="31.59"/>
+          <use xlink:href="#img-187cefc4-13" x="99.15" y="38.7"/>
+          <use xlink:href="#img-187cefc4-13" x="86.24" y="45.98"/>
+          <use xlink:href="#img-187cefc4-13" x="65.18" y="63.3"/>
+          <use xlink:href="#img-187cefc4-13" x="55.29" y="68.9"/>
+          <use xlink:href="#img-187cefc4-13" x="50.31" y="71.78"/>
+          <use xlink:href="#img-187cefc4-13" x="79.89" y="47.86"/>
+          <use xlink:href="#img-187cefc4-13" x="110.92" y="25.44"/>
+          <use xlink:href="#img-187cefc4-13" x="83.36" y="48.06"/>
+          <use xlink:href="#img-187cefc4-13" x="101.91" y="31.73"/>
+          <use xlink:href="#img-187cefc4-13" x="105.44" y="32.39"/>
+          <use xlink:href="#img-187cefc4-13" x="101.54" y="26.09"/>
+          <use xlink:href="#img-187cefc4-13" x="91.97" y="31.58"/>
+          <use xlink:href="#img-187cefc4-13" x="74.29" y="57.95"/>
+          <use xlink:href="#img-187cefc4-13" x="102.38" y="36.44"/>
+          <use xlink:href="#img-187cefc4-13" x="85.54" y="44.69"/>
+          <use xlink:href="#img-187cefc4-13" x="86.59" y="40.88"/>
+          <use xlink:href="#img-187cefc4-13" x="70.25" y="59.38"/>
+          <use xlink:href="#img-187cefc4-13" x="62.37" y="62.19"/>
+          <use xlink:href="#img-187cefc4-13" x="65.28" y="56.59"/>
+          <use xlink:href="#img-187cefc4-13" x="59.7" y="70.08"/>
+          <use xlink:href="#img-187cefc4-13" x="109.34" y="31.56"/>
+          <use xlink:href="#img-187cefc4-13" x="84.45" y="43.63"/>
+          <use xlink:href="#img-187cefc4-13" x="108.25" y="31.94"/>
+          <use xlink:href="#img-187cefc4-13" x="77.24" y="57.46"/>
+          <use xlink:href="#img-187cefc4-13" x="80.76" y="48.43"/>
+          <use xlink:href="#img-187cefc4-13" x="64.33" y="57.7"/>
+          <use xlink:href="#img-187cefc4-13" x="86.51" y="39.34"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</g>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-187cefc4-14">
+    <text x="19.74" y="77.38" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">-1</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="19.74" y="63.3" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">0</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="19.74" y="49.23" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">1</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="19.74" y="35.15" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">2</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="19.74" y="21.08" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">3</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="19.74" y="7" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">4</tspan><tspan dy="0.498000em"></tspan></text>
+  </g>
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-187cefc4-15">
+    <text x="8.81" y="40.19" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 42.19)">Brain</text>
+  </g>
+</g>
+<defs>
+  <clipPath id="img-187cefc4-4">
+  <path d="M20.74,5 L 135 5 135 79.38 20.74 79.38" />
+</clipPath>
+  <g id="img-187cefc4-13">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+</defs>
+</svg>
+</div><div><pre><code class="language-julia">plot(dataset(&quot;MASS&quot;, &quot;mammals&quot;), x=&quot;Body&quot;, y=&quot;Brain&quot;, label=1,
+     Scale.x_log10, Scale.y_log10, Geom.label(position=:centered))</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:gadfly="http://www.gadflyjl.org/ns"
+     version="1.2"
+     width="140mm" height="100mm" viewBox="0 0 140 100"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+     font-size="3.88"
+>
+<g class="plotroot xscalable yscalable" id="img-cf682435-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-cf682435-2">
+    <text x="77.87" y="88.39" text-anchor="middle" dy="0.6em">Body</text>
+  </g>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-cf682435-3">
+    <text x="22.74" y="80.38" text-anchor="middle" dy="0.6em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">-4</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="50.31" y="80.38" text-anchor="middle" dy="0.6em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">-2</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="77.87" y="80.38" text-anchor="middle" dy="0.6em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">0</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="105.44" y="80.38" text-anchor="middle" dy="0.6em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">2</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="133" y="80.38" text-anchor="middle" dy="0.6em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">4</tspan><tspan dy="0.498000em"></tspan></text>
+  </g>
+<g clip-path="url(#img-cf682435-4)">
+  <g id="img-cf682435-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-cf682435-6">
+      <rect x="20.74" y="5" width="114.26" height="74.38"/>
+    </g>
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-cf682435-7">
+      <path fill="none" d="M20.74,77.38 L 135 77.38"/>
+      <path fill="none" d="M20.74,63.3 L 135 63.3"/>
+      <path fill="none" d="M20.74,49.23 L 135 49.23"/>
+      <path fill="none" d="M20.74,35.15 L 135 35.15"/>
+      <path fill="none" d="M20.74,21.08 L 135 21.08"/>
+      <path fill="none" d="M20.74,7 L 135 7"/>
+    </g>
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-cf682435-8">
+      <path fill="none" d="M22.74,5 L 22.74 79.38"/>
+      <path fill="none" d="M50.31,5 L 50.31 79.38"/>
+      <path fill="none" d="M77.87,5 L 77.87 79.38"/>
+      <path fill="none" d="M105.44,5 L 105.44 79.38"/>
+      <path fill="none" d="M133,5 L 133 79.38"/>
+    </g>
+    <g class="plotpanel" id="img-cf682435-9">
+      <g class="geometry" stroke="#000000" stroke-opacity="0.000" fill="#4C404B" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" id="img-cf682435-10">
+        <text x="85.17" y="40.1" text-anchor="middle" dy="0.35em">Arctic fox</text>
+        <text x="73.48" y="46.55" text-anchor="middle" dy="0.35em">Owl monkey</text>
+        <text x="79.67" y="50.52" text-anchor="middle" dy="0.35em">Mountain beaver</text>
+        <text x="114.64" y="26.34" text-anchor="middle" dy="0.35em">Cow</text>
+        <text x="99.38" y="34.06" text-anchor="middle" dy="0.35em">Grey wolf</text>
+        <text x="97.74" y="34.3" text-anchor="middle" dy="0.35em">Goat</text>
+        <text x="94.01" y="35.26" text-anchor="middle" dy="0.35em">Roe deer</text>
+        <text x="78.11" y="52.88" text-anchor="middle" dy="0.35em">Guinea pig</text>
+        <text x="86.45" y="38.48" text-anchor="middle" dy="0.35em">Verbet</text>
+        <text x="72.75" y="51.96" text-anchor="middle" dy="0.35em">Chinchilla</text>
+        <text x="64.15" y="54.83" text-anchor="middle" dy="0.35em">Ground squirrel</text>
+        <text x="77.37" y="52.66" text-anchor="middle" dy="0.35em">Arctic ground squirrel</text>
+        <text x="77.87" y="51.77" text-anchor="middle" dy="0.35em">African giant pouched rat</text>
+        <text x="46.16" y="75.32" text-anchor="middle" dy="0.35em">Lesser short-tailed shrew</text>
+        <text x="61.03" y="63.3" text-anchor="middle" dy="0.35em">Star-nosed mole</text>
+        <text x="85.37" y="48.76" text-anchor="middle" dy="0.35em">Nine-banded armadillo</text>
+        <text x="82.02" y="47.96" text-anchor="middle" dy="0.35em">Tree hyrax</text>
+        <text x="81.05" y="52.05" text-anchor="middle" dy="0.35em">N.A. opossum</text>
+        <text x="124.81" y="11.74" text-anchor="middle" dy="0.35em">Asian elephant</text>
+        <text x="55.29" y="70.66" text-anchor="middle" dy="0.35em">Big brown bat</text>
+        <text x="109.19" y="26.39" text-anchor="middle" dy="0.35em">Donkey</text>
+        <text x="115.32" y="23.66" text-anchor="middle" dy="0.35em">Horse</text>
+        <text x="76.42" y="55.64" text-anchor="middle" dy="0.35em">European hedgehog</text>
+        <text x="91.65" y="34.3" text-anchor="middle" dy="0.35em">Patas monkey</text>
+        <text x="85.02" y="43.48" text-anchor="middle" dy="0.35em">Cat</text>
+        <text x="68.24" y="53.46" text-anchor="middle" dy="0.35em">Galago</text>
+        <text x="79.93" y="45.81" text-anchor="middle" dy="0.35em">Genet</text>
+        <text x="115.41" y="23.43" text-anchor="middle" dy="0.35em">Giraffe</text>
+        <text x="109.79" y="26.59" text-anchor="middle" dy="0.35em">Gorilla</text>
+        <text x="104.46" y="27.95" text-anchor="middle" dy="0.35em">Grey seal</text>
+        <text x="76.15" y="47.96" text-anchor="middle" dy="0.35em">Rock hyrax-a</text>
+        <text x="102.58" y="19.38" text-anchor="middle" dy="0.35em">Human</text>
+        <text x="130.56" y="10.42" text-anchor="middle" dy="0.35em">African elephant</text>
+        <text x="85.37" y="54.98" text-anchor="middle" dy="0.35em">Water opossum</text>
+        <text x="89.35" y="31.59" text-anchor="middle" dy="0.35em">Rhesus monkey</text>
+        <text x="99.15" y="38.7" text-anchor="middle" dy="0.35em">Kangaroo</text>
+        <text x="86.24" y="45.98" text-anchor="middle" dy="0.35em">Yellow-bellied marmot</text>
+        <text x="65.18" y="63.3" text-anchor="middle" dy="0.35em">Golden hamster</text>
+        <text x="55.29" y="68.9" text-anchor="middle" dy="0.35em">Mouse</text>
+        <text x="50.31" y="71.78" text-anchor="middle" dy="0.35em">Little brown bat</text>
+        <text x="79.89" y="47.86" text-anchor="middle" dy="0.35em">Slow loris</text>
+        <text x="110.92" y="25.44" text-anchor="middle" dy="0.35em">Okapi</text>
+        <text x="83.36" y="48.06" text-anchor="middle" dy="0.35em">Rabbit</text>
+        <text x="101.91" y="31.73" text-anchor="middle" dy="0.35em">Sheep</text>
+        <text x="105.44" y="32.39" text-anchor="middle" dy="0.35em">Jaguar</text>
+        <text x="101.54" y="26.09" text-anchor="middle" dy="0.35em">Chimpanzee</text>
+        <text x="91.97" y="31.58" text-anchor="middle" dy="0.35em">Baboon</text>
+        <text x="74.29" y="57.95" text-anchor="middle" dy="0.35em">Desert hedgehog</text>
+        <text x="102.38" y="36.44" text-anchor="middle" dy="0.35em">Giant armadillo</text>
+        <text x="85.54" y="44.69" text-anchor="middle" dy="0.35em">Rock hyrax-b</text>
+        <text x="86.59" y="40.88" text-anchor="middle" dy="0.35em">Raccoon</text>
+        <text x="70.25" y="59.38" text-anchor="middle" dy="0.35em">Rat</text>
+        <text x="62.37" y="62.19" text-anchor="middle" dy="0.35em">E. American mole</text>
+        <text x="65.28" y="56.59" text-anchor="middle" dy="0.35em">Mole rat</text>
+        <text x="59.7" y="70.08" text-anchor="middle" dy="0.35em">Musk shrew</text>
+        <text x="109.34" y="31.56" text-anchor="middle" dy="0.35em">Pig</text>
+        <text x="84.45" y="43.63" text-anchor="middle" dy="0.35em">Echidna</text>
+        <text x="108.25" y="31.94" text-anchor="middle" dy="0.35em">Brazilian tapir</text>
+        <text x="77.24" y="57.46" text-anchor="middle" dy="0.35em">Tenrec</text>
+        <text x="80.76" y="48.43" text-anchor="middle" dy="0.35em">Phalanger</text>
+        <text x="64.33" y="57.7" text-anchor="middle" dy="0.35em">Tree shrew</text>
+        <text x="86.51" y="39.34" text-anchor="middle" dy="0.35em">Red fox</text>
+      </g>
+    </g>
+  </g>
+</g>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-cf682435-11">
+    <text x="19.74" y="77.38" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">-1</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="19.74" y="63.3" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">0</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="19.74" y="49.23" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">1</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="19.74" y="35.15" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">2</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="19.74" y="21.08" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">3</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="19.74" y="7" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">4</tspan><tspan dy="0.498000em"></tspan></text>
+  </g>
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-cf682435-12">
+    <text x="8.81" y="40.19" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 42.19)">Brain</text>
+  </g>
+</g>
+<defs>
+  <clipPath id="img-cf682435-4">
+  <path d="M20.74,5 L 135 5 135 79.38 20.74 79.38" />
+</clipPath>
+</defs>
+</svg>
+</div><footer><hr/><a class="previous" href="geom_hline.html"><span class="direction">Previous</span><span class="title">-</span></a><a class="next" href="geom_line.html"><span class="direction">Next</span><span class="title">-</span></a></footer></article></body></html>
