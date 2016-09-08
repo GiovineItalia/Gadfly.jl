@@ -1,10 +1,10 @@
-<div align="center">
-<img src="docs/src/assets/logo.svg" alt="Gadfly Logo" width="210"></img>
-</div>
+<div align="center"> <img
+src="https://cdn.rawgit.com/dcjones/Gadfly.jl/master/docs/src/assets/logo.svg"
+alt="Gadfly Logo" width="210"></img> </div>
 
 | **Documentation**                                                               | **PackageEvaluator**                                            | **Build Status**                                                                                |
-|:------------------------:|:-------------------------------------------------------------------------------------:|:------------------------------------------------:|
-| [![][docs-stable-img]][docs-stable-url] | [![][pkg-0.4-img]][pkg-0.4-url] [![][pkg-0.5-img]][pkg-0.5-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] |
+|:------------------------------------------:|:-------------------------------------------------------------------------------------:|:------------------------------------------------:|
+| [![][docs-latest-img]][docs-latest-url] [![][docs-stable-img]][docs-stable-url] | [![][pkg-0.4-img]][pkg-0.4-url] [![][pkg-0.5-img]][pkg-0.5-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] |
 
 **Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
