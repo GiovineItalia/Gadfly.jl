@@ -4,11 +4,13 @@ Author = "Tamas Nagy"
 
 # Gadfly.jl
 
-Gadfly is a system for plotting and visualization written in [Julia](https://julialang.org).
-It is based largely on Hadley Wickhams's [ggplot2](http://ggplot2.org/) for R and Leland Wilkinson's book
-[The Grammar of Graphics](http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html).
-It was [Daniel C. Jones'](https://github.com/dcjones) brainchild and is now maintained by
-the community.
+Gadfly is a system for plotting and visualization written in
+[Julia](https://julialang.org). It is based largely on Hadley Wickhams's
+[ggplot2](http://ggplot2.org/) for R and Leland Wilkinson's book [The
+Grammar of
+Graphics](http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html).
+It was [Daniel C. Jones'](https://github.com/dcjones) brainchild and is
+now maintained by the community.
 
 ## Package features
 
@@ -34,7 +36,8 @@ loaded with
 julia> using Gadfly
 ```
 
-See the [Plotting](@ref) for more information on plot invocations.
+Now that you have it loaded, check out the [Tutorial](@ref) for a tour of
+basic plotting and the various manual pages for more advanced usages.
 
 ## Manual outline
 
@@ -50,4 +53,9 @@ Depth = 1
 
 ## Credits
 
-Gadfly is predominantly the work of Daniel C. Jones who initiated the project and built out most of the infrastructure. The current package maintainers are Shashi Gowda and Tamas Nagy. Important contributions have also been made by Godisemo, Tim Holy, Darwin Darakananda, Shashi Gowda, Tamas Nagy, Simon Leblanc, Iain Dunning, Keno Fischer, Mattriks, and others.
+Gadfly is predominantly the work of Daniel C. Jones who initiated the
+project and built out most of the infrastructure. The current package
+maintainers are Shashi Gowda and Tamas Nagy. Important contributions have
+also been made by Godisemo, Tim Holy, Darwin Darakananda, Shashi Gowda,
+Tamas Nagy, Simon Leblanc, Iain Dunning, Keno Fischer, Mattriks, and
+others.

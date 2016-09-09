@@ -9,6 +9,7 @@ makedocs(
     sitename = "Gadfly.jl",
     pages = Any[
         "Home" => "index.md",
+        "Tutorial" => "tutorial.md",
         "Manual" => Any[
             "Plotting" => "man/plotting.md",
             "Stacks & Layers" => "man/layers.md",
@@ -21,7 +22,7 @@ makedocs(
             "Scales" => "man/scales.md"
         ],
         "Library" => Any[
-            "lib/dev_pipeline.md",
+            "Rendering Pipeline" => "lib/dev_pipeline.md",
             "geoms" => load_dir("geoms"),
             "guides" => load_dir("guides"),
             "stats" => load_dir("stats"),
