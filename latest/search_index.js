@@ -29,7 +29,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Quickstart",
     "category": "section",
-    "text": "The latest release of Gadfly can be installed from the Julia REPL prompt withjulia> Pkg.add(\"Gadfly\")This installs the package and any missing dependencies. Gadfly can be loaded withjulia> using GadflySee the Plotting for more information on plot invocations."
+    "text": "The latest release of Gadfly can be installed from the Julia REPL prompt withjulia> Pkg.add(\"Gadfly\")This installs the package and any missing dependencies. Gadfly can be loaded withjulia> using GadflyNow that you have it loaded, check out the Tutorial for a tour of basic plotting and the various manual pages for more advanced usages."
 },
 
 {
@@ -46,6 +46,62 @@ var documenterSearchIndex = {"docs": [
     "title": "Credits",
     "category": "section",
     "text": "Gadfly is predominantly the work of Daniel C. Jones who initiated the project and built out most of the infrastructure. The current package maintainers are Shashi Gowda and Tamas Nagy. Important contributions have also been made by Godisemo, Tim Holy, Darwin Darakananda, Shashi Gowda, Tamas Nagy, Simon Leblanc, Iain Dunning, Keno Fischer, Mattriks, and others."
+},
+
+{
+    "location": "tutorial.html#",
+    "page": "Tutorial",
+    "title": "Tutorial",
+    "category": "page",
+    "text": "Author = \"Tamas Nagy, Daniel C. Jones, Simon Leblanc\""
+},
+
+{
+    "location": "tutorial.html#Tutorial-1",
+    "page": "Tutorial",
+    "title": "Tutorial",
+    "category": "section",
+    "text": "Gadfly is an implementation of a \"grammar of graphics\" style statistical graphics system for Julia. This tutorial will outline general usage patterns and will give you a feel for the overall system.To begin, we need some data. Gadfly works best when the data is supplied in a DataFrame. In this tutorial, we'll pick and choose some examples from the RDatasets package.Let us use Fisher's iris dataset as a starting point.using Gadfly\nusing RDatasets\n\niris = dataset(\"datasets\", \"iris\")\nnothing # hideThe plot function in Gadfly is of the form:plot(data::DataFrame, mapping::Dict, elements::Element...)The first argument is the data to be plotted, the second is a dictionary mapping \"aesthetics\" to columns in the data frame, and this is followed by some number of elements, which are the nouns and verbs, so to speak, that form the grammar.Let's get to it.p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)\nnothing # hideThis produces a Plot object. It can be drawn on one or more backends using draw.img = SVG(\"iris_plot.svg\", 6inch, 4inch)\ndraw(img, p)Now we have the following charming little SVG image.p # hideFor the rest of the demonstrations, we'll omit the draw call for brevity.In this plot we've mapped the x aesthetic to the SepalLength column and the y aesthetic to the SepalWidth. The last argument, Geom.point, is a geometry element which takes bound aesthetics and render delightful figures. Adding other geometries produces layers, which may or may not result in a coherent plot.p = plot(iris, x=:SepalLength, y=:SepalWidth,\n         Geom.point, Geom.line)This is the grammar of graphics equivalent of \"colorless green ideas sleep furiously\". It is valid grammar, but not particularly meaningful."
+},
+
+{
+    "location": "tutorial.html#Color-1",
+    "page": "Tutorial",
+    "title": "Color",
+    "category": "section",
+    "text": "Let's do add something meaningful by mapping the color aesthetic.p = plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,\n         Geom.point)Ah, a scientific discovery: Setosa has short but wide sepals!Color scales in Gadfly by default are produced from perceptually uniform colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and converts arbitrarily between these. Of course, CSS/X11 named colors work too: \"old lace\", anyone?"
+},
+
+{
+    "location": "tutorial.html#Scale-transforms-1",
+    "page": "Tutorial",
+    "title": "Scale transforms",
+    "category": "section",
+    "text": "Scale transforms also work as expected. Let's look at some data where this is useful.mammals = dataset(\"MASS\", \"mammals\")\np = plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)This is no good, the large animals are ruining things for us. Putting both axis on a log-scale clears things up.p = plot(mammals, x=:Body, y=:Brain, label=:Mammal,\n         Geom.point, Geom.label, Scale.x_log10, Scale.y_log10)"
+},
+
+{
+    "location": "tutorial.html#Discrete-scales-1",
+    "page": "Tutorial",
+    "title": "Discrete scales",
+    "category": "section",
+    "text": "Since all continuous analysis is just degenerate discrete analysis, let's take a crack at the latter using some fuel efficiency data.gasoline = dataset(\"Ecdat\", \"Gasoline\")\n\np = plot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of elements in the grammar: we've omitted Scale.x_continuous and Scale.y_continuous in the previous plots, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel, and so on. As much as possible the system tries to fill in the gaps with reasonable defaults."
+},
+
+{
+    "location": "tutorial.html#Rendering-1",
+    "page": "Tutorial",
+    "title": "Rendering",
+    "category": "section",
+    "text": "Gadfly uses a custom graphics library called Compose, which is an attempt at a more elegant, purely functional take on the R grid package. It allows mixing of absolute and relative units and complex coordinate transforms. The primary backend is a native SVG generator (almost native: it uses pango to precompute text extents), though there is also a Cairo backend. See Backends for more details.Building graphics declaratively let's you do some fun things. Like stick two plots together:fig1a = plot(iris, x=\"SepalLength\", y=\"SepalWidth\", Geom.point)\nfig1b = plot(iris, x=\"SepalWidth\", Geom.bar)\nfig1 = hstack(fig1a, fig1b)Ultimately this will make more complex visualizations easier to build. For example, facets, plots within plots, and so on. See Stacks and Layers for more details."
+},
+
+{
+    "location": "tutorial.html#Interactivity-1",
+    "page": "Tutorial",
+    "title": "Interactivity",
+    "category": "section",
+    "text": "One advantage of generating our own SVG is that the files are much more compact than those produced by Cairo, by virtue of having a higher level API. Another advantage is that we can annotate our SVG output and embed Javascript code to provide some level of dynamism.Though not a replacement for full-fledged custom interactive visualizations of the sort produced by d3, this sort of mild interactivity can improve a lot of standard plots. The fuel efficiency plot is made more clear by toggling off some of the countries, for example."
 },
 
 {
@@ -306,15 +362,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/dev_pipeline.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Rendering Pipeline",
+    "title": "Rendering Pipeline",
     "category": "page",
     "text": "Author = \"Darwin Darakananda\""
 },
 
 {
     "location": "lib/dev_pipeline.html#Rendering-Pipeline-1",
-    "page": "-",
+    "page": "Rendering Pipeline",
     "title": "Rendering Pipeline",
     "category": "section",
     "text": "using DataFrames\nusing Colors\nusing Compose\nusing RDatasets\nusing Showoff\nusing GadflyHow does the function calldf = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)actually get turned into the following plot?df = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)p # hide"
@@ -322,7 +378,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/dev_pipeline.html#The-10,000-foot-View-1",
-    "page": "-",
+    "page": "Rendering Pipeline",
     "title": "The 10,000-foot View",
     "category": "section",
     "text": "The rendering pipeline transforms a plot specification into a Compose scene graph that contains a set of guides (e.g. axis ticks, color keys) and one or more layers of geometry (e.g. points, lines). The specification of each layer hasa data source (e.g. dataset(\"ggplot2\", \"diamonds\"))\na geometry to represent the layer's data (e.g. point, line, etc.)\nmappings to associate aesthetics of the geometry with elements of the data source (e.g.  :color => :Cut)\nlayer-wise statistics (optional) to be applied to the layer's dataAll layers of a plot share the sameCoordinates for the geometry (e.g. cartesian, polar, etc.)\naxis Scales (e.g. loglog, semilog, etc.)\nplot-wise Statistics (optional) to be applied to all layers\nGuidesA full plot specification must describe these shared elements as well as all the layer specifications. In the example above, we see that only the data source, statistics, geometry, and mapping are specified. The missing elements are either inferred from the data (e.g. categorical values in df[:Cut] implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale). For example, invoking plot with all the elements will look something likep = plot(layer(df,\n               x = :Price, color = :Cut,\n		       Stat.histogram,\n		       Geom.bar),\n	  	 Scale.x_continuous,\n		 Scale.color_discrete,\n		 Coord.cartesian,\n		 Guide.xticks, Guide.yticks,\n		 Guide.xlabel(\"Price\"),\n		 Guide.colorkey(\"Cut\"))Once a full plot specification is filled out, the rendering process proceeds as follows:(Image: )For each layer in the plot, we first map subsets of the data source to a Data object. The Price and Cut columns of the diamond dataset are mapped to the :x and :color fields of Data, respectively.\nScales are applied to the data to obtain plottable aesthetics. Scale.x_continuous keeps the values of df[:Price] unchanged, while Scale.color_discrete_hue maps the unique elements of df[:Cut] (an array of strings) to actual color values.\nThe aesthetics are transformed by layer-wise and plot-wise statistics, in order. Stat.histogram replaces the x field of the aesthetics with bin positions, and sets the y field with the corresponding counts.\nUsing the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. Coord.cartesian creates a Compose context that maps a vertical distance of 3000 counts to about two inches in the rendered plot.\nEach layer renders its own geometry.\nFinally, we compute the layout of the guides and render them on top of the plot context."
@@ -330,7 +386,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/dev_pipeline.html#More-Detailed-Walkthrough-1",
-    "page": "-",
+    "page": "Rendering Pipeline",
     "title": "More Detailed Walkthrough",
     "category": "section",
     "text": ""
@@ -338,7 +394,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/dev_pipeline.html#Data-Source-to-Aesthetics-1",
-    "page": "-",
+    "page": "Rendering Pipeline",
     "title": "Data Source to Aesthetics",
     "category": "section",
     "text": ""
@@ -346,7 +402,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/dev_pipeline.html#Aesthetics-to-Geometry-1",
-    "page": "-",
+    "page": "Rendering Pipeline",
     "title": "Aesthetics to Geometry",
     "category": "section",
     "text": ""
@@ -354,7 +410,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/dev_pipeline.html#Rendering-Geometry-1",
-    "page": "-",
+    "page": "Rendering Pipeline",
     "title": "Rendering Geometry",
     "category": "section",
     "text": ""
@@ -362,7 +418,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/dev_pipeline.html#Guide-Layout-1",
-    "page": "-",
+    "page": "Rendering Pipeline",
     "title": "Guide Layout",
     "category": "section",
     "text": ""
