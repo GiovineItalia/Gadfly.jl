@@ -6,12 +6,6 @@ alt="Gadfly Logo" width="210"></img> </div>
 |:------------------------------------------:|:-------------------------------------------------------------------------------------:|:------------------------------------------------:|
 | [![][docs-latest-img]][docs-latest-url] [![][docs-stable-img]][docs-stable-url] | [![][pkg-0.4-img]][pkg-0.4-url] [![][pkg-0.5-img]][pkg-0.5-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] |
 
-*****************************************************************
-
-***DOCS ARE CURRENTLY DOWN, MIRROR AT <http://tamasnagy.com/Gadfly.jl/>***
-
-*****************************************************************
-
 **Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
 
