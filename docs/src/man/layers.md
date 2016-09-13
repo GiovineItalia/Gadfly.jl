@@ -50,7 +50,7 @@ plt=plot(layer(x=rand(10), y=rand(10), Geom.point),
 
 ## Stacks
 
-Plots can also be stacked horizontally with ``hstack`` or vertically with ``vstack``.
+Plots can also be stacked horizontally with `hstack` or vertically with `vstack`.
 This allows more customization in regards to tick marks, axis labeling, and other
 plot details than is available with [Geom.subplot_grid](@ref).
 
