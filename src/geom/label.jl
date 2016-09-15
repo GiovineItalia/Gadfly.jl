@@ -4,7 +4,7 @@ immutable LabelGeometry <: Gadfly.GeometryElement
     position::Symbol
 
     # If true, hide labels that can't be made to not-overlap during dynamic
-    # lael layout.
+    # label layout.
     hide_overlaps::Bool
 
     tag::Symbol
