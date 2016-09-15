@@ -375,6 +375,13 @@ article section.docstring a.source-link {
     background-color: #dbfaf4;
 }
 
+
+/* footnotes */
+.footnote {
+    padding-left: 0.8em;
+    border-left: 2px solid #ccc;
+}
+
 /* Search page */
 #search-results .category {
     font-size: smaller;
