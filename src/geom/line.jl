@@ -32,8 +32,8 @@ function path()
     return LineGeometry(preserve_order=true)
 end
 
-function density()
-    return LineGeometry(Gadfly.Stat.density())
+function density(; bandwidth::Real=-Inf)
+    return LineGeometry(Gadfly.Stat.density(bandwidth=bandwidth))
 end
 
 

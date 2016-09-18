@@ -474,9 +474,11 @@ end
 immutable DensityStatistic <: Gadfly.StatisticElement
     # Number of points sampled
     n::Int
+    # Bandwidth used for the kernel density estimation
+    bw::Real
 
-    function DensityStatistic(n=300)
-        new(n)
+    function DensityStatistic(; n=300, bandwidth=-Inf)
+        new(n, bandwidth)
     end
 end
 
@@ -508,9 +510,8 @@ function apply_statistic(stat::DensityStatistic,
         end
 
         x_f64 = collect(Float64, aes.x)
-        # When will stat.n ever be <= 1? Seems pointless
-        # certainly its length will always be 1
-        window = stat.n > 1 ? KernelDensity.default_bandwidth(x_f64) : 0.1
+
+        window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(x_f64) : stat.bw
         f = KernelDensity.kde(x_f64, bandwidth=window, npoints=stat.n)
         aes.x = collect(Float64, f.x)
         aes.y = f.density
@@ -528,7 +529,7 @@ function apply_statistic(stat::DensityStatistic,
         aes.x = Array(Float64, 0)
         aes.y = Array(Float64, 0)
         for (c, xs) in groups
-            window = stat.n > 1 ? KernelDensity.default_bandwidth(xs) : 0.1
+            window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(xs) : stat.bw
             f = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
             append!(aes.x, f.x)
             append!(aes.y, f.density)
