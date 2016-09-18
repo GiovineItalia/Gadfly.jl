@@ -426,15 +426,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_bar.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.bar",
+    "title": "Geom.bar",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_bar.html#Geom.bar-1",
-    "page": "-",
+    "page": "Geom.bar",
     "title": "Geom.bar",
     "category": "section",
     "text": "Draw bar plots. This geometry works on pre-summarized data such as counts. To draw histograms from a series of observations, add Stat.histogram to the plot, or use the convenient geometry Geom.histogram."
@@ -442,7 +442,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_bar.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.bar",
     "title": "Aesthetics",
     "category": "section",
     "text": "y: Height of each bar.\ncolor (optional): Group categorically by color.Eitherx: Position of each bar.Orxmin: Starting x positions for each bar.\nxmax: End x positions for each bar.If x is given, a bar will be drawn at each x value, specifying both xmin and xmax allows bars of variable width to be drawn."
@@ -450,7 +450,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_bar.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.bar",
     "title": "Arguments",
     "category": "section",
     "text": "position: Either :stack or :dodge. If the color aesthetic is bound this determines how bars of different colors should be arranged: stacked on top of each other, or placed side by side.\norientation: Either :vertical (default) or :horizontal. If :horizontal, then the required aesthetics are y or ymin/ymax."
@@ -458,7 +458,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_bar.html#Examples-1",
-    "page": "-",
+    "page": "Geom.bar",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)plot(dataset(\"HistData\", \"ChestSizes\"), x=\"Chest\", y=\"Count\", Geom.bar)"
@@ -466,15 +466,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_beeswarm.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.beeswarm",
+    "title": "Geom.beeswarm",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_beeswarm.html#Geom.beeswarm-1",
-    "page": "-",
+    "page": "Geom.beeswarm",
     "title": "Geom.beeswarm",
     "category": "section",
     "text": "Plot points, shifting them on the x- or y-axis to avoid overlaps."
@@ -482,7 +482,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_beeswarm.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.beeswarm",
     "title": "Arguments",
     "category": "section",
     "text": "orientation: :horizontal or :vertical.  Points will be shifted on the y-axis to avoid overlap if orientation in horizontal, and on the x-axis, if vertical.\npadding: Minimum distance between two points."
@@ -490,7 +490,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_beeswarm.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.beeswarm",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: X-axis position.\ny: Y-axis position.\ncolor (optional): Point color (categorial or continuous)."
@@ -498,7 +498,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_beeswarm.html#Examples-1",
-    "page": "-",
+    "page": "Geom.beeswarm",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)# Binding categorial data to x\nplot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.beeswarm)"
@@ -506,15 +506,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_boxplot.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.boxplot",
+    "title": "Geom.boxplot",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_boxplot.html#Geom.boxplot-1",
-    "page": "-",
+    "page": "Geom.boxplot",
     "title": "Geom.boxplot",
     "category": "section",
     "text": "Draw boxplots."
@@ -522,7 +522,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_boxplot.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.boxplot",
     "title": "Aesthetics",
     "category": "section",
     "text": "Aesthetics used directly:x\nmiddle\nlower_hinge\nupper_hinge\nlower_fence\nupper_fence\noutliersWith default statistic Stat.boxplot, only the following aesthetics need to be defined:x (optional): Group categorically on the X-axis.\ny: Sample from which to draw the boxplot."
@@ -530,7 +530,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_boxplot.html#Examples-1",
-    "page": "-",
+    "page": "Geom.boxplot",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.boxplot)"
@@ -538,15 +538,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_contour.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.contour",
+    "title": "Geom.contour",
     "category": "page",
     "text": "Author = \"Darwin Darakananda\""
 },
 
 {
     "location": "lib/geoms/geom_contour.html#Geom.contour-1",
-    "page": "-",
+    "page": "Geom.contour",
     "title": "Geom.contour",
     "category": "section",
     "text": "Draw contours of a 2D function or a matrix."
@@ -554,7 +554,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_contour.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.contour",
     "title": "Aesthetics",
     "category": "section",
     "text": "z: 2D function or a matrix that represent \"heights\" relative to to the x-y plane.\nx (optional): Vector of X-coordinates.  If z is a matrix, then the length of x must be equal to the number of rows in z.\ny (optional): Vector of Y-coordinates.  If z is a matrix, then the length of y must be equal to the number of columns in z."
@@ -562,7 +562,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_contour.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.contour",
     "title": "Arguments",
     "category": "section",
     "text": "levels (optional): Sets the number of contours to draw, defaults to 15.  It takes either a vector of contour levels, or a integer that specifies the number of contours to draw."
@@ -570,7 +570,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_contour.html#Examples-1",
-    "page": "-",
+    "page": "Geom.contour",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),\n     x=linspace(-8,8,150), y=linspace(-2,2,150), Geom.contour)volcano = float(array(dataset(\"datasets\", \"volcano\")))\nplot(z=volcano, Geom.contour)plot(z=volcano, Geom.contour(levels=[110.0, 150.0, 180.0, 190.0]))plot(z=volcano, x=collect(0.0:10:860.0), y=collect(0.0:10:600.0),\n     Geom.contour(levels=2))"
@@ -578,15 +578,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_density.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.density",
+    "title": "Geom.density",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_density.html#Geom.density-1",
-    "page": "-",
+    "page": "Geom.density",
     "title": "Geom.density",
     "category": "section",
     "text": "Draw a kernel density estimate from data. An alias for Geom.line with Stat.density."
@@ -594,7 +594,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_density.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.density",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: Sample to draw density estimate from."
@@ -602,7 +602,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_density.html#Examples-1",
-    "page": "-",
+    "page": "Geom.density",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", Geom.density)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\", Geom.density)"
@@ -610,15 +610,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_errorbar.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.errorbar",
+    "title": "Geom.errorbar",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_errorbar.html#Geom.errorbar-1",
-    "page": "-",
+    "page": "Geom.errorbar",
     "title": "Geom.errorbar",
     "category": "section",
     "text": "Draw vertical and/or horizontal error bars."
@@ -626,7 +626,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_errorbar.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.errorbar",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: X-position of the bar.\nymin: Lower Y-position.\nymax: Upper Y-position.\ny: Y-position of the bar.\nxmin: Lef-tmost X-position\nymax: Right-most X-position.\ncolor (optional): Bar color (categorial or continuous)The x, ymin, ymax and/or y, xmin, xmax aesthetics must be defined. With the later a vertical error bar is drawn, and the former, a horizontal bar."
@@ -634,7 +634,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_errorbar.html#Examples-1",
-    "page": "-",
+    "page": "Geom.errorbar",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)\nsrand(1234)using Distributions\n\nsds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]\nn = 10\nys = [mean(rand(Normal(0, sd), n)) for sd in sds]\nymins = ys .- (1.96 * sds / sqrt(n))\nymaxs = ys .+ (1.96 * sds / sqrt(n))\n\nplot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs,\n     Geom.point, Geom.errorbar)"
@@ -642,15 +642,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_hexbin.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.hexbin",
+    "title": "Geom.hexbin",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_hexbin.html#Geom.hexbin-1",
-    "page": "-",
+    "page": "Geom.hexbin",
     "title": "Geom.hexbin",
     "category": "section",
     "text": "Bin data into tiled hexagonal bins and color by count."
@@ -658,7 +658,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_hexbin.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.hexbin",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: Observations to be binned and plotted on the x-axis.\ny: Observations to be binned and plotted on the y-axis.\nxsize\nysizeBy default Stat.hexbin is applied which bins x and y observations and colors hexagons according to count. To override this, pass Stat.identity to plot and manually bind the color aesthetic."
@@ -666,7 +666,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_hexbin.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.hexbin",
     "title": "Arguments",
     "category": "section",
     "text": "xbincount: Number of bins along the x-axis.\nybincount: Number of bins along the y-axis."
@@ -674,7 +674,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_hexbin.html#Examples-1",
-    "page": "-",
+    "page": "Geom.hexbin",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly, Distributions\nGadfly.set_default_plot_size(14cm, 8cm)X = rand(MultivariateNormal([0.0, 0.0], [1.0 0.5; 0.5 1.0]), 10000);\nplot(x=X[1,:], y=X[2,:], Geom.hexbin)plot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))"
@@ -682,15 +682,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_histogram2d.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.histogram2d",
+    "title": "Geom.histogram2d",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_histogram2d.html#Geom.histogram2d-1",
-    "page": "-",
+    "page": "Geom.histogram2d",
     "title": "Geom.histogram2d",
     "category": "section",
     "text": "Bin data in rectangles and indicate density with color. As in heatmaps, etc.An alias for Geom.rectbin with Stat.histogram2d."
@@ -698,7 +698,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_histogram2d.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.histogram2d",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: Observations to be binned and plotted on the x coordinate.\ny: Observations to binned and plotted on the y coordinate."
@@ -706,7 +706,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_histogram2d.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.histogram2d",
     "title": "Arguments",
     "category": "section",
     "text": "xbincount: Fix the number of bins in the x coordinate.\nxminbincount: Set the minimum x coordinate bincount when automatically determining the number of bins.\nxmaxbincount: Set the maximum x coordinate bincount when automatically determining the number of bins.\nybincount: Fix the number of bins in the y coordinate.\nyminbincount: Set the minimum y coordinate bincount when automatically determining the number of bins.\nymaxbincount: Set the maximum y coordinate bincount when automatically determining the number of bin."
@@ -714,7 +714,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_histogram2d.html#Examples-1",
-    "page": "-",
+    "page": "Geom.histogram2d",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"car\", \"Womenlf\"), x=\"HIncome\", y=\"Region\", Geom.histogram2d)plot(dataset(\"car\", \"UN\"), x=\"GDP\", y=\"InfantMortality\",\n     Scale.x_log10, Scale.y_log10, Geom.histogram2d)# Explicitly setting the number of bins\nplot(dataset(\"car\", \"UN\"), x=\"GDP\", y=\"InfantMortality\",\n     Scale.x_log10, Scale.y_log10, Geom.histogram2d(xbincount=30, ybincount=30))"
@@ -722,15 +722,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_histogram.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.histogram",
+    "title": "Geom.histogram",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_histogram.html#Geom.histogram-1",
-    "page": "-",
+    "page": "Geom.histogram",
     "title": "Geom.histogram",
     "category": "section",
     "text": "Draw histograms. An alias for Geom.bar with Stat.histogram."
@@ -738,7 +738,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_histogram.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.histogram",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: Sample to draw histogram from.\ncolor (optional): Group categoricially by color."
@@ -746,7 +746,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_histogram.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.histogram",
     "title": "Arguments",
     "category": "section",
     "text": "position: Either :stack or :dodge. If the color aesthetic is bound this determines how bars of different colors should be arranged: stacked on top of each other, or placed side by side.\norientation: Either :vertical (default) or :horizontal. If :horizontal, then the required aesthetic is y instead of x.\nbincount: Number of bins to use. If unspecified, an optimization method is used to determine a reasonable value.\nminbincount: Set a lower limit when automatically choosing a bin count.\nmaxbincount: Set an upper limit when automatically choosing a bin count.\ndensity: If true, use density rather that counts."
@@ -754,7 +754,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_histogram.html#Examples-1",
-    "page": "-",
+    "page": "Geom.histogram",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", Geom.histogram)# Binding categorical data to color\nplot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\", Geom.histogram)# Choosing a smaller bin count\nplot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\",\n     Geom.histogram(bincount=30))# Density instead of counts\nplot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\",\n     Geom.histogram(bincount=30, density=true))"
@@ -762,15 +762,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_hline.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.hline",
+    "title": "Geom.hline",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_hline.html#Geom.hline-1",
-    "page": "-",
+    "page": "Geom.hline",
     "title": "Geom.hline",
     "category": "section",
     "text": "Draw horizontal lines across the plot canvas."
@@ -778,7 +778,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_hline.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.hline",
     "title": "Aesthetics",
     "category": "section",
     "text": "yintercept: Y-axis intercept"
@@ -786,7 +786,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_hline.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.hline",
     "title": "Arguments",
     "category": "section",
     "text": "color: Color of the lines.\nsize: Width of the lines."
@@ -794,7 +794,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_hline.html#Examples-1",
-    "page": "-",
+    "page": "Geom.hline",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n	 yintercept=[2.5, 4.0], Geom.point, Geom.hline)# Colors and widths of lines can be changed. This works separately from the\n# `color` and `size` aesthetics.\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n	 yintercept=[2.5, 4.0], Geom.point,\n	 Geom.hline(color=colorant\"orange\", size=2mm))"
@@ -802,15 +802,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_label.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.label",
+    "title": "Geom.label",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_label.html#Geom.label-1",
-    "page": "-",
+    "page": "Geom.label",
     "title": "Geom.label",
     "category": "section",
     "text": "Label positions on the plot frame.This geometry attemps to optimize label positioning so that labels do not overlap, and hides any that would overlap."
@@ -818,7 +818,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_label.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.label",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: X-axis position.\ny: Y-axis position.\nlabel: Text to render."
@@ -826,7 +826,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_label.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.label",
     "title": "Arguments",
     "category": "section",
     "text": "position: One of :dynamic, :left, :right, :above, :below, :centered. If :dynamic is used, label positions will be adjusted to avoid overaps. Otherwise, labels will be statically positioned left, right, above, below, or centered relative to the point.\nhide_overlaps: If true, and dynamic positioning is used, labels that would otherwise overlap another label or be drawn outside the plot panel are hidden. (default: true)"
@@ -834,7 +834,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_label.html#Examples-1",
-    "page": "-",
+    "page": "Geom.label",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 10cm)plot(dataset(\"ggplot2\", \"mpg\"), x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label)plot(dataset(\"MASS\", \"mammals\"), x=\"Body\", y=\"Brain\", label=1,\n     Scale.x_log10, Scale.y_log10, Geom.point, Geom.label)plot(dataset(\"MASS\", \"mammals\"), x=\"Body\", y=\"Brain\", label=1,\n     Scale.x_log10, Scale.y_log10, Geom.label(position=:centered))"
@@ -842,15 +842,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_line.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.line",
+    "title": "Geom.line",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_line.html#Geom.line-1",
-    "page": "-",
+    "page": "Geom.line",
     "title": "Geom.line",
     "category": "section",
     "text": ""
@@ -858,7 +858,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_line.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.line",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: X-axis position.\ny: Y-axis position.\ngroup (optional): Group categorically.\ncolor (optional): Group categorically and indicate by color."
@@ -866,7 +866,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_line.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.line",
     "title": "Arguments",
     "category": "section",
     "text": "preserve_order: Default behavior for Geom.line is to draw lines between points in order along the x-axis. If this option is true, lines will be drawn between points in the order they appear in the data. Geom.path() is Geom.line(preserve_order=true)."
@@ -874,7 +874,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_line.html#Examples-1",
-    "page": "-",
+    "page": "Geom.line",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"lattice\", \"melanoma\"), x=\"Year\", y=\"Incidence\", Geom.line)plot(dataset(\"Zelig\", \"approval\"), x=\"Month\",  y=\"Approve\", color=\"Year\", Geom.line)"
@@ -882,15 +882,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_path.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.path",
+    "title": "Geom.path",
     "category": "page",
     "text": "Author = \"David Chudzicki\""
 },
 
 {
     "location": "lib/geoms/geom_path.html#Geom.path-1",
-    "page": "-",
+    "page": "Geom.path",
     "title": "Geom.path",
     "category": "section",
     "text": "Draw lines between points in the order they appear in the data. This is an alias for Geom.line with preserve_order=true."
@@ -898,7 +898,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_path.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.path",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: X-axis position.\ny: Y-axis position.\ncolor (optional): Group categorically by color."
@@ -906,7 +906,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_path.html#Examples-1",
-    "page": "-",
+    "page": "Geom.path",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)Here's a random walk in 2D:n = 500\nsrand(1234)\nxjumps = rand(n)-.5\nyjumps = rand(n)-.5\nplot(x=cumsum(xjumps),y=cumsum(yjumps),Geom.path())Here's a spiral:t = 0:0.2:8pi\nplot(x=t.*cos(t), y=t.*sin(t), Geom.path)"
@@ -914,15 +914,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_point.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.point",
+    "title": "Geom.point",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_point.html#Geom.point-1",
-    "page": "-",
+    "page": "Geom.point",
     "title": "Geom.point",
     "category": "section",
     "text": "The point geometry is used to draw various types of scatterplots."
@@ -930,7 +930,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_point.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.point",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: X-axis position.\ny: Y-axis position.\ncolor (optional): Point color (categorial or continuous)."
@@ -938,7 +938,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_point.html#Examples-1",
-    "page": "-",
+    "page": "Geom.point",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\", Geom.point)# Binding categorial data to the color aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n     color=\"Species\", Geom.point)# Binding continuous data to the color aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n     color=\"PetalLength\", Geom.point)# Binding categorial data to x\nplot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.point)<!– TODO: shape aesthetic –><!– TODO: size aesthetic –>"
@@ -946,15 +946,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_polygon.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.polygon",
+    "title": "Geom.polygon",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_polygon.html#Geom.polygon-1",
-    "page": "-",
+    "page": "Geom.polygon",
     "title": "Geom.polygon",
     "category": "section",
     "text": "Draw polygons."
@@ -962,7 +962,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_polygon.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.polygon",
     "title": "Aesthetics",
     "category": "section",
     "text": "Aesthetics used directly:x: X-axis position.\ny: Y-axis position.\ngroup (optional): Group categorically.\ncolor (optional): Group categorically and indicate by color."
@@ -970,7 +970,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_polygon.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.polygon",
     "title": "Arguments",
     "category": "section",
     "text": "order: Z-order relative to other geometry.\nfill: If true, fill the polygon and stroke according to Theme.discrete_highlight_color. If false (default), only stroke.\npreserve_order: If true, connect points in the order they are given. If false (default) order the points around their centroid."
@@ -978,7 +978,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_polygon.html#Examples-1",
-    "page": "-",
+    "page": "Geom.polygon",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],\n     y=[0, 0, 1, 1, 0, 0, 3, 3, 2, 2, 3, 3, 0, 0, 3, 3],\n     group=[\"H\", \"H\", \"H\", \"H\", \"H\", \"H\", \"H\", \"H\",\n            \"H\", \"H\", \"H\", \"H\", \"I\", \"I\", \"I\", \"I\"],\n     Geom.polygon(preserve_order=true, fill=true))"
@@ -986,15 +986,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_rectbin.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.rectbin",
+    "title": "Geom.rectbin",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_rectbin.html#Geom.rectbin-1",
-    "page": "-",
+    "page": "Geom.rectbin",
     "title": "Geom.rectbin",
     "category": "section",
     "text": "Draw colored rectangles."
@@ -1002,7 +1002,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_rectbin.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.rectbin",
     "title": "Aesthetics",
     "category": "section",
     "text": "colorEitherx_min\nx_max\ny_min\ny_maxOrx\nyIn the former case, rectangles defined by x_min, x_max, y_min, y_max are drawn, in the latter, equal sizes squares are centered at x and y positions."
@@ -1010,7 +1010,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_rectbin.html#Examples-1",
-    "page": "-",
+    "page": "Geom.rectbin",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"Zelig\", \"macro\"), x=\"Year\", y=\"Country\", color=\"GDP\", Geom.rectbin)"
@@ -1018,15 +1018,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_ribbon.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.ribbon",
+    "title": "Geom.ribbon",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_ribbon.html#Geom.ribbon-1",
-    "page": "-",
+    "page": "Geom.ribbon",
     "title": "Geom.ribbon",
     "category": "section",
     "text": "Draw a ribbon bounded above and below by ymin and ymax, respectively."
@@ -1034,7 +1034,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_ribbon.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.ribbon",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: X-axis position\nymin: Y-axis lower bound.\nymax: Y-axis upper bound.\ncolor (optional): Group categorically by color."
@@ -1042,7 +1042,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_ribbon.html#Examples-1",
-    "page": "-",
+    "page": "Geom.ribbon",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nusing DataFrames\nGadfly.set_default_plot_size(14cm, 8cm)xs = 0:0.1:20\n\ndf_cos = DataFrame(\n    x=xs,\n    y=cos(xs),\n    ymin=cos(xs) .- 0.5,\n    ymax=cos(xs) .+ 0.5,\n    f=\"cos\"\n)\n\ndf_sin = DataFrame(\n    x=xs,\n    y=sin(xs),\n    ymin=sin(xs) .- 0.5,\n    ymax=sin(xs) .+ 0.5,\n    f=\"sin\"\n)\n\ndf = vcat(df_cos, df_sin)\np = plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)"
@@ -1050,15 +1050,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_segment.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.segment",
+    "title": "Geom.segment",
     "category": "page",
     "text": "Author = \"Mattriks\""
 },
 
 {
     "location": "lib/geoms/geom_segment.html#Geom.segment-1",
-    "page": "-",
+    "page": "Geom.segment",
     "title": "Geom.segment",
     "category": "section",
     "text": "Draw separate line segments/vectors/arrows.note: Note\nIf you want arrows, then you need to provide a Scale object for both axes. See example below."
@@ -1066,7 +1066,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_segment.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.segment",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: Start of line segment.\ny: Start of line segment.\nxend: End of line segment.\nyend: End of line segment.\ncolor (optional): Color of line segments."
@@ -1074,7 +1074,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_segment.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.segment",
     "title": "Arguments",
     "category": "section",
     "text": "arrow: Default behavior for Geom.segment is to draw line segments without arrows. Geom.vector is Geom.segment(arrow=true)."
@@ -1082,7 +1082,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_segment.html#Examples-1",
-    "page": "-",
+    "page": "Geom.segment",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 14cm)seals = RDatasets.dataset(\"ggplot2\",\"seals\")\nseals[:Latb] = seals[:Lat] + seals[:DeltaLat]\nseals[:Longb] = seals[:Long] + seals[:DeltaLong]\nseals[:Angle] = atan2(seals[:DeltaLat], seals[:DeltaLong])\n\ncoord = Coord.cartesian(xmin=-175.0, xmax=-119, ymin=29, ymax=50)\n# Geom.vector also needs scales for both axes:\nxsc  = Scale.x_continuous(minvalue=-175.0, maxvalue=-119)\nysc  = Scale.y_continuous(minvalue=29, maxvalue=50)\ncolsc = Scale.color_continuous(minvalue=-3, maxvalue=3)\n\nlayer1 = layer(seals, x=:Long, y=:Lat, xend=:Longb, yend=:Latb, Geom.vector, color=:Angle)\n\nplot(layer1, xsc, ysc, colsc, coord)"
@@ -1090,15 +1090,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_smooth.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.smooth",
+    "title": "Geom.smooth",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_smooth.html#Geom.smooth-1",
-    "page": "-",
+    "page": "Geom.smooth",
     "title": "Geom.smooth",
     "category": "section",
     "text": "Plot a smooth function estimated from data. An alias for Geom.line with Stat.smooth."
@@ -1106,7 +1106,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_smooth.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.smooth",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: Predictor data.\ny: Response data.\ncolor: (optional) Group categorically by color."
@@ -1114,7 +1114,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_smooth.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.smooth",
     "title": "Arguments",
     "category": "section",
     "text": "method: :loess and :lm are supported.\nsmoothing: Method specific parameter controlling the degree of smoothing. For loess, this is the span parameter giving the proportion of data used for each local fit where 0.75 is the default. Smaller values use more data (less local context), larger values use less data (more local context)."
@@ -1122,7 +1122,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_smooth.html#Examples-1",
-    "page": "-",
+    "page": "Geom.smooth",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)x_data = 0.0:0.1:2.0\ny_data = x_data.^2 + rand(length(x_data))\nplot(x=x_data, y=y_data, Geom.point, Geom.smooth(method=:loess,smoothing=0.9))plot(x=x_data, y=y_data, Geom.point, Geom.smooth(method=:loess,smoothing=0.2))"
@@ -1130,15 +1130,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_step.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.step",
+    "title": "Geom.step",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_step.html#Geom.step-1",
-    "page": "-",
+    "page": "Geom.step",
     "title": "Geom.step",
     "category": "section",
     "text": "Connect points using a stepwise function. Equivalent to Geom.line with Stat.step."
@@ -1146,7 +1146,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_step.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.step",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: Point x-coordinate.\ny: Point y-coordinate."
@@ -1154,7 +1154,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_step.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.step",
     "title": "Arguments",
     "category": "section",
     "text": "direction: Either :hv for horizontal then vertical, or :vh for vertical then horizontal."
@@ -1162,7 +1162,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_step.html#Examples-1",
-    "page": "-",
+    "page": "Geom.step",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)\nsrand(1234)plot(x=rand(25), y=rand(25), Geom.step)"
@@ -1170,15 +1170,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_subplot_grid.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.subplot_grid",
+    "title": "Geom.subplot_grid",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_subplot_grid.html#Geom.subplot_grid-1",
-    "page": "-",
+    "page": "Geom.subplot_grid",
     "title": "Geom.subplot_grid",
     "category": "section",
     "text": "Draw multiple subplots in a grid organized by one or two categorial vectors."
@@ -1186,7 +1186,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_subplot_grid.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.subplot_grid",
     "title": "Aesthetics",
     "category": "section",
     "text": "xgroup (optional): Arrange subplots on the X-axis by categorial data.\nygroup (optional): Arrange subplots on the Y-axis by categorial data.\nfree_y_axis (optional): Whether the y-axis scales can differ acrossthe subplots. Defaults to false. If true, scales are set appropriately for individual subplots.   * free_x_axis (optional): Whether the x-axis scales can differ across   the subplots. Defaults to false. If true, scales are set appropriately for individual subplots.One or both of xgroup or ygroup must be bound. If only one, a single column or row of subplots is drawn, if both, a grid."
@@ -1194,7 +1194,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_subplot_grid.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.subplot_grid",
     "title": "Arguments",
     "category": "section",
     "text": "Geom.subplot_grid(elements::Gadfly.ElementOrFunction...)Unlike most geometries, Geom.subplot_grid is typically passed one or more parameters. The constructor works for the most part like the layer function. Arbitrary plot elements may be passed, while aesthetic bindings are inherited from the parent plot."
@@ -1202,7 +1202,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_subplot_grid.html#Examples-1",
-    "page": "-",
+    "page": "Geom.subplot_grid",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)set_default_plot_size(20cm, 7.5cm)\nplot(dataset(\"datasets\", \"OrchardSprays\"),\n     xgroup=\"Treatment\", x=\"ColPos\", y=\"RowPos\", color=\"Decrease\",\n     Geom.subplot_grid(Geom.point))set_default_plot_size(14cm, 25cm)\nplot(dataset(\"vcd\", \"Suicide\"), xgroup=\"Sex\", ygroup=\"Method\", x=\"Age\", y=\"Freq\",\n     Geom.subplot_grid(Geom.bar))"
@@ -1210,7 +1210,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_subplot_grid.html#Free/fixed-scales:-1",
-    "page": "-",
+    "page": "Geom.subplot_grid",
     "title": "Free/fixed scales:",
     "category": "section",
     "text": "using Gadfly # hide\nusing RDatasets # hid\nusing DataFrames\nset_default_plot_size(8cm, 12cm)\n\nwidedf = DataFrame(x = collect(1:10), var1 = collect(1:10), var2 = collect(1:10).^2)\nlongdf = stack(widedf, [:var1, :var2])\nnothing # hideDefault behavior is for the axes' scales to be fixed across the subplots:plot(longdf, ygroup=\"variable\", x=\"x\", y=\"value\", Geom.subplot_grid(Geom.point))We can change this default behavior where appropriate:plot(longdf, ygroup=\"variable\", x=\"x\", y=\"value\", Geom.subplot_grid(Geom.point, free_y_axis=true))"
@@ -1218,15 +1218,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_violin.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.violin",
+    "title": "Geom.violin",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_violin.html#Geom.violin-1",
-    "page": "-",
+    "page": "Geom.violin",
     "title": "Geom.violin",
     "category": "section",
     "text": "Draw violin plots."
@@ -1234,7 +1234,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_violin.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.violin",
     "title": "Aesthetics",
     "category": "section",
     "text": "Aesthetics used directly:x: Group categorically on the X-axis\ny: Y-axis position.\nwidth: Density at a given y value.With the default statistic Stat.violin, only the following need be defined:x (optional): Group categorically on the X-axis.\ny: Sample from which to draw the density plot."
@@ -1242,7 +1242,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_violin.html#Examples-1",
-    "page": "-",
+    "page": "Geom.violin",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.violin)"
@@ -1250,15 +1250,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_vline.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Geom.vline",
+    "title": "Geom.vline",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/geoms/geom_vline.html#Geom.vline-1",
-    "page": "-",
+    "page": "Geom.vline",
     "title": "Geom.vline",
     "category": "section",
     "text": "Draw vertical lines across the plot canvas."
@@ -1266,7 +1266,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_vline.html#Aesthetics-1",
-    "page": "-",
+    "page": "Geom.vline",
     "title": "Aesthetics",
     "category": "section",
     "text": "xintercept: X-axis intercept"
@@ -1274,7 +1274,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_vline.html#Arguments-1",
-    "page": "-",
+    "page": "Geom.vline",
     "title": "Arguments",
     "category": "section",
     "text": "color: Color of the lines.\nsize: Width of the lines."
@@ -1282,7 +1282,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/geoms/geom_vline.html#Examples-1",
-    "page": "-",
+    "page": "Geom.vline",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n	 xintercept=[5.0, 7.0], Geom.point, Geom.vline)# Colors and widths of lines can be changed. This works separately from the\n# `color` and `size` aesthetics.\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n	 xintercept=[5.0, 7.0], Geom.point,\n	 Geom.vline(color=colorant\"orange\", size=2mm))"
@@ -1290,15 +1290,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_annotation.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Guide.annotation",
+    "title": "Guide.annotation",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/guides/guide_annotation.html#Guide.annotation-1",
-    "page": "-",
+    "page": "Guide.annotation",
     "title": "Guide.annotation",
     "category": "section",
     "text": "Overlay a plot with an arbitrary Compose graphic. The context will inherit the plot's coordinate system, unless overridden with a custom unit box."
@@ -1306,7 +1306,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_annotation.html#Arguments-1",
-    "page": "-",
+    "page": "Guide.annotation",
     "title": "Arguments",
     "category": "section",
     "text": "ctx: A Compose Context."
@@ -1314,7 +1314,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_annotation.html#Examples-1",
-    "page": "-",
+    "page": "Guide.annotation",
     "title": "Examples",
     "category": "section",
     "text": "using Compose\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(sin, 0, 2pi,\n     Guide.annotation(\n       compose(context(), circle([pi/2, 3*pi/2], [1.0, -1.0], [2mm]), fill(nothing),\n       stroke(colorant\"orange\"))))\n"
@@ -1322,15 +1322,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_colorkey.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Guide.colorkey",
+    "title": "Guide.colorkey",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/guides/guide_colorkey.html#Guide.colorkey-1",
-    "page": "-",
+    "page": "Guide.colorkey",
     "title": "Guide.colorkey",
     "category": "section",
     "text": "Set the title for the plot legend"
@@ -1338,7 +1338,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_colorkey.html#Arguments-1",
-    "page": "-",
+    "page": "Guide.colorkey",
     "title": "Arguments",
     "category": "section",
     "text": "title: Legend title"
@@ -1346,7 +1346,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_colorkey.html#Examples-1",
-    "page": "-",
+    "page": "Guide.colorkey",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)volcano = float(convert(Array, dataset(\"datasets\", \"volcano\")))\nplot(z=volcano, Geom.contour, Guide.colorkey(\"Elevation\"))"
@@ -1354,15 +1354,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_manual_color_key.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Guide.manual_color_key",
+    "title": "Guide.manual_color_key",
     "category": "page",
     "text": "Author = \"Alex Ryckman Mellnik\""
 },
 
 {
     "location": "lib/guides/guide_manual_color_key.html#Guide.manual_color_key-1",
-    "page": "-",
+    "page": "Guide.manual_color_key",
     "title": "Guide.manual_color_key",
     "category": "section",
     "text": "Manually define a color key"
@@ -1370,7 +1370,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_manual_color_key.html#Arguments-1",
-    "page": "-",
+    "page": "Guide.manual_color_key",
     "title": "Arguments",
     "category": "section",
     "text": "title: Legend title\nlabels: Item labels\ncolors: Item colors"
@@ -1378,7 +1378,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_manual_color_key.html#Examples-1",
-    "page": "-",
+    "page": "Guide.manual_color_key",
     "title": "Examples",
     "category": "section",
     "text": "Combine two layers into a plot, and set a custom color of one layer.  Add a manual color key with labels that match the two layers.  (Note that \"deepskyblue\" is the default color for Geom.line and others.)using DataFrames\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))\nline = DataFrame(val=rand(1:10,11), index = collect(0:10))\npointLayer = layer(points, x=\"index\", y=\"val\", Geom.point,Theme(default_color=colorant\"green\"))\nlineLayer = layer(line, x=\"index\", y=\"val\", Geom.line)\nplot(pointLayer, lineLayer, Guide.manual_color_key(\"Legend\", [\"Points\", \"Line\"], [\"green\", \"deepskyblue\"]))"
@@ -1386,15 +1386,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_title.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Guide.title",
+    "title": "Guide.title",
     "category": "page",
     "text": "Author = \"Darwin Darakananda\""
 },
 
 {
     "location": "lib/guides/guide_title.html#Guide.title-1",
-    "page": "-",
+    "page": "Guide.title",
     "title": "Guide.title",
     "category": "section",
     "text": "Set the plot tile"
@@ -1402,7 +1402,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_title.html#Arguments-1",
-    "page": "-",
+    "page": "Guide.title",
     "title": "Arguments",
     "category": "section",
     "text": "title: Plot title"
@@ -1410,7 +1410,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_title.html#Examples-1",
-    "page": "-",
+    "page": "Guide.title",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", Geom.histogram, Guide.title(\"Diamond Price Distribution\"))"
@@ -1418,15 +1418,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_xlabel.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Guide.xlabel",
+    "title": "Guide.xlabel",
     "category": "page",
     "text": "Author = \"Darwin Darakananda\""
 },
 
 {
     "location": "lib/guides/guide_xlabel.html#Guide.xlabel-1",
-    "page": "-",
+    "page": "Guide.xlabel",
     "title": "Guide.xlabel",
     "category": "section",
     "text": "Sets the x-axis label for the plot."
@@ -1434,7 +1434,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_xlabel.html#Arguments-1",
-    "page": "-",
+    "page": "Guide.xlabel",
     "title": "Arguments",
     "category": "section",
     "text": "label: X-axis label\norientation (optional): :horizontal, :vertical, or :auto (default)label is not a keyword parameter, it must be supplied as the first argument of Guide.xlabel.  Setting it to nothing will suppress the default label."
@@ -1442,7 +1442,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_xlabel.html#Examples-1",
-    "page": "-",
+    "page": "Guide.xlabel",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(cos, 0, 2π, Guide.xlabel(\"Angle\"))plot(cos, 0, 2π, Guide.xlabel(\"Angle\", orientation=:vertical))plot(cos, 0, 2π, Guide.xlabel(nothing))"
@@ -1450,15 +1450,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_xrug.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Guide.xrug",
+    "title": "Guide.xrug",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/guides/guide_xrug.html#Guide.xrug-1",
-    "page": "-",
+    "page": "Guide.xrug",
     "title": "Guide.xrug",
     "category": "section",
     "text": "Draw a rug plot along the x-axis of a plot."
@@ -1466,7 +1466,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_xrug.html#Aesthetics-1",
-    "page": "-",
+    "page": "Guide.xrug",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: X positions of notches."
@@ -1474,7 +1474,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_xrug.html#Examples-1",
-    "page": "-",
+    "page": "Guide.xrug",
     "title": "Examples",
     "category": "section",
     "text": "using Compose\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(x=rand(20), y=rand(20), Guide.xrug)"
@@ -1482,15 +1482,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_xticks.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Guide.xticks",
+    "title": "Guide.xticks",
     "category": "page",
     "text": "Author = \"Darwin Darakananda\""
 },
 
 {
     "location": "lib/guides/guide_xticks.html#Guide.xticks-1",
-    "page": "-",
+    "page": "Guide.xticks",
     "title": "Guide.xticks",
     "category": "section",
     "text": "Formats the tick marks and labels for the x-axis"
@@ -1498,7 +1498,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_xticks.html#Arguments-1",
-    "page": "-",
+    "page": "Guide.xticks",
     "title": "Arguments",
     "category": "section",
     "text": "ticks: Array of tick locations on the x-axis, :auto to automatically select ticks, or nothing to supress x-axis ticks.\nlabel: Determines if the ticks are labeled, either true (default) or false\norientation: Label orientation (:horizontal, :vertical, :auto). Defaults to :auto"
@@ -1506,7 +1506,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_xticks.html#Examples-1",
-    "page": "-",
+    "page": "Guide.xticks",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)ticks = [0.1, 0.3, 0.5]\nplot(x=rand(10), y=rand(10), Geom.line, Guide.xticks(ticks=ticks))plot(x=rand(10), y=rand(10), Geom.line, Guide.xticks(ticks=ticks, label=false))plot(x=rand(10), y=rand(10), Geom.line, Guide.xticks(ticks=ticks, orientation=:vertical))"
@@ -1514,15 +1514,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_ylabel.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Guide.ylabel",
+    "title": "Guide.ylabel",
     "category": "page",
     "text": "Author = \"Darwin Darakananda\""
 },
 
 {
     "location": "lib/guides/guide_ylabel.html#Guide.ylabel-1",
-    "page": "-",
+    "page": "Guide.ylabel",
     "title": "Guide.ylabel",
     "category": "section",
     "text": "Sets the y-axis label for the plot."
@@ -1530,7 +1530,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_ylabel.html#Arguments-1",
-    "page": "-",
+    "page": "Guide.ylabel",
     "title": "Arguments",
     "category": "section",
     "text": "label: Y-axis label\norientation (optional): :horizontal, :vertical, or :auto (default)label is not a keyword parameter, it must be supplied as the first argument of Guide.ylabel.  Setting it to nothing will suppress the default label."
@@ -1538,7 +1538,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_ylabel.html#Examples-1",
-    "page": "-",
+    "page": "Guide.ylabel",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(cos, 0, 2π, Guide.ylabel(\"cos(x)\"))plot(cos, 0, 2π, Guide.ylabel(\"cos(x)\", orientation=:horizontal))plot(cos, 0, 2π, Guide.ylabel(nothing))"
@@ -1546,15 +1546,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_yrug.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Guide.yrug",
+    "title": "Guide.yrug",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/guides/guide_yrug.html#Guide.yrug-1",
-    "page": "-",
+    "page": "Guide.yrug",
     "title": "Guide.yrug",
     "category": "section",
     "text": "Draw a rug plot along the y-axis of a plot."
@@ -1562,7 +1562,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_yrug.html#Aesthetics-1",
-    "page": "-",
+    "page": "Guide.yrug",
     "title": "Aesthetics",
     "category": "section",
     "text": "y: Y positions of notches."
@@ -1570,7 +1570,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_yrug.html#Examples-1",
-    "page": "-",
+    "page": "Guide.yrug",
     "title": "Examples",
     "category": "section",
     "text": "using Compose\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(x=rand(20), y=rand(20), Guide.yrug)"
@@ -1578,15 +1578,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_yticks.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Guide.yticks",
+    "title": "Guide.yticks",
     "category": "page",
     "text": "Author = \"Darwin Darakananda\""
 },
 
 {
     "location": "lib/guides/guide_yticks.html#Guide.yticks-1",
-    "page": "-",
+    "page": "Guide.yticks",
     "title": "Guide.yticks",
     "category": "section",
     "text": "Formats the tick marks and labels for the y-axis"
@@ -1594,7 +1594,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_yticks.html#Arguments-1",
-    "page": "-",
+    "page": "Guide.yticks",
     "title": "Arguments",
     "category": "section",
     "text": "ticks: Array of tick locations on the y-axis, :auto to automatically select ticks, or nothing to supress y-axis ticks.\nlabel: Determines if the ticks are labeled, either true (default) or false\norientation: Label orientation (:horizontal, :vertical, :auto). Defaults to :auto"
@@ -1602,7 +1602,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/guides/guide_yticks.html#Examples-1",
-    "page": "-",
+    "page": "Guide.yticks",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)ticks = [0.2, 0.4, 0.6]\nplot(x=rand(10), y=rand(10), Geom.line, Guide.yticks(ticks=ticks))plot(x=rand(10), y=rand(10), Geom.line, Guide.yticks(ticks=ticks, label=false))plot(x=rand(10), y=rand(10), Geom.line, Guide.yticks(ticks=ticks, orientation=:vertical))"
@@ -1610,15 +1610,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_binmean.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Stat.binmean",
+    "title": "Stat.binmean",
     "category": "page",
     "text": "Author = \"Matthieu Gomez\""
 },
 
 {
     "location": "lib/stats/stat_binmean.html#Stat.binmean-1",
-    "page": "-",
+    "page": "Stat.binmean",
     "title": "Stat.binmean",
     "category": "section",
     "text": "Plot the mean of y against the mean of x within n quantile bins of x."
@@ -1626,7 +1626,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_binmean.html#Aesthetics-1",
-    "page": "-",
+    "page": "Stat.binmean",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: Data to be plotted on the x-axis.\ny: Data to be plotted on the y-axis."
@@ -1634,7 +1634,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_binmean.html#Arguments-1",
-    "page": "-",
+    "page": "Stat.binmean",
     "title": "Arguments",
     "category": "section",
     "text": "n: Number of bins"
@@ -1642,7 +1642,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_binmean.html#Examples-1",
-    "page": "-",
+    "page": "Stat.binmean",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)p1 = plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\", Stat.binmean, Geom.point)"
@@ -1650,15 +1650,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_qq.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Stat.qq",
+    "title": "Stat.qq",
     "category": "page",
     "text": "Author = \"Dave Kleinschmidt\""
 },
 
 {
     "location": "lib/stats/stat_qq.html#Stat.qq-1",
-    "page": "-",
+    "page": "Stat.qq",
     "title": "Stat.qq",
     "category": "section",
     "text": "Generates quantile-quantile plots for x and y.  If each is a numeric vector, their sample quantiles will be compared.  If one is a Distribution, then its theoretical quantiles will be compared with the sample quantiles of the other."
@@ -1666,7 +1666,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_qq.html#Aesthetics-1",
-    "page": "-",
+    "page": "Stat.qq",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: Data or Distribution to be plotted on the x-axis.\ny: Data or Distribution to be plotted on the y-axis."
@@ -1674,7 +1674,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_qq.html#Examples-1",
-    "page": "-",
+    "page": "Stat.qq",
     "title": "Examples",
     "category": "section",
     "text": "using Distributions\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)plot(x=rand(Normal(), 100), y=rand(Normal(), 100), Stat.qq, Geom.point)\nplot(x=rand(Normal(), 100), y=Normal(), Stat.qq, Geom.point)"
@@ -1682,15 +1682,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_step.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Stat.step",
+    "title": "Stat.step",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/stats/stat_step.html#Stat.step-1",
-    "page": "-",
+    "page": "Stat.step",
     "title": "Stat.step",
     "category": "section",
     "text": "Perform stepwise interpolation between points. If x and y define a a series of points, a new point in inserted between each. Between (x[i], y[i]) and (x[i+1], y[i+1]), either (x[i+1], y[i]) or (x[i], y[i+1]) is inserted, depending on the direction argument."
@@ -1698,7 +1698,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_step.html#Aesthetics-1",
-    "page": "-",
+    "page": "Stat.step",
     "title": "Aesthetics",
     "category": "section",
     "text": "x: Point x-coordinate.\ny: Point y-coordinate."
@@ -1706,7 +1706,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_step.html#Arguments-1",
-    "page": "-",
+    "page": "Stat.step",
     "title": "Arguments",
     "category": "section",
     "text": "direction: Either :hv for horizontal then vertical, or :vh for vertical then horizontal.using Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)plot(x=rand(25), y=rand(25), Stat.step, Geom.line)"
@@ -1714,15 +1714,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_x_jitter.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Stat.x_jitter",
+    "title": "Stat.x_jitter",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/stats/stat_x_jitter.html#Stat.x_jitter-1",
-    "page": "-",
+    "page": "Stat.x_jitter",
     "title": "Stat.x_jitter",
     "category": "section",
     "text": "Nudge values on the x-axis to avoid overplotting."
@@ -1730,7 +1730,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_x_jitter.html#Asethetics-1",
-    "page": "-",
+    "page": "Stat.x_jitter",
     "title": "Asethetics",
     "category": "section",
     "text": "x: Data to nudge."
@@ -1738,7 +1738,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_x_jitter.html#Arguments-1",
-    "page": "-",
+    "page": "Stat.x_jitter",
     "title": "Arguments",
     "category": "section",
     "text": "range: Maximum jitter is this number times the resolution of the data, where the \"resolution\" is the smallest non-zero difference between two points.\nseed: Seed for RNG used to randomly jitter values."
@@ -1746,7 +1746,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_x_jitter.html#Examples-1",
-    "page": "-",
+    "page": "Stat.x_jitter",
     "title": "Examples",
     "category": "section",
     "text": "using Distributions\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)plot(x=rand(1:4, 500), y=rand(500), Stat.x_jitter(range=0.5), Geom.point)"
@@ -1754,15 +1754,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_xticks.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Stat.xticks",
+    "title": "Stat.xticks",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/stats/stat_xticks.html#Stat.xticks-1",
-    "page": "-",
+    "page": "Stat.xticks",
     "title": "Stat.xticks",
     "category": "section",
     "text": "Compute an appealing set of ticks that encompass the data."
@@ -1770,7 +1770,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_xticks.html#Arguments-1",
-    "page": "-",
+    "page": "Stat.xticks",
     "title": "Arguments",
     "category": "section",
     "text": "ticks: A fixed array of ticks, or nothing to indicate they should be computed.\ngranularity_weight: Importance of having a reasonable number of ticks. (Default: 1/4)\nsimplicity_weight: Importance of including zero. (Default: 1/6)\ncoverage_weight: Importance of tightly fitting the span of the data. (Default: 1/3)\nniceness_weight: Importance of having a nice numbering. (Default: 1/4)"
@@ -1778,7 +1778,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_xticks.html#Aesthetics-1",
-    "page": "-",
+    "page": "Stat.xticks",
     "title": "Aesthetics",
     "category": "section",
     "text": "All x-axis aesthetics are considered, and ticks are output to the xtick and xgrid aesthetics."
@@ -1786,7 +1786,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_xticks.html#Examples-1",
-    "page": "-",
+    "page": "Stat.xticks",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Providing a fixed set of ticks\nplot(x=rand(10), y=rand(10),\n     Stat.xticks(ticks=[0.0, 0.1, 0.9, 1.0]), Geom.point)"
@@ -1794,15 +1794,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_y_jitter.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Stat.y_jitter",
+    "title": "Stat.y_jitter",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/stats/stat_y_jitter.html#Stat.y_jitter-1",
-    "page": "-",
+    "page": "Stat.y_jitter",
     "title": "Stat.y_jitter",
     "category": "section",
     "text": "Nudge values on the y-axis to avoid overplotting."
@@ -1810,7 +1810,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_y_jitter.html#Asethetics-1",
-    "page": "-",
+    "page": "Stat.y_jitter",
     "title": "Asethetics",
     "category": "section",
     "text": "y: Data to nudge."
@@ -1818,7 +1818,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_y_jitter.html#Arguments-1",
-    "page": "-",
+    "page": "Stat.y_jitter",
     "title": "Arguments",
     "category": "section",
     "text": "range: Maximum jitter is this number times the resolution of the data, where the \"resolution\" is the smallest non-zero difference between two points.\nseed: Seed for RNG used to randomly jitter values."
@@ -1826,7 +1826,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_y_jitter.html#Examples-1",
-    "page": "-",
+    "page": "Stat.y_jitter",
     "title": "Examples",
     "category": "section",
     "text": "using Distributions\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)plot(x=rand(500), y=rand(1:4, 500), Stat.y_jitter(range=0.5), Geom.point)"
@@ -1834,15 +1834,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_yticks.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Stat.yticks",
+    "title": "Stat.yticks",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/stats/stat_yticks.html#Stat.yticks-1",
-    "page": "-",
+    "page": "Stat.yticks",
     "title": "Stat.yticks",
     "category": "section",
     "text": "Compute an appealing set of ticks that encompass the data."
@@ -1850,7 +1850,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_yticks.html#Arguments-1",
-    "page": "-",
+    "page": "Stat.yticks",
     "title": "Arguments",
     "category": "section",
     "text": "ticks: A fixed array of ticks, or nothing to indicate they should be computed.\ngranularity_weight: Importance of having a reasonable number of ticks. (Default: 1/4)\nsimplicity_weight: Importance of including zero. (Default: 1/6)\ncoverage_weight: Importance of tightly fitting the span of the data. (Default: 1/3)\nniceness_weight: Importance of having a nice numbering. (Default: 1/4)"
@@ -1858,7 +1858,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_yticks.html#Aesthetics-1",
-    "page": "-",
+    "page": "Stat.yticks",
     "title": "Aesthetics",
     "category": "section",
     "text": "All y-axis aesthetics are considered, and ticks are output to the ytick and ygrid aesthetics."
@@ -1866,7 +1866,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/stats/stat_yticks.html#Examples-1",
-    "page": "-",
+    "page": "Stat.yticks",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Providing a fixed set of ticks\nplot(x=rand(10), y=rand(10),\n     Stat.yticks(ticks=[0.0, 0.1, 0.9, 1.0]), Geom.point)"
@@ -1874,15 +1874,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/coords/coord_cartesian.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Coord.cartesian",
+    "title": "Coord.cartesian",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/coords/coord_cartesian.html#Coord.cartesian-1",
-    "page": "-",
+    "page": "Coord.cartesian",
     "title": "Coord.cartesian",
     "category": "section",
     "text": ""
@@ -1890,7 +1890,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/coords/coord_cartesian.html#Arguments-1",
-    "page": "-",
+    "page": "Coord.cartesian",
     "title": "Arguments",
     "category": "section",
     "text": "xmin: Hard minimum value on the x-axis.\nxmax: hard maximum value on the x-axis.\nymin: Hard minimum value on the y-axis.\nymax: Hard maximum value on the y-axis.\nxflip: True if the x-axis should be flipped. (default: false)\nyflip: True if the y-axis should be flipped. (default: false)\naspect_ratio: Aspect ratio, or nothing if no fixed aspect ratio. (default: nothing)\nfixed: True if the ratio should follow the units of the plot. E.g. if the y-axis is 5 units high and the x-axis in 10 units across, the plot will be drawn at an aspect ratio of 2. Overrides aspect_ratio (default: false)"
@@ -1898,7 +1898,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/coords/coord_cartesian.html#Examples-1",
-    "page": "-",
+    "page": "Coord.cartesian",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly# Transform both dimensions\nplot(sin, 0, 20, Coord.cartesian(xmin=2π, xmax=4π, ymin=-2, ymax=2))"
@@ -1906,15 +1906,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_continuous.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Scale.color_continuous",
+    "title": "Scale.color_continuous",
     "category": "page",
     "text": "Author = \"David Chudzicki\""
 },
 
 {
     "location": "lib/scales/scale_color_continuous.html#Scale.color_continuous-1",
-    "page": "-",
+    "page": "Scale.color_continuous",
     "title": "Scale.color_continuous",
     "category": "section",
     "text": "Create a continuous color scale that the plot will use."
@@ -1922,7 +1922,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_continuous.html#Arguments-1",
-    "page": "-",
+    "page": "Scale.color_continuous",
     "title": "Arguments",
     "category": "section",
     "text": "minvalue (optional): the data value corresponding to the bottom of the color scale (will be based on the range of the data if not specified).\nmaxvalue (optional): the data value corresponding to the top of the color scale (will be based on the range of the data if not specified).\ncolormap: A function defined on the interval from 0 to 1 that returns a Color (as from the Colors package)."
@@ -1930,7 +1930,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_continuous.html#Variations-1",
-    "page": "-",
+    "page": "Scale.color_continuous",
     "title": "Variations",
     "category": "section",
     "text": "color_continuous_gradient is an alias for Scale.color_continuous.A number of transformed continuous scales are provided.Scale.color_continuous (scale without any transformation).\nScale.color_log10\nScale.color_log2\nScale.color_log\nScale.color_asinh\nScale.color_sqrt"
@@ -1938,7 +1938,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_continuous.html#Aesthetics-Acted-On-1",
-    "page": "-",
+    "page": "Scale.color_continuous",
     "title": "Aesthetics Acted On",
     "category": "section",
     "text": "color"
@@ -1946,7 +1946,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_continuous.html#Examples-1",
-    "page": "-",
+    "page": "Scale.color_continuous",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nsrand(1234)# The data are all between 0 and 1, but the color scale goes from -1 to 1.\n# For example, you might do this to force a consistent color scale between plots.\nplot(x=rand(12), y=rand(12), color=rand(12),\n     Scale.color_continuous(minvalue=-1, maxvalue=1))Define a custom color scale for a grid:using Colors\nx = repeat(collect(1:10), inner=[10])\ny = repeat(collect(1:10), outer=[10])\nplot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=p->RGB(0,p,0)))Or we can use lab_gradient to construct a color gradient between 2 or more colors:plot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=Scale.lab_gradient(colorant\"green\",\n                                                        colorant\"white\",\n                                                        colorant\"red\")))We can also start the color scale somewhere other than the bottom of the data range using minvalue:plot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=p->RGB(0,p,0), minvalue=-20))"
@@ -1954,15 +1954,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_discrete_hue.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Scale.color_discrete_hue",
+    "title": "Scale.color_discrete_hue",
     "category": "page",
     "text": "Author = \"David Chudzicki\""
 },
 
 {
     "location": "lib/scales/scale_color_discrete_hue.html#Scale.color_discrete_hue-1",
-    "page": "-",
+    "page": "Scale.color_discrete_hue",
     "title": "Scale.color_discrete_hue",
     "category": "section",
     "text": "Create a discrete color scale to be used for the plot. Scale.discrete_color is an alias for Scale.color_discrete_hue."
@@ -1970,7 +1970,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_discrete_hue.html#Arguments-1",
-    "page": "-",
+    "page": "Scale.color_discrete_hue",
     "title": "Arguments",
     "category": "section",
     "text": "levels (optional): Explicitly set levels used by the scale. Order is respected.\norder (optional): A vector of integers giving a permutation of the levels default order."
@@ -1978,7 +1978,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_discrete_hue.html#Examples-1",
-    "page": "-",
+    "page": "Scale.color_discrete_hue",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nsrand(1234)This forces the use of a discrete scale on data that would otherwise receive a continuous scale:plot(x=rand(12), y=rand(12), color=repeat([1,2,3], outer=[4]),\n     Scale.color_discrete())"
@@ -1986,15 +1986,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_discrete_manual.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Scale.color_discrete_manual",
+    "title": "Scale.color_discrete_manual",
     "category": "page",
     "text": "Author = \"David Chudzicki\""
 },
 
 {
     "location": "lib/scales/scale_color_discrete_manual.html#Scale.color_discrete_manual-1",
-    "page": "-",
+    "page": "Scale.color_discrete_manual",
     "title": "Scale.color_discrete_manual",
     "category": "section",
     "text": "Create a discrete color scale to be used for the plot."
@@ -2002,7 +2002,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_discrete_manual.html#Arguments-1",
-    "page": "-",
+    "page": "Scale.color_discrete_manual",
     "title": "Arguments",
     "category": "section",
     "text": "colors...: an iterable collection of things that can be converted to colors with Colors.color (such as strings naming colors, although a better choice is to use colorant\"colorname\")\nlevels (optional): Explicitly set levels used by the scale. Order is respected.\norder (optional): A vector of integers giving a permutation of the levels default order."
@@ -2010,7 +2010,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_discrete_manual.html#Aesthetics-Acted-On-1",
-    "page": "-",
+    "page": "Scale.color_discrete_manual",
     "title": "Aesthetics Acted On",
     "category": "section",
     "text": "color"
@@ -2018,7 +2018,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_discrete_manual.html#Examples-1",
-    "page": "-",
+    "page": "Scale.color_discrete_manual",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nsrand(1234)plot(x=rand(12), y=rand(12), color=repeat([\"a\",\"b\",\"c\"], outer=[4]),\n     Scale.color_discrete_manual(colorant\"red\",colorant\"purple\",colorant\"green\"))"
@@ -2026,15 +2026,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_none.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Scale.color_none",
+    "title": "Scale.color_none",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/scales/scale_color_none.html#Scale.color_none-1",
-    "page": "-",
+    "page": "Scale.color_none",
     "title": "Scale.color_none",
     "category": "section",
     "text": "Suppress a default color scale. Some statistics impose a default color scale. When no color scale is desired, explicitly including Scale.color_none will suppress this default."
@@ -2042,7 +2042,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_color_none.html#Examples-1",
-    "page": "-",
+    "page": "Scale.color_none",
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly\nsrand(1234)xs = 1:10.\nys = 1:10.\nzs = Float64[x^2*log(y) for x in xs, y in ys]\nplot(x=xs, y=ys, z=zs, Geom.contour, Scale.color_none)"
@@ -2050,15 +2050,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_x_continuous.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Scale.x_continuous",
+    "title": "Scale.x_continuous",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/scales/scale_x_continuous.html#Scale.x_continuous-1",
-    "page": "-",
+    "page": "Scale.x_continuous",
     "title": "Scale.x_continuous",
     "category": "section",
     "text": "Map numerical data to x positions in cartesian coordinates."
@@ -2066,7 +2066,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_x_continuous.html#Arguments-1",
-    "page": "-",
+    "page": "Scale.x_continuous",
     "title": "Arguments",
     "category": "section",
     "text": "minvalue: Set scale lower bound to be ≤ this value.\nmaxvalue: Set scale lower bound to be ≥ this value.note: Note\nminvalue and maxvalue here are soft bounds, Gadfly may choose to ignore them when constructing an optimal plot. Use Coord.cartesian to enforce a hard bound.labels: Either a Function or nothing. When a function is given, values are formatted using this function. The function should map a value in x to a string giving its label. If the scale applies a transformation, transformed label values will be passed to this function.\nformat: How numbers should be formatted. One of :plain, :scientific, :engineering, or :auto. The default in :auto which prints very large or very small numbers in scientific notation, and other numbers plainly.\nscalable: When set to false, scale is fixed when zooming (default: true)"
@@ -2074,7 +2074,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_x_continuous.html#Variations-1",
-    "page": "-",
+    "page": "Scale.x_continuous",
     "title": "Variations",
     "category": "section",
     "text": "A number of transformed continuous scales are provided.Scale.x_continuous (scale without any transformation).\nScale.x_log10\nScale.x_log2\nScale.x_log\nScale.x_asinh\nScale.x_sqrt"
@@ -2082,7 +2082,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_x_continuous.html#Aesthetics-Acted-On-1",
-    "page": "-",
+    "page": "Scale.x_continuous",
     "title": "Aesthetics Acted On",
     "category": "section",
     "text": "x, xmin, xmax, xintercept"
@@ -2090,7 +2090,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_x_continuous.html#Examples-1",
-    "page": "-",
+    "page": "Scale.x_continuous",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nsrand(1234)# Transform both dimensions\nplot(x=rand(10), y=rand(10), Scale.x_log)# Force the viewport\nplot(x=rand(10), y=rand(10), Scale.x_continuous(minvalue=-10, maxvalue=10))# Use scientific notation\nplot(x=rand(10), y=rand(10), Scale.x_continuous(format=:scientific))# Use manual formatting\nplot(x=rand(10), y=rand(10), Scale.x_continuous(labels=x -> @sprintf(\"%0.4f\", x)))"
@@ -2098,15 +2098,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_x_discrete.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Scale.x_discrete",
+    "title": "Scale.x_discrete",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/scales/scale_x_discrete.html#Scale.x_discrete-1",
-    "page": "-",
+    "page": "Scale.x_discrete",
     "title": "Scale.x_discrete",
     "category": "section",
     "text": "Map data categorical to Cartesian coordinates. Unlike Scale.x_continuous, each unique x value will be mapped to a equally spaced positions, regardless of value.By default continuous scales are applied to numerical data. If data consists of numbers specifying categories, explicitly adding Scale.x_discrete is the easiest way to get that data to plot appropriately."
@@ -2114,7 +2114,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_x_discrete.html#Arguments-1",
-    "page": "-",
+    "page": "Scale.x_discrete",
     "title": "Arguments",
     "category": "section",
     "text": "labels: Either a Function or nothing. When a function is given, values are formatted using this function. The function should map a value in x to a string giving its label.\nlevels: If non-nothing, give values for the scale. Order will be respected and anything in the data that's not respresented in levels will be set to NA.\norder: If non-nothing, give a vector of integers giving a permutation of the values pool of the data."
@@ -2122,7 +2122,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_x_discrete.html#Aesthetics-Acted-On-1",
-    "page": "-",
+    "page": "Scale.x_discrete",
     "title": "Aesthetics Acted On",
     "category": "section",
     "text": "x, xmin, xmax, xintercept"
@@ -2130,7 +2130,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_x_discrete.html#Examples-1",
-    "page": "-",
+    "page": "Scale.x_discrete",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Treat numerical x data as categories\nplot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)"
@@ -2138,15 +2138,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_y_continuous.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Scale.y_continuous",
+    "title": "Scale.y_continuous",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/scales/scale_y_continuous.html#Scale.y_continuous-1",
-    "page": "-",
+    "page": "Scale.y_continuous",
     "title": "Scale.y_continuous",
     "category": "section",
     "text": "Map numerical data to y positions in cartesian coordinates."
@@ -2154,7 +2154,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_y_continuous.html#Arguments-1",
-    "page": "-",
+    "page": "Scale.y_continuous",
     "title": "Arguments",
     "category": "section",
     "text": "minvalue: Set scale lower bound to be ≤ this value.\nmaxvalue: Set scale lower bound to be ≥ this value.note: Note\nminvalue and maxvalue here are soft bounds, Gadfly may choose to ignore them when constructing an optimal plot. Use Coord.cartesian to enforce a hard bound.labels: Either a Function or nothing. When a function is given, values are formatted using this function. The function should map a value in x to a string giving its label. If the scale applies a transformation, transformed label values will be passed to this function.\nformat: How numbers should be formatted. One of :plain, :scientific, :engineering, or :auto. The default in :auto which prints very large or very small numbers in scientific notation, and other numbers plainly.\nscalable: When set to false, scale is fixed when zooming (default: true)"
@@ -2162,7 +2162,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_y_continuous.html#Variations-1",
-    "page": "-",
+    "page": "Scale.y_continuous",
     "title": "Variations",
     "category": "section",
     "text": "A number of transformed continuous scales are provided.Scale.y_continuous (scale without any transformation).\nScale.y_log10\nScale.y_log2\nScale.y_log\nScale.y_asinh\nScale.y_sqrt"
@@ -2170,7 +2170,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_y_continuous.html#Aesthetics-Acted-On-1",
-    "page": "-",
+    "page": "Scale.y_continuous",
     "title": "Aesthetics Acted On",
     "category": "section",
     "text": "y, ymin, ymax, yintercept"
@@ -2178,7 +2178,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_y_continuous.html#Examples-1",
-    "page": "-",
+    "page": "Scale.y_continuous",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nsrand(1234)# Transform both dimensions\nplot(x=rand(10), y=rand(10), Scale.y_log)# Force the viewport\nplot(x=rand(10), y=rand(10), Scale.y_continuous(minvalue=-10, maxvalue=10))# Use scientific notation\nplot(x=rand(10), y=rand(10), Scale.y_continuous(format=:scientific))# Use manual formatting\nplot(x=rand(10), y=rand(10), Scale.y_continuous(labels=y -> @sprintf(\"%0.4f\", y)))"
@@ -2186,15 +2186,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_y_discrete.html#",
-    "page": "-",
-    "title": "-",
+    "page": "Scale.y_discrete",
+    "title": "Scale.y_discrete",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "lib/scales/scale_y_discrete.html#Scale.y_discrete-1",
-    "page": "-",
+    "page": "Scale.y_discrete",
     "title": "Scale.y_discrete",
     "category": "section",
     "text": "Map data categorical to Cartesian coordinates. Unlike Scale.y_continuous, each unique y value will be mapped to a equally spaced positions, regardless of value.By default continuous scales are applied to numerical data. If data consists of numbers specifying categories, explicitly adding Scale.y_discrete is the easiest way to get that data to plot appropriately."
@@ -2202,7 +2202,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_y_discrete.html#Arguments-1",
-    "page": "-",
+    "page": "Scale.y_discrete",
     "title": "Arguments",
     "category": "section",
     "text": "labels: Either a Function or nothing. When a function is given, values are formatted using this function. The function should map a value in x to a string giving its label.\nlevels: If non-nothing, give values for the scale. Order will be respected and anything in the data that's not respresented in levels will be set to NA.\norder: If non-nothing, give a vector of integers giving a permutation of the values pool of the data."
@@ -2210,7 +2210,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_y_discrete.html#Aesthetics-Acted-On-1",
-    "page": "-",
+    "page": "Scale.y_discrete",
     "title": "Aesthetics Acted On",
     "category": "section",
     "text": "y, ymin, ymax, yintercept"
@@ -2218,7 +2218,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "lib/scales/scale_y_discrete.html#Examples-1",
-    "page": "-",
+    "page": "Scale.y_discrete",
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Treat numerical y data as categories\nplot(x=rand(20), y=rand(1:3, 20), Scale.y_discrete, Geom.point)"
