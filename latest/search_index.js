@@ -581,7 +581,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.density",
     "title": "Geom.density",
     "category": "page",
-    "text": "Author = \"Daniel C. Jones\""
+    "text": "Author = \"Daniel C. Jones, Tamas Nagy\""
 },
 
 {
@@ -601,11 +601,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/geoms/geom_density.html#Arguments-1",
+    "page": "Geom.density",
+    "title": "Arguments",
+    "category": "section",
+    "text": "bandwidth: How closely the density estimate should mirror the data. Larger values will smooth the density estimate out."
+},
+
+{
     "location": "lib/geoms/geom_density.html#Examples-1",
     "page": "Geom.density",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", Geom.density)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\", Geom.density)"
+    "text": "using RDatasets\nusing Gadfly\nusing Distributions\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", Geom.density)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\", Geom.density)# adjusting bandwidth manually\ndist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])\nxs = rand(dist, 10^5)\nplot(layer(x=xs, Geom.density, Theme(default_color=colorant\"orange\")), \nlayer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color=colorant\"green\")),\nlayer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color=colorant\"purple\")),\nGuide.manual_color_key(\"bandwidth\", [\"auto\", \"bw=0.0003\", \"bw=0.25\"], [\"orange\", \"green\", \"purple\"]))"
 },
 
 {
