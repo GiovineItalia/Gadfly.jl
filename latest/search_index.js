@@ -1197,7 +1197,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.subplot_grid",
     "title": "Aesthetics",
     "category": "section",
-    "text": "xgroup (optional): Arrange subplots on the X-axis by categorial data.\nygroup (optional): Arrange subplots on the Y-axis by categorial data.\nfree_y_axis (optional): Whether the y-axis scales can differ acrossthe subplots. Defaults to false. If true, scales are set appropriately for individual subplots.   * free_x_axis (optional): Whether the x-axis scales can differ across   the subplots. Defaults to false. If true, scales are set appropriately for individual subplots.One or both of xgroup or ygroup must be bound. If only one, a single column or row of subplots is drawn, if both, a grid."
+    "text": "xgroup (optional): Arrange subplots on the X-axis by categorial data.\nygroup (optional): Arrange subplots on the Y-axis by categorial data.\nfree_y_axis (optional): Whether the y-axis scales can differ acrossthe subplots. Defaults to false. If true, scales are set appropriately for individual subplots.free_x_axis (optional): Whether the x-axis scales can differ acrossthe subplots. Defaults to false. If true, scales are set appropriately for individual subplots.One or both of xgroup or ygroup must be bound. If only one, a single column or row of subplots is drawn, if both, a grid."
 },
 
 {

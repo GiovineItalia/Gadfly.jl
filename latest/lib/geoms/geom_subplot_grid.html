@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.subplot_grid · Gadfly.jl documentation</title><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script></head><body><nav class="toc"><a href><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Stacks &amp; Layers</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li><li><a class="toctext" href="../../man/geometries.html">Geometries</a></li><li><a class="toctext" href="../../man/guides.html">Guides</a></li><li><a class="toctext" href="../../man/stats.html">Statistics</a></li><li><a class="toctext" href="../../man/coords.html">Coords</a></li><li><a class="toctext" href="../../man/scales.html">Scales</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><span class="toctext">geoms</span><ul><li><a class="toctext" href="geom_bar.html">Geom.bar</a></li><li><a class="toctext" href="geom_beeswarm.html">Geom.beeswarm</a></li><li><a class="toctext" href="geom_boxplot.html">Geom.boxplot</a></li><li><a class="toctext" href="geom_contour.html">Geom.contour</a></li><li><a class="toctext" href="geom_density.html">Geom.density</a></li><li><a class="toctext" href="geom_errorbar.html">Geom.errorbar</a></li><li><a class="toctext" href="geom_hexbin.html">Geom.hexbin</a></li><li><a class="toctext" href="geom_histogram2d.html">Geom.histogram2d</a></li><li><a class="toctext" href="geom_histogram.html">Geom.histogram</a></li><li><a class="toctext" href="geom_hline.html">Geom.hline</a></li><li><a class="toctext" href="geom_label.html">Geom.label</a></li><li><a class="toctext" href="geom_line.html">Geom.line</a></li><li><a class="toctext" href="geom_path.html">Geom.path</a></li><li><a class="toctext" href="geom_point.html">Geom.point</a></li><li><a class="toctext" href="geom_polygon.html">Geom.polygon</a></li><li><a class="toctext" href="geom_rectbin.html">Geom.rectbin</a></li><li><a class="toctext" href="geom_ribbon.html">Geom.ribbon</a></li><li><a class="toctext" href="geom_segment.html">Geom.segment</a></li><li><a class="toctext" href="geom_smooth.html">Geom.smooth</a></li><li><a class="toctext" href="geom_step.html">Geom.step</a></li><li class="current"><a class="toctext" href="geom_subplot_grid.html">Geom.subplot_grid</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li><li><a class="toctext" href="geom_violin.html">Geom.violin</a></li><li><a class="toctext" href="geom_vline.html">Geom.vline</a></li></ul></li><li><span class="toctext">guides</span><ul><li><a class="toctext" href="../guides/guide_annotation.html">Guide.annotation</a></li><li><a class="toctext" href="../guides/guide_colorkey.html">Guide.colorkey</a></li><li><a class="toctext" href="../guides/guide_manual_color_key.html">Guide.manual_color_key</a></li><li><a class="toctext" href="../guides/guide_title.html">Guide.title</a></li><li><a class="toctext" href="../guides/guide_xlabel.html">Guide.xlabel</a></li><li><a class="toctext" href="../guides/guide_xrug.html">Guide.xrug</a></li><li><a class="toctext" href="../guides/guide_xticks.html">Guide.xticks</a></li><li><a class="toctext" href="../guides/guide_ylabel.html">Guide.ylabel</a></li><li><a class="toctext" href="../guides/guide_yrug.html">Guide.yrug</a></li><li><a class="toctext" href="../guides/guide_yticks.html">Guide.yticks</a></li></ul></li><li><span class="toctext">stats</span><ul><li><a class="toctext" href="../stats/stat_binmean.html">Stat.binmean</a></li><li><a class="toctext" href="../stats/stat_qq.html">Stat.qq</a></li><li><a class="toctext" href="../stats/stat_step.html">Stat.step</a></li><li><a class="toctext" href="../stats/stat_x_jitter.html">Stat.x_jitter</a></li><li><a class="toctext" href="../stats/stat_xticks.html">Stat.xticks</a></li><li><a class="toctext" href="../stats/stat_y_jitter.html">Stat.y_jitter</a></li><li><a class="toctext" href="../stats/stat_yticks.html">Stat.yticks</a></li></ul></li><li><span class="toctext">coords</span><ul><li><a class="toctext" href="../coords/coord_cartesian.html">Coord.cartesian</a></li></ul></li><li><span class="toctext">scales</span><ul><li><a class="toctext" href="../scales/scale_color_continuous.html">Scale.color_continuous</a></li><li><a class="toctext" href="../scales/scale_color_discrete_hue.html">Scale.color_discrete_hue</a></li><li><a class="toctext" href="../scales/scale_color_discrete_manual.html">Scale.color_discrete_manual</a></li><li><a class="toctext" href="../scales/scale_color_none.html">Scale.color_none</a></li><li><a class="toctext" href="../scales/scale_x_continuous.html">Scale.x_continuous</a></li><li><a class="toctext" href="../scales/scale_x_discrete.html">Scale.x_discrete</a></li><li><a class="toctext" href="../scales/scale_y_continuous.html">Scale.y_continuous</a></li><li><a class="toctext" href="../scales/scale_y_discrete.html">Scale.y_discrete</a></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li>geoms</li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li></ul><a class="edit-page" href="https://github.com/dcjones/Gadfly.jl/tree/1bcd9fb335d9f25d1edd8c810d9f576b582caa26/docs/src/lib/geoms/geom_subplot_grid.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.subplot_grid-1" href="#Geom.subplot_grid-1">Geom.subplot_grid</a></h1><p>Draw multiple subplots in a grid organized by one or two categorial vectors.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>xgroup</code> (optional): Arrange subplots on the X-axis by categorial data.</p></li><li><p><code>ygroup</code> (optional): Arrange subplots on the Y-axis by categorial data.</p></li><li><p><code>free_y_axis</code> (optional): Whether the y-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.   * <code>free_x_axis</code> (optional): Whether the x-axis scales can differ across   the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><p>One or both of <code>xgroup</code> or <code>ygroup</code> must be bound. If only one, a single column or row of subplots is drawn, if both, a grid.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><pre><code class="language-julia">Geom.subplot_grid(elements::Gadfly.ElementOrFunction...)</code></pre><p>Unlike most geometries, <a href="geom_subplot_grid.html#Geom.subplot_grid-1">Geom.subplot_grid</a> is typically passed one or more parameters. The constructor works for the most part like the <code>layer</code> function. Arbitrary plot elements may be passed, while aesthetic bindings are inherited from the parent plot.</p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">set_default_plot_size(20cm, 7.5cm)
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.subplot_grid · Gadfly.jl documentation</title><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script></head><body><nav class="toc"><a href><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Stacks &amp; Layers</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li><li><a class="toctext" href="../../man/geometries.html">Geometries</a></li><li><a class="toctext" href="../../man/guides.html">Guides</a></li><li><a class="toctext" href="../../man/stats.html">Statistics</a></li><li><a class="toctext" href="../../man/coords.html">Coords</a></li><li><a class="toctext" href="../../man/scales.html">Scales</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><span class="toctext">geoms</span><ul><li><a class="toctext" href="geom_bar.html">Geom.bar</a></li><li><a class="toctext" href="geom_beeswarm.html">Geom.beeswarm</a></li><li><a class="toctext" href="geom_boxplot.html">Geom.boxplot</a></li><li><a class="toctext" href="geom_contour.html">Geom.contour</a></li><li><a class="toctext" href="geom_density.html">Geom.density</a></li><li><a class="toctext" href="geom_errorbar.html">Geom.errorbar</a></li><li><a class="toctext" href="geom_hexbin.html">Geom.hexbin</a></li><li><a class="toctext" href="geom_histogram2d.html">Geom.histogram2d</a></li><li><a class="toctext" href="geom_histogram.html">Geom.histogram</a></li><li><a class="toctext" href="geom_hline.html">Geom.hline</a></li><li><a class="toctext" href="geom_label.html">Geom.label</a></li><li><a class="toctext" href="geom_line.html">Geom.line</a></li><li><a class="toctext" href="geom_path.html">Geom.path</a></li><li><a class="toctext" href="geom_point.html">Geom.point</a></li><li><a class="toctext" href="geom_polygon.html">Geom.polygon</a></li><li><a class="toctext" href="geom_rectbin.html">Geom.rectbin</a></li><li><a class="toctext" href="geom_ribbon.html">Geom.ribbon</a></li><li><a class="toctext" href="geom_segment.html">Geom.segment</a></li><li><a class="toctext" href="geom_smooth.html">Geom.smooth</a></li><li><a class="toctext" href="geom_step.html">Geom.step</a></li><li class="current"><a class="toctext" href="geom_subplot_grid.html">Geom.subplot_grid</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li><li><a class="toctext" href="geom_violin.html">Geom.violin</a></li><li><a class="toctext" href="geom_vline.html">Geom.vline</a></li></ul></li><li><span class="toctext">guides</span><ul><li><a class="toctext" href="../guides/guide_annotation.html">Guide.annotation</a></li><li><a class="toctext" href="../guides/guide_colorkey.html">Guide.colorkey</a></li><li><a class="toctext" href="../guides/guide_manual_color_key.html">Guide.manual_color_key</a></li><li><a class="toctext" href="../guides/guide_title.html">Guide.title</a></li><li><a class="toctext" href="../guides/guide_xlabel.html">Guide.xlabel</a></li><li><a class="toctext" href="../guides/guide_xrug.html">Guide.xrug</a></li><li><a class="toctext" href="../guides/guide_xticks.html">Guide.xticks</a></li><li><a class="toctext" href="../guides/guide_ylabel.html">Guide.ylabel</a></li><li><a class="toctext" href="../guides/guide_yrug.html">Guide.yrug</a></li><li><a class="toctext" href="../guides/guide_yticks.html">Guide.yticks</a></li></ul></li><li><span class="toctext">stats</span><ul><li><a class="toctext" href="../stats/stat_binmean.html">Stat.binmean</a></li><li><a class="toctext" href="../stats/stat_qq.html">Stat.qq</a></li><li><a class="toctext" href="../stats/stat_step.html">Stat.step</a></li><li><a class="toctext" href="../stats/stat_x_jitter.html">Stat.x_jitter</a></li><li><a class="toctext" href="../stats/stat_xticks.html">Stat.xticks</a></li><li><a class="toctext" href="../stats/stat_y_jitter.html">Stat.y_jitter</a></li><li><a class="toctext" href="../stats/stat_yticks.html">Stat.yticks</a></li></ul></li><li><span class="toctext">coords</span><ul><li><a class="toctext" href="../coords/coord_cartesian.html">Coord.cartesian</a></li></ul></li><li><span class="toctext">scales</span><ul><li><a class="toctext" href="../scales/scale_color_continuous.html">Scale.color_continuous</a></li><li><a class="toctext" href="../scales/scale_color_discrete_hue.html">Scale.color_discrete_hue</a></li><li><a class="toctext" href="../scales/scale_color_discrete_manual.html">Scale.color_discrete_manual</a></li><li><a class="toctext" href="../scales/scale_color_none.html">Scale.color_none</a></li><li><a class="toctext" href="../scales/scale_x_continuous.html">Scale.x_continuous</a></li><li><a class="toctext" href="../scales/scale_x_discrete.html">Scale.x_discrete</a></li><li><a class="toctext" href="../scales/scale_y_continuous.html">Scale.y_continuous</a></li><li><a class="toctext" href="../scales/scale_y_discrete.html">Scale.y_discrete</a></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li>geoms</li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li></ul><a class="edit-page" href="https://github.com/dcjones/Gadfly.jl/tree/1bcd9fb335d9f25d1edd8c810d9f576b582caa26/docs/src/lib/geoms/geom_subplot_grid.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.subplot_grid-1" href="#Geom.subplot_grid-1">Geom.subplot_grid</a></h1><p>Draw multiple subplots in a grid organized by one or two categorial vectors.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>xgroup</code> (optional): Arrange subplots on the X-axis by categorial data.</p></li><li><p><code>ygroup</code> (optional): Arrange subplots on the Y-axis by categorial data.</p></li><li><p><code>free_y_axis</code> (optional): Whether the y-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><ul><li><p><code>free_x_axis</code> (optional): Whether the x-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><p>One or both of <code>xgroup</code> or <code>ygroup</code> must be bound. If only one, a single column or row of subplots is drawn, if both, a grid.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><pre><code class="language-julia">Geom.subplot_grid(elements::Gadfly.ElementOrFunction...)</code></pre><p>Unlike most geometries, <a href="geom_subplot_grid.html#Geom.subplot_grid-1">Geom.subplot_grid</a> is typically passed one or more parameters. The constructor works for the most part like the <code>layer</code> function. Arbitrary plot elements may be passed, while aesthetic bindings are inherited from the parent plot.</p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">set_default_plot_size(20cm, 7.5cm)
 plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
      xgroup=&quot;Treatment&quot;, x=&quot;ColPos&quot;, y=&quot;RowPos&quot;, color=&quot;Decrease&quot;,
      Geom.subplot_grid(Geom.point))</code></pre><?xml version="1.0" encoding="UTF-8"?>
@@ -19,9 +19,9 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
   </g>
   <g class="guide colorkey" id="img-64e47d63-3">
     <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-64e47d63-4">
+      <text x="184.23" y="28.62" dy="0.35em">150</text>
       <text x="184.23" y="44.31" dy="0.35em">50</text>
       <text x="184.23" y="51.99" dy="0.35em">1</text>
-      <text x="184.23" y="28.62" dy="0.35em">150</text>
       <text x="184.23" y="36.46" dy="0.35em">100</text>
     </g>
     <g shape-rendering="crispEdges" stroke="#000000" stroke-opacity="0.000" id="img-64e47d63-5">
@@ -66,9 +66,9 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
       <rect x="181.92" y="29.2" width="1.31" height="0.58" fill="#8B3844"/>
       <rect x="181.92" y="28.62" width="1.31" height="0.58" fill="#7E273E"/>
       <g stroke="#FFFFFF" stroke-width="0.2" id="img-64e47d63-6">
+        <path fill="none" d="M181.92,28.62 L 183.23 28.62"/>
         <path fill="none" d="M181.92,44.31 L 183.23 44.31"/>
         <path fill="none" d="M181.92,51.99 L 183.23 51.99"/>
-        <path fill="none" d="M181.92,28.62 L 183.23 28.62"/>
         <path fill="none" d="M181.92,36.46 L 183.23 36.46"/>
       </g>
     </g>
@@ -181,14 +181,14 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-32">
           <g class="geometry" id="img-64e47d63-33">
             <g stroke-width="0.3" id="img-64e47d63-34">
-              <use xlink:href="#img-64e47d63-35" x="165.02" y="9" fill="#005186" stroke="#000436"/>
-              <use xlink:href="#img-64e47d63-35" x="166.58" y="18.28" fill="#005186" stroke="#000436"/>
-              <use xlink:href="#img-64e47d63-35" x="168.14" y="32.19" fill="#005C8D" stroke="#000733"/>
-              <use xlink:href="#img-64e47d63-35" x="169.69" y="36.83" fill="#00588B" stroke="#000634"/>
-              <use xlink:href="#img-64e47d63-35" x="171.25" y="27.55" fill="#005C8D" stroke="#000733"/>
-              <use xlink:href="#img-64e47d63-35" x="172.81" y="41.46" fill="#00749C" stroke="#001A39"/>
-              <use xlink:href="#img-64e47d63-35" x="174.36" y="22.91" fill="#00588B" stroke="#000634"/>
-              <use xlink:href="#img-64e47d63-35" x="175.92" y="13.64" fill="#005589" stroke="#000535"/>
+              <use xlink:href="#img-64e47d63-35" x="165.02" y="9" stroke="#000436" fill="#005186"/>
+              <use xlink:href="#img-64e47d63-35" x="166.58" y="18.28" stroke="#000436" fill="#005186"/>
+              <use xlink:href="#img-64e47d63-35" x="168.14" y="32.19" stroke="#000733" fill="#005C8D"/>
+              <use xlink:href="#img-64e47d63-35" x="169.69" y="36.83" stroke="#000634" fill="#00588B"/>
+              <use xlink:href="#img-64e47d63-35" x="171.25" y="27.55" stroke="#000733" fill="#005C8D"/>
+              <use xlink:href="#img-64e47d63-35" x="172.81" y="41.46" stroke="#001A39" fill="#00749C"/>
+              <use xlink:href="#img-64e47d63-35" x="174.36" y="22.91" stroke="#000634" fill="#00588B"/>
+              <use xlink:href="#img-64e47d63-35" x="175.92" y="13.64" stroke="#000535" fill="#005589"/>
             </g>
           </g>
         </g>
@@ -216,14 +216,14 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-41">
           <g class="geometry" id="img-64e47d63-42">
             <g stroke-width="0.3" id="img-64e47d63-43">
-              <use xlink:href="#img-64e47d63-44" x="144.57" y="13.64" fill="#007EA1" stroke="#00213D"/>
-              <use xlink:href="#img-64e47d63-44" x="146.13" y="41.46" fill="#C3C9B6" stroke="#5C6050"/>
-              <use xlink:href="#img-64e47d63-44" x="147.68" y="18.28" fill="#0082A3" stroke="#00243F"/>
-              <use xlink:href="#img-64e47d63-44" x="149.24" y="27.55" fill="#006A96" stroke="#001134"/>
-              <use xlink:href="#img-64e47d63-44" x="150.8" y="22.91" fill="#0285A4" stroke="#002640"/>
-              <use xlink:href="#img-64e47d63-44" x="152.35" y="36.83" fill="#5CABB7" stroke="#004550"/>
-              <use xlink:href="#img-64e47d63-44" x="153.91" y="32.19" fill="#00789D" stroke="#001D3A"/>
-              <use xlink:href="#img-64e47d63-44" x="155.47" y="9" fill="#1E8CA8" stroke="#002B43"/>
+              <use xlink:href="#img-64e47d63-44" x="144.57" y="13.64" stroke="#00213D" fill="#007EA1"/>
+              <use xlink:href="#img-64e47d63-44" x="146.13" y="41.46" stroke="#5C6050" fill="#C3C9B6"/>
+              <use xlink:href="#img-64e47d63-44" x="147.68" y="18.28" stroke="#00243F" fill="#0082A3"/>
+              <use xlink:href="#img-64e47d63-44" x="149.24" y="27.55" stroke="#001134" fill="#006A96"/>
+              <use xlink:href="#img-64e47d63-44" x="150.8" y="22.91" stroke="#002640" fill="#0285A4"/>
+              <use xlink:href="#img-64e47d63-44" x="152.35" y="36.83" stroke="#004550" fill="#5CABB7"/>
+              <use xlink:href="#img-64e47d63-44" x="153.91" y="32.19" stroke="#001D3A" fill="#00789D"/>
+              <use xlink:href="#img-64e47d63-44" x="155.47" y="9" stroke="#002B43" fill="#1E8CA8"/>
             </g>
           </g>
         </g>
@@ -251,14 +251,14 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-50">
           <g class="geometry" id="img-64e47d63-51">
             <g stroke-width="0.3" id="img-64e47d63-52">
-              <use xlink:href="#img-64e47d63-53" x="124.11" y="18.28" fill="#C7C8B5" stroke="#5F5F4F"/>
-              <use xlink:href="#img-64e47d63-53" x="125.67" y="13.64" fill="#BBCBBC" stroke="#546255"/>
-              <use xlink:href="#img-64e47d63-53" x="127.23" y="41.46" fill="#C5C8B6" stroke="#5D6050"/>
-              <use xlink:href="#img-64e47d63-53" x="128.78" y="22.91" fill="#268FA9" stroke="#002E45"/>
-              <use xlink:href="#img-64e47d63-53" x="130.34" y="9" fill="#BCCABB" stroke="#556254"/>
-              <use xlink:href="#img-64e47d63-53" x="131.9" y="32.19" fill="#A0D0CA" stroke="#396662"/>
-              <use xlink:href="#img-64e47d63-53" x="133.46" y="27.55" fill="#B5CCC2" stroke="#4E635A"/>
-              <use xlink:href="#img-64e47d63-53" x="135.01" y="36.83" fill="#D0B093" stroke="#644B31"/>
+              <use xlink:href="#img-64e47d63-53" x="124.11" y="18.28" stroke="#5F5F4F" fill="#C7C8B5"/>
+              <use xlink:href="#img-64e47d63-53" x="125.67" y="13.64" stroke="#546255" fill="#BBCBBC"/>
+              <use xlink:href="#img-64e47d63-53" x="127.23" y="41.46" stroke="#5D6050" fill="#C5C8B6"/>
+              <use xlink:href="#img-64e47d63-53" x="128.78" y="22.91" stroke="#002E45" fill="#268FA9"/>
+              <use xlink:href="#img-64e47d63-53" x="130.34" y="9" stroke="#556254" fill="#BCCABB"/>
+              <use xlink:href="#img-64e47d63-53" x="131.9" y="32.19" stroke="#396662" fill="#A0D0CA"/>
+              <use xlink:href="#img-64e47d63-53" x="133.46" y="27.55" stroke="#4E635A" fill="#B5CCC2"/>
+              <use xlink:href="#img-64e47d63-53" x="135.01" y="36.83" stroke="#644B31" fill="#D0B093"/>
             </g>
           </g>
         </g>
@@ -286,14 +286,14 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-59">
           <g class="geometry" id="img-64e47d63-60">
             <g stroke-width="0.3" id="img-64e47d63-61">
-              <use xlink:href="#img-64e47d63-62" x="103.66" y="22.91" fill="#C8C7B5" stroke="#605F4F"/>
-              <use xlink:href="#img-64e47d63-62" x="105.22" y="9" fill="#BCCABB" stroke="#556254"/>
-              <use xlink:href="#img-64e47d63-62" x="106.77" y="13.64" fill="#BCCABA" stroke="#556254"/>
-              <use xlink:href="#img-64e47d63-62" x="108.33" y="18.28" fill="#419CAF" stroke="#00394A"/>
-              <use xlink:href="#img-64e47d63-62" x="109.89" y="32.19" fill="#B6CBC0" stroke="#506359"/>
-              <use xlink:href="#img-64e47d63-62" x="111.44" y="27.55" fill="#BFCAB8" stroke="#586152"/>
-              <use xlink:href="#img-64e47d63-62" x="113" y="36.83" fill="#BCCABA" stroke="#556254"/>
-              <use xlink:href="#img-64e47d63-62" x="114.56" y="41.46" fill="#C1C9B7" stroke="#596151"/>
+              <use xlink:href="#img-64e47d63-62" x="103.66" y="22.91" stroke="#605F4F" fill="#C8C7B5"/>
+              <use xlink:href="#img-64e47d63-62" x="105.22" y="9" stroke="#556254" fill="#BCCABB"/>
+              <use xlink:href="#img-64e47d63-62" x="106.77" y="13.64" stroke="#556254" fill="#BCCABA"/>
+              <use xlink:href="#img-64e47d63-62" x="108.33" y="18.28" stroke="#00394A" fill="#419CAF"/>
+              <use xlink:href="#img-64e47d63-62" x="109.89" y="32.19" stroke="#506359" fill="#B6CBC0"/>
+              <use xlink:href="#img-64e47d63-62" x="111.44" y="27.55" stroke="#586152" fill="#BFCAB8"/>
+              <use xlink:href="#img-64e47d63-62" x="113" y="36.83" stroke="#556254" fill="#BCCABA"/>
+              <use xlink:href="#img-64e47d63-62" x="114.56" y="41.46" stroke="#596151" fill="#C1C9B7"/>
             </g>
           </g>
         </g>
@@ -321,14 +321,14 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-68">
           <g class="geometry" id="img-64e47d63-69">
             <g stroke-width="0.3" id="img-64e47d63-70">
-              <use xlink:href="#img-64e47d63-71" x="83.21" y="27.55" fill="#BBCBBC" stroke="#546255"/>
-              <use xlink:href="#img-64e47d63-71" x="84.76" y="32.19" fill="#BA836D" stroke="#4E2412"/>
-              <use xlink:href="#img-64e47d63-71" x="86.32" y="36.83" fill="#BCCABA" stroke="#556254"/>
-              <use xlink:href="#img-64e47d63-71" x="87.88" y="41.46" fill="#B47865" stroke="#481A0A"/>
-              <use xlink:href="#img-64e47d63-71" x="89.43" y="13.64" fill="#C2C9B7" stroke="#5A6151"/>
-              <use xlink:href="#img-64e47d63-71" x="90.99" y="9" fill="#BFCAB9" stroke="#576152"/>
-              <use xlink:href="#img-64e47d63-71" x="92.55" y="18.28" fill="#C2C9B7" stroke="#5A6151"/>
-              <use xlink:href="#img-64e47d63-71" x="94.1" y="22.91" fill="#C5C8B6" stroke="#5D6050"/>
+              <use xlink:href="#img-64e47d63-71" x="83.21" y="27.55" stroke="#546255" fill="#BBCBBC"/>
+              <use xlink:href="#img-64e47d63-71" x="84.76" y="32.19" stroke="#4E2412" fill="#BA836D"/>
+              <use xlink:href="#img-64e47d63-71" x="86.32" y="36.83" stroke="#556254" fill="#BCCABA"/>
+              <use xlink:href="#img-64e47d63-71" x="87.88" y="41.46" stroke="#481A0A" fill="#B47865"/>
+              <use xlink:href="#img-64e47d63-71" x="89.43" y="13.64" stroke="#5A6151" fill="#C2C9B7"/>
+              <use xlink:href="#img-64e47d63-71" x="90.99" y="9" stroke="#576152" fill="#BFCAB9"/>
+              <use xlink:href="#img-64e47d63-71" x="92.55" y="18.28" stroke="#5A6151" fill="#C2C9B7"/>
+              <use xlink:href="#img-64e47d63-71" x="94.1" y="22.91" stroke="#5D6050" fill="#C5C8B6"/>
             </g>
           </g>
         </g>
@@ -356,14 +356,14 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-77">
           <g class="geometry" id="img-64e47d63-78">
             <g stroke-width="0.3" id="img-64e47d63-79">
-              <use xlink:href="#img-64e47d63-80" x="62.75" y="32.19" fill="#006694" stroke="#000C32"/>
-              <use xlink:href="#img-64e47d63-80" x="64.31" y="36.83" fill="#005F90" stroke="#000832"/>
-              <use xlink:href="#img-64e47d63-80" x="65.86" y="9" fill="#00588B" stroke="#000634"/>
-              <use xlink:href="#img-64e47d63-80" x="67.42" y="13.64" fill="#006D98" stroke="#001435"/>
-              <use xlink:href="#img-64e47d63-80" x="68.98" y="18.28" fill="#006392" stroke="#000931"/>
-              <use xlink:href="#img-64e47d63-80" x="70.53" y="22.91" fill="#00588B" stroke="#000634"/>
-              <use xlink:href="#img-64e47d63-80" x="72.09" y="41.46" fill="#006694" stroke="#000C32"/>
-              <use xlink:href="#img-64e47d63-80" x="73.65" y="27.55" fill="#007B9F" stroke="#001F3C"/>
+              <use xlink:href="#img-64e47d63-80" x="62.75" y="32.19" stroke="#000C32" fill="#006694"/>
+              <use xlink:href="#img-64e47d63-80" x="64.31" y="36.83" stroke="#000832" fill="#005F90"/>
+              <use xlink:href="#img-64e47d63-80" x="65.86" y="9" stroke="#000634" fill="#00588B"/>
+              <use xlink:href="#img-64e47d63-80" x="67.42" y="13.64" stroke="#001435" fill="#006D98"/>
+              <use xlink:href="#img-64e47d63-80" x="68.98" y="18.28" stroke="#000931" fill="#006392"/>
+              <use xlink:href="#img-64e47d63-80" x="70.53" y="22.91" stroke="#000634" fill="#00588B"/>
+              <use xlink:href="#img-64e47d63-80" x="72.09" y="41.46" stroke="#000C32" fill="#006694"/>
+              <use xlink:href="#img-64e47d63-80" x="73.65" y="27.55" stroke="#001F3C" fill="#007B9F"/>
             </g>
           </g>
         </g>
@@ -391,14 +391,14 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-86">
           <g class="geometry" id="img-64e47d63-87">
             <g stroke-width="0.3" id="img-64e47d63-88">
-              <use xlink:href="#img-64e47d63-89" x="42.3" y="36.83" fill="#CAC7B3" stroke="#615F4E"/>
-              <use xlink:href="#img-64e47d63-89" x="43.85" y="22.91" fill="#ACCEC4" stroke="#46645C"/>
-              <use xlink:href="#img-64e47d63-89" x="45.41" y="27.55" fill="#8CC6C5" stroke="#225D5D"/>
-              <use xlink:href="#img-64e47d63-89" x="46.97" y="32.19" fill="#D0B093" stroke="#644B31"/>
-              <use xlink:href="#img-64e47d63-89" x="48.52" y="41.46" fill="#9DD0CB" stroke="#366662"/>
-              <use xlink:href="#img-64e47d63-89" x="50.08" y="13.64" fill="#A5CFC7" stroke="#3F655F"/>
-              <use xlink:href="#img-64e47d63-89" x="51.64" y="9" fill="#B6CBBF" stroke="#506358"/>
-              <use xlink:href="#img-64e47d63-89" x="53.19" y="18.28" fill="#B2CCC2" stroke="#4C635B"/>
+              <use xlink:href="#img-64e47d63-89" x="42.3" y="36.83" stroke="#615F4E" fill="#CAC7B3"/>
+              <use xlink:href="#img-64e47d63-89" x="43.85" y="22.91" stroke="#46645C" fill="#ACCEC4"/>
+              <use xlink:href="#img-64e47d63-89" x="45.41" y="27.55" stroke="#225D5D" fill="#8CC6C5"/>
+              <use xlink:href="#img-64e47d63-89" x="46.97" y="32.19" stroke="#644B31" fill="#D0B093"/>
+              <use xlink:href="#img-64e47d63-89" x="48.52" y="41.46" stroke="#366662" fill="#9DD0CB"/>
+              <use xlink:href="#img-64e47d63-89" x="50.08" y="13.64" stroke="#3F655F" fill="#A5CFC7"/>
+              <use xlink:href="#img-64e47d63-89" x="51.64" y="9" stroke="#506358" fill="#B6CBBF"/>
+              <use xlink:href="#img-64e47d63-89" x="53.19" y="18.28" stroke="#4C635B" fill="#B2CCC2"/>
             </g>
           </g>
         </g>
@@ -426,14 +426,14 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-95">
           <g class="geometry" id="img-64e47d63-96">
             <g stroke-width="0.3" id="img-64e47d63-97">
-              <use xlink:href="#img-64e47d63-98" x="20.09" y="41.46" fill="#B5CCC2" stroke="#4E635A"/>
-              <use xlink:href="#img-64e47d63-98" x="21.9" y="27.55" fill="#7EBEC0" stroke="#0C5659"/>
-              <use xlink:href="#img-64e47d63-98" x="23.71" y="22.91" fill="#3495AC" stroke="#003347"/>
-              <use xlink:href="#img-64e47d63-98" x="25.51" y="9" fill="#ACCEC4" stroke="#46645C"/>
-              <use xlink:href="#img-64e47d63-98" x="27.32" y="36.83" fill="#57A8B5" stroke="#00434F"/>
-              <use xlink:href="#img-64e47d63-98" x="29.13" y="18.28" fill="#51A5B4" stroke="#00404E"/>
-              <use xlink:href="#img-64e47d63-98" x="30.93" y="13.64" fill="#268FA9" stroke="#002E45"/>
-              <use xlink:href="#img-64e47d63-98" x="32.74" y="32.19" fill="#8CC6C5" stroke="#225D5D"/>
+              <use xlink:href="#img-64e47d63-98" x="20.09" y="41.46" stroke="#4E635A" fill="#B5CCC2"/>
+              <use xlink:href="#img-64e47d63-98" x="21.9" y="27.55" stroke="#0C5659" fill="#7EBEC0"/>
+              <use xlink:href="#img-64e47d63-98" x="23.71" y="22.91" stroke="#003347" fill="#3495AC"/>
+              <use xlink:href="#img-64e47d63-98" x="25.51" y="9" stroke="#46645C" fill="#ACCEC4"/>
+              <use xlink:href="#img-64e47d63-98" x="27.32" y="36.83" stroke="#00434F" fill="#57A8B5"/>
+              <use xlink:href="#img-64e47d63-98" x="29.13" y="18.28" stroke="#00404E" fill="#51A5B4"/>
+              <use xlink:href="#img-64e47d63-98" x="30.93" y="13.64" stroke="#002E45" fill="#268FA9"/>
+              <use xlink:href="#img-64e47d63-98" x="32.74" y="32.19" stroke="#225D5D" fill="#8CC6C5"/>
             </g>
           </g>
         </g>
@@ -454,29 +454,29 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
   </g>
 </g>
 <defs>
-  <clipPath id="img-64e47d63-45">
-  <path d="M120.56,7 L 137.01 7 137.01 48.1 120.56 48.1" />
-</clipPath>
-  <clipPath id="img-64e47d63-63">
-  <path d="M79.65,7 L 96.1 7 96.1 48.1 79.65 48.1" />
-</clipPath>
   <clipPath id="img-64e47d63-72">
   <path d="M59.19,7 L 75.65 7 75.65 48.1 59.19 48.1" />
 </clipPath>
-  <clipPath id="img-64e47d63-27">
-  <path d="M161.47,7 L 177.92 7 177.92 48.1 161.47 48.1" />
+  <clipPath id="img-64e47d63-54">
+  <path d="M100.1,7 L 116.56 7 116.56 48.1 100.1 48.1" />
 </clipPath>
   <clipPath id="img-64e47d63-8">
   <path d="M12.61,5 L 179.92 5 179.92 60.39 12.61 60.39" />
 </clipPath>
-  <clipPath id="img-64e47d63-81">
-  <path d="M38.74,7 L 55.19 7 55.19 48.1 38.74 48.1" />
+  <clipPath id="img-64e47d63-63">
+  <path d="M79.65,7 L 96.1 7 96.1 48.1 79.65 48.1" />
 </clipPath>
   <clipPath id="img-64e47d63-36">
   <path d="M141.01,7 L 157.47 7 157.47 48.1 141.01 48.1" />
 </clipPath>
-  <clipPath id="img-64e47d63-54">
-  <path d="M100.1,7 L 116.56 7 116.56 48.1 100.1 48.1" />
+  <clipPath id="img-64e47d63-27">
+  <path d="M161.47,7 L 177.92 7 177.92 48.1 161.47 48.1" />
+</clipPath>
+  <clipPath id="img-64e47d63-45">
+  <path d="M120.56,7 L 137.01 7 137.01 48.1 120.56 48.1" />
+</clipPath>
+  <clipPath id="img-64e47d63-81">
+  <path d="M38.74,7 L 55.19 7 55.19 48.1 38.74 48.1" />
 </clipPath>
   <clipPath id="img-64e47d63-90">
   <path d="M16.29,7 L 34.74 7 34.74 48.1 16.29 48.1" />
@@ -1370,62 +1370,62 @@ plot(dataset(&quot;vcd&quot;, &quot;Suicide&quot;), xgroup=&quot;Sex&quot;, ygro
   </g>
 </g>
 <defs>
-  <clipPath id="img-0d7e651b-28">
-  <path d="M83.96,175.08 L 133 175.08 133 195.09 83.96 195.09" />
-</clipPath>
-  <clipPath id="img-0d7e651b-10">
-  <path d="M83.96,199.09 L 133 199.09 133 221.1 83.96 221.1" />
-</clipPath>
-  <clipPath id="img-0d7e651b-3">
-  <path d="M12.61,5 L 135 5 135 235.39 12.61 235.39" />
+  <clipPath id="img-0d7e651b-100">
+  <path d="M83.96,79.03 L 133 79.03 133 99.05 83.96 99.05" />
 </clipPath>
   <clipPath id="img-0d7e651b-108">
   <path d="M28.92,79.03 L 79.96 79.03 79.96 99.05 28.92 99.05" />
 </clipPath>
-  <clipPath id="img-0d7e651b-36">
-  <path d="M28.92,175.08 L 79.96 175.08 79.96 195.09 28.92 195.09" />
-</clipPath>
-  <clipPath id="img-0d7e651b-126">
-  <path d="M28.92,55.02 L 79.96 55.02 79.96 75.03 28.92 75.03" />
+  <clipPath id="img-0d7e651b-54">
+  <path d="M28.92,151.07 L 79.96 151.07 79.96 171.08 28.92 171.08" />
 </clipPath>
   <clipPath id="img-0d7e651b-136">
   <path d="M83.96,31.01 L 133 31.01 133 51.02 83.96 51.02" />
 </clipPath>
-  <clipPath id="img-0d7e651b-64">
-  <path d="M83.96,127.06 L 133 127.06 133 147.07 83.96 147.07" />
-</clipPath>
-  <clipPath id="img-0d7e651b-18">
-  <path d="M28.92,199.09 L 79.96 199.09 79.96 221.1 28.92 221.1" />
-</clipPath>
-  <clipPath id="img-0d7e651b-100">
-  <path d="M83.96,79.03 L 133 79.03 133 99.05 83.96 99.05" />
-</clipPath>
-  <clipPath id="img-0d7e651b-118">
-  <path d="M83.96,55.02 L 133 55.02 133 75.03 83.96 75.03" />
-</clipPath>
   <clipPath id="img-0d7e651b-90">
   <path d="M28.92,103.05 L 79.96 103.05 79.96 123.06 28.92 123.06" />
 </clipPath>
-  <clipPath id="img-0d7e651b-162">
-  <path d="M28.92,7 L 79.96 7 79.96 27.01 28.92 27.01" />
-</clipPath>
-  <clipPath id="img-0d7e651b-144">
-  <path d="M28.92,31.01 L 79.96 31.01 79.96 51.02 28.92 51.02" />
-</clipPath>
-  <clipPath id="img-0d7e651b-154">
-  <path d="M83.96,7 L 133 7 133 27.01 83.96 27.01" />
+  <clipPath id="img-0d7e651b-36">
+  <path d="M28.92,175.08 L 79.96 175.08 79.96 195.09 28.92 195.09" />
 </clipPath>
   <clipPath id="img-0d7e651b-82">
   <path d="M83.96,103.05 L 133 103.05 133 123.06 83.96 123.06" />
 </clipPath>
+  <clipPath id="img-0d7e651b-144">
+  <path d="M28.92,31.01 L 79.96 31.01 79.96 51.02 28.92 51.02" />
+</clipPath>
+  <clipPath id="img-0d7e651b-126">
+  <path d="M28.92,55.02 L 79.96 55.02 79.96 75.03 28.92 75.03" />
+</clipPath>
+  <clipPath id="img-0d7e651b-18">
+  <path d="M28.92,199.09 L 79.96 199.09 79.96 221.1 28.92 221.1" />
+</clipPath>
+  <clipPath id="img-0d7e651b-3">
+  <path d="M12.61,5 L 135 5 135 235.39 12.61 235.39" />
+</clipPath>
+  <clipPath id="img-0d7e651b-162">
+  <path d="M28.92,7 L 79.96 7 79.96 27.01 28.92 27.01" />
+</clipPath>
+  <clipPath id="img-0d7e651b-118">
+  <path d="M83.96,55.02 L 133 55.02 133 75.03 83.96 75.03" />
+</clipPath>
+  <clipPath id="img-0d7e651b-64">
+  <path d="M83.96,127.06 L 133 127.06 133 147.07 83.96 147.07" />
+</clipPath>
+  <clipPath id="img-0d7e651b-154">
+  <path d="M83.96,7 L 133 7 133 27.01 83.96 27.01" />
+</clipPath>
   <clipPath id="img-0d7e651b-46">
   <path d="M83.96,151.07 L 133 151.07 133 171.08 83.96 171.08" />
 </clipPath>
-  <clipPath id="img-0d7e651b-54">
-  <path d="M28.92,151.07 L 79.96 151.07 79.96 171.08 28.92 171.08" />
+  <clipPath id="img-0d7e651b-10">
+  <path d="M83.96,199.09 L 133 199.09 133 221.1 83.96 221.1" />
 </clipPath>
   <clipPath id="img-0d7e651b-72">
   <path d="M28.92,127.06 L 79.96 127.06 79.96 147.07 28.92 147.07" />
+</clipPath>
+  <clipPath id="img-0d7e651b-28">
+  <path d="M83.96,175.08 L 133 175.08 133 195.09 83.96 195.09" />
 </clipPath>
 </defs>
 </svg>
@@ -1553,14 +1553,14 @@ longdf = stack(widedf, [:var1, :var2])</code></pre></div><p>Default behavior is 
   </g>
 </g>
 <defs>
-  <clipPath id="img-86adb5a7-18">
-  <path d="M27.24,7 L 73 7 73 50.86 27.24 50.86" />
-</clipPath>
   <clipPath id="img-86adb5a7-7">
   <path d="M27.24,54.86 L 73 54.86 73 100.72 27.24 100.72" />
 </clipPath>
   <clipPath id="img-86adb5a7-3">
   <path d="M12.61,5 L 75 5 75 105.39 12.61 105.39" />
+</clipPath>
+  <clipPath id="img-86adb5a7-18">
+  <path d="M27.24,7 L 73 7 73 50.86 27.24 50.86" />
 </clipPath>
   <g id="img-86adb5a7-15">
     <circle cx="0" cy="0" r="0.9"/>
