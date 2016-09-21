@@ -1107,13 +1107,15 @@ end
 
 # Display in Juno
 
-using Juno
+import Juno: Juno, @render, media, Media, Hiccup
+
+media(Plot, Media.Plot)
 
 @render Juno.PlotPane p::Plot begin
   x, y = Juno.plotsize()
   set_default_plot_size(x*Gadfly.px, y*Gadfly.px)
-  div(d(:style=>"background: white"),
-      HTML(stringmime("text/html", p)))
+  Hiccup.div(Dict(:style=>"background: white"),
+                  HTML(stringmime("text/html", p)))
 end
 
 @render Juno.Editor p::Gadfly.Plot begin
