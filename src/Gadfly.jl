@@ -134,7 +134,7 @@ Creates layers based on elements
 
 ### Args
 * data_source: The data source as a dataframe
-* elements: The elements 
+* elements: The elements
 * mapping: mapping
 
 ### Returns
@@ -1105,6 +1105,20 @@ function display(d::REPLDisplay, ::MIME"application/pdf", p::Plot)
     open_file(filename)
 end
 
+# Display in Juno
+
+using Juno
+
+@render Juno.PlotPane p::Plot begin
+  x, y = Juno.plotsize()
+  set_default_plot_size(x*Gadfly.px, y*Gadfly.px)
+  div(d(:style=>"background: white"),
+      HTML(stringmime("text/html", p)))
+end
+
+@render Juno.Editor p::Gadfly.Plot begin
+  Juno.icon("graph")
+end
 
 include("scale.jl")
 include("coord.jl")
