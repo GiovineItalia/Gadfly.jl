@@ -13,6 +13,6 @@ while guides have some special layout considerations.
 ## Available Guides
 
 ```@contents
-Pages = map(file -> joinpath("..", "lib", "guides", file), readdir(joinpath("..", "lib", "guides")))
+Pages = map(file -> joinpath("guides", file), readdir("guides"))
 Depth = 1
 ```
