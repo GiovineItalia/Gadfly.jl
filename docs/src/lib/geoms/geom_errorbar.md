@@ -12,7 +12,7 @@ Draw vertical and/or horizontal error bars.
   * `ymin`: Lower Y-position.
   * `ymax`: Upper Y-position.
   * `y`: Y-position of the bar.
-  * `xmin`: Lef-tmost X-position
+  * `xmin`: Left-most X-position
   * `ymax`: Right-most X-position.
   * `color` (optional): Bar color (categorial or continuous)
 
