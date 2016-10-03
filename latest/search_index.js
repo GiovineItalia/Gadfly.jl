@@ -637,7 +637,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.errorbar",
     "title": "Aesthetics",
     "category": "section",
-    "text": "x: X-position of the bar.\nymin: Lower Y-position.\nymax: Upper Y-position.\ny: Y-position of the bar.\nxmin: Lef-tmost X-position\nymax: Right-most X-position.\ncolor (optional): Bar color (categorial or continuous)The x, ymin, ymax and/or y, xmin, xmax aesthetics must be defined. With the later a vertical error bar is drawn, and the former, a horizontal bar."
+    "text": "x: X-position of the bar.\nymin: Lower Y-position.\nymax: Upper Y-position.\ny: Y-position of the bar.\nxmin: Left-most X-position\nymax: Right-most X-position.\ncolor (optional): Bar color (categorial or continuous)The x, ymin, ymax and/or y, xmin, xmax aesthetics must be defined. With the later a vertical error bar is drawn, and the former, a horizontal bar."
 },
 
 {
