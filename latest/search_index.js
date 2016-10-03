@@ -1517,7 +1517,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.xticks",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)ticks = [0.1, 0.3, 0.5]\nplot(x=rand(10), y=rand(10), Geom.line, Guide.xticks(ticks=ticks))plot(x=rand(10), y=rand(10), Geom.line, Guide.xticks(ticks=ticks, label=false))plot(x=rand(10), y=rand(10), Geom.line, Guide.xticks(ticks=ticks, orientation=:vertical))"
+    "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)ticks = [0.1, 0.3, 0.5]\nplot(x=rand(10), y=rand(10), Geom.line, Guide.xticks(ticks=ticks))plot(x=rand(10), y=rand(10), Geom.line, Guide.xticks(ticks=ticks, label=false))plot(x=rand(10), y=rand(10), Geom.line, Guide.xticks(ticks=ticks, orientation=:vertical))Range types can also be usedplot(x=rand(1:10, 10), y=rand(1:10, 10), Geom.line, Guide.xticks(ticks=[1:9;]))note: Note\nThe ; in ticks=[1:9;] is required to flatten the 1:9 range type into [1, 2, 3, ...]. Alternatively, collect can be used in the following manner ticks=collect(1:9)."
 },
 
 {
@@ -1613,7 +1613,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.yticks",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)ticks = [0.2, 0.4, 0.6]\nplot(x=rand(10), y=rand(10), Geom.line, Guide.yticks(ticks=ticks))plot(x=rand(10), y=rand(10), Geom.line, Guide.yticks(ticks=ticks, label=false))plot(x=rand(10), y=rand(10), Geom.line, Guide.yticks(ticks=ticks, orientation=:vertical))"
+    "text": "using Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)ticks = [0.2, 0.4, 0.6]\nplot(x=rand(10), y=rand(10), Geom.line, Guide.yticks(ticks=ticks))plot(x=rand(10), y=rand(10), Geom.line, Guide.yticks(ticks=ticks, label=false))plot(x=rand(10), y=rand(10), Geom.line, Guide.yticks(ticks=ticks, orientation=:vertical))Range types can also be usedplot(x=rand(1:10, 10), y=rand(1:10, 10), Geom.line, Guide.yticks(ticks=[1:9;]))note: Note\nThe ; in ticks=[1:9;] is required to flatten the 1:9 range type into [1, 2, 3, ...]. Alternatively, collect can be used in the following manner ticks=collect(1:9)."
 },
 
 {
