@@ -62,7 +62,7 @@ function default_middle_color(fill_color::TransparentColor)
         fill_color.alpha)
 end
 
- 
+
 get_stroke_vector(::@compat(Void)) = []
 get_stroke_vector(vec::AbstractVector) = vec
 function get_stroke_vector(linestyle::Symbol)
@@ -89,7 +89,7 @@ end
     # Width of lines in the line geometry.
     line_width,            Measure,         0.3mm
 
-    # type of dash style (a Compose.StrokeDash object which takes a vector of sold/missing/solid/missing/... 
+    # type of dash style (a Compose.StrokeDash object which takes a vector of sold/missing/solid/missing/...
     # lengths which are applied cyclically)
     line_style,            Maybe(Vector),   nothing
 
@@ -202,6 +202,9 @@ end
 
     rug_size,             Measure,          2.0mm
 
+    # Management of axis-margin ticks.
+    tick_color,           ColorOrNothing,   nothing
+
     # TODO: This stuff is too incomprehensible to be in theme, I think. Put it
     # somewhere else.
 
@@ -224,4 +227,3 @@ end
 
 
 const default_theme = Theme()
-
