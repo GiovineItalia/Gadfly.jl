@@ -581,7 +581,7 @@ function output_aesthetics(stat::Histogram2DStatistic)
 end
 
 
-default_scales(::Histogram2DStatistic) = [Gadfly.Scale.color_continuous()]
+default_scales(::Histogram2DStatistic) = [Gadfly.get_scale(:numerical, :color)]
 
 
 const histogram2d = Histogram2DStatistic
@@ -1293,7 +1293,7 @@ end
 
 
 function default_scales(::HexBinStatistic)
-    return [Gadfly.Scale.color_continuous()]
+    return [Gadfly.get_scale(:numerical, :color)]
 end
 
 
@@ -1492,7 +1492,7 @@ const contour = ContourStatistic
 function default_scales(::ContourStatistic)
     return [Gadfly.Scale.z_func(), Gadfly.Scale.x_continuous(),
             Gadfly.Scale.y_continuous(),
-            Gadfly.Scale.color_continuous_gradient()]
+            Gadfly.get_scale(:numerical, :color)]
 end
 
 
