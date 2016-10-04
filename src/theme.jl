@@ -220,8 +220,47 @@ end
     # Number of columns in key
     key_max_columns,             Int,       4
 
+    # Discrete color scale
+    discrete_color_scale,        Scale.DiscreteColorScale, Scale.color_discrete()
+
+    # Continuous color scale
+    continuous_color_scale,      Scale.ContinuousColorScale, Scale.color_continuous()
+
 end
 
 
-const default_theme = Theme()
+global current_theme = Theme()::Theme
+
+
+style(; kwargs...) = Theme(current_theme; kwargs...)
+
+
+function set_theme(t::Theme)
+    global current_theme
+    current_theme = t
+end
+
+
+function set_theme(t::Symbol)
+    set_theme(get_theme(Val{t}))
+end
+
+
+function get_theme(::Type{Val{:default}})
+    Theme()
+end
+
+### Override default getters for color scales
+
+function get_scale(::Type{Val{:categorical}}, ::Type{Val{:color}})
+    global current_theme
+    current_theme.discrete_color_scale
+end
+
+
+function get_scale(::Type{Val{:numerical}}, ::Type{Val{:color}})
+    global current_theme
+    current_theme.continuous_color_scale
+end
+
 
