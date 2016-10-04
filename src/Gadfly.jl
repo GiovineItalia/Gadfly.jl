@@ -31,6 +31,14 @@ export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colora
 function __init__()
     # Define an XML namespace for custom attributes
     Compose.xmlns["gadfly"] = "http://www.gadflyjl.org/ns"
+    if haskey(ENV, "GADFLY_THEME")
+        theme = ENV["GADFLY_THEME"]
+        try
+            set_theme(Symbol(theme))
+        catch err
+            warn("Error loading Gadlfy theme $theme (set by GADFLY_THEME env variable)")
+        end
+    end
 end
 
 
