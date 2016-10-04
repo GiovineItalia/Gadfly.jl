@@ -57,10 +57,11 @@ include("ticks.jl")
 include("color_misc.jl")
 include("varset.jl")
 include("shapes.jl")
-include("theme.jl")
 include("data.jl")
 include("aesthetics.jl")
 include("mapping.jl")
+include("scale.jl")
+include("theme.jl")
 
 
 # The layer and plot functions can also take functions that are evaluated with
@@ -210,7 +211,7 @@ type Plot
 
     function Plot()
         new(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
-            nothing, GuideElement[], default_theme)
+            nothing, GuideElement[], current_theme)
     end
 end
 
@@ -1121,7 +1122,6 @@ end
   Juno.icon("graph")
 end
 
-include("scale.jl")
 include("coord.jl")
 include("geometry.jl")
 include("guide.jl")
