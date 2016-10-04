@@ -264,3 +264,77 @@ function get_scale(::Type{Val{:numerical}}, ::Type{Val{:color}})
 end
 
 
+### Dark theme
+
+const dark_theme = let label_color=colorant"#a1a1a1",
+    bgcolor=colorant"#222831",
+    grid_color=colorant"#575757",
+    fgcol1=colorant"#FE4365",
+    fgcol2=colorant"#eca25c",
+    fgcol3=colorant"#3f9778",
+    fgcol4=colorant"#005D7F"
+
+    function border_color(fill_color)
+        fill_color = convert(LCHab, fill_color)
+        c = LCHab(fill_color.l, fill_color.c, fill_color.h)
+        LCHab(60, 20, c.h)
+    end
+
+
+    function gen_dark_colors(n)
+      cs = distinguishable_colors(n, [fgcol1, fgcol2,fgcol3],
+          lchoices=Float64[58, 45, 72.5, 90],
+          transform=c -> deuteranopic(c, 0.1),
+          cchoices=Float64[20,40],
+          hchoices=[75,51,35,120,180,210,270,310]
+      )
+
+      convert(Vector{Color}, cs)
+    end
+
+    function lowlight_color(fill_color)
+        fill_color = convert(LCHab, fill_color)
+        c = LCHab(fill_color.l, fill_color.c, fill_color.h)
+        c2 = convert(RGBA, LCHab(c.l, 50, c.h))
+        RGBA(c2.r, c2.g, c2.b, .53)
+    end
+
+    function dark_theme_discrete_colors(;
+        levels=nothing,
+        order=nothing,
+        preserve_order=true)
+
+        Gadfly.Scale.DiscreteColorScale(
+            gen_dark_colors,
+            levels=levels,
+            order=order,
+            preserve_order=preserve_order
+        )
+    end
+
+    function dark_theme_continuous_colors()
+        Scale.color_continuous(
+          colormap=Scale.lab_gradient(fgcol4, fgcol2, fgcol1)
+        )
+    end
+
+    Theme(
+          default_color=fgcol1,
+          stroke_color=default_stroke_color,
+          panel_fill=bgcolor,
+          major_label_color=label_color,
+          minor_label_color=label_color,
+          grid_color=grid_color,
+          key_title_color=label_color,
+          key_label_color=label_color,
+          lowlight_color=lowlight_color,
+          background_color=bgcolor,
+          discrete_highlight_color=border_color,
+          discrete_color_scale=dark_theme_discrete_colors(),
+          continuous_color_scale=dark_theme_continuous_colors(),
+    )
+end
+
+function get_theme(::Type{Val{:dark}})
+    dark_theme
+end
