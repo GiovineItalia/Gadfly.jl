@@ -6,6 +6,8 @@ Author = "David Chudzicki"
 
 Create a continuous color scale that the plot will use.
 
+This can also be set as the `continuous_color_scheme` in a [`Theme`](@ref)
+
 ## Arguments
 
   * `minvalue` (optional): the data value corresponding to the bottom of the color scale (will be based on the range of the data if not specified).
