@@ -1,17 +1,28 @@
 ```@meta
-Author = "Daniel C. Jones"
+Author = "Daniel C. Jones, Shashi Gowda"
 ```
 
 # Themes
 
 Many parameters controlling the appearance of plots can be overridden by passing
-a `Theme` object to the `plot` function.
+a `Theme` object to the `plot` function. Or setting the `Theme` as the current theme using `push_theme` (see also `pop_theme` and `with_theme` below).
 
-The constructor for `Theme` takes zero or more named arguments each of which
-overrides the default theme's value.
+The constructor for `Theme` takes zero or more named arguments each of which overrides the *default* value of the field.
+
+## The Theme stack
+
+Gadfly maintains a stack of themes and applies theme values from the topmost theme in the stack. This can be useful when you want to set a theme for multiple plots and then switch back to a previous theme.
+
+`push_theme(t::Theme)` and `pop_theme()` will push and pop from this stack respectively. You can use `with_theme(f, t::Theme)` to set a theme as the current theme and call `f()`.
+
+## `style`
+
+You can use `style` to override the fields on top of the *current* theme at the top of the stack. `style(...)` returns a `Theme`. So it can be used with `push_theme` and `with_theme`.
 
 
 ## Parameters
+
+These parameters can either be used with `Theme` or `style`
 
   * `default_color`: When the color aesthetic is not bound, geometry uses this
     color for drawing. (Color)
@@ -71,6 +82,8 @@ overrides the default theme's value.
   * `bar_highlight`: Color used to stroke bars in bar plots. If a function is
     given, it's used to transform the fill color of the bars to obtain a stroke
     color. (Function, Color, or Nothing)
+  * `discrete_color_scheme`: A `DiscreteColorScale` see [Scale.color_discrete_hue](@ref)
+  * `continuous_color_scheme`: A `ContinuousColorScale` see [Scale.color_continuous](@ref)
 
 ## Examples
 
@@ -82,13 +95,51 @@ srand(12345)
 ```
 
 ```@example 1
-plot(x=rand(10), y=rand(10),
-     Theme(panel_fill=colorant"black", default_color=colorant"orange"))
+
+dark_panel = Theme(
+    panel_fill=colorant"black",
+    default_color=colorant"orange"
+)
+
+plot(x=rand(10), y=rand(10), dark_panel)
+
 ```
 
 Setting the font to Computer Modern to create a LaTeX-like look, and choosing a font size:
 
 ```@example 1
+Gadfly.push_theme(dark_panel)
+
 plot(x=rand(10), y=rand(10),
-     Theme(major_label_font="CMU Serif",minor_label_font="CMU Serif",major_label_font_size=16pt,minor_label_font_size=14pt))
+     style(major_label_font="CMU Serif",minor_label_font="CMU Serif",
+           major_label_font_size=16pt,minor_label_font_size=14pt))
+
+# can plot more plots here...
+
+Gadfly.pop_theme()
+```
+
+Same effect can be had with `with_theme`
+
+```@example 1
+Gadfly.with_theme(dark_panel) do
+
+  plot(x=rand(10), y=rand(10),
+       style(major_label_font="CMU Serif",minor_label_font="CMU Serif",
+             major_label_font_size=16pt,minor_label_font_size=14pt))
+end
+```
+
+or
+
+```@example 1
+
+Gadfly.push_theme(dark_panel)
+
+Gadfly.with_theme(
+       style(major_label_font="CMU Serif",minor_label_font="CMU Serif",
+             major_label_font_size=16pt,minor_label_font_size=14pt)) do
+
+  plot(x=rand(10), y=rand(10))
+end
 ```
