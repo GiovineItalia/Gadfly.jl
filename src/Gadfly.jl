@@ -2,7 +2,6 @@ __precompile__()
 
 module Gadfly
 
-using Codecs
 using Colors
 using Compat
 using Compose
