@@ -37,7 +37,7 @@ function __init__()
         try
             set_theme(Symbol(theme))
         catch err
-            warn("Error loading Gadlfy theme $theme (set by GADFLY_THEME env variable)")
+            warn("Error loading Gadfly theme $theme (set by GADFLY_THEME env variable)")
         end
     end
 end
