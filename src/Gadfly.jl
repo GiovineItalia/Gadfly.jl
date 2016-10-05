@@ -20,8 +20,7 @@ import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant, pa
 import Distributions: Distribution
 
 export Plot, Layer, Theme, Col, Scale, Coord, Geom, Guide, Stat, render, plot,
-       layer, spy, set_default_plot_size, set_default_plot_format,
-       prepare_display
+       style, layer, spy, set_default_plot_size, set_default_plot_format, prepare_display
 
 
 # Re-export some essentials from Compose
@@ -48,6 +47,7 @@ element_aesthetics(::Any) = []
 input_aesthetics(::Any) = []
 output_aesthetics(::Any) = []
 default_scales(::Any) = []
+default_scales(x::Any, t) = default_scales(x)
 default_statistic(::Any) = Stat.identity()
 element_coordinate_type(::Any) = Coord.cartesian
 
@@ -219,7 +219,7 @@ type Plot
 
     function Plot()
         new(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
-            nothing, GuideElement[], current_theme)
+            nothing, GuideElement[], current_theme())
     end
 end
 
@@ -567,9 +567,18 @@ function render_prepare(plot::Plot)
 
     unscaled_aesthetics = setdiff(used_aesthetics, scaled_aesthetics)
 
+    _theme(plt, lyr) = lyr.theme == nothing ? plt.theme : lyr.theme
+
     # Add default scales for statistics.
-    for element in chain(plot.statistics, [l.geom for l in plot.layers], layer_stats...)
-        for scale in default_scales(element)
+    layer_stats_with_theme = map(plot.layers, layer_stats) do l, stats
+        map(s->(s, _theme(l, plot)), collect(stats))
+    end
+
+    for element in chain([(s, plot.theme) for s in plot.statistics],
+                         [(l.geom, _theme(plot, l)) for l in plot.layers],
+                         layer_stats_with_theme...)
+
+        for scale in default_scales(element...)
             # Use the statistics default scale only when it covers some
             # aesthetic that is not already scaled.
             scale_aes = Set(element_aesthetics(scale))
@@ -609,7 +618,7 @@ function render_prepare(plot::Plot)
         end
 
         if scale_exists(t, var)
-            scale = get_scale(t, var)
+            scale = get_scale(t, var, plot.theme)
             scale_aes = Set(element_aesthetics(scale))
             for var in scale_aes
                 scales[var] = scale
@@ -631,7 +640,7 @@ function render_prepare(plot::Plot)
         end
 
         if scale_exists(t, var)
-            scale = get_scale(t, var)
+            scale = get_scale(t, var, plot.theme)
             scale_aes = Set(element_aesthetics(scale))
             for var in scale_aes
                 scales[var] = scale
@@ -1194,17 +1203,24 @@ const default_aes_scales = Dict{Symbol, Dict}(
     )
 )
 
+
+function get_scale{t,var}(::Val{t}, ::Val{var}, theme::Theme)
+    default_aes_scales[t][var]
+end
+
+
+function get_scale(t::Symbol, var::Symbol, theme::Theme)
+    get_scale(Val{t}(), Val{var}(), theme)
+end
+
+
 function scale_exists(t::Symbol, var::Symbol)
-    applicable(get_scale, Val{t}, Val{var})
-end
-
-function get_scale(t::Symbol, var::Symbol)
-    get_scale(Val{t}, Val{var})
-end
-
-for (t, scales) in default_aes_scales
-    for (var, scale) in scales
-        @eval get_scale(::Type{Val{$(QuoteNode(t))}}, ::Type{Val{$(QuoteNode(var))}}) = $(scale)
+    if !haskey(default_aes_scales, t) || !haskey(default_aes_scales[t], var)
+        method = methods(get_scale, (Val{t}, Val{var}, Theme))
+        catchall = methods(get_scale, (Val{1}, Val{nothing}, Theme))
+        first(method) !== first(catchall)
+    else
+        true
     end
 end
 
