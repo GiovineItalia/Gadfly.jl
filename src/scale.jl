@@ -503,17 +503,29 @@ function element_aesthetics(scale::DiscreteColorScale)
 end
 
 
+function default_discrete_colors(n)
+    convert(Vector{Color},
+         distinguishable_colors(n, [LCHab(70, 60, 240)],
+             transform=c -> deuteranopic(c, 0.5),
+             lchoices=Float64[65, 70, 75, 80],
+             cchoices=Float64[0, 50, 60, 70],
+             hchoices=linspace(0, 330, 24),
+         )
+     )
+end
+
 # Common discrete color scales
-function color_discrete_hue(; levels=nothing, order=nothing,
+function color_discrete_hue(f=default_discrete_colors;
+                            levels=nothing,
+                            order=nothing,
                             preserve_order=true)
+
     DiscreteColorScale(
-        h -> convert(Vector{Color},
-             distinguishable_colors(h, [LCHab(70, 60, 240)],
-                                    transform=c -> deuteranopic(c, 0.5),
-                                    lchoices=Float64[65, 70, 75, 80],
-                                    cchoices=Float64[0, 50, 60, 70],
-                                    hchoices=linspace(0, 330, 24))),
-        levels=levels, order=order, preserve_order=preserve_order)
+        default_discrete_colors,
+        levels=levels,
+        order=order,
+        preserve_order=preserve_order,
+    )
 end
 
 @deprecate discrete_color_hue(; levels=nothing, order=nothing, preserve_order=true) color_discrete_hue(; levels=levels, order=order, preserve_order=preserve_order)

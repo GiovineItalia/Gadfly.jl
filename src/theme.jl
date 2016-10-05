@@ -229,38 +229,111 @@ end
 end
 
 
-global current_theme = Theme()::Theme
+const theme_stack = Theme[Theme()]
+
+"""
+Get Theme on top of the theme stack
+"""
+current_theme() = theme_stack[end]
 
 
-style(; kwargs...) = Theme(current_theme; kwargs...)
+"""
+Set some attributes in the current `Theme`.
+See `Theme` for available field.
+"""
+style(; kwargs...) = Theme(current_theme(); kwargs...)
 
 
-function set_theme(t::Theme)
-    global current_theme
-    current_theme = t
+"""
+Set the current theme. Pushes the theme to a stack. You can pop it using `pop_theme`.
+
+You can use this in conjunction with `style` to
+set a subset of Theme attributes.
+
+    push_theme(style(background_color=colorant"#888888")))
+
+See also `with_theme`
+"""
+function push_theme(t::Theme)
+    push!(theme_stack, t)
+    nothing
 end
 
 
-function set_theme(t::Symbol)
-    set_theme(get_theme(Val{t}))
+"""
+Go back to using the previous theme
+
+See also `push_theme` and `with_theme`
+"""
+function pop_theme()
+    if length(theme_stack) == 1
+        error("There default theme cannot be removed")
+    end
+
+    pop!(theme_stack)
 end
 
 
-function get_theme(::Type{Val{:default}})
+"""
+Push a theme by its name. Available options are `:default` and `:dark`.
+
+A new theme can be added by adding a method to `get_theme`
+
+    get_theme(::Val{:mytheme}) = Theme(...)
+
+    push_theme(:mytheme) # will set the above theme
+"""
+function push_theme(t::Symbol)
+    push_theme(get_theme(Val{t}()))
+end
+
+
+"""
+Register a theme by name.
+
+    get_theme(::Val{:mytheme}) = Theme(...)
+
+    push_theme(:mytheme) # will set the above theme
+
+See also: push_theme, with_theme
+"""
+function get_theme{name}(::Val{name})
+    error("No theme $name found")
+end
+
+
+"""
+Call a function after setting a new theme.
+
+Theme can be a `Theme` object or a symbol.
+
+You can use this in conjunction with `style` to
+set a subset of Theme attributes.
+
+    with_theme(style(background_color=colorant"#888888"))) do
+        plot(x=rand(10), y=rand(10))
+    end
+"""
+function with_theme(f, theme)
+    push_theme(theme)
+    p = f()
+    pop_theme()
+    p
+end
+
+function get_theme(::Val{:default})
     Theme()
 end
 
 ### Override default getters for color scales
 
-function get_scale(::Type{Val{:categorical}}, ::Type{Val{:color}})
-    global current_theme
-    current_theme.discrete_color_scale
+function get_scale(::Val{:categorical}, ::Val{:color}, theme::Theme=current_theme())
+    theme.discrete_color_scale
 end
 
 
-function get_scale(::Type{Val{:numerical}}, ::Type{Val{:color}})
-    global current_theme
-    current_theme.continuous_color_scale
+function get_scale(::Val{:numerical}, ::Val{:color}, theme::Theme=current_theme())
+    theme.continuous_color_scale
 end
 
 
@@ -335,6 +408,6 @@ const dark_theme = let label_color=colorant"#a1a1a1",
     )
 end
 
-function get_theme(::Type{Val{:dark}})
+function get_theme(::Val{:dark})
     dark_theme
 end
