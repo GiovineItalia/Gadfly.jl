@@ -986,6 +986,7 @@ end
 
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
+    global show
     @compat function show(io::IO, ::MIME"image/png", p::Plot)
         draw(PNG(io, Compose.default_graphic_width,
                  Compose.default_graphic_height), p)
@@ -994,9 +995,10 @@ end
 
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
+    global show
     @compat function show(io::IO, ::MIME"application/postscript", p::Plot)
         draw(PS(io, Compose.default_graphic_width,
-             Compose.default_graphic_height), p)
+             Compose.default_graphic_height), p);
     end
 end
 
