@@ -40,6 +40,10 @@ function gen_colors(n)
   convert(Vector{Color}, cs)
 end
 
+using RDatasets
+
+iris = dataset("datasets", "iris")
+
 plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
      Geom.point, Scale.color_discrete(gen_colors))
 
@@ -52,13 +56,15 @@ plot(x=rand(12), y=rand(12), color=repeat([1,2,3], outer=[4]),
      Scale.color_discrete())
 ```
 
-To set a default color scale for plots, you can set it in the current [Theme](@ref) using `set_theme`, using `style` to modify the current theme.
+To set a default color scale for plots, you can set it in the current [Theme](@ref) using `push_theme`, using `style` to modify the current theme.
 
 ```@example 1
-Gadfly.set_theme(
+Gadfly.push_theme(
     style(
         discrete_color_scale=Scale.color_discrete(gen_colors)
     )
 )
+
+Gadfly.pop_theme() # hide
 ```
 
