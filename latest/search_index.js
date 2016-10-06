@@ -213,7 +213,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Themes",
     "category": "page",
-    "text": "Author = \"Daniel C. Jones\""
+    "text": "Author = \"Daniel C. Jones, Shashi Gowda\""
 },
 
 {
@@ -221,7 +221,23 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Themes",
     "category": "section",
-    "text": "Many parameters controlling the appearance of plots can be overridden by passing a Theme object to the plot function.The constructor for Theme takes zero or more named arguments each of which overrides the default theme's value."
+    "text": "Many parameters controlling the appearance of plots can be overridden by passing a Theme object to the plot function. Or setting the Theme as the current theme using push_theme (see also pop_theme and with_theme below).The constructor for Theme takes zero or more named arguments each of which overrides the default value of the field."
+},
+
+{
+    "location": "man/themes.html#The-Theme-stack-1",
+    "page": "Themes",
+    "title": "The Theme stack",
+    "category": "section",
+    "text": "Gadfly maintains a stack of themes and applies theme values from the topmost theme in the stack. This can be useful when you want to set a theme for multiple plots and then switch back to a previous theme.push_theme(t::Theme) and pop_theme() will push and pop from this stack respectively. You can use with_theme(f, t::Theme) to set a theme as the current theme and call f()."
+},
+
+{
+    "location": "man/themes.html#style-1",
+    "page": "Themes",
+    "title": "style",
+    "category": "section",
+    "text": "You can use style to override the fields on top of the current theme at the top of the stack. style(...) returns a Theme. So it can be used with push_theme and with_theme."
 },
 
 {
@@ -229,7 +245,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Parameters",
     "category": "section",
-    "text": "default_color: When the color aesthetic is not bound, geometry uses this color for drawing. (Color)\ndefault_point_size: Size of points in the point and boxplot geometry.  (Measure)\nline_width: Width of lines in the line geometry. (Measure)\npanel_fill: Background color used in the main plot panel. ( Color or Nothing)\npanel_opacity: Opacity of the plot background panel. (Float in [0.0, 1.0])\npanel_stroke: Border color of the main plot panel. (Color or Nothing)\nbackground_color: Background color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding: How much padding should be put around the plot as a whole (Measure)\ngrid_color: Color of grid lines. (Color or Nothing)\ngrid_color_focused: In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width: Width of grid lines. (Measure)\nminor_label_font: Font used for minor labels such as guide entries and labels. (String)\nminor_label_font_size: Font size used for minor labels. (Measure)\nminor_label_color: Color used for minor labels. (Color)\nmajor_label_font: Font used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size: Font size used for major labels. (Measure)\nmajor_label_color: Color used for major labels. (Color)\nkey_position: Where key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, or :none. Setting to :none disables the key. (Symbol)\nkey_title_font: Font used for titles of keys. (String)\nkey_title_font_size: Font size used for key titles. (Measure)\nkey_title_color: Color used for key titles. (Color)\nkey_label_font: Font used for key entry labels. (String)\nkey_label_font_size: Font size used for key entry labels. (Measure)\nkey_label_color: Color used for key entry labels. (Color)\nkey_max_columns: Maximum number of columns for key entry labels. (Int)\nbar_spacing: Spacing between bars in Geom.bar. (Measure)\nboxplot_spacing: Spacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length: Length of caps on error bars. (Measure)\nhighlight_width: Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color and continuous_highlight_color: Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color: Color used to draw background geometry, such as Geom.ribbon. This is a function that alters the fill color of the geometry. (Function)\nlowlight_opacity: Opacity of background geometry such as Geom.ribbon. (Float64)\nmiddle_color: Color altering function used to draw the midline in boxplots. (Function)\nmiddle_width: Width of the middle line in boxplots. (Measure)\nguide_title_position: One of :left, :center, :right indicating the  placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape: The shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nbar_highlight: Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)"
+    "text": "These parameters can either be used with Theme or styledefault_color: When the color aesthetic is not bound, geometry uses this color for drawing. (Color)\ndefault_point_size: Size of points in the point and boxplot geometry.  (Measure)\nline_width: Width of lines in the line geometry. (Measure)\npanel_fill: Background color used in the main plot panel. ( Color or Nothing)\npanel_opacity: Opacity of the plot background panel. (Float in [0.0, 1.0])\npanel_stroke: Border color of the main plot panel. (Color or Nothing)\nbackground_color: Background color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding: How much padding should be put around the plot as a whole (Measure)\ngrid_color: Color of grid lines. (Color or Nothing)\ngrid_color_focused: In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width: Width of grid lines. (Measure)\nminor_label_font: Font used for minor labels such as guide entries and labels. (String)\nminor_label_font_size: Font size used for minor labels. (Measure)\nminor_label_color: Color used for minor labels. (Color)\nmajor_label_font: Font used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size: Font size used for major labels. (Measure)\nmajor_label_color: Color used for major labels. (Color)\nkey_position: Where key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, or :none. Setting to :none disables the key. (Symbol)\nkey_title_font: Font used for titles of keys. (String)\nkey_title_font_size: Font size used for key titles. (Measure)\nkey_title_color: Color used for key titles. (Color)\nkey_label_font: Font used for key entry labels. (String)\nkey_label_font_size: Font size used for key entry labels. (Measure)\nkey_label_color: Color used for key entry labels. (Color)\nkey_max_columns: Maximum number of columns for key entry labels. (Int)\nbar_spacing: Spacing between bars in Geom.bar. (Measure)\nboxplot_spacing: Spacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length: Length of caps on error bars. (Measure)\nhighlight_width: Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color and continuous_highlight_color: Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color: Color used to draw background geometry, such as Geom.ribbon. This is a function that alters the fill color of the geometry. (Function)\nlowlight_opacity: Opacity of background geometry such as Geom.ribbon. (Float64)\nmiddle_color: Color altering function used to draw the midline in boxplots. (Function)\nmiddle_width: Width of the middle line in boxplots. (Measure)\nguide_title_position: One of :left, :center, :right indicating the  placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape: The shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nbar_highlight: Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\ndiscrete_color_scheme: A DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scheme: A ContinuousColorScale see Scale.color_continuous"
 },
 
 {
@@ -237,7 +253,23 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(12345)plot(x=rand(10), y=rand(10),\n     Theme(panel_fill=colorant\"black\", default_color=colorant\"orange\"))Setting the font to Computer Modern to create a LaTeX-like look, and choosing a font size:plot(x=rand(10), y=rand(10),\n     Theme(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",major_label_font_size=16pt,minor_label_font_size=14pt))"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(12345)\ndark_panel = Theme(\n    panel_fill=colorant\"black\",\n    default_color=colorant\"orange\"\n)\n\nplot(x=rand(10), y=rand(10), dark_panel)\nSetting the font to Computer Modern to create a LaTeX-like look, and choosing a font size:Gadfly.push_theme(dark_panel)\n\np = plot(x=rand(10), y=rand(10),\n     style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n           major_label_font_size=16pt,minor_label_font_size=14pt))\n\n# can plot more plots here...\n\nGadfly.pop_theme()\n\np # hideSame effect can be had with with_themeGadfly.with_theme(dark_panel) do\n\n  plot(x=rand(10), y=rand(10),\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt))\nend\nnothing # hideor\nGadfly.push_theme(dark_panel)\n\nGadfly.with_theme(\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt)) do\n\n  plot(x=rand(10), y=rand(10))\n\nend\n\nGadfly.pop_theme()\nnothing # hide"
+},
+
+{
+    "location": "man/themes.html#Named-themes-1",
+    "page": "Themes",
+    "title": "Named themes",
+    "category": "section",
+    "text": "To register a theme by name, you can extend Gadfly.get_theme(::Val{:theme_name}) to return a Theme object.Gadfly.get_theme(::Val{:orange}) =\n    Theme(default_color=colorant\"orange\")\n\nGadfly.with_theme(:orange) do\n  plot(x=[1:10;], y=rand(10), Geom.bar)\nendGadfly comes built in with 2 named themes: :default and :dark. You can also set a theme to use by default by setting the GADFLY_THEME environment variable before loading Gadfly."
+},
+
+{
+    "location": "man/themes.html#The-Dark-theme-1",
+    "page": "Themes",
+    "title": "The Dark theme",
+    "category": "section",
+    "text": "This is one of the two themes the ship with Gadfly the other being :default. Here are a few plots that use the dark theme.Gadfly.push_theme(:dark)\nnothing # hideplot(dataset(\"datasets\", \"iris\"),\n    x=\"SepalLength\", y=\"SepalWidth\", color=\"Species\", Geom.point)using RDatasets\n\ngasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)using DataFrames\n\nxs = 0:0.1:20\n\ndf_cos = DataFrame(\n    x=xs,\n    y=cos(xs),\n    ymin=cos(xs) .- 0.5,\n    ymax=cos(xs) .+ 0.5,\n    f=\"cos\"\n)\n\ndf_sin = DataFrame(\n    x=xs,\n    y=sin(xs),\n    ymin=sin(xs) .- 0.5,\n    ymax=sin(xs) .+ 0.5,\n    f=\"sin\"\n)\n\ndf = vcat(df_cos, df_sin)\np = plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)using Distributions\n\nX = rand(MultivariateNormal([0.0, 0.0], [1.0 0.5; 0.5 1.0]), 10000);\nplot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))Gadfly.pop_theme()"
 },
 
 {
@@ -1925,7 +1957,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_continuous",
     "title": "Scale.color_continuous",
     "category": "section",
-    "text": "Create a continuous color scale that the plot will use."
+    "text": "Create a continuous color scale that the plot will use.This can also be set as the continuous_color_scheme in a Theme"
 },
 
 {
@@ -1973,7 +2005,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_discrete_hue",
     "title": "Scale.color_discrete_hue",
     "category": "section",
-    "text": "Create a discrete color scale to be used for the plot. Scale.discrete_color is an alias for Scale.color_discrete_hue."
+    "text": "Create a discrete color scale to be used for the plot. Scale.color_discrete is an alias for Scale.color_discrete_hue."
 },
 
 {
@@ -1981,7 +2013,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_discrete_hue",
     "title": "Arguments",
     "category": "section",
-    "text": "levels (optional): Explicitly set levels used by the scale. Order is respected.\norder (optional): A vector of integers giving a permutation of the levels default order."
+    "text": "f (optional): A function f(n) that produces a vector of n colors. Usually distinguishable_colors can be used for this, with parameters tuned to your liking.\nlevels (optional, keyword): Explicitly set levels used by the scale.\norder (optional, keyword): A vector of integers giving a permutation of the levels default order.\npreserve_order (optional, keyword): If set to true, orders levels as they appear in the data"
 },
 
 {
@@ -1989,7 +2021,15 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_discrete_hue",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly\nsrand(1234)This forces the use of a discrete scale on data that would otherwise receive a continuous scale:plot(x=rand(12), y=rand(12), color=repeat([1,2,3], outer=[4]),\n     Scale.color_discrete())"
+    "text": "using Gadfly\nsrand(1234)"
+},
+
+{
+    "location": "lib/scales/scale_color_discrete_hue.html#Examples-2",
+    "page": "Scale.color_discrete_hue",
+    "title": "Examples",
+    "category": "section",
+    "text": "You can set a discrete color scale of your choice in a plot.\nfunction gen_colors(n)\n  cs = distinguishable_colors(n,\n      [colorant\"#FE4365\", colorant\"#eca25c\"], # seed colors\n      lchoices=Float64[58, 45, 72.5, 90],     # lightness choices\n      transform=c -> deuteranopic(c, 0.1),    # color transform\n      cchoices=Float64[20,40],                # chroma choices\n      hchoices=[75,51,35,120,180,210,270,310] # hue choices\n  )\n\n  convert(Vector{Color}, cs)\nend\n\nusing RDatasets\n\niris = dataset(\"datasets\", \"iris\")\n\nplot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,\n     Geom.point, Scale.color_discrete(gen_colors))\nYou can force the use of a discrete scale on data that would otherwise receive a continuous scale:plot(x=rand(12), y=rand(12), color=repeat([1,2,3], outer=[4]),\n     Scale.color_discrete())To set a default color scale for plots, you can set it in the current Theme using push_theme, using style to modify the current theme.Gadfly.push_theme(\n    style(\n        discrete_color_scale=Scale.color_discrete(gen_colors)\n    )\n)\n\nGadfly.pop_theme() # hide"
 },
 
 {
