@@ -110,13 +110,15 @@ Setting the font to Computer Modern to create a LaTeX-like look, and choosing a 
 ```@example 1
 Gadfly.push_theme(dark_panel)
 
-plot(x=rand(10), y=rand(10),
+p = plot(x=rand(10), y=rand(10),
      style(major_label_font="CMU Serif",minor_label_font="CMU Serif",
            major_label_font_size=16pt,minor_label_font_size=14pt))
 
 # can plot more plots here...
 
 Gadfly.pop_theme()
+
+p # hide
 ```
 
 Same effect can be had with `with_theme`
@@ -128,6 +130,7 @@ Gadfly.with_theme(dark_panel) do
        style(major_label_font="CMU Serif",minor_label_font="CMU Serif",
              major_label_font_size=16pt,minor_label_font_size=14pt))
 end
+nothing # hide
 ```
 
 or
@@ -141,5 +144,83 @@ Gadfly.with_theme(
              major_label_font_size=16pt,minor_label_font_size=14pt)) do
 
   plot(x=rand(10), y=rand(10))
+
 end
+
+Gadfly.pop_theme()
+nothing # hide
+```
+
+## Named themes
+
+To register a theme by name, you can extend `Gadfly.get_theme(::Val{:theme_name})` to return a Theme object.
+
+```@example 1
+Gadfly.get_theme(::Val{:orange}) =
+    Theme(default_color=colorant"orange")
+
+Gadfly.with_theme(:orange) do
+  plot(x=[1:10;], y=rand(10), Geom.bar)
+end
+```
+
+Gadfly comes built in with 2 named themes: `:default` and `:dark`. You can also set a theme to use by default by setting the `GADFLY_THEME` environment variable *before* loading Gadfly.
+
+## The Dark theme
+
+This is one of the two themes the ship with Gadfly the other being `:default`. Here are a few plots that use the dark theme.
+
+```@example 1
+Gadfly.push_theme(:dark)
+nothing # hide
+```
+
+```@example 1
+plot(dataset("datasets", "iris"),
+    x="SepalLength", y="SepalWidth", color="Species", Geom.point)
+```
+
+```@example 1
+using RDatasets
+
+gasoline = dataset("Ecdat", "Gasoline")
+
+plot(gasoline, x=:Year, y=:LGasPCar, color=:Country,
+         Geom.point, Geom.line)
+```
+
+```@example 1
+using DataFrames
+
+xs = 0:0.1:20
+
+df_cos = DataFrame(
+    x=xs,
+    y=cos(xs),
+    ymin=cos(xs) .- 0.5,
+    ymax=cos(xs) .+ 0.5,
+    f="cos"
+)
+
+df_sin = DataFrame(
+    x=xs,
+    y=sin(xs),
+    ymin=sin(xs) .- 0.5,
+    ymax=sin(xs) .+ 0.5,
+    f="sin"
+)
+
+df = vcat(df_cos, df_sin)
+p = plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)
+```
+
+```@example 1
+using Distributions
+
+X = rand(MultivariateNormal([0.0, 0.0], [1.0 0.5; 0.5 1.0]), 10000);
+plot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))
+```
+
+```@example 1
+Gadfly.pop_theme()
 ```
