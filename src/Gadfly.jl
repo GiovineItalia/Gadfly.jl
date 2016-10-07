@@ -33,9 +33,10 @@ function __init__()
     if haskey(ENV, "GADFLY_THEME")
         theme = ENV["GADFLY_THEME"]
         try
-            set_theme(Symbol(theme))
+            push_theme(Symbol(strip(theme)))
         catch err
             warn("Error loading Gadfly theme $theme (set by GADFLY_THEME env variable)")
+            show(err)
         end
     end
 end
