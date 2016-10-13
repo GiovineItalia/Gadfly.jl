@@ -39,27 +39,27 @@ Pkg.add("Gadfly")
 ## Contributing and Questions
 
 This is a new and fairly complex piece of software. [Filing an
-issue](https://github.com/dcjones/Gadfly.jl/issues/new) to report a bug,
-counterintuitive behavior, or even requesting a feature is extremely valuable in
-helping us prioritize what to work on, so don't hesitate.
+issue](https://github.com/GiovineItalia/Gadfly.jl/issues/new) to report a
+bug, counterintuitive behavior, or even requesting a feature is extremely
+valuable in helping us prioritize what to work on, so don't hesitate.
 
 If you have a question then you can ask for help in the [Gitter chat room][gitter-url].
 
 [docs-latest-img]: https://img.shields.io/badge/docs-latest-blue.svg
-[docs-latest-url]: https://dcjones.github.io/Gadfly.jl/latest
+[docs-latest-url]: http://gadflyjl.org/latest
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
-[docs-stable-url]: https://dcjones.github.io/Gadfly.jl/stable
+[docs-stable-url]: http://gadflyjl.org/stable
 
 [pkg-0.4-img]: http://pkg.julialang.org/badges/Gadfly_0.4.svg
 [pkg-0.4-url]: http://pkg.julialang.org/?pkg=Gadfly
 [pkg-0.5-img]: http://pkg.julialang.org/badges/Gadfly_0.5.svg
 [pkg-0.5-url]: http://pkg.julialang.org/?pkg=Gadfly
 
-[travis-img]: http://img.shields.io/travis/dcjones/Gadfly.jl.svg
-[travis-url]: https://travis-ci.org/dcjones/Gadfly.jl
-[codecov-img]: http://img.shields.io/coveralls/dcjones/Gadfly.jl.svg
-[codecov-url]: https://coveralls.io/r/dcjones/Gadfly.jl
+[travis-img]: http://img.shields.io/travis/GiovineItalia/Gadfly.jl.svg
+[travis-url]: https://travis-ci.org/GiovineItalia/Gadfly.jl
+[codecov-img]: http://img.shields.io/coveralls/GiovineItalia/Gadfly.jl.svg
+[codecov-url]: https://coveralls.io/r/GiovineItalia/Gadfly.jl
 
 [citation-img]: https://zenodo.org/badge/6322/dcjones/Gadfly.jl.png
 [citation-url]: http://dx.doi.org/10.5281/zenodo.11876
