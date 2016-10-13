@@ -1,5 +1,12 @@
 #!/usr/bin/env julia
 
+global prev_theme=nothing
+
+if haskey(ENV, "GADFLY_THEME")
+    prev_theme = ENV["GADFLY_THEME"]
+    pop!(ENV, "GADFLY_THEME")
+end
+
 using RDatasets, Gadfly, Compat
 
 tests = [
@@ -183,6 +190,10 @@ function run_tests(output_filename)
         """)
 
     close(output)
+end
+
+if prev_theme !== nothing
+    ENV["GADFLY_THEME"] = prev_theme
 end
 
 
