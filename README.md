@@ -58,8 +58,8 @@ If you have a question then you can ask for help in the [Gitter chat room][gitte
 
 [travis-img]: http://img.shields.io/travis/GiovineItalia/Gadfly.jl.svg
 [travis-url]: https://travis-ci.org/GiovineItalia/Gadfly.jl
-[codecov-img]: http://img.shields.io/coveralls/GiovineItalia/Gadfly.jl.svg
-[codecov-url]: https://coveralls.io/r/GiovineItalia/Gadfly.jl
+[codecov-img]: https://codecov.io/gh/GiovineItalia/Gadfly.jl/branch/master/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/GiovineItalia/Gadfly.jl
 
 [citation-img]: https://zenodo.org/badge/6322/dcjones/Gadfly.jl.png
 [citation-url]: http://dx.doi.org/10.5281/zenodo.11876
