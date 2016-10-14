@@ -128,7 +128,7 @@ the gaps with reasonable defaults.
 ## Rendering
 
 Gadfly uses a custom graphics library called
-[Compose](https://github.com/dcjones/Compose.jl), which is an attempt at a
+[Compose](https://github.com/GiovineItalia/Compose.jl), which is an attempt at a
 more elegant, purely functional take on the R `grid` package. It allows
 mixing of absolute and relative units and complex coordinate transforms.
 The primary backend is a native SVG generator (almost native: it uses

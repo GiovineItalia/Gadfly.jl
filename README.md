@@ -1,5 +1,5 @@
 <div align="center"> <img
-src="https://cdn.rawgit.com/dcjones/Gadfly.jl/master/docs/src/assets/logo.svg"
+src="https://cdn.rawgit.com/GiovineItalia/Gadfly.jl/master/docs/src/assets/logo.svg"
 alt="Gadfly Logo" width="210"></img> </div>
 
 | **Documentation**                                                               | **PackageEvaluator**                                            | **Build Status**                                                                                |
@@ -61,7 +61,7 @@ If you have a question then you can ask for help in the [Gitter chat room][gitte
 [codecov-img]: http://img.shields.io/coveralls/GiovineItalia/Gadfly.jl.svg
 [codecov-url]: https://coveralls.io/r/GiovineItalia/Gadfly.jl
 
-[citation-img]: https://zenodo.org/badge/6322/dcjones/Gadfly.jl.png
+[citation-img]: https://zenodo.org/badge/DOI/10.5281/zenodo.11876.svg
 [citation-url]: http://dx.doi.org/10.5281/zenodo.11876
 
 [gog-book]: http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html
