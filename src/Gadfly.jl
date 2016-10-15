@@ -38,6 +38,8 @@ function __init__()
             warn("Error loading Gadfly theme $theme (set by GADFLY_THEME env variable)")
             show(err)
         end
+    else
+        push_theme(Juno.isactive() ? :dark : :default)
     end
 end
 
@@ -1134,8 +1136,7 @@ media(Plot, Media.Plot)
 @render Juno.PlotPane p::Plot begin
   x, y = Juno.plotsize()
   set_default_plot_size(x*Gadfly.px, y*Gadfly.px)
-  Hiccup.div(Dict(:style=>"background: white"),
-                  HTML(stringmime("text/html", p)))
+  HTML(stringmime("text/html", p))
 end
 
 @render Juno.Editor p::Gadfly.Plot begin
