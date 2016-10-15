@@ -1134,13 +1134,13 @@ import Juno: Juno, @render, media, Media, Hiccup
 media(Plot, Media.Plot)
 
 @render Juno.PlotPane p::Plot begin
-  x, y = Juno.plotsize()
-  set_default_plot_size(x*Gadfly.px, y*Gadfly.px)
-  HTML(stringmime("text/html", p))
+    x, y = Juno.plotsize()
+    set_default_plot_size(x*Gadfly.px, y*Gadfly.px)
+    HTML(stringmime("text/html", p))
 end
 
 @render Juno.Editor p::Gadfly.Plot begin
-  Juno.icon("graph")
+    Juno.icon("graph")
 end
 
 include("coord.jl")
