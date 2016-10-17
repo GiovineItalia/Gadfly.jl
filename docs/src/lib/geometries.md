@@ -13,6 +13,6 @@ with those same two aesthetics.
 ## Available Geometries
 
 ```@contents
-Pages = map(file -> joinpath("..", "lib", "geoms", file), readdir(joinpath("..", "lib", "geoms")))
+Pages = map(file -> joinpath("geoms", file), readdir("geoms"))
 Depth = 1
 ```

@@ -5,7 +5,7 @@ load_dir(x) = map(file -> joinpath("lib", x, file), readdir(joinpath(Base.source
 makedocs(
     modules = [Gadfly],
     clean = false,
-    format = Documenter.Formats.HTML,
+    format = :html,
     sitename = "Gadfly.jl",
     pages = Any[
         "Home" => "index.md",
@@ -15,19 +15,14 @@ makedocs(
             "Stacks & Layers" => "man/layers.md",
             "Backends" => "man/backends.md",
             "Themes" => "man/themes.md",
-            "Geometries" => "man/geometries.md",
-            "Guides" => "man/guides.md",
-            "Statistics" => "man/stats.md",
-            "Coords" => "man/coords.md",
-            "Scales" => "man/scales.md"
         ],
         "Library" => Any[
             "Rendering Pipeline" => "lib/dev_pipeline.md",
-            "geoms" => load_dir("geoms"),
-            "guides" => load_dir("guides"),
-            "stats" => load_dir("stats"),
-            "coords" => load_dir("coords"),
-            "scales" => load_dir("scales")
+            hide("Geometries" => "lib/geometries.md", load_dir("geoms")),
+            hide("Guides" => "lib/guides.md", load_dir("guides")),
+            hide("Statistics" => "lib/stats.md", load_dir("stats")),
+            hide("Coords" => "lib/coords.md", load_dir("coords")),
+            hide("Scales" => "lib/scales.md", load_dir("scales")),
         ]
     ]
 )

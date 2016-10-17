@@ -14,6 +14,6 @@ identified.
 ## Available Scales
 
 ```@contents
-Pages = map(file -> joinpath("..", "lib", "scales", file), readdir(joinpath("..", "lib", "scales")))
+Pages = map(file -> joinpath("scales", file), readdir("scales"))
 Depth = 1
 ```

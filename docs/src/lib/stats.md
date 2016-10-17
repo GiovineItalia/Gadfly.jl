@@ -13,6 +13,6 @@ hinge, and upper and lower fence aesthetics.
 ## Available Statistics
 
 ```@contents
-Pages = map(file -> joinpath("..", "lib", "stats", file), readdir(joinpath("..", "lib", "stats")))
+Pages = map(file -> joinpath("stats", file), readdir("stats"))
 Depth = 1
 ```
