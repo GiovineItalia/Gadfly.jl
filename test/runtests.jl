@@ -7,7 +7,7 @@ if haskey(ENV, "GADFLY_THEME")
     pop!(ENV, "GADFLY_THEME")
 end
 
-using RDatasets, Gadfly, Compat
+using RDatasets, Gadfly, Compat, Cairo, Fontconfig
 
 tests = [
     ("points",                                6inch, 3inch),
@@ -146,6 +146,7 @@ function run_tests(output_filename)
         end
 
         for (backend_name, backend) in backends
+            @show Compose.cairo_provider
             println(STDERR, "Rendering $(name) on $(backend_name) backend.")
             try
                 p = evalfile(joinpath(testdir, "$(name).jl"))

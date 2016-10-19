@@ -859,4 +859,5 @@ function _precompile_()
     precompile(Gadfly.Scale.discretize, (DataArrays.DataArray{Int32, 1}, Void, Void,))
     precompile(Gadfly.Scale.discretize, (Array{Int64, 1}, Void, Void,))
     precompile(Gadfly.Scale.discretize, (DataArrays.DataArray{Int64, 1}, Void, Void,))
+    stringmime(MIME"text/html"(), plot(x=rand(10), y=rand(10)))
 end

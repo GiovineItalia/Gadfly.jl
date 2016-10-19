@@ -9,11 +9,12 @@ using DataArrays
 using DataFrames
 using DataStructures
 using JSON
+using Requires
 using Showoff
 
 import Iterators
 import Iterators: distinct, drop, chain
-import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant, parse_colorant_vec
+import Compose: draw, hstack, vstack, gridstack, parse_colorant, parse_colorant_vec
 @compat import Base: +, -, /, *,
              copy, push!, start, next, done, show, getindex, cat,
              show, isfinite, display
@@ -985,19 +986,13 @@ end
 end
 
 
-try
-    getfield(Compose, :Cairo) # throws if Cairo isn't being used
-    global show
-    @compat function show(io::IO, ::MIME"image/png", p::Plot)
+@require Cairo begin # throws if Cairo isn't being used
+    @compat function Base.show(io::IO, ::MIME"image/png", p::Plot)
         draw(PNG(io, Compose.default_graphic_width,
                  Compose.default_graphic_height), p)
     end
-end
 
-try
-    getfield(Compose, :Cairo) # throws if Cairo isn't being used
-    global show
-    @compat function show(io::IO, ::MIME"application/postscript", p::Plot)
+    @compat function Base.show(io::IO, ::MIME"application/postscript", p::Plot)
         draw(PS(io, Compose.default_graphic_width,
              Compose.default_graphic_height), p);
     end
