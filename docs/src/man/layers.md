@@ -57,8 +57,8 @@ plot details than is available with [Geom.subplot_grid](@ref).
 ```julia
 p1 = plot(x=[1,2,3], y=[4,5,6])
 p2 = plot(x=[1,2,3], y=[6,7,8])
-draw(PDF("p1and2.pdf", 6inch, 6inch), vstack(p1,p2))
+vstack(p1,p2)
 p3 = plot(x=[5,7,8], y=[8,9,10])
 p4 = plot(x=[5,7,8], y=[10,11,12])
-draw(PDF("p1to4.pdf", 6inch, 9inch), vstack(hstack(p1,p2),hstack(p3,p4)))
+vstack(hstack(p1,p2),hstack(p3,p4))
 ```
