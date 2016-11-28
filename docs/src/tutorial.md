@@ -37,11 +37,12 @@ grammar.
 Let's get to it.
 
 ```@example 1
-p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)
+p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point);
 nothing # hide
 ```
 
-This produces a `Plot` object. It can be drawn on one or more backends using `draw`.
+This produces a `Plot` object. It can be saved to a file by drawing to one or
+more backends using `draw`.
 
 ```julia
 img = SVG("iris_plot.svg", 6inch, 4inch)
@@ -54,8 +55,31 @@ Now we have the following charming little SVG image.
 p # hide
 ```
 
-For the rest of the demonstrations, we'll omit the `draw` call for
-brevity.
+If you are working at the REPL, a quicker way to see the image is to omit
+the semi-colon trailing `plot`.  This automatically renders the image to
+your default multimedia display, typically an internet browser.  No need
+to capture the output argument in this case.
+
+```
+plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)
+```
+
+Alternatively one can manually call `display` on a `Plot` object.  This
+workflow is necessary when `display` would not otherwise be called
+automatically.
+
+```
+function get_to_it(d)
+  ppoint = plot(d, x=:SepalLength, y=:SepalWidth, Geom.point)
+  pline = plot(d, x=:SepalLength, y=:SepalWidth, Geom.line)
+  ppoint, pline
+end
+ps = get_to_it(iris)
+map(display, ps)
+```
+
+For the rest of the demonstrations, we'll simply omit the trailing semi-colon
+for brevity.
 
 In this plot we've mapped the x aesthetic to the `SepalLength` column and
 the y aesthetic to the `SepalWidth`. The last argument,
@@ -64,7 +88,7 @@ render delightful figures. Adding other geometries produces layers, which
 may or may not result in a coherent plot.
 
 ```@example 1
-p = plot(iris, x=:SepalLength, y=:SepalWidth,
+plot(iris, x=:SepalLength, y=:SepalWidth,
          Geom.point, Geom.line)
 ```
 
@@ -76,7 +100,7 @@ furiously". It is valid grammar, but not particularly meaningful.
 Let's do add something meaningful by mapping the color aesthetic.
 
 ```@example 1
-p = plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
+plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
          Geom.point)
 ```
 
@@ -94,14 +118,14 @@ useful.
 
 ```@example 1
 mammals = dataset("MASS", "mammals")
-p = plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)
+plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)
 ```
 
 This is no good, the large animals are ruining things for us. Putting both
 axis on a log-scale clears things up.
 
 ```@example 1
-p = plot(mammals, x=:Body, y=:Brain, label=:Mammal,
+plot(mammals, x=:Body, y=:Brain, label=:Mammal,
          Geom.point, Geom.label, Scale.x_log10, Scale.y_log10)
 ```
 
@@ -113,7 +137,7 @@ crack at the latter using some fuel efficiency data.
 ```@example 1
 gasoline = dataset("Ecdat", "Gasoline")
 
-p = plot(gasoline, x=:Year, y=:LGasPCar, color=:Country,
+plot(gasoline, x=:Year, y=:LGasPCar, color=:Country,
          Geom.point, Geom.line)
 ```
 

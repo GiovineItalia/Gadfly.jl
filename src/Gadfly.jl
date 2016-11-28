@@ -1028,6 +1028,14 @@ end
 import Base.Multimedia: @try_display, xdisplayable
 import Base.REPL: REPLDisplay
 
+"""
+    display(p::Plot)
+
+Render `p` to a multimedia display, typically an internet browser.
+
+This function is handy when rendering by `plot` has been suppressed
+with either trailing semi-colon or by calling it within a function.
+"""
 function display(p::Plot)
     displays = Base.Multimedia.displays
     for i = length(displays):-1:1
