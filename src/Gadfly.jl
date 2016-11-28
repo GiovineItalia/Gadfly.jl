@@ -1036,7 +1036,7 @@ Render `p` to a multimedia display, typically an internet browser.
 This function is handy when rendering by `plot` has been suppressed
 with either trailing semi-colon or by calling it within a function.
 """
-function display(p::Plot)
+function display(p::Union{Plot,Compose.Context})
     displays = Base.Multimedia.displays
     for i = length(displays):-1:1
         m = default_mime()
@@ -1066,7 +1066,7 @@ end
 
 # Fallback display method. When there isn't a better option, we write to a
 # temporary file and try to open it.
-function display(d::REPLDisplay, ::MIME"image/png", p::Plot)
+function display(d::REPLDisplay, ::MIME"image/png", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".png")
     output = open(filename, "w")
     draw(PNG(output, Compose.default_graphic_width,
@@ -1075,7 +1075,7 @@ function display(d::REPLDisplay, ::MIME"image/png", p::Plot)
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"image/svg+xml", p::Plot)
+function display(d::REPLDisplay, ::MIME"image/svg+xml", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".svg")
     output = open(filename, "w")
     draw(SVG(output, Compose.default_graphic_width,
@@ -1084,7 +1084,7 @@ function display(d::REPLDisplay, ::MIME"image/svg+xml", p::Plot)
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"text/html", p::Plot)
+function display(d::REPLDisplay, ::MIME"text/html", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".html")
     output = open(filename, "w")
 
@@ -1117,7 +1117,7 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Plot)
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"application/postscript", p::Plot)
+function display(d::REPLDisplay, ::MIME"application/postscript", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".ps")
     output = open(filename, "w")
     draw(PS(output, Compose.default_graphic_width,
@@ -1126,7 +1126,7 @@ function display(d::REPLDisplay, ::MIME"application/postscript", p::Plot)
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"application/pdf", p::Plot)
+function display(d::REPLDisplay, ::MIME"application/pdf", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".pdf")
     output = open(filename, "w")
     draw(PDF(output, Compose.default_graphic_width,
