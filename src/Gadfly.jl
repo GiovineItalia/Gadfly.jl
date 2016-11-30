@@ -24,7 +24,7 @@ export Plot, Layer, Theme, Col, Scale, Coord, Geom, Guide, Stat, render, plot,
 
 
 # Re-export some essentials from Compose
-export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack
+export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack, title
 
 
 function __init__()
@@ -934,6 +934,22 @@ function draw(backend::Compose.Backend, p::Plot)
     draw(backend, render(p))
 end
 
+"""
+    title(ctx::Context, str::String, props::Property...) -> Context
+
+Add a title string to a group of plots, typically created with `vstack`, `hstack`, or `gridstack`.
+
+# Examples
+
+```
+p1 = plot(x=[1,2], y=[3,4], Geom.line);
+p2 = plot(x=[1,2], y=[4,3], Geom.line);
+title(hstack(p1,p2), "my latest data", Compose.fontsize(18pt), fill(colorant"red"))
+```
+"""
+title(ctx::Context, str::String, props::Compose.Property...) = vstack(
+    compose(context(0, 0, 1, 0.1), text(0.5, 1.0, str, hcenter, vbottom), props...),
+    compose(context(0, 0, 1, 0.9), ctx))
 
 # Convenience stacking functions
 """

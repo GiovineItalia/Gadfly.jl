@@ -52,7 +52,8 @@ plt=plot(layer(x=rand(10), y=rand(10), Geom.point),
 
 Plots can also be stacked horizontally with `hstack` or vertically with `vstack`.
 This allows more customization in regards to tick marks, axis labeling, and other
-plot details than is available with [Geom.subplot_grid](@ref).
+plot details than is available with [Geom.subplot_grid](@ref).  Use `title` to add
+a descriptive string at the top.
 
 ```julia
 p1 = plot(x=[1,2,3], y=[4,5,6])
@@ -61,4 +62,5 @@ vstack(p1,p2)
 p3 = plot(x=[5,7,8], y=[8,9,10])
 p4 = plot(x=[5,7,8], y=[10,11,12])
 vstack(hstack(p1,p2),hstack(p3,p4))
+title("My great data", hstack(p3,p4))
 ```
