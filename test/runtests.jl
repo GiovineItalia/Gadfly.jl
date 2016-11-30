@@ -21,6 +21,7 @@ tests = [
     ("vstack",                                6inch, 6inch),
     ("hstack",                                6inch, 3inch),
     ("title",                                 6inch, 3inch),
+    ("gridstack",                             6inch, 3inch),
     ("colorful_hist",                         6inch, 3inch),
     ("discrete_histogram",                    6inch, 3inch),
     ("discrete_bar",                          6inch, 3inch),

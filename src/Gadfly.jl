@@ -24,7 +24,7 @@ export Plot, Layer, Theme, Col, Scale, Coord, Geom, Guide, Stat, render, plot,
 
 
 # Re-export some essentials from Compose
-export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack, title
+export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack, title, gridstack
 
 
 function __init__()
@@ -980,6 +980,11 @@ hstack(ps::Vector{Plot}) = hstack(Context[render(p) for p in ps]...)
 hstack(p::Plot, c::Context) = hstack(render(p), c)
 hstack(c::Context, p::Plot) = hstack(c, render(p))
 
+"""
+    gridstack(ps::Matrix{Plot}) -> Context
+
+Arrange plots into a rectangular array.
+"""
 gridstack(ps::Matrix{Plot}) = gridstack(map(render, ps))
 
 # show functions for all supported compose backends.
