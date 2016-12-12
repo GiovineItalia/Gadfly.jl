@@ -2,10 +2,10 @@
 Author = "Daniel C. Jones"
 ```
 
-# Stacks and Layers
+# Layers and Stacks
 
-**Gadfly** also supports more advanced plot composition techniques like stacking
-and layering.
+**Gadfly** also supports more advanced plot composition techniques like layering
+and stacking.
 
 ## Layers
 
@@ -50,15 +50,23 @@ plt=plot(layer(x=rand(10), y=rand(10), Geom.point),
 
 ## Stacks
 
-Plots can also be stacked horizontally with `hstack` or vertically with `vstack`.
+Plots can also be stacked horizontally with `hstack` or vertically with `vstack`,
+and arranged into a rectangular array with `gridstack`.
 This allows more customization in regards to tick marks, axis labeling, and other
-plot details than is available with [Geom.subplot_grid](@ref).
+plot details than is available with [Geom.subplot_grid](@ref).  Use `title` to add
+a descriptive string at the top.
 
 ```julia
 p1 = plot(x=[1,2,3], y=[4,5,6])
 p2 = plot(x=[1,2,3], y=[6,7,8])
 vstack(p1,p2)
+
 p3 = plot(x=[5,7,8], y=[8,9,10])
 p4 = plot(x=[5,7,8], y=[10,11,12])
+
+# these two are equivalent
 vstack(hstack(p1,p2),hstack(p3,p4))
+gridstack([p1 p2; p3 p4])
+
+title("My great data", hstack(p3,p4))
 ```
