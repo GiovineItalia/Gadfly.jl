@@ -104,7 +104,7 @@ end
 
 # Create a layer from a single function.
 function layer(f::Function, a::Number, b::Number, elements::ElementOrFunction...)
-    layer([f], a, b, elements...)
+    layer(Function[f], a, b, elements...)
 end
 
 
