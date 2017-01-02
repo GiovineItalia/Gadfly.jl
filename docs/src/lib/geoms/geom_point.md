@@ -41,6 +41,9 @@ plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
 plot(dataset("lattice", "singer"), x="VoicePart", y="Height", Geom.point)
 ```
 
-<!-- TODO: shape aesthetic -->
+```@example 1
+# Binding categorical data to the shape aesthetic
+plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth", shape="Species", color="Species", Geom.point)
+```
 
 <!-- TODO: size aesthetic -->
