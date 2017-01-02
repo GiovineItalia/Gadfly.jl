@@ -52,6 +52,13 @@ require(['mathjax'], function(MathJax) {
 
 require(['jquery', 'highlight', 'highlight-julia'], function($, hljs) {
     $(document).ready(function() {
+        if (typeof DOC_VERSIONS !== 'undefined') {
+            var version_selector = $("#version-selector");
+            DOC_VERSIONS.forEach(function(each) {
+                var option = $("<option value='" + documenterBaseURL + "/../" + each + "'>" + each + "</option>");
+                version_selector.append(option);
+            });
+        }
         hljs.initHighlighting();
     })
 

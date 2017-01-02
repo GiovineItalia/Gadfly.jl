@@ -61,7 +61,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Tutorial",
     "category": "section",
-    "text": "Gadfly is an implementation of a \"grammar of graphics\" style statistical graphics system for Julia. This tutorial will outline general usage patterns and will give you a feel for the overall system.To begin, we need some data. Gadfly works best when the data is supplied in a DataFrame. In this tutorial, we'll pick and choose some examples from the RDatasets package.Let us use Fisher's iris dataset as a starting point.using Gadfly\nusing RDatasets\n\niris = dataset(\"datasets\", \"iris\")\nnothing # hideThe plot function in Gadfly is of the form:plot(data::DataFrame, mapping::Dict, elements::Element...)The first argument is the data to be plotted, the second is a dictionary mapping \"aesthetics\" to columns in the data frame, and this is followed by some number of elements, which are the nouns and verbs, so to speak, that form the grammar.Let's get to it.p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)\nnothing # hideThis produces a Plot object. It can be drawn on one or more backends using draw.img = SVG(\"iris_plot.svg\", 6inch, 4inch)\ndraw(img, p)Now we have the following charming little SVG image.p # hideFor the rest of the demonstrations, we'll omit the draw call for brevity.In this plot we've mapped the x aesthetic to the SepalLength column and the y aesthetic to the SepalWidth. The last argument, Geom.point, is a geometry element which takes bound aesthetics and render delightful figures. Adding other geometries produces layers, which may or may not result in a coherent plot.p = plot(iris, x=:SepalLength, y=:SepalWidth,\n         Geom.point, Geom.line)This is the grammar of graphics equivalent of \"colorless green ideas sleep furiously\". It is valid grammar, but not particularly meaningful."
+    "text": "Gadfly is an implementation of a \"grammar of graphics\" style statistical graphics system for Julia. This tutorial will outline general usage patterns and will give you a feel for the overall system.To begin, we need some data. Gadfly works best when the data is supplied in a DataFrame. In this tutorial, we'll pick and choose some examples from the RDatasets package.Let us use Fisher's iris dataset as a starting point.using Gadfly\nusing RDatasets\n\niris = dataset(\"datasets\", \"iris\")\nnothing # hideThe plot function in Gadfly is of the form:plot(data::DataFrame, mapping::Dict, elements::Element...)The first argument is the data to be plotted, the second is a dictionary mapping \"aesthetics\" to columns in the data frame, and this is followed by some number of elements, which are the nouns and verbs, so to speak, that form the grammar.Let's get to it.p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point);\nnothing # hideThis produces a Plot object. It can be saved to a file by drawing to one or more backends using draw.img = SVG(\"iris_plot.svg\", 6inch, 4inch)\ndraw(img, p)Now we have the following charming little SVG image.p # hideIf you are working at the REPL, a quicker way to see the image is to omit the semi-colon trailing plot.  This automatically renders the image to your default multimedia display, typically an internet browser.  No need to capture the output argument in this case.plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)Alternatively one can manually call display on a Plot object.  This workflow is necessary when display would not otherwise be called automatically.function get_to_it(d)\n  ppoint = plot(d, x=:SepalLength, y=:SepalWidth, Geom.point)\n  pline = plot(d, x=:SepalLength, y=:SepalWidth, Geom.line)\n  ppoint, pline\nend\nps = get_to_it(iris)\nmap(display, ps)For the rest of the demonstrations, we'll simply omit the trailing semi-colon for brevity.In this plot we've mapped the x aesthetic to the SepalLength column and the y aesthetic to the SepalWidth. The last argument, Geom.point, is a geometry element which takes bound aesthetics and render delightful figures. Adding other geometries produces layers, which may or may not result in a coherent plot.plot(iris, x=:SepalLength, y=:SepalWidth,\n         Geom.point, Geom.line)This is the grammar of graphics equivalent of \"colorless green ideas sleep furiously\". It is valid grammar, but not particularly meaningful."
 },
 
 {
@@ -69,7 +69,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Color",
     "category": "section",
-    "text": "Let's do add something meaningful by mapping the color aesthetic.p = plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,\n         Geom.point)Ah, a scientific discovery: Setosa has short but wide sepals!Color scales in Gadfly by default are produced from perceptually uniform colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and converts arbitrarily between these. Of course, CSS/X11 named colors work too: \"old lace\", anyone?"
+    "text": "Let's do add something meaningful by mapping the color aesthetic.plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,\n         Geom.point)Ah, a scientific discovery: Setosa has short but wide sepals!Color scales in Gadfly by default are produced from perceptually uniform colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and converts arbitrarily between these. Of course, CSS/X11 named colors work too: \"old lace\", anyone?"
 },
 
 {
@@ -77,7 +77,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Scale transforms",
     "category": "section",
-    "text": "Scale transforms also work as expected. Let's look at some data where this is useful.mammals = dataset(\"MASS\", \"mammals\")\np = plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)This is no good, the large animals are ruining things for us. Putting both axis on a log-scale clears things up.p = plot(mammals, x=:Body, y=:Brain, label=:Mammal,\n         Geom.point, Geom.label, Scale.x_log10, Scale.y_log10)"
+    "text": "Scale transforms also work as expected. Let's look at some data where this is useful.mammals = dataset(\"MASS\", \"mammals\")\nplot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)This is no good, the large animals are ruining things for us. Putting both axis on a log-scale clears things up.plot(mammals, x=:Body, y=:Brain, label=:Mammal,\n         Geom.point, Geom.label, Scale.x_log10, Scale.y_log10)"
 },
 
 {
@@ -85,7 +85,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Discrete scales",
     "category": "section",
-    "text": "Since all continuous analysis is just degenerate discrete analysis, let's take a crack at the latter using some fuel efficiency data.gasoline = dataset(\"Ecdat\", \"Gasoline\")\n\np = plot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of elements in the grammar: we've omitted Scale.x_continuous and Scale.y_continuous in the previous plots, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel, and so on. As much as possible the system tries to fill in the gaps with reasonable defaults."
+    "text": "Since all continuous analysis is just degenerate discrete analysis, let's take a crack at the latter using some fuel efficiency data.gasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of elements in the grammar: we've omitted Scale.x_continuous and Scale.y_continuous in the previous plots, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel, and so on. As much as possible the system tries to fill in the gaps with reasonable defaults."
 },
 
 {
@@ -153,11 +153,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/layers.html#Stacks-and-Layers-1",
+    "location": "man/layers.html#Layers-and-Stacks-1",
     "page": "Stacks & Layers",
-    "title": "Stacks and Layers",
+    "title": "Layers and Stacks",
     "category": "section",
-    "text": "Gadfly also supports more advanced plot composition techniques like stacking and layering."
+    "text": "Gadfly also supports more advanced plot composition techniques like layering and stacking."
 },
 
 {
@@ -173,7 +173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Stacks & Layers",
     "title": "Stacks",
     "category": "section",
-    "text": "Plots can also be stacked horizontally with hstack or vertically with vstack. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.p1 = plot(x=[1,2,3], y=[4,5,6])\np2 = plot(x=[1,2,3], y=[6,7,8])\ndraw(PDF(\"p1and2.pdf\", 6inch, 6inch), vstack(p1,p2))\np3 = plot(x=[5,7,8], y=[8,9,10])\np4 = plot(x=[5,7,8], y=[10,11,12])\ndraw(PDF(\"p1to4.pdf\", 6inch, 9inch), vstack(hstack(p1,p2),hstack(p3,p4)))"
+    "text": "Plots can also be stacked horizontally with hstack or vertically with vstack, and arranged into a rectangular array with gridstack. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.  Use title to add a descriptive string at the top.p1 = plot(x=[1,2,3], y=[4,5,6])\np2 = plot(x=[1,2,3], y=[6,7,8])\nvstack(p1,p2)\n\np3 = plot(x=[5,7,8], y=[8,9,10])\np4 = plot(x=[5,7,8], y=[10,11,12])\n\n# these two are equivalent\nvstack(hstack(p1,p2),hstack(p3,p4))\ngridstack([p1 p2; p3 p4])\n\ntitle(\"My great data\", hstack(p3,p4))"
 },
 
 {
@@ -273,126 +273,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/geometries.html#",
-    "page": "Geometries",
-    "title": "Geometries",
-    "category": "page",
-    "text": "Author = \"Daniel C. Jones\""
-},
-
-{
-    "location": "man/geometries.html#Geometries-1",
-    "page": "Geometries",
-    "title": "Geometries",
-    "category": "section",
-    "text": "Geometries are responsible for actually doing the drawing. A geometry takes as input one or more aesthetics, and used data bound to these aesthetics to draw things. For instance, the Geom.point geometry draws points using the x and y aesthetics, while the Geom.line geometry draws lines with those same two aesthetics."
-},
-
-{
-    "location": "man/geometries.html#Available-Geometries-1",
-    "page": "Geometries",
-    "title": "Available Geometries",
-    "category": "section",
-    "text": "Pages = map(file -> joinpath(\"..\", \"lib\", \"geoms\", file), readdir(joinpath(\"..\", \"lib\", \"geoms\")))\nDepth = 1"
-},
-
-{
-    "location": "man/guides.html#",
-    "page": "Guides",
-    "title": "Guides",
-    "category": "page",
-    "text": "Author = \"Daniel C. Jones\""
-},
-
-{
-    "location": "man/guides.html#Guides-1",
-    "page": "Guides",
-    "title": "Guides",
-    "category": "section",
-    "text": "Very similar to Geometries are guides, which draw graphics supporting the actual visualization, such as axis ticks and labels and color keys. The major distinction is that geometries always draw within the rectangular plot frame, while guides have some special layout considerations."
-},
-
-{
-    "location": "man/guides.html#Available-Guides-1",
-    "page": "Guides",
-    "title": "Available Guides",
-    "category": "section",
-    "text": "Pages = map(file -> joinpath(\"..\", \"lib\", \"guides\", file), readdir(joinpath(\"..\", \"lib\", \"guides\")))\nDepth = 1"
-},
-
-{
-    "location": "man/stats.html#",
-    "page": "Statistics",
-    "title": "Statistics",
-    "category": "page",
-    "text": "Author = \"Daniel C. Jones\""
-},
-
-{
-    "location": "man/stats.html#Statistics-1",
-    "page": "Statistics",
-    "title": "Statistics",
-    "category": "section",
-    "text": "Statistics are functions taking as input one or more aesthetics, operating on those values, then output to one or more aesthetics. For example, drawing of boxplots typically uses the boxplot statistic (Stat.boxplot) that takes as input the x and y aesthetic, and outputs the middle, and upper and lower hinge, and upper and lower fence aesthetics."
-},
-
-{
-    "location": "man/stats.html#Available-Statistics-1",
-    "page": "Statistics",
-    "title": "Available Statistics",
-    "category": "section",
-    "text": "Pages = map(file -> joinpath(\"..\", \"lib\", \"stats\", file), readdir(joinpath(\"..\", \"lib\", \"stats\")))\nDepth = 1"
-},
-
-{
-    "location": "man/coords.html#",
-    "page": "Coords",
-    "title": "Coords",
-    "category": "page",
-    "text": "Author = \"Tamas Nagy\""
-},
-
-{
-    "location": "man/coords.html#Coordinates-1",
-    "page": "Coords",
-    "title": "Coordinates",
-    "category": "section",
-    "text": "Coordinate systems are mappings between a coordinate space and the 2D rendered output."
-},
-
-{
-    "location": "man/coords.html#Available-Coordinates-1",
-    "page": "Coords",
-    "title": "Available Coordinates",
-    "category": "section",
-    "text": "Pages = map(file -> joinpath(\"..\", \"lib\", \"coords\", file), readdir(joinpath(\"..\", \"lib\", \"coords\")))\nDepth = 1"
-},
-
-{
-    "location": "man/scales.html#",
-    "page": "Scales",
-    "title": "Scales",
-    "category": "page",
-    "text": "Author = \"Daniel C. Jones\""
-},
-
-{
-    "location": "man/scales.html#Scales-1",
-    "page": "Scales",
-    "title": "Scales",
-    "category": "section",
-    "text": "Scales, similarly to Statistics, apply a transformation to the original data, typically mapping one aesthetic to the same aesthetic, while retaining the original value. For example, the Scale.x_log10 aesthetic maps the  x aesthetic back to the x aesthetic after applying a log10 transformation, but keeps track of the original value so that data points are properly identified."
-},
-
-{
-    "location": "man/scales.html#Available-Scales-1",
-    "page": "Scales",
-    "title": "Available Scales",
-    "category": "section",
-    "text": "Pages = map(file -> joinpath(\"..\", \"lib\", \"scales\", file), readdir(joinpath(\"..\", \"lib\", \"scales\")))\nDepth = 1"
-},
-
-{
     "location": "lib/dev_pipeline.html#",
     "page": "Rendering Pipeline",
     "title": "Rendering Pipeline",
@@ -454,6 +334,30 @@ var documenterSearchIndex = {"docs": [
     "title": "Guide Layout",
     "category": "section",
     "text": ""
+},
+
+{
+    "location": "lib/geometries.html#",
+    "page": "Geometries",
+    "title": "Geometries",
+    "category": "page",
+    "text": "Author = \"Daniel C. Jones\""
+},
+
+{
+    "location": "lib/geometries.html#Geometries-1",
+    "page": "Geometries",
+    "title": "Geometries",
+    "category": "section",
+    "text": "Geometries are responsible for actually doing the drawing. A geometry takes as input one or more aesthetics, and used data bound to these aesthetics to draw things. For instance, the Geom.point geometry draws points using the x and y aesthetics, while the Geom.line geometry draws lines with those same two aesthetics."
+},
+
+{
+    "location": "lib/geometries.html#Available-Geometries-1",
+    "page": "Geometries",
+    "title": "Available Geometries",
+    "category": "section",
+    "text": "Pages = map(file -> joinpath(\"geoms\", file), readdir(\"geoms\"))\nDepth = 1"
 },
 
 {
@@ -981,7 +885,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.point",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\", Geom.point)# Binding categorial data to the color aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n     color=\"Species\", Geom.point)# Binding continuous data to the color aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n     color=\"PetalLength\", Geom.point)# Binding categorial data to x\nplot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.point)<!– TODO: shape aesthetic –><!– TODO: size aesthetic –>"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\", Geom.point)# Binding categorial data to the color aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n     color=\"Species\", Geom.point)# Binding continuous data to the color aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n     color=\"PetalLength\", Geom.point)# Binding categorial data to x\nplot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.point)# Binding categorical data to the shape aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\", shape=\"Species\", color=\"Species\", Geom.point)<!– TODO: size aesthetic –>"
 },
 
 {
@@ -1329,6 +1233,30 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/guides.html#",
+    "page": "Guides",
+    "title": "Guides",
+    "category": "page",
+    "text": "Author = \"Daniel C. Jones\""
+},
+
+{
+    "location": "lib/guides.html#Guides-1",
+    "page": "Guides",
+    "title": "Guides",
+    "category": "section",
+    "text": "Very similar to Geometries are guides, which draw graphics supporting the actual visualization, such as axis ticks and labels and color keys. The major distinction is that geometries always draw within the rectangular plot frame, while guides have some special layout considerations."
+},
+
+{
+    "location": "lib/guides.html#Available-Guides-1",
+    "page": "Guides",
+    "title": "Available Guides",
+    "category": "section",
+    "text": "Pages = map(file -> joinpath(\"guides\", file), readdir(\"guides\"))\nDepth = 1"
+},
+
+{
     "location": "lib/guides/guide_annotation.html#",
     "page": "Guide.annotation",
     "title": "Guide.annotation",
@@ -1649,6 +1577,30 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/stats.html#",
+    "page": "Statistics",
+    "title": "Statistics",
+    "category": "page",
+    "text": "Author = \"Daniel C. Jones\""
+},
+
+{
+    "location": "lib/stats.html#Statistics-1",
+    "page": "Statistics",
+    "title": "Statistics",
+    "category": "section",
+    "text": "Statistics are functions taking as input one or more aesthetics, operating on those values, then output to one or more aesthetics. For example, drawing of boxplots typically uses the boxplot statistic (Stat.boxplot) that takes as input the x and y aesthetic, and outputs the middle, and upper and lower hinge, and upper and lower fence aesthetics."
+},
+
+{
+    "location": "lib/stats.html#Available-Statistics-1",
+    "page": "Statistics",
+    "title": "Available Statistics",
+    "category": "section",
+    "text": "Pages = map(file -> joinpath(\"stats\", file), readdir(\"stats\"))\nDepth = 1"
+},
+
+{
     "location": "lib/stats/stat_binmean.html#",
     "page": "Stat.binmean",
     "title": "Stat.binmean",
@@ -1913,6 +1865,30 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/coords.html#",
+    "page": "Coords",
+    "title": "Coords",
+    "category": "page",
+    "text": "Author = \"Tamas Nagy\""
+},
+
+{
+    "location": "lib/coords.html#Coordinates-1",
+    "page": "Coords",
+    "title": "Coordinates",
+    "category": "section",
+    "text": "Coordinate systems are mappings between a coordinate space and the 2D rendered output."
+},
+
+{
+    "location": "lib/coords.html#Available-Coordinates-1",
+    "page": "Coords",
+    "title": "Available Coordinates",
+    "category": "section",
+    "text": "Pages = map(file -> joinpath(\"coords\", file), readdir(\"coords\"))\nDepth = 1"
+},
+
+{
     "location": "lib/coords/coord_cartesian.html#",
     "page": "Coord.cartesian",
     "title": "Coord.cartesian",
@@ -1942,6 +1918,30 @@ var documenterSearchIndex = {"docs": [
     "title": "Examples",
     "category": "section",
     "text": "using Gadfly# Transform both dimensions\nplot(sin, 0, 20, Coord.cartesian(xmin=2π, xmax=4π, ymin=-2, ymax=2))"
+},
+
+{
+    "location": "lib/scales.html#",
+    "page": "Scales",
+    "title": "Scales",
+    "category": "page",
+    "text": "Author = \"Daniel C. Jones\""
+},
+
+{
+    "location": "lib/scales.html#Scales-1",
+    "page": "Scales",
+    "title": "Scales",
+    "category": "section",
+    "text": "Scales, similarly to Statistics, apply a transformation to the original data, typically mapping one aesthetic to the same aesthetic, while retaining the original value. For example, the Scale.x_log10 aesthetic maps the  x aesthetic back to the x aesthetic after applying a log10 transformation, but keeps track of the original value so that data points are properly identified."
+},
+
+{
+    "location": "lib/scales.html#Available-Scales-1",
+    "page": "Scales",
+    "title": "Available Scales",
+    "category": "section",
+    "text": "Pages = map(file -> joinpath(\"scales\", file), readdir(\"scales\"))\nDepth = 1"
 },
 
 {
