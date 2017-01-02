@@ -16,4 +16,4 @@ script:
 after_success:
   - julia -e 'cd(Pkg.dir("Gadfly")); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
   - julia -e 'Pkg.checkout("Compose")'
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; julia -e 'cd(Pkg.dir("Gadfly")); map(x->Pkg.add(strip(x)), readlines(open(joinpath("docs", "REQUIRE")))); include(joinpath("docs", "make.jl"))'; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then julia -e 'cd(Pkg.dir("Gadfly")); map(x->Pkg.add(strip(x)), readlines(open(joinpath("docs", "REQUIRE")))); include(joinpath("docs", "make.jl"))'; fi
