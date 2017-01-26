@@ -48,8 +48,8 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
 
     if aes.group != nothing
         XT, YT = eltype(aes.x), eltype(aes.y)
-        xs = DefaultDict(Any, Vector{XT}, () -> XT[])
-        ys = DefaultDict(Any, Vector{YT}, () -> YT[])
+        xs = DefaultDict{Any, Vector{XT}}(() -> XT[])
+        ys = DefaultDict{Any, Vector{YT}}(() -> YT[])
         for (x, y, c, g) in zip(aes.x, aes.y, cycle(aes.color), cycle(aes.group))
             push!(xs[(c,g)], x)
             push!(ys[(c,g)], y)
@@ -77,8 +77,8 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
         end
     else
         XT, YT = eltype(aes.x), eltype(aes.y)
-        xs = DefaultDict(Color, Vector{XT}, () -> XT[])
-        ys = DefaultDict(Color, Vector{YT}, () -> YT[])
+        xs = DefaultDict{Color, Vector{XT}}(() -> XT[])
+        ys = DefaultDict{Color, Vector{YT}}(() -> YT[])
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes.color))
             push!(xs[c], x)
             push!(ys[c], y)

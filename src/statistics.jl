@@ -1671,7 +1671,7 @@ function apply_statistic(stat::ViolinStatistic,
         aes.y = collect(Float64, f.x)
         aes.width = f.density
     else
-        grouped_y = DefaultDict(eltype(aes.x), Vector{Float64}, () -> Float64[])
+        grouped_y = DefaultDict{eltype(aes.x), Vector{Float64}}(() -> Float64[])
         for (x, y) in zip(cycle(aes.x), aes.y)
             push!(grouped_y[x], y)
         end
