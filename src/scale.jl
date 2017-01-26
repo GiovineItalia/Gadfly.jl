@@ -242,6 +242,10 @@ function apply_scale(scale::ContinuousScale,
                 end
             end
 
+            if T <: Measure
+                T = Measure
+            end
+
             ds = Gadfly.hasna(vals) ? DataArray(T, length(vals)) : Array(T, length(vals))
             apply_scale_typed!(ds, vals, scale)
 
