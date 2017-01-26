@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.bar · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><select id="version-selector" onChange="window.location.href=this.value"><option value="#" selected="selected" disabled="disabled">Version</option></select><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Stacks &amp; Layers</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_bar.html">Geom.bar</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_bar.html">Geom.bar</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/ed84fccde97503b2000531b97fba93e491066580/docs/src/lib/geoms/geom_bar.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.bar-1" href="#Geom.bar-1">Geom.bar</a></h1><p>Draw bar plots. This geometry works on pre-summarized data such as counts. To draw histograms from a series of observations, add <a href="@ref">Stat.histogram</a> to the plot, or use the convenient geometry <a href="geom_histogram.html#Geom.histogram-1">Geom.histogram</a>.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>y</code>: Height of each bar.</p></li><li><p><code>color</code> (optional): Group categorically by color.</p></li></ul><p>Either</p><ul><li><p><code>x</code>: Position of each bar.</p></li></ul><p>Or</p><ul><li><p><code>xmin</code>: Starting x positions for each bar.</p></li><li><p><code>xmax</code>: End x positions for each bar.</p></li></ul><p>If <code>x</code> is given, a bar will be drawn at each x value, specifying both <code>xmin</code> and <code>xmax</code> allows bars of variable width to be drawn.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>position</code>: Either <code>:stack</code> or <code>:dodge</code>. If the <code>color</code> aesthetic is bound this determines how bars of different colors should be arranged: stacked on top of each other, or placed side by side.</p></li><li><p><code>orientation</code>: Either <code>:vertical</code> (default) or <code>:horizontal</code>. If <code>:horizontal</code>, then the required aesthetics are <code>y</code> or <code>ymin/ymax</code>.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(dataset(&quot;HistData&quot;, &quot;ChestSizes&quot;), x=&quot;Chest&quot;, y=&quot;Count&quot;, Geom.bar)</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.bar · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><select id="version-selector" onChange="window.location.href=this.value"><option value="#" selected="selected" disabled="disabled">Version</option></select><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Stacks &amp; Layers</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_bar.html">Geom.bar</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_bar.html">Geom.bar</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/b0a6429aeca1daaa02f2a0ba0757512b6458d578/docs/src/lib/geoms/geom_bar.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.bar-1" href="#Geom.bar-1">Geom.bar</a></h1><p>Draw bar plots. This geometry works on pre-summarized data such as counts. To draw histograms from a series of observations, add <a href="@ref">Stat.histogram</a> to the plot, or use the convenient geometry <a href="geom_histogram.html#Geom.histogram-1">Geom.histogram</a>.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>y</code>: Height of each bar.</p></li><li><p><code>color</code> (optional): Group categorically by color.</p></li></ul><p>Either</p><ul><li><p><code>x</code>: Position of each bar.</p></li></ul><p>Or</p><ul><li><p><code>xmin</code>: Starting x positions for each bar.</p></li><li><p><code>xmax</code>: End x positions for each bar.</p></li></ul><p>If <code>x</code> is given, a bar will be drawn at each x value, specifying both <code>xmin</code> and <code>xmax</code> allows bars of variable width to be drawn.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>position</code>: Either <code>:stack</code> or <code>:dodge</code>. If the <code>color</code> aesthetic is bound this determines how bars of different colors should be arranged: stacked on top of each other, or placed side by side.</p></li><li><p><code>orientation</code>: Either <code>:vertical</code> (default) or <code>:horizontal</code>. If <code>:horizontal</code>, then the required aesthetics are <code>y</code> or <code>ymin/ymax</code>.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(dataset(&quot;HistData&quot;, &quot;ChestSizes&quot;), x=&quot;Chest&quot;, y=&quot;Count&quot;, Geom.bar)</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns:gadfly="http://www.gadflyjl.org/ns"
@@ -10,38 +10,38 @@
      stroke-width="0.3"
      font-size="3.88"
 >
-<g class="plotroot xscalable yscalable" id="img-9f38685c-1">
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-9f38685c-2">
+<g class="plotroot xscalable yscalable" id="img-70a4628e-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-70a4628e-2">
     <text x="68.15" y="68.39" text-anchor="middle" dy="0.6em">Chest</text>
   </g>
-  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-9f38685c-3">
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-70a4628e-3">
     <text x="23.3" y="61.72" text-anchor="middle" dy="0.6em">30</text>
     <text x="45.73" y="61.72" text-anchor="middle" dy="0.6em">35</text>
     <text x="68.15" y="61.72" text-anchor="middle" dy="0.6em">40</text>
     <text x="90.58" y="61.72" text-anchor="middle" dy="0.6em">45</text>
     <text x="113" y="61.72" text-anchor="middle" dy="0.6em">50</text>
   </g>
-<g clip-path="url(#img-9f38685c-4)">
-  <g id="img-9f38685c-5">
-    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-9f38685c-6">
+<g clip-path="url(#img-70a4628e-4)">
+  <g id="img-70a4628e-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-70a4628e-6">
       <rect x="21.3" y="5" width="93.7" height="55.72"/>
     </g>
-    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-9f38685c-7">
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-70a4628e-7">
       <path fill="none" d="M21.3,58.72 L 115 58.72"/>
       <path fill="none" d="M21.3,41.48 L 115 41.48"/>
       <path fill="none" d="M21.3,24.24 L 115 24.24"/>
       <path fill="none" d="M21.3,7 L 115 7"/>
     </g>
-    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-9f38685c-8">
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-70a4628e-8">
       <path fill="none" d="M23.3,5 L 23.3 60.72"/>
       <path fill="none" d="M45.73,5 L 45.73 60.72"/>
       <path fill="none" d="M68.15,5 L 68.15 60.72"/>
       <path fill="none" d="M90.58,5 L 90.58 60.72"/>
       <path fill="none" d="M113,5 L 113 60.72"/>
     </g>
-    <g class="plotpanel" id="img-9f38685c-9">
-      <g shape-rendering="crispEdges" stroke-width="0.3" id="img-9f38685c-10">
-        <g stroke="#000000" stroke-opacity="0.000" fill="#00BFFF" class="geometry" id="img-9f38685c-11">
+    <g class="plotpanel" id="img-70a4628e-9">
+      <g shape-rendering="crispEdges" stroke-width="0.3" id="img-70a4628e-10">
+        <g stroke="#000000" stroke-opacity="0.000" fill="#00BFFF" class="geometry" id="img-70a4628e-11">
           <rect x="34.49" y="58.61" width="4.53" height="0.1"/>
           <rect x="38.98" y="58.09" width="4.53" height="0.62"/>
           <rect x="43.46" y="55.92" width="4.53" height="2.79"/>
@@ -63,18 +63,18 @@
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-9f38685c-12">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-70a4628e-12">
     <text x="20.3" y="58.72" text-anchor="end" dy="0.35em">0</text>
     <text x="20.3" y="41.48" text-anchor="end" dy="0.35em">500</text>
     <text x="20.3" y="24.24" text-anchor="end" dy="0.35em">1000</text>
     <text x="20.3" y="7" text-anchor="end" dy="0.35em">1500</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-9f38685c-13">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-70a4628e-13">
     <text x="8.81" y="30.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 32.86)">Count</text>
   </g>
 </g>
 <defs>
-  <clipPath id="img-9f38685c-4">
+  <clipPath id="img-70a4628e-4">
   <path d="M21.3,5 L 115 5 115 60.72 21.3 60.72" />
 </clipPath>
 </defs>
