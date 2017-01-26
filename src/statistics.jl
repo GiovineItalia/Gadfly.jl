@@ -992,7 +992,7 @@ function minvalmaxval{T}(minval::T, maxval::T, val, s, ds)
         maxval = val
     end
 
-    if s != nothing
+    if s != nothing && !(typeof(s) <: Measure)
         minval = min(minval, val - s)::T
         maxval = max(maxval, val + s)::T
     end
