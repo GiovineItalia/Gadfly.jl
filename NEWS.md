@@ -2,6 +2,12 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 0.5.3
+
+  * Support for size aesthetic for `Geom.point` (#952, @tlnagy & @Mattriks)
+  * Various doc improvements (#923, #933, #943)
+  * Improved Juno support (#920, @MikeInnes)
+
 # Version 0.4.1
 
   * Add transformed continuous color scales (`Scale.color_{log,log10,log2,asinh,sqrt}`).
