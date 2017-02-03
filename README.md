@@ -4,7 +4,7 @@ alt="Gadfly Logo" width="210"></img> </div>
 
 | **Documentation**                                                               | **PackageEvaluator**                                            | **Build Status**                                                                                |
 |:------------------------------------------:|:-------------------------------------------------------------------------------------:|:------------------------------------------------:|
-| [![][docs-latest-img]][docs-latest-url] [![][docs-stable-img]][docs-stable-url] | [![][pkg-0.4-img]][pkg-0.4-url] [![][pkg-0.5-img]][pkg-0.5-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] |
+| [![][docs-latest-img]][docs-latest-url] [![][docs-stable-img]][docs-stable-url] | [![][pkg-0.5-img]][pkg-0.5-url] [![][pkg-0.6-img]][pkg-0.6-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] |
 
 **Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
@@ -51,10 +51,10 @@ If you have a question then you can ask for help in the [Gitter chat room][gitte
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [docs-stable-url]: http://gadflyjl.org/stable
 
-[pkg-0.4-img]: http://pkg.julialang.org/badges/Gadfly_0.4.svg
-[pkg-0.4-url]: http://pkg.julialang.org/?pkg=Gadfly
 [pkg-0.5-img]: http://pkg.julialang.org/badges/Gadfly_0.5.svg
 [pkg-0.5-url]: http://pkg.julialang.org/?pkg=Gadfly
+[pkg-0.6-img]: http://pkg.julialang.org/badges/Gadfly_0.6.svg
+[pkg-0.6-url]: http://pkg.julialang.org/?pkg=Gadfly
 
 [travis-img]: http://img.shields.io/travis/GiovineItalia/Gadfly.jl.svg
 [travis-url]: https://travis-ci.org/GiovineItalia/Gadfly.jl
