@@ -131,7 +131,9 @@ function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks,
                         (q_best, r_best, k_best, z_best) = (q, r, k, z)
                         high_score = score
                     end
-                    r += 1
+
+                    # Fix for #932
+                    r += max(1, eps(r))
                 end
             end
         end
@@ -325,5 +327,3 @@ function multilevel_ticks(viewmin::DateTime, viewmax::DateTime;
 
     return ticks
 end
-
-
