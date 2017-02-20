@@ -36,6 +36,11 @@ function density(; bandwidth::Real=-Inf)
     return LineGeometry(Gadfly.Stat.density(bandwidth=bandwidth))
 end
 
+function density2d(; bandwidth::Real=-Inf, levels=15)
+    return LineGeometry(Gadfly.Stat.density2d(bandwidth=bandwidth, levels=levels);
+            preserve_order=true)
+end
+
 
 function smooth(; method::Symbol=:loess, smoothing::Float64=0.75)
     return LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing),
