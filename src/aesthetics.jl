@@ -35,6 +35,8 @@ typealias NumericalAesthetic
     # fixed lines
     xintercept,   NumericalAesthetic
     yintercept,   NumericalAesthetic
+    xslope,       NumericalAesthetic
+    yslope,       NumericalAesthetic
 
     # boxplots
     middle,       NumericalAesthetic
@@ -169,7 +171,7 @@ function assert_aesthetics_undefined(who::AbstractString, aes::Aesthetics, vars:
     defined_vars = intersect(Set(vars), defined_aesthetics(aes))
     if !isempty(defined_vars)
         error(@sprintf("The following aesthetics are defined but incompatible with %s: %s\n",
-                       who, join(undefined_vars, ", ")))
+                       who, join(defined_vars, ", ")))
     end
 end
 

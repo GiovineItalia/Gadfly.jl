@@ -4,7 +4,8 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 0.5.4 (WIP)
 
-- Dramatically speed up precompilation by removing old, duplicate code (#958)
+  * Dramatically speed up precompilation by removing old, duplicate code (#958)
+  * Add `Geom.abline` (#957)
 
 # Version 0.5.3
 
