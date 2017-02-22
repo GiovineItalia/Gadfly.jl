@@ -24,7 +24,7 @@ plot canvas.
 ## Examples
 
 ```@setup 1
-using Gadfly, RDatasets
+using Gadfly, RDatasets, Compose
 Gadfly.set_default_plot_size(14cm, 10cm)
 ```
 
