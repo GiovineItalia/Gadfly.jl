@@ -1297,7 +1297,4 @@ end
 const x_axis_label_aesthetics = [:x, :xmin, :xmax]
 const y_axis_label_aesthetics = [:y, :ymin, :ymax]
 
-include("precompile.jl")
-_precompile_()
-
 end # module Gadfly

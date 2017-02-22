@@ -2,6 +2,10 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 0.5.4 (WIP)
+
+- Dramatically speed up precompilation by removing old, duplicate code (#958)
+
 # Version 0.5.3
 
   * Support for size aesthetic for `Geom.point` (#952, @tlnagy & @Mattriks)
