@@ -4,7 +4,8 @@ Author = "Daniel C. Jones"
 
 # Geom.vline
 
-Draw vertical lines across the plot canvas.
+Draw vertical lines across the plot canvas.  An alias for Geom.abline with only `xintercept` speci
+fied.
 
 ## Aesthetics
 
@@ -25,13 +26,14 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 
 ```@example 1
 plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
-	 xintercept=[5.0, 7.0], Geom.point, Geom.vline)
+   xintercept=[5.0, 7.0], Geom.point, Geom.vline)
 ```
 
 ```@example 1
 # Colors and widths of lines can be changed. This works separately from the
-# `color` and `size` aesthetics.
+# `color` and `size` aesthetics.  They may be either a scalar or a vector of
+# length(xintercept).
 plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
-	 xintercept=[5.0, 7.0], Geom.point,
-	 Geom.vline(color=colorant"orange", size=2mm))
+   xintercept=[5.0, 7.0], Geom.point,
+   Geom.vline(color=["orange","red"], size=[2mm,3mm]))
 ```

@@ -35,8 +35,8 @@ immutable Cartesian <: Gadfly.CoordinateElement
     raster::Bool
 
     function Cartesian(
-            xvars=[:x, :xmin, :xmax, :xintercept],
-            yvars=[:y, :ymin, :ymax, :yintercept, :middle,
+            xvars=[:x, :xmin, :xmax, :xintercept, :xslope],
+            yvars=[:y, :ymin, :ymax, :yintercept, :yslope, :middle,
                    :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers];
             xflip::Bool=false, yflip::Bool=false,
             xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,

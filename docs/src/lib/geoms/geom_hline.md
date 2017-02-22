@@ -4,7 +4,7 @@ Author = "Daniel C. Jones"
 
 # Geom.hline
 
-Draw horizontal lines across the plot canvas.
+Draw horizontal lines across the plot canvas.  An alias for Geom.abline with only `yintercept` specified.
 
 ## Aesthetics
 
@@ -25,13 +25,14 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 
 ```@example 1
 plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
-	 yintercept=[2.5, 4.0], Geom.point, Geom.hline)
+   yintercept=[2.5, 4.0], Geom.point, Geom.hline)
 ```
 
 ```@example 1
 # Colors and widths of lines can be changed. This works separately from the
-# `color` and `size` aesthetics.
+# `color` and `size` aesthetics.  They may be either a scalor or a vector of
+# length(yintercept).
 plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
-	 yintercept=[2.5, 4.0], Geom.point,
-	 Geom.hline(color=colorant"orange", size=2mm))
+   yintercept=[2.5, 4.0], Geom.point,
+   Geom.hline(color=["orange","red"], size=[2mm,3mm]))
 ```
