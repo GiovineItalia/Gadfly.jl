@@ -17,8 +17,9 @@ Draw contours of a 2D function or a matrix.
 
 ## Arguments
   * `levels` (optional): Sets the number of contours to draw, defaults
-    to 15.  It takes either a vector of contour levels, or a integer
-    that specifies the number of contours to draw.
+    to 15.  It takes either a vector of contour levels;  an integer
+    that specifies the number of contours to draw;  or a function which
+    inputs `z` and outputs either a vector or an integer.
 
 ## Examples
 

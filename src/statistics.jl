@@ -474,7 +474,7 @@ end
 immutable Density2DStatistic <: Gadfly.StatisticElement
     n::Tuple{Int,Int} # Number of points sampled
     bw::Tuple{Real,Real} # Bandwidth used for the kernel density estimation
-    levels
+    levels::Union{Int,Vector,Function}
 
     function Density2DStatistic(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15)
         new(n, bandwidth, levels)
@@ -1510,7 +1510,7 @@ end
 
 
 immutable ContourStatistic <: Gadfly.StatisticElement
-    levels
+    levels::Union{Int,Vector,Function}
     samples::Int
 
     function ContourStatistic(; levels=15, samples=150)
@@ -1577,9 +1577,11 @@ function apply_statistic(stat::ContourStatistic,
     contour_xs = eltype(xs)[]
     contour_ys = eltype(ys)[]
 
+    stat_levels = typeof(stat.levels) <: Function ? stat.levels(zs) : stat.levels
+
     groups = PooledDataArray(Int[])
     group = 0
-    for level in Contour.levels(Contour.contours(xs, ys, zs, stat.levels))
+    for level in Contour.levels(Contour.contours(xs, ys, zs, stat_levels))
         for line in Contour.lines(level)
             xc, yc = Contour.coordinates(line)
             append!(contour_xs, xc)
