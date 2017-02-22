@@ -55,7 +55,6 @@ Depth = 1
 
 Gadfly is predominantly the work of Daniel C. Jones who initiated the
 project and built out most of the infrastructure. The current package
-maintainers are Shashi Gowda and Tamas Nagy. Important contributions have
-also been made by Godisemo, Tim Holy, Darwin Darakananda, Shashi Gowda,
-Tamas Nagy, Simon Leblanc, Iain Dunning, Keno Fischer, Mattriks, and
-others.
+maintainers are Shashi Gowda and Tamas Nagy. Important contributions
+have also been made by Godisemo, Tim Holy, Darwin Darakananda, Simon
+Leblanc, Iain Dunning, Keno Fischer, Mattriks, and others.

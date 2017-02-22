@@ -471,13 +471,55 @@ function apply_statistic(stat::HistogramStatistic,
 end
 
 
+immutable Density2DStatistic <: Gadfly.StatisticElement
+    n::Tuple{Int,Int} # Number of points sampled
+    bw::Tuple{Real,Real} # Bandwidth used for the kernel density estimation
+    levels::Union{Int,Vector,Function}
+
+    function Density2DStatistic(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15)
+        new(n, bandwidth, levels)
+    end
+end
+
+
+const density2d = Density2DStatistic
+
+
+function input_aesthetics(stat::Density2DStatistic)
+    return [:x, :y]
+end
+
+
+function output_aesthetics(stat::Density2DStatistic)
+    return [:x, :y, :z]
+end
+
+
+default_scales(::Density2DStatistic) = [Gadfly.Scale.y_continuous()]
+
+function apply_statistic(stat::Density2DStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("Density2DStatistic", aes, :x, :y)
+
+    window = (stat.bw[1] <= 0.0 ? KernelDensity.default_bandwidth(aes.x) : stat.bw[1],
+              stat.bw[2] <= 0.0 ? KernelDensity.default_bandwidth(aes.x) : stat.bw[2])
+    k = KernelDensity.kde((aes.x,aes.y), bandwidth=window, npoints=stat.n)
+    aes.z = k.density
+    aes.x = collect(k.x)
+    aes.y = collect(k.y)
+    apply_statistic(ContourStatistic(levels=stat.levels), scales, coord, aes)
+end
+
+
 immutable DensityStatistic <: Gadfly.StatisticElement
     # Number of points sampled
     n::Int
     # Bandwidth used for the kernel density estimation
     bw::Real
 
-    function DensityStatistic(; n=300, bandwidth=-Inf)
+    function DensityStatistic(; n=256, bandwidth=-Inf)
         new(n, bandwidth)
     end
 end
@@ -1468,7 +1510,7 @@ end
 
 
 immutable ContourStatistic <: Gadfly.StatisticElement
-    levels
+    levels::Union{Int,Vector,Function}
     samples::Int
 
     function ContourStatistic(; levels=15, samples=150)
@@ -1535,9 +1577,11 @@ function apply_statistic(stat::ContourStatistic,
     contour_xs = eltype(xs)[]
     contour_ys = eltype(ys)[]
 
+    stat_levels = typeof(stat.levels) <: Function ? stat.levels(zs) : stat.levels
+
     groups = PooledDataArray(Int[])
     group = 0
-    for level in Contour.levels(Contour.contours(xs, ys, zs, stat.levels))
+    for level in Contour.levels(Contour.contours(xs, ys, zs, stat_levels))
         for line in Contour.lines(level)
             xc, yc = Contour.coordinates(line)
             append!(contour_xs, xc)
