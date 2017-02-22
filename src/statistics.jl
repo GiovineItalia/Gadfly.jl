@@ -768,7 +768,7 @@ function xticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
                   simplicity_weight::Float64=1/6,
                   coverage_weight::Float64=1/3,
                   niceness_weight::Float64=1/4)
-    TickStatistic([:x, :xmin, :xmax, :xintercept], "x",
+    TickStatistic([:x, :xmin, :xmax, :xintercept, :xslope], "x",
                   granularity_weight, simplicity_weight,
                   coverage_weight, niceness_weight, ticks)
 end
@@ -782,7 +782,7 @@ function yticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
                   coverage_weight::Float64=1/3,
                   niceness_weight::Float64=1/4)
     TickStatistic(
-        [:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge,
+        [:y, :ymin, :ymax, :yintercept, :yslope, :middle, :lower_hinge, :upper_hinge,
          :lower_fence, :upper_fence], "y",
         granularity_weight, simplicity_weight,
         coverage_weight, niceness_weight, ticks)

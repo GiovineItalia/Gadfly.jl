@@ -162,8 +162,8 @@ function make_labeler(scale::ContinuousScale)
 end
 
 
-const x_vars = [:x, :xmin, :xmax, :xintercept, :xviewmin, :xviewmax, :xend]
-const y_vars = [:y, :ymin, :ymax, :yintercept, :middle,
+const x_vars = [:x, :xmin, :xmax, :xintercept, :xslope, :xviewmin, :xviewmax, :xend]
+const y_vars = [:y, :ymin, :ymax, :yintercept, :yslope, :middle,
                 :upper_fence, :lower_fence, :upper_hinge, :lower_hinge,
     :yviewmin, :yviewmax, :yend]
 

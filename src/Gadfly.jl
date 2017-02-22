@@ -1197,13 +1197,15 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :x           => Scale.x_continuous(),
         :xmin        => Scale.x_continuous(),
         :xmax        => Scale.x_continuous(),
-        :xintercept       => Scale.x_continuous(),
-        :xend  => Scale.x_continuous(),
-        :yend  => Scale.y_continuous(),
+        :xintercept  => Scale.x_continuous(),
+        :xslope      => Scale.x_continuous(),
+        :xend        => Scale.x_continuous(),
+        :yend        => Scale.y_continuous(),
         :y           => Scale.y_continuous(),
         :ymin        => Scale.y_continuous(),
         :ymax        => Scale.y_continuous(),
         :yintercept  => Scale.y_continuous(),
+        :yslope      => Scale.y_continuous(),
         :middle      => Scale.y_continuous(),
         :upper_fence => Scale.y_continuous(),
         :lower_fence => Scale.y_continuous(),
@@ -1296,8 +1298,5 @@ end
 # preference.
 const x_axis_label_aesthetics = [:x, :xmin, :xmax]
 const y_axis_label_aesthetics = [:y, :ymin, :ymax]
-
-include("precompile.jl")
-_precompile_()
 
 end # module Gadfly
