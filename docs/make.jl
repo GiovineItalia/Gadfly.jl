@@ -12,7 +12,7 @@ makedocs(
         "Tutorial" => "tutorial.md",
         "Manual" => Any[
             "Plotting" => "man/plotting.md",
-            "Stacks & Layers" => "man/layers.md",
+            "Layers and Stacks" => "man/layers.md",
             "Backends" => "man/backends.md",
             "Themes" => "man/themes.md",
         ],
