@@ -93,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Rendering",
     "category": "section",
-    "text": "Gadfly uses a custom graphics library called Compose, which is an attempt at a more elegant, purely functional take on the R grid package. It allows mixing of absolute and relative units and complex coordinate transforms. The primary backend is a native SVG generator (almost native: it uses pango to precompute text extents), though there is also a Cairo backend. See Backends for more details.Building graphics declaratively let's you do some fun things. Like stick two plots together:fig1a = plot(iris, x=\"SepalLength\", y=\"SepalWidth\", Geom.point)\nfig1b = plot(iris, x=\"SepalWidth\", Geom.bar)\nfig1 = hstack(fig1a, fig1b)Ultimately this will make more complex visualizations easier to build. For example, facets, plots within plots, and so on. See Stacks and Layers for more details."
+    "text": "Gadfly uses a custom graphics library called Compose, which is an attempt at a more elegant, purely functional take on the R grid package. It allows mixing of absolute and relative units and complex coordinate transforms. The primary backend is a native SVG generator (almost native: it uses pango to precompute text extents), though there is also a Cairo backend. See Backends for more details.Building graphics declaratively let's you do some fun things. Like stick two plots together:fig1a = plot(iris, x=\"SepalLength\", y=\"SepalWidth\", Geom.point)\nfig1b = plot(iris, x=\"SepalWidth\", Geom.bar)\nfig1 = hstack(fig1a, fig1b)Ultimately this will make more complex visualizations easier to build. For example, facets, plots within plots, and so on. See Layers and Stacks for more details."
 },
 
 {
@@ -146,15 +146,15 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "man/layers.html#",
-    "page": "Stacks & Layers",
-    "title": "Stacks & Layers",
+    "page": "Layers and Stacks",
+    "title": "Layers and Stacks",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
     "location": "man/layers.html#Layers-and-Stacks-1",
-    "page": "Stacks & Layers",
+    "page": "Layers and Stacks",
     "title": "Layers and Stacks",
     "category": "section",
     "text": "Gadfly also supports more advanced plot composition techniques like layering and stacking."
@@ -162,7 +162,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "man/layers.html#Layers-1",
-    "page": "Stacks & Layers",
+    "page": "Layers and Stacks",
     "title": "Layers",
     "category": "section",
     "text": "Draw multiple layers onto the same plot withplot(layer(x=rand(10), y=rand(10), Geom.point),\n     layer(x=rand(10), y=rand(10), Geom.line))Or if your data is in a DataFrame:plot(my_data, layer(x=\"some_column1\", y=\"some_column2\", Geom.point),\n              layer(x=\"some_column3\", y=\"some_column4\", Geom.line))You can also pass different data frames to each layers:layer(another_dataframe, x=\"col1\", y=\"col2\", Geom.point)Ordering of layers can be controlled with the order keyword. A higher order number will cause a layer to be drawn on top of any layers with a lower number. If not specified, default order for a layer is 0.plot(layer(x=rand(10), y=rand(10), Geom.point, order=1),\n     layer(x=rand(10), y=rand(10), Geom.line, order=2))Guide attributes may be added to a multi-layer plots:plt=plot(layer(x=rand(10), y=rand(10), Geom.point),\n         layer(x=rand(10), y=rand(10), Geom.line),\n         Guide.XLabel(\"XLabel\"),\n         Guide.YLabel(\"YLabel\"),\n         Guide.Title(\"Title\"));"
@@ -170,7 +170,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "man/layers.html#Stacks-1",
-    "page": "Stacks & Layers",
+    "page": "Layers and Stacks",
     "title": "Stacks",
     "category": "section",
     "text": "Plots can also be stacked horizontally with hstack or vertically with vstack, and arranged into a rectangular array with gridstack. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.  Use title to add a descriptive string at the top.p1 = plot(x=[1,2,3], y=[4,5,6])\np2 = plot(x=[1,2,3], y=[6,7,8])\nvstack(p1,p2)\n\np3 = plot(x=[5,7,8], y=[8,9,10])\np4 = plot(x=[5,7,8], y=[10,11,12])\n\n# these two are equivalent\nvstack(hstack(p1,p2),hstack(p3,p4))\ngridstack([p1 p2; p3 p4])\n\ntitle(\"My great data\", hstack(p3,p4))"
@@ -565,7 +565,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.density2d",
     "title": "Geom.density2d",
     "category": "section",
-    "text": "Draw a kernel density estimate from data. An alias for Geom.Contour with Stat.density2d."
+    "text": "Draw a kernel density estimate from data. An alias for Geom.contour with Stat.density2d."
 },
 
 {
@@ -581,7 +581,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.density2d",
     "title": "Arguments",
     "category": "section",
-    "text": "bandwidth:  See Geom.Density.\nlevels:  See Geom.Contour."
+    "text": "bandwidth:  See Geom.density.\nlevels:  See Geom.contour."
 },
 
 {
@@ -589,7 +589,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.density2d",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly\nusing Distributions\nGadfly.set_default_plot_size(14cm, 8cm)```@example 1 plot(x=rand(Rayleigh(2),1000), y=rand(Rayleigh(2),1000),     Geom.density2d(levels = x->maximum(x)*0.5.^collect(1:2:8)), Geom.point,     Theme(key_position=:none),     Scale.color_continuous(colormap=x->colorant\"red\"))"
+    "text": "using Gadfly\nusing Distributions\nGadfly.set_default_plot_size(14cm, 8cm)plot(x=rand(Rayleigh(2),1000), y=rand(Rayleigh(2),1000),\n    Geom.density2d(levels = x->maximum(x)*0.5.^collect(1:2:8)), Geom.point,\n    Theme(key_position=:none),\n    Scale.color_continuous(colormap=x->colorant\"red\"))"
 },
 
 {
