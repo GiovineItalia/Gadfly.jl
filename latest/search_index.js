@@ -45,7 +45,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Credits",
     "category": "section",
-    "text": "Gadfly is predominantly the work of Daniel C. Jones who initiated the project and built out most of the infrastructure. The current package maintainers are Shashi Gowda and Tamas Nagy. Important contributions have also been made by Godisemo, Tim Holy, Darwin Darakananda, Shashi Gowda, Tamas Nagy, Simon Leblanc, Iain Dunning, Keno Fischer, Mattriks, and others."
+    "text": "Gadfly is predominantly the work of Daniel C. Jones who initiated the project and built out most of the infrastructure. The current package maintainers are Shashi Gowda and Tamas Nagy. Important contributions have also been made by Godisemo, Tim Holy, Darwin Darakananda, Simon Leblanc, Iain Dunning, Keno Fischer, Mattriks, and others."
 },
 
 {
@@ -361,6 +361,46 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/geoms/geom_abline.html#",
+    "page": "Geom.abline",
+    "title": "Geom.abline",
+    "category": "page",
+    "text": "Author = \"Ben J. Arthur\""
+},
+
+{
+    "location": "lib/geoms/geom_abline.html#Geom.abline-1",
+    "page": "Geom.abline",
+    "title": "Geom.abline",
+    "category": "section",
+    "text": "For each number in yintercept, draw the lines y = xslope * x + yintercept across the plot canvas.  Similarly, for each number in xintercept, draw the lines x = yslope * y + xintercept across the plot canvas."
+},
+
+{
+    "location": "lib/geoms/geom_abline.html#Aesthetics-1",
+    "page": "Geom.abline",
+    "title": "Aesthetics",
+    "category": "section",
+    "text": "yintercept: Y-axis intercepts\nxslope: rise over run, defaults to 0\nxintercept: X-axis intercepts\nyslope: run over rise, defaults to 0"
+},
+
+{
+    "location": "lib/geoms/geom_abline.html#Arguments-1",
+    "page": "Geom.abline",
+    "title": "Arguments",
+    "category": "section",
+    "text": "color: Color of the lines.\nsize: Width of the lines."
+},
+
+{
+    "location": "lib/geoms/geom_abline.html#Examples-1",
+    "page": "Geom.abline",
+    "title": "Examples",
+    "category": "section",
+    "text": "using Gadfly, RDatasets, Compose\nGadfly.set_default_plot_size(14cm, 10cm)plot(dataset(\"ggplot2\", \"mpg\"), x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n    yintercept=[0], xslope=[1], Geom.abline(color=\"red\"),\n    Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(colorant\"red\"))))"
+},
+
+{
     "location": "lib/geoms/geom_bar.html#",
     "page": "Geom.bar",
     "title": "Geom.bar",
@@ -501,7 +541,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.contour",
     "title": "Arguments",
     "category": "section",
-    "text": "levels (optional): Sets the number of contours to draw, defaults to 15.  It takes either a vector of contour levels, or a integer that specifies the number of contours to draw."
+    "text": "levels (optional): Sets the number of contours to draw, defaults to 15.  It takes either a vector of contour levels;  an integer that specifies the number of contours to draw;  or a function which inputs z and outputs either a vector or an integer."
 },
 
 {
@@ -510,6 +550,46 @@ var documenterSearchIndex = {"docs": [
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),\n     x=linspace(-8,8,150), y=linspace(-2,2,150), Geom.contour)volcano = float(array(dataset(\"datasets\", \"volcano\")))\nplot(z=volcano, Geom.contour)plot(z=volcano, Geom.contour(levels=[110.0, 150.0, 180.0, 190.0]))plot(z=volcano, x=collect(0.0:10:860.0), y=collect(0.0:10:600.0),\n     Geom.contour(levels=2))"
+},
+
+{
+    "location": "lib/geoms/geom_density2d.html#",
+    "page": "Geom.density2d",
+    "title": "Geom.density2d",
+    "category": "page",
+    "text": "Author = \"Ben J. Arthur\""
+},
+
+{
+    "location": "lib/geoms/geom_density2d.html#Geom.density2d-1",
+    "page": "Geom.density2d",
+    "title": "Geom.density2d",
+    "category": "section",
+    "text": "Draw a kernel density estimate from data. An alias for Geom.Contour with Stat.density2d."
+},
+
+{
+    "location": "lib/geoms/geom_density2d.html#Aesthetics-1",
+    "page": "Geom.density2d",
+    "title": "Aesthetics",
+    "category": "section",
+    "text": "x, y: Sample to draw density estimate from."
+},
+
+{
+    "location": "lib/geoms/geom_density2d.html#Arguments-1",
+    "page": "Geom.density2d",
+    "title": "Arguments",
+    "category": "section",
+    "text": "bandwidth:  See Geom.Density.\nlevels:  See Geom.Contour."
+},
+
+{
+    "location": "lib/geoms/geom_density2d.html#Examples-1",
+    "page": "Geom.density2d",
+    "title": "Examples",
+    "category": "section",
+    "text": "using Gadfly\nusing Distributions\nGadfly.set_default_plot_size(14cm, 8cm)```@example 1 plot(x=rand(Rayleigh(2),1000), y=rand(Rayleigh(2),1000),     Geom.density2d(levels = x->maximum(x)*0.5.^collect(1:2:8)), Geom.point,     Theme(key_position=:none),     Scale.color_continuous(colormap=x->colorant\"red\"))"
 },
 
 {
@@ -717,7 +797,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.hline",
     "title": "Geom.hline",
     "category": "section",
-    "text": "Draw horizontal lines across the plot canvas."
+    "text": "Draw horizontal lines across the plot canvas.  An alias for Geom.abline with only yintercept specified."
 },
 
 {
@@ -741,7 +821,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.hline",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n	 yintercept=[2.5, 4.0], Geom.point, Geom.hline)# Colors and widths of lines can be changed. This works separately from the\n# `color` and `size` aesthetics.\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n	 yintercept=[2.5, 4.0], Geom.point,\n	 Geom.hline(color=colorant\"orange\", size=2mm))"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   yintercept=[2.5, 4.0], Geom.point, Geom.hline)# Colors and widths of lines can be changed. This works separately from the\n# `color` and `size` aesthetics.  They may be either a scalor or a vector of\n# length(yintercept).\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   yintercept=[2.5, 4.0], Geom.point,\n   Geom.hline(color=[\"orange\",\"red\"], size=[2mm,3mm]))"
 },
 
 {
@@ -1205,7 +1285,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.vline",
     "title": "Geom.vline",
     "category": "section",
-    "text": "Draw vertical lines across the plot canvas."
+    "text": "Draw vertical lines across the plot canvas.  An alias for Geom.abline with only xintercept speci fied."
 },
 
 {
@@ -1229,7 +1309,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.vline",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n	 xintercept=[5.0, 7.0], Geom.point, Geom.vline)# Colors and widths of lines can be changed. This works separately from the\n# `color` and `size` aesthetics.\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n	 xintercept=[5.0, 7.0], Geom.point,\n	 Geom.vline(color=colorant\"orange\", size=2mm))"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   xintercept=[5.0, 7.0], Geom.point, Geom.vline)# Colors and widths of lines can be changed. This works separately from the\n# `color` and `size` aesthetics.  They may be either a scalar or a vector of\n# length(xintercept).\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   xintercept=[5.0, 7.0], Geom.point,\n   Geom.vline(color=[\"orange\",\"red\"], size=[2mm,3mm]))"
 },
 
 {

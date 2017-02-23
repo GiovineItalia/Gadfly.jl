@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.subplot_grid · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><select id="version-selector" onChange="window.location.href=this.value"><option value="#" selected="selected" disabled="disabled">Version</option></select><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Stacks &amp; Layers</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_subplot_grid.html">Geom.subplot_grid</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/b0a6429aeca1daaa02f2a0ba0757512b6458d578/docs/src/lib/geoms/geom_subplot_grid.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.subplot_grid-1" href="#Geom.subplot_grid-1">Geom.subplot_grid</a></h1><p>Draw multiple subplots in a grid organized by one or two categorial vectors.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>xgroup</code> (optional): Arrange subplots on the X-axis by categorial data.</p></li><li><p><code>ygroup</code> (optional): Arrange subplots on the Y-axis by categorial data.</p></li><li><p><code>free_y_axis</code> (optional): Whether the y-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><ul><li><p><code>free_x_axis</code> (optional): Whether the x-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><p>One or both of <code>xgroup</code> or <code>ygroup</code> must be bound. If only one, a single column or row of subplots is drawn, if both, a grid.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><pre><code class="language-julia">Geom.subplot_grid(elements::Gadfly.ElementOrFunction...)</code></pre><p>Unlike most geometries, <a href="geom_subplot_grid.html#Geom.subplot_grid-1">Geom.subplot_grid</a> is typically passed one or more parameters. The constructor works for the most part like the <code>layer</code> function. Arbitrary plot elements may be passed, while aesthetic bindings are inherited from the parent plot.</p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">set_default_plot_size(20cm, 7.5cm)
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.subplot_grid · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><select id="version-selector" onChange="window.location.href=this.value"><option value="#" selected="selected" disabled="disabled">Version</option></select><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Stacks &amp; Layers</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_subplot_grid.html">Geom.subplot_grid</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/c0e53d648558015945841ada2f97ad6dfebcd200/docs/src/lib/geoms/geom_subplot_grid.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.subplot_grid-1" href="#Geom.subplot_grid-1">Geom.subplot_grid</a></h1><p>Draw multiple subplots in a grid organized by one or two categorial vectors.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>xgroup</code> (optional): Arrange subplots on the X-axis by categorial data.</p></li><li><p><code>ygroup</code> (optional): Arrange subplots on the Y-axis by categorial data.</p></li><li><p><code>free_y_axis</code> (optional): Whether the y-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><ul><li><p><code>free_x_axis</code> (optional): Whether the x-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><p>One or both of <code>xgroup</code> or <code>ygroup</code> must be bound. If only one, a single column or row of subplots is drawn, if both, a grid.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><pre><code class="language-julia">Geom.subplot_grid(elements::Gadfly.ElementOrFunction...)</code></pre><p>Unlike most geometries, <a href="geom_subplot_grid.html#Geom.subplot_grid-1">Geom.subplot_grid</a> is typically passed one or more parameters. The constructor works for the most part like the <code>layer</code> function. Arbitrary plot elements may be passed, while aesthetic bindings are inherited from the parent plot.</p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">set_default_plot_size(20cm, 7.5cm)
 plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
      xgroup=&quot;Treatment&quot;, x=&quot;ColPos&quot;, y=&quot;RowPos&quot;, color=&quot;Decrease&quot;,
      Geom.subplot_grid(Geom.point))</code></pre><?xml version="1.0" encoding="UTF-8"?>
@@ -19,10 +19,10 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
   </g>
   <g class="guide colorkey" id="img-64e47d63-3">
     <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-64e47d63-4">
-      <text x="184.23" y="36.46" dy="0.35em">100</text>
       <text x="184.23" y="51.99" dy="0.35em">1</text>
-      <text x="184.23" y="44.31" dy="0.35em">50</text>
       <text x="184.23" y="28.62" dy="0.35em">150</text>
+      <text x="184.23" y="44.31" dy="0.35em">50</text>
+      <text x="184.23" y="36.46" dy="0.35em">100</text>
     </g>
     <g shape-rendering="crispEdges" stroke="#000000" stroke-opacity="0.000" id="img-64e47d63-5">
       <rect x="181.92" y="51.41" width="1.31" height="0.58" fill="#004D84"/>
@@ -66,10 +66,10 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
       <rect x="181.92" y="29.2" width="1.31" height="0.58" fill="#8B3844"/>
       <rect x="181.92" y="28.62" width="1.31" height="0.58" fill="#7E273E"/>
       <g stroke="#FFFFFF" stroke-width="0.2" id="img-64e47d63-6">
-        <path fill="none" d="M181.92,36.46 L 183.23 36.46"/>
         <path fill="none" d="M181.92,51.99 L 183.23 51.99"/>
-        <path fill="none" d="M181.92,44.31 L 183.23 44.31"/>
         <path fill="none" d="M181.92,28.62 L 183.23 28.62"/>
+        <path fill="none" d="M181.92,44.31 L 183.23 44.31"/>
+        <path fill="none" d="M181.92,36.46 L 183.23 36.46"/>
       </g>
     </g>
     <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-64e47d63-7">
@@ -454,32 +454,32 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
   </g>
 </g>
 <defs>
-  <clipPath id="img-64e47d63-54">
-  <path d="M100.1,7 L 116.56 7 116.56 48.1 100.1 48.1" />
-</clipPath>
-  <clipPath id="img-64e47d63-72">
-  <path d="M59.19,7 L 75.65 7 75.65 48.1 59.19 48.1" />
+  <clipPath id="img-64e47d63-90">
+  <path d="M16.29,7 L 34.74 7 34.74 48.1 16.29 48.1" />
 </clipPath>
   <clipPath id="img-64e47d63-36">
   <path d="M141.01,7 L 157.47 7 157.47 48.1 141.01 48.1" />
 </clipPath>
+  <clipPath id="img-64e47d63-8">
+  <path d="M12.61,5 L 179.92 5 179.92 60.39 12.61 60.39" />
+</clipPath>
+  <clipPath id="img-64e47d63-72">
+  <path d="M59.19,7 L 75.65 7 75.65 48.1 59.19 48.1" />
+</clipPath>
   <clipPath id="img-64e47d63-63">
   <path d="M79.65,7 L 96.1 7 96.1 48.1 79.65 48.1" />
-</clipPath>
-  <clipPath id="img-64e47d63-27">
-  <path d="M161.47,7 L 177.92 7 177.92 48.1 161.47 48.1" />
-</clipPath>
-  <clipPath id="img-64e47d63-90">
-  <path d="M16.29,7 L 34.74 7 34.74 48.1 16.29 48.1" />
 </clipPath>
   <clipPath id="img-64e47d63-81">
   <path d="M38.74,7 L 55.19 7 55.19 48.1 38.74 48.1" />
 </clipPath>
+  <clipPath id="img-64e47d63-27">
+  <path d="M161.47,7 L 177.92 7 177.92 48.1 161.47 48.1" />
+</clipPath>
   <clipPath id="img-64e47d63-45">
   <path d="M120.56,7 L 137.01 7 137.01 48.1 120.56 48.1" />
 </clipPath>
-  <clipPath id="img-64e47d63-8">
-  <path d="M12.61,5 L 179.92 5 179.92 60.39 12.61 60.39" />
+  <clipPath id="img-64e47d63-54">
+  <path d="M100.1,7 L 116.56 7 116.56 48.1 100.1 48.1" />
 </clipPath>
   <g id="img-64e47d63-35">
     <circle cx="0" cy="0" r="0.9"/>
@@ -1370,59 +1370,59 @@ plot(dataset(&quot;vcd&quot;, &quot;Suicide&quot;), xgroup=&quot;Sex&quot;, ygro
   </g>
 </g>
 <defs>
-  <clipPath id="img-0d7e651b-46">
-  <path d="M83.96,151.07 L 133 151.07 133 171.08 83.96 171.08" />
-</clipPath>
-  <clipPath id="img-0d7e651b-82">
-  <path d="M83.96,103.05 L 133 103.05 133 123.06 83.96 123.06" />
-</clipPath>
-  <clipPath id="img-0d7e651b-64">
-  <path d="M83.96,127.06 L 133 127.06 133 147.07 83.96 147.07" />
-</clipPath>
-  <clipPath id="img-0d7e651b-10">
-  <path d="M83.96,199.09 L 133 199.09 133 221.1 83.96 221.1" />
-</clipPath>
-  <clipPath id="img-0d7e651b-144">
-  <path d="M28.92,31.01 L 79.96 31.01 79.96 51.02 28.92 51.02" />
+  <clipPath id="img-0d7e651b-72">
+  <path d="M28.92,127.06 L 79.96 127.06 79.96 147.07 28.92 147.07" />
 </clipPath>
   <clipPath id="img-0d7e651b-18">
   <path d="M28.92,199.09 L 79.96 199.09 79.96 221.1 28.92 221.1" />
 </clipPath>
-  <clipPath id="img-0d7e651b-36">
-  <path d="M28.92,175.08 L 79.96 175.08 79.96 195.09 28.92 195.09" />
+  <clipPath id="img-0d7e651b-118">
+  <path d="M83.96,55.02 L 133 55.02 133 75.03 83.96 75.03" />
+</clipPath>
+  <clipPath id="img-0d7e651b-144">
+  <path d="M28.92,31.01 L 79.96 31.01 79.96 51.02 28.92 51.02" />
 </clipPath>
   <clipPath id="img-0d7e651b-28">
   <path d="M83.96,175.08 L 133 175.08 133 195.09 83.96 195.09" />
 </clipPath>
-  <clipPath id="img-0d7e651b-126">
-  <path d="M28.92,55.02 L 79.96 55.02 79.96 75.03 28.92 75.03" />
-</clipPath>
   <clipPath id="img-0d7e651b-108">
   <path d="M28.92,79.03 L 79.96 79.03 79.96 99.05 28.92 99.05" />
 </clipPath>
-  <clipPath id="img-0d7e651b-72">
-  <path d="M28.92,127.06 L 79.96 127.06 79.96 147.07 28.92 147.07" />
-</clipPath>
-  <clipPath id="img-0d7e651b-162">
-  <path d="M28.92,7 L 79.96 7 79.96 27.01 28.92 27.01" />
-</clipPath>
-  <clipPath id="img-0d7e651b-118">
-  <path d="M83.96,55.02 L 133 55.02 133 75.03 83.96 75.03" />
+  <clipPath id="img-0d7e651b-82">
+  <path d="M83.96,103.05 L 133 103.05 133 123.06 83.96 123.06" />
 </clipPath>
   <clipPath id="img-0d7e651b-90">
   <path d="M28.92,103.05 L 79.96 103.05 79.96 123.06 28.92 123.06" />
 </clipPath>
+  <clipPath id="img-0d7e651b-162">
+  <path d="M28.92,7 L 79.96 7 79.96 27.01 28.92 27.01" />
+</clipPath>
   <clipPath id="img-0d7e651b-54">
   <path d="M28.92,151.07 L 79.96 151.07 79.96 171.08 28.92 171.08" />
 </clipPath>
-  <clipPath id="img-0d7e651b-136">
-  <path d="M83.96,31.01 L 133 31.01 133 51.02 83.96 51.02" />
+  <clipPath id="img-0d7e651b-3">
+  <path d="M12.61,5 L 135 5 135 235.39 12.61 235.39" />
+</clipPath>
+  <clipPath id="img-0d7e651b-64">
+  <path d="M83.96,127.06 L 133 127.06 133 147.07 83.96 147.07" />
 </clipPath>
   <clipPath id="img-0d7e651b-154">
   <path d="M83.96,7 L 133 7 133 27.01 83.96 27.01" />
 </clipPath>
-  <clipPath id="img-0d7e651b-3">
-  <path d="M12.61,5 L 135 5 135 235.39 12.61 235.39" />
+  <clipPath id="img-0d7e651b-126">
+  <path d="M28.92,55.02 L 79.96 55.02 79.96 75.03 28.92 75.03" />
+</clipPath>
+  <clipPath id="img-0d7e651b-10">
+  <path d="M83.96,199.09 L 133 199.09 133 221.1 83.96 221.1" />
+</clipPath>
+  <clipPath id="img-0d7e651b-136">
+  <path d="M83.96,31.01 L 133 31.01 133 51.02 83.96 51.02" />
+</clipPath>
+  <clipPath id="img-0d7e651b-46">
+  <path d="M83.96,151.07 L 133 151.07 133 171.08 83.96 171.08" />
+</clipPath>
+  <clipPath id="img-0d7e651b-36">
+  <path d="M28.92,175.08 L 79.96 175.08 79.96 195.09 28.92 195.09" />
 </clipPath>
   <clipPath id="img-0d7e651b-100">
   <path d="M83.96,79.03 L 133 79.03 133 99.05 83.96 99.05" />
@@ -1553,14 +1553,14 @@ longdf = stack(widedf, [:var1, :var2])</code></pre></div><p>Default behavior is 
   </g>
 </g>
 <defs>
-  <clipPath id="img-86adb5a7-7">
-  <path d="M27.24,54.86 L 73 54.86 73 100.72 27.24 100.72" />
-</clipPath>
   <clipPath id="img-86adb5a7-3">
   <path d="M12.61,5 L 75 5 75 105.39 12.61 105.39" />
 </clipPath>
   <clipPath id="img-86adb5a7-18">
   <path d="M27.24,7 L 73 7 73 50.86 27.24 50.86" />
+</clipPath>
+  <clipPath id="img-86adb5a7-7">
+  <path d="M27.24,54.86 L 73 54.86 73 100.72 27.24 100.72" />
 </clipPath>
   <g id="img-86adb5a7-15">
     <circle cx="0" cy="0" r="0.9"/>
@@ -1693,11 +1693,11 @@ longdf = stack(widedf, [:var1, :var2])</code></pre></div><p>Default behavior is 
   </g>
 </g>
 <defs>
-  <clipPath id="img-bba1554a-7">
-  <path d="M27.92,54.86 L 73 54.86 73 100.72 27.92 100.72" />
-</clipPath>
   <clipPath id="img-bba1554a-3">
   <path d="M12.61,5 L 75 5 75 105.39 12.61 105.39" />
+</clipPath>
+  <clipPath id="img-bba1554a-7">
+  <path d="M27.92,54.86 L 73 54.86 73 100.72 27.92 100.72" />
 </clipPath>
   <clipPath id="img-bba1554a-18">
   <path d="M27.92,7 L 73 7 73 50.86 27.92 50.86" />
