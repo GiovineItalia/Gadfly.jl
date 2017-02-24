@@ -4,8 +4,7 @@ Author = "Daniel C. Jones"
 
 # Geom.vline
 
-Draw vertical lines across the plot canvas.  An alias for Geom.abline with only `xintercept` speci
-fied.
+Draw vertical lines across the plot canvas.
 
 ## Aesthetics
 
