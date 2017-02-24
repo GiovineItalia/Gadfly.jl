@@ -4,7 +4,7 @@ Author = "Daniel C. Jones"
 
 # Geom.hline
 
-Draw horizontal lines across the plot canvas.  An alias for Geom.abline with only `yintercept` specified.
+Draw horizontal lines across the plot canvas.
 
 ## Aesthetics
 
