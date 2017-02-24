@@ -797,7 +797,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.hline",
     "title": "Geom.hline",
     "category": "section",
-    "text": "Draw horizontal lines across the plot canvas.  An alias for Geom.abline with only yintercept specified."
+    "text": "Draw horizontal lines across the plot canvas."
 },
 
 {
@@ -1285,7 +1285,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.vline",
     "title": "Geom.vline",
     "category": "section",
-    "text": "Draw vertical lines across the plot canvas.  An alias for Geom.abline with only xintercept speci fied."
+    "text": "Draw vertical lines across the plot canvas."
 },
 
 {
