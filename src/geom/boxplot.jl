@@ -110,15 +110,20 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
 
     # Outliers
     if aes.outliers != nothing && !isempty(aes.outliers)
-        xys = collect(chain([zip(cycle([x]), ys, cycle([c]))
-                             for (x, ys, c) in zip(xs, aes.outliers, cs)]...))
-        compose!(ctx,
-            (context(),
-             circle([x for (x, y, c) in xys],
-                    [y for (x, y, c) in xys],
-                    [theme.default_point_size], to),
-             stroke([theme.discrete_highlight_color(c) for (x, y, c) in xys]),
-             fill([c for (x, y, c) in xys])))
+        if length(aes.outliers) < 100
+            warn("Plotting of more then 100 outliers is currently disabled because it will result in errors by compose")
+            warn("See https://github.com/GiovineItalia/Gadfly.jl/issues/770")
+        else
+            xys = collect(chain([zip(cycle([x]), ys, cycle([c]))
+                                 for (x, ys, c) in zip(xs, aes.outliers, cs)]...))
+            compose!(ctx,
+                (context(),
+                 circle([x for (x, y, c) in xys],
+                        [y for (x, y, c) in xys],
+                        [theme.default_point_size], to),
+                 stroke([theme.discrete_highlight_color(c) for (x, y, c) in xys]),
+                 fill([c for (x, y, c) in xys])))
+        end
     end
 
     # Middle
