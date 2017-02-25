@@ -110,7 +110,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
 
     # Outliers
     if aes.outliers != nothing && !isempty(aes.outliers)
-        if length(aes.outliers) < 100
+        if length(aes.outliers) > 100
             warn("Plotting of more then 100 outliers is currently disabled because it will result in errors by compose")
             warn("See https://github.com/GiovineItalia/Gadfly.jl/issues/770")
         else
