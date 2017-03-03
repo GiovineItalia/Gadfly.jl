@@ -504,7 +504,7 @@ function apply_statistic(stat::Density2DStatistic,
     Gadfly.assert_aesthetics_defined("Density2DStatistic", aes, :x, :y)
 
     window = (stat.bw[1] <= 0.0 ? KernelDensity.default_bandwidth(aes.x) : stat.bw[1],
-              stat.bw[2] <= 0.0 ? KernelDensity.default_bandwidth(aes.x) : stat.bw[2])
+              stat.bw[2] <= 0.0 ? KernelDensity.default_bandwidth(aes.y) : stat.bw[2])
     k = KernelDensity.kde((aes.x,aes.y), bandwidth=window, npoints=stat.n)
     aes.z = k.density
     aes.x = collect(k.x)
