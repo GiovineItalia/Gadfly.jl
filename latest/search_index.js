@@ -549,7 +549,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.contour",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),\n     x=linspace(-8,8,150), y=linspace(-2,2,150), Geom.contour)volcano = float(array(dataset(\"datasets\", \"volcano\")))\nplot(z=volcano, Geom.contour)plot(z=volcano, Geom.contour(levels=[110.0, 150.0, 180.0, 190.0]))plot(z=volcano, x=collect(0.0:10:860.0), y=collect(0.0:10:600.0),\n     Geom.contour(levels=2))"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),\n     x=linspace(-8,8,150), y=linspace(-2,2,150), Geom.contour)volcano = Matrix{Float64}(dataset(\"datasets\", \"volcano\"))\nplot(z=volcano, Geom.contour)plot(z=volcano, Geom.contour(levels=[110.0, 150.0, 180.0, 190.0]))plot(z=volcano, x=collect(0.0:10:860.0), y=collect(0.0:10:600.0),\n     Geom.contour(levels=2))"
 },
 
 {
