@@ -35,7 +35,7 @@ plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),
 ```
 
 ```@example 1
-volcano = float(array(dataset("datasets", "volcano")))
+volcano = Matrix{Float64}(dataset("datasets", "volcano"))
 plot(z=volcano, Geom.contour)
 ```
 
