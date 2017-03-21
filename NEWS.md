@@ -2,13 +2,14 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
-# Version 0.5.5 (WIP)
+# Version 0.6.1 (WIP)
 
-# Version 0.5.4
+# Version 0.6.0
 
   * Dramatically speed up precompilation by removing old, duplicate code (#958)
   * Add `Geom.abline` (#957)
   * Add `Geom.density2d` (#959)
+  * Drop support for Julia 0.4 (#954)
 
 # Version 0.5.3
 
