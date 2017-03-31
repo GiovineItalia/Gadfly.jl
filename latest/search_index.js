@@ -245,7 +245,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Parameters",
     "category": "section",
-    "text": "These parameters can either be used with Theme or styledefault_color: When the color aesthetic is not bound, geometry uses this color for drawing. (Color)\ndefault_point_size: Size of points in the point and boxplot geometry.  (Measure)\nline_width: Width of lines in the line geometry. (Measure)\npanel_fill: Background color used in the main plot panel. ( Color or Nothing)\npanel_opacity: Opacity of the plot background panel. (Float in [0.0, 1.0])\npanel_stroke: Border color of the main plot panel. (Color or Nothing)\nbackground_color: Background color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding: How much padding should be put around the plot as a whole (Measure)\ngrid_color: Color of grid lines. (Color or Nothing)\ngrid_color_focused: In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width: Width of grid lines. (Measure)\nminor_label_font: Font used for minor labels such as guide entries and labels. (String)\nminor_label_font_size: Font size used for minor labels. (Measure)\nminor_label_color: Color used for minor labels. (Color)\nmajor_label_font: Font used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size: Font size used for major labels. (Measure)\nmajor_label_color: Color used for major labels. (Color)\nkey_position: Where key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, or :none. Setting to :none disables the key. (Symbol)\nkey_title_font: Font used for titles of keys. (String)\nkey_title_font_size: Font size used for key titles. (Measure)\nkey_title_color: Color used for key titles. (Color)\nkey_label_font: Font used for key entry labels. (String)\nkey_label_font_size: Font size used for key entry labels. (Measure)\nkey_label_color: Color used for key entry labels. (Color)\nkey_max_columns: Maximum number of columns for key entry labels. (Int)\nbar_spacing: Spacing between bars in Geom.bar. (Measure)\nboxplot_spacing: Spacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length: Length of caps on error bars. (Measure)\nhighlight_width: Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color and continuous_highlight_color: Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color: Color used to draw background geometry, such as Geom.ribbon. This is a function that alters the fill color of the geometry. (Function)\nlowlight_opacity: Opacity of background geometry such as Geom.ribbon. (Float64)\nmiddle_color: Color altering function used to draw the midline in boxplots. (Function)\nmiddle_width: Width of the middle line in boxplots. (Measure)\nguide_title_position: One of :left, :center, :right indicating the  placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape: The shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nbar_highlight: Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\ndiscrete_color_scheme: A DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scheme: A ContinuousColorScale see Scale.color_continuous"
+    "text": "These parameters can either be used with Theme or styledefault_color: When the color aesthetic is not bound, geometry uses this color for drawing. (Color)\ndefault_point_size: Size of points in the point and boxplot geometry.  (Measure)\nline_width: Width of lines in the line geometry. (Measure)\nline_style: Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)\npanel_fill: Background color used in the main plot panel. ( Color or Nothing)\npanel_opacity: Opacity of the plot background panel. (Float in [0.0, 1.0])\npanel_stroke: Border color of the main plot panel. (Color or Nothing)\nbackground_color: Background color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding: How much padding should be put around the plot as a whole (Measure)\ngrid_color: Color of grid lines. (Color or Nothing)\ngrid_color_focused: In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width: Width of grid lines. (Measure)\nminor_label_font: Font used for minor labels such as guide entries and labels. (String)\nminor_label_font_size: Font size used for minor labels. (Measure)\nminor_label_color: Color used for minor labels. (Color)\nmajor_label_font: Font used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size: Font size used for major labels. (Measure)\nmajor_label_color: Color used for major labels. (Color)\nkey_position: Where key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, or :none. Setting to :none disables the key. (Symbol)\nkey_title_font: Font used for titles of keys. (String)\nkey_title_font_size: Font size used for key titles. (Measure)\nkey_title_color: Color used for key titles. (Color)\nkey_label_font: Font used for key entry labels. (String)\nkey_label_font_size: Font size used for key entry labels. (Measure)\nkey_label_color: Color used for key entry labels. (Color)\nkey_max_columns: Maximum number of columns for key entry labels. (Int)\nbar_spacing: Spacing between bars in Geom.bar. (Measure)\nboxplot_spacing: Spacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length: Length of caps on error bars. (Measure)\nhighlight_width: Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color and continuous_highlight_color: Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color: Color used to draw background geometry, such as Geom.ribbon. This is a function that alters the fill color of the geometry. (Function)\nlowlight_opacity: Opacity of background geometry such as Geom.ribbon. (Float64)\nmiddle_color: Color altering function used to draw the midline in boxplots. (Function)\nmiddle_width: Width of the middle line in boxplots. (Measure)\nguide_title_position: One of :left, :center, :right indicating the  placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape: The shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nbar_highlight: Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\ndiscrete_color_scheme: A DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scheme: A ContinuousColorScale see Scale.color_continuous"
 },
 
 {
@@ -389,7 +389,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.abline",
     "title": "Arguments",
     "category": "section",
-    "text": "color: Color of the lines.\nsize: Width of the lines."
+    "text": "color: Color of the lines.\nsize: Width of the lines.\nstyle: Style of the lines."
 },
 
 {
@@ -397,7 +397,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.abline",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly, RDatasets, Compose\nGadfly.set_default_plot_size(14cm, 10cm)plot(dataset(\"ggplot2\", \"mpg\"), x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n    yintercept=[0], xslope=[1], Geom.abline(color=\"red\"),\n    Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(colorant\"red\"))))"
+    "text": "using Gadfly, RDatasets, Compose\nGadfly.set_default_plot_size(14cm, 10cm)plot(dataset(\"ggplot2\", \"mpg\"), x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n    yintercept=[0], xslope=[1], Geom.abline(color=\"red\", style=:dash),\n    Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(colorant\"red\"))))"
 },
 
 {
@@ -813,7 +813,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.hline",
     "title": "Arguments",
     "category": "section",
-    "text": "color: Color of the lines.\nsize: Width of the lines."
+    "text": "color: Color of the lines.\nsize: Width of the lines.\nstyle: Style of the lines."
 },
 
 {
@@ -821,7 +821,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.hline",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   yintercept=[2.5, 4.0], Geom.point, Geom.hline)# Colors and widths of lines can be changed. This works separately from the\n# `color` and `size` aesthetics.  They may be either a scalor or a vector of\n# length(yintercept).\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   yintercept=[2.5, 4.0], Geom.point,\n   Geom.hline(color=[\"orange\",\"red\"], size=[2mm,3mm]))"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   yintercept=[2.5, 4.0], Geom.point, Geom.hline(style=:dot))# Colors and widths of lines can be changed. This works separately from the\n# `color` and `size` aesthetics.  They may be either a scalor or a vector of\n# length(yintercept).\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   yintercept=[2.5, 4.0], Geom.point,\n   Geom.hline(color=[\"orange\",\"red\"], size=[2mm,3mm]))"
 },
 
 {
@@ -1301,7 +1301,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.vline",
     "title": "Arguments",
     "category": "section",
-    "text": "color: Color of the lines.\nsize: Width of the lines."
+    "text": "color: Color of the lines.\nsize: Width of the lines.\nstyle: Style of the lines."
 },
 
 {
@@ -1309,7 +1309,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.vline",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   xintercept=[5.0, 7.0], Geom.point, Geom.vline)# Colors and widths of lines can be changed. This works separately from the\n# `color` and `size` aesthetics.  They may be either a scalar or a vector of\n# length(xintercept).\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   xintercept=[5.0, 7.0], Geom.point,\n   Geom.vline(color=[\"orange\",\"red\"], size=[2mm,3mm]))"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   xintercept=[5.0, 7.0], Geom.point, Geom.vline(style=[:solid,[1mm,1mm]]))# Colors and widths of lines can be changed. This works separately from the\n# `color` and `size` aesthetics.  They may be either a scalar or a vector of\n# length(xintercept).\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n   xintercept=[5.0, 7.0], Geom.point,\n   Geom.vline(color=[\"orange\",\"red\"], size=[2mm,3mm]))"
 },
 
 {
