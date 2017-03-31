@@ -14,15 +14,17 @@ end
 immutable HLineGeometry <: Gadfly.GeometryElement
     color::@compat(Union{Vector, Color, (@compat Void)})
     size::@compat(Union{Vector, Measure, (@compat Void)})
+    style::@compat(Union{Vector, Symbol, (@compat Void)})
     tag::Symbol
 
     function HLineGeometry(; color::@compat(Union{Vector, String, Color, (@compat Void)})=nothing,
                            size::@compat(Union{Vector, Measure, (@compat Void)})=nothing,
+                           style::@compat(Union{Vector, Symbol, (@compat Void)})=nothing,
                            tag::Symbol=empty_tag)
         new(color === nothing ? nothing :
                 typeof(color)<:Vector ? [parse(Colorant,x) for x in color] :
                 parse(Colorant, color),
-            size, tag)
+            size, style, tag)
     end
 end
 
@@ -39,17 +41,21 @@ function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    line_style = Gadfly.get_stroke_vector(theme.line_style)
+    style = geom.style === nothing ? theme.line_style : geom.style
 
     color = check_arguments(color, length(aes.yintercept))
     size = check_arguments(size, length(aes.yintercept))
+    style = check_arguments(style, length(aes.yintercept))
 
-    root = compose(context(), strokedash(line_style), svgclass("xfixed"))
+    style = map(Gadfly.get_stroke_vector, style)
+
+    root = compose(context(), svgclass("xfixed"))
     for (idx,y) in enumerate(aes.yintercept)
         compose!(root, (context(),
             Compose.line([(0w, y), (1w, y)], geom.tag),
             stroke(color[idx]),
-            linewidth(size[idx])))
+            linewidth(size[idx]),
+            strokedash(style[idx])))
     end
     root
 end
@@ -58,15 +64,17 @@ end
 immutable VLineGeometry <: Gadfly.GeometryElement
     color::@compat(Union{Vector, Color, (@compat Void)})
     size::@compat(Union{Vector, Measure, (@compat Void)})
+    style::@compat(Union{Vector, Symbol, (@compat Void)})
     tag::Symbol
 
     function VLineGeometry(; color::@compat(Union{Vector, String, Color, (@compat Void)})=nothing,
                            size::@compat(Union{Vector, Measure, (@compat Void)})=nothing,
+                           style::@compat(Union{Vector, Symbol, (@compat Void)})=nothing,
                            tag::Symbol=empty_tag)
         new(color === nothing ? nothing :
                 typeof(color)<:Vector ? [parse(Colorant,x) for x in color] :
                 parse(Colorant, color),
-            size, tag)
+            size, style, tag)
     end
 end
 
@@ -83,17 +91,21 @@ function render(geom::VLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    line_style = Gadfly.get_stroke_vector(theme.line_style)
+    style = geom.style === nothing ? theme.line_style : geom.style
 
     color = check_arguments(color, length(aes.xintercept))
     size = check_arguments(size, length(aes.xintercept))
+    style = check_arguments(style, length(aes.xintercept))
 
-    root = compose(context(), strokedash(line_style), svgclass("xfixed"))
+    style = map(Gadfly.get_stroke_vector, style)
+
+    root = compose(context(), svgclass("xfixed"))
     for (idx,x) in enumerate(aes.xintercept)
         compose!(root, (context(),
                 Compose.line([(x, 0h), (x, 1h)], geom.tag),
                 stroke(color[idx]),
-                linewidth(size[idx])))
+                linewidth(size[idx]),
+                strokedash(style[idx])))
     end
     root
 end
@@ -102,15 +114,17 @@ end
 immutable ABLineGeometry <: Gadfly.GeometryElement
     color::@compat(Union{Vector, Color, (@compat Void)})
     size::@compat(Union{Vector, Measure, (@compat Void)})
+    style::@compat(Union{Vector, Symbol, (@compat Void)})
     tag::Symbol
 
     function ABLineGeometry(; color::@compat(Union{Vector, String, Color, (@compat Void)})=nothing,
                            size::@compat(Union{Vector, Measure, (@compat Void)})=nothing,
+                           style::@compat(Union{Vector, Symbol, (@compat Void)})=nothing,
                            tag::Symbol=empty_tag)
         new(color === nothing ? nothing :
                 typeof(color)<:Vector ? [parse(Colorant,x) for x in color] :
                 parse(Colorant, color),
-            size, tag)
+            size, style, tag)
     end
 end
 
@@ -119,7 +133,6 @@ abline = ABLineGeometry
 function element_aesthetics(geom::ABLineGeometry)
     [:xintercept, :yintercept, :xslope, :yslope]
 end
-
 function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     function check_aesthetics(intercept, slope)
@@ -140,10 +153,13 @@ function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    line_style = Gadfly.get_stroke_vector(theme.line_style)
+    style = geom.style === nothing ? theme.line_style : geom.style
 
     color = check_arguments(color, length(aes.yintercept) + length(aes.xintercept))
     size = check_arguments(size, length(aes.yintercept) + length(aes.xintercept))
+    style = check_arguments(style, length(aes.yintercept) + length(aes.xintercept))
+
+    style = map(Gadfly.get_stroke_vector, style)
 
     # it would've been nice to just say low, high = realmin(Float64), realmax(Float64).
     # but SVG() and PDF() have silent overflow errors when plotting way outside the context's
@@ -168,18 +184,20 @@ function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     xlows  = [ low * m + b for (m,b) in zip(aes.yslope, aes.xintercept)]
     xhighs = [high * m + b for (m,b) in zip(aes.yslope, aes.xintercept)]
 
-    root = compose(context(), strokedash(line_style), svgclass("xfixed"))
+    root = compose(context(), svgclass("xfixed"))
     for (idx,(ylow,yhigh)) in enumerate(zip(ylows,yhighs))
         compose!(root, (context(),
                 Compose.line([(low,ylow), (high,yhigh)], geom.tag),
                 stroke(color[idx]),
-                linewidth(size[idx])))
+                linewidth(size[idx]),
+                strokedash(style[idx])))
     end
     for (idx,(xlow,xhigh)) in enumerate(zip(xlows,xhighs))
         compose!(root, (context(),
                 Compose.line([(xlow,low), (xhigh,high)], geom.tag),
                 stroke(color[idx+length(ylows)]),
-                linewidth(size[idx+length(ylows)])))
+                linewidth(size[idx+length(ylows)]),
+                strokedash(style[idx+length(ylows)])))
     end
     root
 end

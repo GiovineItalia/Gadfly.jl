@@ -61,31 +61,26 @@ function render(geom::SegmentGeom, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
 
     aes = inherit(aes, default_aes) 
 
-#    line_style = Gadfly.get_stroke_vector(theme.line_style)
-    line_style = theme.line_style 
-    if is(line_style, nothing)
-        line_style = [] 
+    line_style = Gadfly.get_stroke_vector(theme.line_style)
+
+    # Geom.vector requires information about scales
+
+    if geom.arrow
+        xscale = scales[:x]
+        yscale = scales[:y]
+        check = [xscale.minvalue, xscale.maxvalue, yscale.minvalue, yscale.maxvalue]
+        if any( map(x -> is(x,nothing), check) )
+            error("For Geom.vector, Scale minvalue and maxvalue must be manually provided for both axes")
+        end
+        fx = xscale.trans.f
+        fy = yscale.trans.f
+        xyrange = [fx(xscale.maxvalue)-fx(xscale.minvalue),
+            fy(yscale.maxvalue)-fy(yscale.minvalue)]
+
+         arrows = [ arrow(x, y, xend, yend, xyrange)
+                for (x, y, xend, yend) in zip(aes.x, aes.y, aes.xend, aes.yend) ]
+
     end
-
-
-# Geom.vector requires information about scales
-
-if geom.arrow
-    xscale = scales[:x]
-    yscale = scales[:y]
-    check = [xscale.minvalue, xscale.maxvalue, yscale.minvalue, yscale.maxvalue]
-    if any( map(x -> is(x,nothing), check) )
-        error("For Geom.vector, Scale minvalue and maxvalue must be manually provided for both axes")
-    end
-    fx = xscale.trans.f
-    fy = yscale.trans.f
-    xyrange = [fx(xscale.maxvalue)-fx(xscale.minvalue),
-        fy(yscale.maxvalue)-fy(yscale.minvalue)]
-
-     arrows = [ arrow(x, y, xend, yend, xyrange)
-            for (x, y, xend, yend) in zip(aes.x, aes.y, aes.xend, aes.yend) ]
-
-end
 
     
     segments = [ [(x,y), (xend,yend)]
