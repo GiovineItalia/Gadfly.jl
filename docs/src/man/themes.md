@@ -29,6 +29,7 @@ These parameters can either be used with `Theme` or `style`
   * `default_point_size`: Size of points in the point and boxplot geometry.
      (Measure)
   * `line_width`: Width of lines in the line geometry. (Measure)
+  * `line_style`: Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)
   * `panel_fill`: Background color used in the main plot panel. (
     Color or Nothing)
   * `panel_opacity`: Opacity of the plot background panel. (Float in [0.0, 1.0])

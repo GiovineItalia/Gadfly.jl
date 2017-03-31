@@ -66,9 +66,9 @@ end
 get_stroke_vector(::@compat(Void)) = []
 get_stroke_vector(vec::AbstractVector) = vec
 function get_stroke_vector(linestyle::Symbol)
-  dash = 12 * Compose.mm
-  dot = 3 * Compose.mm
-  gap = 2 * Compose.mm
+  dash = 4 * Compose.mm
+  dot = 2 * Compose.mm
+  gap = 1 * Compose.mm
   linestyle == :solid && return []
   linestyle == :dash && return [dash, gap]
   linestyle == :dot && return [dot, gap]
@@ -91,7 +91,7 @@ end
 
     # type of dash style (a Compose.StrokeDash object which takes a vector of sold/missing/solid/missing/... 
     # lengths which are applied cyclically)
-    line_style,            Maybe(Vector),   nothing
+    line_style,            Union{Symbol,Vector},   :solid
 
     # Background color of the plot.
     panel_fill,            ColorOrNothing,  nothing

@@ -14,6 +14,7 @@ Draw horizontal lines across the plot canvas.
 
   * `color`: Color of the lines.
   * `size`: Width of the lines.
+  * `style`: Style of the lines.
 
 ## Examples
 
@@ -25,7 +26,7 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 
 ```@example 1
 plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
-   yintercept=[2.5, 4.0], Geom.point, Geom.hline)
+   yintercept=[2.5, 4.0], Geom.point, Geom.hline(style=:dot))
 ```
 
 ```@example 1
