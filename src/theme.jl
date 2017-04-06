@@ -62,6 +62,9 @@ function default_middle_color(fill_color::TransparentColor)
         fill_color.alpha)
 end
 
+function default_alpha_color(fill_color::Colorant)
+    return fill_color
+end
  
 get_stroke_vector(::@compat(Void)) = []
 get_stroke_vector(vec::AbstractVector) = vec
@@ -180,6 +183,8 @@ end
 
     # Width of the middle line in a boxplot.
     middle_width,          Measure,         0.6mm
+
+    alpha_color,            Function,       default_alpha_color
 
     # Horizontal position of the title of color key guides. One of :left,
     # :right, :center.
