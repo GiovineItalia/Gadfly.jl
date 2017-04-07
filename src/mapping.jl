@@ -145,7 +145,7 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
             end
         end
 
-        push!(V, eltyp == Vector ? Array(eltyp, vm) : DataArray(eltyp, vm))
+        push!(V, eltyp == Vector ? Array{eltyp}(vm) : DataArray(eltyp, vm))
         name = gensym()
         push!(vnames, name)
         colmap[colgroup] = j
@@ -159,7 +159,7 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
     end
 
     # Indicator columns for each colgroup
-    indicators = Array(Symbol, (vm, length(colgroups)))
+    indicators = Array{Symbol}((vm, length(colgroups)))
 
     colidxs = [isnull(colgroup.columns) ? collect(allcolumns) : get(colgroup.columns)
                for colgroup in colgroups]
@@ -219,7 +219,7 @@ function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
     V = similar(U, (vm, vn))
 
     # Indicator columns for each colgroup
-    indicators = Array(Int, (vm, length(colgroups)))
+    indicators = Array{Int}((vm, length(colgroups)))
 
     colidxs = [isnull(colgroup.columns) ? collect(allcolumns) : get(colgroup.columns)
                for colgroup in colgroups]

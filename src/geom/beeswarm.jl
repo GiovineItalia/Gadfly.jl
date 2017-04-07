@@ -54,12 +54,12 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
         end
 
         point_dist = (2*theme.default_point_size + geom.padding).value
-        offsets = Array(Length{:mm}, length(val))
-        positions = Array(Compose.Measure, length(val))
+        offsets = Array{Length{:mm}}(length(val))
+        positions = Array{Compose.Measure}(length(val))
 
         n = length(val)
-        overlaps = Array(Bool, n)
-        absvals = Array(Float64, n)
+        overlaps = Array{Bool}(n)
+        absvals = Array{Float64}(n)
         for (i, v) in enumerate(val)
             absvals[i] = Compose.resolve_position(
                     draw_context.box,

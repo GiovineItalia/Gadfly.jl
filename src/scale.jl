@@ -246,7 +246,7 @@ function apply_scale(scale::ContinuousScale,
                 T = Measure
             end
 
-            ds = Gadfly.hasna(vals) ? DataArray(T, length(vals)) : Array(T, length(vals))
+            ds = Gadfly.hasna(vals) ? DataArray(T, length(vals)) : Array{T}(length(vals))
             apply_scale_typed!(ds, vals, scale)
 
             if var == :xviewmin || var == :xviewmax ||
@@ -430,7 +430,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
 
             disc_data = discretize(getfield(data, var), scale.levels, scale.order)
 
-            setfield!(aes, var, PooledDataArray(round(Int64, disc_data.refs)))
+            setfield!(aes, var, PooledDataArray([round(Int64,x) for x in disc_data.refs]))
 
             # The leveler for discrete scales is a closure over the discretized data.
             if scale.labels === nothing
@@ -591,7 +591,7 @@ function apply_scale(scale::DiscreteColorScale,
             continue
         end
         ds = discretize(data.color, scale_levels)
-        colorvals = Array(RGB{Float32}, nonzero_length(ds.refs))
+        colorvals = Array{RGB{Float32}}(nonzero_length(ds.refs))
         i = 1
         for k in ds.refs
             if k != 0

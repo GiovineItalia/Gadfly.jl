@@ -57,7 +57,7 @@ function deferred_label_context(geom::LabelGeometry,
     # This should maybe go in theme? Or should we be using Aesthetics.size?
     padding = 2mm
 
-    point_positions = Array(AbsoluteVec2, 0)
+    point_positions = Array{AbsoluteVec2}(0)
     for (x, y) in zip(aes.x, aes.y)
         x = Compose.resolve_position(parent_box, units, parent_transform, Compose.x_measure(x))
         y = Compose.resolve_position(parent_box, units, parent_transform, Compose.y_measure(y))
@@ -102,7 +102,7 @@ function deferred_label_context(geom::LabelGeometry,
     # Checking for label overlaps is O(n^2). To mitigate these costs, we build a
     # sparse overlap matrix. This also costs O(n^2), but we only have to do it
     # once, rather than every iteration of annealing.
-    possible_overlaps = [Array(Int, 0) for _ in 1:length(positions)]
+    possible_overlaps = [Array{Int}(0) for _ in 1:length(positions)]
 
     # TODO: this whole thing would be much more effecient if we forbid from
     # the start labels that overlap points. We should be able to precompute

@@ -1,5 +1,5 @@
 
-abstract SegmentGeometry <: Gadfly.GeometryElement
+@compat abstract type SegmentGeometry <: Gadfly.GeometryElement end
 
 # Geometry for vectors/arrows/segments
 immutable SegmentGeom <: SegmentGeometry 
@@ -69,7 +69,7 @@ function render(geom::SegmentGeom, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
         xscale = scales[:x]
         yscale = scales[:y]
         check = [xscale.minvalue, xscale.maxvalue, yscale.minvalue, yscale.maxvalue]
-        if any( map(x -> is(x,nothing), check) )
+        if any( map(x -> x === nothing, check) )
             error("For Geom.vector, Scale minvalue and maxvalue must be manually provided for both axes")
         end
         fx = xscale.trans.f

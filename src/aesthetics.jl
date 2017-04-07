@@ -1,12 +1,12 @@
 
 
-typealias NumericalOrCategoricalAesthetic
+const NumericalOrCategoricalAesthetic =
     @compat(Union{(@compat Void), Vector, DataArray, PooledDataArray})
 
-typealias CategoricalAesthetic
+const CategoricalAesthetic =
     @compat(Union{(@compat Void), PooledDataArray})
 
-typealias NumericalAesthetic
+const NumericalAesthetic =
     @compat(Union{(@compat Void), Matrix, Vector, DataArray})
 
 
@@ -135,7 +135,7 @@ end
 function defined_aesthetics(aes::Aesthetics)
     vars = Set{Symbol}()
     for name in fieldnames(Aesthetics)
-        if !is(getfield(aes, name), nothing)
+        if getfield(aes, name) !== nothing
             push!(vars, name)
         end
     end
@@ -177,7 +177,7 @@ end
 
 
 function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, vars::Symbol...)
-    defined_vars = filter(var -> !(getfield(aes, var) === nothing), vars)
+    defined_vars = Compat.Iterators.filter(var -> !(getfield(aes, var) === nothing), vars)
 
     if !isempty(defined_vars)
         n = length(getfield(aes, first(defined_vars)))
@@ -309,7 +309,7 @@ function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
     if isa(a, DataArray) || isa(b, DataArray)
         ab = DataArray(V, length(a) + length(b))
     else
-        ab = Array(V, length(a) + length(b))
+        ab = Array{V}(length(a) + length(b))
     end
     i = 1
     for x in a
@@ -370,13 +370,13 @@ function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygro
     xrefs = xgroup === nothing ? [1] : xgroup
     yrefs = ygroup === nothing ? [1] : ygroup
 
-    aes_grid = Array(T, n, m)
-    staging = Array(AbstractArray, n, m)
+    aes_grid = Array{T}(n, m)
+    staging = Array{AbstractArray}(n, m)
     for i in 1:n, j in 1:m
         aes_grid[i, j] = T()
     end
 
-    if is(xgroup, nothing) && is(ygroup, nothing)
+    if xgroup === nothing && ygroup === nothing
         return aes_grid
     end
 
@@ -401,8 +401,8 @@ function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygro
 
         vals = getfield(aes, var)
         if typeof(vals) <: AbstractArray
-            if !is(xgroup, nothing) && length(vals) != length(xgroup) ||
-               !is(ygroup, nothing) && length(vals) != length(ygroup)
+            if xgroup !== nothing && length(vals) !== length(xgroup) ||
+               ygroup !== nothing && length(vals) !== length(ygroup)
                 error("Aesthetic $(var) must be the same length as xgroup or ygroup")
             end
 
@@ -410,7 +410,7 @@ function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygro
                 staging[i, j] = similar(vals, 0)
             end
 
-            for (i, j, v) in zip(Iterators.cycle(yrefs), Iterators.cycle(xrefs), vals)
+            for (i, j, v) in zip(Compat.Iterators.cycle(yrefs), Compat.Iterators.cycle(xrefs), vals)
                 push!(staging[i, j], v)
             end
 

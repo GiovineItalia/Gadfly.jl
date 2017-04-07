@@ -159,7 +159,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
             sort!(points, by=first)
         end
 
-        ctx = compose!(ctx, Compose.line(points,geom.tag),
+        ctx = compose!(ctx, Compose.line([points],geom.tag),
                        stroke(aes.color[1]),
                        strokedash(line_style),
                        svgclass("geometry"))

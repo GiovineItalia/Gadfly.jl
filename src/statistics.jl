@@ -15,7 +15,8 @@ import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, nonzero_length, setfield!
 import KernelDensity
 import Distributions: Uniform, Distribution, qqbuild
-import Iterators: chain, cycle, product, partition, distinct
+import Iterators: chain, distinct
+import Compat.Iterators: cycle, product
 
 include("bincount.jl")
 
@@ -78,8 +79,8 @@ function barminmax(values, iscontinuous::Bool)
         barspan = minspan
     end
     position_type = promote_type(typeof(barspan/2.0), eltype(values))
-    minvals = Array(position_type, length(values))
-    maxvals = Array(position_type, length(values))
+    minvals = Array{position_type}(length(values))
+    maxvals = Array{position_type}(length(values))
 
     for (i, x) in enumerate(values)
         minvals[i] = x - barspan/2.0
@@ -346,10 +347,10 @@ function apply_statistic(stat::HistogramStatistic,
 
     if aes.color === nothing
         T = typeof(x_min + 1*binwidth)
-        setfield!(aes, othervar, Array(Float64, d))
-        setfield!(aes, minvar, Array(T, d))
-        setfield!(aes, maxvar, Array(T, d))
-        setfield!(aes, var, Array(T, d))
+        setfield!(aes, othervar, Array{Float64}(d))
+        setfield!(aes, minvar, Array{T}(d))
+        setfield!(aes, maxvar, Array{T}(d))
+        setfield!(aes, var, Array{T}(d))
         for j in 1:d
             getfield(aes, minvar)[j] = x_min + (j - 1) * binwidth
             getfield(aes, maxvar)[j] = x_min + j * binwidth
@@ -370,12 +371,12 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
         T = typeof(x_min + 1*binwidth)
-        setfield!(aes, minvar, Array(T, d * length(groups)))
-        setfield!(aes, maxvar, Array(T, d * length(groups)))
-        setfield!(aes, var, Array(T, d * length(groups)))
+        setfield!(aes, minvar, Array{T}(d * length(groups)))
+        setfield!(aes, maxvar, Array{T}(d * length(groups)))
+        setfield!(aes, var, Array{T}(d * length(groups)))
 
-        setfield!(aes, othervar, Array(Float64, d * length(groups)))
-        colors = Array(RGB{Float32}, d * length(groups))
+        setfield!(aes, othervar, Array{Float64}(d * length(groups)))
+        colors = Array{RGB{Float32}}(d * length(groups))
 
         x_span = x_max - x_min
         stack_height = zeros(Int, d)
@@ -567,9 +568,9 @@ function apply_statistic(stat::DensityStatistic,
             end
         end
 
-        colors = Array(RGB{Float32}, 0)
-        aes.x = Array(Float64, 0)
-        aes.y = Array(Float64, 0)
+        colors = Array{RGB{Float32}}(0)
+        aes.x = Array{Float64}(0)
+        aes.y = Array{Float64}(0)
         for (c, xs) in groups
             window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(xs) : stat.bw
             f = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
@@ -674,17 +675,17 @@ function apply_statistic(stat::Histogram2DStatistic,
     end
 
     if x_categorial
-        aes.x = Array(Int64, n)
+        aes.x = Array{Int64}(n)
     else
-        aes.xmin = Array(Float64, n)
-        aes.xmax = Array(Float64, n)
+        aes.xmin = Array{Float64}(n)
+        aes.xmax = Array{Float64}(n)
     end
 
     if y_categorial
-        aes.y = Array(Int64, n)
+        aes.y = Array{Int64}(n)
     else
-        aes.ymin = Array(Float64, n)
-        aes.ymax = Array(Float64, n)
+        aes.ymin = Array{Float64}(n)
+        aes.ymax = Array{Float64}(n)
     end
 
     k = 1
@@ -720,7 +721,7 @@ function apply_statistic(stat::Histogram2DStatistic,
     aes.color_key_title = "Count"
 
     data = Gadfly.Data()
-    data.color = Array(Int, n)
+    data.color = Array{Int}(n)
     k = 1
     for cnt in transpose(bincounts)
         if cnt > 0
@@ -892,20 +893,20 @@ function apply_statistic(stat::TickStatistic,
     strict_span = false
     if typeof(coord) == Coord.Cartesian
         if stat.out_var == "x"
-            if !is(coord.xmin, nothing)
+            if coord.xmin !== nothing
                 minval = coord.xmin
                 strict_span = true
             end
-            if !is(coord.xmax, nothing)
+            if coord.xmax !== nothing
                 maxval = coord.xmax
                 strict_span = true
             end
         elseif stat.out_var == "y"
-            if !is(coord.ymin, nothing)
+            if coord.ymin !== nothing
                 minval = coord.ymin
                 strict_span = true
             end
-            if !is(coord.ymax, nothing)
+            if coord.ymax !== nothing
                 maxval = coord.ymax
                 strict_span = true
             end
@@ -947,8 +948,8 @@ function apply_statistic(stat::TickStatistic,
         multiticks = Gadfly.multilevel_ticks(viewmin - (viewmax - viewmin),
                                              viewmax + (viewmax - viewmin))
         tickcount = length(ticks) + sum([length(ts) for ts in values(multiticks)])
-        tickvisible = Array(Bool, tickcount)
-        tickscale = Array(Float64, tickcount)
+        tickvisible = Array{Bool}(tickcount)
+        tickscale = Array{Float64}(tickcount)
         i = 1
         for t in ticks
             tickscale[i] = 1.0
@@ -1008,7 +1009,7 @@ function apply_statistic_typed{T}(minval::T, maxval::T, vals, size, dsize)
     minval, maxval
 end
 
-function apply_statistic_typed{T}(minval, maxval, vals::DataArray{T}, size, dsize)
+function apply_statistic_typed{T}(minval::T, maxval::T, vals::DataArray{T}, size, dsize)
     lensize  = length(size)
     lendsize = length(dsize)
     for i = 1:length(vals)
@@ -1078,7 +1079,7 @@ function apply_statistic(stat::BoxplotStatistic,
             push!(groups, (x, c))
         end
 
-        if !is(aes.color, nothing)
+        if aes.color !== nothing
             aes.color = PooledDataArray([c for (x, c) in groups],
                                         levels(aes.color))
         end
@@ -1103,12 +1104,12 @@ function apply_statistic(stat::BoxplotStatistic,
 
     if aes.y != nothing
         m = length(groups)
-        aes.x = Array(eltype(aes.x), m)
-        aes.middle = Array(T, m)
-        aes.lower_hinge = Array(T, m)
-        aes.upper_hinge = Array(T, m)
-        aes.lower_fence = Array(T, m)
-        aes.upper_fence = Array(T, m)
+        aes.x = Array{eltype(aes.x)}(m)
+        aes.middle = Array{T}(m)
+        aes.lower_hinge = Array{T}(m)
+        aes.upper_hinge = Array{T}(m)
+        aes.lower_fence = Array{T}(m)
+        aes.upper_fence = Array{T}(m)
         aes.outliers = Vector{T}[]
 
         for (i, ((x, c), ys)) in enumerate(groups)
@@ -1150,7 +1151,7 @@ function apply_statistic(stat::BoxplotStatistic,
         aes.x = PooledDataArray(aes.x, aes_x.pool)
     end
 
-    if !is(aes.color, nothing)
+    if aes.color !== nothing
         aes.color = PooledDataArray(RGB{Float32}[c for (x, c) in keys(groups)],
                                     levels(aes.color))
     end
@@ -1240,9 +1241,9 @@ function apply_statistic(stat::SmoothStatistic,
             end
         end
 
-        aes.x = Array(Float64, length(groups) * num_steps)
-        aes.y = Array(Float64, length(groups) * num_steps)
-        colors = Array(RGB{Float32}, length(groups) * num_steps)
+        aes.x = Array{Float64}(length(groups) * num_steps)
+        aes.y = Array{Float64}(length(groups) * num_steps)
+        colors = Array{RGB{Float32}}(length(groups) * num_steps)
 
         for (i, (c, (xs, ys))) in enumerate(groups)
             x_min, x_max = minimum(xs), maximum(xs)
@@ -1308,10 +1309,10 @@ function apply_statistic(stat::HexBinStatistic,
     end
 
     N = length(counts)
-    aes.x = Array(Float64, N)
-    aes.y = Array(Float64, N)
+    aes.x = Array{Float64}(N)
+    aes.y = Array{Float64}(N)
     data = Gadfly.Data()
-    data.color = Array(Int, N)
+    data.color = Array{Int}(N)
     k = 1
     for (idx, cnt) in counts
         x, y = center(HexagonOffsetOddR(idx[1], idx[2]), xsize, ysize,
@@ -1394,10 +1395,10 @@ function apply_statistic(stat::StepStatistic,
         aes.group != nothing && permute!(aes.group, p)
     end
 
-    x_step = Array(eltype(aes.x), 0)
-    y_step = Array(eltype(aes.y), 0)
-    color_step = aes.color == nothing ? nothing : Array(eltype(aes.color), 0)
-    group_step = aes.group == nothing ? nothing : Array(eltype(aes.group), 0)
+    x_step = Array{eltype(aes.x)}(0)
+    y_step = Array{eltype(aes.y)}(0)
+    color_step = aes.color == nothing ? nothing : Array{eltype(aes.color)}(0)
+    group_step = aes.group == nothing ? nothing : Array{eltype(aes.group)}(0)
 
     i = 1
     i_offset = 1
@@ -1468,8 +1469,8 @@ function apply_statistic(stat::FunctionStatistic,
     Gadfly.assert_aesthetics_defined("FunctionStatistic", aes, :xmax)
     Gadfly.assert_aesthetics_equal_length("FunctionStatistic", aes, :xmin, :xmax)
 
-    aes.x = Array(Float64, length(aes.y) * stat.num_samples)
-    ys = Array(Float64, length(aes.y) * stat.num_samples)
+    aes.x = Array{Float64}(length(aes.y) * stat.num_samples)
+    ys = Array{Float64}(length(aes.y) * stat.num_samples)
 
     i = 1
     for (f, xmin, xmax) in zip(aes.y, cycle(aes.xmin), cycle(aes.xmax))
@@ -1492,7 +1493,7 @@ function apply_statistic(stat::FunctionStatistic,
         aes.group = PooledDataArray(groups)
     elseif length(aes.y) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
-        data.color = Array(AbstractString, length(aes.y) * stat.num_samples)
+        data.color = Array{AbstractString}(length(aes.y) * stat.num_samples)
         groups = DataArray(Int, length(aes.y) * stat.num_samples)
         for i in 1:length(aes.y)
             fname = "f<sub>$(i)</sub>"
@@ -1720,9 +1721,9 @@ function apply_statistic(stat::ViolinStatistic,
             push!(grouped_y[x], y)
         end
 
-        aes.x     = Array(Float64, 0)
-        aes.y     = Array(Float64, 0)
-        aes.width = Array(Float64, 0)
+        aes.x     = Array{Float64}(0)
+        aes.y     = Array{Float64}(0)
+        aes.width = Array{Float64}(0)
 
         for (x, ys) in grouped_y
             window = stat.n > 1 ? KernelDensity.default_bandwidth(ys) : 0.1
@@ -1778,8 +1779,7 @@ function minimum_span(vars::Vector{Symbol}, aes::Gadfly.Aesthetics)
         T = eltype(data)
         z = convert(T, zero(T))
         sorteddata = sort(data)
-        for (u, v) in partition(sorteddata, 2, 1)
-            δ = v - u
+        for δ in diff(sorteddata)
             if δ != z && (δ < dataspan || dataspan == z)
                 dataspan = δ
             end
@@ -1806,7 +1806,7 @@ function apply_statistic(stat::JitterStatistic,
     rng = MersenneTwister(stat.seed)
     for var in stat.vars
         data = getfield(aes, var)
-        outdata = Array(Float64, size(data))
+        outdata = Array{Float64}(size(data))
         broadcast!(+, outdata, data, stat.range * (rand(rng, length(data)) - 0.5) .* span)
         setfield!(aes, var, outdata)
     end
@@ -1864,9 +1864,9 @@ function apply_statistic(stat::BinMeanStatistic,
                 push!(groups[c][2], y)
             end
         end
-        colors = Array(RGB{Float32}, 0)
-        aes.x = Array(Tx, 0)
-        aes.y = Array(Ty, 0)
+        colors = Array{RGB{Float32}}(0)
+        aes.x = Array{Tx}(0)
+        aes.y = Array{Ty}(0)
         for (c, v) in groups
             (fx, fy) = mean_by_group(v[1], v[2], breaks)
             append!(aes.x, fx)

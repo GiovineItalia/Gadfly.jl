@@ -17,14 +17,14 @@ pl2 = plot(x=x, y=yd, Stat.qq, Geom.point)
 pl3 = plot(x=xd, y=y, Stat.qq, Geom.point)
 
 # Apply different scales to x and y
-pl4 = plot(x=x, y=exp(y), Stat.qq, Geom.point, Scale.y_log10)
-pl5= plot(x=exp(x), y=y, Stat.qq, Geom.point, Scale.x_log10)
+pl4 = plot(x=x, y=exp.(y), Stat.qq, Geom.point, Scale.y_log10)
+pl5= plot(x=exp.(x), y=y, Stat.qq, Geom.point, Scale.x_log10)
 
 # Apply scales to Distributions
 z = rand(Exponential(), 100)
 pl5 = plot(x=z, y=Exponential(), Stat.qq, Geom.point)
-pl6 = plot(x=log(z), y=Exponential(), Stat.qq, Geom.point)
-pl7 = plot(x=log(z), y=Exponential(), Stat.qq, Geom.point, Scale.y_log)
+pl6 = plot(x=log.(z), y=Exponential(), Stat.qq, Geom.point)
+pl7 = plot(x=log.(z), y=Exponential(), Stat.qq, Geom.point, Scale.y_log)
 pl8 = plot(x=z, y=Exponential(), Stat.qq, Geom.point, Scale.x_log, Scale.y_log)
 
 # by analogy with Stat.func, computed (.y) aes should be scaled:

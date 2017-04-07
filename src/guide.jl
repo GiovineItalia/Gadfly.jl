@@ -14,7 +14,7 @@ import Gadfly: render, escape_id, default_statistic, jsdata, jsplotdata,
 
 
 # Where the guide should be placed in relation to the plot.
-abstract GuidePosition
+@compat abstract type GuidePosition end
 immutable TopGuidePosition    <: GuidePosition end
 immutable RightGuidePosition  <: GuidePosition end
 immutable BottomGuidePosition <: GuidePosition end
@@ -208,7 +208,7 @@ function render_discrete_color_key{C<:Color}(colors::Vector{C},
 
     # return a context with a lyout of numcols columns
     function make_layout(numcols)
-        colrows = Array(Int, numcols)
+        colrows = Array{Int}(numcols)
         m = n
         for i in 1:numcols
             colrows[i] = min(m, ceil(Integer, (n / numcols)))
@@ -216,7 +216,7 @@ function render_discrete_color_key{C<:Color}(colors::Vector{C},
         end
 
         xpad = 1mm
-        colwidths = Array(Measure, numcols)
+        colwidths = Array{Measure}(numcols)
         m = 0
         for (i, nrows) in enumerate(colrows)
             if m == n
@@ -406,13 +406,13 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     end
 
     used_colors = Set{Color}()
-    colors = Array(Color, 0) # to preserve ordering
+    colors = Array{Color}(0) # to preserve ordering
     labels = OrderedDict{Color, Set{AbstractString}}()
 
     continuous_guide = false
     guide_title = guide.title
 
-    if guide_title === nothing && !is(aes.color_key_title, nothing)
+    if guide_title === nothing && aes.color_key_title !== nothing
         guide_title = aes.color_key_title
     end
 
@@ -509,7 +509,7 @@ function render(guide::ManualColorKey, theme::Gadfly.Theme,
 
     guide_title = guide.title
 
-    if guide_title === nothing && !is(aes.color_key_title, nothing)
+    if guide_title === nothing && aes.color_key_title !== nothing
         guide_title = aes.color_key_title
     end
 

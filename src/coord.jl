@@ -6,7 +6,6 @@ using Compat
 using Compose
 using DataArrays
 import Gadfly.Maybe
-import Iterators: cycle
 
 export cartesian
 

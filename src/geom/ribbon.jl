@@ -50,7 +50,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
         max_points = Dict{RGB{Float32}, Vector{(@compat Tuple{XT, YT})}}()
         for (x, y, c) in zip(aes_x, aes_ymax, aes.color)
             if !haskey(max_points, c)
-                max_points[c] = Array((@compat Tuple{XT, YT}), 0)
+                max_points[c] = Array{@compat Tuple{XT, YT}}(0)
             end
             push!(max_points[c], (x, y))
         end
@@ -58,7 +58,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
         min_points = Dict{RGB{Float32}, Vector{(@compat Tuple{XT, YT})}}()
         for (x, y, c) in zip(aes.x, aes.ymin, aes.color)
             if !haskey(min_points, c)
-                min_points[c] = Array((@compat Tuple{XT, YT}), 0)
+                min_points[c] = Array{@compat Tuple{XT, YT}}(0)
             end
             push!(min_points[c], (x, y))
         end

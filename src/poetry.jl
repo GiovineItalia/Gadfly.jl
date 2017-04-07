@@ -186,7 +186,7 @@ function _findnz{T}(testf::Function, A::AbstractMatrix{T})
     N = Base.count(testf, A)
     is = zeros(Int, N)
     js = zeros(Int, N)
-    zs = Array(T, N)
+    zs = Array{T}(N)
     if N == 0
         return (is, js, zs)
     end
