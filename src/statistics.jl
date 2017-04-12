@@ -1219,7 +1219,7 @@ function apply_statistic(stat::SmoothStatistic,
         aes.x = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
 
         if stat.method == :loess
-            aes.y = Loess.predict(loess(xs, ys, span=stat.smoothing), aes.x)
+            aes.y = Loess.predict(loess(xs, ys, span=stat.smoothing), Float64.(aes.x))
         elseif stat.method == :lm
             lmcoeff = linreg(xs,ys)
             aes.y = lmcoeff[2].*aes.x .+ lmcoeff[1]
