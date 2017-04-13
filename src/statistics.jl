@@ -1240,7 +1240,7 @@ function apply_statistic(stat::SmoothStatistic,
             end
         end
 
-        aes.x = Array(Float64, length(groups) * num_steps)
+        aes.x = Array(eltype(aes.x), length(groups) * num_steps)
         aes.y = Array(Float64, length(groups) * num_steps)
         colors = Array(RGB{Float32}, length(groups) * num_steps)
 
