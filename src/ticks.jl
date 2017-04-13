@@ -147,13 +147,13 @@ function optimize_ticks_typed{T}(x_min::T, x_max::T, extend_ticks,
 
     span = q_best * 10.0^z_best * one_t
     if extend_ticks
-        S = Array(typeof(1.0 * one_t), (@compat Int(3 * k_best)))
+        S = Array{typeof(1.0 * one_t)}(@compat Int(3 * k_best))
         for i in 0:(3*k_best - 1)
             S[i+1] = (r_best + i - k_best) * span
         end
         viewmin, viewmax = S[k_best + 1], S[2 * k_best]
     else
-        S = Array(typeof(1.0 * one_t), k_best)
+        S = Array{typeof(1.0 * one_t)}(k_best)
         for i in 0:(k_best - 1)
             S[i+1] = (r_best + i) * span
         end

@@ -1,7 +1,7 @@
 using Gadfly
 using Base.Dates
 
-dates = Array(Date,40)
+dates = Array{Date}(40)
 dates[1] = today()
 for i=2:length(dates)
     dates[i] = today()+Day(i)

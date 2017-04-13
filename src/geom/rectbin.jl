@@ -70,7 +70,7 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
     if length(aes.color) == n
         cs = aes.color
     else
-        cs = Array(RGB{Float32}, n)
+        cs = Array{RGB{Float32}}(n)
         for i in 1:n
             cs[i] = aes.color[((i - 1) % length(aes.color)) + 1]
         end

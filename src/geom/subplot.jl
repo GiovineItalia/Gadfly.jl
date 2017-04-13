@@ -2,7 +2,7 @@
 # Subplot geometries
 
 
-abstract SubplotGeometry <: Gadfly.GeometryElement
+@compat abstract type SubplotGeometry <: Gadfly.GeometryElement end
 
 
 # Adding elements to subplots in a generic way.
@@ -165,12 +165,12 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         end
     end
 
-    layer_aes_grid = Array(Matrix{Gadfly.Aesthetics}, length(geom.layers))
+    layer_aes_grid = Array{Matrix{Gadfly.Aesthetics}}(length(geom.layers))
     for (i, (layer, aes)) in enumerate(zip(geom.layers, subplot_layer_aess))
         layer_aes_grid[i] = Gadfly.by_xy_group(aes, aes.xgroup, aes.ygroup, m, n)
     end
 
-    layer_data_grid = Array(Matrix{Gadfly.Data}, length(geom.layers))
+    layer_data_grid = Array{Matrix{Gadfly.Data}}(length(geom.layers))
     for (i, (layer, data, aes)) in enumerate(zip(geom.layers, subplot_layer_datas,
                                                  subplot_layer_aess))
         layer_data_grid[i] = Gadfly.by_xy_group(data, aes.xgroup, aes.ygroup, m, n)
@@ -300,9 +300,9 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     subplot_padding = 2mm
 
     # This assumes non of the layers themselves are subplot geometries
-    layer_subplot_aess = Vector{Gadfly.Aesthetics}[Array(Gadfly.Aesthetics, 0)
+    layer_subplot_aess = Vector{Gadfly.Aesthetics}[Array{Gadfly.Aesthetics}(0)
                                                    for _ in 1:length(geom.layers)]
-    layer_subplot_datas = Vector{Gadfly.Data}[Array(Gadfly.Data, 0)
+    layer_subplot_datas = Vector{Gadfly.Data}[Array{Gadfly.Data}(0)
                                                    for _ in 1:length(geom.layers)]
 
     for i in 1:n, j in 1:m
@@ -326,7 +326,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         if i == n
             push!(guides, get(geom.guides, Guide.XTicks, Guide.xticks()))
 
-            if !is(superplot_aes.xgroup, nothing)
+            if superplot_aes.xgroup !== nothing
                 push!(guides, get(geom.guides, Guide.XLabel, Guide.xlabel(xlabels[j])))
             end
         else
@@ -337,7 +337,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         if j == 1
             joff += 1
             push!(guides, get(geom.guides, Guide.YTicks, Guide.yticks()))
-            if !is(superplot_aes.ygroup, nothing)
+            if superplot_aes.ygroup !== nothing
                 joff += 1
                 push!(guides, get(geom.guides, Guide.YLabel, Guide.ylabel(ylabels[i])))
             end

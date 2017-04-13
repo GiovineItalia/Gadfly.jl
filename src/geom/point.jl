@@ -44,10 +44,10 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     ctx = context()
     if aes.shape != nothing
-        xs = Array(eltype(aes_x), 0)
-        ys = Array(eltype(aes_y), 0)
-        cs = Array(eltype(aes.color), 0)
-        size = Array(eltype(aes.size), 0)
+        xs = Array{eltype(aes_x)}(0)
+        ys = Array{eltype(aes_y)}(0)
+        cs = Array{eltype(aes.color)}(0)
+        size = Array{eltype(aes.size)}(0)
         shape_max = maximum(aes.shape)
         if shape_max > length(theme.shapes)
             error("Too many values for the shape aesthetic. Define more shapes in Theme.shapes")

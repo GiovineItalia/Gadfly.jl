@@ -7,7 +7,7 @@ if haskey(ENV, "GADFLY_THEME")
     pop!(ENV, "GADFLY_THEME")
 end
 
-using RDatasets, Gadfly, Compat
+using Gadfly, Compat
 
 tests = [
     ("points",                                6inch, 3inch),
@@ -151,7 +151,7 @@ function run_tests(output_filename)
             println(STDERR, "Rendering $(name) on $(backend_name) backend.")
             try
                 p = evalfile(joinpath(testdir, "$(name).jl"))
-                @time draw(backend(name, width, height), p)
+                @time eval(Expr(:call, ()->draw(backend(name, width, height), p) ))
             catch
                 println(STDERR, "FAILED!")
                 rethrow()

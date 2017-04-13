@@ -208,7 +208,7 @@ function formatter{T<:Date}(ds::AbstractArray{T}; fmt=nothing)
         function format(d)
             buf = IOBuffer()
             print(buf, year(d))
-            takebuf_string(buf)
+            String(take!(buf))
         end
     elseif day_all_1
         # label months and years
@@ -219,7 +219,7 @@ function formatter{T<:Date}(ds::AbstractArray{T}; fmt=nothing)
             else
                 print(buf, month_abbrevs[month(d)])
             end
-            takebuf_string(buf)
+            String(take!(buf))
         end
     else
         function format(d)
@@ -231,7 +231,7 @@ function formatter{T<:Date}(ds::AbstractArray{T}; fmt=nothing)
             else
                 print(buf, day(d))
             end
-            takebuf_string(buf)
+            String(take!(buf))
         end
     end
 end
@@ -242,7 +242,7 @@ function formatter(xs::AbstractArray; fmt=nothing)
     function format(x)
         buf = IOBuffer()
         print(buf, x)
-        takebuf_string(buf)
+        String(take!(buf))
     end
 
     format

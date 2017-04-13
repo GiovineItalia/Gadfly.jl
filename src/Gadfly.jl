@@ -44,7 +44,7 @@ function __init__()
 end
 
 
-typealias ColorOrNothing @compat(Union{Colorant, (@compat Void)})
+const ColorOrNothing = @compat(Union{Colorant, (@compat Void)})
 
 element_aesthetics(::Any) = []
 input_aesthetics(::Any) = []
@@ -55,12 +55,12 @@ default_statistic(::Any) = Stat.identity()
 element_coordinate_type(::Any) = Coord.cartesian
 
 
-abstract Element
-abstract ScaleElement       <: Element
-abstract CoordinateElement  <: Element
-abstract GeometryElement    <: Element
-abstract GuideElement       <: Element
-abstract StatisticElement   <: Element
+@compat abstract type Element end
+@compat abstract type ScaleElement       <: Element end
+@compat abstract type CoordinateElement  <: Element end
+@compat abstract type GeometryElement    <: Element end
+@compat abstract type GuideElement       <: Element end
+@compat abstract type StatisticElement   <: Element end
 
 
 include("misc.jl")
@@ -77,7 +77,7 @@ include("theme.jl")
 
 # The layer and plot functions can also take functions that are evaluated with
 # no arguments and are expected to produce an element.
-typealias ElementOrFunction{T <: Element} @compat(Union{Element, Base.Callable, Theme})
+@compat const ElementOrFunction{T <: Element} = @compat(Union{Element, Base.Callable, Theme})
 
 const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 
@@ -184,7 +184,7 @@ end
 
 
 function add_plot_element!(lyrs::Vector{Layer}, arg::GeometryElement)
-    if ! is(lyrs[end].geom, Geom.nil())
+    if lyrs[end].geom !== Geom.nil()
         push!(lyrs, copy(lyrs[end]))
     end
     lyrs[end].geom = arg
@@ -313,7 +313,7 @@ end
 # because a call to layer() expands to a vector of layers (one for each Geom
 # supplied), we need to allow Vector{Layer} to count as an Element for the
 # purposes of plot().
-typealias ElementOrFunctionOrLayers @compat(Union{ElementOrFunction, Vector{Layer}})
+const ElementOrFunctionOrLayers = @compat(Union{ElementOrFunction, Vector{Layer}})
 
 
 """
@@ -452,7 +452,7 @@ function render_prepare(plot::Plot)
 
     # Process layers, filling inheriting mappings or data from the Plot where
     # they are missing.
-    datas = Array(Data, length(plot.layers))
+    datas = Array{Data}(length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
         if layer.data_source === nothing && isempty(layer.mapping)
             layer.data_source = plot.data_source
@@ -507,7 +507,7 @@ function render_prepare(plot::Plot)
     end
 
     # Add default statistics for geometries.
-    layer_stats = Array(Vector{StatisticElement}, length(plot.layers))
+    layer_stats = Array{Vector{StatisticElement}}(length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
         layer_stats[i] = isempty(layer.statistics) ?
             [default_statistic(layer.geom)] : layer.statistics
@@ -783,8 +783,8 @@ function render_prepare(plot::Plot)
     end
 
     # build arrays of scaled aesthetics for layers within subplots
-    layer_subplot_aess = Array(Vector{Aesthetics}, length(plot.layers))
-    layer_subplot_datas = Array(Vector{Data}, length(plot.layers))
+    layer_subplot_aess = Array{Vector{Aesthetics}}(length(plot.layers))
+    layer_subplot_datas = Array{Vector{Data}}(length(plot.layers))
     j = 1
     for (i, layer) in enumerate(plot.layers)
         layer_subplot_aess[i] = Aesthetics[]
@@ -1046,7 +1046,6 @@ function default_mime()
     end
 end
 
-import Base.Multimedia: @try_display, xdisplayable
 import Base.REPL: REPLDisplay
 
 """
@@ -1057,21 +1056,25 @@ Render `p` to a multimedia display, typically an internet browser.
 This function is handy when rendering by `plot` has been suppressed
 with either trailing semi-colon or by calling it within a function.
 """
-function display(p::Union{Plot,Compose.Context})
-    displays = Base.Multimedia.displays
-    for i = length(displays):-1:1
-        m = default_mime()
-        if xdisplayable(displays[i], m, p)
-             @try_display return display(displays[i], m, p)
-        end
-
-        if xdisplayable(displays[i], p)
-            @try_display return display(displays[i], p)
-        end
+function display(d::REPLDisplay, p::Union{Plot,Compose.Context})
+    if mimewritable("text/html", p)
+        display(d,"text/html", p)
+        return
+    elseif mimewritable("image/png", p)
+        display(d,"image/png", p)
+        return
+    elseif mimewritable("application/pdf", p)
+        display(d,"application/pdf", p)
+        return
+    elseif mimewritable("image/svg+xml", p)
+        display(d,"image/svg+xml", p)
+        return
+    elseif mimewritable("application/postscript", p)
+        display(d,"application/postscript", p)
+        return
     end
-    invoke(display, Tuple{Any}, p)
+    throw(MethodError)
 end
-
 
 function open_file(filename)
     if is_apple()
@@ -1112,7 +1115,7 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Union{Plot,Compose.Contex
     plot_output = IOBuffer()
     draw(SVGJS(plot_output, Compose.default_graphic_width,
                Compose.default_graphic_height, false), p)
-    plotsvg = takebuf_string(plot_output)
+    plotsvg = String(take!(plot_output))
 
     write(output,
         """
@@ -1262,7 +1265,7 @@ end
 
 # Determine whether the input is categorical or numerical
 
-typealias CategoricalType @compat(Union{AbstractString, Bool, Symbol})
+const CategoricalType = @compat(Union{AbstractString, Bool, Symbol})
 
 
 function classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N})

@@ -59,9 +59,9 @@ function concretize(xss::AbstractVector...)
         @label next_j1
     end
 
-    yss = Array(AbstractVector, length(xss))
+    yss = Array{AbstractVector}(length(xss))
     for (i, xs) in enumerate(xss)
-        yss[i] = Array(eltype(xs), count)
+        yss[i] = Array{eltype(xs)}(count)
     end
 
     k = 1
@@ -271,7 +271,7 @@ function inherit!{T}(a::T, b::T)
 end
 
 
-isnothing(u) = is(u, nothing)
+isnothing(u) = u === nothing
 issomething(u) = !isnothing(u)
 
 negate(f) = x -> !f(x)
@@ -334,7 +334,7 @@ function evalfunc(f::Function, a, b, n)
     @assert n > 1
 
     step = (b - a) / (n - 1)
-    xs = Array(typeof(a + step), n)
+    xs = Array{typeof(a + step)}(n)
     for i in 1:n
         xs[i] = a + (i-1) * step
     end
