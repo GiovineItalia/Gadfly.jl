@@ -14,8 +14,8 @@
     width
     xintercept
     yintercept
-    xslope
-    yslope
+    intercept
+    slope
     middle
     lower_hinge
     upper_hinge

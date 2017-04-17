@@ -35,8 +35,8 @@ const NumericalAesthetic =
     # fixed lines
     xintercept,   NumericalAesthetic
     yintercept,   NumericalAesthetic
-    xslope,       NumericalAesthetic
-    yslope,       NumericalAesthetic
+    intercept,    NumericalAesthetic
+    slope,        NumericalAesthetic
 
     # boxplots
     middle,       NumericalAesthetic
