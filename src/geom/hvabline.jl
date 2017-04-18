@@ -131,39 +131,32 @@ end
 abline = ABLineGeometry
 
 function element_aesthetics(geom::ABLineGeometry)
-    [:xintercept, :yintercept, :xslope, :yslope]
+    [:intercept, :slope]
 end
 function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-
-    function check_aesthetics(intercept, slope)
-        if getfield(aes, intercept) == nothing
-            getfield(aes, slope) == nothing || error()
-            setfield!(aes, intercept, [])
-            setfield!(aes, slope, [])
-        else
-            if getfield(aes, slope) == nothing
-                setfield!(aes, slope, fill(0, length(getfield(aes,intercept))))
-            else
-                @assert length(getfield(aes, intercept)) == length(getfield(aes, slope))
-            end
-        end
+    if aes.intercept == nothing && aes.slope == nothing
+        aes.intercept = [0]
+        aes.slope = [1]
+    elseif aes.intercept == nothing
+        aes.intercept = fill(0,length(aes.slope))
+    elseif aes.slope == nothing
+        aes.slope = fill(1,length(aes.intercept))
     end
-    check_aesthetics(:xintercept, :yslope)
-    check_aesthetics(:yintercept, :xslope)
+    Gadfly.assert_aesthetics_equal_length("Geom.line", aes, element_aesthetics(geom)...)
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
     style = geom.style === nothing ? theme.line_style : geom.style
 
-    color = check_arguments(color, length(aes.yintercept) + length(aes.xintercept))
-    size = check_arguments(size, length(aes.yintercept) + length(aes.xintercept))
-    style = check_arguments(style, length(aes.yintercept) + length(aes.xintercept))
+    color = check_arguments(color, length(aes.intercept))
+    size = check_arguments(size, length(aes.intercept))
+    style = check_arguments(style, length(aes.intercept))
 
     style = map(Gadfly.get_stroke_vector, style)
 
-    # it would've been nice to just say low, high = realmin(Float64), realmax(Float64).
-    # but SVG() and PDF() have silent overflow errors when plotting way outside the context's
-    # bounding box.  so instead, use the extrema of the data, and widen a bit to make sure
+    # it would've been nice to just say x0, x1 = realmin(Float64), realmax(Float64).
+    # but SVG() and PDF() have silent overflow errors when plotting way outside the
+    # context's bounding box.  so instead, use the extrema of the data, and hope that
     # the line extends to the edges of the graph.
 
     if typeof(aes.y) <: Array{Function}
@@ -176,28 +169,19 @@ function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     end
 
     range = high-low
-    low -= range
-    high += range
+    x0 = low-range
+    x1 = high+range
 
-    ylows  = [ low * m + b for (m,b) in zip(aes.xslope, aes.yintercept)]
-    yhighs = [high * m + b for (m,b) in zip(aes.xslope, aes.yintercept)]
-    xlows  = [ low * m + b for (m,b) in zip(aes.yslope, aes.xintercept)]
-    xhighs = [high * m + b for (m,b) in zip(aes.yslope, aes.xintercept)]
+    y0s = [x0 * m + b for (m,b) in zip(aes.slope, aes.intercept)]
+    y1s = [x1 * m + b for (m,b) in zip(aes.slope, aes.intercept)]
 
     root = compose(context(), svgclass("xfixed"))
-    for (idx,(ylow,yhigh)) in enumerate(zip(ylows,yhighs))
+    for (idx,(y0,y1)) in enumerate(zip(y0s,y1s))
         compose!(root, (context(),
-                Compose.line([(low,ylow), (high,yhigh)], geom.tag),
+                Compose.line([(x0,y0), (x1,y1)], geom.tag),
                 stroke(color[idx]),
                 linewidth(size[idx]),
                 strokedash(style[idx])))
-    end
-    for (idx,(xlow,xhigh)) in enumerate(zip(xlows,xhighs))
-        compose!(root, (context(),
-                Compose.line([(xlow,low), (xhigh,high)], geom.tag),
-                stroke(color[idx+length(ylows)]),
-                linewidth(size[idx+length(ylows)]),
-                strokedash(style[idx+length(ylows)])))
     end
     root
 end

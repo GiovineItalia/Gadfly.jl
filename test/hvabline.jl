@@ -11,8 +11,15 @@ plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
    Geom.hline(color=["orange","red"], size=[2mm,3mm]))
 
 plot(dataset("ggplot2", "mpg"), x="Cty", y="Hwy", label="Model", Geom.point, Geom.label,
-    yintercept=[0], xslope=[1], Geom.abline(color="red", style=:dash),
+    intercept=[0], slope=[1], Geom.abline(color="red", style=:dash),
     Guide.annotation(compose(context(), text(6,4, "y=x", hleft, vtop), fill(colorant"red"))))
+
+plot(x=[2,3,4],y=[2,3,4],Geom.point,intercept=[0],slope=[1],Geom.abline)
+plot(x=[2,3,4],y=[2,3,4],Geom.point,intercept=[0],Geom.abline)
+plot(x=[2,3,4],y=[2,3,4],Geom.point,slope=[1],Geom.abline)
+plot(x=[2,3,4],y=[2,3,4],Geom.point,intercept=[0.1],Geom.abline)
+plot(x=[2,3,4],y=[2,3,4],Geom.point,slope=[1.1],Geom.abline)
+
 
 # issue 961
 day = collect(Date("1960-01-01"):Dates.Day(1):Date("1999-12-31"))
