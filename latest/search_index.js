@@ -373,7 +373,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.abline",
     "title": "Geom.abline",
     "category": "section",
-    "text": "For each number in yintercept, draw the lines y = xslope * x + yintercept across the plot canvas.  Similarly, for each number in xintercept, draw the lines x = yslope * y + xintercept across the plot canvas."
+    "text": "For each corresponding pair of elements in intercept and slope, draw the lines y = slope * x + intercept across the plot canvas.Currently does not support non-linear Scale transformations."
 },
 
 {
@@ -381,7 +381,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.abline",
     "title": "Aesthetics",
     "category": "section",
-    "text": "yintercept: Y-axis intercepts\nxslope: rise over run, defaults to 0\nxintercept: X-axis intercepts\nyslope: run over rise, defaults to 0"
+    "text": "intercept: Y-axis intercepts, defaults to [0]\nslope: rise over run, defaults to [1]"
 },
 
 {
@@ -397,7 +397,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.abline",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly, RDatasets, Compose\nGadfly.set_default_plot_size(14cm, 10cm)plot(dataset(\"ggplot2\", \"mpg\"), x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n    yintercept=[0], xslope=[1], Geom.abline(color=\"red\", style=:dash),\n    Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(colorant\"red\"))))"
+    "text": "using Gadfly, RDatasets, Compose\nGadfly.set_default_plot_size(14cm, 10cm)plot(dataset(\"ggplot2\", \"mpg\"), x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n    intercept=[0], slope=[1], Geom.abline(color=\"red\", style=:dash),\n    Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(colorant\"red\"))))"
 },
 
 {
