@@ -1196,79 +1196,67 @@ function apply_statistic(stat::SmoothStatistic,
         error("The only Stat.smooth methods currently supported are loess and lm.")
     end
 
-    num_steps = 750
-
-    if aes.color === nothing
-        x_min, x_max = minimum(aes.x), maximum(aes.x)
-
-        if x_min == x_max
-            error("Stat.smooth requires more than one distinct x value")
-        end
-
-        local xs, ys
-
-        try
-            xs = convert(Vector{Float64}, aes.x)
-            ys = convert(Vector{Float64}, aes.y)
-        catch e
-            error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
-        end
-
-        # loess can't predict points <x_min or >x_max. Make sure that doesn't
-        # happen through a floating point fluke
-        nudge = 1e-5 * (x_max - x_min)
-        aes.x = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
-
-        if stat.method == :loess
-            aes.y = Loess.predict(loess(xs, ys, span=stat.smoothing), aes.x)
-        elseif stat.method == :lm
-            lmcoeff = linreg(xs,ys)
-            aes.y = lmcoeff[2].*aes.x .+ lmcoeff[1]
-        end
-    else
-        groups = Dict()
-        aes_color = aes.color === nothing ? [nothing] : aes.color
+    max_num_steps = 750
+    aes_color = aes.color === nothing ? [nothing] : aes.color
+    
+        groups = Dict(c => (eltype(aes.x)[], eltype(aes.y)[]) for c in unique(aes_color))
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes_color))
-            if !haskey(groups, c)
-                groups[c] = (Float64[], Float64[])
-            end
-
-            try
                 push!(groups[c][1], x)
                 push!(groups[c][2], y)
-            catch
-                error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
-            end
         end
+    
+        local xs, ys, xsp
+        aes.x = eltype(aes.x)[]
+        # For aes.y returning a Float is ok if `y` is an Int or a Float 
+        # There does not seem to be strong demand for other types of `y`
+        aes.y = Float64[]
+        colors = eltype(aes_color)[]
+ 
 
-        aes.x = Array{Float64}(length(groups) * num_steps)
-        aes.y = Array{Float64}(length(groups) * num_steps)
-        colors = Array{RGB{Float32}}(length(groups) * num_steps)
-
-        for (i, (c, (xs, ys))) in enumerate(groups)
-            x_min, x_max = minimum(xs), maximum(xs)
+        for (c, (xv, yv)) in groups
+            x_min, x_max = minimum(xv), maximum(xv)
             if x_min == x_max
                 error("Stat.smooth requires more than one distinct x value")
             end
+            try
+                xs = convert(Vector{Float64}, xv)
+                ys = convert(Vector{Float64}, yv)
+            catch e
+                error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
+            end
+                
             nudge = 1e-5 * (x_max - x_min)
-            steps = collect((x_min + nudge):((x_max - x_min) / num_steps):(x_max - nudge))
+            
+            dx = (x_max-x_min)*(1/max_num_steps)
+            # For a Date, dx might be 0 days, so correct
+            # For Ints, correct dx
+            if isa(xv[1], Date)
+                dx = max(dx, Dates.Day(1))
+            elseif isa(xv[1], Int)
+                dx = ceil(Int, dx)
+                nudge = 0
+            end
 
+            steps = collect((x_min + nudge):dx:(x_max - nudge))
+            xsp = convert(Vector{Float64}, steps)
             if stat.method == :loess
-                smoothys = Loess.predict(loess(xs, ys, span=stat.smoothing), steps)
+                smoothys = Loess.predict(loess(xs, ys, span=stat.smoothing), xsp)
             elseif stat.method == :lm
                 lmcoeff = linreg(xs,ys)
-                smoothys = lmcoeff[2].*steps .+ lmcoeff[1]
+                smoothys = lmcoeff[2].*xsp .+ lmcoeff[1]
             end
-
-            for (j, (x, y)) in enumerate(zip(steps, smoothys))
-                aes.x[(i - 1) * num_steps + j] = x
-                aes.y[(i - 1) * num_steps + j] = y
-                colors[(i - 1) * num_steps + j] = c
-            end
+        
+        # New aes 
+            append!(aes.x, steps)
+            append!(aes.y, smoothys)
+            append!(colors, fill(c, length(steps)))
         end
-        aes.color = PooledDataArray(colors)
-    end
-end
+    
+
+        if !(aes.color===nothing)
+            aes.color = PooledDataArray(colors)
+        end
+ end
 
 
 immutable HexBinStatistic <: Gadfly.StatisticElement
