@@ -43,7 +43,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
 
         ctx = compose!(
             context(),
-            Compose.polygon(collect(chain(min_points, max_points))),
+            Compose.polygon([collect(chain(min_points, max_points))]),
             fill(theme.lowlight_color(aes.color[1])))
     else
         XT, YT = eltype(aes_x), promote_type(eltype(aes_ymin), eltype(aes_ymax))
