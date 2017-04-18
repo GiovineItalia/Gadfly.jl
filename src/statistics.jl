@@ -339,7 +339,7 @@ function apply_statistic(stat::HistogramStatistic,
             x_min = Gadfly.concrete_minimum(values)
             span = x_max - x_min
             binwidth = span / d
-            bincounts = bincounts ./ sum(bincounts) * binwidth
+            bincounts = bincounts ./ (sum(bincounts) * binwidth)
         end
 
         binwidth = (x_max - x_min) / d
@@ -396,7 +396,7 @@ function apply_statistic(stat::HistogramStatistic,
 
             if stat.density
                 binwidth = x_span / d
-                bincounts = bincounts ./ sum(bincounts) * binwidth
+                bincounts = bincounts ./ (sum(bincounts) * binwidth)
             end
 
             stack_height += bincounts[1:d]
