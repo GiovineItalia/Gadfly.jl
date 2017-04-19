@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Guide.xrug · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><select id="version-selector" onChange="window.location.href=this.value"><option value="#" selected="selected" disabled="disabled">Version</option></select><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a><ul><li class="current"><a class="toctext" href="guide_xrug.html">Guide.xrug</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../guides.html">Guides</a></li><li><a href="guide_xrug.html">Guide.xrug</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/ed0f3e082a256f94780d4ffee95922fbf9ad77fa/docs/src/lib/guides/guide_xrug.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Guide.xrug-1" href="#Guide.xrug-1">Guide.xrug</a></h1><p>Draw a rug plot along the x-axis of a plot.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>x</code>: X positions of notches.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(x=rand(20), y=rand(20), Guide.xrug)</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Guide.xrug · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><form class="search" action="../../search.html"><select id="version-selector" onChange="window.location.href=this.value"><option value="#" selected="selected" disabled="disabled">Version</option></select><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a><ul><li class="current"><a class="toctext" href="guide_xrug.html">Guide.xrug</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../guides.html">Guides</a></li><li><a href="guide_xrug.html">Guide.xrug</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/92f56571f52d33c984631311dad9177275f5d135/docs/src/lib/guides/guide_xrug.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Guide.xrug-1" href="#Guide.xrug-1">Guide.xrug</a></h1><p>Draw a rug plot along the x-axis of a plot.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>x</code>: X positions of notches.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(x=rand(20), y=rand(20), Guide.xrug)</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns:gadfly="http://www.gadflyjl.org/ns"
@@ -10,103 +10,99 @@
      stroke-width="0.3"
      font-size="3.88"
 >
-<g class="plotroot xscalable yscalable" id="img-c4e1d430-1">
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-c4e1d430-2">
+<g class="plotroot xscalable yscalable" id="img-d944dd47-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-d944dd47-2">
     <text x="75.91" y="68.39" text-anchor="middle" dy="0.6em">x</text>
   </g>
-  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-c4e1d430-3">
-    <text x="18.83" y="61.72" text-anchor="middle" dy="0.6em">0.00</text>
-    <text x="47.37" y="61.72" text-anchor="middle" dy="0.6em">0.25</text>
-    <text x="75.91" y="61.72" text-anchor="middle" dy="0.6em">0.50</text>
-    <text x="104.46" y="61.72" text-anchor="middle" dy="0.6em">0.75</text>
-    <text x="133" y="61.72" text-anchor="middle" dy="0.6em">1.00</text>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-d944dd47-3">
+    <text x="18.83" y="61.72" text-anchor="middle" dy="0.6em">0.0</text>
+    <text x="75.91" y="61.72" text-anchor="middle" dy="0.6em">0.5</text>
+    <text x="133" y="61.72" text-anchor="middle" dy="0.6em">1.0</text>
   </g>
-<g clip-path="url(#img-c4e1d430-4)">
-  <g class="guide yfixed" stroke-width="0.3" stroke="#00BFFF" id="img-c4e1d430-5">
-    <path fill="none" d="M30.75,59.12 L 30.75 60.32"/>
-    <path fill="none" d="M87.3,59.12 L 87.3 60.32"/>
-    <path fill="none" d="M59.43,59.12 L 59.43 60.32"/>
-    <path fill="none" d="M107.25,59.12 L 107.25 60.32"/>
-    <path fill="none" d="M77.35,59.12 L 77.35 60.32"/>
-    <path fill="none" d="M61.7,59.12 L 61.7 60.32"/>
-    <path fill="none" d="M43.08,59.12 L 43.08 60.32"/>
-    <path fill="none" d="M127.1,59.12 L 127.1 60.32"/>
-    <path fill="none" d="M96.5,59.12 L 96.5 60.32"/>
-    <path fill="none" d="M63.68,59.12 L 63.68 60.32"/>
-    <path fill="none" d="M68.14,59.12 L 68.14 60.32"/>
-    <path fill="none" d="M34.88,59.12 L 34.88 60.32"/>
-    <path fill="none" d="M74.3,59.12 L 74.3 60.32"/>
-    <path fill="none" d="M62.98,59.12 L 62.98 60.32"/>
-    <path fill="none" d="M73.26,59.12 L 73.26 60.32"/>
-    <path fill="none" d="M119.17,59.12 L 119.17 60.32"/>
-    <path fill="none" d="M32.61,59.12 L 32.61 60.32"/>
-    <path fill="none" d="M26.77,59.12 L 26.77 60.32"/>
-    <path fill="none" d="M55.72,59.12 L 55.72 60.32"/>
-    <path fill="none" d="M127.07,59.12 L 127.07 60.32"/>
+<g clip-path="url(#img-d944dd47-4)">
+  <g class="guide yfixed" stroke-width="0.3" stroke="#00BFFF" id="img-d944dd47-5">
+    <path fill="none" d="M44.24,59.12 L 44.24 60.32"/>
+    <path fill="none" d="M113.81,59.12 L 113.81 60.32"/>
+    <path fill="none" d="M106.37,59.12 L 106.37 60.32"/>
+    <path fill="none" d="M92.73,59.12 L 92.73 60.32"/>
+    <path fill="none" d="M46.49,59.12 L 46.49 60.32"/>
+    <path fill="none" d="M45.25,59.12 L 45.25 60.32"/>
+    <path fill="none" d="M46.52,59.12 L 46.52 60.32"/>
+    <path fill="none" d="M29.68,59.12 L 29.68 60.32"/>
+    <path fill="none" d="M27.04,59.12 L 27.04 60.32"/>
+    <path fill="none" d="M132.13,59.12 L 132.13 60.32"/>
+    <path fill="none" d="M104.96,59.12 L 104.96 60.32"/>
+    <path fill="none" d="M124.54,59.12 L 124.54 60.32"/>
+    <path fill="none" d="M24.1,59.12 L 24.1 60.32"/>
+    <path fill="none" d="M75.33,59.12 L 75.33 60.32"/>
+    <path fill="none" d="M42.03,59.12 L 42.03 60.32"/>
+    <path fill="none" d="M128.24,59.12 L 128.24 60.32"/>
+    <path fill="none" d="M65.15,59.12 L 65.15 60.32"/>
+    <path fill="none" d="M94.57,59.12 L 94.57 60.32"/>
+    <path fill="none" d="M46.89,59.12 L 46.89 60.32"/>
+    <path fill="none" d="M40.34,59.12 L 40.34 60.32"/>
   </g>
 </g>
-<g clip-path="url(#img-c4e1d430-6)">
-  <g id="img-c4e1d430-7">
-    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-c4e1d430-8">
+<g clip-path="url(#img-d944dd47-6)">
+  <g id="img-d944dd47-7">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-d944dd47-8">
       <rect x="16.83" y="5" width="118.17" height="53.72"/>
     </g>
-    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-c4e1d430-9">
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-d944dd47-9">
       <path fill="none" d="M16.83,56.72 L 135 56.72"/>
       <path fill="none" d="M16.83,31.86 L 135 31.86"/>
       <path fill="none" d="M16.83,7 L 135 7"/>
     </g>
-    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-c4e1d430-10">
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-d944dd47-10">
       <path fill="none" d="M18.83,5 L 18.83 58.72"/>
-      <path fill="none" d="M47.37,5 L 47.37 58.72"/>
       <path fill="none" d="M75.91,5 L 75.91 58.72"/>
-      <path fill="none" d="M104.46,5 L 104.46 58.72"/>
       <path fill="none" d="M133,5 L 133 58.72"/>
     </g>
-    <g class="plotpanel" id="img-c4e1d430-11">
-      <g class="geometry" id="img-c4e1d430-12">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" fill="#00BFFF" id="img-c4e1d430-13">
-          <use xlink:href="#img-c4e1d430-14" x="30.75" y="25.86"/>
-          <use xlink:href="#img-c4e1d430-14" x="87.3" y="7.95"/>
-          <use xlink:href="#img-c4e1d430-14" x="59.43" y="52.04"/>
-          <use xlink:href="#img-c4e1d430-14" x="107.25" y="17.55"/>
-          <use xlink:href="#img-c4e1d430-14" x="77.35" y="7.92"/>
-          <use xlink:href="#img-c4e1d430-14" x="61.7" y="11.16"/>
-          <use xlink:href="#img-c4e1d430-14" x="43.08" y="16.21"/>
-          <use xlink:href="#img-c4e1d430-14" x="127.1" y="25.07"/>
-          <use xlink:href="#img-c4e1d430-14" x="96.5" y="19.25"/>
-          <use xlink:href="#img-c4e1d430-14" x="63.68" y="56.02"/>
-          <use xlink:href="#img-c4e1d430-14" x="68.14" y="53.82"/>
-          <use xlink:href="#img-c4e1d430-14" x="34.88" y="35.78"/>
-          <use xlink:href="#img-c4e1d430-14" x="74.3" y="16.85"/>
-          <use xlink:href="#img-c4e1d430-14" x="62.98" y="43.45"/>
-          <use xlink:href="#img-c4e1d430-14" x="73.26" y="50.45"/>
-          <use xlink:href="#img-c4e1d430-14" x="119.17" y="38.23"/>
-          <use xlink:href="#img-c4e1d430-14" x="32.61" y="31.89"/>
-          <use xlink:href="#img-c4e1d430-14" x="26.77" y="54.26"/>
-          <use xlink:href="#img-c4e1d430-14" x="55.72" y="21.15"/>
-          <use xlink:href="#img-c4e1d430-14" x="127.07" y="29.27"/>
+    <g class="plotpanel" id="img-d944dd47-11">
+      <g class="geometry" id="img-d944dd47-12">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" fill="#00BFFF" id="img-d944dd47-13">
+          <use xlink:href="#img-d944dd47-14" x="44.24" y="29.56"/>
+          <use xlink:href="#img-d944dd47-14" x="113.81" y="22.37"/>
+          <use xlink:href="#img-d944dd47-14" x="106.37" y="40.67"/>
+          <use xlink:href="#img-d944dd47-14" x="92.73" y="32"/>
+          <use xlink:href="#img-d944dd47-14" x="46.49" y="50"/>
+          <use xlink:href="#img-d944dd47-14" x="45.25" y="49.79"/>
+          <use xlink:href="#img-d944dd47-14" x="46.52" y="21.75"/>
+          <use xlink:href="#img-d944dd47-14" x="29.68" y="37.1"/>
+          <use xlink:href="#img-d944dd47-14" x="27.04" y="38"/>
+          <use xlink:href="#img-d944dd47-14" x="132.13" y="47.23"/>
+          <use xlink:href="#img-d944dd47-14" x="104.96" y="46.57"/>
+          <use xlink:href="#img-d944dd47-14" x="124.54" y="24.22"/>
+          <use xlink:href="#img-d944dd47-14" x="24.1" y="7.77"/>
+          <use xlink:href="#img-d944dd47-14" x="75.33" y="30.43"/>
+          <use xlink:href="#img-d944dd47-14" x="42.03" y="20.75"/>
+          <use xlink:href="#img-d944dd47-14" x="128.24" y="22.86"/>
+          <use xlink:href="#img-d944dd47-14" x="65.15" y="25.14"/>
+          <use xlink:href="#img-d944dd47-14" x="94.57" y="54.6"/>
+          <use xlink:href="#img-d944dd47-14" x="46.89" y="44.71"/>
+          <use xlink:href="#img-d944dd47-14" x="40.34" y="26.07"/>
         </g>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-c4e1d430-15">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-d944dd47-15">
     <text x="15.83" y="56.72" text-anchor="end" dy="0.35em">0.0</text>
     <text x="15.83" y="31.86" text-anchor="end" dy="0.35em">0.5</text>
     <text x="15.83" y="7" text-anchor="end" dy="0.35em">1.0</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-c4e1d430-16">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-d944dd47-16">
     <text x="8.81" y="31.86" text-anchor="end" dy="0.35em">y</text>
   </g>
 </g>
 <defs>
-  <clipPath id="img-c4e1d430-4">
-  <path d="M16.83,58.72 L 135 58.72 135 60.72 16.83 60.72" />
-</clipPath>
-  <clipPath id="img-c4e1d430-6">
+  <clipPath id="img-d944dd47-6">
   <path d="M16.83,5 L 135 5 135 58.72 16.83 58.72" />
 </clipPath>
-  <g id="img-c4e1d430-14">
+  <clipPath id="img-d944dd47-4">
+  <path d="M16.83,58.72 L 135 58.72 135 60.72 16.83 60.72" />
+</clipPath>
+  <g id="img-d944dd47-14">
     <circle cx="0" cy="0" r="0.9"/>
   </g>
 </defs>
