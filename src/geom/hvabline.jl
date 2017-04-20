@@ -11,29 +11,26 @@ function check_arguments(arg, len)
     arg
 end
 
+
 immutable HLineGeometry <: Gadfly.GeometryElement
     color::@compat(Union{Vector, Color, (@compat Void)})
     size::@compat(Union{Vector, Measure, (@compat Void)})
     style::@compat(Union{Vector, Symbol, (@compat Void)})
     tag::Symbol
 
-    function HLineGeometry(; color::@compat(Union{Vector, String, Color, (@compat Void)})=nothing,
-                           size::@compat(Union{Vector, Measure, (@compat Void)})=nothing,
-                           style::@compat(Union{Vector, Symbol, (@compat Void)})=nothing,
-                           tag::Symbol=empty_tag)
+    function HLineGeometry(color, size, style, tag)
         new(color === nothing ? nothing :
                 typeof(color)<:Vector ? [parse(Colorant,x) for x in color] :
                 parse(Colorant, color),
             size, style, tag)
     end
 end
+HLineGeometry(; color=nothing, size=nothing, style=nothing, tag=empty_tag) =
+        HLineGeometry(color, size, style, tag)
 
 const hline = HLineGeometry
 
-function element_aesthetics(::HLineGeometry)
-    [:yintercept]
-end
-
+element_aesthetics(::HLineGeometry) = [:yintercept]
 
 # Generate a form for the hline geometry
 function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
@@ -67,23 +64,19 @@ immutable VLineGeometry <: Gadfly.GeometryElement
     style::@compat(Union{Vector, Symbol, (@compat Void)})
     tag::Symbol
 
-    function VLineGeometry(; color::@compat(Union{Vector, String, Color, (@compat Void)})=nothing,
-                           size::@compat(Union{Vector, Measure, (@compat Void)})=nothing,
-                           style::@compat(Union{Vector, Symbol, (@compat Void)})=nothing,
-                           tag::Symbol=empty_tag)
+    function VLineGeometry(color, size, style, tag)
         new(color === nothing ? nothing :
                 typeof(color)<:Vector ? [parse(Colorant,x) for x in color] :
                 parse(Colorant, color),
             size, style, tag)
     end
 end
+VLineGeometry(; color=nothing, size=nothing, style=nothing, tag=empty_tag) =
+        VLineGeometry(color, size, style, tag)
 
 const vline = VLineGeometry
 
-
-function element_aesthetics(::VLineGeometry)
-    [:xintercept]
-end
+element_aesthetics(::VLineGeometry) = [:xintercept]
 
 # Generate a form for the vline geometry
 function render(geom::VLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
@@ -117,22 +110,20 @@ immutable ABLineGeometry <: Gadfly.GeometryElement
     style::@compat(Union{Vector, Symbol, (@compat Void)})
     tag::Symbol
 
-    function ABLineGeometry(; color::@compat(Union{Vector, String, Color, (@compat Void)})=nothing,
-                           size::@compat(Union{Vector, Measure, (@compat Void)})=nothing,
-                           style::@compat(Union{Vector, Symbol, (@compat Void)})=nothing,
-                           tag::Symbol=empty_tag)
+    function ABLineGeometry(color, size, style, tag)
         new(color === nothing ? nothing :
                 typeof(color)<:Vector ? [parse(Colorant,x) for x in color] :
                 parse(Colorant, color),
             size, style, tag)
     end
 end
+ABLineGeometry(; color=nothing, size=nothing, style=nothing, tag::Symbol=empty_tag) =
+        ABLineGeometry(color, size, style, tag)
 
 abline = ABLineGeometry
 
-function element_aesthetics(geom::ABLineGeometry)
-    [:intercept, :slope]
-end
+element_aesthetics(geom::ABLineGeometry) = [:intercept, :slope]
+
 function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     if aes.intercept == nothing && aes.slope == nothing
         aes.intercept = [0]

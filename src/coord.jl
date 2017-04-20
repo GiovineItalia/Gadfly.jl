@@ -1,4 +1,3 @@
-
 module Coord
 
 using Gadfly
@@ -33,21 +32,23 @@ immutable Cartesian <: Gadfly.CoordinateElement
     aspect_ratio::@compat(Union{(@compat Void), Float64})
     raster::Bool
 
-    function Cartesian(
-            xvars=[:x, :xmin, :xmax, :xintercept],
-            yvars=[:y, :ymin, :ymax, :yintercept, :middle,
-                   :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers];
-            xflip::Bool=false, yflip::Bool=false,
-            xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,
-            fixed=false, aspect_ratio=nothing, raster=false)
-        if isa(aspect_ratio, Real)
-            aspect_ratio = convert(Float64, aspect_ratio)
-        end
-        new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
+    function Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
             aspect_ratio, raster)
+        new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
+            isa(aspect_ratio, Real) ? Float64(aspect_ratio) : aspect_ratio, raster)
     end
 end
 
+function Cartesian(
+        xvars=[:x, :xmin, :xmax, :xintercept],
+        yvars=[:y, :ymin, :ymax, :yintercept, :middle,
+               :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers];
+        xflip=false, yflip=false,
+        xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,
+        fixed=false, aspect_ratio=nothing, raster=false)
+    Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
+        aspect_ratio, raster)
+end
 
 const cartesian = Cartesian
 

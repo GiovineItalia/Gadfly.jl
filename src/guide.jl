@@ -1,4 +1,3 @@
-
 module Guide
 
 using Compat
@@ -172,15 +171,10 @@ end
 
 immutable ColorKey <: Gadfly.GuideElement
     title::@compat(Union{AbstractString, (@compat Void)})
-
-    function ColorKey(title=nothing)
-        new(title)
-    end
 end
-
+ColorKey() = ColorKey(nothing)
 
 const colorkey = ColorKey
-
 
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
@@ -494,12 +488,12 @@ immutable ManualColorKey{C<:Color} <: Gadfly.GuideElement
     labels::Vector{AbstractString}
     colors::Vector{C}
 end
-
-ManualColorKey{C<:Color}(title, labels, colors::Vector{C}) = ManualColorKey{C}(title, labels, colors)
-ManualColorKey(title, labels, colors) = ManualColorKey(title, labels, Gadfly.parse_colorant_vec(colors...))
+ManualColorKey{C<:Color}(title, labels, colors::Vector{C}) =
+        ManualColorKey{C}(title, labels, colors)
+ManualColorKey(title, labels, colors) =
+        ManualColorKey(title, labels, Gadfly.parse_colorant_vec(colors...))
 
 const manual_color_key = ManualColorKey
-
 
 function render(guide::ManualColorKey, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
@@ -546,18 +540,16 @@ immutable XTicks <: Gadfly.GuideElement
     ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})
     orientation::Symbol
 
-    function XTicks(; label::Bool=true,
-                      ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})=:auto,
-                      orientation::Symbol=:auto)
-        if isa(ticks, Symbol) && ticks != :auto
-            error("$(ticks) is not a valid value for the `ticks` parameter")
-        end
-        return new(label, ticks, orientation)
+    function XTicks(label, ticks, orientation)
+        isa(ticks, Symbol) && ticks != :auto &&
+                error("$(ticks) is not a valid value for the `ticks` parameter")
+        new(label, ticks, orientation)
     end
 end
 
-const xticks = XTicks
+XTicks(; label=true, ticks=:auto, orientation=:auto) = XTicks(label, ticks, orientation)
 
+const xticks = XTicks
 
 function default_statistic(guide::XTicks)
     if guide.ticks == nothing
@@ -566,7 +558,6 @@ function default_statistic(guide::XTicks)
         return Stat.xticks(ticks=guide.ticks)
     end
 end
-
 
 function render(guide::XTicks, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics, dynamic::Bool=true)
@@ -726,19 +717,16 @@ immutable YTicks <: Gadfly.GuideElement
     ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})
     orientation::Symbol
 
-    function YTicks(; label::Bool=true,
-                      ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})=:auto,
-                      orientation::Symbol=:horizontal)
-        if isa(ticks, Symbol) && ticks != :auto
-            error("$(ticks) is not a valid value for the `ticks` parameter")
-        end
+    function YTicks(label, ticks, orientation)
+        isa(ticks, Symbol) && ticks != :auto &&
+                error("$(ticks) is not a valid value for the `ticks` parameter")
         new(label, ticks, orientation)
     end
 end
 
+YTicks(; label=true, ticks=:auto, orientation=:horizontal) = YTicks(label, ticks, orientation)
 
 const yticks = YTicks
-
 
 function default_statistic(guide::YTicks)
     if guide.ticks == nothing
@@ -747,7 +735,6 @@ function default_statistic(guide::YTicks)
         return Stat.yticks(ticks=guide.ticks)
     end
 end
-
 
 function render(guide::YTicks, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics, dynamic::Bool=true)
@@ -907,14 +894,10 @@ end
 immutable XLabel <: Gadfly.GuideElement
     label::@compat(Union{(@compat Void), AbstractString})
     orientation::Symbol
-
-    function XLabel(label; orientation::Symbol=:auto)
-        return new(label, orientation)
-    end
 end
+XLabel(label; orientation=:auto) = XLabel(label, orientation)
 
 const xlabel = XLabel
-
 
 function render(guide::XLabel, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
@@ -972,11 +955,8 @@ end
 immutable YLabel <: Gadfly.GuideElement
     label::@compat(Union{(@compat Void), AbstractString})
     orientation::Symbol
-
-    function YLabel(label; orientation::Symbol=:auto)
-        return new(label, orientation)
-    end
 end
+YLabel(label; orientation=:auto) = YLabel(label, orientation)
 
 const ylabel = YLabel
 
@@ -1061,7 +1041,6 @@ end
 
 const xrug = XRug
 
-
 function render(guide::XRug, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Guide.xrug", aes, :x)
@@ -1082,7 +1061,6 @@ immutable YRug <: Gadfly.GuideElement
 end
 
 const yrug = YRug
-
 
 function render(guide::YRug, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
@@ -1219,9 +1197,7 @@ immutable Annotation <: Gadfly.GuideElement
     ctx::Context
 end
 
-
 const annotation = Annotation
-
 
 function render(guide::Annotation, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)

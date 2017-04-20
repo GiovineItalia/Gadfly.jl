@@ -1,26 +1,15 @@
-
 immutable RibbonGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
-
-    function RibbonGeometry(default_statistic=Gadfly.Stat.identity();
-                            tag::Symbol=empty_tag)
-        new(default_statistic, tag)
-    end
 end
+RibbonGeometry(default_statistic=Gadfly.Stat.identity(); tag=empty_tag) =
+        RibbonGeometry(default_statistic, tag)
 
 const ribbon = RibbonGeometry
 
+default_statistic(geom::RibbonGeometry) = geom.default_statistic
 
-function default_statistic(geom::RibbonGeometry)
-    return geom.default_statistic
-end
-
-
-function element_aesthetics(::RibbonGeometry)
-    return [:x, :ymin, :ymax, :color]
-end
-
+element_aesthetics(::RibbonGeometry) = [:x, :ymin, :ymax, :color]
 
 function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.ribbon", aes, :x, :ymin, :ymax)

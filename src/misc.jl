@@ -1,23 +1,9 @@
 #Is this usable data?
-function isconcrete{T<:Number}(x::T)
-    !isna(x) && isfinite(x)
-end
+isconcrete{T<:Number}(x::T) = !isna(x) && isfinite(x)
+isconcrete(x::(@compat Irrational)) = true
+isconcrete(x) = !isna(x)
 
-
-function isconcrete(x::(@compat Irrational))
-    return true
-end
-
-
-function isconcrete(x)
-    !isna(x)
-end
-
-
-function hasna(xs)
-    return false
-end
-
+hasna(xs) = false
 
 function hasna(xs::AbstractDataArray)
     for x in xs
@@ -289,9 +275,7 @@ end
 Maybe(T) = @compat(Union{T, (@compat Void)})
 
 
-function lerp(x::Float64, a, b)
-    a + (b - a) * max(min(x, 1.0), 0.0)
-end
+lerp(x::Float64, a, b) = a + (b - a) * max(min(x, 1.0), 0.0)
 
 
 # Generate a unique id, primarily for assigning IDs to SVG elements.
@@ -369,9 +353,8 @@ function jsplotdata(key::AbstractString, value::AbstractString, arg::Vector{Meas
 end
 
 
-function svg_color_class_from_label(label::AbstractString)
-    return @sprintf("color_%s", escape_id(label))
-end
+svg_color_class_from_label(label::AbstractString) = @sprintf("color_%s", escape_id(label))
+
 
 
 """
@@ -385,14 +368,10 @@ end
 using Base.Dates
 
 # Arbitrarily order colors
-function color_isless(a::Color, b::Color)
-    return color_isless(convert(RGB{Float32}, a), convert(RGB{Float32}, b))
-end
-
-
-function color_isless(a::TransparentColor, b::TransparentColor)
-    return color_isless(convert(RGBA{Float32}, a), convert(RGBA{Float32}, b))
-end
+color_isless(a::Color, b::Color) =
+        color_isless(convert(RGB{Float32}, a), convert(RGB{Float32}, b))
+color_isless(a::TransparentColor, b::TransparentColor) =
+        color_isless(convert(RGBA{Float32}, a), convert(RGBA{Float32}, b))
 
 
 function color_isless(a::RGB{Float32}, b::RGB{Float32})

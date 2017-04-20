@@ -1,6 +1,4 @@
-
 # Various color scales.
-
 
 # Weighted mean of some number of colors within the same space.
 #
@@ -39,13 +37,8 @@ end
 #   h0: start hue
 #   n: number of colors
 #
-function lab_rainbow(l, c, h0, n)
-    [LCHab(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
-end
-
-function luv_rainbow(l, c, h0, n)
-    [LCHuv(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
-end
+lab_rainbow(l, c, h0, n) = [LCHab(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
+luv_rainbow(l, c, h0, n) = [LCHuv(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
 
 # Helpful for Experimenting
 function plot_color_scale{T <: Color}(colors::Vector{T})

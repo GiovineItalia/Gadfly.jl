@@ -1,20 +1,14 @@
-
 immutable ViolinGeometry <: Gadfly.GeometryElement
     order::Int
     tag::Symbol
-
-    function ViolinGeometry(; order=1, tag::Symbol=empty_tag)
-        new(order, tag)
-    end
 end
-
+ViolinGeometry(; order=1, tag=empty_tag) = ViolinGeometry(order, tag)
 
 const violin = ViolinGeometry
 
 element_aesthetics(::ViolinGeometry) = [:x, :y, :color]
 
 default_statistic(::ViolinGeometry) = Gadfly.Stat.violin()
-
 
 function render(geom::ViolinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     # TODO: What should we do with the color aesthetic?
@@ -38,13 +32,10 @@ function render(geom::ViolinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     end
 
     ctx = context(order=geom.order)
-    compose!(ctx,
-             Compose.polygon([vcat([(x - w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])],
-                                   reverse!([(x + w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])]))
-                              for x in keys(grouped_y)], geom.tag))
+    compose!(ctx, Compose.polygon(
+            [vcat([(x - w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])],
+                    reverse!([(x + w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])]))
+                for x in keys(grouped_y)], geom.tag))
 
-
-    return compose!(ctx,
-                    fill(theme.default_color),
-                    svgclass("geometry"))
+    compose!(ctx, fill(theme.default_color), svgclass("geometry"))
 end

@@ -1,4 +1,3 @@
-
 module Geom
 
 using Colors
@@ -50,9 +49,7 @@ end
 
 
 # Catchall
-function default_statistic(::Gadfly.GeometryElement)
-    return Gadfly.Stat.identity()
-end
+default_statistic(::Gadfly.GeometryElement) = Gadfly.Stat.identity()
 
 
 include("geom/bar.jl")

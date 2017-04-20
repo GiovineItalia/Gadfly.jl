@@ -1,4 +1,3 @@
-
 # Compose pseudo-forms for simple symbols, all parameterized by center and size
 
 using Compose: x_measure, y_measure
@@ -106,9 +105,7 @@ function utriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scal
 end
 
 
-function dtriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
-    utriangle(xs, ys, rs, -1)
-end
+dtriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray) = utriangle(xs, ys, rs, -1)
 
 
 function star1(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
@@ -198,4 +195,3 @@ function octagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
 
   return polygon(polys)
 end
-

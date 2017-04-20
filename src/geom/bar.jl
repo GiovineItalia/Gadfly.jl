@@ -1,5 +1,3 @@
-
-
 # Bar geometry summarizes data as vertical bars.
 immutable BarGeometry <: Gadfly.GeometryElement
     # How bars should be positioned if they are grouped by color.
@@ -14,19 +12,11 @@ immutable BarGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
 
     tag::Symbol
+end
 
-    function BarGeometry(; position::Symbol=:stack,
-                         orientation::Symbol=:vertical,
-                         tag::Symbol=empty_tag)
-        new(position, orientation, Gadfly.Stat.bar(position=position,
-            orientation = orientation), tag)
-    end
-
-    function BarGeometry(position::Symbol, orientation::Symbol,
-                         default_statistic::Gadfly.StatisticElement,
-                         tag::Symbol)
-        new(position, orientation, default_statistic, tag)
-    end
+function BarGeometry(; position=:stack, orientation=:vertical, tag=empty_tag)
+    BarGeometry(position, orientation, Gadfly.Stat.bar(position=position,
+        orientation = orientation), tag)
 end
 
 const bar = BarGeometry
@@ -47,16 +37,9 @@ function histogram(; position=:stack, bincount=nothing,
         tag)
 end
 
+element_aesthetics(::BarGeometry) = [:x, :xmin, :xmax, :y, :ymin, :ymax, :color]
 
-function element_aesthetics(::BarGeometry)
-    [:x, :xmin, :xmax, :y, :ymin, :ymax, :color]
-end
-
-
-function default_statistic(geom::BarGeometry)
-    return geom.default_statistic
-end
-
+default_statistic(geom::BarGeometry) = geom.default_statistic
 
 # Render a single color bar chart
 function render_colorless_bar(geom::BarGeometry,

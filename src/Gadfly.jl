@@ -90,10 +90,8 @@ set_default_plot_size(width::Compose.MeasureOrNumber, height::Compose.MeasureOrN
 ```
 Sets preferred canvas size when rendering a plot without an explicit call to draw
 """
-function set_default_plot_size(width::Compose.MeasureOrNumber,
-                               height::Compose.MeasureOrNumber)
-    Compose.set_default_graphic_size(width, height)
-end
+set_default_plot_size(width::Compose.MeasureOrNumber, height::Compose.MeasureOrNumber) =
+        Compose.set_default_graphic_size(width, height)
 
 
 """
@@ -102,9 +100,7 @@ set_default_plot_format(fmt::Symbol)
 ```
 Sets the default plot format
 """
-function set_default_plot_format(fmt::Symbol)
-    Compose.set_default_graphic_format(fmt)
-end
+set_default_plot_format(fmt::Symbol) = Compose.set_default_graphic_format(fmt)
 
 
 # A plot has zero or more layers. Layers have a particular geometry and their
@@ -116,23 +112,10 @@ type Layer <: Element
     geom::GeometryElement
     theme::@compat(Union{(@compat Void), Theme})
     order::Int
-
-    function Layer()
-        new(nothing, Dict(), StatisticElement[], Geom.nil(), nothing, 0)
-    end
-
-    function Layer(lyr::Layer)
-        new(lyr.data_source,
-            lyr.mapping,
-            lyr.statistics,
-            lyr.geom,
-            lyr.theme)
-    end
 end
-
-function copy(lyr::Layer)
-    lyr_new = Layer(lyr)
-end
+Layer() = Layer(nothing, Dict(), StatisticElement[], Geom.nil(), nothing, 0)
+Layer(l::Layer) = Layer(l.data_source, l.mapping, l.statistics, l.geom, l.theme, l.order)
+copy(l::Layer) = Layer(l)
 
 
 
@@ -168,19 +151,16 @@ function layer(data_source::@compat(Union{AbstractDataFrame, (@compat Void)}),
 end
 
 
-function layer(elements::ElementOrFunction...; mapping...)
-    return layer(nothing, elements...; mapping...)
-end
+layer(elements::ElementOrFunction...; mapping...) =
+        layer(nothing, elements...; mapping...)
 
 
-function add_plot_element!{T<:Element}(lyrs::Vector{Layer}, arg::T)
-    error("Layers can't be used with elements of type $(typeof(arg))")
-end
+add_plot_element!{T<:Element}(lyrs::Vector{Layer}, arg::T) =
+        error("Layers can't be used with elements of type $(typeof(arg))")
 
 
-function add_plot_element!(lyrs::Vector{Layer}, arg::ScaleElement)
-    error("Scales cannot be passed to layers, they must be specified at the plot level.")
-end
+add_plot_element!(lyrs::Vector{Layer}, arg::ScaleElement) =
+        error("Scales cannot be passed to layers, they must be specified at the plot level.")
 
 
 function add_plot_element!(lyrs::Vector{Layer}, arg::GeometryElement)
@@ -191,9 +171,7 @@ function add_plot_element!(lyrs::Vector{Layer}, arg::GeometryElement)
 end
 
 
-function add_plot_element!(lyrs::Vector{Layer}, arg::Base.Callable)
-    add_plot_element!(lyrs, arg())
-end
+add_plot_element!(lyrs::Vector{Layer}, arg::Base.Callable) = add_plot_element!(lyrs, arg())
 
 
 function add_plot_element!(lyrs::Vector{Layer}, arg::StatisticElement)
@@ -203,9 +181,7 @@ function add_plot_element!(lyrs::Vector{Layer}, arg::StatisticElement)
 end
 
 
-function add_plot_element!(lyrs::Vector{Layer}, arg::Theme)
-    [lyr.theme = arg for lyr in lyrs]
-end
+add_plot_element!(lyrs::Vector{Layer}, arg::Theme) = [lyr.theme = arg for lyr in lyrs]
 
 
 # A full plot specification.
@@ -219,22 +195,12 @@ type Plot
     guides::Vector{GuideElement}
     theme::Theme
     mapping::Dict
-
-    function Plot()
-        new(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
-            nothing, GuideElement[], current_theme())
-    end
 end
+Plot() = Plot(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
+      nothing, GuideElement[], current_theme(), Dict())
 
 
-function layers(p::Plot)
-    return p.layers
-end
-
-
-function add_plot_element!(p::Plot, arg::Function)
-    add_plot_element!(p, arg())
-end
+layers(p::Plot) = p.layers
 
 
 function add_plot_element!(p::Plot, arg::GeometryElement)
@@ -248,11 +214,6 @@ function add_plot_element!(p::Plot, arg::GeometryElement)
 end
 
 
-function add_plot_element!(p::Plot, arg::ScaleElement)
-    push!(p.scales, arg)
-end
-
-
 function add_plot_element!(p::Plot, arg::StatisticElement)
     if isempty(p.layers)
         push!(p.layers, Layer())
@@ -261,35 +222,14 @@ function add_plot_element!(p::Plot, arg::StatisticElement)
     push!(p.layers[end].statistics, arg)
 end
 
-
-function add_plot_element!(p::Plot, arg::CoordinateElement)
-    p.coord = arg
-end
-
-
-function add_plot_element!(p::Plot, arg::GuideElement)
-    push!(p.guides, arg)
-end
-
-
-function add_plot_element!(p::Plot, arg::Layer)
-    push!(p.layers, arg)
-end
-
-
-function add_plot_element!(p::Plot, arg::Vector{Layer})
-    append!(p.layers, arg)
-end
-
-
-function add_plot_element!{T <: Element}(p::Plot, f::Type{T})
-    add_plot_element!(p, f())
-end
-
-
-function add_plot_element!(p::Plot, theme::Theme)
-    p.theme = theme
-end
+add_plot_element!(p::Plot, arg::Function) = add_plot_element!(p, arg())
+add_plot_element!(p::Plot, arg::ScaleElement) = push!(p.scales, arg)
+add_plot_element!(p::Plot, arg::CoordinateElement) = p.coord = arg
+add_plot_element!(p::Plot, arg::GuideElement) = push!(p.guides, arg)
+add_plot_element!(p::Plot, arg::Layer) = push!(p.layers, arg)
+add_plot_element!(p::Plot, arg::Vector{Layer}) = append!(p.layers, arg)
+add_plot_element!{T <: Element}(p::Plot, f::Type{T}) = add_plot_element!(p, f())
+add_plot_element!(p::Plot, theme::Theme) = p.theme = theme
 
 
 # Create a new plot.
@@ -930,9 +870,7 @@ A convenience version of Compose.draw without having to call render
 * backend: The Compose.Backend object
 * p: The Plot object
 """
-function draw(backend::Compose.Backend, p::Plot)
-    draw(backend, render(p))
-end
+draw(backend::Compose.Backend, p::Plot) = draw(backend, render(p))
 
 """
     title(ctx::Context, str::String, props::Property...) -> Context
@@ -1242,14 +1180,8 @@ const default_aes_scales = Dict{Symbol, Dict}(
 )
 
 
-function get_scale{t,var}(::Val{t}, ::Val{var}, theme::Theme)
-    default_aes_scales[t][var]
-end
-
-
-function get_scale(t::Symbol, var::Symbol, theme::Theme)
-    get_scale(Val{t}(), Val{var}(), theme)
-end
+get_scale{t,var}(::Val{t}, ::Val{var}, theme::Theme) = default_aes_scales[t][var]
+get_scale(t::Symbol, var::Symbol, theme::Theme) = get_scale(Val{t}(), Val{var}(), theme)
 
 
 function scale_exists(t::Symbol, var::Symbol)
@@ -1268,17 +1200,11 @@ end
 const CategoricalType = @compat(Union{AbstractString, Bool, Symbol})
 
 
-function classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N})
-    :categorical
-end
-
-function classify_data{N, T <: Base.Callable}(data::AbstractArray{T, N})
-    :functional
-end
-
-function classify_data{T <: Base.Callable}(data::T)
-    :functional
-end
+classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N}) = :categorical
+classify_data{N, T <: Base.Callable}(data::AbstractArray{T, N}) = :functional
+classify_data{T <: Base.Callable}(data::T) = :functional
+classify_data(data::AbstractArray) = :numerical
+classify_data(data::Distribution) = :distribution
 
 function classify_data(data::AbstractArray{Any})
     for val in data
@@ -1287,14 +1213,6 @@ function classify_data(data::AbstractArray{Any})
         end
     end
     :numerical
-end
-
-function classify_data(data::AbstractArray)
-    :numerical
-end
-
-function classify_data(data::Distribution)
-    :distribution
 end
 
 # Axis labels are taken whatever is mapped to these aesthetics, in order of

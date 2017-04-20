@@ -1,4 +1,3 @@
-
 immutable LabelGeometry <: Gadfly.GeometryElement
     # One of :dynamic, :left, :right, :above, :below, :centered
     position::Symbol
@@ -8,28 +7,21 @@ immutable LabelGeometry <: Gadfly.GeometryElement
     hide_overlaps::Bool
 
     tag::Symbol
-
-    function LabelGeometry(;position=:dynamic, hide_overlaps::Bool=true, tag::Symbol=empty_tag)
-        new(position, hide_overlaps, tag)
-    end
 end
-
+LabelGeometry(; position=:dynamic, hide_overlaps=true, tag=empty_tag) = 
+        LabelGeometry(position, hide_overlaps, tag)
 
 element_aesthetics(::LabelGeometry) = [:x, :y, :label]
 
-
 default_statistic(::LabelGeometry) = Gadfly.Stat.identity()
 
-
 const label = LabelGeometry
-
 
 # True if two boxes overlap
 function overlaps(a::Absolute2DBox, b::Absolute2DBox)
     a.x0[1] + a.a[1] >= b.x0[1] && a.x0[1] <= b.x0[1] + b.a[1] &&
     a.x0[2] + a.a[2] >= b.x0[2] && a.x0[2] <= b.x0[2] + b.a[2]
 end
-
 
 # A deferred context function for labeling points in a plot. Optimizing label
 # placement depends on knowing the absolute size of the containing context.

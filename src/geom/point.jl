@@ -1,21 +1,13 @@
-
 # Geometry which displays points at given (x, y) positions.
+
 immutable PointGeometry <: Gadfly.GeometryElement
     tag::Symbol
-
-    function PointGeometry(; tag::Symbol=empty_tag)
-        new(tag)
-    end
 end
-
+PointGeometry(; tag=empty_tag) = PointGeometry(tag)
 
 const point = PointGeometry
 
-
-function element_aesthetics(::PointGeometry)
-    [:x, :y, :size, :color, :shape]
-end
-
+element_aesthetics(::PointGeometry) = [:x, :y, :size, :color, :shape]
 
 # Generate a form for a point geometry.
 #

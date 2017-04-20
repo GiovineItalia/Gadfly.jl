@@ -1,28 +1,18 @@
-
 # Subplot geometries
-
 
 @compat abstract type SubplotGeometry <: Gadfly.GeometryElement end
 
-
 # Adding elements to subplots in a generic way.
 
-function add_subplot_element(subplot::SubplotGeometry, arg::Base.Callable)
-    add_subplot_element(subplot, arg())
-end
-
-
-function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.Layer)
-    push!(subplot.layers, arg)
-end
-
+add_subplot_element(subplot::SubplotGeometry, arg::Base.Callable) =
+        add_subplot_element(subplot, arg())
+add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.Layer) = push!(subplot.layers, arg)
 
 function add_subplot_element(subplot::SubplotGeometry, arg::Vector{Gadfly.Layer})
     for layer in arg
         push!(subplot.layers, layer)
     end
 end
-
 
 function add_subplot_element(p::SubplotGeometry, arg::Gadfly.GeometryElement)
     if !isempty(p.layers) && isa(p.layers[end].geom, Geom.Nil)
@@ -34,11 +24,8 @@ function add_subplot_element(p::SubplotGeometry, arg::Gadfly.GeometryElement)
     end
 end
 
-
-function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.StatisticElement)
-    push!(subplot.statistics, arg)
-end
-
+add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.StatisticElement) =
+        push!(subplot.statistics, arg)
 
 function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.ScaleElement)
     push!(subplot.scales, arg)
@@ -48,27 +35,17 @@ function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.ScaleElement)
     end
 end
 
+add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.GuideElement) =
+        subplot.guides[typeof(arg)] = arg
 
-function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.GuideElement)
-    subplot.guides[typeof(arg)] = arg
-end
+add_subplot_element{T <: Gadfly.Element}(subplot::SubplotGeometry, arg::Type{T}) =
+        add_subplot_element(subplot, arg())
 
+add_subplot_element(subplot::SubplotGeometry, coord::Gadfly.CoordinateElement) =
+        subplot.coord = coord
 
-function add_subplot_element{T <: Gadfly.Element}(subplot::SubplotGeometry,
-                                                  arg::Type{T})
-    add_subplot_element(subplot, arg())
-end
-
-
-function add_subplot_element(subplot::SubplotGeometry, coord::Gadfly.CoordinateElement)
-    subplot.coord = coord
-end
-
-
-function add_subplot_element(subplot::SubplotGeometry, arg)
-    error("Subplots do not support elements of type $(typeof(arg))")
-end
-
+add_subplot_element(subplot::SubplotGeometry, arg) =
+        error("Subplots do not support elements of type $(typeof(arg))")
 
 type SubplotGrid <: SubplotGeometry
     layers::Vector{Gadfly.Layer}
@@ -78,32 +55,27 @@ type SubplotGrid <: SubplotGeometry
     coord::Gadfly.CoordinateElement
     free_x_axis::Bool
     free_y_axis::Bool
+end
 
-    # Current plot has no way of passing existing aesthetics. It always produces
-    # these using scales.
-    function SubplotGrid(elements::Gadfly.ElementOrFunctionOrLayers...;
-                         free_x_axis=false, free_y_axis=false)
-        subplot = new(Gadfly.Layer[], Gadfly.ScaleElement[], Gadfly.StatisticElement[],
-                      Dict{Type, Gadfly.GuideElement}(), Coord.cartesian(),
-                      free_x_axis, free_y_axis)
+# Current plot has no way of passing existing aesthetics. It always produces
+# these using scales.
+function SubplotGrid(elements::Gadfly.ElementOrFunctionOrLayers...;
+                     free_x_axis=false, free_y_axis=false)
+    subplot = SubplotGrid(Gadfly.Layer[], Gadfly.ScaleElement[], Gadfly.StatisticElement[],
+                  Dict{Type, Gadfly.GuideElement}(), Coord.cartesian(),
+                  free_x_axis, free_y_axis)
 
-        for element in elements
-            add_subplot_element(subplot, element)
-        end
-
-        # TODO: Handle default guides and statistics
-        subplot
+    for element in elements
+        add_subplot_element(subplot, element)
     end
+
+    # TODO: Handle default guides and statistics
+    subplot
 end
 
-
-function layers(geom::SubplotGrid)
-    return geom.layers
-end
-
+layers(geom::SubplotGrid) = geom.layers
 
 const subplot_grid = SubplotGrid
-
 
 function element_aesthetics(geom::SubplotGrid)
     vars = [:xgroup, :ygroup]
@@ -112,7 +84,6 @@ function element_aesthetics(geom::SubplotGrid)
     end
     vars
 end
-
 
 function default_scales(geom::SubplotGrid)
     scales = Gadfly.ScaleElement[]
@@ -128,11 +99,7 @@ function default_scales(geom::SubplotGrid)
     return scales
 end
 
-
-function element_coordinate_type(::SubplotGrid)
-    return Gadfly.Coord.subplot_grid
-end
-
+element_coordinate_type(::SubplotGrid) = Gadfly.Coord.subplot_grid
 
 # Render a subplot grid geometry, which consists of rendering and arranging
 # many smaller plots.
@@ -409,5 +376,3 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     return compose!(context(), tbl)
 end
-
-

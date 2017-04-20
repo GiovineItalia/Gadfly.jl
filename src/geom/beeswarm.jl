@@ -1,26 +1,15 @@
-
-
 immutable BeeswarmGeometry <: Gadfly.GeometryElement
     # :vertical or :horizontal
     orientation::Symbol
     padding::Measure
     tag::Symbol
-
-    function BeeswarmGeometry(; orientation::Symbol=:vertical,
-                                padding::Measure=0.1mm,
-                                tag::Symbol=empty_tag)
-        new(orientation, padding, tag)
-    end
 end
-
+BeeswarmGeometry(; orientation=:vertical, padding=0.1mm, tag=empty_tag) =
+        BeeswarmGeometry(orientation, padding, tag)
 
 const beeswarm = BeeswarmGeometry
 
-
-function element_aesthetics(geom::BeeswarmGeometry)
-    [:x, :y, :color]
-end
-
+element_aesthetics(geom::BeeswarmGeometry) = [:x, :y, :color]
 
 function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.point", aes, :x, :y)
