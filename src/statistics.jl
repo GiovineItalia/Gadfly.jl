@@ -921,14 +921,7 @@ function apply_statistic(stat::TickStatistic,
         tickvisible = fill(true, length(ticks))
         tickscale = fill(1.0, length(ticks))
     elseif categorical
-        ticks = Set{Int}()
-        for val in in_values
-            if isinteger(val) && val > 0
-                push!(ticks, round(Int, val))
-            end
-        end
-        ticks = Int[t for t in ticks]
-        sort!(ticks)
+        ticks = collect( colon(map(x->round(Int, x), extrema(in_values))...) )
         grids = (ticks .- 0.5)[2:end]
         viewmin = minimum(ticks)
         viewmax = maximum(ticks)
