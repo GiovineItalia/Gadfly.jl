@@ -1125,8 +1125,8 @@ function apply_statistic(stat::SmoothStatistic,
                 error("Stat.smooth requires more than one distinct x value")
             end
             try
-                xs = convert(Vector{Float64}, xv)
-                ys = convert(Vector{Float64}, yv)
+                xs = Float64.( eltype(xv) <: Dates.TimeType ? Dates.value.(xv) : xv )
+                ys = Float64.( eltype(yv) <: Dates.TimeType ? Dates.value.(yv) : yv )
             catch e
                 error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
             end
@@ -1144,7 +1144,7 @@ function apply_statistic(stat::SmoothStatistic,
             end
 
             steps = collect((x_min + nudge):dx:(x_max - nudge))
-            xsp = convert(Vector{Float64}, steps)
+            xsp = Float64.( eltype(steps) <: Dates.TimeType ? Dates.value.(steps) : steps )
             if stat.method == :loess
                 smoothys = Loess.predict(loess(xs, ys, span=stat.smoothing), xsp)
             elseif stat.method == :lm
