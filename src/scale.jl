@@ -1,4 +1,3 @@
-
 module Scale
 
 using Colors
@@ -17,9 +16,9 @@ include("color_misc.jl")
 
 
 # Return true if var is categorical.
-function iscategorical(scales::Dict{Symbol, Gadfly.ScaleElement}, var::Symbol)
-    return haskey(scales, var) && isa(scales[var], DiscreteScale)
-end
+iscategorical(scales::Dict{Symbol, Gadfly.ScaleElement}, var::Symbol) =
+        haskey(scales, var) && isa(scales[var], DiscreteScale)
+
 
 
 # Apply some scales to data in the given order.
@@ -71,50 +70,27 @@ immutable ContinuousScaleTransform
     label::Function
 end
 
+identity_formatter(xs::AbstractArray, format=:auto) = showoff(xs, format)
+const identity_transform = ContinuousScaleTransform(identity, identity, identity_formatter)
 
-function identity_formatter(xs::AbstractArray, format=:auto)
-    return showoff(xs, format)
-end
+log10_formatter(xs::AbstractArray, format=:plain) =
+        [@sprintf("10<sup>%s</sup>", x) for x in showoff(xs, format)]
+const log10_transform = ContinuousScaleTransform(log10, x -> 10^x, log10_formatter)
 
-const identity_transform =
-    ContinuousScaleTransform(identity, identity, identity_formatter)
+log2_formatter(xs::AbstractArray, format=:plain) =
+        [@sprintf("2<sup>%s</sup>", x) for x in showoff(xs, format)]
+const log2_transform = ContinuousScaleTransform(log2, x -> 2^x, log2_formatter)
 
-function log10_formatter(xs::AbstractArray, format=:plain)
-    [@sprintf("10<sup>%s</sup>", x) for x in showoff(xs, format)]
-end
+ln_formatter(xs::AbstractArray, format=:plain) =
+        [@sprintf("e<sup>%s</sup>", x) for x in showoff(xs, format)]
+const ln_transform = ContinuousScaleTransform(log, exp, ln_formatter)
 
-const log10_transform =
-    ContinuousScaleTransform(log10, x -> 10^x, log10_formatter)
+asinh_formatter(xs::AbstractArray, format=:plain) =
+        [@sprintf("sinh(%s)", x) for x in showoff(xs, format)]
+const asinh_transform = ContinuousScaleTransform(asinh, sinh, asinh_formatter)
 
-
-function log2_formatter(xs::AbstractArray, format=:plain)
-    [@sprintf("2<sup>%s</sup>", x) for x in showoff(xs, format)]
-end
-
-const log2_transform =
-    ContinuousScaleTransform(log2, x -> 2^x, log2_formatter)
-
-
-function ln_formatter(xs::AbstractArray, format=:plain)
-    [@sprintf("e<sup>%s</sup>", x) for x in showoff(xs, format)]
-end
-
-const ln_transform =
-    ContinuousScaleTransform(log, exp, ln_formatter)
-
-
-function asinh_formatter(xs::AbstractArray, format=:plain)
-    [@sprintf("sinh(%s)", x) for x in showoff(xs, format)]
-end
-
-const asinh_transform =
-    ContinuousScaleTransform(asinh, sinh, asinh_formatter)
-
-
-function sqrt_formatter(xs::AbstractArray, format=:plain)
-    [@sprintf("%s<sup>2</sup>", x) for x in showoff(xs, format)]
-end
-
+sqrt_formatter(xs::AbstractArray, format=:plain) =
+        [@sprintf("%s<sup>2</sup>", x) for x in showoff(xs, format)]
 const sqrt_transform = ContinuousScaleTransform(sqrt, x -> x^2, sqrt_formatter)
 
 
@@ -131,19 +107,23 @@ immutable ContinuousScale <: Gadfly.ScaleElement
     format
     scalable
 
-    function ContinuousScale(vars::Vector{Symbol},
-                             trans::ContinuousScaleTransform;
-                             labels=nothing,
-                             minvalue=nothing, maxvalue=nothing,
-                             minticks=2, maxticks=10,
-                             format=nothing,
-                             scalable=true)
-        if minvalue != nothing && maxvalue != nothing && minvalue > maxvalue
-            error("Cannot construct a ContinuousScale with minvalue > maxvalue")
-        end
+    function ContinuousScale(vars, trans,
+                             minvalue, maxvalue, minticks, maxticks,
+                             labels, format, scalable)
+        minvalue != nothing && maxvalue != nothing && minvalue > maxvalue &&
+                error("Cannot construct a ContinuousScale with minvalue > maxvalue")
         new(vars, trans, minvalue, maxvalue, minticks, maxticks, labels,
             format, scalable)
     end
+end
+
+function ContinuousScale(vars, trans;
+                         labels=nothing,
+                         minvalue=nothing, maxvalue=nothing,
+                         minticks=2, maxticks=10,
+                         format=nothing, scalable=true)
+    ContinuousScale(vars, trans, minvalue, maxvalue, minticks, maxticks, labels,
+        format, scalable)
 end
 
 
@@ -195,9 +175,7 @@ const y_sqrt       = continuous_scale_partial(y_vars, sqrt_transform)
 const size_continuous = continuous_scale_partial([:size], identity_transform)
 
 
-function element_aesthetics(scale::ContinuousScale)
-    return scale.vars
-end
+element_aesthetics(scale::ContinuousScale) = scale.vars
 
 
 # Apply a continuous scale.
@@ -369,7 +347,6 @@ immutable DiscreteScaleTransform
     f::Function
 end
 
-
 immutable DiscreteScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
 
@@ -385,37 +362,26 @@ immutable DiscreteScale <: Gadfly.ScaleElement
 
     # If non-nothing, a permutation of the pool of values.
     order::@compat(Union{(@compat Void), AbstractVector})
-
-    function DiscreteScale(vals::Vector{Symbol};
-                           labels=nothing, levels=nothing, order=nothing)
-        new(vals, labels, levels, order)
-    end
 end
+DiscreteScale(vals; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale(vals, labels, levels, order)
 
 const discrete = DiscreteScale
-
 
 element_aesthetics(scale::DiscreteScale) = scale.vars
 
 
-function x_discrete(; labels=nothing, levels=nothing, order=nothing)
-    return DiscreteScale(x_vars, labels=labels, levels=levels, order=order)
-end
+x_discrete(; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale(x_vars, labels=labels, levels=levels, order=order)
 
+y_discrete(; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale(y_vars, labels=labels, levels=levels, order=order)
 
-function y_discrete(; labels=nothing, levels=nothing, order=nothing)
-    return DiscreteScale(y_vars, labels=labels, levels=levels, order=order)
-end
+group_discrete(; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale([:group], labels=labels, levels=levels, order=order)
 
-
-function group_discrete(; labels=nothing, levels=nothing, order=nothing)
-    return DiscreteScale([:group], labels=labels, levels=levels, order=order)
-end
-
-
-function shape_discrete(; labels=nothing, levels=nothing, order=nothing)
-    return DiscreteScale([:shape], labels=labels, levels=levels, order=order)
-end
+shape_discrete(; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale([:shape], labels=labels, levels=levels, order=order)
 
 
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
@@ -465,14 +431,9 @@ end
 immutable NoneColorScale <: Gadfly.ScaleElement
 end
 
-
 const color_none = NoneColorScale
 
-
-function element_aesthetics(scale::NoneColorScale)
-    [:color]
-end
-
+element_aesthetics(scale::NoneColorScale) = [:color]
 
 function apply_scale(scale::NoneColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
@@ -480,7 +441,6 @@ function apply_scale(scale::NoneColorScale,
         aes.color = nothing
     end
 end
-
 
 immutable DiscreteColorScale <: Gadfly.ScaleElement
     f::Function # A function f(n) that produces a vector of n colors.
@@ -494,18 +454,11 @@ immutable DiscreteColorScale <: Gadfly.ScaleElement
 
     # If true, order levels as they appear in the data
     preserve_order::Bool
-
-    function DiscreteColorScale(f::Function; levels=nothing, order=nothing,
-                                preserve_order=true)
-        new(f, levels, order, preserve_order)
-    end
 end
+DiscreteColorScale(f; levels=nothing, order=nothing, preserve_order=true) =
+        DiscreteColorScale(f, levels, order, preserve_order)
 
-
-function element_aesthetics(scale::DiscreteColorScale)
-    [:color]
-end
-
+element_aesthetics(scale::DiscreteColorScale) = [:color]
 
 function default_discrete_colors(n)
     convert(Vector{Color},
@@ -619,12 +572,9 @@ immutable ContinuousColorScale <: Gadfly.ScaleElement
 
     minvalue
     maxvalue
-
-    function ContinuousColorScale(f::Function, trans::ContinuousScaleTransform=identity_transform; minvalue=nothing, maxvalue=nothing)
-        new(f, trans, minvalue, maxvalue)
-    end
 end
-
+ContinuousColorScale(f, trans=identity_transform; minvalue=nothing, maxvalue=nothing) =
+        ContinuousColorScale(f, trans, minvalue, maxvalue)
 
 function continuous_color_scale_partial(trans::ContinuousScaleTransform)
     lch_diverge2 = function f3(l0=30, l1=100, c=40, h0=260, h1=10, hmid=20, power=1.5)
@@ -765,7 +715,6 @@ end
 immutable LabelScale <: Gadfly.ScaleElement
 end
 
-
 function apply_scale(scale::LabelScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
@@ -777,9 +726,7 @@ function apply_scale(scale::LabelScale,
     end
 end
 
-
 element_aesthetics(::LabelScale) = [:label]
-
 
 const label = LabelScale
 
@@ -789,15 +736,12 @@ immutable GroupingScale <: Gadfly.ScaleElement
     var::Symbol
 end
 
+xgroup(; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale([:xgroup], labels=labels, levels=levels, order=order)
 
-function xgroup(; labels=nothing, levels=nothing, order=nothing)
-    return DiscreteScale([:xgroup], labels=labels, levels=levels, order=order)
-end
+ygroup(; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale([:ygroup], labels=labels, levels=levels, order=order)
 
-
-function ygroup(; labels=nothing, levels=nothing, order=nothing)
-    return DiscreteScale([:ygroup], labels=labels, levels=levels, order=order)
-end
 
 
 # Catchall scale for when no transformation of the data is necessary
@@ -805,11 +749,7 @@ immutable IdentityScale <: Gadfly.ScaleElement
     var::Symbol
 end
 
-
-function element_aesthetics(scale::IdentityScale)
-    return [scale.var]
-end
-
+element_aesthetics(scale::IdentityScale) = [scale.var]
 
 function apply_scale(scale::IdentityScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
@@ -822,25 +762,9 @@ function apply_scale(scale::IdentityScale,
     end
 end
 
-
-function z_func()
-    return IdentityScale(:z)
-end
-
-
-function y_func()
-    return IdentityScale(:y)
-end
-
-
-function x_distribution()
-    return IdentityScale(:x)
-end
-
-
-function y_distribution()
-    return IdentityScale(:y)
-end
-
+z_func() = IdentityScale(:z)
+y_func() = IdentityScale(:y)
+x_distribution() = IdentityScale(:x)
+y_distribution() = IdentityScale(:y)
 
 end # module Scale

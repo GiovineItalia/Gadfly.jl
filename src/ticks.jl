@@ -1,5 +1,3 @@
-
-
 # Find the smallest order of magnitude that is larger than xspan This is a
 # little opaque because I want to avoid assuming the log function is defined
 # over typeof(xspan)

@@ -94,19 +94,10 @@ end
 immutable RectbinStatistic <: Gadfly.StatisticElement
 end
 
-
 const rectbin = RectbinStatistic
 
-
-function input_aesthetics(stat::RectbinStatistic)
-    return [:x, :y]
-end
-
-
-function output_aesthetics(stat::RectbinStatistic)
-    return [:xmin, :xmax, :ymin, :ymax]
-end
-
+input_aesthetics(stat::RectbinStatistic) = [:x, :y]
+output_aesthetics(stat::RectbinStatistic) = [:xmin, :xmax, :ymin, :ymax]
 
 function apply_statistic(stat::RectbinStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -138,23 +129,11 @@ immutable BarStatistic <: Gadfly.StatisticElement
     position::Symbol # :dodge or :stack
     orientation::Symbol # :horizontal or :vertical
 end
+BarStatistic(; position=:stack, orientation=:vertical) = BarStatistic(position, orientation)
 
-
-function BarStatistic(; position::Symbol=:stack,
-                        orientation::Symbol=:vertical)
-    return BarStatistic(position, orientation)
-end
-
-
-function input_aesthetics(stat::BarStatistic)
-    return stat.orientation == :vertical ? [:x] : [:y]
-end
-
-
-function output_aesthetics(stat::BarStatistic)
-    return stat.orientation == :vertical ? [:ymin, :ymax] : [:xmin, :xmax]
-end
-
+input_aesthetics(stat::BarStatistic) = stat.orientation == :vertical ? [:x] : [:y]
+output_aesthetics(stat::BarStatistic) =
+    stat.orientation == :vertical ? [:ymin, :ymax] : [:xmin, :xmax]
 
 function default_scales(stat::BarStatistic)
     if stat.orientation == :vertical
@@ -164,9 +143,7 @@ function default_scales(stat::BarStatistic)
     end
 end
 
-
 const bar = BarStatistic
-
 
 function apply_statistic(stat::BarStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -237,31 +214,24 @@ immutable HistogramStatistic <: Gadfly.StatisticElement
     position::Symbol # :dodge or :stack
     orientation::Symbol
     density::Bool
+end
 
-    function HistogramStatistic(; bincount=nothing,
-                                  minbincount=3,
-                                  maxbincount=150,
-                                  position::Symbol=:stack,
-                                  orientation::Symbol=:vertical,
-                                  density::Bool=false)
-        if bincount != nothing
-            new(bincount, bincount, position, orientation, density)
-        else
-            new(minbincount, maxbincount, position, orientation, density)
-        end
+function HistogramStatistic(; bincount=nothing,
+                              minbincount=3,
+                              maxbincount=150,
+                              position=:stack,
+                              orientation=:vertical,
+                              density=false)
+    if bincount != nothing
+        HistogramStatistic(bincount, bincount, position, orientation, density)
+    else
+        HistogramStatistic(minbincount, maxbincount, position, orientation, density)
     end
 end
 
-
-function input_aesthetics(stat::HistogramStatistic)
-    return stat.orientation == :vertical ? [:x] : [:y]
-end
-
-
-function output_aesthetics(stat::HistogramStatistic)
-    return stat.orientation == :vertical ? [:x, :y, :ymin, :ymax] : [:y, :x, :xmin, :xmax]
-end
-
+input_aesthetics(stat::HistogramStatistic) = stat.orientation == :vertical ? [:x] : [:y]
+output_aesthetics(stat::HistogramStatistic) =
+    stat.orientation == :vertical ? [:x, :y, :ymin, :ymax] : [:y, :x, :xmin, :xmax]
 
 function default_scales(stat::HistogramStatistic)
     if stat.orientation == :vertical
@@ -272,7 +242,6 @@ function default_scales(stat::HistogramStatistic)
 end
 
 const histogram = HistogramStatistic
-
 
 function apply_statistic(stat::HistogramStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -476,25 +445,14 @@ immutable Density2DStatistic <: Gadfly.StatisticElement
     n::Tuple{Int,Int} # Number of points sampled
     bw::Tuple{Real,Real} # Bandwidth used for the kernel density estimation
     levels::Union{Int,Vector,Function}
-
-    function Density2DStatistic(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15)
-        new(n, bandwidth, levels)
-    end
 end
-
+Density2DStatistic(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15) =
+      Density2DStatistic(n, bandwidth, levels)
 
 const density2d = Density2DStatistic
 
-
-function input_aesthetics(stat::Density2DStatistic)
-    return [:x, :y]
-end
-
-
-function output_aesthetics(stat::Density2DStatistic)
-    return [:x, :y, :z]
-end
-
+input_aesthetics(stat::Density2DStatistic) = [:x, :y]
+output_aesthetics(stat::Density2DStatistic) = [:x, :y, :z]
 
 default_scales(::Density2DStatistic) = [Gadfly.Scale.y_continuous()]
 
@@ -519,25 +477,13 @@ immutable DensityStatistic <: Gadfly.StatisticElement
     n::Int
     # Bandwidth used for the kernel density estimation
     bw::Real
-
-    function DensityStatistic(; n=256, bandwidth=-Inf)
-        new(n, bandwidth)
-    end
 end
-
+DensityStatistic(; n=256, bandwidth=-Inf) = DensityStatistic(n, bandwidth)
 
 const density = DensityStatistic
 
-
-function input_aesthetics(stat::DensityStatistic)
-    return [:x]
-end
-
-
-function output_aesthetics(stat::DensityStatistic)
-    return [:x, :y]
-end
-
+input_aesthetics(stat::DensityStatistic) = [:x]
+output_aesthetics(stat::DensityStatistic) = [:x, :y]
 
 default_scales(::DensityStatistic) = [Gadfly.Scale.y_continuous()]
 
@@ -592,44 +538,34 @@ immutable Histogram2DStatistic <: Gadfly.StatisticElement
     xmaxbincount::Int
     yminbincount::Int
     ymaxbincount::Int
+end
 
-    function Histogram2DStatistic(; xbincount=nothing,
-                                    xminbincount=3,
-                                    xmaxbincount=150,
-                                    ybincount=nothing,
-                                    yminbincount=3,
-                                    ymaxbincount=150)
-        if xbincount != nothing
-            xminbincount = xbincount
-            xmaxbincount = xbincount
-        end
-
-        if ybincount != nothing
-            yminbincount = ybincount
-            ymaxbincount = ybincount
-        end
-
-        new(xminbincount, xmaxbincount, yminbincount, ymaxbincount)
+function Histogram2DStatistic(; xbincount=nothing,
+                                xminbincount=3,
+                                xmaxbincount=150,
+                                ybincount=nothing,
+                                yminbincount=3,
+                                ymaxbincount=150)
+    if xbincount != nothing
+        xminbincount = xbincount
+        xmaxbincount = xbincount
     end
+
+    if ybincount != nothing
+        yminbincount = ybincount
+        ymaxbincount = ybincount
+    end
+
+    Histogram2DStatistic(xminbincount, xmaxbincount, yminbincount, ymaxbincount)
 end
 
-
-function input_aesthetics(stat::Histogram2DStatistic)
-    return [:x, :y]
-end
-
-
-function output_aesthetics(stat::Histogram2DStatistic)
-    return [:xmin, :ymax, :ymin, :ymax, :color]
-end
-
+input_aesthetics(stat::Histogram2DStatistic) = [:x, :y]
+output_aesthetics(stat::Histogram2DStatistic) = [:xmin, :ymax, :ymin, :ymax, :color]
 
 default_scales(::Histogram2DStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
     [t.continuous_color_scale]
 
-
 const histogram2d = Histogram2DStatistic
-
 
 function apply_statistic(stat::Histogram2DStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -761,7 +697,6 @@ immutable TickStatistic <: Gadfly.StatisticElement
     ticks::@compat(Union{Symbol, AbstractArray})
 end
 
-
 @deprecate xticks(ticks) xticks(ticks=ticks)
 
 function xticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
@@ -788,8 +723,6 @@ function yticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
         granularity_weight, simplicity_weight,
         coverage_weight, niceness_weight, ticks)
 end
-
-
 
 # Apply a tick statistic.
 #
@@ -1044,19 +977,11 @@ end
 immutable BoxplotStatistic <: Gadfly.StatisticElement
 end
 
-
-function input_aesthetics(stat::BoxplotStatistic)
-    return [:x, :y]
-end
-
-
-function output_aesthetics(stat::BoxplotStatistic)
-    return [:x, :middle, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers]
-end
-
+input_aesthetics(stat::BoxplotStatistic) = [:x, :y]
+output_aesthetics(stat::BoxplotStatistic) =
+    [:x, :middle, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers]
 
 const boxplot = BoxplotStatistic
-
 
 function apply_statistic(stat::BoxplotStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1157,25 +1082,13 @@ end
 immutable SmoothStatistic <: Gadfly.StatisticElement
     method::Symbol
     smoothing::Float64
-
-    function SmoothStatistic(; method::Symbol=:loess, smoothing::Float64=0.75)
-        new(method, smoothing)
-    end
 end
-
+SmoothStatistic(; method=:loess, smoothing=0.75) = SmoothStatistic(method, smoothing)
 
 const smooth = SmoothStatistic
 
-
-function input_aesthetics(::SmoothStatistic)
-    return [:x, :y]
-end
-
-
-function output_aesthetics(::SmoothStatistic)
-    return [:x, :y]
-end
-
+input_aesthetics(::SmoothStatistic) = [:x, :y]
+output_aesthetics(::SmoothStatistic) = [:x, :y]
 
 function apply_statistic(stat::SmoothStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1255,15 +1168,10 @@ function apply_statistic(stat::SmoothStatistic,
 immutable HexBinStatistic <: Gadfly.StatisticElement
     xbincount::Int
     ybincount::Int
-
-    function HexBinStatistic(; xbincount=50, ybincount=50)
-        new(xbincount, ybincount)
-    end
 end
-
+HexBinStatistic(; xbincount=50, ybincount=50) = HexBinStatistic(xbincount, ybincount)
 
 const hexbin = HexBinStatistic
-
 
 function apply_statistic(stat::HexBinStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1316,32 +1224,18 @@ function apply_statistic(stat::HexBinStatistic,
     Scale.apply_scale(color_scale, [aes], data)
 end
 
-
-function default_scales(::HexBinStatistic, t::Gadfly.Theme)
-    return [t.continuous_color_scale]
-end
+default_scales(::HexBinStatistic, t::Gadfly.Theme) = [t.continuous_color_scale]
 
 
 immutable StepStatistic <: Gadfly.StatisticElement
     direction::Symbol
-
-    function StepStatistic(; direction::Symbol=:hv)
-        return new(direction)
-    end
 end
+StepStatistic(; direction=:hv) = StepStatistic(direction)
 
 const step = StepStatistic
 
-
-function input_aesthetics(::StepStatistic)
-    return [:x, :y]
-end
-
-
-function output_aesthetics(::StepStatistic)
-    return [:x, :y]
-end
-
+input_aesthetics(::StepStatistic) = [:x, :y]
+output_aesthetics(::StepStatistic) = [:x, :y]
 
 function apply_statistic(stat::StepStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1416,30 +1310,15 @@ end
 immutable FunctionStatistic <: Gadfly.StatisticElement
     # Number of points to evaluate the function at
     num_samples::Int
-
-    function FunctionStatistic(; num_samples=250)
-        return new(num_samples)
-    end
 end
-
+FunctionStatistic(; num_samples=250) = FunctionStatistic(num_samples)
 
 const func = FunctionStatistic
 
+default_scales(::FunctionStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
 
-function default_scales(::FunctionStatistic)
-    return [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
-end
-
-
-function input_aesthetics(::FunctionStatistic)
-    return [:y, :xmin, :xmax]
-end
-
-
-function output_aesthetics(::FunctionStatistic)
-    return [:x, :y, :group]
-end
-
+input_aesthetics(::FunctionStatistic) = [:y, :xmin, :xmax]
+output_aesthetics(::FunctionStatistic) = [:x, :y, :group]
 
 function apply_statistic(stat::FunctionStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1494,32 +1373,19 @@ end
 immutable ContourStatistic <: Gadfly.StatisticElement
     levels::Union{Int,Vector,Function}
     samples::Int
-
-    function ContourStatistic(; levels=15, samples=150)
-        new(levels, samples)
-    end
 end
+ContourStatistic(; levels=15, samples=150) = ContourStatistic(levels, samples)
 
-
-function input_aesthetics(::ContourStatistic)
-    return [:z, :xmin, :xmax, :ymin, :ymax]
-end
-
-
-function output_aesthetics(::ContourStatistic)
-    return [:x, :y, :color, :group]
-end
-
+input_aesthetics(::ContourStatistic) = [:z, :xmin, :xmax, :ymin, :ymax]
+output_aesthetics(::ContourStatistic) = [:x, :y, :color, :group]
 
 const contour = ContourStatistic
-
 
 function default_scales(::ContourStatistic, t::Gadfly.Theme=Gadfly.current_theme())
     return [Gadfly.Scale.z_func(), Gadfly.Scale.x_continuous(),
             Gadfly.Scale.y_continuous(),
             t.continuous_color_scale]
 end
-
 
 function apply_statistic(stat::ContourStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1587,22 +1453,13 @@ end
 immutable QQStatistic <: Gadfly.StatisticElement
 end
 
-
-function input_aesthetics(::QQStatistic)
-    return [:x, :y]
-end
-
-
-function output_aesthetics(::QQStatistic)
-    return [:x, :y]
-end
-
+input_aesthetics(::QQStatistic) = [:x, :y]
+output_aesthetics(::QQStatistic) = [:x, :y]
 
 const qq = QQStatistic
 
-function default_scales(::QQStatistic)
-    return [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous]
-end
+default_scales(::QQStatistic) =
+        [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous]
 
 function apply_statistic(stat::QQStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1666,20 +1523,12 @@ end
 immutable ViolinStatistic <: Gadfly.StatisticElement
     # Number of points sampled
     n::Int
-
-    function ViolinStatistic(n=300)
-        new(n)
-    end
 end
+ViolinStatistic() = ViolinStatistic(300)
 
-
-function input_aesthetics(::ViolinStatistic)
-    return [:x, :y, :width]
-end
-
+input_aesthetics(::ViolinStatistic) = [:x, :y, :width]
 
 const violin = ViolinStatistic
-
 
 function apply_statistic(stat::ViolinStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1728,26 +1577,14 @@ immutable JitterStatistic <: Gadfly.StatisticElement
     vars::Vector{Symbol}
     range::Float64
     seed::UInt32
-
-    function JitterStatistic(vars::Vector{Symbol}; range=0.8, seed=0x0af5a1f7)
-        return new(vars, range, seed)
-    end
 end
-
+JitterStatistic(vars; range=0.8, seed=0x0af5a1f7) = JitterStatistic(vars, range, seed)
 
 x_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:x], range=range, seed=seed)
 y_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:y], range=range, seed=seed)
 
-
-function input_aesthetics(stat::JitterStatistic)
-    return stat.vars
-end
-
-
-function output_aesthetics(stat::JitterStatistic)
-    return stat.vars
-end
-
+input_aesthetics(stat::JitterStatistic) = stat.vars
+output_aesthetics(stat::JitterStatistic) = stat.vars
 
 function minimum_span(vars::Vector{Symbol}, aes::Gadfly.Aesthetics)
     span = nothing
@@ -1800,24 +1637,13 @@ end
 
 immutable BinMeanStatistic <: Gadfly.StatisticElement
     n::Int
-    function BinMeanStatistic(;n=20)
-        new(n)
-    end
 end
-
+BinMeanStatistic(; n=20) = BinMeanStatistic(n)
 
 const binmean = BinMeanStatistic
 
-
-function input_aesthetics(::BinMeanStatistic)
-    return [:x, :y]
-end
-
-
-function output_aesthetics(::BinMeanStatistic)
-    return [:x, :y]
-end
-
+input_aesthetics(::BinMeanStatistic) = [:x, :y]
+output_aesthetics(::BinMeanStatistic) = [:x, :y]
 
 function apply_statistic(stat::BinMeanStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1880,16 +1706,8 @@ immutable EnumerateStatistic <: Gadfly.StatisticElement
     var::Symbol
 end
 
-
-function input_aesthetics(stat::EnumerateStatistic)
-    return [stat.var]
-end
-
-
-function output_aesthetics(stat::EnumerateStatistic)
-    return [stat.var == :x ? :y : :x]
-end
-
+input_aesthetics(stat::EnumerateStatistic) = [stat.var]
+output_aesthetics(stat::EnumerateStatistic) = [stat.var == :x ? :y : :x]
 
 function default_scales(stat::EnumerateStatistic)
     if stat.var == :y
@@ -1901,10 +1719,8 @@ function default_scales(stat::EnumerateStatistic)
     end
 end
 
-
 const x_enumerate = EnumerateStatistic(:x)
 const y_enumerate = EnumerateStatistic(:y)
-
 
 function apply_statistic(stat::EnumerateStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},

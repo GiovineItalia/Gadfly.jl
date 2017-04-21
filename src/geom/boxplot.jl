@@ -1,12 +1,7 @@
-
 immutable BoxplotGeometry <: Gadfly.GeometryElement
     tag::Symbol
-
-    function BoxplotGeometry(; tag::Symbol=empty_tag)
-        new(tag)
-    end
 end
-
+BoxplotGeometry(; tag=empty_tag) = BoxplotGeometry(tag)
 
 const boxplot = BoxplotGeometry
 

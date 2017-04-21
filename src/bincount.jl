@@ -1,4 +1,3 @@
-
 # Optimization of bin counts for histograms, heatmaps, hexbin plots, etc.
 #
 # I'm using the penalized maximum-likelihood method proposed in
@@ -276,4 +275,3 @@ end
 function choose_hex_bin_count(xs::AbstractVector, ys::AbstractVector)
     # TODO: this should probably be a thing
 end
-

@@ -1,6 +1,3 @@
-
-
-
 @varset Data begin
     x
     y
@@ -84,4 +81,3 @@ function show(io::IO, data::Data)
     end
     print(io, "\n)\n")
 end
-

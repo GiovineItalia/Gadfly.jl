@@ -1,13 +1,10 @@
-
 # Parameters controlling how a plot appears
 
 const title_font_desc = "'PT Sans','Helvetica Neue','Helvetica',sans-serif"
 const label_font_desc = "'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif"
 
 # Choose highlight color by darkening the fill color
-function default_discrete_highlight_color(fill_color::Color)
-    return RGB(1, 1, 1)
-end
+default_discrete_highlight_color(fill_color::Color) = RGB(1, 1, 1)
 
 function default_discrete_highlight_color(fill_color::TransparentColor)
     return RGBA{Float32}(
@@ -283,9 +280,8 @@ A new theme can be added by adding a method to `get_theme`
 
     push_theme(:mytheme) # will set the above theme
 """
-function push_theme(t::Symbol)
-    push_theme(get_theme(Val{t}()))
-end
+push_theme(t::Symbol) = push_theme(get_theme(Val{t}()))
+
 
 
 """
@@ -297,9 +293,8 @@ Register a theme by name.
 
 See also: push_theme, with_theme
 """
-function get_theme{name}(::Val{name})
-    error("No theme $name found")
-end
+get_theme{name}(::Val{name}) = error("No theme $name found")
+
 
 
 """
@@ -321,20 +316,19 @@ function with_theme(f, theme)
     p
 end
 
-function get_theme(::Val{:default})
-    Theme()
-end
+get_theme(::Val{:default}) = Theme()
+
 
 ### Override default getters for color scales
 
-function get_scale(::Val{:categorical}, ::Val{:color}, theme::Theme=current_theme())
-    theme.discrete_color_scale
-end
+get_scale(::Val{:categorical}, ::Val{:color}, theme::Theme=current_theme()) =
+        theme.discrete_color_scale
 
 
-function get_scale(::Val{:numerical}, ::Val{:color}, theme::Theme=current_theme())
-    theme.continuous_color_scale
-end
+
+get_scale(::Val{:numerical}, ::Val{:color}, theme::Theme=current_theme()) =
+        theme.continuous_color_scale
+
 
 
 ### Dark theme
@@ -408,6 +402,4 @@ const dark_theme = let label_color=colorant"#a1a1a1",
     )
 end
 
-function get_theme(::Val{:dark})
-    dark_theme
-end
+get_theme(::Val{:dark}) = dark_theme

@@ -9,52 +9,28 @@ immutable GroupedColumn
     columns::Nullable{Vector}
 end
 
-
-function Base.hash(colgroup::GroupedColumn, h::UInt64)
-    return hash(colgroup.columns, h)
-end
-
+Base.hash(colgroup::GroupedColumn, h::UInt64) = hash(colgroup.columns, h)
 
 function ==(a::GroupedColumn, b::GroupedColumn)
     return (isnull(a.columns) && isnull(b.columns)) ||
         (!isnull(a.columns) && !isnull(b.columns) && get(a.columns) == get(b.columns))
 end
 
+Base.show(io::IO, gc::GroupedColumn) = print(io, "Column")
 
-function Base.show(io::IO, gc::GroupedColumn)
-    print(io, "Column")
-end
+index() = GroupedColumn(Nullable{Vector}())
 
-
-function index()
-    return GroupedColumn(Nullable{Vector}())
-end
-
-
-function index{T <: (@compat Union{Int, Symbol})}(xs::T...)
-    return GroupedColumn(Nullable(collect(T, xs)))
-end
-
+index{T <: (@compat Union{Int, Symbol})}(xs::T...) = GroupedColumn(Nullable(collect(T, xs)))
 
 immutable GroupedColumnValue
     columns::Nullable{Vector}
 end
 
+Base.show(io::IO, gc::GroupedColumnValue) = print(io, "Column Value")
 
-function Base.show(io::IO, gc::GroupedColumnValue)
-    print(io, "Column Value")
-end
+value() = GroupedColumnValue(Nullable{Vector}())
 
-
-function value()
-    return GroupedColumnValue(Nullable{Vector}())
-end
-
-
-function value{T <: (@compat Union{Int, Symbol})}(xs::T...)
-    return GroupedColumnValue(Nullable(collect(T, xs)))
-end
-
+value{T <: (@compat Union{Int, Symbol})}(xs::T...) = GroupedColumnValue(Nullable(collect(T, xs)))
 
 end # module Col
 
@@ -96,7 +72,6 @@ immutable MeltedData
     indicators::Array
     colmap::Dict
 end
-
 
 function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
     um, un = size(U)
@@ -265,25 +240,11 @@ evalmapping(source::AbstractDataFrame, arg::AbstractString) = evalmapping(source
 evalmapping(source::AbstractDataFrame, arg::Integer) = source[arg]
 evalmapping(source::AbstractDataFrame, arg::Expr) = with(source, arg)
 
-
-function evalmapping(source::MeltedData, arg::Integer)
-    return source.melted_data[:,source.colmap[arg]]
-end
-
-
-function evalmapping(source::MeltedData, arg::Col.GroupedColumn)
-    return source.indicators[:,source.colmap[arg]]
-end
-
-
-function evalmapping(source::MeltedData, arg::Col.GroupedColumnValue)
-    return source.melted_data[:,source.colmap[Col.GroupedColumn(arg.columns)]]
-end
-
-
-function evalmapping(source::MeltedData, arg::Colon)
-    return source.melted_data
-end
+evalmapping(source::MeltedData, arg::Integer) = source.melted_data[:,source.colmap[arg]]
+evalmapping(source::MeltedData, arg::Col.GroupedColumn) = source.indicators[:,source.colmap[arg]]
+evalmapping(source::MeltedData, arg::Col.GroupedColumnValue) =
+    source.melted_data[:,source.colmap[Col.GroupedColumn(arg.columns)]]
+evalmapping(source::MeltedData, arg::Colon) = source.melted_data
 
 
 # Evalute aesthetic mappings producting a Data instance.
@@ -309,4 +270,3 @@ function evalmapping!(mapping::Dict, data_source, data::Data)
 
     return data_source
 end
-

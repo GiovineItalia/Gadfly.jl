@@ -1,5 +1,5 @@
-
 # Line geometry connects (x, y) coordinates with lines.
+
 immutable LineGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
 
@@ -9,16 +9,14 @@ immutable LineGeometry <: Gadfly.GeometryElement
     order::Int
 
     tag::Symbol
-
-    function LineGeometry(default_statistic=Gadfly.Stat.identity();
-                          preserve_order=false, order=2, tag=empty_tag)
-        new(default_statistic, preserve_order, order, tag)
-    end
 end
 
+function LineGeometry(default_statistic=Gadfly.Stat.identity();
+                      preserve_order=false, order=2, tag=empty_tag)
+    LineGeometry(default_statistic, preserve_order, order, tag)
+end
 
 const line = LineGeometry
-
 
 function contour(; levels=15, samples=150, preserve_order=true)
     return LineGeometry(Gadfly.Stat.contour(levels=levels, samples=samples),
@@ -28,40 +26,22 @@ end
 
 # Only allowing identity statistic in paths b/c I don't think any
 # any of the others will work with `preserve_order=true` right now
-function path()
-    return LineGeometry(preserve_order=true)
-end
+path() = LineGeometry(preserve_order=true)
 
-function density(; bandwidth::Real=-Inf)
-    return LineGeometry(Gadfly.Stat.density(bandwidth=bandwidth))
-end
+density(; bandwidth::Real=-Inf) =
+    LineGeometry(Gadfly.Stat.density(bandwidth=bandwidth))
 
-function density2d(; bandwidth::Real=-Inf, levels=15)
-    return LineGeometry(Gadfly.Stat.density2d(bandwidth=bandwidth, levels=levels);
-            preserve_order=true)
-end
+density2d(; bandwidth::Real=-Inf, levels=15) =
+    LineGeometry(Gadfly.Stat.density2d(bandwidth=bandwidth, levels=levels); preserve_order=true)
 
+smooth(; method::Symbol=:loess, smoothing::Float64=0.75) =
+    LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing), order=5)
 
-function smooth(; method::Symbol=:loess, smoothing::Float64=0.75)
-    return LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing),
-                        order=5)
-end
+step(; direction::Symbol=:hv) = LineGeometry(Gadfly.Stat.step(direction=direction))
 
+default_statistic(geom::LineGeometry) = geom.default_statistic
 
-function step(; direction::Symbol=:hv)
-    return LineGeometry(Gadfly.Stat.step(direction=direction))
-end
-
-
-function default_statistic(geom::LineGeometry)
-    return geom.default_statistic
-end
-
-
-function element_aesthetics(::LineGeometry)
-    return [:x, :y, :color, :group]
-end
-
+element_aesthetics(::LineGeometry) = [:x, :y, :color, :group]
 
 # Render line geometry.
 #

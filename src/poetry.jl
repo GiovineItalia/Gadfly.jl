@@ -1,7 +1,4 @@
-
-
 # Particularly useful or beautiful grammar of graphics invocations.
-
 
 # A convenience plot function for quickly plotting functions or expressions.
 #
@@ -46,9 +43,8 @@ end
 
 
 # Plot a single function.
-function plot(f::Function, a::Number, b::Number, elements::ElementOrFunction...; mapping...)
-    plot(Function[f], a, b, elements...; mapping...)
-end
+plot(f::Function, a::Number, b::Number, elements::ElementOrFunction...; mapping...) =
+        plot(Function[f], a, b, elements...; mapping...)
 
 
 # Plot a single function using a contour plot
@@ -97,15 +93,14 @@ end
 
 
 # Create a layer from a list of functions or expressions.
-function layer(fs::Array, a::Number, b::Number, elements::ElementOrFunction...)
-    layer(y=fs, xmin=[a], xmax=[b], Stat.func, Geom.line, elements...)
-end
+layer(fs::Array, a::Number, b::Number, elements::ElementOrFunction...) =
+        layer(y=fs, xmin=[a], xmax=[b], Stat.func, Geom.line, elements...)
+
 
 
 # Create a layer from a single function.
-function layer(f::Function, a::Number, b::Number, elements::ElementOrFunction...)
-    layer(Function[f], a, b, elements...)
-end
+layer(f::Function, a::Number, b::Number, elements::ElementOrFunction...) =
+        layer(Function[f], a, b, elements...)
 
 
 # Simple heatmap plots of matrices.

@@ -1,25 +1,16 @@
-
 immutable PolygonGeometry <: Gadfly.GeometryElement
     order::Int
     fill::Bool
     preserve_order::Bool
     tag::Symbol
-
-    function PolygonGeometry(; order::Int=0, fill::Bool=false,
-                               preserve_order::Bool=false,
-                               tag::Symbol=empty_tag)
-        return new(order, fill, preserve_order, tag)
-    end
 end
 
+PolygonGeometry(; order=0, fill=false, preserve_order=false, tag=empty_tag) =
+        PolygonGeometry(order, fill, preserve_order, tag)
 
 const polygon = PolygonGeometry
 
-
-function element_aesthetics(::PolygonGeometry)
-    return [:x, :y, :color, :group]
-end
-
+element_aesthetics(::PolygonGeometry) = [:x, :y, :color, :group]
 
 function polygon_points(xs, ys, preserve_order)
     T = (@compat Tuple{eltype(xs), eltype(ys)})
@@ -32,7 +23,6 @@ function polygon_points(xs, ys, preserve_order)
         return T[(x, y)for (x, y) in zip(xs[perm], ys[perm])]
     end
 end
-
 
 # Render polygon geometry.
 function render(geom::PolygonGeometry, theme::Gadfly.Theme,

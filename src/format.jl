@@ -1,6 +1,3 @@
-
-
-
 # Print a floating point number at fixed precision. Pretty much equivalent to
 # @sprintf("%0.$(precision)f", x), without the macro issues.
 function format_fixed(x::AbstractFloat, precision::Integer)
@@ -247,4 +244,3 @@ function formatter(xs::AbstractArray; fmt=nothing)
 
     format
 end
-

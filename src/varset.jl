@@ -1,5 +1,3 @@
-
-
 # Generate large types where each field has a default value to which it's
 # initialized.
 
@@ -29,36 +27,27 @@ macro varset(name::Symbol, table)
             typ = row.args[2]
             default = length(row.args) > 2 ? row.args[3] : :nothing
         else
-            error("Bad varset systax")
+            error("Bad varset syntax")
         end
 
         push!(names, var)
         push!(vars, :($(var)::$(typ)))
         push!(parameters, Expr(:kw, var, default))
         push!(inherit_parameters, Expr(:kw, var, :(b.$var)))
-        parameters_expr = Expr(:parameters, parameters...)
-        inherit_parameters_expr = Expr(:parameters, inherit_parameters...)
     end
 
-    new_with_defaults = Expr(:call, :new, names...)
+    parameters_expr = Expr(:parameters, parameters...)
+    inherit_parameters_expr = Expr(:parameters, inherit_parameters...)
 
     ex =
     quote
         type $(name)
             $(vars...)
-
-            function $(name)($(parameters_expr))
-                $(new_with_defaults)
-            end
-
-            function $(name)($(inherit_parameters_expr), b::$name)
-                $(new_with_defaults)
-            end
         end
 
-        function copy(a::$(name))
-            $(name)(a)
-        end
+        $(name)($(parameters_expr)) = $(name)($(names...))
+        $(name)($(inherit_parameters_expr), b::$name) = $(name)($(names...))
+        copy(a::$(name)) = $(name)(a)
     end
 
     esc(ex)

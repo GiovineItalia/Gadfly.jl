@@ -1,30 +1,21 @@
+# Geometry for vectors/arrows/segments
 
 @compat abstract type SegmentGeometry <: Gadfly.GeometryElement end
 
-# Geometry for vectors/arrows/segments
 immutable SegmentGeom <: SegmentGeometry 
-    
      arrow::Bool
      filled::Bool
      tag::Symbol 
- 
-    function SegmentGeom(;arrow=false, filled=false, tag=empty_tag) 
-         new(arrow, filled, tag) 
-     end 
 end 
+SegmentGeom(; arrow=false, filled=false, tag=empty_tag) = SegmentGeom(arrow, filled, tag) 
 
 const segment = SegmentGeom
 
 # Leave this as a function, pending extra arguments e.g. arrow attributes
-function vector(;filled::Bool=false, tag::Symbol=empty_tag)
-    return SegmentGeom(arrow=true, filled=filled, tag=tag)
-end
-
+vector(; filled::Bool=false, tag::Symbol=empty_tag) =
+        SegmentGeom(arrow=true, filled=filled, tag=tag)
  
-function element_aesthetics(::SegmentGeom) 
-    return [:x, :y, :xend, :yend, :color] 
-end 
-
+element_aesthetics(::SegmentGeom) = [:x, :y, :xend, :yend, :color] 
 
 function Gadfly.render(geom::SegmentGeom, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
                 subplot_layer_aess::@compat(Union{(@compat Void), Vector{Gadfly.Aesthetics}}),
@@ -32,10 +23,6 @@ function Gadfly.render(geom::SegmentGeom, theme::Gadfly.Theme, aes::Gadfly.Aesth
     scales::Dict{Symbol, Gadfly.ScaleElement})
     render(geom, theme, aes, scales)
 end
-
-
-
-
 
 function render(geom::SegmentGeom, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
     scales::Dict{Symbol, Gadfly.ScaleElement})
@@ -105,8 +92,3 @@ function render(geom::SegmentGeom, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
 
     return ctx
 end
-
-
-
-
-

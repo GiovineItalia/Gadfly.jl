@@ -1,5 +1,3 @@
-
-
 const NumericalOrCategoricalAesthetic =
     @compat(Union{(@compat Void), Vector, DataArray, PooledDataArray})
 
@@ -126,9 +124,7 @@ const aesthetic_aliases =
 
 
 # Index as if this were a data frame
-function getindex(aes::Aesthetics, i::Integer, j::AbstractString)
-    getfield(aes, Symbol(j))[i]
-end
+getindex(aes::Aesthetics, i::Integer, j::AbstractString) = getfield(aes, Symbol(j))[i]
 
 
 # Return the set of variables that are non-nothing.
@@ -153,9 +149,8 @@ end
 #   aes: An Aesthetics object.
 #   vars: Symbol that must be defined in the aesthetics.
 #
-function undefined_aesthetics(aes::Aesthetics, vars::Symbol...)
-    setdiff(Set(vars), defined_aesthetics(aes))
-end
+undefined_aesthetics(aes::Aesthetics, vars::Symbol...) =
+        setdiff(Set(vars), defined_aesthetics(aes))
 
 
 function assert_aesthetics_defined(who::AbstractString, aes::Aesthetics, vars::Symbol...)
@@ -221,9 +216,7 @@ end
 # Returns:
 #   JSON data as a string.
 #
-function json(a::Aesthetics)
-    join([string(a, ":", json(getfield(a, var))) for var in aes_vars], ",\n")
-end
+json(a::Aesthetics) = join([string(a, ":", json(getfield(a, var))) for var in aes_vars], ",\n")
 
 
 # Concatenate aesthetics.
@@ -276,32 +269,18 @@ function cat_aes_var!(a::Dict, b::Dict)
 end
 
 
-function cat_aes_var!{T <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{T})
-    return append!(a, b)
-end
-
-
-function cat_aes_var!{T <: Base.Callable, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U})
-    return append!(a, b)
-end
+cat_aes_var!{T <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{T}) = append!(a, b)
+cat_aes_var!{T <: Base.Callable, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U}) =
+        append!(a, b)
 
 
 # Let arrays of numbers clobber arrays of functions. This is slightly odd
 # behavior, comes up with with function statistics applied on a layer-wise
 # basis.
-function cat_aes_var!{T <: Base.Callable, U}(a::AbstractArray{T}, b::AbstractArray{U})
-    return b
-end
-
-
-function cat_aes_var!{T, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U})
-    return a
-end
-
-
-function cat_aes_var!{T}(a::AbstractArray{T}, b::AbstractArray{T})
-    return append!(a, b)
-end
+cat_aes_var!{T <: Base.Callable, U}(a::AbstractArray{T}, b::AbstractArray{U}) = b
+cat_aes_var!{T, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U}) = a
+cat_aes_var!{T}(a::AbstractArray{T}, b::AbstractArray{T}) = append!(a, b)
+cat_aes_var!(a, b) = a
 
 
 function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
@@ -322,11 +301,6 @@ function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
     end
 
     return ab
-end
-
-
-function cat_aes_var!(a, b)
-    a
 end
 
 

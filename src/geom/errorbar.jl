@@ -1,45 +1,26 @@
-
 immutable ErrorBarGeometry <: Gadfly.GeometryElement
     tag::Symbol
-
-    function ErrorBarGeometry(; tag::Symbol=empty_tag)
-        new(tag)
-    end
 end
+ErrorBarGeometry(; tag=empty_tag) = ErrorBarGeometry(tag)
+
 
 immutable XErrorBarGeometry <: Gadfly.GeometryElement
     tag::Symbol
-
-    function XErrorBarGeometry(; tag::Symbol=empty_tag)
-        new(tag)
-    end
 end
+XErrorBarGeometry(; tag=empty_tag) = XErrorBarGeometry(tag)
 
 immutable YErrorBarGeometry <: Gadfly.GeometryElement
     tag::Symbol
-
-    function YErrorBarGeometry(; tag::Symbol=empty_tag)
-        new(tag)
-    end
 end
+YErrorBarGeometry(; tag=empty_tag) = YErrorBarGeometry(tag)
 
 const errorbar = ErrorBarGeometry
 const xerrorbar = XErrorBarGeometry
 const yerrorbar = YErrorBarGeometry
 
-
-function element_aesthetics(::ErrorBarGeometry)
-    [:x, :y, :xmin, :xmax, :ymin, :ymax]
-end
-
-function element_aesthetics(::YErrorBarGeometry)
-    [:x, :ymin, :ymax]
-end
-
-function element_aesthetics(::XErrorBarGeometry)
-    [:y, :xmin, :xmax]
-end
-
+element_aesthetics(::ErrorBarGeometry) = [:x, :y, :xmin, :xmax, :ymin, :ymax]
+element_aesthetics(::YErrorBarGeometry) = [:x, :ymin, :ymax]
+element_aesthetics(::XErrorBarGeometry) = [:y, :xmin, :xmax]
 
 # Generate a form for the errorbar geometry.
 #

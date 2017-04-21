@@ -1,34 +1,18 @@
-
 using Hexagons
 
 immutable HexagonalBinGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
-
-    function HexagonalBinGeometry(
-            default_statistic::Gadfly.StatisticElement;
-            tag::Symbol=empty_tag)
-        new(default_statistic, tag)
-    end
-
-    function HexagonalBinGeometry(; xbincount=200, ybincount=200, tag::Symbol=empty_tag)
-        new(Gadfly.Stat.hexbin(xbincount=xbincount, ybincount=ybincount), tag)
-    end
 end
-
+HexagonalBinGeometry(default_statistic; tag=empty_tag) =
+        HexagonalBinGeometry(default_statistic, tag)
+HexagonalBinGeometry(; xbincount=200, ybincount=200, tag=empty_tag) =
+        HexagonalBinGeometry(Gadfly.Stat.hexbin(xbincount=xbincount, ybincount=ybincount), tag)
 
 const hexbin = HexagonalBinGeometry
 
-
-function default_statistic(geom::HexagonalBinGeometry)
-    geom.default_statistic
-end
-
-
-function element_aesthetics(geom::HexagonalBinGeometry)
-    [:x, :y, :xsize, :ysize, :color]
-end
-
+default_statistic(geom::HexagonalBinGeometry) = geom.default_statistic
+element_aesthetics(geom::HexagonalBinGeometry) = [:x, :y, :xsize, :ysize, :color]
 
 function render(geom::HexagonalBinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     default_aes = Gadfly.Aesthetics()

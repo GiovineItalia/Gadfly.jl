@@ -1,18 +1,15 @@
-
 immutable RectangularBinGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
-
-    function RectangularBinGeometry(
-            default_statistic::Gadfly.StatisticElement=Gadfly.Stat.rectbin();
-            tag::Symbol=empty_tag)
-        new(default_statistic, tag)
-    end
 end
 
+function RectangularBinGeometry(
+        default_statistic::Gadfly.StatisticElement=Gadfly.Stat.rectbin();
+        tag=empty_tag)
+    RectangularBinGeometry(default_statistic, tag)
+end
 
 const rectbin = RectangularBinGeometry
-
 
 function histogram2d(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
                        ybincount=nothing, yminbincount=3, ymaxbincount=150)
@@ -25,16 +22,10 @@ function histogram2d(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
                                 ymaxbincount=ymaxbincount))
 end
 
+default_statistic(geom::RectangularBinGeometry) = geom.default_statistic
 
-function default_statistic(geom::RectangularBinGeometry)
-    geom.default_statistic
-end
-
-
-function element_aesthetics(::RectangularBinGeometry)
-    [:x, :y, :xmin, :xmax, :ymin, :ymax, :color]
-end
-
+element_aesthetics(::RectangularBinGeometry) =
+        [:x, :y, :xmin, :xmax, :ymin, :ymax, :color]
 
 # Render rectangular bin (e.g., heatmap) geometry.
 #
