@@ -17,7 +17,7 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
                                           element_aesthetics(geom)...)
     default_aes = Gadfly.Aesthetics()
     default_aes.color = PooledDataArray(RGBA{Float32}[theme.default_color])
-    default_aes.size = Measure[theme.default_point_size]
+    default_aes.size = Measure[theme.point_size]
     aes = inherit(aes, default_aes)
     padding = 1.0mm
 
@@ -42,7 +42,7 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
             permute!(aes.color, p)
         end
 
-        point_dist = (2*theme.default_point_size + geom.padding).value
+        point_dist = (2*theme.point_size + geom.padding).value
         offsets = Array{Length{:mm}}(length(val))
         positions = Array{Compose.Measure}(length(val))
 

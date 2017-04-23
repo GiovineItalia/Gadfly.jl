@@ -42,9 +42,8 @@ function render(geom::SegmentGeom, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
     end
 
     n = length(aes.x)
-    color = ColorTypes.RGBA{Float32}(theme.default_color)
     default_aes = Gadfly.Aesthetics()  
-    default_aes.color = DataArrays.DataArray(fill(color,n))
+    default_aes.color = fill(RGBA{Float32}(theme.default_color), n)
 
     aes = inherit(aes, default_aes) 
 

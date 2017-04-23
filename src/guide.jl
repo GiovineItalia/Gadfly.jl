@@ -395,9 +395,7 @@ end
 function render(guide::ColorKey, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
 
-    if theme.key_position == :none
-        return PositionedGuide[]
-    end
+    (theme.key_position == :none || isempty(aes.color_key_colors)) && return PositionedGuide[]
 
     used_colors = Set{Color}()
     colors = Array{Color}(0) # to preserve ordering
@@ -439,10 +437,8 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
 
     title_context, title_width = render_colorkey_title(guide_title, theme)
 
-    if theme.colorkey_swatch_shape != :circle &&
-    theme.colorkey_swatch_shape != :square
-        error("$(theme.colorkey_swatch_shape) is not a valid color key swatch shape")
-    end
+    theme.colorkey_swatch_shape != :circle && theme.colorkey_swatch_shape != :square &&
+            error("$(theme.colorkey_swatch_shape) is not a valid color key swatch shape")
 
     if continuous_guide
         ctxs = render_continuous_color_key(aes.color_key_colors,
@@ -551,19 +547,12 @@ XTicks(; label=true, ticks=:auto, orientation=:auto) = XTicks(label, ticks, orie
 
 const xticks = XTicks
 
-function default_statistic(guide::XTicks)
-    if guide.ticks == nothing
-        return Stat.identity()
-    else
-        return Stat.xticks(ticks=guide.ticks)
-    end
-end
+default_statistic(guide::XTicks) =
+    guide.ticks == nothing ? Stat.identity() : Stat.xticks(ticks=guide.ticks)
 
 function render(guide::XTicks, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics, dynamic::Bool=true)
-    if guide.ticks == nothing
-        return PositionedGuide[]
-    end
+    guide.ticks == nothing && return PositionedGuide[]
 
     if Gadfly.issomething(aes.xtick)
         ticks = aes.xtick
@@ -584,19 +573,13 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 
     if Gadfly.issomething(aes.xgrid)
         grids = aes.xgrid
-        if length(grids) < length(ticks)
-            gridvisibility = tickvisibility[2:end]
-        else
-            gridvisibility = tickvisibility
-        end
+        gridvisibility = length(grids) < length(ticks) ?  tickvisibility[2:end] : tickvisibility
     else
         grids = Any[]
         gridvisibility = Bool[]
     end
 
-    if sum(gridvisibility) == 0 && sum(tickvisibility) == 0
-        return PositionedGuide[]
-    end
+    sum(gridvisibility) == 0 && sum(tickvisibility) == 0 && return PositionedGuide[]
 
     # grid lines
     static_grid_lines = compose!(
@@ -626,9 +609,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         grid_lines = compose!(context(), static_grid_lines)
     end
 
-    if !guide.label
-        return [PositionedGuide([grid_lines], 0, under_guide_position)]
-    end
+    guide.label || return [PositionedGuide([grid_lines], 0, under_guide_position)]
 
     label_sizes = text_extents(theme.minor_label_font,
                                theme.minor_label_font_size,

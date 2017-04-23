@@ -400,9 +400,7 @@ function apply_statistic(stat::HistogramStatistic,
         aes.color = PooledDataArray(colors)
     end
 
-    if getfield(aes, viewminvar) === nothing
-        setfield!(aes, viewminvar, 0.0)
-    end
+    getfield(aes, viewminvar) === nothing && setfield!(aes, viewminvar, 0.0)
 
     if haskey(scales, othervar)
         data = Gadfly.Data()
@@ -699,11 +697,11 @@ end
 
 @deprecate xticks(ticks) xticks(ticks=ticks)
 
-function xticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
-                  granularity_weight::Float64=1/4,
-                  simplicity_weight::Float64=1/6,
-                  coverage_weight::Float64=1/3,
-                  niceness_weight::Float64=1/4)
+function xticks(; ticks=:auto,
+                  granularity_weight=1/4,
+                  simplicity_weight=1/6,
+                  coverage_weight=1/3,
+                  niceness_weight=1/4)
     TickStatistic([:x, :xmin, :xmax, :xintercept], "x",
                   granularity_weight, simplicity_weight,
                   coverage_weight, niceness_weight, ticks)
@@ -712,11 +710,11 @@ end
 
 @deprecate yticks(ticks) yticks(ticks=ticks)
 
-function yticks(; ticks::@compat(Union{Symbol, AbstractArray})=:auto,
-                  granularity_weight::Float64=1/4,
-                  simplicity_weight::Float64=1/6,
-                  coverage_weight::Float64=1/3,
-                  niceness_weight::Float64=1/4)
+function yticks(; ticks=:auto,
+                  granularity_weight=1/4,
+                  simplicity_weight=1/6,
+                  coverage_weight=1/3,
+                  niceness_weight=1/4)
     TickStatistic(
         [:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge,
          :lower_fence, :upper_fence], "y",
@@ -740,19 +738,14 @@ function apply_statistic(stat::TickStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
+    isa(stat.ticks, Symbol) && stat.ticks != :auto &&
+            error("Invalid value $(stat.ticks) for ticks parameter.")
 
-    if isa(stat.ticks, Symbol) && stat.ticks != :auto
-        error("Invalid value $(stat.ticks) for ticks parameter.")
-    end
-
-    if isa(coord, Coord.SubplotGrid)
-        error("TickStatistic cannot be applied to subplot coordinates.")
-    end
+    isa(coord, Coord.SubplotGrid) &&
+            error("TickStatistic cannot be applied to subplot coordinates.")
 
     # don't clobber existing ticks
-    if getfield(aes, Symbol(stat.out_var, "tick")) != nothing
-        return
-    end
+    getfield(aes, Symbol(stat.out_var, "tick")) == nothing || return
 
     in_group_var = Symbol(stat.out_var, "group")
     minval, maxval = nothing, nothing
@@ -789,9 +782,7 @@ function apply_statistic(stat::TickStatistic,
         end
     end
 
-    if isempty(in_values)
-        return
-    end
+    isempty(in_values) && return
 
     in_values = chain(in_values...)
 
@@ -923,9 +914,7 @@ function apply_statistic_typed{T}(minval::T, maxval::T, vals, size, dsize)
     lensize  = length(size)
     lendsize = length(dsize)
     for (i, val) in enumerate(vals)
-        if !Gadfly.isconcrete(val) || !isfinite(val)
-            continue
-        end
+        (!Gadfly.isconcrete(val) || !isfinite(val)) && continue
 
         s = size[mod1(i, lensize)]
         ds = dsize[mod1(i, lendsize)]
@@ -939,9 +928,7 @@ function apply_statistic_typed{T}(minval::T, maxval::T, vals::DataArray{T}, size
     lensize  = length(size)
     lendsize = length(dsize)
     for i = 1:length(vals)
-        if vals.na[i]
-            continue
-        end
+        vals.na[i] && continue
 
         val::T = vals.data[i]
         s = size[mod1(i, lensize)]
@@ -961,7 +948,7 @@ function minvalmaxval{T}(minval::T, maxval::T, val, s, ds)
         maxval = val
     end
 
-    if s != nothing && !(typeof(s) <: Measure)
+    if s != nothing && typeof(s) <: AbstractFloat
         minval = min(minval, val - s)::T
         maxval = max(maxval, val + s)::T
     end
@@ -973,6 +960,7 @@ function minvalmaxval{T}(minval::T, maxval::T, val, s, ds)
 
     minval, maxval
 end
+
 
 immutable BoxplotStatistic <: Gadfly.StatisticElement
 end
@@ -1344,7 +1332,7 @@ function apply_statistic(stat::FunctionStatistic,
     # color was bound explicitly
     if aes.color != nothing
         func_color = aes.color
-        aes.color = DataArray(eltype(aes.color), length(aes.y) * stat.num_samples)
+        aes.color = Array{eltype(aes.color)}(length(aes.y) * stat.num_samples)
         groups = DataArray(Int, length(aes.y) * stat.num_samples)
         for i in 1:length(aes.y)
             aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = func_color[i]

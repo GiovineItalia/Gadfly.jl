@@ -10,9 +10,18 @@ end
 using Gadfly, Compat
 
 tests = [
-    ("points",                                6inch, 3inch),
     ("noticks",                               6inch, 3inch),
-    ("point_shape",                           6inch, 6inch),
+    ("points",                                6inch, 3inch),
+    ("point_shape_numerical",                 6inch, 6inch),
+    ("point_size_numerical",                  6inch, 6inch),
+    ("point_color_numerical",                 6inch, 6inch),
+    ("point_shape_categorical",               6inch, 6inch),
+    ("point_size_categorical",                6inch, 6inch),
+    ("point_color_categorical",               6inch, 6inch),
+    ("point_shape_explicit",                  6inch, 6inch),
+    ("point_size_explicit",                   6inch, 6inch),
+    ("point_color_explicit",                  6inch, 6inch),
+    ("point_color_shape_size",                6inch, 6inch),
     ("colored_points",                        6inch, 3inch),
     ("function_plots",                        6inch, 3inch),
     ("function_explicit_colors",              6inch, 3inch),

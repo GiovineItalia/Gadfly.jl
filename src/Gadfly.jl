@@ -21,7 +21,8 @@ import Distributions: Distribution
 
 export Plot, Layer, Theme, Col, Scale, Coord, Geom, Guide, Stat, render, plot,
        style, layer, spy, set_default_plot_size, set_default_plot_format, prepare_display
-
+export circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2,
+       hexagon, octogon, hline, vline
 
 # Re-export some essentials from Compose
 export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack, title, gridstack
@@ -489,10 +490,9 @@ function render_prepare(plot::Plot)
     end
 
     defined_unused_aesthetics = setdiff(mapped_aesthetics, used_aesthetics)
-    if !isempty(defined_unused_aesthetics)
-        warn("The following aesthetics are mapped, but not used by any geometry:\n    ",
-             join([string(a) for a in defined_unused_aesthetics], ", "))
-    end
+    isempty(defined_unused_aesthetics) ||
+        warn("The following aesthetics are mapped, but not used by any geometry:\n",
+                 join([string(a) for a in defined_unused_aesthetics], ", "))
 
     scaled_aesthetics = Set{Symbol}()
     for scale in plot.scales
@@ -536,9 +536,7 @@ function render_prepare(plot::Plot)
 
     # Assign scales to mapped aesthetics first.
     for var in unscaled_aesthetics
-        if !in(var, mapped_aesthetics)
-            continue
-        end
+        in(var, mapped_aesthetics) || continue
 
         var_data = getfield(plot.data, var)
         if var_data == nothing
@@ -551,15 +549,9 @@ function render_prepare(plot::Plot)
             end
         end
 
-        if var_data == nothing
-            continue
-        end
+        var_data == nothing && continue
 
         t = classify_data(var_data)
-        if t == nothing
-
-        end
-
         if scale_exists(t, var)
             scale = get_scale(t, var, plot.theme)
             scale_aes = Set(element_aesthetics(scale))
@@ -570,9 +562,7 @@ function render_prepare(plot::Plot)
     end
 
     for var in unscaled_aesthetics
-        if haskey(plot.mapping, var) || haskey(scales, var)
-            continue
-        end
+        (haskey(plot.mapping, var) || haskey(scales, var)) && continue
 
         t = :categorical
         for data in chain(datas, subplot_datas)
@@ -1130,8 +1120,11 @@ const default_aes_scales = Dict{Symbol, Dict}(
     ),
 
     :functional => Dict{Symbol, Any}(
-        :z => Scale.z_func(),
-        :y => Scale.y_func()
+        :z      => Scale.z_func(),
+        :y      => Scale.y_func(),
+        :shape  => Scale.shape_identity(),
+        :size   => Scale.size_identity(),
+        :color  => Scale.color_identity(),
     ),
 
     :numerical => Dict{Symbol, Any}(
@@ -1155,9 +1148,9 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :xgroup      => Scale.xgroup(),
         :ygroup      => Scale.ygroup(),
         :shape       => Scale.shape_discrete(),
+        :size        => Scale.size_continuous(),
         :group       => Scale.group_discrete(),
-        :label       => Scale.label(),
-        :size        => Scale.size_continuous()
+        :label       => Scale.label()
     ),
 
     :categorical => Dict{Symbol, Any}(
@@ -1174,6 +1167,7 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :xgroup     => Scale.xgroup(),
         :ygroup     => Scale.ygroup(),
         :shape      => Scale.shape_discrete(),
+        :size       => Scale.size_discrete(),
         :group      => Scale.group_discrete(),
         :label      => Scale.label()
     )
@@ -1182,6 +1176,12 @@ const default_aes_scales = Dict{Symbol, Dict}(
 
 get_scale{t,var}(::Val{t}, ::Val{var}, theme::Theme) = default_aes_scales[t][var]
 get_scale(t::Symbol, var::Symbol, theme::Theme) = get_scale(Val{t}(), Val{var}(), theme)
+
+### Override default getters for color scales
+get_scale(::Val{:categorical}, ::Val{:color}, theme::Theme=current_theme()) =
+        theme.discrete_color_scale
+get_scale(::Val{:numerical}, ::Val{:color}, theme::Theme=current_theme()) =
+        theme.continuous_color_scale
 
 
 function scale_exists(t::Symbol, var::Symbol)
@@ -1199,9 +1199,8 @@ end
 
 const CategoricalType = @compat(Union{AbstractString, Bool, Symbol})
 
-
 classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N}) = :categorical
-classify_data{N, T <: Base.Callable}(data::AbstractArray{T, N}) = :functional
+classify_data{N, T <: Union{Base.Callable,Measure,Colorant}}(data::AbstractArray{T, N}) = :functional
 classify_data{T <: Base.Callable}(data::T) = :functional
 classify_data(data::AbstractArray) = :numerical
 classify_data(data::Distribution) = :distribution

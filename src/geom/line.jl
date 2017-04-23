@@ -23,7 +23,6 @@ function contour(; levels=15, samples=150, preserve_order=true)
                                             preserve_order=preserve_order)
 end
 
-
 # Only allowing identity statistic in paths b/c I don't think any
 # any of the others will work with `preserve_order=true` right now
 path() = LineGeometry(preserve_order=true)
@@ -135,10 +134,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
             !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
         T = (@compat Tuple{eltype(aes.x), eltype(aes.y)})
         points = T[(x, y) for (x, y) in zip(aes.x, aes.y)]
-        if !geom.preserve_order
-            sort!(points, by=first)
-        end
-
+        geom.preserve_order || sort!(points, by=first)
         ctx = compose!(ctx, Compose.line([points],geom.tag),
                        stroke(aes.color[1]),
                        strokedash(line_style),
