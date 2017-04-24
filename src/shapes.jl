@@ -15,7 +15,7 @@ function square(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
         r = rs[1 + i % length(rs)]
 
         rect_xs[i] = x - s*r
-        rect_ys[i] = y - s*r
+        rect_ys[i] = y + s*r
         rect_ws[i] = 2*s*r
     end
 
