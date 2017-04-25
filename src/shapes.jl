@@ -22,7 +22,6 @@ function square(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     return rectangle(rect_xs, rect_ys, rect_ws, rect_ws)
 end
 
-
 function diamond(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
 
@@ -36,8 +35,6 @@ function diamond(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
 
     return polygon(polys)
 end
-
-
 
 function cross(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
@@ -84,7 +81,6 @@ function xcross(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   return polygon(polys)
 end
 
-
 function utriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
   n = max(length(xs), length(ys), length(rs))
   polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
@@ -104,9 +100,7 @@ function utriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scal
   return polygon(polys)
 end
 
-
 dtriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray) = utriangle(xs, ys, rs, -1)
-
 
 function star1(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
   n = max(length(xs), length(ys), length(rs))
@@ -132,8 +126,6 @@ function star1(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar =
   return polygon(polys)
 end
 
-
-
 function star2(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
   n = max(length(xs), length(ys), length(rs))
   polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
@@ -153,7 +145,6 @@ function star2(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar =
   return polygon(polys)
 end
 
-
 function hexagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
 
@@ -172,7 +163,7 @@ function hexagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     ]
   end
 
-  return Gadfly.polygon(polys)
+  return polygon(polys)
 end
 
 function octagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
@@ -194,4 +185,34 @@ function octagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   end
 
   return polygon(polys)
+end
+
+function hline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
+    n = max(length(xs), length(ys), length(rs))
+
+    line_ps = Vector{Vector{Tuple{Measure,Measure}}}(n)
+    for i in 1:n
+        x = x_measure(xs[1 + i % length(xs)])
+        y = y_measure(ys[1 + i % length(ys)])
+        r = rs[1 + i % length(rs)]
+
+        line_ps[i] = Tuple{Measure, Measure}[(x-r,y),(x+r,y)]
+    end
+
+    return line(line_ps)
+end
+
+function vline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
+    n = max(length(xs), length(ys), length(rs))
+
+    line_ps = Vector{Vector{Tuple{Measure,Measure}}}(n)
+    for i in 1:n
+        x = x_measure(xs[1 + i % length(xs)])
+        y = y_measure(ys[1 + i % length(ys)])
+        r = rs[1 + i % length(rs)]
+
+        line_ps[i] = Tuple{Measure, Measure}[(x,y-r),(x,y+r)]
+    end
+
+    return line(line_ps)
 end
