@@ -1,32 +1,32 @@
 # Geometry for vectors/arrows/segments
 
-@compat abstract type SegmentGeometry <: Gadfly.GeometryElement end
 
-immutable SegmentGeom <: SegmentGeometry 
+immutable SegmentGeometry <: Gadfly.GeometryElement
+    default_statistic::Gadfly.StatisticElement
      arrow::Bool
      filled::Bool
      tag::Symbol 
 end 
-SegmentGeom(; arrow=false, filled=false, tag=empty_tag) = SegmentGeom(arrow, filled, tag) 
+SegmentGeometry(default_statistic=Gadfly.Stat.identity(); arrow=false, filled=false, tag=empty_tag) = 
+    SegmentGeometry(default_statistic, arrow, filled, tag) 
 
-const segment = SegmentGeom
+const segment = SegmentGeometry
 
 # Leave this as a function, pending extra arguments e.g. arrow attributes
-vector(; filled::Bool=false, tag::Symbol=empty_tag) =
-        SegmentGeom(arrow=true, filled=filled, tag=tag)
- 
-element_aesthetics(::SegmentGeom) = [:x, :y, :xend, :yend, :color] 
+vector(; filled::Bool=false) = SegmentGeometry(arrow=true, filled=filled)
 
-function Gadfly.render(geom::SegmentGeom, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
-                subplot_layer_aess::@compat(Union{(@compat Void), Vector{Gadfly.Aesthetics}}),
-                subplot_layer_datas::@compat(Union{(@compat Void), Vector{Gadfly.Data}}),
-    scales::Dict{Symbol, Gadfly.ScaleElement})
-    render(geom, theme, aes, scales)
+function vectorfield(;smoothness=1.0, scale=1.0, samples=20, filled::Bool=false)
+    return SegmentGeometry(
+        Gadfly.Stat.vectorfield(smoothness, scale, samples), 
+        arrow=true, filled=filled )
 end
 
-function render(geom::SegmentGeom, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
-    scales::Dict{Symbol, Gadfly.ScaleElement})
+default_statistic(geom::SegmentGeometry) = geom.default_statistic
+element_aesthetics(::SegmentGeometry) = [:x, :y, :xend, :yend, :color] 
 
+
+function render(geom::SegmentGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+    
     Gadfly.assert_aesthetics_defined("Geom.segment", aes, :x, :y, :xend, :yend)
 
     function arrow{T<:Real}(x::T, y::T, xmax::T, ymax::T, xyrange::Vector{T})
@@ -53,22 +53,15 @@ function render(geom::SegmentGeom, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
     # Geom.vector requires information about scales
 
     if geom.arrow
-        xscale = scales[:x]
-        yscale = scales[:y]
-        check = [xscale.minvalue, xscale.maxvalue, yscale.minvalue, yscale.maxvalue]
+        check = [aes.xviewmin, aes.xviewmax, aes.yviewmin, aes.yviewmax ]
         if any( map(x -> x === nothing, check) )
             error("For Geom.vector, Scale minvalue and maxvalue must be manually provided for both axes")
         end
-        fx = xscale.trans.f
-        fy = yscale.trans.f
-        xyrange = [fx(xscale.maxvalue)-fx(xscale.minvalue),
-            fy(yscale.maxvalue)-fy(yscale.minvalue)]
+         xyrange = [aes.xviewmax-aes.xviewmin, aes.yviewmax-aes.yviewmin]
 
          arrows = [ arrow(x, y, xend, yend, xyrange)
                 for (x, y, xend, yend) in zip(aes.x, aes.y, aes.xend, aes.yend) ]
-
     end
-
     
     segments = [ [(x,y), (xend,yend)]
         for (x, y, xend, yend) in zip(aes.x, aes.y, aes.xend, aes.yend) ]  
