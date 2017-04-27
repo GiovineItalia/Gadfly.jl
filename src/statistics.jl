@@ -10,6 +10,7 @@ using DataArrays
 using DataStructures
 using Hexagons
 using Loess
+using CoupledFields # It is registered in METADATA.jl
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, nonzero_length, setfield!
@@ -1735,6 +1736,78 @@ function apply_statistic(stat::EnumerateStatistic,
         aes.y = collect(1:length(aes.x))
     end
 end
+
+
+
+
+immutable VecFieldStatistic <: Gadfly.StatisticElement
+    smoothness::Float64
+    scale::Float64
+    samples::Int64
+end
+VecFieldStatistic(; smoothness=1.0, scale=1.0, samples=20) =
+        VecFieldStatistic(smoothness, scale, samples)
+
+input_aesthetics(stat::VecFieldStatistic) = [:z, :x, :y, :color]
+output_aesthetics(stat::VecFieldStatistic) = [:x, :y, :xend, :yend, :color]
+default_scales(stat::VecFieldStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
+    [Gadfly.Scale.z_func(), Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous(),
+        t.continuous_color_scale ]
+
+
+const vectorfield = VecFieldStatistic
+
+function apply_statistic(stat::VecFieldStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    xs = aes.x === nothing ? nothing : Float64.(aes.x)
+    ys = aes.y === nothing ? nothing : Float64.(aes.y)
+
+    if isa(aes.z, Function)
+        if xs == nothing && aes.xmin != nothing && aes.xmax != nothing
+            xs = linspace(aes.xmin[1], aes.xmax[1], stat.samples)
+        end
+        if ys == nothing && aes.ymin != nothing && aes.ymax != nothing
+            ys = linspace(aes.ymin[1], aes.ymax[1], stat.samples)
+        end
+
+        zs = Float64[aes.z(x, y) for x in xs, y in ys]
+
+    elseif isa(aes.z, Matrix)
+        zs = Float64.(aes.z)
+
+        if xs == nothing
+            xs = collect(Float64, 1:size(zs)[1])
+        end
+        if ys == nothing
+            ys = collect(Float64, 1:size(zs)[2])
+        end
+        if size(zs) != (length(xs), length(ys))
+            error("Stat.vectorfield requires dimension of z to be length(x) by length(y)")
+        end
+    else
+        error("Stat.vectorfield requires either a matrix or a function")
+    end
+    
+    X = vcat([[x y] for x in xs, y in ys]...)
+    Z = vec(zs)
+    # The next two lines make use of the package CoupledFields.jl
+    kpars = GaussianKP(X)
+    ∇g = hcat(gradvecfield([stat.smoothness -7.0], X, Z[:,1:1], kpars)...)'
+    vecf = [X-∇g*stat.scale X+∇g*stat.scale] 
+    
+    aes.z = nothing
+    aes.x = vecf[:,1]
+    aes.y = vecf[:,2]
+    aes.xend = vecf[:,3]
+    aes.yend = vecf[:,4]
+    color_scale = get(scales, :color, Gadfly.Scale.color_continuous_gradient())
+    Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=Z))
+    
+end
+
+
 
 
 end # module Stat
