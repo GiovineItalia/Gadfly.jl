@@ -1241,6 +1241,46 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/geoms/geom_vectorfield.html#",
+    "page": "Geom.vectorfield",
+    "title": "Geom.vectorfield",
+    "category": "page",
+    "text": "Author = \"Mattriks\""
+},
+
+{
+    "location": "lib/geoms/geom_vectorfield.html#Geom.vectorfield-1",
+    "page": "Geom.vectorfield",
+    "title": "Geom.vectorfield",
+    "category": "section",
+    "text": "Draw a vectorfield of a 2D function or a matrix. A vectorfield consists of gradient vectors calculated for particular points in a space."
+},
+
+{
+    "location": "lib/geoms/geom_vectorfield.html#Aesthetics-1",
+    "page": "Geom.vectorfield",
+    "title": "Aesthetics",
+    "category": "section",
+    "text": "z: 2D function or a matrix that represent \"heights\" relative to to the x-y plane.\nx (optional): Vector of X-coordinates.  If z is a matrix, then the length of x must be equal to the number of rows in z.\ny (optional): Vector of Y-coordinates.  If z is a matrix, then the length of y must be equal to the number of columns in z."
+},
+
+{
+    "location": "lib/geoms/geom_vectorfield.html#Arguments-1",
+    "page": "Geom.vectorfield",
+    "title": "Arguments",
+    "category": "section",
+    "text": "smoothness (optional): Sets the smoothness of the vectorfield, defaults to 1.0. Smaller values (→0) result in more local smoothing. Larger values (→∞) will approach a plane of best fit.\nscale (optional): Sets the size of vectors, defaults to 1.0. \nsamples (optional): Sets the size of the grid at which to estimate vectors, defaults to 20 (i.e. grid is 20 x 20). See the first example below."
+},
+
+{
+    "location": "lib/geoms/geom_vectorfield.html#Examples-1",
+    "page": "Geom.vectorfield",
+    "title": "Examples",
+    "category": "section",
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)\nplot(coord, z=(x,y)->x*exp(-(x^2+y^2)), \n        xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], \n# or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     \n        Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),\n        Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),\n        Scale.y_continuous(minvalue=-2.0, maxvalue=2.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"), Guide.colorkey(\"z\")\n    )volcano = Matrix{Float64}(dataset(\"datasets\", \"volcano\"))\nvolc = volcano[1:4:end, 1:4:end] \ncoord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)\nplot(coord, z=volc, x=1.0:22, y=1.0:16,\n        Geom.vectorfield(scale=0.05), Geom.contour(levels=7),\n        Scale.x_continuous(minvalue=1.0, maxvalue=22.0),\n        Scale.y_continuous(minvalue=1.0, maxvalue=16.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"),\n        Theme(key_position=:none)\n    )"
+},
+
+{
     "location": "lib/geoms/geom_violin.html#",
     "page": "Geom.violin",
     "title": "Geom.violin",
