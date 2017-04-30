@@ -1013,7 +1013,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.rectbin",
     "title": "Geom.rectbin",
     "category": "page",
-    "text": "Author = \"Daniel C. Jones\""
+    "text": "Author = \"Daniel C. Jones, Mattriks\""
 },
 
 {
@@ -1029,7 +1029,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.rectbin",
     "title": "Aesthetics",
     "category": "section",
-    "text": "colorEitherx_min\nx_max\ny_min\ny_maxOrx\nyIn the former case, rectangles defined by x_min, x_max, y_min, y_max are drawn, in the latter, equal sizes squares are centered at x and y positions."
+    "text": "colorEither (for Geom.rect)x_min\nx_max\ny_min\ny_maxOr (for Geom.rectbin)x\nyFor Geom.rect, rectangles defined by x_min, x_max, y_min, y_max are drawn.   For Geom.rectbin, equal sizes squares are centered at x and y positions."
 },
 
 {
@@ -1037,7 +1037,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.rectbin",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"Zelig\", \"macro\"), x=\"Year\", y=\"Country\", color=\"GDP\", Geom.rectbin)"
+    "text": "using DataFrames, RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"Zelig\", \"macro\"), x=\"Year\", y=\"Country\", color=\"GDP\", Geom.rectbin)theme1 = Theme(default_color=RGBA(0, 0.75, 1.0, 0.5))\nD = DataFrame(x=[0.5,1], y=[0.5,1], x1=[0,0.5], y1=[0,0.5], x2=[1,1.5], y2=[1,1.5])\npa = plot(D, x=:x, y=:y, Geom.rectbin, theme1)\npb = plot(D, xmin=:x1, ymin=:y1, xmax=:x2, ymax=:y2, Geom.rect, theme1)\nhstack(pa, pb)"
 },
 
 {
