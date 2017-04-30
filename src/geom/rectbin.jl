@@ -9,6 +9,8 @@ function RectangularBinGeometry(
     RectangularBinGeometry(default_statistic, tag)
 end
 
+rect() = RectangularBinGeometry(Gadfly.Stat.Identity())
+
 const rectbin = RectangularBinGeometry
 
 function histogram2d(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
@@ -40,7 +42,7 @@ element_aesthetics(::RectangularBinGeometry) =
 function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
+    default_aes.color = PooledDataArray(RGBA{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
     Gadfly.assert_aesthetics_defined("RectangularBinGeometry", aes, :xmin, :xmax, :ymin, :ymax)
@@ -61,7 +63,7 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
     if length(aes.color) == n
         cs = aes.color
     else
-        cs = Array{RGB{Float32}}(n)
+        cs = Array{RGBA{Float32}}(n)
         for i in 1:n
             cs[i] = aes.color[((i - 1) % length(aes.color)) + 1]
         end
