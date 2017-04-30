@@ -81,7 +81,14 @@ end
     default_color,         ColorOrNothing,  LCHab(70, 60, 240)
 
     # Default size when the size aesthetic is not mapped.
-    default_point_size,    Measure,         0.9mm
+    point_size,            Measure,         0.9mm
+    point_size_min,        Measure,         0.45mm
+    point_size_max,        Measure,         1.8mm
+
+    # Symbol forms used for the shape aesthetic
+    point_shapes,          Vector{Function},  [circle, square, diamond, cross, xcross,
+                                               utriangle, dtriangle, star1, star2,
+                                               hexagon, octagon, hline, vline]
 
     # Width of lines in the line geometry.
     line_width,            Measure,         0.3mm
@@ -160,7 +167,7 @@ end
     # is the stroke width.
     highlight_width,       Measure,         0.3mm
 
-    # A function mapping fill color to stoke color for highlights.
+    # A function mapping fill color to stroke color for highlights.
     discrete_highlight_color,       Function,        default_discrete_highlight_color
     continuous_highlight_color,     Function,        default_continuous_highlight_color
 
@@ -191,11 +198,6 @@ end
 
     # True if bars in bar plots should be stroked. Stroke color is
     bar_highlight,         @compat(Union{(@compat Void), Function, Color}),   nothing
-
-    # Symbol forms used for the shape aesthetic
-    shapes,               Vector{Function},  [circle, square, diamond, cross,
-                                              xcross, utriangle, dtriangle,
-                                              star1, star2, hexagon, octagon]
 
     rug_size,             Measure,          2.0mm
 
@@ -317,18 +319,6 @@ function with_theme(f, theme)
 end
 
 get_theme(::Val{:default}) = Theme()
-
-
-### Override default getters for color scales
-
-get_scale(::Val{:categorical}, ::Val{:color}, theme::Theme=current_theme()) =
-        theme.discrete_color_scale
-
-
-
-get_scale(::Val{:numerical}, ::Val{:color}, theme::Theme=current_theme()) =
-        theme.continuous_color_scale
-
 
 
 ### Dark theme

@@ -26,8 +26,10 @@ These parameters can either be used with `Theme` or `style`
 
   * `default_color`: When the color aesthetic is not bound, geometry uses this
     color for drawing. (Color)
-  * `default_point_size`: Size of points in the point and boxplot geometry.
-     (Measure)
+  * `point_size`: Size of points in the point, boxplot, and beeswarm geometries.  (Measure)
+  * `point_size_min`: Minimum size of points in the point geometry.  (Measure)
+  * `point_size_max`: Maximum size of points in the point geometry.  (Measure)
+  * `point_shapes`: Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)
   * `line_width`: Width of lines in the line geometry. (Measure)
   * `line_style`: Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)
   * `panel_fill`: Background color used in the main plot panel. (

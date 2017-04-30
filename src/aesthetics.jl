@@ -14,10 +14,11 @@ const NumericalAesthetic =
     z,            @compat(Union{(@compat Void), Function, Matrix})
     xend,         NumericalAesthetic
     yend,         NumericalAesthetic
-    size,         Maybe(Vector{Measure})
-    shape,        CategoricalAesthetic
-    color,        Maybe(@compat(Union{AbstractVector{RGBA{Float32}},
-                              AbstractVector{RGB{Float32}}}))
+
+    size,         Union{CategoricalAesthetic,Vector,Void}
+    shape,        Union{CategoricalAesthetic,Vector,Void}
+    color,        Union{CategoricalAesthetic,Vector,Void}
+
     label,        CategoricalAesthetic
     group,        CategoricalAesthetic
 
@@ -152,24 +153,17 @@ end
 undefined_aesthetics(aes::Aesthetics, vars::Symbol...) =
         setdiff(Set(vars), defined_aesthetics(aes))
 
-
 function assert_aesthetics_defined(who::AbstractString, aes::Aesthetics, vars::Symbol...)
     undefined_vars = undefined_aesthetics(aes, vars...)
-    if !isempty(undefined_vars)
-        error(@sprintf("The following aesthetics are required by %s but are not defined: %s\n",
-                       who, join(undefined_vars, ", ")))
-    end
+    isempty(undefined_vars) || error("The following aesthetics are required by ",who,
+            " but are not defined: ", join(undefined_vars,", "),"\n")
 end
-
 
 function assert_aesthetics_undefined(who::AbstractString, aes::Aesthetics, vars::Symbol...)
     defined_vars = intersect(Set(vars), defined_aesthetics(aes))
-    if !isempty(defined_vars)
-        error(@sprintf("The following aesthetics are defined but incompatible with %s: %s\n",
-                       who, join(defined_vars, ", ")))
-    end
+    isempty(defined_vars) || error("The following aesthetics are defined but incompatible with ",
+            who,": ",join(defined_vars,", "),"\n")
 end
-
 
 function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, vars::Symbol...)
     defined_vars = Compat.Iterators.filter(var -> !(getfield(aes, var) === nothing), vars)
@@ -177,10 +171,9 @@ function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, va
     if !isempty(defined_vars)
         n = length(getfield(aes, first(defined_vars)))
         for var in defined_vars
-            if length(getfield(aes, var)) != n
-                error(@sprintf("The following aesthetics are required by %s to be of equal length: %s\n",
-                               who, join(defined_vars, ", ")))
-            end
+            length(getfield(aes, var)) != n && error(
+                    "The following aesthetics are required by ",who,
+                    " to be of equal length: ",join(defined_vars,", "),"\n")
         end
     end
     nothing
@@ -199,11 +192,8 @@ end
 #
 function update!(a::Aesthetics, b::Aesthetics)
     for name in fieldnames(Aesthetics)
-        if issomething(getfield(b, name))
-            setfield(a, name, getfield(b, name))
-        end
+        issomething(getfield(b, name)) && setfield(a, name, getfield(b, name))
     end
-
     nothing
 end
 
@@ -262,17 +252,16 @@ cat_aes_var!(a::(@compat Void), b) = copy(b)
 cat_aes_var!(a, b::(@compat Void)) = a
 cat_aes_var!(a::Function, b::Function) = a === string || a == showoff ? b : a
 
-
 function cat_aes_var!(a::Dict, b::Dict)
     merge!(a, b)
     a
 end
 
-
 cat_aes_var!{T <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{T}) = append!(a, b)
-cat_aes_var!{T <: Base.Callable, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U}) =
-        append!(a, b)
 
+function cat_aes_var!{T <: Base.Callable, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U})
+    a=[promote(a..., b...)...]
+end
 
 # Let arrays of numbers clobber arrays of functions. This is slightly odd
 # behavior, comes up with with function statistics applied on a layer-wise
@@ -281,7 +270,6 @@ cat_aes_var!{T <: Base.Callable, U}(a::AbstractArray{T}, b::AbstractArray{U}) = 
 cat_aes_var!{T, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U}) = a
 cat_aes_var!{T}(a::AbstractArray{T}, b::AbstractArray{T}) = append!(a, b)
 cat_aes_var!(a, b) = a
-
 
 function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
     V = promote_type(T, U)
@@ -303,13 +291,11 @@ function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
     return ab
 end
 
-
 function cat_aes_var!{T}(xs::PooledDataVector{T}, ys::PooledDataVector{T})
     newpool = T[x for x in union(Set(xs.pool), Set(ys.pool))]
     newdata = vcat(T[x for x in xs], T[y for y in ys])
     PooledDataArray(newdata, newpool, [false for _ in newdata])
 end
-
 
 function cat_aes_var!{T, U}(xs::PooledDataVector{T}, ys::PooledDataVector{U})
     V = promote_type(T, U)

@@ -70,7 +70,7 @@ function deferred_label_context(geom::LabelGeometry,
         push!(positions, Absolute2DBox((x, y), (text_width, text_height)))
     end
 
-    # TODO: use Aesthetics.size and/or theme.default_point_size
+    # TODO: use Aesthetics.size and/or theme.point_size
     for (x, y) in point_positions
         push!(positions, Absolute2DBox((x - 0.5mm, y - 0.5mm), (1.0mm, 1.0mm)))
         push!(extents, (1mm, 1mm))

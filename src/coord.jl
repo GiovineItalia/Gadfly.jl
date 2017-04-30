@@ -46,8 +46,7 @@ function Cartesian(
         xflip=false, yflip=false,
         xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,
         fixed=false, aspect_ratio=nothing, raster=false)
-    Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
-        aspect_ratio, raster)
+    Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster)
 end
 
 const cartesian = Cartesian
@@ -62,15 +61,12 @@ const cartesian = Cartesian
 # Returns:
 #   A concrete value if one is found, otherwise nothing.
 #
-function first_concrete_aesthetic_value(aess::Vector{Gadfly.Aesthetics},
-                                        vars::Vector{Symbol})
+function first_concrete_aesthetic_value(aess::Vector{Gadfly.Aesthetics}, vars::Vector{Symbol})
     T = aesthetics_type(aess, vars)
     for var in vars
         for aes in aess
             vals = getfield(aes, var)
-            if vals === nothing
-                continue
-            end
+            vals === nothing && continue
 
             if !isa(vals, AbstractArray)
                 vals = [vals]
@@ -79,18 +75,14 @@ function first_concrete_aesthetic_value(aess::Vector{Gadfly.Aesthetics},
             if var == :outliers
                 for outlier_vals in aes.outliers
                     for val in outlier_vals
-                        if Gadfly.isconcrete(val)
-                            return convert(T, val)
-                        end
+                        Gadfly.isconcrete(val) && return convert(T, val)
                     end
                 end
                 continue
             end
 
             for val in vals
-                if Gadfly.isconcrete(val)
-                    return convert(T, val)
-                end
+                Gadfly.isconcrete(val) && return convert(T, val)
             end
         end
     end
@@ -113,9 +105,7 @@ function aesthetics_type(aess::Vector{Gadfly.Aesthetics},
     for var in vars
         for aes in aess
             vals = getfield(aes, var)
-            if vals === nothing
-                continue
-            end
+            vals === nothing && continue
 
             if var == :outliers
                 if !isempty(vals)
@@ -166,9 +156,7 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
         for var in coord.xvars
             for aes in aess
                 vals = getfield(aes, var)
-                if vals === nothing
-                    continue
-                end
+                vals === nothing && continue
 
                 if !isa(vals, AbstractArray)
                     vals = [vals]
@@ -184,16 +172,13 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
         for var in coord.yvars
             for aes in aess
                 vals = getfield(aes, var)
-                if vals === nothing
-                    continue
-                end
+                vals === nothing && continue
 
                 # Outliers is an odd aesthetic that needs special treatment.
                 if var == :outliers
                     for outlier_vals in aes.outliers
                         ymin, ymax = Gadfly.concrete_minmax(outlier_vals, ymin, ymax)
                     end
-
                     continue
                 end
 

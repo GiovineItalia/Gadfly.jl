@@ -1,4 +1,3 @@
-
 using DataFrames, Gadfly
 
 # Geom.smooth already has tests for these types:
@@ -17,11 +16,11 @@ Dl = melt(D,[:t1,:t2])
 plot(D,
     x=:t1, y=:trend, Geom.point,
     Geom.smooth(method=:lm),
-    Theme(default_point_size=1.8pt, key_position=:none)
+    Theme(point_size=1.8pt, key_position=:none)
     )
 
 plot(Dl,
     x=:t2, y=:value, color=:variable, Geom.point,
     Geom.smooth(smoothing=0.05),
-    Theme(default_point_size=1.8pt, key_position=:none)
+    Theme(point_size=1.8pt, key_position=:none)
     )

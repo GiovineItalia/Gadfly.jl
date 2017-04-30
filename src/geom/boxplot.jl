@@ -111,7 +111,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
             (context(),
              circle([x for (x, y, c) in xys],
                     [y for (x, y, c) in xys],
-                    [theme.default_point_size], to),
+                    [theme.point_size], to),
              stroke([theme.discrete_highlight_color(c) for (x, y, c) in xys]),
              fill([c for (x, y, c) in xys])))
     end
