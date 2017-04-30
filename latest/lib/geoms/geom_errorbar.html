@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.errorbar · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_errorbar.html">Geom.errorbar</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/f999348540b487ee0d39ebb13a373584141ec3d9/docs/src/lib/geoms/geom_errorbar.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.errorbar-1" href="#Geom.errorbar-1">Geom.errorbar</a></h1><p>Draw vertical and/or horizontal error bars.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>x</code>: X-position of the bar.</p></li><li><p><code>ymin</code>: Lower Y-position.</p></li><li><p><code>ymax</code>: Upper Y-position.</p></li><li><p><code>y</code>: Y-position of the bar.</p></li><li><p><code>xmin</code>: Left-most X-position</p></li><li><p><code>ymax</code>: Right-most X-position.</p></li><li><p><code>color</code> (optional): Bar color (categorial or continuous)</p></li></ul><p>The <code>x</code>, <code>ymin</code>, <code>ymax</code> and/or <code>y</code>, <code>xmin</code>, <code>xmax</code> aesthetics must be defined. With the later a vertical error bar is drawn, and the former, a horizontal bar.</p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">using Distributions
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.errorbar · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_errorbar.html">Geom.errorbar</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_errorbar.html">Geom.errorbar</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/d36d54ea7b9648851d0f0a4d3577b0f813af7e2f/docs/src/lib/geoms/geom_errorbar.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.errorbar-1" href="#Geom.errorbar-1">Geom.errorbar</a></h1><p>Draw vertical and/or horizontal error bars.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>x</code>: X-position of the bar.</p></li><li><p><code>ymin</code>: Lower Y-position.</p></li><li><p><code>ymax</code>: Upper Y-position.</p></li><li><p><code>y</code>: Y-position of the bar.</p></li><li><p><code>xmin</code>: Left-most X-position</p></li><li><p><code>ymax</code>: Right-most X-position.</p></li><li><p><code>color</code> (optional): Bar color (categorial or continuous)</p></li></ul><p>The <code>x</code>, <code>ymin</code>, <code>ymax</code> and/or <code>y</code>, <code>xmin</code>, <code>xmax</code> aesthetics must be defined. With the later a vertical error bar is drawn, and the former, a horizontal bar.</p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">using Distributions
 
 sds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]
 n = 10
@@ -74,25 +74,37 @@ plot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs,
         <path fill="none" d="M131.5,40.77 L 134.5 40.77"/>
       </g>
       <g class="geometry" id="img-dc3fa6e9-11">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" fill="#00BFFF" id="img-dc3fa6e9-12">
-          <use xlink:href="#img-dc3fa6e9-13" x="38.78" y="34.96"/>
-          <use xlink:href="#img-dc3fa6e9-13" x="57.63" y="42.56"/>
-          <use xlink:href="#img-dc3fa6e9-13" x="76.47" y="44.16"/>
-          <use xlink:href="#img-dc3fa6e9-13" x="95.31" y="42.03"/>
-          <use xlink:href="#img-dc3fa6e9-13" x="114.16" y="42.63"/>
-          <use xlink:href="#img-dc3fa6e9-13" x="133" y="41.44"/>
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-dc3fa6e9-12">
+          <g fill="#00BFFF" id="img-dc3fa6e9-13">
+            <use xlink:href="#img-dc3fa6e9-14" x="133" y="41.44"/>
+          </g>
+          <g fill="#00BFFF" id="img-dc3fa6e9-15">
+            <use xlink:href="#img-dc3fa6e9-16" x="114.16" y="42.63"/>
+          </g>
+          <g fill="#00BFFF" id="img-dc3fa6e9-17">
+            <use xlink:href="#img-dc3fa6e9-18" x="95.31" y="42.03"/>
+          </g>
+          <g fill="#00BFFF" id="img-dc3fa6e9-19">
+            <use xlink:href="#img-dc3fa6e9-20" x="76.47" y="44.16"/>
+          </g>
+          <g fill="#00BFFF" id="img-dc3fa6e9-21">
+            <use xlink:href="#img-dc3fa6e9-22" x="57.63" y="42.56"/>
+          </g>
+          <g fill="#00BFFF" id="img-dc3fa6e9-23">
+            <use xlink:href="#img-dc3fa6e9-24" x="38.78" y="34.96"/>
+          </g>
         </g>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-dc3fa6e9-14">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-dc3fa6e9-25">
     <text x="16.94" y="58.72" text-anchor="end" dy="0.35em">-0.5</text>
     <text x="16.94" y="41.48" text-anchor="end" dy="0.35em">0.0</text>
     <text x="16.94" y="24.24" text-anchor="end" dy="0.35em">0.5</text>
     <text x="16.94" y="7" text-anchor="end" dy="0.35em">1.0</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-dc3fa6e9-15">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-dc3fa6e9-26">
     <text x="8.81" y="32.86" text-anchor="end" dy="0.35em">y</text>
   </g>
 </g>
@@ -100,7 +112,22 @@ plot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs,
   <clipPath id="img-dc3fa6e9-4">
   <path d="M17.94,5 L 135 5 135 60.72 17.94 60.72" />
 </clipPath>
-  <g id="img-dc3fa6e9-13">
+  <g id="img-dc3fa6e9-14">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-dc3fa6e9-16">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-dc3fa6e9-18">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-dc3fa6e9-20">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-dc3fa6e9-22">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-dc3fa6e9-24">
     <circle cx="0" cy="0" r="0.9"/>
   </g>
 </defs>

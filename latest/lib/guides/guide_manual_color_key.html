@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Guide.manual_color_key · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a><ul><li class="current"><a class="toctext" href="guide_manual_color_key.html">Guide.manual_color_key</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../guides.html">Guides</a></li><li><a href="guide_manual_color_key.html">Guide.manual_color_key</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/f999348540b487ee0d39ebb13a373584141ec3d9/docs/src/lib/guides/guide_manual_color_key.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Guide.manual_color_key-1" href="#Guide.manual_color_key-1">Guide.manual_color_key</a></h1><p>Manually define a color key</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>title</code>: Legend title</p></li><li><p><code>labels</code>: Item labels</p></li><li><p><code>colors</code>: Item colors</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><p>Combine two layers into a plot, and set a custom color of one layer.  Add a manual color key with labels that match the two layers.  (Note that &quot;deepskyblue&quot; is the default color for Geom.line and others.)</p><div></div><div><pre><code class="language-julia">points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Guide.manual_color_key · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a><ul><li class="current"><a class="toctext" href="guide_manual_color_key.html">Guide.manual_color_key</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../guides.html">Guides</a></li><li><a href="guide_manual_color_key.html">Guide.manual_color_key</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/d36d54ea7b9648851d0f0a4d3577b0f813af7e2f/docs/src/lib/guides/guide_manual_color_key.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Guide.manual_color_key-1" href="#Guide.manual_color_key-1">Guide.manual_color_key</a></h1><p>Manually define a color key</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>title</code>: Legend title</p></li><li><p><code>labels</code>: Item labels</p></li><li><p><code>colors</code>: Item colors</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><p>Combine two layers into a plot, and set a custom color of one layer.  Add a manual color key with labels that match the two layers.  (Note that &quot;deepskyblue&quot; is the default color for Geom.line and others.)</p><div></div><div><pre><code class="language-julia">points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))
 line = DataFrame(val=rand(1:10,11), index = collect(0:10))
 pointLayer = layer(points, x=&quot;index&quot;, y=&quot;val&quot;, Geom.point,Theme(default_color=colorant&quot;green&quot;))
 lineLayer = layer(line, x=&quot;index&quot;, y=&quot;val&quot;, Geom.line)
@@ -58,50 +58,110 @@ plot(pointLayer, lineLayer, Guide.manual_color_key(&quot;Legend&quot;, [&quot;Po
         <path fill="none" d="M22.31,53.54 L 32.15 7 42 7 51.84 32.86 61.69 22.51 71.53 53.54 81.38 48.37 91.23 7 101.07 22.51 110.92 7 120.76 43.2"/>
       </g>
       <g class="geometry" id="img-30f994b4-15">
-        <g class="color_RGBA{Float32}(0.0f0,0.5019608f0,0.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" fill="#008000" id="img-30f994b4-16">
-          <use xlink:href="#img-30f994b4-17" x="32.15" y="12.17"/>
-          <use xlink:href="#img-30f994b4-17" x="32.15" y="48.37"/>
-          <use xlink:href="#img-30f994b4-17" x="22.31" y="27.69"/>
-          <use xlink:href="#img-30f994b4-17" x="101.07" y="43.2"/>
-          <use xlink:href="#img-30f994b4-17" x="51.84" y="32.86"/>
-          <use xlink:href="#img-30f994b4-17" x="22.31" y="43.2"/>
-          <use xlink:href="#img-30f994b4-17" x="91.23" y="32.86"/>
-          <use xlink:href="#img-30f994b4-17" x="32.15" y="38.03"/>
-          <use xlink:href="#img-30f994b4-17" x="42" y="48.37"/>
-          <use xlink:href="#img-30f994b4-17" x="51.84" y="17.34"/>
-          <use xlink:href="#img-30f994b4-17" x="61.69" y="48.37"/>
-          <use xlink:href="#img-30f994b4-17" x="101.07" y="32.86"/>
-          <use xlink:href="#img-30f994b4-17" x="120.76" y="27.69"/>
-          <use xlink:href="#img-30f994b4-17" x="91.23" y="22.51"/>
-          <use xlink:href="#img-30f994b4-17" x="81.38" y="38.03"/>
-          <use xlink:href="#img-30f994b4-17" x="110.92" y="53.54"/>
-          <use xlink:href="#img-30f994b4-17" x="42" y="7"/>
-          <use xlink:href="#img-30f994b4-17" x="51.84" y="7"/>
-          <use xlink:href="#img-30f994b4-17" x="91.23" y="43.2"/>
-          <use xlink:href="#img-30f994b4-17" x="101.07" y="53.54"/>
-          <use xlink:href="#img-30f994b4-17" x="81.38" y="32.86"/>
-          <use xlink:href="#img-30f994b4-17" x="32.15" y="43.2"/>
-          <use xlink:href="#img-30f994b4-17" x="61.69" y="12.17"/>
-          <use xlink:href="#img-30f994b4-17" x="42" y="32.86"/>
-          <use xlink:href="#img-30f994b4-17" x="61.69" y="43.2"/>
-          <use xlink:href="#img-30f994b4-17" x="22.31" y="22.51"/>
-          <use xlink:href="#img-30f994b4-17" x="120.76" y="27.69"/>
-          <use xlink:href="#img-30f994b4-17" x="81.38" y="32.86"/>
-          <use xlink:href="#img-30f994b4-17" x="32.15" y="17.34"/>
-          <use xlink:href="#img-30f994b4-17" x="32.15" y="22.51"/>
+        <g class="color_RGBA{Float32}(0.0f0,0.5019608f0,0.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-30f994b4-16">
+          <g fill="#008000" id="img-30f994b4-17">
+            <use xlink:href="#img-30f994b4-18" x="32.15" y="22.51"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-19">
+            <use xlink:href="#img-30f994b4-20" x="32.15" y="17.34"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-21">
+            <use xlink:href="#img-30f994b4-22" x="81.38" y="32.86"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-23">
+            <use xlink:href="#img-30f994b4-24" x="120.76" y="27.69"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-25">
+            <use xlink:href="#img-30f994b4-26" x="22.31" y="22.51"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-27">
+            <use xlink:href="#img-30f994b4-28" x="61.69" y="43.2"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-29">
+            <use xlink:href="#img-30f994b4-30" x="42" y="32.86"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-31">
+            <use xlink:href="#img-30f994b4-32" x="61.69" y="12.17"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-33">
+            <use xlink:href="#img-30f994b4-34" x="32.15" y="43.2"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-35">
+            <use xlink:href="#img-30f994b4-36" x="81.38" y="32.86"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-37">
+            <use xlink:href="#img-30f994b4-38" x="101.07" y="53.54"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-39">
+            <use xlink:href="#img-30f994b4-40" x="91.23" y="43.2"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-41">
+            <use xlink:href="#img-30f994b4-42" x="51.84" y="7"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-43">
+            <use xlink:href="#img-30f994b4-44" x="42" y="7"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-45">
+            <use xlink:href="#img-30f994b4-46" x="110.92" y="53.54"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-47">
+            <use xlink:href="#img-30f994b4-48" x="81.38" y="38.03"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-49">
+            <use xlink:href="#img-30f994b4-50" x="91.23" y="22.51"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-51">
+            <use xlink:href="#img-30f994b4-52" x="120.76" y="27.69"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-53">
+            <use xlink:href="#img-30f994b4-54" x="101.07" y="32.86"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-55">
+            <use xlink:href="#img-30f994b4-56" x="61.69" y="48.37"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-57">
+            <use xlink:href="#img-30f994b4-58" x="51.84" y="17.34"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-59">
+            <use xlink:href="#img-30f994b4-60" x="42" y="48.37"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-61">
+            <use xlink:href="#img-30f994b4-62" x="32.15" y="38.03"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-63">
+            <use xlink:href="#img-30f994b4-64" x="91.23" y="32.86"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-65">
+            <use xlink:href="#img-30f994b4-66" x="22.31" y="43.2"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-67">
+            <use xlink:href="#img-30f994b4-68" x="51.84" y="32.86"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-69">
+            <use xlink:href="#img-30f994b4-70" x="101.07" y="43.2"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-71">
+            <use xlink:href="#img-30f994b4-72" x="22.31" y="27.69"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-73">
+            <use xlink:href="#img-30f994b4-74" x="32.15" y="48.37"/>
+          </g>
+          <g fill="#008000" id="img-30f994b4-75">
+            <use xlink:href="#img-30f994b4-76" x="32.15" y="12.17"/>
+          </g>
         </g>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-30f994b4-18">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-30f994b4-77">
     <text x="19.3" y="58.71" text-anchor="end" dy="0.35em">0.0</text>
     <text x="19.3" y="45.79" text-anchor="end" dy="0.35em">2.5</text>
     <text x="19.3" y="32.86" text-anchor="end" dy="0.35em">5.0</text>
     <text x="19.3" y="19.93" text-anchor="end" dy="0.35em">7.5</text>
     <text x="19.3" y="7" text-anchor="end" dy="0.35em">10.0</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-30f994b4-19">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-30f994b4-78">
     <text x="8.81" y="30.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 32.86)">val</text>
   </g>
 </g>
@@ -109,7 +169,94 @@ plot(pointLayer, lineLayer, Guide.manual_color_key(&quot;Legend&quot;, [&quot;Po
   <clipPath id="img-30f994b4-8">
   <path d="M20.31,5 L 122.76 5 122.76 60.72 20.31 60.72" />
 </clipPath>
-  <g id="img-30f994b4-17">
+  <g id="img-30f994b4-18">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-20">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-22">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-24">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-26">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-28">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-30">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-32">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-34">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-36">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-38">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-40">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-42">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-44">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-46">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-48">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-50">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-52">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-54">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-56">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-58">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-60">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-62">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-64">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-66">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-68">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-70">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-72">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-74">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-30f994b4-76">
     <circle cx="0" cy="0" r="0.9"/>
   </g>
 </defs>

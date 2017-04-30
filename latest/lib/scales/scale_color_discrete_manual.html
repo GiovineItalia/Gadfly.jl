@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scale.color_discrete_manual · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a><ul><li class="current"><a class="toctext" href="scale_color_discrete_manual.html">Scale.color_discrete_manual</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../scales.html">Scales</a></li><li><a href="scale_color_discrete_manual.html">Scale.color_discrete_manual</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/f999348540b487ee0d39ebb13a373584141ec3d9/docs/src/lib/scales/scale_color_discrete_manual.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Scale.color_discrete_manual-1" href="#Scale.color_discrete_manual-1">Scale.color_discrete_manual</a></h1><p>Create a discrete color scale to be used for the plot.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>colors...</code>: an iterable collection of things that can be converted to colors with <code>Colors.color</code> (such as strings naming colors, although a better choice is to use <code>colorant&quot;colorname&quot;</code>)</p></li><li><p><code>levels</code> (optional): Explicitly set levels used by the scale. Order is respected.</p></li><li><p><code>order</code> (optional): A vector of integers giving a permutation of the levels default order.</p></li></ul><h3><a class="nav-anchor" id="Aesthetics-Acted-On-1" href="#Aesthetics-Acted-On-1">Aesthetics Acted On</a></h3><p><code>color</code></p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(x=rand(12), y=rand(12), color=repeat([&quot;a&quot;,&quot;b&quot;,&quot;c&quot;], outer=[4]),
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scale.color_discrete_manual · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a><ul><li class="current"><a class="toctext" href="scale_color_discrete_manual.html">Scale.color_discrete_manual</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../scales.html">Scales</a></li><li><a href="scale_color_discrete_manual.html">Scale.color_discrete_manual</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/d36d54ea7b9648851d0f0a4d3577b0f813af7e2f/docs/src/lib/scales/scale_color_discrete_manual.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Scale.color_discrete_manual-1" href="#Scale.color_discrete_manual-1">Scale.color_discrete_manual</a></h1><p>Create a discrete color scale to be used for the plot.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>colors...</code>: an iterable collection of things that can be converted to colors with <code>Colors.color</code> (such as strings naming colors, although a better choice is to use <code>colorant&quot;colorname&quot;</code>)</p></li><li><p><code>levels</code> (optional): Explicitly set levels used by the scale. Order is respected.</p></li><li><p><code>order</code> (optional): A vector of integers giving a permutation of the levels default order.</p></li></ul><h3><a class="nav-anchor" id="Aesthetics-Acted-On-1" href="#Aesthetics-Acted-On-1">Aesthetics Acted On</a></h3><p><code>color</code></p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(x=rand(12), y=rand(12), color=repeat([&quot;a&quot;,&quot;b&quot;,&quot;c&quot;], outer=[4]),
      Scale.color_discrete_manual(colorant&quot;red&quot;,colorant&quot;purple&quot;,colorant&quot;green&quot;))</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -57,38 +57,95 @@
     <g class="plotpanel" id="img-1be299f1-29">
       <g class="geometry" id="img-1be299f1-30">
         <g stroke-width="0.3" id="img-1be299f1-31">
-          <use xlink:href="#img-1be299f1-32" x="81.06" y="55.28" id="img-1be299f1-33" stroke="#FFFFFF" class="color_a" fill="#FF0000"/>
-          <use xlink:href="#img-1be299f1-32" x="99.6" y="9.24" id="img-1be299f1-34" stroke="#FFFFFF" class="color_b" fill="#800080"/>
-          <use xlink:href="#img-1be299f1-32" x="78.47" y="25.27" id="img-1be299f1-35" stroke="#FFFFFF" class="color_c" fill="#008000"/>
-          <use xlink:href="#img-1be299f1-32" x="67.29" y="52.9" id="img-1be299f1-36" stroke="#FFFFFF" class="color_a" fill="#FF0000"/>
-          <use xlink:href="#img-1be299f1-32" x="102.47" y="44.44" id="img-1be299f1-37" stroke="#FFFFFF" class="color_b" fill="#800080"/>
-          <use xlink:href="#img-1be299f1-32" x="108.8" y="25.01" id="img-1be299f1-38" stroke="#FFFFFF" class="color_c" fill="#008000"/>
-          <use xlink:href="#img-1be299f1-32" x="39.96" y="55.79" id="img-1be299f1-39" stroke="#FFFFFF" class="color_a" fill="#FF0000"/>
-          <use xlink:href="#img-1be299f1-32" x="50.28" y="15.13" id="img-1be299f1-40" stroke="#FFFFFF" class="color_b" fill="#800080"/>
-          <use xlink:href="#img-1be299f1-32" x="44.83" y="9.56" id="img-1be299f1-41" stroke="#FFFFFF" class="color_c" fill="#008000"/>
-          <use xlink:href="#img-1be299f1-32" x="79.89" y="8.83" id="img-1be299f1-42" stroke="#FFFFFF" class="color_a" fill="#FF0000"/>
-          <use xlink:href="#img-1be299f1-32" x="87.18" y="9.8" id="img-1be299f1-43" stroke="#FFFFFF" class="color_b" fill="#800080"/>
-          <use xlink:href="#img-1be299f1-32" x="19.97" y="17.87" id="img-1be299f1-44" stroke="#FFFFFF" class="color_c" fill="#008000"/>
+          <g fill="#008000" id="img-1be299f1-32">
+            <use xlink:href="#img-1be299f1-33" x="19.97" y="17.87" id="img-1be299f1-34" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#800080" id="img-1be299f1-35">
+            <use xlink:href="#img-1be299f1-36" x="87.18" y="9.8" id="img-1be299f1-37" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#FF0000" id="img-1be299f1-38">
+            <use xlink:href="#img-1be299f1-39" x="79.89" y="8.83" id="img-1be299f1-40" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#008000" id="img-1be299f1-41">
+            <use xlink:href="#img-1be299f1-42" x="44.83" y="9.56" id="img-1be299f1-43" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#800080" id="img-1be299f1-44">
+            <use xlink:href="#img-1be299f1-45" x="50.28" y="15.13" id="img-1be299f1-46" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#FF0000" id="img-1be299f1-47">
+            <use xlink:href="#img-1be299f1-48" x="39.96" y="55.79" id="img-1be299f1-49" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#008000" id="img-1be299f1-50">
+            <use xlink:href="#img-1be299f1-51" x="108.8" y="25.01" id="img-1be299f1-52" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#800080" id="img-1be299f1-53">
+            <use xlink:href="#img-1be299f1-54" x="102.47" y="44.44" id="img-1be299f1-55" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#FF0000" id="img-1be299f1-56">
+            <use xlink:href="#img-1be299f1-57" x="67.29" y="52.9" id="img-1be299f1-58" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#008000" id="img-1be299f1-59">
+            <use xlink:href="#img-1be299f1-60" x="78.47" y="25.27" id="img-1be299f1-61" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#800080" id="img-1be299f1-62">
+            <use xlink:href="#img-1be299f1-63" x="99.6" y="9.24" id="img-1be299f1-64" stroke="#FFFFFF" class="color_a"/>
+          </g>
+          <g fill="#FF0000" id="img-1be299f1-65">
+            <use xlink:href="#img-1be299f1-66" x="81.06" y="55.28" id="img-1be299f1-67" stroke="#FFFFFF" class="color_a"/>
+          </g>
         </g>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-1be299f1-45">
-    <text x="15.83" y="58.72" text-anchor="end" dy="0.35em" id="img-1be299f1-46">0.0</text>
-    <text x="15.83" y="32.86" text-anchor="end" dy="0.35em" id="img-1be299f1-47">0.5</text>
-    <text x="15.83" y="7" text-anchor="end" dy="0.35em" id="img-1be299f1-48">1.0</text>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-1be299f1-68">
+    <text x="15.83" y="58.72" text-anchor="end" dy="0.35em" id="img-1be299f1-69">0.0</text>
+    <text x="15.83" y="32.86" text-anchor="end" dy="0.35em" id="img-1be299f1-70">0.5</text>
+    <text x="15.83" y="7" text-anchor="end" dy="0.35em" id="img-1be299f1-71">1.0</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-1be299f1-49">
-    <text x="8.81" y="32.86" text-anchor="end" dy="0.35em" id="img-1be299f1-50">y</text>
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-1be299f1-72">
+    <text x="8.81" y="32.86" text-anchor="end" dy="0.35em" id="img-1be299f1-73">y</text>
   </g>
 </g>
 <defs>
   <clipPath id="img-1be299f1-15">
   <path d="M16.83,5 L 126.16 5 126.16 60.72 16.83 60.72" />
 </clipPath>
-  <g id="img-1be299f1-32">
-    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-51"/>
+  <g id="img-1be299f1-33">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-74"/>
+  </g>
+  <g id="img-1be299f1-36">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-75"/>
+  </g>
+  <g id="img-1be299f1-39">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-76"/>
+  </g>
+  <g id="img-1be299f1-42">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-77"/>
+  </g>
+  <g id="img-1be299f1-45">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-78"/>
+  </g>
+  <g id="img-1be299f1-48">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-79"/>
+  </g>
+  <g id="img-1be299f1-51">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-80"/>
+  </g>
+  <g id="img-1be299f1-54">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-81"/>
+  </g>
+  <g id="img-1be299f1-57">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-82"/>
+  </g>
+  <g id="img-1be299f1-60">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-83"/>
+  </g>
+  <g id="img-1be299f1-63">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-84"/>
+  </g>
+  <g id="img-1be299f1-66">
+    <circle cx="0" cy="0" r="0.9" id="img-1be299f1-85"/>
   </g>
 </defs>
 </svg>
