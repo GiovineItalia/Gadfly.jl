@@ -755,6 +755,7 @@ function apply_statistic(stat::TickStatistic,
                   (:y in stat.in_vars && Scale.iscategorical(scales, :y))
 
     for var in stat.in_vars
+        categorical && !in(var,[:x,:y]) && continue
         vals = getfield(aes, var)
         if vals != nothing && eltype(vals) != Function
             if minval == nothing
@@ -846,7 +847,12 @@ function apply_statistic(stat::TickStatistic,
         tickvisible = fill(true, length(ticks))
         tickscale = fill(1.0, length(ticks))
     elseif categorical
-        ticks = collect( colon(map(x->round(Int, x), extrema(in_values))...) )
+        ticks = Set{Int}()
+        for val in in_values
+            val>0 && push!(ticks, round(Int, val))
+        end
+        ticks = Int[t for t in ticks]
+        sort!(ticks)
         grids = (ticks .- 0.5)[2:end]
         viewmin = minimum(ticks)
         viewmax = maximum(ticks)
