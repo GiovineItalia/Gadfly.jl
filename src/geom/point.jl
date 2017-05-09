@@ -39,23 +39,19 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     for (x, y, color, size, shape) in Compose.cyclezip(aes.x, aes.y, aes.color, aes.size, aes.shape)
         shapefun = typeof(shape) <: Function ? shape : theme.point_shapes[shape]
         sizeval = typeof(size) <: Int ? interpolate_size(size) : size
-        compose!(ctx, (context(), shapefun([x], [y], [sizeval]), fill(color)))
+        strokecolor = aes.color_key_continuous != nothing && aes.color_key_continuous ?
+                    theme.continuous_highlight_color(color) :
+                    theme.discrete_highlight_color(color)
+        compose!(ctx, (context(), shapefun([x], [y], [sizeval]), fill(color), stroke(strokecolor)))
     end
 
     compose!(ctx, linewidth(theme.highlight_width))
 
-    if aes.color_key_continuous != nothing && aes.color_key_continuous
-        compose!(ctx,
-            stroke(map(theme.continuous_highlight_color, aes.color)))
-    else
-        stroke_colors =
-            Gadfly.pooled_map(RGBA{Float32}, theme.discrete_highlight_color, aes.color)
-        classes =
-            Gadfly.pooled_map(Compat.ASCIIString,
+    if !(aes.color_key_continuous != nothing && aes.color_key_continuous)
+        classes = Gadfly.pooled_map(Compat.ASCIIString,
                 c -> svg_color_class_from_label(escape_id(aes.color_label([c])[1])),
                 aes.color)
-
-        compose!(ctx, stroke(stroke_colors), svgclass(classes))
+        compose!(ctx, svgclass(classes))
     end
 
     return compose!(context(order=4), svgclass("geometry"), ctx)
