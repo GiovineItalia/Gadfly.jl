@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scale.y_continuous · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a><ul><li class="current"><a class="toctext" href="scale_y_continuous.html">Scale.y_continuous</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../scales.html">Scales</a></li><li><a href="scale_y_continuous.html">Scale.y_continuous</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/11aaf43718ac420d7704011fbf2b4b81082f395e/docs/src/lib/scales/scale_y_continuous.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Scale.y_continuous-1" href="#Scale.y_continuous-1">Scale.y_continuous</a></h1><p>Map numerical data to y positions in cartesian coordinates.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>minvalue</code>: Set scale lower bound to be ≤ this value.</p></li><li><p><code>maxvalue</code>: Set scale lower bound to be ≥ this value.</p></li></ul><div class="admonition note"><div class="admonition-title">Note</div><div class="admonition-text"><p><code>minvalue</code> and <code>maxvalue</code> here are soft bounds, Gadfly may choose to ignore them when constructing an optimal plot. Use <a href="../coords/coord_cartesian.html#Coord.cartesian-1">Coord.cartesian</a> to enforce a hard bound.</p></div></div><ul><li><p><code>labels</code>: Either a <code>Function</code> or <code>nothing</code>. When a function is given, values are formatted using this function. The function should map a value in <code>x</code> to a string giving its label. If the scale applies a transformation, transformed label values will be passed to this function.</p></li><li><p><code>format</code>: How numbers should be formatted. One of <code>:plain</code>, <code>:scientific</code>, <code>:engineering</code>, or <code>:auto</code>. The default in <code>:auto</code> which prints very large or very small numbers in scientific notation, and other numbers plainly.</p></li><li><p><code>scalable</code>: When set to false, scale is fixed when zooming (default: true)</p></li></ul><h3><a class="nav-anchor" id="Variations-1" href="#Variations-1">Variations</a></h3><p>A number of transformed continuous scales are provided.</p><ul><li><p><code>Scale.y_continuous</code> (scale without any transformation).</p></li><li><p><code>Scale.y_log10</code></p></li><li><p><code>Scale.y_log2</code></p></li><li><p><code>Scale.y_log</code></p></li><li><p><code>Scale.y_asinh</code></p></li><li><p><code>Scale.y_sqrt</code></p></li></ul><h3><a class="nav-anchor" id="Aesthetics-Acted-On-1" href="#Aesthetics-Acted-On-1">Aesthetics Acted On</a></h3><p><code>y</code>, <code>ymin</code>, <code>ymax</code>, <code>yintercept</code></p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia"># Transform both dimensions
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scale.y_continuous · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a><ul><li class="current"><a class="toctext" href="scale_y_continuous.html">Scale.y_continuous</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../scales.html">Scales</a></li><li><a href="scale_y_continuous.html">Scale.y_continuous</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/f6e845712f8908b331f670520877634d74b540d4/docs/src/lib/scales/scale_y_continuous.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Scale.y_continuous-1" href="#Scale.y_continuous-1">Scale.y_continuous</a></h1><p>Map numerical data to y positions in cartesian coordinates.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>minvalue</code>: Set scale lower bound to be ≤ this value.</p></li><li><p><code>maxvalue</code>: Set scale lower bound to be ≥ this value.</p></li></ul><div class="admonition note"><div class="admonition-title">Note</div><div class="admonition-text"><p><code>minvalue</code> and <code>maxvalue</code> here are soft bounds, Gadfly may choose to ignore them when constructing an optimal plot. Use <a href="../coords/coord_cartesian.html#Coord.cartesian-1">Coord.cartesian</a> to enforce a hard bound.</p></div></div><ul><li><p><code>labels</code>: Either a <code>Function</code> or <code>nothing</code>. When a function is given, values are formatted using this function. The function should map a value in <code>x</code> to a string giving its label. If the scale applies a transformation, transformed label values will be passed to this function.</p></li><li><p><code>format</code>: How numbers should be formatted. One of <code>:plain</code>, <code>:scientific</code>, <code>:engineering</code>, or <code>:auto</code>. The default in <code>:auto</code> which prints very large or very small numbers in scientific notation, and other numbers plainly.</p></li><li><p><code>scalable</code>: When set to false, scale is fixed when zooming (default: true)</p></li></ul><h3><a class="nav-anchor" id="Variations-1" href="#Variations-1">Variations</a></h3><p>A number of transformed continuous scales are provided.</p><ul><li><p><code>Scale.y_continuous</code> (scale without any transformation).</p></li><li><p><code>Scale.y_log10</code></p></li><li><p><code>Scale.y_log2</code></p></li><li><p><code>Scale.y_log</code></p></li><li><p><code>Scale.y_asinh</code></p></li><li><p><code>Scale.y_sqrt</code></p></li></ul><h3><a class="nav-anchor" id="Aesthetics-Acted-On-1" href="#Aesthetics-Acted-On-1">Aesthetics Acted On</a></h3><p><code>y</code>, <code>ymin</code>, <code>ymax</code>, <code>yintercept</code></p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia"># Transform both dimensions
 plot(x=rand(10), y=rand(10), Scale.y_log)</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -46,35 +46,35 @@ plot(x=rand(10), y=rand(10), Scale.y_log)</code></pre><?xml version="1.0" encodi
     </g>
     <g class="plotpanel" id="img-d15a22df-9">
       <g class="geometry" id="img-d15a22df-10">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-d15a22df-11">
-          <g fill="#00BFFF" id="img-d15a22df-12">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-d15a22df-11">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-d15a22df-12">
             <use xlink:href="#img-d15a22df-13" x="85.2" y="8.77"/>
           </g>
-          <g fill="#00BFFF" id="img-d15a22df-14">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-d15a22df-14">
             <use xlink:href="#img-d15a22df-15" x="47.35" y="36.69"/>
           </g>
-          <g fill="#00BFFF" id="img-d15a22df-16">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-d15a22df-16">
             <use xlink:href="#img-d15a22df-17" x="53.24" y="11.43"/>
           </g>
-          <g fill="#00BFFF" id="img-d15a22df-18">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-d15a22df-18">
             <use xlink:href="#img-d15a22df-19" x="42.09" y="20.31"/>
           </g>
-          <g fill="#00BFFF" id="img-d15a22df-20">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-d15a22df-20">
             <use xlink:href="#img-d15a22df-21" x="116.41" y="29.6"/>
           </g>
-          <g fill="#00BFFF" id="img-d15a22df-22">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-d15a22df-22">
             <use xlink:href="#img-d15a22df-23" x="109.58" y="11.51"/>
           </g>
-          <g fill="#00BFFF" id="img-d15a22df-24">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-d15a22df-24">
             <use xlink:href="#img-d15a22df-25" x="71.6" y="7.46"/>
           </g>
-          <g fill="#00BFFF" id="img-d15a22df-26">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-d15a22df-26">
             <use xlink:href="#img-d15a22df-27" x="83.67" y="35.05"/>
           </g>
-          <g fill="#00BFFF" id="img-d15a22df-28">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-d15a22df-28">
             <use xlink:href="#img-d15a22df-29" x="106.48" y="53.73"/>
           </g>
-          <g fill="#00BFFF" id="img-d15a22df-30">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-d15a22df-30">
             <use xlink:href="#img-d15a22df-31" x="86.47" y="11.47"/>
           </g>
         </g>
@@ -176,35 +176,35 @@ plot(x=rand(10), y=rand(10), Scale.y_continuous(minvalue=-10, maxvalue=10))</cod
     </g>
     <g class="plotpanel" id="img-f43f2986-9">
       <g class="geometry" id="img-f43f2986-10">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-f43f2986-11">
-          <g fill="#00BFFF" id="img-f43f2986-12">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-f43f2986-11">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f43f2986-12">
             <use xlink:href="#img-f43f2986-13" x="47.34" y="31.91"/>
           </g>
-          <g fill="#00BFFF" id="img-f43f2986-14">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f43f2986-14">
             <use xlink:href="#img-f43f2986-15" x="69.19" y="31.05"/>
           </g>
-          <g fill="#00BFFF" id="img-f43f2986-16">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f43f2986-16">
             <use xlink:href="#img-f43f2986-17" x="125.17" y="32.74"/>
           </g>
-          <g fill="#00BFFF" id="img-f43f2986-18">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f43f2986-18">
             <use xlink:href="#img-f43f2986-19" x="61.82" y="30.59"/>
           </g>
-          <g fill="#00BFFF" id="img-f43f2986-20">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f43f2986-20">
             <use xlink:href="#img-f43f2986-21" x="33.8" y="31.7"/>
           </g>
-          <g fill="#00BFFF" id="img-f43f2986-22">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f43f2986-22">
             <use xlink:href="#img-f43f2986-23" x="55.08" y="32.08"/>
           </g>
-          <g fill="#00BFFF" id="img-f43f2986-24">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f43f2986-24">
             <use xlink:href="#img-f43f2986-25" x="30.02" y="30.96"/>
           </g>
-          <g fill="#00BFFF" id="img-f43f2986-26">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f43f2986-26">
             <use xlink:href="#img-f43f2986-27" x="23.15" y="31.57"/>
           </g>
-          <g fill="#00BFFF" id="img-f43f2986-28">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f43f2986-28">
             <use xlink:href="#img-f43f2986-29" x="112.66" y="32.74"/>
           </g>
-          <g fill="#00BFFF" id="img-f43f2986-30">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f43f2986-30">
             <use xlink:href="#img-f43f2986-31" x="109.1" y="32.83"/>
           </g>
         </g>
@@ -303,35 +303,35 @@ plot(x=rand(10), y=rand(10), Scale.y_continuous(format=:scientific))</code></pre
     </g>
     <g class="plotpanel" id="img-6e5f7653-9">
       <g class="geometry" id="img-6e5f7653-10">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-6e5f7653-11">
-          <g fill="#00BFFF" id="img-6e5f7653-12">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-6e5f7653-11">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-6e5f7653-12">
             <use xlink:href="#img-6e5f7653-13" x="66.7" y="53.4"/>
           </g>
-          <g fill="#00BFFF" id="img-6e5f7653-14">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-6e5f7653-14">
             <use xlink:href="#img-6e5f7653-15" x="67.21" y="30.75"/>
           </g>
-          <g fill="#00BFFF" id="img-6e5f7653-16">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-6e5f7653-16">
             <use xlink:href="#img-6e5f7653-17" x="106.49" y="19.15"/>
           </g>
-          <g fill="#00BFFF" id="img-6e5f7653-18">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-6e5f7653-18">
             <use xlink:href="#img-6e5f7653-19" x="63.09" y="24.77"/>
           </g>
-          <g fill="#00BFFF" id="img-6e5f7653-20">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-6e5f7653-20">
             <use xlink:href="#img-6e5f7653-21" x="96.14" y="32.77"/>
           </g>
-          <g fill="#00BFFF" id="img-6e5f7653-22">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-6e5f7653-22">
             <use xlink:href="#img-6e5f7653-23" x="114.7" y="17.1"/>
           </g>
-          <g fill="#00BFFF" id="img-6e5f7653-24">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-6e5f7653-24">
             <use xlink:href="#img-6e5f7653-25" x="94.05" y="56.33"/>
           </g>
-          <g fill="#00BFFF" id="img-6e5f7653-26">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-6e5f7653-26">
             <use xlink:href="#img-6e5f7653-27" x="81.79" y="10.01"/>
           </g>
-          <g fill="#00BFFF" id="img-6e5f7653-28">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-6e5f7653-28">
             <use xlink:href="#img-6e5f7653-29" x="66.03" y="15.77"/>
           </g>
-          <g fill="#00BFFF" id="img-6e5f7653-30">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-6e5f7653-30">
             <use xlink:href="#img-6e5f7653-31" x="48.39" y="18.75"/>
           </g>
         </g>
@@ -432,35 +432,35 @@ plot(x=rand(10), y=rand(10), Scale.y_continuous(labels=y -&gt; @sprintf(&quot;%0
     </g>
     <g class="plotpanel" id="img-9e4fbb0e-9">
       <g class="geometry" id="img-9e4fbb0e-10">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-9e4fbb0e-11">
-          <g fill="#00BFFF" id="img-9e4fbb0e-12">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-9e4fbb0e-11">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-9e4fbb0e-12">
             <use xlink:href="#img-9e4fbb0e-13" x="28.17" y="51.6"/>
           </g>
-          <g fill="#00BFFF" id="img-9e4fbb0e-14">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-9e4fbb0e-14">
             <use xlink:href="#img-9e4fbb0e-15" x="118.73" y="41.55"/>
           </g>
-          <g fill="#00BFFF" id="img-9e4fbb0e-16">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-9e4fbb0e-16">
             <use xlink:href="#img-9e4fbb0e-17" x="108.46" y="24.77"/>
           </g>
-          <g fill="#00BFFF" id="img-9e4fbb0e-18">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-9e4fbb0e-18">
             <use xlink:href="#img-9e4fbb0e-19" x="38.33" y="52.64"/>
           </g>
-          <g fill="#00BFFF" id="img-9e4fbb0e-20">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-9e4fbb0e-20">
             <use xlink:href="#img-9e4fbb0e-21" x="93.08" y="26.47"/>
           </g>
-          <g fill="#00BFFF" id="img-9e4fbb0e-22">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-9e4fbb0e-22">
             <use xlink:href="#img-9e4fbb0e-23" x="34.68" y="42.23"/>
           </g>
-          <g fill="#00BFFF" id="img-9e4fbb0e-24">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-9e4fbb0e-24">
             <use xlink:href="#img-9e4fbb0e-25" x="114.15" y="19.41"/>
           </g>
-          <g fill="#00BFFF" id="img-9e4fbb0e-26">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-9e4fbb0e-26">
             <use xlink:href="#img-9e4fbb0e-27" x="125.68" y="49.82"/>
           </g>
-          <g fill="#00BFFF" id="img-9e4fbb0e-28">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-9e4fbb0e-28">
             <use xlink:href="#img-9e4fbb0e-29" x="46.19" y="30.84"/>
           </g>
-          <g fill="#00BFFF" id="img-9e4fbb0e-30">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-9e4fbb0e-30">
             <use xlink:href="#img-9e4fbb0e-31" x="63.36" y="7.62"/>
           </g>
         </g>

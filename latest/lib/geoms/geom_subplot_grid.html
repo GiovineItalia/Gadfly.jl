@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.subplot_grid · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_subplot_grid.html">Geom.subplot_grid</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/11aaf43718ac420d7704011fbf2b4b81082f395e/docs/src/lib/geoms/geom_subplot_grid.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.subplot_grid-1" href="#Geom.subplot_grid-1">Geom.subplot_grid</a></h1><p>Draw multiple subplots in a grid organized by one or two categorial vectors.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>xgroup</code> (optional): Arrange subplots on the X-axis by categorial data.</p></li><li><p><code>ygroup</code> (optional): Arrange subplots on the Y-axis by categorial data.</p></li><li><p><code>free_y_axis</code> (optional): Whether the y-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><ul><li><p><code>free_x_axis</code> (optional): Whether the x-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><p>One or both of <code>xgroup</code> or <code>ygroup</code> must be bound. If only one, a single column or row of subplots is drawn, if both, a grid.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><pre><code class="language-julia">Geom.subplot_grid(elements::Gadfly.ElementOrFunction...)</code></pre><p>Unlike most geometries, <a href="geom_subplot_grid.html#Geom.subplot_grid-1">Geom.subplot_grid</a> is typically passed one or more parameters. The constructor works for the most part like the <code>layer</code> function. Arbitrary plot elements may be passed, while aesthetic bindings are inherited from the parent plot.</p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">set_default_plot_size(20cm, 7.5cm)
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.subplot_grid · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_subplot_grid.html">Geom.subplot_grid</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_subplot_grid.html">Geom.subplot_grid</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/f6e845712f8908b331f670520877634d74b540d4/docs/src/lib/geoms/geom_subplot_grid.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.subplot_grid-1" href="#Geom.subplot_grid-1">Geom.subplot_grid</a></h1><p>Draw multiple subplots in a grid organized by one or two categorial vectors.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>xgroup</code> (optional): Arrange subplots on the X-axis by categorial data.</p></li><li><p><code>ygroup</code> (optional): Arrange subplots on the Y-axis by categorial data.</p></li><li><p><code>free_y_axis</code> (optional): Whether the y-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><ul><li><p><code>free_x_axis</code> (optional): Whether the x-axis scales can differ across</p></li></ul><p>the subplots. Defaults to <code>false</code>. If <code>true</code>, scales are set appropriately for individual subplots.</p><p>One or both of <code>xgroup</code> or <code>ygroup</code> must be bound. If only one, a single column or row of subplots is drawn, if both, a grid.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><pre><code class="language-julia">Geom.subplot_grid(elements::Gadfly.ElementOrFunction...)</code></pre><p>Unlike most geometries, <a href="geom_subplot_grid.html#Geom.subplot_grid-1">Geom.subplot_grid</a> is typically passed one or more parameters. The constructor works for the most part like the <code>layer</code> function. Arbitrary plot elements may be passed, while aesthetic bindings are inherited from the parent plot.</p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">set_default_plot_size(20cm, 7.5cm)
 plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
      xgroup=&quot;Treatment&quot;, x=&quot;ColPos&quot;, y=&quot;RowPos&quot;, color=&quot;Decrease&quot;,
      Geom.subplot_grid(Geom.point))</code></pre><?xml version="1.0" encoding="UTF-8"?>
@@ -19,10 +19,10 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
   </g>
   <g class="guide colorkey" id="img-64e47d63-3">
     <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-64e47d63-4">
-      <text x="184.23" y="28.62" dy="0.35em">150</text>
       <text x="184.23" y="51.99" dy="0.35em">1</text>
-      <text x="184.23" y="36.46" dy="0.35em">100</text>
+      <text x="184.23" y="28.62" dy="0.35em">150</text>
       <text x="184.23" y="44.31" dy="0.35em">50</text>
+      <text x="184.23" y="36.46" dy="0.35em">100</text>
     </g>
     <g shape-rendering="crispEdges" stroke="#000000" stroke-opacity="0.000" id="img-64e47d63-5">
       <rect x="181.92" y="51.41" width="1.31" height="0.58" fill="#004D84"/>
@@ -66,10 +66,10 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
       <rect x="181.92" y="29.2" width="1.31" height="0.58" fill="#8B3844"/>
       <rect x="181.92" y="28.62" width="1.31" height="0.58" fill="#7E273E"/>
       <g stroke="#FFFFFF" stroke-width="0.2" id="img-64e47d63-6">
-        <path fill="none" d="M181.92,28.62 L 183.23 28.62"/>
         <path fill="none" d="M181.92,51.99 L 183.23 51.99"/>
-        <path fill="none" d="M181.92,36.46 L 183.23 36.46"/>
+        <path fill="none" d="M181.92,28.62 L 183.23 28.62"/>
         <path fill="none" d="M181.92,44.31 L 183.23 44.31"/>
+        <path fill="none" d="M181.92,36.46 L 183.23 36.46"/>
       </g>
     </g>
     <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-64e47d63-7">
@@ -181,29 +181,29 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-32">
           <g class="geometry" id="img-64e47d63-33">
             <g stroke-width="0.3" id="img-64e47d63-34">
-              <g fill="#005589" id="img-64e47d63-35">
-                <use xlink:href="#img-64e47d63-36" x="175.92" y="13.64" stroke="#000436"/>
+              <g stroke="#000535" fill="#005589" id="img-64e47d63-35">
+                <use xlink:href="#img-64e47d63-36" x="175.92" y="13.64"/>
               </g>
-              <g fill="#00588B" id="img-64e47d63-37">
-                <use xlink:href="#img-64e47d63-38" x="174.36" y="22.91" stroke="#000436"/>
+              <g stroke="#000634" fill="#00588B" id="img-64e47d63-37">
+                <use xlink:href="#img-64e47d63-38" x="174.36" y="22.91"/>
               </g>
-              <g fill="#00749C" id="img-64e47d63-39">
-                <use xlink:href="#img-64e47d63-40" x="172.81" y="41.46" stroke="#000436"/>
+              <g stroke="#001A39" fill="#00749C" id="img-64e47d63-39">
+                <use xlink:href="#img-64e47d63-40" x="172.81" y="41.46"/>
               </g>
-              <g fill="#005C8D" id="img-64e47d63-41">
-                <use xlink:href="#img-64e47d63-42" x="171.25" y="27.55" stroke="#000436"/>
+              <g stroke="#000733" fill="#005C8D" id="img-64e47d63-41">
+                <use xlink:href="#img-64e47d63-42" x="171.25" y="27.55"/>
               </g>
-              <g fill="#00588B" id="img-64e47d63-43">
-                <use xlink:href="#img-64e47d63-44" x="169.69" y="36.83" stroke="#000436"/>
+              <g stroke="#000634" fill="#00588B" id="img-64e47d63-43">
+                <use xlink:href="#img-64e47d63-44" x="169.69" y="36.83"/>
               </g>
-              <g fill="#005C8D" id="img-64e47d63-45">
-                <use xlink:href="#img-64e47d63-46" x="168.14" y="32.19" stroke="#000436"/>
+              <g stroke="#000733" fill="#005C8D" id="img-64e47d63-45">
+                <use xlink:href="#img-64e47d63-46" x="168.14" y="32.19"/>
               </g>
-              <g fill="#005186" id="img-64e47d63-47">
-                <use xlink:href="#img-64e47d63-48" x="166.58" y="18.28" stroke="#000436"/>
+              <g stroke="#000436" fill="#005186" id="img-64e47d63-47">
+                <use xlink:href="#img-64e47d63-48" x="166.58" y="18.28"/>
               </g>
-              <g fill="#005186" id="img-64e47d63-49">
-                <use xlink:href="#img-64e47d63-50" x="165.02" y="9" stroke="#000436"/>
+              <g stroke="#000436" fill="#005186" id="img-64e47d63-49">
+                <use xlink:href="#img-64e47d63-50" x="165.02" y="9"/>
               </g>
             </g>
           </g>
@@ -232,29 +232,29 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-56">
           <g class="geometry" id="img-64e47d63-57">
             <g stroke-width="0.3" id="img-64e47d63-58">
-              <g fill="#1E8CA8" id="img-64e47d63-59">
-                <use xlink:href="#img-64e47d63-60" x="155.47" y="9" stroke="#00213D"/>
+              <g stroke="#002B43" fill="#1E8CA8" id="img-64e47d63-59">
+                <use xlink:href="#img-64e47d63-60" x="155.47" y="9"/>
               </g>
-              <g fill="#00789D" id="img-64e47d63-61">
-                <use xlink:href="#img-64e47d63-62" x="153.91" y="32.19" stroke="#00213D"/>
+              <g stroke="#001D3A" fill="#00789D" id="img-64e47d63-61">
+                <use xlink:href="#img-64e47d63-62" x="153.91" y="32.19"/>
               </g>
-              <g fill="#5CABB7" id="img-64e47d63-63">
-                <use xlink:href="#img-64e47d63-64" x="152.35" y="36.83" stroke="#00213D"/>
+              <g stroke="#004550" fill="#5CABB7" id="img-64e47d63-63">
+                <use xlink:href="#img-64e47d63-64" x="152.35" y="36.83"/>
               </g>
-              <g fill="#0285A4" id="img-64e47d63-65">
-                <use xlink:href="#img-64e47d63-66" x="150.8" y="22.91" stroke="#00213D"/>
+              <g stroke="#002640" fill="#0285A4" id="img-64e47d63-65">
+                <use xlink:href="#img-64e47d63-66" x="150.8" y="22.91"/>
               </g>
-              <g fill="#006A96" id="img-64e47d63-67">
-                <use xlink:href="#img-64e47d63-68" x="149.24" y="27.55" stroke="#00213D"/>
+              <g stroke="#001134" fill="#006A96" id="img-64e47d63-67">
+                <use xlink:href="#img-64e47d63-68" x="149.24" y="27.55"/>
               </g>
-              <g fill="#0082A3" id="img-64e47d63-69">
-                <use xlink:href="#img-64e47d63-70" x="147.68" y="18.28" stroke="#00213D"/>
+              <g stroke="#00243F" fill="#0082A3" id="img-64e47d63-69">
+                <use xlink:href="#img-64e47d63-70" x="147.68" y="18.28"/>
               </g>
-              <g fill="#C3C9B6" id="img-64e47d63-71">
-                <use xlink:href="#img-64e47d63-72" x="146.13" y="41.46" stroke="#00213D"/>
+              <g stroke="#5C6050" fill="#C3C9B6" id="img-64e47d63-71">
+                <use xlink:href="#img-64e47d63-72" x="146.13" y="41.46"/>
               </g>
-              <g fill="#007EA1" id="img-64e47d63-73">
-                <use xlink:href="#img-64e47d63-74" x="144.57" y="13.64" stroke="#00213D"/>
+              <g stroke="#00213D" fill="#007EA1" id="img-64e47d63-73">
+                <use xlink:href="#img-64e47d63-74" x="144.57" y="13.64"/>
               </g>
             </g>
           </g>
@@ -283,29 +283,29 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-80">
           <g class="geometry" id="img-64e47d63-81">
             <g stroke-width="0.3" id="img-64e47d63-82">
-              <g fill="#D0B093" id="img-64e47d63-83">
-                <use xlink:href="#img-64e47d63-84" x="135.01" y="36.83" stroke="#5F5F4F"/>
+              <g stroke="#644B31" fill="#D0B093" id="img-64e47d63-83">
+                <use xlink:href="#img-64e47d63-84" x="135.01" y="36.83"/>
               </g>
-              <g fill="#B5CCC2" id="img-64e47d63-85">
-                <use xlink:href="#img-64e47d63-86" x="133.46" y="27.55" stroke="#5F5F4F"/>
+              <g stroke="#4E635A" fill="#B5CCC2" id="img-64e47d63-85">
+                <use xlink:href="#img-64e47d63-86" x="133.46" y="27.55"/>
               </g>
-              <g fill="#A0D0CA" id="img-64e47d63-87">
-                <use xlink:href="#img-64e47d63-88" x="131.9" y="32.19" stroke="#5F5F4F"/>
+              <g stroke="#396662" fill="#A0D0CA" id="img-64e47d63-87">
+                <use xlink:href="#img-64e47d63-88" x="131.9" y="32.19"/>
               </g>
-              <g fill="#BCCABB" id="img-64e47d63-89">
-                <use xlink:href="#img-64e47d63-90" x="130.34" y="9" stroke="#5F5F4F"/>
+              <g stroke="#556254" fill="#BCCABB" id="img-64e47d63-89">
+                <use xlink:href="#img-64e47d63-90" x="130.34" y="9"/>
               </g>
-              <g fill="#268FA9" id="img-64e47d63-91">
-                <use xlink:href="#img-64e47d63-92" x="128.78" y="22.91" stroke="#5F5F4F"/>
+              <g stroke="#002E45" fill="#268FA9" id="img-64e47d63-91">
+                <use xlink:href="#img-64e47d63-92" x="128.78" y="22.91"/>
               </g>
-              <g fill="#C5C8B6" id="img-64e47d63-93">
-                <use xlink:href="#img-64e47d63-94" x="127.23" y="41.46" stroke="#5F5F4F"/>
+              <g stroke="#5D6050" fill="#C5C8B6" id="img-64e47d63-93">
+                <use xlink:href="#img-64e47d63-94" x="127.23" y="41.46"/>
               </g>
-              <g fill="#BBCBBC" id="img-64e47d63-95">
-                <use xlink:href="#img-64e47d63-96" x="125.67" y="13.64" stroke="#5F5F4F"/>
+              <g stroke="#546255" fill="#BBCBBC" id="img-64e47d63-95">
+                <use xlink:href="#img-64e47d63-96" x="125.67" y="13.64"/>
               </g>
-              <g fill="#C7C8B5" id="img-64e47d63-97">
-                <use xlink:href="#img-64e47d63-98" x="124.11" y="18.28" stroke="#5F5F4F"/>
+              <g stroke="#5F5F4F" fill="#C7C8B5" id="img-64e47d63-97">
+                <use xlink:href="#img-64e47d63-98" x="124.11" y="18.28"/>
               </g>
             </g>
           </g>
@@ -334,29 +334,29 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-104">
           <g class="geometry" id="img-64e47d63-105">
             <g stroke-width="0.3" id="img-64e47d63-106">
-              <g fill="#C1C9B7" id="img-64e47d63-107">
-                <use xlink:href="#img-64e47d63-108" x="114.56" y="41.46" stroke="#605F4F"/>
+              <g stroke="#596151" fill="#C1C9B7" id="img-64e47d63-107">
+                <use xlink:href="#img-64e47d63-108" x="114.56" y="41.46"/>
               </g>
-              <g fill="#BCCABA" id="img-64e47d63-109">
-                <use xlink:href="#img-64e47d63-110" x="113" y="36.83" stroke="#605F4F"/>
+              <g stroke="#556254" fill="#BCCABA" id="img-64e47d63-109">
+                <use xlink:href="#img-64e47d63-110" x="113" y="36.83"/>
               </g>
-              <g fill="#BFCAB8" id="img-64e47d63-111">
-                <use xlink:href="#img-64e47d63-112" x="111.44" y="27.55" stroke="#605F4F"/>
+              <g stroke="#586152" fill="#BFCAB8" id="img-64e47d63-111">
+                <use xlink:href="#img-64e47d63-112" x="111.44" y="27.55"/>
               </g>
-              <g fill="#B6CBC0" id="img-64e47d63-113">
-                <use xlink:href="#img-64e47d63-114" x="109.89" y="32.19" stroke="#605F4F"/>
+              <g stroke="#506359" fill="#B6CBC0" id="img-64e47d63-113">
+                <use xlink:href="#img-64e47d63-114" x="109.89" y="32.19"/>
               </g>
-              <g fill="#419CAF" id="img-64e47d63-115">
-                <use xlink:href="#img-64e47d63-116" x="108.33" y="18.28" stroke="#605F4F"/>
+              <g stroke="#00394A" fill="#419CAF" id="img-64e47d63-115">
+                <use xlink:href="#img-64e47d63-116" x="108.33" y="18.28"/>
               </g>
-              <g fill="#BCCABA" id="img-64e47d63-117">
-                <use xlink:href="#img-64e47d63-118" x="106.77" y="13.64" stroke="#605F4F"/>
+              <g stroke="#556254" fill="#BCCABA" id="img-64e47d63-117">
+                <use xlink:href="#img-64e47d63-118" x="106.77" y="13.64"/>
               </g>
-              <g fill="#BCCABB" id="img-64e47d63-119">
-                <use xlink:href="#img-64e47d63-120" x="105.22" y="9" stroke="#605F4F"/>
+              <g stroke="#556254" fill="#BCCABB" id="img-64e47d63-119">
+                <use xlink:href="#img-64e47d63-120" x="105.22" y="9"/>
               </g>
-              <g fill="#C8C7B5" id="img-64e47d63-121">
-                <use xlink:href="#img-64e47d63-122" x="103.66" y="22.91" stroke="#605F4F"/>
+              <g stroke="#605F4F" fill="#C8C7B5" id="img-64e47d63-121">
+                <use xlink:href="#img-64e47d63-122" x="103.66" y="22.91"/>
               </g>
             </g>
           </g>
@@ -385,29 +385,29 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-128">
           <g class="geometry" id="img-64e47d63-129">
             <g stroke-width="0.3" id="img-64e47d63-130">
-              <g fill="#C5C8B6" id="img-64e47d63-131">
-                <use xlink:href="#img-64e47d63-132" x="94.1" y="22.91" stroke="#546255"/>
+              <g stroke="#5D6050" fill="#C5C8B6" id="img-64e47d63-131">
+                <use xlink:href="#img-64e47d63-132" x="94.1" y="22.91"/>
               </g>
-              <g fill="#C2C9B7" id="img-64e47d63-133">
-                <use xlink:href="#img-64e47d63-134" x="92.55" y="18.28" stroke="#546255"/>
+              <g stroke="#5A6151" fill="#C2C9B7" id="img-64e47d63-133">
+                <use xlink:href="#img-64e47d63-134" x="92.55" y="18.28"/>
               </g>
-              <g fill="#BFCAB9" id="img-64e47d63-135">
-                <use xlink:href="#img-64e47d63-136" x="90.99" y="9" stroke="#546255"/>
+              <g stroke="#576152" fill="#BFCAB9" id="img-64e47d63-135">
+                <use xlink:href="#img-64e47d63-136" x="90.99" y="9"/>
               </g>
-              <g fill="#C2C9B7" id="img-64e47d63-137">
-                <use xlink:href="#img-64e47d63-138" x="89.43" y="13.64" stroke="#546255"/>
+              <g stroke="#5A6151" fill="#C2C9B7" id="img-64e47d63-137">
+                <use xlink:href="#img-64e47d63-138" x="89.43" y="13.64"/>
               </g>
-              <g fill="#B47865" id="img-64e47d63-139">
-                <use xlink:href="#img-64e47d63-140" x="87.88" y="41.46" stroke="#546255"/>
+              <g stroke="#481A0A" fill="#B47865" id="img-64e47d63-139">
+                <use xlink:href="#img-64e47d63-140" x="87.88" y="41.46"/>
               </g>
-              <g fill="#BCCABA" id="img-64e47d63-141">
-                <use xlink:href="#img-64e47d63-142" x="86.32" y="36.83" stroke="#546255"/>
+              <g stroke="#556254" fill="#BCCABA" id="img-64e47d63-141">
+                <use xlink:href="#img-64e47d63-142" x="86.32" y="36.83"/>
               </g>
-              <g fill="#BA836D" id="img-64e47d63-143">
-                <use xlink:href="#img-64e47d63-144" x="84.76" y="32.19" stroke="#546255"/>
+              <g stroke="#4E2412" fill="#BA836D" id="img-64e47d63-143">
+                <use xlink:href="#img-64e47d63-144" x="84.76" y="32.19"/>
               </g>
-              <g fill="#BBCBBC" id="img-64e47d63-145">
-                <use xlink:href="#img-64e47d63-146" x="83.21" y="27.55" stroke="#546255"/>
+              <g stroke="#546255" fill="#BBCBBC" id="img-64e47d63-145">
+                <use xlink:href="#img-64e47d63-146" x="83.21" y="27.55"/>
               </g>
             </g>
           </g>
@@ -436,29 +436,29 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-152">
           <g class="geometry" id="img-64e47d63-153">
             <g stroke-width="0.3" id="img-64e47d63-154">
-              <g fill="#007B9F" id="img-64e47d63-155">
-                <use xlink:href="#img-64e47d63-156" x="73.65" y="27.55" stroke="#000C32"/>
+              <g stroke="#001F3C" fill="#007B9F" id="img-64e47d63-155">
+                <use xlink:href="#img-64e47d63-156" x="73.65" y="27.55"/>
               </g>
-              <g fill="#006694" id="img-64e47d63-157">
-                <use xlink:href="#img-64e47d63-158" x="72.09" y="41.46" stroke="#000C32"/>
+              <g stroke="#000C32" fill="#006694" id="img-64e47d63-157">
+                <use xlink:href="#img-64e47d63-158" x="72.09" y="41.46"/>
               </g>
-              <g fill="#00588B" id="img-64e47d63-159">
-                <use xlink:href="#img-64e47d63-160" x="70.53" y="22.91" stroke="#000C32"/>
+              <g stroke="#000634" fill="#00588B" id="img-64e47d63-159">
+                <use xlink:href="#img-64e47d63-160" x="70.53" y="22.91"/>
               </g>
-              <g fill="#006392" id="img-64e47d63-161">
-                <use xlink:href="#img-64e47d63-162" x="68.98" y="18.28" stroke="#000C32"/>
+              <g stroke="#000931" fill="#006392" id="img-64e47d63-161">
+                <use xlink:href="#img-64e47d63-162" x="68.98" y="18.28"/>
               </g>
-              <g fill="#006D98" id="img-64e47d63-163">
-                <use xlink:href="#img-64e47d63-164" x="67.42" y="13.64" stroke="#000C32"/>
+              <g stroke="#001435" fill="#006D98" id="img-64e47d63-163">
+                <use xlink:href="#img-64e47d63-164" x="67.42" y="13.64"/>
               </g>
-              <g fill="#00588B" id="img-64e47d63-165">
-                <use xlink:href="#img-64e47d63-166" x="65.86" y="9" stroke="#000C32"/>
+              <g stroke="#000634" fill="#00588B" id="img-64e47d63-165">
+                <use xlink:href="#img-64e47d63-166" x="65.86" y="9"/>
               </g>
-              <g fill="#005F90" id="img-64e47d63-167">
-                <use xlink:href="#img-64e47d63-168" x="64.31" y="36.83" stroke="#000C32"/>
+              <g stroke="#000832" fill="#005F90" id="img-64e47d63-167">
+                <use xlink:href="#img-64e47d63-168" x="64.31" y="36.83"/>
               </g>
-              <g fill="#006694" id="img-64e47d63-169">
-                <use xlink:href="#img-64e47d63-170" x="62.75" y="32.19" stroke="#000C32"/>
+              <g stroke="#000C32" fill="#006694" id="img-64e47d63-169">
+                <use xlink:href="#img-64e47d63-170" x="62.75" y="32.19"/>
               </g>
             </g>
           </g>
@@ -487,29 +487,29 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-176">
           <g class="geometry" id="img-64e47d63-177">
             <g stroke-width="0.3" id="img-64e47d63-178">
-              <g fill="#B2CCC2" id="img-64e47d63-179">
-                <use xlink:href="#img-64e47d63-180" x="53.19" y="18.28" stroke="#615F4E"/>
+              <g stroke="#4C635B" fill="#B2CCC2" id="img-64e47d63-179">
+                <use xlink:href="#img-64e47d63-180" x="53.19" y="18.28"/>
               </g>
-              <g fill="#B6CBBF" id="img-64e47d63-181">
-                <use xlink:href="#img-64e47d63-182" x="51.64" y="9" stroke="#615F4E"/>
+              <g stroke="#506358" fill="#B6CBBF" id="img-64e47d63-181">
+                <use xlink:href="#img-64e47d63-182" x="51.64" y="9"/>
               </g>
-              <g fill="#A5CFC7" id="img-64e47d63-183">
-                <use xlink:href="#img-64e47d63-184" x="50.08" y="13.64" stroke="#615F4E"/>
+              <g stroke="#3F655F" fill="#A5CFC7" id="img-64e47d63-183">
+                <use xlink:href="#img-64e47d63-184" x="50.08" y="13.64"/>
               </g>
-              <g fill="#9DD0CB" id="img-64e47d63-185">
-                <use xlink:href="#img-64e47d63-186" x="48.52" y="41.46" stroke="#615F4E"/>
+              <g stroke="#366662" fill="#9DD0CB" id="img-64e47d63-185">
+                <use xlink:href="#img-64e47d63-186" x="48.52" y="41.46"/>
               </g>
-              <g fill="#D0B093" id="img-64e47d63-187">
-                <use xlink:href="#img-64e47d63-188" x="46.97" y="32.19" stroke="#615F4E"/>
+              <g stroke="#644B31" fill="#D0B093" id="img-64e47d63-187">
+                <use xlink:href="#img-64e47d63-188" x="46.97" y="32.19"/>
               </g>
-              <g fill="#8CC6C5" id="img-64e47d63-189">
-                <use xlink:href="#img-64e47d63-190" x="45.41" y="27.55" stroke="#615F4E"/>
+              <g stroke="#225D5D" fill="#8CC6C5" id="img-64e47d63-189">
+                <use xlink:href="#img-64e47d63-190" x="45.41" y="27.55"/>
               </g>
-              <g fill="#ACCEC4" id="img-64e47d63-191">
-                <use xlink:href="#img-64e47d63-192" x="43.85" y="22.91" stroke="#615F4E"/>
+              <g stroke="#46645C" fill="#ACCEC4" id="img-64e47d63-191">
+                <use xlink:href="#img-64e47d63-192" x="43.85" y="22.91"/>
               </g>
-              <g fill="#CAC7B3" id="img-64e47d63-193">
-                <use xlink:href="#img-64e47d63-194" x="42.3" y="36.83" stroke="#615F4E"/>
+              <g stroke="#615F4E" fill="#CAC7B3" id="img-64e47d63-193">
+                <use xlink:href="#img-64e47d63-194" x="42.3" y="36.83"/>
               </g>
             </g>
           </g>
@@ -538,29 +538,29 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
         <g class="plotpanel" id="img-64e47d63-200">
           <g class="geometry" id="img-64e47d63-201">
             <g stroke-width="0.3" id="img-64e47d63-202">
-              <g fill="#8CC6C5" id="img-64e47d63-203">
-                <use xlink:href="#img-64e47d63-204" x="32.74" y="32.19" stroke="#4E635A"/>
+              <g stroke="#225D5D" fill="#8CC6C5" id="img-64e47d63-203">
+                <use xlink:href="#img-64e47d63-204" x="32.74" y="32.19"/>
               </g>
-              <g fill="#268FA9" id="img-64e47d63-205">
-                <use xlink:href="#img-64e47d63-206" x="30.93" y="13.64" stroke="#4E635A"/>
+              <g stroke="#002E45" fill="#268FA9" id="img-64e47d63-205">
+                <use xlink:href="#img-64e47d63-206" x="30.93" y="13.64"/>
               </g>
-              <g fill="#51A5B4" id="img-64e47d63-207">
-                <use xlink:href="#img-64e47d63-208" x="29.13" y="18.28" stroke="#4E635A"/>
+              <g stroke="#00404E" fill="#51A5B4" id="img-64e47d63-207">
+                <use xlink:href="#img-64e47d63-208" x="29.13" y="18.28"/>
               </g>
-              <g fill="#57A8B5" id="img-64e47d63-209">
-                <use xlink:href="#img-64e47d63-210" x="27.32" y="36.83" stroke="#4E635A"/>
+              <g stroke="#00434F" fill="#57A8B5" id="img-64e47d63-209">
+                <use xlink:href="#img-64e47d63-210" x="27.32" y="36.83"/>
               </g>
-              <g fill="#ACCEC4" id="img-64e47d63-211">
-                <use xlink:href="#img-64e47d63-212" x="25.51" y="9" stroke="#4E635A"/>
+              <g stroke="#46645C" fill="#ACCEC4" id="img-64e47d63-211">
+                <use xlink:href="#img-64e47d63-212" x="25.51" y="9"/>
               </g>
-              <g fill="#3495AC" id="img-64e47d63-213">
-                <use xlink:href="#img-64e47d63-214" x="23.71" y="22.91" stroke="#4E635A"/>
+              <g stroke="#003347" fill="#3495AC" id="img-64e47d63-213">
+                <use xlink:href="#img-64e47d63-214" x="23.71" y="22.91"/>
               </g>
-              <g fill="#7EBEC0" id="img-64e47d63-215">
-                <use xlink:href="#img-64e47d63-216" x="21.9" y="27.55" stroke="#4E635A"/>
+              <g stroke="#0C5659" fill="#7EBEC0" id="img-64e47d63-215">
+                <use xlink:href="#img-64e47d63-216" x="21.9" y="27.55"/>
               </g>
-              <g fill="#B5CCC2" id="img-64e47d63-217">
-                <use xlink:href="#img-64e47d63-218" x="20.09" y="41.46" stroke="#4E635A"/>
+              <g stroke="#4E635A" fill="#B5CCC2" id="img-64e47d63-217">
+                <use xlink:href="#img-64e47d63-218" x="20.09" y="41.46"/>
               </g>
             </g>
           </g>
@@ -582,8 +582,17 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
   </g>
 </g>
 <defs>
-  <clipPath id="img-64e47d63-51">
-  <path d="M141.01,7 L 157.47 7 157.47 48.1 141.01 48.1" />
+  <clipPath id="img-64e47d63-99">
+  <path d="M100.1,7 L 116.56 7 116.56 48.1 100.1 48.1" />
+</clipPath>
+  <clipPath id="img-64e47d63-123">
+  <path d="M79.65,7 L 96.1 7 96.1 48.1 79.65 48.1" />
+</clipPath>
+  <clipPath id="img-64e47d63-147">
+  <path d="M59.19,7 L 75.65 7 75.65 48.1 59.19 48.1" />
+</clipPath>
+  <clipPath id="img-64e47d63-8">
+  <path d="M12.61,5 L 179.92 5 179.92 60.39 12.61 60.39" />
 </clipPath>
   <clipPath id="img-64e47d63-27">
   <path d="M161.47,7 L 177.92 7 177.92 48.1 161.47 48.1" />
@@ -591,23 +600,14 @@ plot(dataset(&quot;datasets&quot;, &quot;OrchardSprays&quot;),
   <clipPath id="img-64e47d63-171">
   <path d="M38.74,7 L 55.19 7 55.19 48.1 38.74 48.1" />
 </clipPath>
-  <clipPath id="img-64e47d63-147">
-  <path d="M59.19,7 L 75.65 7 75.65 48.1 59.19 48.1" />
-</clipPath>
-  <clipPath id="img-64e47d63-195">
-  <path d="M16.29,7 L 34.74 7 34.74 48.1 16.29 48.1" />
-</clipPath>
-  <clipPath id="img-64e47d63-8">
-  <path d="M12.61,5 L 179.92 5 179.92 60.39 12.61 60.39" />
-</clipPath>
-  <clipPath id="img-64e47d63-99">
-  <path d="M100.1,7 L 116.56 7 116.56 48.1 100.1 48.1" />
-</clipPath>
   <clipPath id="img-64e47d63-75">
   <path d="M120.56,7 L 137.01 7 137.01 48.1 120.56 48.1" />
 </clipPath>
-  <clipPath id="img-64e47d63-123">
-  <path d="M79.65,7 L 96.1 7 96.1 48.1 79.65 48.1" />
+  <clipPath id="img-64e47d63-51">
+  <path d="M141.01,7 L 157.47 7 157.47 48.1 141.01 48.1" />
+</clipPath>
+  <clipPath id="img-64e47d63-195">
+  <path d="M16.29,7 L 34.74 7 34.74 48.1 16.29 48.1" />
 </clipPath>
   <g id="img-64e47d63-36">
     <circle cx="0" cy="0" r="0.9"/>
@@ -1666,35 +1666,26 @@ plot(dataset(&quot;vcd&quot;, &quot;Suicide&quot;), xgroup=&quot;Sex&quot;, ygro
   </g>
 </g>
 <defs>
-  <clipPath id="img-0d7e651b-3">
-  <path d="M12.61,5 L 135 5 135 235.39 12.61 235.39" />
-</clipPath>
   <clipPath id="img-0d7e651b-18">
   <path d="M28.92,199.09 L 79.96 199.09 79.96 221.1 28.92 221.1" />
-</clipPath>
-  <clipPath id="img-0d7e651b-154">
-  <path d="M83.96,7 L 133 7 133 27.01 83.96 27.01" />
-</clipPath>
-  <clipPath id="img-0d7e651b-54">
-  <path d="M28.92,151.07 L 79.96 151.07 79.96 171.08 28.92 171.08" />
-</clipPath>
-  <clipPath id="img-0d7e651b-28">
-  <path d="M83.96,175.08 L 133 175.08 133 195.09 83.96 195.09" />
-</clipPath>
-  <clipPath id="img-0d7e651b-162">
-  <path d="M28.92,7 L 79.96 7 79.96 27.01 28.92 27.01" />
-</clipPath>
-  <clipPath id="img-0d7e651b-136">
-  <path d="M83.96,31.01 L 133 31.01 133 51.02 83.96 51.02" />
-</clipPath>
-  <clipPath id="img-0d7e651b-46">
-  <path d="M83.96,151.07 L 133 151.07 133 171.08 83.96 171.08" />
 </clipPath>
   <clipPath id="img-0d7e651b-64">
   <path d="M83.96,127.06 L 133 127.06 133 147.07 83.96 147.07" />
 </clipPath>
+  <clipPath id="img-0d7e651b-118">
+  <path d="M83.96,55.02 L 133 55.02 133 75.03 83.96 75.03" />
+</clipPath>
+  <clipPath id="img-0d7e651b-28">
+  <path d="M83.96,175.08 L 133 175.08 133 195.09 83.96 195.09" />
+</clipPath>
+  <clipPath id="img-0d7e651b-36">
+  <path d="M28.92,175.08 L 79.96 175.08 79.96 195.09 28.92 195.09" />
+</clipPath>
   <clipPath id="img-0d7e651b-90">
   <path d="M28.92,103.05 L 79.96 103.05 79.96 123.06 28.92 123.06" />
+</clipPath>
+  <clipPath id="img-0d7e651b-144">
+  <path d="M28.92,31.01 L 79.96 31.01 79.96 51.02 28.92 51.02" />
 </clipPath>
   <clipPath id="img-0d7e651b-108">
   <path d="M28.92,79.03 L 79.96 79.03 79.96 99.05 28.92 99.05" />
@@ -1702,26 +1693,35 @@ plot(dataset(&quot;vcd&quot;, &quot;Suicide&quot;), xgroup=&quot;Sex&quot;, ygro
   <clipPath id="img-0d7e651b-10">
   <path d="M83.96,199.09 L 133 199.09 133 221.1 83.96 221.1" />
 </clipPath>
-  <clipPath id="img-0d7e651b-72">
-  <path d="M28.92,127.06 L 79.96 127.06 79.96 147.07 28.92 147.07" />
-</clipPath>
-  <clipPath id="img-0d7e651b-118">
-  <path d="M83.96,55.02 L 133 55.02 133 75.03 83.96 75.03" />
-</clipPath>
-  <clipPath id="img-0d7e651b-82">
-  <path d="M83.96,103.05 L 133 103.05 133 123.06 83.96 123.06" />
-</clipPath>
-  <clipPath id="img-0d7e651b-126">
-  <path d="M28.92,55.02 L 79.96 55.02 79.96 75.03 28.92 75.03" />
-</clipPath>
-  <clipPath id="img-0d7e651b-36">
-  <path d="M28.92,175.08 L 79.96 175.08 79.96 195.09 28.92 195.09" />
+  <clipPath id="img-0d7e651b-3">
+  <path d="M12.61,5 L 135 5 135 235.39 12.61 235.39" />
 </clipPath>
   <clipPath id="img-0d7e651b-100">
   <path d="M83.96,79.03 L 133 79.03 133 99.05 83.96 99.05" />
 </clipPath>
-  <clipPath id="img-0d7e651b-144">
-  <path d="M28.92,31.01 L 79.96 31.01 79.96 51.02 28.92 51.02" />
+  <clipPath id="img-0d7e651b-46">
+  <path d="M83.96,151.07 L 133 151.07 133 171.08 83.96 171.08" />
+</clipPath>
+  <clipPath id="img-0d7e651b-162">
+  <path d="M28.92,7 L 79.96 7 79.96 27.01 28.92 27.01" />
+</clipPath>
+  <clipPath id="img-0d7e651b-136">
+  <path d="M83.96,31.01 L 133 31.01 133 51.02 83.96 51.02" />
+</clipPath>
+  <clipPath id="img-0d7e651b-72">
+  <path d="M28.92,127.06 L 79.96 127.06 79.96 147.07 28.92 147.07" />
+</clipPath>
+  <clipPath id="img-0d7e651b-126">
+  <path d="M28.92,55.02 L 79.96 55.02 79.96 75.03 28.92 75.03" />
+</clipPath>
+  <clipPath id="img-0d7e651b-154">
+  <path d="M83.96,7 L 133 7 133 27.01 83.96 27.01" />
+</clipPath>
+  <clipPath id="img-0d7e651b-54">
+  <path d="M28.92,151.07 L 79.96 151.07 79.96 171.08 28.92 171.08" />
+</clipPath>
+  <clipPath id="img-0d7e651b-82">
+  <path d="M83.96,103.05 L 133 103.05 133 123.06 83.96 123.06" />
 </clipPath>
 </defs>
 </svg>
@@ -1774,35 +1774,35 @@ longdf = stack(widedf, [:var1, :var2])</code></pre></div><p>Default behavior is 
         </g>
         <g class="plotpanel" id="img-86adb5a7-12">
           <g class="geometry" id="img-86adb5a7-13">
-            <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-86adb5a7-14">
-              <g fill="#00BFFF" id="img-86adb5a7-15">
+            <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-86adb5a7-14">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-15">
                 <use xlink:href="#img-86adb5a7-16" x="71" y="56.86"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-17">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-17">
                 <use xlink:href="#img-86adb5a7-18" x="66.82" y="64.81"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-19">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-19">
                 <use xlink:href="#img-86adb5a7-20" x="62.65" y="71.93"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-21">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-21">
                 <use xlink:href="#img-86adb5a7-22" x="58.47" y="78.2"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-23">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-23">
                 <use xlink:href="#img-86adb5a7-24" x="54.3" y="83.65"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-25">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-25">
                 <use xlink:href="#img-86adb5a7-26" x="50.12" y="88.25"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-27">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-27">
                 <use xlink:href="#img-86adb5a7-28" x="45.95" y="92.02"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-29">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-29">
                 <use xlink:href="#img-86adb5a7-30" x="41.77" y="94.95"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-31">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-31">
                 <use xlink:href="#img-86adb5a7-32" x="37.59" y="97.04"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-33">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-33">
                 <use xlink:href="#img-86adb5a7-34" x="33.42" y="98.3"/>
               </g>
             </g>
@@ -1837,35 +1837,35 @@ longdf = stack(widedf, [:var1, :var2])</code></pre></div><p>Default behavior is 
         </g>
         <g class="plotpanel" id="img-86adb5a7-42">
           <g class="geometry" id="img-86adb5a7-43">
-            <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-86adb5a7-44">
-              <g fill="#00BFFF" id="img-86adb5a7-45">
+            <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-86adb5a7-44">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-45">
                 <use xlink:href="#img-86adb5a7-46" x="71" y="44.87"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-47">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-47">
                 <use xlink:href="#img-86adb5a7-48" x="66.82" y="45.27"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-49">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-49">
                 <use xlink:href="#img-86adb5a7-50" x="62.65" y="45.67"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-51">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-51">
                 <use xlink:href="#img-86adb5a7-52" x="58.47" y="46.07"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-53">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-53">
                 <use xlink:href="#img-86adb5a7-54" x="54.3" y="46.47"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-55">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-55">
                 <use xlink:href="#img-86adb5a7-56" x="50.12" y="46.86"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-57">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-57">
                 <use xlink:href="#img-86adb5a7-58" x="45.95" y="47.26"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-59">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-59">
                 <use xlink:href="#img-86adb5a7-60" x="41.77" y="47.66"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-61">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-61">
                 <use xlink:href="#img-86adb5a7-62" x="37.59" y="48.06"/>
               </g>
-              <g fill="#00BFFF" id="img-86adb5a7-63">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-86adb5a7-63">
                 <use xlink:href="#img-86adb5a7-64" x="33.42" y="48.46"/>
               </g>
             </g>
@@ -1889,11 +1889,11 @@ longdf = stack(widedf, [:var1, :var2])</code></pre></div><p>Default behavior is 
   </g>
 </g>
 <defs>
-  <clipPath id="img-86adb5a7-3">
-  <path d="M12.61,5 L 75 5 75 105.39 12.61 105.39" />
-</clipPath>
   <clipPath id="img-86adb5a7-7">
   <path d="M27.24,54.86 L 73 54.86 73 100.72 27.24 100.72" />
+</clipPath>
+  <clipPath id="img-86adb5a7-3">
+  <path d="M12.61,5 L 75 5 75 105.39 12.61 105.39" />
 </clipPath>
   <clipPath id="img-86adb5a7-37">
   <path d="M27.24,7 L 73 7 73 50.86 27.24 50.86" />
@@ -2004,35 +2004,35 @@ longdf = stack(widedf, [:var1, :var2])</code></pre></div><p>Default behavior is 
         </g>
         <g class="plotpanel" id="img-bba1554a-12">
           <g class="geometry" id="img-bba1554a-13">
-            <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-bba1554a-14">
-              <g fill="#00BFFF" id="img-bba1554a-15">
+            <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-bba1554a-14">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-15">
                 <use xlink:href="#img-bba1554a-16" x="71" y="56.86"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-17">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-17">
                 <use xlink:href="#img-bba1554a-18" x="66.89" y="64.81"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-19">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-19">
                 <use xlink:href="#img-bba1554a-20" x="62.78" y="71.93"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-21">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-21">
                 <use xlink:href="#img-bba1554a-22" x="58.68" y="78.2"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-23">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-23">
                 <use xlink:href="#img-bba1554a-24" x="54.57" y="83.65"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-25">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-25">
                 <use xlink:href="#img-bba1554a-26" x="50.46" y="88.25"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-27">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-27">
                 <use xlink:href="#img-bba1554a-28" x="46.35" y="92.02"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-29">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-29">
                 <use xlink:href="#img-bba1554a-30" x="42.24" y="94.95"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-31">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-31">
                 <use xlink:href="#img-bba1554a-32" x="38.13" y="97.04"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-33">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-33">
                 <use xlink:href="#img-bba1554a-34" x="34.02" y="98.3"/>
               </g>
             </g>
@@ -2069,35 +2069,35 @@ longdf = stack(widedf, [:var1, :var2])</code></pre></div><p>Default behavior is 
         </g>
         <g class="plotpanel" id="img-bba1554a-42">
           <g class="geometry" id="img-bba1554a-43">
-            <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-bba1554a-44">
-              <g fill="#00BFFF" id="img-bba1554a-45">
+            <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-bba1554a-44">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-45">
                 <use xlink:href="#img-bba1554a-46" x="71" y="9"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-47">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-47">
                 <use xlink:href="#img-bba1554a-48" x="66.89" y="12.99"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-49">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-49">
                 <use xlink:href="#img-bba1554a-50" x="62.78" y="16.97"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-51">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-51">
                 <use xlink:href="#img-bba1554a-52" x="58.68" y="20.96"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-53">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-53">
                 <use xlink:href="#img-bba1554a-54" x="54.57" y="24.94"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-55">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-55">
                 <use xlink:href="#img-bba1554a-56" x="50.46" y="28.93"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-57">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-57">
                 <use xlink:href="#img-bba1554a-58" x="46.35" y="32.91"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-59">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-59">
                 <use xlink:href="#img-bba1554a-60" x="42.24" y="36.9"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-61">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-61">
                 <use xlink:href="#img-bba1554a-62" x="38.13" y="40.89"/>
               </g>
-              <g fill="#00BFFF" id="img-bba1554a-63">
+              <g stroke="#FFFFFF" fill="#00BFFF" id="img-bba1554a-63">
                 <use xlink:href="#img-bba1554a-64" x="34.02" y="44.87"/>
               </g>
             </g>
@@ -2123,11 +2123,11 @@ longdf = stack(widedf, [:var1, :var2])</code></pre></div><p>Default behavior is 
   </g>
 </g>
 <defs>
-  <clipPath id="img-bba1554a-37">
-  <path d="M27.92,7 L 73 7 73 50.86 27.92 50.86" />
-</clipPath>
   <clipPath id="img-bba1554a-3">
   <path d="M12.61,5 L 75 5 75 105.39 12.61 105.39" />
+</clipPath>
+  <clipPath id="img-bba1554a-37">
+  <path d="M27.92,7 L 73 7 73 50.86 27.92 50.86" />
 </clipPath>
   <clipPath id="img-bba1554a-7">
   <path d="M27.92,54.86 L 73 54.86 73 100.72 27.92 100.72" />

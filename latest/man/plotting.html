@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Plotting · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script></head><body><nav class="toc"><a href="../index.html"><img class="logo" src="../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../index.html">Home</a></li><li><a class="toctext" href="../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li class="current"><a class="toctext" href="plotting.html">Plotting</a><ul class="internal"><li><a class="toctext" href="#Plotting-arrays-1">Plotting arrays</a></li><li><a class="toctext" href="#Plotting-data-frames-1">Plotting data frames</a></li><li><a class="toctext" href="#Functions-and-Expressions-1">Functions and Expressions</a></li></ul></li><li><a class="toctext" href="layers.html">Layers and Stacks</a></li><li><a class="toctext" href="backends.html">Backends</a></li><li><a class="toctext" href="themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../lib/dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../lib/geometries.html">Geometries</a></li><li><a class="toctext" href="../lib/guides.html">Guides</a></li><li><a class="toctext" href="../lib/stats.html">Statistics</a></li><li><a class="toctext" href="../lib/coords.html">Coords</a></li><li><a class="toctext" href="../lib/scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Manual</li><li><a href="plotting.html">Plotting</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/11aaf43718ac420d7704011fbf2b4b81082f395e/docs/src/man/plotting.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Plotting-1" href="#Plotting-1">Plotting</a></h1><p>Most interaction with Gadfly is through the <code>plot</code> function. Plots are described by binding data to <strong>aesthetics</strong>, and specifying a number of plot elements including <a href="../lib/scales.html#Scales-1">Scales</a>, <a href="../lib/coords.html#Coordinates-1">Coordinates</a>, <a href="../lib/guides.html#Guides-1">Guides</a>, and <a href="../lib/geometries.html#Geometries-1">Geometries</a>. Aesthetics are a set of special named variables that are mapped to plot geometry. How this mapping occurs is defined by the plot elements.</p><p>This &quot;grammar of graphics&quot; approach tries to avoid arcane incantations and special cases, instead approaching the problem as if one were drawing a wiring diagram: data is connected to aesthetics, which act as input leads, and elements, each self-contained with well-defined inputs and outputs, are connected and combined to produce the desired result.</p><h2><a class="nav-anchor" id="Plotting-arrays-1" href="#Plotting-arrays-1">Plotting arrays</a></h2><p>If no plot elements are defined, point geometry is added by default. The point geometry takes as input the <code>x</code> and <code>y</code> aesthetics. So all that&#39;s needed to draw a scatterplot is to bind <code>x</code> and <code>y</code>.</p><div></div><div><pre><code class="language-julia"># E.g.
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Plotting · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../index.html"><img class="logo" src="../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../index.html">Home</a></li><li><a class="toctext" href="../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li class="current"><a class="toctext" href="plotting.html">Plotting</a><ul class="internal"><li><a class="toctext" href="#Plotting-arrays-1">Plotting arrays</a></li><li><a class="toctext" href="#Plotting-data-frames-1">Plotting data frames</a></li><li><a class="toctext" href="#Functions-and-Expressions-1">Functions and Expressions</a></li></ul></li><li><a class="toctext" href="layers.html">Layers and Stacks</a></li><li><a class="toctext" href="backends.html">Backends</a></li><li><a class="toctext" href="themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../lib/dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../lib/geometries.html">Geometries</a></li><li><a class="toctext" href="../lib/guides.html">Guides</a></li><li><a class="toctext" href="../lib/stats.html">Statistics</a></li><li><a class="toctext" href="../lib/coords.html">Coords</a></li><li><a class="toctext" href="../lib/scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Manual</li><li><a href="plotting.html">Plotting</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/f6e845712f8908b331f670520877634d74b540d4/docs/src/man/plotting.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Plotting-1" href="#Plotting-1">Plotting</a></h1><p>Most interaction with Gadfly is through the <code>plot</code> function. Plots are described by binding data to <strong>aesthetics</strong>, and specifying a number of plot elements including <a href="../lib/scales.html#Scales-1">Scales</a>, <a href="../lib/coords.html#Coordinates-1">Coordinates</a>, <a href="../lib/guides.html#Guides-1">Guides</a>, and <a href="../lib/geometries.html#Geometries-1">Geometries</a>. Aesthetics are a set of special named variables that are mapped to plot geometry. How this mapping occurs is defined by the plot elements.</p><p>This &quot;grammar of graphics&quot; approach tries to avoid arcane incantations and special cases, instead approaching the problem as if one were drawing a wiring diagram: data is connected to aesthetics, which act as input leads, and elements, each self-contained with well-defined inputs and outputs, are connected and combined to produce the desired result.</p><h2><a class="nav-anchor" id="Plotting-arrays-1" href="#Plotting-arrays-1">Plotting arrays</a></h2><p>If no plot elements are defined, point geometry is added by default. The point geometry takes as input the <code>x</code> and <code>y</code> aesthetics. So all that&#39;s needed to draw a scatterplot is to bind <code>x</code> and <code>y</code>.</p><div></div><div><pre><code class="language-julia"># E.g.
 plot(x=rand(10), y=rand(10))</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -41,35 +41,35 @@ plot(x=rand(10), y=rand(10))</code></pre><?xml version="1.0" encoding="UTF-8"?>
     </g>
     <g class="plotpanel" id="img-fdaa3389-9">
       <g class="geometry" id="img-fdaa3389-10">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-fdaa3389-11">
-          <g fill="#00BFFF" id="img-fdaa3389-12">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-fdaa3389-11">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-fdaa3389-12">
             <use xlink:href="#img-fdaa3389-13" x="23.44" y="39.85"/>
           </g>
-          <g fill="#00BFFF" id="img-fdaa3389-14">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-fdaa3389-14">
             <use xlink:href="#img-fdaa3389-15" x="124.13" y="8.78"/>
           </g>
-          <g fill="#00BFFF" id="img-fdaa3389-16">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-fdaa3389-16">
             <use xlink:href="#img-fdaa3389-17" x="48.51" y="29.24"/>
           </g>
-          <g fill="#00BFFF" id="img-fdaa3389-18">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-fdaa3389-18">
             <use xlink:href="#img-fdaa3389-19" x="114.16" y="47.56"/>
           </g>
-          <g fill="#00BFFF" id="img-fdaa3389-20">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-fdaa3389-20">
             <use xlink:href="#img-fdaa3389-21" x="60.59" y="26.65"/>
           </g>
-          <g fill="#00BFFF" id="img-fdaa3389-22">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-fdaa3389-22">
             <use xlink:href="#img-fdaa3389-23" x="62.34" y="27.08"/>
           </g>
-          <g fill="#00BFFF" id="img-fdaa3389-24">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-fdaa3389-24">
             <use xlink:href="#img-fdaa3389-25" x="51.18" y="56.12"/>
           </g>
-          <g fill="#00BFFF" id="img-fdaa3389-26">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-fdaa3389-26">
             <use xlink:href="#img-fdaa3389-27" x="61.25" y="28.38"/>
           </g>
-          <g fill="#00BFFF" id="img-fdaa3389-28">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-fdaa3389-28">
             <use xlink:href="#img-fdaa3389-29" x="115.87" y="7.96"/>
           </g>
-          <g fill="#00BFFF" id="img-fdaa3389-30">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-fdaa3389-30">
             <use xlink:href="#img-fdaa3389-31" x="83.07" y="29.06"/>
           </g>
         </g>
@@ -166,35 +166,35 @@ plot(x=rand(10), y=rand(10), Geom.point, Geom.line)</code></pre><?xml version="1
         <path fill="none" d="M21,26.39 L 22.38 23.18 50.67 44.85 50.79 26.56 62.64 12.63 63.67 49.92 81.43 14.13 100.17 29.47 102.72 18.17 132.37 37.95"/>
       </g>
       <g class="geometry" id="img-b4b55ba1-11">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-b4b55ba1-12">
-          <g fill="#00BFFF" id="img-b4b55ba1-13">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-b4b55ba1-12">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-b4b55ba1-13">
             <use xlink:href="#img-b4b55ba1-14" x="62.64" y="12.63"/>
           </g>
-          <g fill="#00BFFF" id="img-b4b55ba1-15">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-b4b55ba1-15">
             <use xlink:href="#img-b4b55ba1-16" x="102.72" y="18.17"/>
           </g>
-          <g fill="#00BFFF" id="img-b4b55ba1-17">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-b4b55ba1-17">
             <use xlink:href="#img-b4b55ba1-18" x="100.17" y="29.47"/>
           </g>
-          <g fill="#00BFFF" id="img-b4b55ba1-19">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-b4b55ba1-19">
             <use xlink:href="#img-b4b55ba1-20" x="81.43" y="14.13"/>
           </g>
-          <g fill="#00BFFF" id="img-b4b55ba1-21">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-b4b55ba1-21">
             <use xlink:href="#img-b4b55ba1-22" x="132.37" y="37.95"/>
           </g>
-          <g fill="#00BFFF" id="img-b4b55ba1-23">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-b4b55ba1-23">
             <use xlink:href="#img-b4b55ba1-24" x="50.67" y="44.85"/>
           </g>
-          <g fill="#00BFFF" id="img-b4b55ba1-25">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-b4b55ba1-25">
             <use xlink:href="#img-b4b55ba1-26" x="63.67" y="49.92"/>
           </g>
-          <g fill="#00BFFF" id="img-b4b55ba1-27">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-b4b55ba1-27">
             <use xlink:href="#img-b4b55ba1-28" x="21" y="26.39"/>
           </g>
-          <g fill="#00BFFF" id="img-b4b55ba1-29">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-b4b55ba1-29">
             <use xlink:href="#img-b4b55ba1-30" x="50.79" y="26.56"/>
           </g>
-          <g fill="#00BFFF" id="img-b4b55ba1-31">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-b4b55ba1-31">
             <use xlink:href="#img-b4b55ba1-32" x="22.38" y="23.18"/>
           </g>
         </g>
@@ -299,35 +299,35 @@ plot(x=1:10, y=2.^rand(10),
         <path fill="none" d="M33.37,46.05 L 44.44 39.43 55.51 38.95 66.58 44.14 77.65 44.23 88.72 38.39 99.79 39.54 110.86 36.94 121.93 35.22 133 32.46"/>
       </g>
       <g class="geometry" id="img-f9b29b0a-11">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-f9b29b0a-12">
-          <g fill="#00BFFF" id="img-f9b29b0a-13">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-f9b29b0a-12">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f9b29b0a-13">
             <use xlink:href="#img-f9b29b0a-14" x="133" y="37.55"/>
           </g>
-          <g fill="#00BFFF" id="img-f9b29b0a-15">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f9b29b0a-15">
             <use xlink:href="#img-f9b29b0a-16" x="121.93" y="18.67"/>
           </g>
-          <g fill="#00BFFF" id="img-f9b29b0a-17">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f9b29b0a-17">
             <use xlink:href="#img-f9b29b0a-18" x="110.86" y="58.45"/>
           </g>
-          <g fill="#00BFFF" id="img-f9b29b0a-19">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f9b29b0a-19">
             <use xlink:href="#img-f9b29b0a-20" x="99.79" y="29.09"/>
           </g>
-          <g fill="#00BFFF" id="img-f9b29b0a-21">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f9b29b0a-21">
             <use xlink:href="#img-f9b29b0a-22" x="88.72" y="35.56"/>
           </g>
-          <g fill="#00BFFF" id="img-f9b29b0a-23">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f9b29b0a-23">
             <use xlink:href="#img-f9b29b0a-24" x="77.65" y="52.85"/>
           </g>
-          <g fill="#00BFFF" id="img-f9b29b0a-25">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f9b29b0a-25">
             <use xlink:href="#img-f9b29b0a-26" x="66.58" y="36.78"/>
           </g>
-          <g fill="#00BFFF" id="img-f9b29b0a-27">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f9b29b0a-27">
             <use xlink:href="#img-f9b29b0a-28" x="55.51" y="49.43"/>
           </g>
-          <g fill="#00BFFF" id="img-f9b29b0a-29">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f9b29b0a-29">
             <use xlink:href="#img-f9b29b0a-30" x="44.44" y="21.36"/>
           </g>
-          <g fill="#00BFFF" id="img-f9b29b0a-31">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-f9b29b0a-31">
             <use xlink:href="#img-f9b29b0a-32" x="33.37" y="52.96"/>
           </g>
         </g>
@@ -431,455 +431,455 @@ plot(dataset(&quot;datasets&quot;, &quot;iris&quot;), x=&quot;SepalLength&quot;,
     </g>
     <g class="plotpanel" id="img-1b50e5e6-9">
       <g class="geometry" id="img-1b50e5e6-10">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" id="img-1b50e5e6-11">
-          <g fill="#00BFFF" id="img-1b50e5e6-12">
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-1b50e5e6-11">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-12">
             <use xlink:href="#img-1b50e5e6-13" x="74.01" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-14">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-14">
             <use xlink:href="#img-1b50e5e6-15" x="82.43" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-16">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-16">
             <use xlink:href="#img-1b50e5e6-17" x="90.86" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-18">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-18">
             <use xlink:href="#img-1b50e5e6-19" x="85.24" y="48.37"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-20">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-20">
             <use xlink:href="#img-1b50e5e6-21" x="96.48" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-22">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-22">
             <use xlink:href="#img-1b50e5e6-23" x="96.48" y="31.82"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-24">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-24">
             <use xlink:href="#img-1b50e5e6-25" x="99.29" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-26">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-26">
             <use xlink:href="#img-1b50e5e6-27" x="71.2" y="44.23"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-28">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-28">
             <use xlink:href="#img-1b50e5e6-29" x="102.1" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-30">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-30">
             <use xlink:href="#img-1b50e5e6-31" x="96.48" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-32">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-32">
             <use xlink:href="#img-1b50e5e6-33" x="102.1" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-34">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-34">
             <use xlink:href="#img-1b50e5e6-35" x="76.82" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-36">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-36">
             <use xlink:href="#img-1b50e5e6-37" x="88.05" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-38">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-38">
             <use xlink:href="#img-1b50e5e6-39" x="85.24" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-40">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-40">
             <use xlink:href="#img-1b50e5e6-41" x="124.57" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-42">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-42">
             <use xlink:href="#img-1b50e5e6-43" x="79.63" y="46.3"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-44">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-44">
             <use xlink:href="#img-1b50e5e6-45" x="85.24" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-46">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-46">
             <use xlink:href="#img-1b50e5e6-47" x="88.05" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-48">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-48">
             <use xlink:href="#img-1b50e5e6-49" x="130.19" y="21.48"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-50">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-50">
             <use xlink:href="#img-1b50e5e6-51" x="116.14" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-52">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-52">
             <use xlink:href="#img-1b50e5e6-53" x="110.53" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-54">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-54">
             <use xlink:href="#img-1b50e5e6-55" x="88.05" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-56">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-56">
             <use xlink:href="#img-1b50e5e6-57" x="79.63" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-58">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-58">
             <use xlink:href="#img-1b50e5e6-59" x="82.43" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-60">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-60">
             <use xlink:href="#img-1b50e5e6-61" x="110.53" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-62">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-62">
             <use xlink:href="#img-1b50e5e6-63" x="96.48" y="31.82"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-64">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-64">
             <use xlink:href="#img-1b50e5e6-65" x="85.24" y="44.23"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-66">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-66">
             <use xlink:href="#img-1b50e5e6-67" x="124.57" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-68">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-68">
             <use xlink:href="#img-1b50e5e6-69" x="65.58" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-70">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-70">
             <use xlink:href="#img-1b50e5e6-71" x="102.1" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-72">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-72">
             <use xlink:href="#img-1b50e5e6-73" x="76.82" y="54.58"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-74">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-74">
             <use xlink:href="#img-1b50e5e6-75" x="124.57" y="46.3"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-76">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-76">
             <use xlink:href="#img-1b50e5e6-77" x="124.57" y="21.48"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-78">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-78">
             <use xlink:href="#img-1b50e5e6-79" x="90.86" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-80">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-80">
             <use xlink:href="#img-1b50e5e6-81" x="88.05" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-82">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-82">
             <use xlink:href="#img-1b50e5e6-83" x="71.2" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-84">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-84">
             <use xlink:href="#img-1b50e5e6-85" x="68.39" y="48.37"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-86">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-86">
             <use xlink:href="#img-1b50e5e6-87" x="99.29" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-88">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-88">
             <use xlink:href="#img-1b50e5e6-89" x="88.05" y="44.23"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-90">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-90">
             <use xlink:href="#img-1b50e5e6-91" x="90.86" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-92">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-92">
             <use xlink:href="#img-1b50e5e6-93" x="110.53" y="25.62"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-94">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-94">
             <use xlink:href="#img-1b50e5e6-95" x="96.48" y="48.37"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-96">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-96">
             <use xlink:href="#img-1b50e5e6-97" x="113.34" y="40.1"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-98">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-98">
             <use xlink:href="#img-1b50e5e6-99" x="45.91" y="48.37"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-100">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-100">
             <use xlink:href="#img-1b50e5e6-101" x="121.76" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-102">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-102">
             <use xlink:href="#img-1b50e5e6-103" x="90.86" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-104">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-104">
             <use xlink:href="#img-1b50e5e6-105" x="85.24" y="40.1"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-106">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-106">
             <use xlink:href="#img-1b50e5e6-107" x="107.72" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-108">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-108">
             <use xlink:href="#img-1b50e5e6-109" x="71.2" y="44.23"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-110">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-110">
             <use xlink:href="#img-1b50e5e6-111" x="85.24" y="31.82"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-112">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-112">
             <use xlink:href="#img-1b50e5e6-113" x="68.39" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-114">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-114">
             <use xlink:href="#img-1b50e5e6-115" x="51.53" y="48.37"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-116">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-116">
             <use xlink:href="#img-1b50e5e6-117" x="82.43" y="40.1"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-118">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-118">
             <use xlink:href="#img-1b50e5e6-119" x="68.39" y="40.1"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-120">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-120">
             <use xlink:href="#img-1b50e5e6-121" x="68.39" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-122">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-122">
             <use xlink:href="#img-1b50e5e6-123" x="65.58" y="44.23"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-124">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-124">
             <use xlink:href="#img-1b50e5e6-125" x="48.72" y="52.51"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-126">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-126">
             <use xlink:href="#img-1b50e5e6-127" x="71.2" y="46.3"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-128">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-128">
             <use xlink:href="#img-1b50e5e6-129" x="79.63" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-130">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-130">
             <use xlink:href="#img-1b50e5e6-131" x="62.77" y="46.3"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-132">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-132">
             <use xlink:href="#img-1b50e5e6-133" x="62.77" y="48.37"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-134">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-134">
             <use xlink:href="#img-1b50e5e6-135" x="65.58" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-136">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-136">
             <use xlink:href="#img-1b50e5e6-137" x="85.24" y="52.51"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-138">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-138">
             <use xlink:href="#img-1b50e5e6-139" x="96.48" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-140">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-140">
             <use xlink:href="#img-1b50e5e6-141" x="76.82" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-142">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-142">
             <use xlink:href="#img-1b50e5e6-143" x="59.96" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-144">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-144">
             <use xlink:href="#img-1b50e5e6-145" x="76.82" y="44.23"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-146">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-146">
             <use xlink:href="#img-1b50e5e6-147" x="71.2" y="44.23"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-148">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-148">
             <use xlink:href="#img-1b50e5e6-149" x="62.77" y="50.44"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-150">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-150">
             <use xlink:href="#img-1b50e5e6-151" x="62.77" y="50.44"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-152">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-152">
             <use xlink:href="#img-1b50e5e6-153" x="68.39" y="46.3"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-154">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-154">
             <use xlink:href="#img-1b50e5e6-155" x="76.82" y="40.1"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-156">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-156">
             <use xlink:href="#img-1b50e5e6-157" x="96.48" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-158">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-158">
             <use xlink:href="#img-1b50e5e6-159" x="99.29" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-160">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-160">
             <use xlink:href="#img-1b50e5e6-161" x="93.67" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-162">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-162">
             <use xlink:href="#img-1b50e5e6-163" x="88.05" y="40.1"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-164">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-164">
             <use xlink:href="#img-1b50e5e6-165" x="79.63" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-166">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-166">
             <use xlink:href="#img-1b50e5e6-167" x="85.24" y="48.37"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-168">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-168">
             <use xlink:href="#img-1b50e5e6-169" x="79.63" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-170">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-170">
             <use xlink:href="#img-1b50e5e6-171" x="74.01" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-172">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-172">
             <use xlink:href="#img-1b50e5e6-173" x="65.58" y="48.37"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-174">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-174">
             <use xlink:href="#img-1b50e5e6-175" x="82.43" y="54.58"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-176">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-176">
             <use xlink:href="#img-1b50e5e6-177" x="71.2" y="44.23"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-178">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-178">
             <use xlink:href="#img-1b50e5e6-179" x="65.58" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-180">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-180">
             <use xlink:href="#img-1b50e5e6-181" x="96.48" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-182">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-182">
             <use xlink:href="#img-1b50e5e6-183" x="65.58" y="40.1"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-184">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-184">
             <use xlink:href="#img-1b50e5e6-185" x="79.63" y="40.1"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-186">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-186">
             <use xlink:href="#img-1b50e5e6-187" x="76.82" y="54.58"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-188">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-188">
             <use xlink:href="#img-1b50e5e6-189" x="74.01" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-190">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-190">
             <use xlink:href="#img-1b50e5e6-191" x="48.72" y="58.72"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-192">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-192">
             <use xlink:href="#img-1b50e5e6-193" x="54.34" y="44.23"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-194">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-194">
             <use xlink:href="#img-1b50e5e6-195" x="93.67" y="40.1"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-196">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-196">
             <use xlink:href="#img-1b50e5e6-197" x="45.91" y="50.44"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-198">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-198">
             <use xlink:href="#img-1b50e5e6-199" x="85.24" y="31.82"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-200">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-200">
             <use xlink:href="#img-1b50e5e6-201" x="68.39" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-202">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-202">
             <use xlink:href="#img-1b50e5e6-203" x="90.86" y="42.17"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-204">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-204">
             <use xlink:href="#img-1b50e5e6-205" x="62.77" y="52.51"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-206">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-206">
             <use xlink:href="#img-1b50e5e6-207" x="102.1" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-208">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-208">
             <use xlink:href="#img-1b50e5e6-209" x="88.05" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-210">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-210">
             <use xlink:href="#img-1b50e5e6-211" x="104.91" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-212">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-212">
             <use xlink:href="#img-1b50e5e6-213" x="48.72" y="31.82"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-214">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-214">
             <use xlink:href="#img-1b50e5e6-215" x="57.15" y="23.55"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-216">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-216">
             <use xlink:href="#img-1b50e5e6-217" x="37.49" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-218">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-218">
             <use xlink:href="#img-1b50e5e6-219" x="51.53" y="21.48"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-220">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-220">
             <use xlink:href="#img-1b50e5e6-221" x="43.11" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-222">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-222">
             <use xlink:href="#img-1b50e5e6-223" x="51.53" y="21.48"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-224">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-224">
             <use xlink:href="#img-1b50e5e6-225" x="48.72" y="27.69"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-226">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-226">
             <use xlink:href="#img-1b50e5e6-227" x="31.87" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-228">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-228">
             <use xlink:href="#img-1b50e5e6-229" x="34.68" y="52.51"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-230">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-230">
             <use xlink:href="#img-1b50e5e6-231" x="48.72" y="27.69"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-232">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-232">
             <use xlink:href="#img-1b50e5e6-233" x="51.53" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-234">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-234">
             <use xlink:href="#img-1b50e5e6-235" x="31.87" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-236">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-236">
             <use xlink:href="#img-1b50e5e6-237" x="45.91" y="25.62"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-238">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-238">
             <use xlink:href="#img-1b50e5e6-239" x="62.77" y="27.69"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-240">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-240">
             <use xlink:href="#img-1b50e5e6-241" x="48.72" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-242">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-242">
             <use xlink:href="#img-1b50e5e6-243" x="45.91" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-244">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-244">
             <use xlink:href="#img-1b50e5e6-245" x="62.77" y="13.21"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-246">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-246">
             <use xlink:href="#img-1b50e5e6-247" x="54.34" y="15.27"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-248">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-248">
             <use xlink:href="#img-1b50e5e6-249" x="59.96" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-250">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-250">
             <use xlink:href="#img-1b50e5e6-251" x="43.11" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-252">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-252">
             <use xlink:href="#img-1b50e5e6-253" x="40.3" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-254">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-254">
             <use xlink:href="#img-1b50e5e6-255" x="54.34" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-256">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-256">
             <use xlink:href="#img-1b50e5e6-257" x="54.34" y="27.69"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-258">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-258">
             <use xlink:href="#img-1b50e5e6-259" x="48.72" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-260">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-260">
             <use xlink:href="#img-1b50e5e6-261" x="48.72" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-262">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-262">
             <use xlink:href="#img-1b50e5e6-263" x="43.11" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-264">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-264">
             <use xlink:href="#img-1b50e5e6-265" x="51.53" y="31.82"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-266">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-266">
             <use xlink:href="#img-1b50e5e6-267" x="37.49" y="25.62"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-268">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-268">
             <use xlink:href="#img-1b50e5e6-269" x="51.53" y="23.55"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-270">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-270">
             <use xlink:href="#img-1b50e5e6-271" x="59.96" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-272">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-272">
             <use xlink:href="#img-1b50e5e6-273" x="51.53" y="21.48"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-274">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-274">
             <use xlink:href="#img-1b50e5e6-275" x="68.39" y="21.48"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-276">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-276">
             <use xlink:href="#img-1b50e5e6-277" x="51.53" y="27.69"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-278">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-278">
             <use xlink:href="#img-1b50e5e6-279" x="59.96" y="19.41"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-280">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-280">
             <use xlink:href="#img-1b50e5e6-281" x="68.39" y="9.07"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-282">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-282">
             <use xlink:href="#img-1b50e5e6-283" x="71.2" y="17.34"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-284">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-284">
             <use xlink:href="#img-1b50e5e6-285" x="29.06" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-286">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-286">
             <use xlink:href="#img-1b50e5e6-287" x="43.11" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-288">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-288">
             <use xlink:href="#img-1b50e5e6-289" x="43.11" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-290">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-290">
             <use xlink:href="#img-1b50e5e6-291" x="59.96" y="23.55"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-292">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-292">
             <use xlink:href="#img-1b50e5e6-293" x="45.91" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-294">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-294">
             <use xlink:href="#img-1b50e5e6-295" x="31.87" y="40.1"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-296">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-296">
             <use xlink:href="#img-1b50e5e6-297" x="48.72" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-298">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-298">
             <use xlink:href="#img-1b50e5e6-299" x="37.49" y="29.75"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-300">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-300">
             <use xlink:href="#img-1b50e5e6-301" x="59.96" y="19.41"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-302">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-302">
             <use xlink:href="#img-1b50e5e6-303" x="48.72" y="25.62"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-304">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-304">
             <use xlink:href="#img-1b50e5e6-305" x="37.49" y="35.96"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-306">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-306">
             <use xlink:href="#img-1b50e5e6-307" x="40.3" y="33.89"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-308">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-308">
             <use xlink:href="#img-1b50e5e6-309" x="45.91" y="38.03"/>
           </g>
-          <g fill="#00BFFF" id="img-1b50e5e6-310">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-1b50e5e6-310">
             <use xlink:href="#img-1b50e5e6-311" x="51.53" y="27.69"/>
           </g>
         </g>
