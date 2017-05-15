@@ -60,6 +60,7 @@ tests = [
     ("histogram2d",                           6inch, 3inch),
     ("rectbin",                               6inch, 3inch),
     ("density",                               6inch, 3inch),
+    ("density2d",                             6inch, 3inch),
     ("density_dark",                          6inch, 3inch),
     ("colorful_density",                      6inch, 3inch),
     ("explicit_colorkey_title",               6inch, 3inch),
