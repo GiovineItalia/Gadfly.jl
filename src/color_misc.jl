@@ -56,9 +56,7 @@ end
 
 # Then functions return functions suitable for ContinuousColorScales.
 function lab_gradient(cs::Color...)
-    if length(cs) < 2
-        error("Two or more colors are needed for gradients")
-    end
+    length(cs) < 2 && error("Two or more colors are needed for gradients")
 
     cs_lab = [convert(Lab, c) for c in cs]
     n = length(cs_lab)
@@ -70,7 +68,7 @@ function lab_gradient(cs::Color...)
     end
     f
 end
-
+lab_gradient(cs...) = lab_gradient(Gadfly.parse_colorant(cs)...)
 
 function lchabmix(c0_, c1_, r, power)
     c0 = convert(LCHab, c0_)

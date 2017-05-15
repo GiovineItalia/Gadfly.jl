@@ -100,8 +100,8 @@ srand(12345)
 ```@example 1
 
 dark_panel = Theme(
-    panel_fill=colorant"black",
-    default_color=colorant"orange"
+    panel_fill="black",
+    default_color="orange"
 )
 
 plot(x=rand(10), y=rand(10), dark_panel)
@@ -160,7 +160,7 @@ To register a theme by name, you can extend `Gadfly.get_theme(::Val{:theme_name}
 
 ```@example 1
 Gadfly.get_theme(::Val{:orange}) =
-    Theme(default_color=colorant"orange")
+    Theme(default_color="orange")
 
 Gadfly.with_theme(:orange) do
   plot(x=[1:10;], y=rand(10), Geom.bar)

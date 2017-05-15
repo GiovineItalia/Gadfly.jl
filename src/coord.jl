@@ -32,11 +32,9 @@ immutable Cartesian <: Gadfly.CoordinateElement
     aspect_ratio::@compat(Union{(@compat Void), Float64})
     raster::Bool
 
-    function Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
-            aspect_ratio, raster)
-        new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
-            isa(aspect_ratio, Real) ? Float64(aspect_ratio) : aspect_ratio, raster)
-    end
+    Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster) =
+            new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
+                isa(aspect_ratio, Real) ? Float64(aspect_ratio) : aspect_ratio, raster)
 end
 
 function Cartesian(

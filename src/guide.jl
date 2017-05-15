@@ -44,10 +44,9 @@ end
 
 const background = PanelBackground
 
-function render(guide::Gadfly.GuideElement, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics, dynamic::Bool=true)
-    render(guide, theme, aes)
-end
+render(guide::Gadfly.GuideElement, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics, dynamic::Bool=true) =
+        render(guide, theme, aes)
 
 function render(guide::PanelBackground, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
@@ -487,7 +486,7 @@ end
 ManualColorKey{C<:Color}(title, labels, colors::Vector{C}) =
         ManualColorKey{C}(title, labels, colors)
 ManualColorKey(title, labels, colors) =
-        ManualColorKey(title, labels, Gadfly.parse_colorant_vec(colors...))
+        ManualColorKey(title, labels, Gadfly.parse_colorant(colors))
 
 const manual_color_key = ManualColorKey
 

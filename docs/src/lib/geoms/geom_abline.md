@@ -30,5 +30,5 @@ Gadfly.set_default_plot_size(14cm, 10cm)
 ```@example 1
 plot(dataset("ggplot2", "mpg"), x="Cty", y="Hwy", label="Model", Geom.point, Geom.label,
     intercept=[0], slope=[1], Geom.abline(color="red", style=:dash),
-    Guide.annotation(compose(context(), text(6,4, "y=x", hleft, vtop), fill(colorant"red"))))
+    Guide.annotation(compose(context(), text(6,4, "y=x", hleft, vtop), fill("red"))))
 ```

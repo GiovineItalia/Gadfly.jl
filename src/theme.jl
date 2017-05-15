@@ -6,22 +6,16 @@ const label_font_desc = "'PT Sans Caption','Helvetica Neue','Helvetica',sans-ser
 # Choose highlight color by darkening the fill color
 default_discrete_highlight_color(fill_color::Color) = RGB(1, 1, 1)
 
-function default_discrete_highlight_color(fill_color::TransparentColor)
-    return RGBA{Float32}(
-        default_discrete_highlight_color(color(fill_color)),
-        fill_color.alpha)
-end
+default_discrete_highlight_color(fill_color::TransparentColor) = RGBA{Float32}(
+        default_discrete_highlight_color(color(fill_color)), fill_color.alpha)
 
 function default_continuous_highlight_color(fill_color::Color)
     c = convert(LCHab, fill_color)
     return LCHab(max(0, c.l - 40), c.c, c.h)
 end
 
-function default_continuous_highlight_color(fill_color::TransparentColor)
-    return RGBA{Float32}(
-        default_continuous_highlight_color(color(fill_color)),
-        fill_color.alpha)
-end
+default_continuous_highlight_color(fill_color::TransparentColor) = RGBA{Float32}(
+        default_continuous_highlight_color(color(fill_color)), fill_color.alpha)
 
 function default_stroke_color(fill_color::Color)
     fill_color = convert(LCHab, fill_color)
@@ -29,11 +23,8 @@ function default_stroke_color(fill_color::Color)
     LCHab(c.l - 15, c.c, c.h)
 end
 
-function default_stroke_color(fill_color::TransparentColor)
-    return RGBA{Float32}(
-        default_stroke_color(color(fill_color)),
-        fill_color.alpha)
-end
+default_stroke_color(fill_color::TransparentColor) = RGBA{Float32}(
+        default_stroke_color(color(fill_color)), fill_color.alpha)
 
 function default_lowlight_color(fill_color::Color)
     fill_color = convert(LCHab, fill_color)
@@ -41,11 +32,8 @@ function default_lowlight_color(fill_color::Color)
     LCHab(90, 20, c.h)
 end
 
-function default_lowlight_color(fill_color::TransparentColor)
-    return RGBA{Float32}(
-        default_lowlight_color(color(fill_color)),
-        fill_color.alpha)
-end
+default_lowlight_color(fill_color::TransparentColor) = RGBA{Float32}(
+        default_lowlight_color(color(fill_color)), fill_color.alpha)
 
 # Choose a middle color by darkening the fill color
 function default_middle_color(fill_color::Color)
@@ -53,12 +41,8 @@ function default_middle_color(fill_color::Color)
     LCHab(fill_color.l + 40, fill_color.c, fill_color.h)
 end
 
-function default_middle_color(fill_color::TransparentColor)
-    return RGBA{Float32}(
-        default_middle_color(color(fill_color)),
-        fill_color.alpha)
-end
-
+default_middle_color(fill_color::TransparentColor) = RGBA{Float32}(
+        default_middle_color(color(fill_color)), fill_color.alpha)
  
 get_stroke_vector(::@compat(Void)) = []
 get_stroke_vector(vec::AbstractVector) = vec
@@ -73,7 +57,6 @@ function get_stroke_vector(linestyle::Symbol)
   linestyle == :dashdotdot && return [dash, gap, dot, gap, dot, gap]
   error("unsupported linestyle: ", linestyle)
 end
-
 
 @varset Theme begin
     # If the color aesthetic is not mapped to anything, this is the color that
@@ -265,10 +248,7 @@ Go back to using the previous theme
 See also `push_theme` and `with_theme`
 """
 function pop_theme()
-    if length(theme_stack) == 1
-        error("There default theme cannot be removed")
-    end
-
+    length(theme_stack) == 1 && error("There default theme cannot be removed")
     pop!(theme_stack)
 end
 

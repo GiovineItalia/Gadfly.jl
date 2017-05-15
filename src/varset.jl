@@ -7,6 +7,7 @@ macro varset(name::Symbol, table)
 
     names = Any[]
     vars = Any[]
+    parsed_vars = Any[]
     parameters = Any[]
     parameters_expr = Expr(:parameters)
     inherit_parameters = Any[]
@@ -34,6 +35,11 @@ macro varset(name::Symbol, table)
         push!(vars, :($(var)::$(typ)))
         push!(parameters, Expr(:kw, var, default))
         push!(inherit_parameters, Expr(:kw, var, :(b.$var)))
+        if typ==:ColorOrNothing
+            push!(parsed_vars, :($(var)==nothing ? nothing : parse_colorant($(var))))
+        else
+            push!(parsed_vars, :($(var)))
+        end
     end
 
     parameters_expr = Expr(:parameters, parameters...)
@@ -45,7 +51,7 @@ macro varset(name::Symbol, table)
             $(vars...)
         end
 
-        $(name)($(parameters_expr)) = $(name)($(names...))
+        $(name)($(parameters_expr)) = $(name)($(parsed_vars...))
         $(name)($(inherit_parameters_expr), b::$name) = $(name)($(names...))
         copy(a::$(name)) = $(name)(a)
     end

@@ -1,15 +1,12 @@
-function check_arguments(arg, len)
-    if typeof(arg)<:Vector
-        if length(arg)>1
-            @assert length(arg) == len
-        else
-            arg = fill(arg[1], len)
-        end
+function check_arguments(arg::Vector, len)
+    if length(arg)>1
+        @assert length(arg) == len
     else
-        arg = fill(arg, len)
-    end 
+        arg = fill(arg[1], len)
+    end
     arg
 end
+check_arguments(arg, len) = fill(arg, len)
 
 
 immutable HLineGeometry <: Gadfly.GeometryElement
@@ -18,12 +15,8 @@ immutable HLineGeometry <: Gadfly.GeometryElement
     style::@compat(Union{Vector, Symbol, (@compat Void)})
     tag::Symbol
 
-    function HLineGeometry(color, size, style, tag)
-        new(color === nothing ? nothing :
-                typeof(color)<:Vector ? [parse(Colorant,x) for x in color] :
-                parse(Colorant, color),
-            size, style, tag)
-    end
+    HLineGeometry(color, size, style, tag) =
+            new(color === nothing ? nothing : Gadfly.parse_colorant(color), size, style, tag)
 end
 HLineGeometry(; color=nothing, size=nothing, style=nothing, tag=empty_tag) =
         HLineGeometry(color, size, style, tag)
@@ -64,12 +57,8 @@ immutable VLineGeometry <: Gadfly.GeometryElement
     style::@compat(Union{Vector, Symbol, (@compat Void)})
     tag::Symbol
 
-    function VLineGeometry(color, size, style, tag)
-        new(color === nothing ? nothing :
-                typeof(color)<:Vector ? [parse(Colorant,x) for x in color] :
-                parse(Colorant, color),
-            size, style, tag)
-    end
+    VLineGeometry(color, size, style, tag) =
+            new(color === nothing ? nothing : Gadfly.parse_colorant(color), size, style, tag)
 end
 VLineGeometry(; color=nothing, size=nothing, style=nothing, tag=empty_tag) =
         VLineGeometry(color, size, style, tag)
@@ -110,12 +99,8 @@ immutable ABLineGeometry <: Gadfly.GeometryElement
     style::@compat(Union{Vector, Symbol, (@compat Void)})
     tag::Symbol
 
-    function ABLineGeometry(color, size, style, tag)
-        new(color === nothing ? nothing :
-                typeof(color)<:Vector ? [parse(Colorant,x) for x in color] :
-                parse(Colorant, color),
-            size, style, tag)
-    end
+    ABLineGeometry(color, size, style, tag) =
+            new(color === nothing ? nothing : Gadfly.parse_colorant(color), size, style, tag)
 end
 ABLineGeometry(; color=nothing, size=nothing, style=nothing, tag::Symbol=empty_tag) =
         ABLineGeometry(color, size, style, tag)

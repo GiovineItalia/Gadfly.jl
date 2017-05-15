@@ -23,6 +23,5 @@ Gadfly.set_default_plot_size(14cm, 8cm)
 plot(sin, 0, 2pi,
      Guide.annotation(
        compose(context(), circle([pi/2, 3*pi/2], [1.0, -1.0], [2mm]), fill(nothing),
-       stroke(colorant"orange"))))
-
+       stroke("orange"))))
 ```

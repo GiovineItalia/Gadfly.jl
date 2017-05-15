@@ -13,7 +13,7 @@ using Showoff
 
 import Iterators
 import Iterators: distinct, drop, chain
-import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant, parse_colorant_vec
+import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant
 @compat import Base: +, -, /, *,
              copy, push!, start, next, done, show, getindex, cat,
              show, isfinite, display
