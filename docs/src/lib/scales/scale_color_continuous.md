@@ -59,9 +59,7 @@ Or we can use `lab_gradient` to construct a color gradient between 2 or more col
 
 ```@example 1
 plot(x=x, y=y, color=x+y, Geom.rectbin,
-     Scale.color_continuous(colormap=Scale.lab_gradient(colorant"green",
-                                                        colorant"white",
-                                                        colorant"red")))
+     Scale.color_continuous(colormap=Scale.lab_gradient("green", "white", "red")))
 ```
 
 We can also start the color scale somewhere other than the bottom of the data range using `minvalue`:
