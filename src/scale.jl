@@ -14,11 +14,9 @@ import Distributions: Distribution
 
 include("color_misc.jl")
 
-
 # Return true if var is categorical.
 iscategorical(scales::Dict{Symbol, Gadfly.ScaleElement}, var::Symbol) =
         haskey(scales, var) && isa(scales[var], DiscreteScale)
-
 
 # Apply some scales to data in the given order.
 #
@@ -30,9 +28,7 @@ iscategorical(scales::Dict{Symbol, Gadfly.ScaleElement}, var::Symbol) =
 # Returns:
 #   nothing
 #
-function apply_scales(scales,
-                      aess::Vector{Gadfly.Aesthetics},
-                      datas::Gadfly.Data...)
+function apply_scales(scales, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for scale in scales
         apply_scale(scale, aess, datas...)
     end
@@ -41,7 +37,6 @@ function apply_scales(scales,
         aes.titles = data.titles
     end
 end
-
 
 # Apply some scales to data in the given order.
 #
@@ -122,7 +117,6 @@ function ContinuousScale(vars, trans;
     ContinuousScale(vars, trans, minvalue, maxvalue, minticks, maxticks, labels, format, scalable)
 end
 
-
 function make_labeler(scale::ContinuousScale)
     if scale.labels != nothing
         xs -> [scale.labels(x) for x in xs]
@@ -132,7 +126,6 @@ function make_labeler(scale::ContinuousScale)
         xs -> scale.trans.label(xs, scale.format)
     end
 end
-
 
 const x_vars = [:x, :xmin, :xmax, :xintercept, :intercept, :xviewmin, :xviewmax, :xend]
 const y_vars = [:y, :ymin, :ymax, :yintercept, :slope, :middle, :upper_fence, :lower_fence,
@@ -146,7 +139,6 @@ function continuous_scale_partial(vars::Vector{Symbol}, trans::ContinuousScaleTr
                         maxticks=maxticks, scalable=scalable)
     end
 end
-
 
 # Commonly used scales.
 const x_continuous = continuous_scale_partial(x_vars, identity_transform)
@@ -261,13 +253,11 @@ end
 # Reorder the levels of a pooled data array
 function reorder_levels(da::PooledDataArray, order::AbstractVector)
     level_values = levels(da)
-    if length(order) != length(level_values)
-        error("Discrete scale order is not of the same length as the data's levels.")
-    end
+    length(order) != length(level_values) &&
+            error("Discrete scale order is not of the same length as the data's levels.")
     permute!(level_values, order)
     return PooledDataArray(da, level_values)
 end
-
 
 function discretize_make_pda(values::Vector, levels=nothing)
     if levels == nothing
@@ -277,7 +267,6 @@ function discretize_make_pda(values::Vector, levels=nothing)
     end
 end
 
-
 function discretize_make_pda(values::DataArray, levels=nothing)
     if levels == nothing
         return PooledDataArray(values)
@@ -285,7 +274,6 @@ function discretize_make_pda(values::DataArray, levels=nothing)
         return PooledDataArray(convert(DataArray{eltype(levels)}, values), levels)
     end
 end
-
 
 function discretize_make_pda(values::Range, levels=nothing)
     if levels == nothing
@@ -295,7 +283,6 @@ function discretize_make_pda(values::Range, levels=nothing)
     end
 end
 
-
 function discretize_make_pda(values::PooledDataArray, levels=nothing)
     if levels == nothing
         return values
@@ -304,9 +291,7 @@ function discretize_make_pda(values::PooledDataArray, levels=nothing)
     end
 end
 
-
-function discretize(values, levels=nothing, order=nothing,
-                    preserve_order=true)
+function discretize(values, levels=nothing, order=nothing, preserve_order=true)
     if levels == nothing
         if preserve_order
             levels = OrderedSet()
@@ -333,6 +318,7 @@ immutable DiscreteScaleTransform
     f::Function
 end
 
+
 immutable DiscreteScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
 
@@ -356,7 +342,6 @@ const discrete = DiscreteScale
 
 element_aesthetics(scale::DiscreteScale) = scale.vars
 
-
 x_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale(x_vars, labels=labels, levels=levels, order=order)
 
@@ -372,8 +357,7 @@ shape_discrete(; labels=nothing, levels=nothing, order=nothing) =
 size_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:size], labels=labels, levels=levels, order=order)
 
-function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics},
-                     datas::Gadfly.Data...)
+function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
             label_var = Symbol(var, "_label")
@@ -474,13 +458,11 @@ function color_discrete_hue(f=default_discrete_colors;
                             levels=nothing,
                             order=nothing,
                             preserve_order=true)
-
     DiscreteColorScale(
         default_discrete_colors,
         levels=levels,
         order=order,
-        preserve_order=preserve_order,
-    )
+        preserve_order=preserve_order)
 end
 
 @deprecate discrete_color_hue(; levels=nothing, order=nothing, preserve_order=true) color_discrete_hue(; levels=levels, order=order, preserve_order=preserve_order)
@@ -494,9 +476,7 @@ color_discrete_manual(colors::AbstractString...; levels=nothing, order=nothing) 
 
 function color_discrete_manual(colors::Color...; levels=nothing, order=nothing)
     cs = [colors...]
-    f = function(n)
-        distinguishable_colors(n, cs)
-    end
+    f = n -> distinguishable_colors(n, cs)
     DiscreteColorScale(f, levels=levels, order=order)
 end
 
@@ -669,7 +649,8 @@ function apply_scale_typed!(ds, field, scale::ContinuousColorScale,
                             cmin::Float64, cspan::Float64)
     for (i, d) in enumerate(field)
         if isconcrete(d)
-            ds[i] = convert(RGB{Float32}, scale.f((convert(Float64, scale.trans.f(d)) - cmin) / cspan))
+            ds[i] = convert(RGB{Float32},
+                        scale.f((convert(Float64, scale.trans.f(d)) - cmin) / cspan))
         else
             ds[i] = NA
         end
