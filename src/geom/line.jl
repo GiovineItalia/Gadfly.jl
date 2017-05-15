@@ -30,7 +30,7 @@ path() = LineGeometry(preserve_order=true)
 density(; bandwidth::Real=-Inf) =
     LineGeometry(Gadfly.Stat.density(bandwidth=bandwidth))
 
-density2d(; bandwidth::Real=-Inf, levels=15) =
+density2d(; bandwidth::Tuple{Real,Real}=(-Inf,-Inf), levels=15) =
     LineGeometry(Gadfly.Stat.density2d(bandwidth=bandwidth, levels=levels); preserve_order=true)
 
 smooth(; method::Symbol=:loess, smoothing::Float64=0.75) =
