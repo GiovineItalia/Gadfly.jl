@@ -1037,7 +1037,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.rectbin",
     "title": "Examples",
     "category": "section",
-    "text": "using DataFrames, RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"Zelig\", \"macro\"), x=\"Year\", y=\"Country\", color=\"GDP\", Geom.rectbin)theme1 = Theme(default_color=RGBA(0, 0.75, 1.0, 0.5))\nD = DataFrame(x=[0.5,1], y=[0.5,1], x1=[0,0.5], y1=[0,0.5], x2=[1,1.5], y2=[1,1.5])\npa = plot(D, x=:x, y=:y, Geom.rectbin, theme1)\npb = plot(D, xmin=:x1, ymin=:y1, xmax=:x2, ymax=:y2, Geom.rect, theme1)\nhstack(pa, pb)"
+    "text": "using DataFrames, RDatasets\nusing Gadfly, Colors\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"Zelig\", \"macro\"), x=\"Year\", y=\"Country\", color=\"GDP\", Geom.rectbin)theme1 = Theme(default_color=RGBA(0, 0.75, 1.0, 0.5))\nD = DataFrame(x=[0.5,1], y=[0.5,1], x1=[0,0.5], y1=[0,0.5], x2=[1,1.5], y2=[1,1.5])\npa = plot(D, x=:x, y=:y, Geom.rectbin, theme1)\npb = plot(D, xmin=:x1, ymin=:y1, xmax=:x2, ymax=:y2, Geom.rect, theme1)\nhstack(pa, pb)"
 },
 
 {
