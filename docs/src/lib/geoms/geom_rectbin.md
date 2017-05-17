@@ -30,7 +30,7 @@ positions.
 
 ```@setup 1
 using DataFrames, RDatasets
-using Gadfly
+using Gadfly, Colors
 Gadfly.set_default_plot_size(14cm, 8cm)
 ```
 
