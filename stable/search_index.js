@@ -245,7 +245,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Parameters",
     "category": "section",
-    "text": "These parameters can either be used with Theme or styledefault_color: When the color aesthetic is not bound, geometry uses this color for drawing. (Color)\ndefault_point_size: Size of points in the point and boxplot geometry.  (Measure)\nline_width: Width of lines in the line geometry. (Measure)\nline_style: Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)\npanel_fill: Background color used in the main plot panel. ( Color or Nothing)\npanel_opacity: Opacity of the plot background panel. (Float in [0.0, 1.0])\npanel_stroke: Border color of the main plot panel. (Color or Nothing)\nbackground_color: Background color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding: How much padding should be put around the plot as a whole (Measure)\ngrid_color: Color of grid lines. (Color or Nothing)\ngrid_color_focused: In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width: Width of grid lines. (Measure)\nminor_label_font: Font used for minor labels such as guide entries and labels. (String)\nminor_label_font_size: Font size used for minor labels. (Measure)\nminor_label_color: Color used for minor labels. (Color)\nmajor_label_font: Font used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size: Font size used for major labels. (Measure)\nmajor_label_color: Color used for major labels. (Color)\nkey_position: Where key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, or :none. Setting to :none disables the key. (Symbol)\nkey_title_font: Font used for titles of keys. (String)\nkey_title_font_size: Font size used for key titles. (Measure)\nkey_title_color: Color used for key titles. (Color)\nkey_label_font: Font used for key entry labels. (String)\nkey_label_font_size: Font size used for key entry labels. (Measure)\nkey_label_color: Color used for key entry labels. (Color)\nkey_max_columns: Maximum number of columns for key entry labels. (Int)\nbar_spacing: Spacing between bars in Geom.bar. (Measure)\nboxplot_spacing: Spacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length: Length of caps on error bars. (Measure)\nhighlight_width: Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color and continuous_highlight_color: Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color: Color used to draw background geometry, such as Geom.ribbon. This is a function that alters the fill color of the geometry. (Function)\nlowlight_opacity: Opacity of background geometry such as Geom.ribbon. (Float64)\nmiddle_color: Color altering function used to draw the midline in boxplots. (Function)\nmiddle_width: Width of the middle line in boxplots. (Measure)\nguide_title_position: One of :left, :center, :right indicating the  placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape: The shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nbar_highlight: Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\ndiscrete_color_scheme: A DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scheme: A ContinuousColorScale see Scale.color_continuous"
+    "text": "These parameters can either be used with Theme or styledefault_color: When the color aesthetic is not bound, geometry uses this color for drawing. (Color)\npoint_size: Size of points in the point, boxplot, and beeswarm geometries.  (Measure)\npoint_size_min: Minimum size of points in the point geometry.  (Measure)\npoint_size_max: Maximum size of points in the point geometry.  (Measure)\npoint_shapes: Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)\nline_width: Width of lines in the line geometry. (Measure)\nline_style: Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)\npanel_fill: Background color used in the main plot panel. ( Color or Nothing)\npanel_opacity: Opacity of the plot background panel. (Float in [0.0, 1.0])\npanel_stroke: Border color of the main plot panel. (Color or Nothing)\nbackground_color: Background color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding: How much padding should be put around the plot as a whole (Measure)\ngrid_color: Color of grid lines. (Color or Nothing)\ngrid_color_focused: In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width: Width of grid lines. (Measure)\nminor_label_font: Font used for minor labels such as guide entries and labels. (String)\nminor_label_font_size: Font size used for minor labels. (Measure)\nminor_label_color: Color used for minor labels. (Color)\nmajor_label_font: Font used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size: Font size used for major labels. (Measure)\nmajor_label_color: Color used for major labels. (Color)\nkey_position: Where key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, or :none. Setting to :none disables the key. (Symbol)\nkey_title_font: Font used for titles of keys. (String)\nkey_title_font_size: Font size used for key titles. (Measure)\nkey_title_color: Color used for key titles. (Color)\nkey_label_font: Font used for key entry labels. (String)\nkey_label_font_size: Font size used for key entry labels. (Measure)\nkey_label_color: Color used for key entry labels. (Color)\nkey_max_columns: Maximum number of columns for key entry labels. (Int)\nbar_spacing: Spacing between bars in Geom.bar. (Measure)\nboxplot_spacing: Spacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length: Length of caps on error bars. (Measure)\nhighlight_width: Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color and continuous_highlight_color: Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color: Color used to draw background geometry, such as Geom.ribbon. This is a function that alters the fill color of the geometry. (Function)\nlowlight_opacity: Opacity of background geometry such as Geom.ribbon. (Float64)\nmiddle_color: Color altering function used to draw the midline in boxplots. (Function)\nmiddle_width: Width of the middle line in boxplots. (Measure)\nguide_title_position: One of :left, :center, :right indicating the  placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape: The shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nbar_highlight: Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\ndiscrete_color_scheme: A DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scheme: A ContinuousColorScale see Scale.color_continuous"
 },
 
 {
@@ -253,7 +253,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(12345)\ndark_panel = Theme(\n    panel_fill=colorant\"black\",\n    default_color=colorant\"orange\"\n)\n\nplot(x=rand(10), y=rand(10), dark_panel)\nSetting the font to Computer Modern to create a LaTeX-like look, and choosing a font size:Gadfly.push_theme(dark_panel)\n\np = plot(x=rand(10), y=rand(10),\n     style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n           major_label_font_size=16pt,minor_label_font_size=14pt))\n\n# can plot more plots here...\n\nGadfly.pop_theme()\n\np # hideSame effect can be had with with_themeGadfly.with_theme(dark_panel) do\n\n  plot(x=rand(10), y=rand(10),\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt))\nend\nnothing # hideor\nGadfly.push_theme(dark_panel)\n\nGadfly.with_theme(\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt)) do\n\n  plot(x=rand(10), y=rand(10))\n\nend\n\nGadfly.pop_theme()\nnothing # hide"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(12345)\ndark_panel = Theme(\n    panel_fill=\"black\",\n    default_color=\"orange\"\n)\n\nplot(x=rand(10), y=rand(10), dark_panel)\nSetting the font to Computer Modern to create a LaTeX-like look, and choosing a font size:Gadfly.push_theme(dark_panel)\n\np = plot(x=rand(10), y=rand(10),\n     style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n           major_label_font_size=16pt,minor_label_font_size=14pt))\n\n# can plot more plots here...\n\nGadfly.pop_theme()\n\np # hideSame effect can be had with with_themeGadfly.with_theme(dark_panel) do\n\n  plot(x=rand(10), y=rand(10),\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt))\nend\nnothing # hideor\nGadfly.push_theme(dark_panel)\n\nGadfly.with_theme(\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt)) do\n\n  plot(x=rand(10), y=rand(10))\n\nend\n\nGadfly.pop_theme()\nnothing # hide"
 },
 
 {
@@ -261,7 +261,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Named themes",
     "category": "section",
-    "text": "To register a theme by name, you can extend Gadfly.get_theme(::Val{:theme_name}) to return a Theme object.Gadfly.get_theme(::Val{:orange}) =\n    Theme(default_color=colorant\"orange\")\n\nGadfly.with_theme(:orange) do\n  plot(x=[1:10;], y=rand(10), Geom.bar)\nendGadfly comes built in with 2 named themes: :default and :dark. You can also set a theme to use by default by setting the GADFLY_THEME environment variable before loading Gadfly."
+    "text": "To register a theme by name, you can extend Gadfly.get_theme(::Val{:theme_name}) to return a Theme object.Gadfly.get_theme(::Val{:orange}) =\n    Theme(default_color=\"orange\")\n\nGadfly.with_theme(:orange) do\n  plot(x=[1:10;], y=rand(10), Geom.bar)\nendGadfly comes built in with 2 named themes: :default and :dark. You can also set a theme to use by default by setting the GADFLY_THEME environment variable before loading Gadfly."
 },
 
 {
@@ -269,7 +269,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "The Dark theme",
     "category": "section",
-    "text": "This is one of the two themes the ship with Gadfly the other being :default. Here are a few plots that use the dark theme.Gadfly.push_theme(:dark)\nnothing # hideplot(dataset(\"datasets\", \"iris\"),\n    x=\"SepalLength\", y=\"SepalWidth\", color=\"Species\", Geom.point)using RDatasets\n\ngasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)using DataFrames\n\nxs = 0:0.1:20\n\ndf_cos = DataFrame(\n    x=xs,\n    y=cos(xs),\n    ymin=cos(xs) .- 0.5,\n    ymax=cos(xs) .+ 0.5,\n    f=\"cos\"\n)\n\ndf_sin = DataFrame(\n    x=xs,\n    y=sin(xs),\n    ymin=sin(xs) .- 0.5,\n    ymax=sin(xs) .+ 0.5,\n    f=\"sin\"\n)\n\ndf = vcat(df_cos, df_sin)\np = plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)using Distributions\n\nX = rand(MultivariateNormal([0.0, 0.0], [1.0 0.5; 0.5 1.0]), 10000);\nplot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))Gadfly.pop_theme()"
+    "text": "This is one of the two themes the ship with Gadfly the other being :default. Here are a few plots that use the dark theme.Gadfly.push_theme(:dark)\nnothing # hideplot(dataset(\"datasets\", \"iris\"),\n    x=\"SepalLength\", y=\"SepalWidth\", color=\"Species\", Geom.point)using RDatasets\n\ngasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)using DataFrames\n\nxs = 0:0.1:20\n\ndf_cos = DataFrame(\n    x=xs,\n    y=cos.(xs),\n    ymin=cos.(xs) .- 0.5,\n    ymax=cos.(xs) .+ 0.5,\n    f=\"cos\"\n)\n\ndf_sin = DataFrame(\n    x=xs,\n    y=sin.(xs),\n    ymin=sin.(xs) .- 0.5,\n    ymax=sin.(xs) .+ 0.5,\n    f=\"sin\"\n)\n\ndf = vcat(df_cos, df_sin)\np = plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)using Distributions\n\nX = rand(MultivariateNormal([0.0, 0.0], [1.0 0.5; 0.5 1.0]), 10000);\nplot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))Gadfly.pop_theme()"
 },
 
 {
@@ -397,7 +397,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.abline",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly, RDatasets, Compose\nGadfly.set_default_plot_size(14cm, 10cm)plot(dataset(\"ggplot2\", \"mpg\"), x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n    intercept=[0], slope=[1], Geom.abline(color=\"red\", style=:dash),\n    Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(colorant\"red\"))))"
+    "text": "using Gadfly, RDatasets, Compose\nGadfly.set_default_plot_size(14cm, 10cm)plot(dataset(\"ggplot2\", \"mpg\"), x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n    intercept=[0], slope=[1], Geom.abline(color=\"red\", style=:dash),\n    Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(\"red\"))))"
 },
 
 {
@@ -629,7 +629,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.density",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nusing Distributions\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", Geom.density)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\", Geom.density)# adjusting bandwidth manually\ndist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])\nxs = rand(dist, 10^5)\nplot(layer(x=xs, Geom.density, Theme(default_color=colorant\"orange\")), \nlayer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color=colorant\"green\")),\nlayer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color=colorant\"purple\")),\nGuide.manual_color_key(\"bandwidth\", [\"auto\", \"bw=0.0003\", \"bw=0.25\"], [\"orange\", \"green\", \"purple\"]))"
+    "text": "using RDatasets\nusing Gadfly\nusing Distributions\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", Geom.density)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\", Geom.density)# adjusting bandwidth manually\ndist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])\nxs = rand(dist, 10^5)\nplot(layer(x=xs, Geom.density, Theme(default_color=\"orange\")), \nlayer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color=\"green\")),\nlayer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color=\"purple\")),\nGuide.manual_color_key(\"bandwidth\", [\"auto\", \"bw=0.0003\", \"bw=0.25\"], [\"orange\", \"green\", \"purple\"]))"
 },
 
 {
@@ -957,7 +957,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.point",
     "title": "Aesthetics",
     "category": "section",
-    "text": "x: X-axis position.\ny: Y-axis position.\ncolor (optional): Point color (categorial or continuous)."
+    "text": "x: X-axis position.\ny: Y-axis position.\ncolor (optional): Point color.  Categorical data will choose maximally distinguishable colors from the LCHab color space.  Continuous data will map onto LCHab as well.  Colors can also be specified explicitly for each data point with a vector of colors of length(x).  A vector of length one specifies the color to use for all points.  Default is Theme.default_color.\nshape (optional): Point shape.  Categorical data will cycle through Theme.point_shapes.  Shapes can also be specified explicitly for each data point with a vector of shapes of length(x).  A vector of length one specifies the shape to use for all points.  Default is Theme.point_shapes[1].\nsize (optional): Point size.  Categorical data and vectors of Ints will interpolate between Theme.point_size_{min,max}.  A continuous vector of AbstractFloats or Measures of length(x) specifies the size of each data point explicitly.  A vector of length one specifies the size to use for all points.  Default is Theme.point_size."
 },
 
 {
@@ -965,7 +965,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.point",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\", Geom.point)# Binding categorial data to the color aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n     color=\"Species\", Geom.point)# Binding continuous data to the color aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n     color=\"PetalLength\", Geom.point)# Binding categorial data to x\nplot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.point)# Binding categorical data to the shape aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\", shape=\"Species\", color=\"Species\", Geom.point)<!– TODO: size aesthetic –>"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\", Geom.point)# Binding categorial data to the color aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n     color=\"Species\", Geom.point)# Binding continuous data to the color aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n     color=\"PetalLength\", Geom.point)# Binding categorial data to x\nplot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.point)# Binding categorical data to the shape aesthetic\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\",\n        shape=\"Species\", color=\"Species\", Geom.point)# Different colored layers\nusing Distributions\nrdata = rand(MvNormal([0,0.],[1 0;0 1.]),100)\nbdata = rand(MvNormal([1,0.],[1 0;0 1.]),100)\nplot(layer(x=rdata[1,:], y=rdata[2,:], color=[colorant\"red\"], Geom.point),\n     layer(x=bdata[1,:], y=bdata[2,:], color=[colorant\"blue\"], Geom.point))"
 },
 
 {
@@ -1013,7 +1013,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.rectbin",
     "title": "Geom.rectbin",
     "category": "page",
-    "text": "Author = \"Daniel C. Jones\""
+    "text": "Author = \"Daniel C. Jones, Mattriks\""
 },
 
 {
@@ -1029,7 +1029,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.rectbin",
     "title": "Aesthetics",
     "category": "section",
-    "text": "colorEitherx_min\nx_max\ny_min\ny_maxOrx\nyIn the former case, rectangles defined by x_min, x_max, y_min, y_max are drawn, in the latter, equal sizes squares are centered at x and y positions."
+    "text": "colorEither (for Geom.rect)x_min\nx_max\ny_min\ny_maxOr (for Geom.rectbin)x\nyFor Geom.rect, rectangles defined by x_min, x_max, y_min, y_max are drawn.   For Geom.rectbin, equal sizes squares are centered at x and y positions."
 },
 
 {
@@ -1037,7 +1037,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.rectbin",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"Zelig\", \"macro\"), x=\"Year\", y=\"Country\", color=\"GDP\", Geom.rectbin)"
+    "text": "using DataFrames, RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"Zelig\", \"macro\"), x=\"Year\", y=\"Country\", color=\"GDP\", Geom.rectbin)theme1 = Theme(default_color=RGBA(0, 0.75, 1.0, 0.5))\nD = DataFrame(x=[0.5,1], y=[0.5,1], x1=[0,0.5], y1=[0,0.5], x2=[1,1.5], y2=[1,1.5])\npa = plot(D, x=:x, y=:y, Geom.rectbin, theme1)\npb = plot(D, xmin=:x1, ymin=:y1, xmax=:x2, ymax=:y2, Geom.rect, theme1)\nhstack(pa, pb)"
 },
 
 {
@@ -1241,6 +1241,46 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/geoms/geom_vectorfield.html#",
+    "page": "Geom.vectorfield",
+    "title": "Geom.vectorfield",
+    "category": "page",
+    "text": "Author = \"Mattriks\""
+},
+
+{
+    "location": "lib/geoms/geom_vectorfield.html#Geom.vectorfield-1",
+    "page": "Geom.vectorfield",
+    "title": "Geom.vectorfield",
+    "category": "section",
+    "text": "Draw a vectorfield of a 2D function or a matrix. A vectorfield consists of gradient vectors calculated for particular points in a space."
+},
+
+{
+    "location": "lib/geoms/geom_vectorfield.html#Aesthetics-1",
+    "page": "Geom.vectorfield",
+    "title": "Aesthetics",
+    "category": "section",
+    "text": "z: 2D function or a matrix that represent \"heights\" relative to to the x-y plane.\nx (optional): Vector of X-coordinates.  If z is a matrix, then the length of x must be equal to the number of rows in z.\ny (optional): Vector of Y-coordinates.  If z is a matrix, then the length of y must be equal to the number of columns in z."
+},
+
+{
+    "location": "lib/geoms/geom_vectorfield.html#Arguments-1",
+    "page": "Geom.vectorfield",
+    "title": "Arguments",
+    "category": "section",
+    "text": "smoothness (optional): Sets the smoothness of the vectorfield, defaults to 1.0. Smaller values (→0) result in more local smoothing. Larger values (→∞) will approach a plane of best fit.\nscale (optional): Sets the size of vectors, defaults to 1.0. \nsamples (optional): Sets the size of the grid at which to estimate vectors, defaults to 20 (i.e. grid is 20 x 20). See the first example below."
+},
+
+{
+    "location": "lib/geoms/geom_vectorfield.html#Examples-1",
+    "page": "Geom.vectorfield",
+    "title": "Examples",
+    "category": "section",
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)\nplot(coord, z=(x,y)->x*exp(-(x^2+y^2)), \n        xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], \n# or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     \n        Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),\n        Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),\n        Scale.y_continuous(minvalue=-2.0, maxvalue=2.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"), Guide.colorkey(\"z\")\n    )volcano = Matrix{Float64}(dataset(\"datasets\", \"volcano\"))\nvolc = volcano[1:4:end, 1:4:end] \ncoord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)\nplot(coord, z=volc, x=1.0:22, y=1.0:16,\n        Geom.vectorfield(scale=0.05), Geom.contour(levels=7),\n        Scale.x_continuous(minvalue=1.0, maxvalue=22.0),\n        Scale.y_continuous(minvalue=1.0, maxvalue=16.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"),\n        Theme(key_position=:none)\n    )"
+},
+
+{
     "location": "lib/geoms/geom_violin.html#",
     "page": "Geom.violin",
     "title": "Geom.violin",
@@ -1365,7 +1405,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.annotation",
     "title": "Examples",
     "category": "section",
-    "text": "using Compose\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(sin, 0, 2pi,\n     Guide.annotation(\n       compose(context(), circle([pi/2, 3*pi/2], [1.0, -1.0], [2mm]), fill(nothing),\n       stroke(colorant\"orange\"))))\n"
+    "text": "using Compose\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(sin, 0, 2pi,\n     Guide.annotation(\n       compose(context(), circle([pi/2, 3*pi/2], [1.0, -1.0], [2mm]), fill(nothing),\n       stroke(\"orange\"))))"
 },
 
 {
@@ -1429,7 +1469,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.manual_color_key",
     "title": "Examples",
     "category": "section",
-    "text": "Combine two layers into a plot, and set a custom color of one layer.  Add a manual color key with labels that match the two layers.  (Note that \"deepskyblue\" is the default color for Geom.line and others.)using DataFrames\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))\nline = DataFrame(val=rand(1:10,11), index = collect(0:10))\npointLayer = layer(points, x=\"index\", y=\"val\", Geom.point,Theme(default_color=colorant\"green\"))\nlineLayer = layer(line, x=\"index\", y=\"val\", Geom.line)\nplot(pointLayer, lineLayer, Guide.manual_color_key(\"Legend\", [\"Points\", \"Line\"], [\"green\", \"deepskyblue\"]))"
+    "text": "Combine two layers into a plot, and set a custom color of one layer.  Add a manual color key with labels that match the two layers.  (Note that \"deepskyblue\" is the default color for Geom.line and others.)using DataFrames\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))\nline = DataFrame(val=rand(1:10,11), index = collect(0:10))\npointLayer = layer(points, x=\"index\", y=\"val\", Geom.point,Theme(default_color=\"green\"))\nlineLayer = layer(line, x=\"index\", y=\"val\", Geom.line)\nplot(pointLayer, lineLayer, Guide.manual_color_key(\"Legend\", [\"Points\", \"Line\"], [\"green\", \"deepskyblue\"]))"
 },
 
 {
@@ -2069,7 +2109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_continuous",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly\nsrand(1234)# The data are all between 0 and 1, but the color scale goes from -1 to 1.\n# For example, you might do this to force a consistent color scale between plots.\nplot(x=rand(12), y=rand(12), color=rand(12),\n     Scale.color_continuous(minvalue=-1, maxvalue=1))Define a custom color scale for a grid:using Colors\nx = repeat(collect(1:10), inner=[10])\ny = repeat(collect(1:10), outer=[10])\nplot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=p->RGB(0,p,0)))Or we can use lab_gradient to construct a color gradient between 2 or more colors:plot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=Scale.lab_gradient(colorant\"green\",\n                                                        colorant\"white\",\n                                                        colorant\"red\")))We can also start the color scale somewhere other than the bottom of the data range using minvalue:plot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=p->RGB(0,p,0), minvalue=-20))"
+    "text": "using Gadfly\nsrand(1234)# The data are all between 0 and 1, but the color scale goes from -1 to 1.\n# For example, you might do this to force a consistent color scale between plots.\nplot(x=rand(12), y=rand(12), color=rand(12),\n     Scale.color_continuous(minvalue=-1, maxvalue=1))Define a custom color scale for a grid:using Colors\nx = repeat(collect(1:10), inner=[10])\ny = repeat(collect(1:10), outer=[10])\nplot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=p->RGB(0,p,0)))Or we can use lab_gradient to construct a color gradient between 2 or more colors:plot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=Scale.lab_gradient(\"green\", \"white\", \"red\")))We can also start the color scale somewhere other than the bottom of the data range using minvalue:plot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=p->RGB(0,p,0), minvalue=-20))"
 },
 
 {
@@ -2133,7 +2173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_discrete_manual",
     "title": "Arguments",
     "category": "section",
-    "text": "colors...: an iterable collection of things that can be converted to colors with Colors.color (such as strings naming colors, although a better choice is to use colorant\"colorname\")\nlevels (optional): Explicitly set levels used by the scale. Order is respected.\norder (optional): A vector of integers giving a permutation of the levels default order."
+    "text": "colors...: an iterable collection of things that can be converted to colors with Colors.color (e.g. \"tomato\", RGB(1.0,0.388,0.278), colorant\"#FF6347\")\nlevels (optional): Explicitly set levels used by the scale. Order is respected.\norder (optional): A vector of integers giving a permutation of the levels default order."
 },
 
 {
@@ -2149,7 +2189,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_discrete_manual",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly\nsrand(1234)plot(x=rand(12), y=rand(12), color=repeat([\"a\",\"b\",\"c\"], outer=[4]),\n     Scale.color_discrete_manual(colorant\"red\",colorant\"purple\",colorant\"green\"))"
+    "text": "using Gadfly\nsrand(1234)plot(x=rand(12), y=rand(12), color=repeat([\"a\",\"b\",\"c\"], outer=[4]),\n     Scale.color_discrete_manual(\"red\",\"purple\",\"green\"))"
 },
 
 {

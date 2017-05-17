@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.histogram2d · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_histogram2d.html">Geom.histogram2d</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_histogram2d.html">Geom.histogram2d</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/16018ad198d50d5a951faa46ad5e444a80df5a49/docs/src/lib/geoms/geom_histogram2d.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.histogram2d-1" href="#Geom.histogram2d-1">Geom.histogram2d</a></h1><p>Bin data in rectangles and indicate density with color. As in heatmaps, etc.</p><p>An alias for <a href="geom_rectbin.html#Geom.rectbin-1">Geom.rectbin</a> with <a href="@ref">Stat.histogram2d</a>.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>x</code>: Observations to be binned and plotted on the x coordinate.</p></li><li><p><code>y</code>: Observations to binned and plotted on the y coordinate.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>xbincount</code>: Fix the number of bins in the x coordinate.</p></li><li><p><code>xminbincount</code>: Set the minimum x coordinate bincount when automatically determining the number of bins.</p></li><li><p><code>xmaxbincount</code>: Set the maximum x coordinate bincount when automatically determining the number of bins.</p></li><li><p><code>ybincount</code>: Fix the number of bins in the y coordinate.</p></li><li><p><code>yminbincount</code>: Set the minimum y coordinate bincount when automatically determining the number of bins.</p></li><li><p><code>ymaxbincount</code>: Set the maximum y coordinate bincount when automatically determining the number of bin.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(dataset(&quot;car&quot;, &quot;Womenlf&quot;), x=&quot;HIncome&quot;, y=&quot;Region&quot;, Geom.histogram2d)</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.histogram2d · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_histogram2d.html">Geom.histogram2d</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_histogram2d.html">Geom.histogram2d</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/05f4df1d6ac01eacdab415ea20e874be3623f6a4/docs/src/lib/geoms/geom_histogram2d.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Geom.histogram2d-1" href="#Geom.histogram2d-1">Geom.histogram2d</a></h1><p>Bin data in rectangles and indicate density with color. As in heatmaps, etc.</p><p>An alias for <a href="geom_rectbin.html#Geom.rectbin-1">Geom.rectbin</a> with <a href="@ref">Stat.histogram2d</a>.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>x</code>: Observations to be binned and plotted on the x coordinate.</p></li><li><p><code>y</code>: Observations to binned and plotted on the y coordinate.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>xbincount</code>: Fix the number of bins in the x coordinate.</p></li><li><p><code>xminbincount</code>: Set the minimum x coordinate bincount when automatically determining the number of bins.</p></li><li><p><code>xmaxbincount</code>: Set the maximum x coordinate bincount when automatically determining the number of bins.</p></li><li><p><code>ybincount</code>: Fix the number of bins in the y coordinate.</p></li><li><p><code>yminbincount</code>: Set the minimum y coordinate bincount when automatically determining the number of bins.</p></li><li><p><code>ymaxbincount</code>: Set the maximum y coordinate bincount when automatically determining the number of bin.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(dataset(&quot;car&quot;, &quot;Womenlf&quot;), x=&quot;HIncome&quot;, y=&quot;Region&quot;, Geom.histogram2d)</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns:gadfly="http://www.gadflyjl.org/ns"
@@ -24,8 +24,8 @@
   </g>
   <g class="guide colorkey" id="img-0b3d7924-4">
     <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-0b3d7924-5">
-      <text x="129.49" y="45.48" dy="0.35em">5</text>
       <text x="129.49" y="52.16" dy="0.35em">1</text>
+      <text x="129.49" y="45.48" dy="0.35em">5</text>
       <text x="129.49" y="28.78" dy="0.35em">15</text>
       <text x="129.49" y="37.13" dy="0.35em">10</text>
     </g>
@@ -71,8 +71,8 @@
       <rect x="127.17" y="29.37" width="1.31" height="0.58" fill="#8B3844"/>
       <rect x="127.17" y="28.78" width="1.31" height="0.58" fill="#7E273E"/>
       <g stroke="#FFFFFF" stroke-width="0.2" id="img-0b3d7924-7">
-        <path fill="none" d="M127.17,45.48 L 128.49 45.48"/>
         <path fill="none" d="M127.17,52.16 L 128.49 52.16"/>
+        <path fill="none" d="M127.17,45.48 L 128.49 45.48"/>
         <path fill="none" d="M127.17,28.78 L 128.49 28.78"/>
         <path fill="none" d="M127.17,37.13 L 128.49 37.13"/>
       </g>
@@ -87,12 +87,10 @@
       <rect x="25.49" y="5" width="99.68" height="55.72"/>
     </g>
     <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-0b3d7924-12">
-      <path fill="none" d="M25.49,56.07 L 125.17 56.07"/>
-      <path fill="none" d="M25.49,46.79 L 125.17 46.79"/>
-      <path fill="none" d="M25.49,37.5 L 125.17 37.5"/>
-      <path fill="none" d="M25.49,28.21 L 125.17 28.21"/>
-      <path fill="none" d="M25.49,18.93 L 125.17 18.93"/>
-      <path fill="none" d="M25.49,9.64 L 125.17 9.64"/>
+      <path fill="none" d="M25.49,49.57 L 125.17 49.57"/>
+      <path fill="none" d="M25.49,38.43 L 125.17 38.43"/>
+      <path fill="none" d="M25.49,27.29 L 125.17 27.29"/>
+      <path fill="none" d="M25.49,16.14 L 125.17 16.14"/>
     </g>
     <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-0b3d7924-13">
       <path fill="none" d="M27.49,5 L 27.49 60.72"/>
@@ -104,97 +102,95 @@
     </g>
     <g class="plotpanel" id="img-0b3d7924-14">
       <g shape-rendering="crispEdges" class="geometry" stroke="#000000" stroke-opacity="0.000" id="img-0b3d7924-15">
-        <rect x="33.15" y="46.74" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="35.02" y="46.74" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="36.89" y="46.74" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="40.63" y="46.74" width="1.92" height="9.34" fill="#9FD0CB"/>
-        <rect x="44.37" y="46.74" width="1.92" height="9.34" fill="#7E273E"/>
-        <rect x="46.25" y="46.74" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="48.12" y="46.74" width="1.92" height="9.34" fill="#3696AD"/>
-        <rect x="51.86" y="46.74" width="1.92" height="9.34" fill="#B77D68"/>
-        <rect x="53.73" y="46.74" width="1.92" height="9.34" fill="#9FD0CB"/>
-        <rect x="55.6" y="46.74" width="1.92" height="9.34" fill="#7E273E"/>
-        <rect x="59.34" y="46.74" width="1.92" height="9.34" fill="#C5C8B6"/>
-        <rect x="61.21" y="46.74" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="63.09" y="46.74" width="1.92" height="9.34" fill="#D8C4A7"/>
-        <rect x="64.96" y="46.74" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="68.7" y="46.74" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="70.57" y="46.74" width="1.92" height="9.34" fill="#BECAB9"/>
-        <rect x="72.44" y="46.74" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="76.18" y="46.74" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="78.05" y="46.74" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="79.93" y="46.74" width="1.92" height="9.34" fill="#9FD0CB"/>
-        <rect x="83.67" y="46.74" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="93.02" y="46.74" width="1.92" height="9.34" fill="#3696AD"/>
-        <rect x="98.64" y="46.74" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="111.73" y="46.74" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="29.41" y="37.45" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="36.89" y="37.45" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="40.63" y="37.45" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="44.37" y="37.45" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="46.25" y="37.45" width="1.92" height="9.34" fill="#3696AD"/>
-        <rect x="48.12" y="37.45" width="1.92" height="9.34" fill="#3696AD"/>
-        <rect x="51.86" y="37.45" width="1.92" height="9.34" fill="#BECAB9"/>
-        <rect x="53.73" y="37.45" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="55.6" y="37.45" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="59.34" y="37.45" width="1.92" height="9.34" fill="#6FB6BC"/>
-        <rect x="63.09" y="37.45" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="70.57" y="37.45" width="1.92" height="9.34" fill="#3696AD"/>
-        <rect x="29.41" y="28.16" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="33.15" y="28.16" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="36.89" y="28.16" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="38.76" y="28.16" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="40.63" y="28.16" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="44.37" y="28.16" width="1.92" height="9.34" fill="#B1CDC3"/>
-        <rect x="48.12" y="28.16" width="1.92" height="9.34" fill="#3696AD"/>
-        <rect x="55.6" y="28.16" width="1.92" height="9.34" fill="#3696AD"/>
-        <rect x="57.47" y="28.16" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="59.34" y="28.16" width="1.92" height="9.34" fill="#6FB6BC"/>
-        <rect x="63.09" y="28.16" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="70.57" y="28.16" width="1.92" height="9.34" fill="#6FB6BC"/>
-        <rect x="111.73" y="28.16" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="36.89" y="18.88" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="38.76" y="18.88" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="40.63" y="18.88" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="42.5" y="18.88" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="44.37" y="18.88" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="48.12" y="18.88" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="49.99" y="18.88" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="51.86" y="18.88" width="1.92" height="9.34" fill="#B1CDC3"/>
-        <rect x="55.6" y="18.88" width="1.92" height="9.34" fill="#9FD0CB"/>
-        <rect x="57.47" y="18.88" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="63.09" y="18.88" width="1.92" height="9.34" fill="#6FB6BC"/>
-        <rect x="70.57" y="18.88" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="78.05" y="18.88" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="79.93" y="18.88" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="31.28" y="9.59" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="33.15" y="9.59" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="36.89" y="9.59" width="1.92" height="9.34" fill="#B1CDC3"/>
-        <rect x="38.76" y="9.59" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="40.63" y="9.59" width="1.92" height="9.34" fill="#3696AD"/>
-        <rect x="44.37" y="9.59" width="1.92" height="9.34" fill="#3696AD"/>
-        <rect x="46.25" y="9.59" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="48.12" y="9.59" width="1.92" height="9.34" fill="#CCC7B1"/>
-        <rect x="51.86" y="9.59" width="1.92" height="9.34" fill="#BECAB9"/>
-        <rect x="55.6" y="9.59" width="1.92" height="9.34" fill="#CAA386"/>
-        <rect x="57.47" y="9.59" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="59.34" y="9.59" width="1.92" height="9.34" fill="#00739B"/>
-        <rect x="63.09" y="9.59" width="1.92" height="9.34" fill="#9FD0CB"/>
-        <rect x="64.96" y="9.59" width="1.92" height="9.34" fill="#004D84"/>
-        <rect x="70.57" y="9.59" width="1.92" height="9.34" fill="#B1CDC3"/>
-        <rect x="79.93" y="9.59" width="1.92" height="9.34" fill="#004D84"/>
+        <rect x="33.15" y="49.52" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="35.02" y="49.52" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="36.89" y="49.52" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="40.63" y="49.52" width="1.92" height="11.19" fill="#9FD0CB"/>
+        <rect x="44.37" y="49.52" width="1.92" height="11.19" fill="#7E273E"/>
+        <rect x="46.25" y="49.52" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="48.12" y="49.52" width="1.92" height="11.19" fill="#3696AD"/>
+        <rect x="51.86" y="49.52" width="1.92" height="11.19" fill="#B77D68"/>
+        <rect x="53.73" y="49.52" width="1.92" height="11.19" fill="#9FD0CB"/>
+        <rect x="55.6" y="49.52" width="1.92" height="11.19" fill="#7E273E"/>
+        <rect x="59.34" y="49.52" width="1.92" height="11.19" fill="#C5C8B6"/>
+        <rect x="61.21" y="49.52" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="63.09" y="49.52" width="1.92" height="11.19" fill="#D8C4A7"/>
+        <rect x="64.96" y="49.52" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="68.7" y="49.52" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="70.57" y="49.52" width="1.92" height="11.19" fill="#BECAB9"/>
+        <rect x="72.44" y="49.52" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="76.18" y="49.52" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="78.05" y="49.52" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="79.93" y="49.52" width="1.92" height="11.19" fill="#9FD0CB"/>
+        <rect x="83.67" y="49.52" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="93.02" y="49.52" width="1.92" height="11.19" fill="#3696AD"/>
+        <rect x="98.64" y="49.52" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="111.73" y="49.52" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="29.41" y="38.38" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="36.89" y="38.38" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="40.63" y="38.38" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="44.37" y="38.38" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="46.25" y="38.38" width="1.92" height="11.19" fill="#3696AD"/>
+        <rect x="48.12" y="38.38" width="1.92" height="11.19" fill="#3696AD"/>
+        <rect x="51.86" y="38.38" width="1.92" height="11.19" fill="#BECAB9"/>
+        <rect x="53.73" y="38.38" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="55.6" y="38.38" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="59.34" y="38.38" width="1.92" height="11.19" fill="#6FB6BC"/>
+        <rect x="63.09" y="38.38" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="70.57" y="38.38" width="1.92" height="11.19" fill="#3696AD"/>
+        <rect x="29.41" y="27.24" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="33.15" y="27.24" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="36.89" y="27.24" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="38.76" y="27.24" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="40.63" y="27.24" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="44.37" y="27.24" width="1.92" height="11.19" fill="#B1CDC3"/>
+        <rect x="48.12" y="27.24" width="1.92" height="11.19" fill="#3696AD"/>
+        <rect x="55.6" y="27.24" width="1.92" height="11.19" fill="#3696AD"/>
+        <rect x="57.47" y="27.24" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="59.34" y="27.24" width="1.92" height="11.19" fill="#6FB6BC"/>
+        <rect x="63.09" y="27.24" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="70.57" y="27.24" width="1.92" height="11.19" fill="#6FB6BC"/>
+        <rect x="111.73" y="27.24" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="36.89" y="16.09" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="38.76" y="16.09" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="40.63" y="16.09" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="42.5" y="16.09" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="44.37" y="16.09" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="48.12" y="16.09" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="49.99" y="16.09" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="51.86" y="16.09" width="1.92" height="11.19" fill="#B1CDC3"/>
+        <rect x="55.6" y="16.09" width="1.92" height="11.19" fill="#9FD0CB"/>
+        <rect x="57.47" y="16.09" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="63.09" y="16.09" width="1.92" height="11.19" fill="#6FB6BC"/>
+        <rect x="70.57" y="16.09" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="78.05" y="16.09" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="79.93" y="16.09" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="31.28" y="4.95" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="33.15" y="4.95" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="36.89" y="4.95" width="1.92" height="11.19" fill="#B1CDC3"/>
+        <rect x="38.76" y="4.95" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="40.63" y="4.95" width="1.92" height="11.19" fill="#3696AD"/>
+        <rect x="44.37" y="4.95" width="1.92" height="11.19" fill="#3696AD"/>
+        <rect x="46.25" y="4.95" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="48.12" y="4.95" width="1.92" height="11.19" fill="#CCC7B1"/>
+        <rect x="51.86" y="4.95" width="1.92" height="11.19" fill="#BECAB9"/>
+        <rect x="55.6" y="4.95" width="1.92" height="11.19" fill="#CAA386"/>
+        <rect x="57.47" y="4.95" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="59.34" y="4.95" width="1.92" height="11.19" fill="#00739B"/>
+        <rect x="63.09" y="4.95" width="1.92" height="11.19" fill="#9FD0CB"/>
+        <rect x="64.96" y="4.95" width="1.92" height="11.19" fill="#004D84"/>
+        <rect x="70.57" y="4.95" width="1.92" height="11.19" fill="#B1CDC3"/>
+        <rect x="79.93" y="4.95" width="1.92" height="11.19" fill="#004D84"/>
       </g>
     </g>
   </g>
 </g>
   <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-0b3d7924-16">
-    <text x="24.49" y="60.72" text-anchor="end" dy="0.35em"></text>
-    <text x="24.49" y="51.43" text-anchor="end" dy="0.35em">Ontario</text>
-    <text x="24.49" y="42.14" text-anchor="end" dy="0.35em">Prairie</text>
+    <text x="24.49" y="55.14" text-anchor="end" dy="0.35em">Ontario</text>
+    <text x="24.49" y="44" text-anchor="end" dy="0.35em">Prairie</text>
     <text x="24.49" y="32.86" text-anchor="end" dy="0.35em">Atlantic</text>
-    <text x="24.49" y="23.57" text-anchor="end" dy="0.35em">BC</text>
-    <text x="24.49" y="14.29" text-anchor="end" dy="0.35em">Quebec</text>
-    <text x="24.49" y="5" text-anchor="end" dy="0.35em"></text>
+    <text x="24.49" y="21.71" text-anchor="end" dy="0.35em">BC</text>
+    <text x="24.49" y="10.57" text-anchor="end" dy="0.35em">Quebec</text>
   </g>
   <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-0b3d7924-17">
     <text x="8.81" y="30.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 32.86)">Region</text>
@@ -232,11 +228,11 @@
   </g>
   <g class="guide colorkey" id="img-871775fa-4">
     <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-871775fa-5">
-      <text x="129.49" y="46.63" dy="0.35em">1.5</text>
       <text x="129.49" y="53.46" dy="0.35em">1.0</text>
-      <text x="129.49" y="39.8" dy="0.35em">2.0</text>
-      <text x="129.49" y="26.14" dy="0.35em">3.0</text>
       <text x="129.49" y="32.97" dy="0.35em">2.5</text>
+      <text x="129.49" y="46.63" dy="0.35em">1.5</text>
+      <text x="129.49" y="26.14" dy="0.35em">3.0</text>
+      <text x="129.49" y="39.8" dy="0.35em">2.0</text>
     </g>
     <g shape-rendering="crispEdges" stroke="#000000" stroke-opacity="0.000" id="img-871775fa-6">
       <rect x="127.17" y="52.77" width="1.31" height="0.68" fill="#004D84"/>
@@ -280,11 +276,11 @@
       <rect x="127.17" y="26.83" width="1.31" height="0.68" fill="#8B3844"/>
       <rect x="127.17" y="26.14" width="1.31" height="0.68" fill="#7E273E"/>
       <g stroke="#FFFFFF" stroke-width="0.2" id="img-871775fa-7">
-        <path fill="none" d="M127.17,46.63 L 128.49 46.63"/>
         <path fill="none" d="M127.17,53.46 L 128.49 53.46"/>
-        <path fill="none" d="M127.17,39.8 L 128.49 39.8"/>
-        <path fill="none" d="M127.17,26.14 L 128.49 26.14"/>
         <path fill="none" d="M127.17,32.97 L 128.49 32.97"/>
+        <path fill="none" d="M127.17,46.63 L 128.49 46.63"/>
+        <path fill="none" d="M127.17,26.14 L 128.49 26.14"/>
+        <path fill="none" d="M127.17,39.8 L 128.49 39.8"/>
       </g>
     </g>
     <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-871775fa-8">
@@ -548,11 +544,11 @@ plot(dataset(&quot;car&quot;, &quot;UN&quot;), x=&quot;GDP&quot;, y=&quot;Infant
   </g>
   <g class="guide colorkey" id="img-bd3754f0-4">
     <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-bd3754f0-5">
-      <text x="129.49" y="46.63" dy="0.35em">2</text>
       <text x="129.49" y="53.46" dy="0.35em">1</text>
-      <text x="129.49" y="39.8" dy="0.35em">3</text>
-      <text x="129.49" y="26.14" dy="0.35em">5</text>
       <text x="129.49" y="32.97" dy="0.35em">4</text>
+      <text x="129.49" y="46.63" dy="0.35em">2</text>
+      <text x="129.49" y="26.14" dy="0.35em">5</text>
+      <text x="129.49" y="39.8" dy="0.35em">3</text>
     </g>
     <g shape-rendering="crispEdges" stroke="#000000" stroke-opacity="0.000" id="img-bd3754f0-6">
       <rect x="127.17" y="52.77" width="1.31" height="0.68" fill="#004D84"/>
@@ -596,11 +592,11 @@ plot(dataset(&quot;car&quot;, &quot;UN&quot;), x=&quot;GDP&quot;, y=&quot;Infant
       <rect x="127.17" y="26.83" width="1.31" height="0.68" fill="#8B3844"/>
       <rect x="127.17" y="26.14" width="1.31" height="0.68" fill="#7E273E"/>
       <g stroke="#FFFFFF" stroke-width="0.2" id="img-bd3754f0-7">
-        <path fill="none" d="M127.17,46.63 L 128.49 46.63"/>
         <path fill="none" d="M127.17,53.46 L 128.49 53.46"/>
-        <path fill="none" d="M127.17,39.8 L 128.49 39.8"/>
-        <path fill="none" d="M127.17,26.14 L 128.49 26.14"/>
         <path fill="none" d="M127.17,32.97 L 128.49 32.97"/>
+        <path fill="none" d="M127.17,46.63 L 128.49 46.63"/>
+        <path fill="none" d="M127.17,26.14 L 128.49 26.14"/>
+        <path fill="none" d="M127.17,39.8 L 128.49 39.8"/>
       </g>
     </g>
     <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-bd3754f0-8">

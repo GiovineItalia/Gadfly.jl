@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scale.x_discrete · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a><ul><li class="current"><a class="toctext" href="scale_x_discrete.html">Scale.x_discrete</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../scales.html">Scales</a></li><li><a href="scale_x_discrete.html">Scale.x_discrete</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/16018ad198d50d5a951faa46ad5e444a80df5a49/docs/src/lib/scales/scale_x_discrete.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Scale.x_discrete-1" href="#Scale.x_discrete-1">Scale.x_discrete</a></h1><p>Map data categorical to Cartesian coordinates. Unlike <a href="scale_x_continuous.html#Scale.x_continuous-1">Scale.x_continuous</a>, each unique x value will be mapped to a equally spaced positions, regardless of value.</p><p>By default continuous scales are applied to numerical data. If data consists of numbers specifying categories, explicitly adding <a href="scale_x_discrete.html#Scale.x_discrete-1">Scale.x_discrete</a> is the easiest way to get that data to plot appropriately.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>labels</code>: Either a <code>Function</code> or <code>nothing</code>. When a function is given, values are formatted using this function. The function should map a value in <code>x</code> to a string giving its label.</p></li><li><p><code>levels</code>: If non-nothing, give values for the scale. Order will be respected and anything in the data that&#39;s not respresented in <code>levels</code> will be set to <code>NA</code>.</p></li><li><p><code>order</code>: If non-nothing, give a vector of integers giving a permutation of the values pool of the data.</p></li></ul><h3><a class="nav-anchor" id="Aesthetics-Acted-On-1" href="#Aesthetics-Acted-On-1">Aesthetics Acted On</a></h3><p><code>x</code>, <code>xmin</code>, <code>xmax</code>, <code>xintercept</code></p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia"># Treat numerical x data as categories
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scale.x_discrete · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a><ul><li class="current"><a class="toctext" href="scale_x_discrete.html">Scale.x_discrete</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../scales.html">Scales</a></li><li><a href="scale_x_discrete.html">Scale.x_discrete</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/05f4df1d6ac01eacdab415ea20e874be3623f6a4/docs/src/lib/scales/scale_x_discrete.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Scale.x_discrete-1" href="#Scale.x_discrete-1">Scale.x_discrete</a></h1><p>Map data categorical to Cartesian coordinates. Unlike <a href="scale_x_continuous.html#Scale.x_continuous-1">Scale.x_continuous</a>, each unique x value will be mapped to a equally spaced positions, regardless of value.</p><p>By default continuous scales are applied to numerical data. If data consists of numbers specifying categories, explicitly adding <a href="scale_x_discrete.html#Scale.x_discrete-1">Scale.x_discrete</a> is the easiest way to get that data to plot appropriately.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>labels</code>: Either a <code>Function</code> or <code>nothing</code>. When a function is given, values are formatted using this function. The function should map a value in <code>x</code> to a string giving its label.</p></li><li><p><code>levels</code>: If non-nothing, give values for the scale. Order will be respected and anything in the data that&#39;s not respresented in <code>levels</code> will be set to <code>NA</code>.</p></li><li><p><code>order</code>: If non-nothing, give a vector of integers giving a permutation of the values pool of the data.</p></li></ul><h3><a class="nav-anchor" id="Aesthetics-Acted-On-1" href="#Aesthetics-Acted-On-1">Aesthetics Acted On</a></h3><p><code>x</code>, <code>xmin</code>, <code>xmax</code>, <code>xintercept</code></p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia"># Treat numerical x data as categories
 plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -36,38 +36,78 @@ plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)</code></pre><?xml version="1
     </g>
     <g class="plotpanel" id="img-434e4ec2-9">
       <g class="geometry" id="img-434e4ec2-10">
-        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" stroke-width="0.3" fill="#00BFFF" id="img-434e4ec2-11">
-          <use xlink:href="#img-434e4ec2-12" x="33.19" y="9.56"/>
-          <use xlink:href="#img-434e4ec2-12" x="65.91" y="8.83"/>
-          <use xlink:href="#img-434e4ec2-12" x="33.19" y="9.8"/>
-          <use xlink:href="#img-434e4ec2-12" x="98.64" y="17.87"/>
-          <use xlink:href="#img-434e4ec2-12" x="33.19" y="16.25"/>
-          <use xlink:href="#img-434e4ec2-12" x="65.91" y="56.95"/>
-          <use xlink:href="#img-434e4ec2-12" x="33.19" y="53.83"/>
-          <use xlink:href="#img-434e4ec2-12" x="65.91" y="42.43"/>
-          <use xlink:href="#img-434e4ec2-12" x="65.91" y="52.11"/>
-          <use xlink:href="#img-434e4ec2-12" x="98.64" y="39.36"/>
-          <use xlink:href="#img-434e4ec2-12" x="98.64" y="10.56"/>
-          <use xlink:href="#img-434e4ec2-12" x="33.19" y="36.02"/>
-          <use xlink:href="#img-434e4ec2-12" x="65.91" y="45.95"/>
-          <use xlink:href="#img-434e4ec2-12" x="65.91" y="58.1"/>
-          <use xlink:href="#img-434e4ec2-12" x="33.19" y="56.33"/>
-          <use xlink:href="#img-434e4ec2-12" x="98.64" y="33.06"/>
-          <use xlink:href="#img-434e4ec2-12" x="65.91" y="20.86"/>
-          <use xlink:href="#img-434e4ec2-12" x="65.91" y="43.25"/>
-          <use xlink:href="#img-434e4ec2-12" x="33.19" y="35.49"/>
-          <use xlink:href="#img-434e4ec2-12" x="33.19" y="13.46"/>
+        <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke-width="0.3" id="img-434e4ec2-11">
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-12">
+            <use xlink:href="#img-434e4ec2-13" x="33.19" y="13.46"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-14">
+            <use xlink:href="#img-434e4ec2-15" x="33.19" y="35.49"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-16">
+            <use xlink:href="#img-434e4ec2-17" x="65.91" y="43.25"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-18">
+            <use xlink:href="#img-434e4ec2-19" x="65.91" y="20.86"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-20">
+            <use xlink:href="#img-434e4ec2-21" x="98.64" y="33.06"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-22">
+            <use xlink:href="#img-434e4ec2-23" x="33.19" y="56.33"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-24">
+            <use xlink:href="#img-434e4ec2-25" x="65.91" y="58.1"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-26">
+            <use xlink:href="#img-434e4ec2-27" x="65.91" y="45.95"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-28">
+            <use xlink:href="#img-434e4ec2-29" x="33.19" y="36.02"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-30">
+            <use xlink:href="#img-434e4ec2-31" x="98.64" y="10.56"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-32">
+            <use xlink:href="#img-434e4ec2-33" x="98.64" y="39.36"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-34">
+            <use xlink:href="#img-434e4ec2-35" x="65.91" y="52.11"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-36">
+            <use xlink:href="#img-434e4ec2-37" x="65.91" y="42.43"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-38">
+            <use xlink:href="#img-434e4ec2-39" x="33.19" y="53.83"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-40">
+            <use xlink:href="#img-434e4ec2-41" x="65.91" y="56.95"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-42">
+            <use xlink:href="#img-434e4ec2-43" x="33.19" y="16.25"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-44">
+            <use xlink:href="#img-434e4ec2-45" x="98.64" y="17.87"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-46">
+            <use xlink:href="#img-434e4ec2-47" x="33.19" y="9.8"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-48">
+            <use xlink:href="#img-434e4ec2-49" x="65.91" y="8.83"/>
+          </g>
+          <g stroke="#FFFFFF" fill="#00BFFF" id="img-434e4ec2-50">
+            <use xlink:href="#img-434e4ec2-51" x="33.19" y="9.56"/>
+          </g>
         </g>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-434e4ec2-13">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-434e4ec2-52">
     <text x="15.83" y="58.72" text-anchor="end" dy="0.35em">0.0</text>
     <text x="15.83" y="32.86" text-anchor="end" dy="0.35em">0.5</text>
     <text x="15.83" y="7" text-anchor="end" dy="0.35em">1.0</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-434e4ec2-14">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-434e4ec2-53">
     <text x="8.81" y="32.86" text-anchor="end" dy="0.35em">y</text>
   </g>
 </g>
@@ -75,7 +115,64 @@ plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)</code></pre><?xml version="1
   <clipPath id="img-434e4ec2-4">
   <path d="M16.83,5 L 115 5 115 60.72 16.83 60.72" />
 </clipPath>
-  <g id="img-434e4ec2-12">
+  <g id="img-434e4ec2-13">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-15">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-17">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-19">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-21">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-23">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-25">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-27">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-29">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-31">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-33">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-35">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-37">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-39">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-41">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-43">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-45">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-47">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-49">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-434e4ec2-51">
     <circle cx="0" cy="0" r="0.9"/>
   </g>
 </defs>
