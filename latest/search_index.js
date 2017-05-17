@@ -253,7 +253,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(12345)\ndark_panel = Theme(\n    panel_fill=colorant\"black\",\n    default_color=colorant\"orange\"\n)\n\nplot(x=rand(10), y=rand(10), dark_panel)\nSetting the font to Computer Modern to create a LaTeX-like look, and choosing a font size:Gadfly.push_theme(dark_panel)\n\np = plot(x=rand(10), y=rand(10),\n     style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n           major_label_font_size=16pt,minor_label_font_size=14pt))\n\n# can plot more plots here...\n\nGadfly.pop_theme()\n\np # hideSame effect can be had with with_themeGadfly.with_theme(dark_panel) do\n\n  plot(x=rand(10), y=rand(10),\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt))\nend\nnothing # hideor\nGadfly.push_theme(dark_panel)\n\nGadfly.with_theme(\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt)) do\n\n  plot(x=rand(10), y=rand(10))\n\nend\n\nGadfly.pop_theme()\nnothing # hide"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(12345)\ndark_panel = Theme(\n    panel_fill=\"black\",\n    default_color=\"orange\"\n)\n\nplot(x=rand(10), y=rand(10), dark_panel)\nSetting the font to Computer Modern to create a LaTeX-like look, and choosing a font size:Gadfly.push_theme(dark_panel)\n\np = plot(x=rand(10), y=rand(10),\n     style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n           major_label_font_size=16pt,minor_label_font_size=14pt))\n\n# can plot more plots here...\n\nGadfly.pop_theme()\n\np # hideSame effect can be had with with_themeGadfly.with_theme(dark_panel) do\n\n  plot(x=rand(10), y=rand(10),\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt))\nend\nnothing # hideor\nGadfly.push_theme(dark_panel)\n\nGadfly.with_theme(\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt)) do\n\n  plot(x=rand(10), y=rand(10))\n\nend\n\nGadfly.pop_theme()\nnothing # hide"
 },
 
 {
@@ -261,7 +261,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Named themes",
     "category": "section",
-    "text": "To register a theme by name, you can extend Gadfly.get_theme(::Val{:theme_name}) to return a Theme object.Gadfly.get_theme(::Val{:orange}) =\n    Theme(default_color=colorant\"orange\")\n\nGadfly.with_theme(:orange) do\n  plot(x=[1:10;], y=rand(10), Geom.bar)\nendGadfly comes built in with 2 named themes: :default and :dark. You can also set a theme to use by default by setting the GADFLY_THEME environment variable before loading Gadfly."
+    "text": "To register a theme by name, you can extend Gadfly.get_theme(::Val{:theme_name}) to return a Theme object.Gadfly.get_theme(::Val{:orange}) =\n    Theme(default_color=\"orange\")\n\nGadfly.with_theme(:orange) do\n  plot(x=[1:10;], y=rand(10), Geom.bar)\nendGadfly comes built in with 2 named themes: :default and :dark. You can also set a theme to use by default by setting the GADFLY_THEME environment variable before loading Gadfly."
 },
 
 {
@@ -269,7 +269,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "The Dark theme",
     "category": "section",
-    "text": "This is one of the two themes the ship with Gadfly the other being :default. Here are a few plots that use the dark theme.Gadfly.push_theme(:dark)\nnothing # hideplot(dataset(\"datasets\", \"iris\"),\n    x=\"SepalLength\", y=\"SepalWidth\", color=\"Species\", Geom.point)using RDatasets\n\ngasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)using DataFrames\n\nxs = 0:0.1:20\n\ndf_cos = DataFrame(\n    x=xs,\n    y=cos(xs),\n    ymin=cos(xs) .- 0.5,\n    ymax=cos(xs) .+ 0.5,\n    f=\"cos\"\n)\n\ndf_sin = DataFrame(\n    x=xs,\n    y=sin(xs),\n    ymin=sin(xs) .- 0.5,\n    ymax=sin(xs) .+ 0.5,\n    f=\"sin\"\n)\n\ndf = vcat(df_cos, df_sin)\np = plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)using Distributions\n\nX = rand(MultivariateNormal([0.0, 0.0], [1.0 0.5; 0.5 1.0]), 10000);\nplot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))Gadfly.pop_theme()"
+    "text": "This is one of the two themes the ship with Gadfly the other being :default. Here are a few plots that use the dark theme.Gadfly.push_theme(:dark)\nnothing # hideplot(dataset(\"datasets\", \"iris\"),\n    x=\"SepalLength\", y=\"SepalWidth\", color=\"Species\", Geom.point)using RDatasets\n\ngasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)using DataFrames\n\nxs = 0:0.1:20\n\ndf_cos = DataFrame(\n    x=xs,\n    y=cos.(xs),\n    ymin=cos.(xs) .- 0.5,\n    ymax=cos.(xs) .+ 0.5,\n    f=\"cos\"\n)\n\ndf_sin = DataFrame(\n    x=xs,\n    y=sin.(xs),\n    ymin=sin.(xs) .- 0.5,\n    ymax=sin.(xs) .+ 0.5,\n    f=\"sin\"\n)\n\ndf = vcat(df_cos, df_sin)\np = plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)using Distributions\n\nX = rand(MultivariateNormal([0.0, 0.0], [1.0 0.5; 0.5 1.0]), 10000);\nplot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))Gadfly.pop_theme()"
 },
 
 {
@@ -397,7 +397,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.abline",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly, RDatasets, Compose\nGadfly.set_default_plot_size(14cm, 10cm)plot(dataset(\"ggplot2\", \"mpg\"), x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n    intercept=[0], slope=[1], Geom.abline(color=\"red\", style=:dash),\n    Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(colorant\"red\"))))"
+    "text": "using Gadfly, RDatasets, Compose\nGadfly.set_default_plot_size(14cm, 10cm)plot(dataset(\"ggplot2\", \"mpg\"), x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n    intercept=[0], slope=[1], Geom.abline(color=\"red\", style=:dash),\n    Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(\"red\"))))"
 },
 
 {
@@ -629,7 +629,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.density",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nusing Distributions\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", Geom.density)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\", Geom.density)# adjusting bandwidth manually\ndist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])\nxs = rand(dist, 10^5)\nplot(layer(x=xs, Geom.density, Theme(default_color=colorant\"orange\")), \nlayer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color=colorant\"green\")),\nlayer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color=colorant\"purple\")),\nGuide.manual_color_key(\"bandwidth\", [\"auto\", \"bw=0.0003\", \"bw=0.25\"], [\"orange\", \"green\", \"purple\"]))"
+    "text": "using RDatasets\nusing Gadfly\nusing Distributions\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", Geom.density)plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\", Geom.density)# adjusting bandwidth manually\ndist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])\nxs = rand(dist, 10^5)\nplot(layer(x=xs, Geom.density, Theme(default_color=\"orange\")), \nlayer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color=\"green\")),\nlayer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color=\"purple\")),\nGuide.manual_color_key(\"bandwidth\", [\"auto\", \"bw=0.0003\", \"bw=0.25\"], [\"orange\", \"green\", \"purple\"]))"
 },
 
 {
@@ -1405,7 +1405,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.annotation",
     "title": "Examples",
     "category": "section",
-    "text": "using Compose\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(sin, 0, 2pi,\n     Guide.annotation(\n       compose(context(), circle([pi/2, 3*pi/2], [1.0, -1.0], [2mm]), fill(nothing),\n       stroke(colorant\"orange\"))))\n"
+    "text": "using Compose\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(sin, 0, 2pi,\n     Guide.annotation(\n       compose(context(), circle([pi/2, 3*pi/2], [1.0, -1.0], [2mm]), fill(nothing),\n       stroke(\"orange\"))))"
 },
 
 {
@@ -1469,7 +1469,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.manual_color_key",
     "title": "Examples",
     "category": "section",
-    "text": "Combine two layers into a plot, and set a custom color of one layer.  Add a manual color key with labels that match the two layers.  (Note that \"deepskyblue\" is the default color for Geom.line and others.)using DataFrames\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))\nline = DataFrame(val=rand(1:10,11), index = collect(0:10))\npointLayer = layer(points, x=\"index\", y=\"val\", Geom.point,Theme(default_color=colorant\"green\"))\nlineLayer = layer(line, x=\"index\", y=\"val\", Geom.line)\nplot(pointLayer, lineLayer, Guide.manual_color_key(\"Legend\", [\"Points\", \"Line\"], [\"green\", \"deepskyblue\"]))"
+    "text": "Combine two layers into a plot, and set a custom color of one layer.  Add a manual color key with labels that match the two layers.  (Note that \"deepskyblue\" is the default color for Geom.line and others.)using DataFrames\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))\nline = DataFrame(val=rand(1:10,11), index = collect(0:10))\npointLayer = layer(points, x=\"index\", y=\"val\", Geom.point,Theme(default_color=\"green\"))\nlineLayer = layer(line, x=\"index\", y=\"val\", Geom.line)\nplot(pointLayer, lineLayer, Guide.manual_color_key(\"Legend\", [\"Points\", \"Line\"], [\"green\", \"deepskyblue\"]))"
 },
 
 {
@@ -2109,7 +2109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_continuous",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly\nsrand(1234)# The data are all between 0 and 1, but the color scale goes from -1 to 1.\n# For example, you might do this to force a consistent color scale between plots.\nplot(x=rand(12), y=rand(12), color=rand(12),\n     Scale.color_continuous(minvalue=-1, maxvalue=1))Define a custom color scale for a grid:using Colors\nx = repeat(collect(1:10), inner=[10])\ny = repeat(collect(1:10), outer=[10])\nplot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=p->RGB(0,p,0)))Or we can use lab_gradient to construct a color gradient between 2 or more colors:plot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=Scale.lab_gradient(colorant\"green\",\n                                                        colorant\"white\",\n                                                        colorant\"red\")))We can also start the color scale somewhere other than the bottom of the data range using minvalue:plot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=p->RGB(0,p,0), minvalue=-20))"
+    "text": "using Gadfly\nsrand(1234)# The data are all between 0 and 1, but the color scale goes from -1 to 1.\n# For example, you might do this to force a consistent color scale between plots.\nplot(x=rand(12), y=rand(12), color=rand(12),\n     Scale.color_continuous(minvalue=-1, maxvalue=1))Define a custom color scale for a grid:using Colors\nx = repeat(collect(1:10), inner=[10])\ny = repeat(collect(1:10), outer=[10])\nplot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=p->RGB(0,p,0)))Or we can use lab_gradient to construct a color gradient between 2 or more colors:plot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=Scale.lab_gradient(\"green\", \"white\", \"red\")))We can also start the color scale somewhere other than the bottom of the data range using minvalue:plot(x=x, y=y, color=x+y, Geom.rectbin,\n     Scale.color_continuous(colormap=p->RGB(0,p,0), minvalue=-20))"
 },
 
 {
@@ -2173,7 +2173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_discrete_manual",
     "title": "Arguments",
     "category": "section",
-    "text": "colors...: an iterable collection of things that can be converted to colors with Colors.color (such as strings naming colors, although a better choice is to use colorant\"colorname\")\nlevels (optional): Explicitly set levels used by the scale. Order is respected.\norder (optional): A vector of integers giving a permutation of the levels default order."
+    "text": "colors...: an iterable collection of things that can be converted to colors with Colors.color (e.g. \"tomato\", RGB(1.0,0.388,0.278), colorant\"#FF6347\")\nlevels (optional): Explicitly set levels used by the scale. Order is respected.\norder (optional): A vector of integers giving a permutation of the levels default order."
 },
 
 {
@@ -2189,7 +2189,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_discrete_manual",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly\nsrand(1234)plot(x=rand(12), y=rand(12), color=repeat([\"a\",\"b\",\"c\"], outer=[4]),\n     Scale.color_discrete_manual(colorant\"red\",colorant\"purple\",colorant\"green\"))"
+    "text": "using Gadfly\nsrand(1234)plot(x=rand(12), y=rand(12), color=repeat([\"a\",\"b\",\"c\"], outer=[4]),\n     Scale.color_discrete_manual(\"red\",\"purple\",\"green\"))"
 },
 
 {
