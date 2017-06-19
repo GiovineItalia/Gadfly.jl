@@ -321,7 +321,6 @@ function evalmapping!(mapping::Dict, data_source, data::Data)
     end
 
     for (k, v) in mapping
-        @show (k, v, typeof(data_source), typeof(v))
         setfield!(data, k, evalmapping(data_source, v))
         data.titles[k] = isa(v, AbstractString) || isa(v, Symbol) ?  string(v) : string(k)
     end
