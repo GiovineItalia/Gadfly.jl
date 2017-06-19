@@ -19,7 +19,7 @@ import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant
              show, isfinite, display
 import Distributions: Distribution
 
-export Plot, Layer, Theme, Col, Scale, Coord, Geom, Guide, Stat, render, plot,
+export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, render, plot,
        style, layer, spy, set_default_plot_size, set_default_plot_format, prepare_display
 export circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2,
        hexagon, octogon, hline, vline
@@ -107,7 +107,7 @@ set_default_plot_format(fmt::Symbol) = Compose.set_default_graphic_format(fmt)
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 type Layer <: Element
-    data_source::@compat(Union{(@compat Void), MeltedData, AbstractMatrix, AbstractDataFrame})
+    data_source::@compat(Union{(@compat Void), MeltedData, AbstractArray, AbstractDataFrame})
     mapping::Dict
     statistics::Vector{StatisticElement}
     geom::GeometryElement
@@ -188,7 +188,7 @@ add_plot_element!(lyrs::Vector{Layer}, arg::Theme) = [lyr.theme = arg for lyr in
 # A full plot specification.
 type Plot
     layers::Vector{Layer}
-    data_source::@compat(Union{(@compat Void), MeltedData, AbstractMatrix, AbstractDataFrame})
+    data_source::@compat(Union{(@compat Void), MeltedData, AbstractArray, AbstractDataFrame})
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
@@ -280,7 +280,7 @@ Where "time" and "price" are the names of columns in my_data.
 * elements: Geometries, statistics, etc.
 * mapping: Aesthetics symbols (e.g. :x, :y, :color) mapped to names of columns in the data frame or other expressions.
 """
-function plot(data_source::@compat(Union{AbstractMatrix, AbstractDataFrame}),
+function plot(data_source::@compat(Union{AbstractArray, AbstractDataFrame}),
               elements::ElementOrFunctionOrLayers...; mapping...)
     mappingdict = Dict{Symbol, Any}(mapping)
     return plot(data_source, mappingdict, elements...)
@@ -326,7 +326,7 @@ to expressions or columns in the data frame.
 ### Returns:
 A Plot object.
 """
-function plot(data_source::@compat(Union{(@compat Void), AbstractMatrix, AbstractDataFrame}),
+function plot(data_source::@compat(Union{(@compat Void), AbstractArray, AbstractDataFrame}),
               mapping::Dict, elements::ElementOrFunctionOrLayers...)
     mapping = cleanmapping(mapping)
     p = Plot()
