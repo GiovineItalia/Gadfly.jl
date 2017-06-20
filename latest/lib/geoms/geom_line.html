@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.line · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_line.html">Geom.line</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_line.html">Geom.line</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/cb7aafb9caf5e33523f3b4006512129f52fea24e/docs/src/lib/geoms/geom_line.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Geom.line</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Geom.line-1" href="#Geom.line-1">Geom.line</a></h1><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>x</code>: X-axis position.</p></li><li><p><code>y</code>: Y-axis position.</p></li><li><p><code>group</code> (optional): Group categorically.</p></li><li><p><code>color</code> (optional): Group categorically and indicate by color.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>preserve_order</code>: Default behavior for <code>Geom.line</code> is to draw lines between points in order along the x-axis. If this option is true, lines will be drawn between points in the order they appear in the data. <code>Geom.path()</code> is <code>Geom.line(preserve_order=true)</code>.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(dataset(&quot;lattice&quot;, &quot;melanoma&quot;), x=&quot;Year&quot;, y=&quot;Incidence&quot;, Geom.line)</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.line · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_line.html">Geom.line</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_line.html">Geom.line</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/9ec146fe1039e068c5303e0c2fb030a7a8411f59/docs/src/lib/geoms/geom_line.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Geom.line</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Geom.line-1" href="#Geom.line-1">Geom.line</a></h1><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>x</code>: X-axis position.</p></li><li><p><code>y</code>: Y-axis position.</p></li><li><p><code>group</code> (optional): Group categorically.</p></li><li><p><code>color</code> (optional): Group categorically and indicate by color.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>preserve_order</code>: Default behavior for <code>Geom.line</code> is to draw lines between points in order along the x-axis. If this option is true, lines will be drawn between points in the order they appear in the data. <code>Geom.path()</code> is <code>Geom.line(preserve_order=true)</code>.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(dataset(&quot;lattice&quot;, &quot;melanoma&quot;), x=&quot;Year&quot;, y=&quot;Incidence&quot;, Geom.line)</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns:gadfly="http://www.gadflyjl.org/ns"
@@ -10,11 +10,11 @@
      stroke-width="0.3"
      font-size="3.88"
 >
-<g class="plotroot xscalable yscalable" id="img-36d1b7a3-1">
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-36d1b7a3-2">
+<g class="plotroot xscalable yscalable" id="img-6a84ded7-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-6a84ded7-2">
     <text x="75.64" y="68.39" text-anchor="middle" dy="0.6em">Year</text>
   </g>
-  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-36d1b7a3-3">
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-6a84ded7-3">
     <text x="18.28" y="61.72" text-anchor="middle" dy="0.6em">1930</text>
     <text x="41.23" y="61.72" text-anchor="middle" dy="0.6em">1940</text>
     <text x="64.17" y="61.72" text-anchor="middle" dy="0.6em">1950</text>
@@ -22,12 +22,12 @@
     <text x="110.06" y="61.72" text-anchor="middle" dy="0.6em">1970</text>
     <text x="133" y="61.72" text-anchor="middle" dy="0.6em">1980</text>
   </g>
-<g clip-path="url(#img-36d1b7a3-4)">
-  <g id="img-36d1b7a3-5">
-    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-36d1b7a3-6">
+<g clip-path="url(#img-6a84ded7-4)">
+  <g id="img-6a84ded7-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-6a84ded7-6">
       <rect x="16.28" y="5" width="118.72" height="55.72"/>
     </g>
-    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-36d1b7a3-7">
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-6a84ded7-7">
       <path fill="none" d="M16.28,58.71 L 135 58.71"/>
       <path fill="none" d="M16.28,48.37 L 135 48.37"/>
       <path fill="none" d="M16.28,38.03 L 135 38.03"/>
@@ -35,7 +35,7 @@
       <path fill="none" d="M16.28,17.34 L 135 17.34"/>
       <path fill="none" d="M16.28,7 L 135 7"/>
     </g>
-    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-36d1b7a3-8">
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-6a84ded7-8">
       <path fill="none" d="M18.28,5 L 18.28 60.72"/>
       <path fill="none" d="M41.23,5 L 41.23 60.72"/>
       <path fill="none" d="M64.17,5 L 64.17 60.72"/>
@@ -43,14 +43,14 @@
       <path fill="none" d="M110.06,5 L 110.06 60.72"/>
       <path fill="none" d="M133,5 L 133 60.72"/>
     </g>
-    <g class="plotpanel" id="img-36d1b7a3-9">
-      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" class="geometry" stroke-dasharray="none" stroke="#00BFFF" id="img-36d1b7a3-10">
+    <g class="plotpanel" id="img-6a84ded7-9">
+      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" class="geometry" stroke-dasharray="none" stroke="#00BFFF" id="img-6a84ded7-10">
         <path fill="none" d="M32.05,49.41 L 34.35 50.44 36.64 50.44 38.93 45.27 41.23 44.23 43.52 46.3 45.82 41.13 48.11 40.1 50.41 42.17 52.7 43.2 54.99 43.2 57.29 38.03 59.58 32.86 61.88 30.79 64.17 28.72 66.47 32.86 68.76 26.65 71.05 33.89 73.35 35.96 75.64 28.72 77.94 32.86 80.23 31.82 82.53 25.62 84.82 19.41 87.11 15.27 89.41 18.38 91.7 20.45 94 24.58 96.29 20.45 98.59 18.38 100.88 16.31 103.17 19.41 105.47 10.1 107.76 13.21 110.06 9.07 112.35 9.07 114.65 9.07"/>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-36d1b7a3-11">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-6a84ded7-11">
     <text x="15.28" y="58.71" text-anchor="end" dy="0.35em">0</text>
     <text x="15.28" y="48.37" text-anchor="end" dy="0.35em">1</text>
     <text x="15.28" y="38.03" text-anchor="end" dy="0.35em">2</text>
@@ -58,12 +58,12 @@
     <text x="15.28" y="17.34" text-anchor="end" dy="0.35em">4</text>
     <text x="15.28" y="7" text-anchor="end" dy="0.35em">5</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-36d1b7a3-12">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-6a84ded7-12">
     <text x="8.81" y="30.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 32.86)">Incidence</text>
   </g>
 </g>
 <defs>
-  <clipPath id="img-36d1b7a3-4">
+  <clipPath id="img-6a84ded7-4">
   <path d="M16.28,5 L 135 5 135 60.72 16.28 60.72" />
 </clipPath>
 </defs>
@@ -79,26 +79,26 @@
      stroke-width="0.3"
      font-size="3.88"
 >
-<g class="plotroot xscalable yscalable" id="img-c238cd6d-1">
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-c238cd6d-2">
+<g class="plotroot xscalable yscalable" id="img-72bc2e29-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-72bc2e29-2">
     <text x="70.74" y="68.39" text-anchor="middle" dy="0.6em">Month</text>
   </g>
-  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-c238cd6d-3">
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-72bc2e29-3">
     <text x="19.96" y="61.72" text-anchor="middle" dy="0.6em">0</text>
     <text x="53.81" y="61.72" text-anchor="middle" dy="0.6em">5</text>
     <text x="87.67" y="61.72" text-anchor="middle" dy="0.6em">10</text>
     <text x="121.53" y="61.72" text-anchor="middle" dy="0.6em">15</text>
   </g>
-  <g class="guide colorkey" id="img-c238cd6d-4">
-    <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-c238cd6d-5">
+  <g class="guide colorkey" id="img-72bc2e29-4">
+    <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-72bc2e29-5">
       <text x="127.84" y="56.1" dy="0.35em">2001</text>
+      <text x="127.84" y="24.84" dy="0.35em">2006</text>
+      <text x="127.84" y="49.84" dy="0.35em">2002</text>
+      <text x="127.84" y="37.34" dy="0.35em">2004</text>
       <text x="127.84" y="31.09" dy="0.35em">2005</text>
       <text x="127.84" y="43.59" dy="0.35em">2003</text>
-      <text x="127.84" y="49.84" dy="0.35em">2002</text>
-      <text x="127.84" y="24.84" dy="0.35em">2006</text>
-      <text x="127.84" y="37.34" dy="0.35em">2004</text>
     </g>
-    <g shape-rendering="crispEdges" stroke="#000000" stroke-opacity="0.000" id="img-c238cd6d-6">
+    <g shape-rendering="crispEdges" stroke="#000000" stroke-opacity="0.000" id="img-72bc2e29-6">
       <rect x="125.53" y="55.31" width="1.31" height="0.78" fill="#004D84"/>
       <rect x="125.53" y="54.53" width="1.31" height="0.78" fill="#005B8D"/>
       <rect x="125.53" y="53.75" width="1.31" height="0.78" fill="#006995"/>
@@ -139,25 +139,25 @@
       <rect x="125.53" y="26.41" width="1.31" height="0.78" fill="#96484A"/>
       <rect x="125.53" y="25.62" width="1.31" height="0.78" fill="#8B3844"/>
       <rect x="125.53" y="24.84" width="1.31" height="0.78" fill="#7E273E"/>
-      <g stroke="#FFFFFF" stroke-width="0.2" id="img-c238cd6d-7">
+      <g stroke="#FFFFFF" stroke-width="0.2" id="img-72bc2e29-7">
         <path fill="none" d="M125.53,56.1 L 126.84 56.1"/>
+        <path fill="none" d="M125.53,24.84 L 126.84 24.84"/>
+        <path fill="none" d="M125.53,49.84 L 126.84 49.84"/>
+        <path fill="none" d="M125.53,37.34 L 126.84 37.34"/>
         <path fill="none" d="M125.53,31.09 L 126.84 31.09"/>
         <path fill="none" d="M125.53,43.59 L 126.84 43.59"/>
-        <path fill="none" d="M125.53,49.84 L 126.84 49.84"/>
-        <path fill="none" d="M125.53,24.84 L 126.84 24.84"/>
-        <path fill="none" d="M125.53,37.34 L 126.84 37.34"/>
       </g>
     </g>
-    <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-c238cd6d-8">
+    <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-72bc2e29-8">
       <text x="125.53" y="20.84">Year</text>
     </g>
   </g>
-<g clip-path="url(#img-c238cd6d-9)">
-  <g id="img-c238cd6d-10">
-    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-c238cd6d-11">
+<g clip-path="url(#img-72bc2e29-9)">
+  <g id="img-72bc2e29-10">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-72bc2e29-11">
       <rect x="17.96" y="5" width="105.57" height="55.72"/>
     </g>
-    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-c238cd6d-12">
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-72bc2e29-12">
       <path fill="none" d="M17.96,58.72 L 123.53 58.72"/>
       <path fill="none" d="M17.96,50.1 L 123.53 50.1"/>
       <path fill="none" d="M17.96,41.48 L 123.53 41.48"/>
@@ -166,25 +166,25 @@
       <path fill="none" d="M17.96,15.62 L 123.53 15.62"/>
       <path fill="none" d="M17.96,7 L 123.53 7"/>
     </g>
-    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-c238cd6d-13">
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-72bc2e29-13">
       <path fill="none" d="M19.96,5 L 19.96 60.72"/>
       <path fill="none" d="M53.81,5 L 53.81 60.72"/>
       <path fill="none" d="M87.67,5 L 87.67 60.72"/>
       <path fill="none" d="M121.53,5 L 121.53 60.72"/>
     </g>
-    <g class="plotpanel" id="img-c238cd6d-14">
-      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" stroke-dasharray="none" id="img-c238cd6d-15">
-        <path fill="none" d="M33.5,34 L 40.27 34.58 47.04 32.43 53.81 37.17 60.59 38.03 67.36 35.87 74.13 36.31 80.9 19.35 87.67 8.72 94.44 9.59 101.21 10.45" stroke="#004D84" class="geometry color_"/>
-        <path fill="none" d="M26.73,12.46 L 33.5 13.9 40.27 16.27 47.04 18.85 53.81 18.78 60.59 21.31 67.36 23.81 74.13 27.26 80.9 26.65 87.67 28.76 94.44 27.4 101.21 30.49" stroke="#65B0B9" class="geometry color_"/>
-        <path fill="none" d="M26.73,47.51 L 33.5 50.38 40.27 53.11 47.04 53.83 53.81 52.68 60.59 50.1" stroke="#7E273E" class="geometry color_"/>
-        <path fill="none" d="M26.73,32.71 L 33.5 33.93 40.27 28.38 47.04 24.24 53.81 27.4 60.59 31.13 67.36 33.14 74.13 33.29 80.9 40.61 87.67 37.45 94.44 40.04 101.21 34.15" stroke="#B6CBC0" class="geometry color_"/>
-        <path fill="none" d="M26.73,40.04 L 33.5 39.54 40.27 41.76 47.04 42.77 53.81 43.2 60.59 44.71 67.36 43.78 74.13 46.86 80.9 46.65 87.67 49.45 94.44 51.54 101.21 48.16" stroke="#C69C80" class="geometry color_"/>
-        <path fill="none" d="M26.73,36.95 L 33.5 40.33 40.27 40.9 47.04 39.75 53.81 43.78 60.59 42.77 67.36 43.42 74.13 41.48 80.9 39.18 87.67 42.19 94.44 38.03 101.21 40.61" stroke="#C7C8B5" class="geometry color_"/>
+    <g class="plotpanel" id="img-72bc2e29-14">
+      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" stroke-dasharray="none" id="img-72bc2e29-15">
+        <path fill="none" d="M33.5,34 L 40.27 34.58 47.04 32.43 53.81 37.17 60.59 38.03 67.36 35.87 74.13 36.31 80.9 19.35 87.67 8.72 94.44 9.59 101.21 10.45" class="geometry color_" stroke="#004D84"/>
+        <path fill="none" d="M26.73,12.46 L 33.5 13.9 40.27 16.27 47.04 18.85 53.81 18.78 60.59 21.31 67.36 23.81 74.13 27.26 80.9 26.65 87.67 28.76 94.44 27.4 101.21 30.49" class="geometry color_" stroke="#65B0B9"/>
+        <path fill="none" d="M26.73,47.51 L 33.5 50.38 40.27 53.11 47.04 53.83 53.81 52.68 60.59 50.1" class="geometry color_" stroke="#7E273E"/>
+        <path fill="none" d="M26.73,32.71 L 33.5 33.93 40.27 28.38 47.04 24.24 53.81 27.4 60.59 31.13 67.36 33.14 74.13 33.29 80.9 40.61 87.67 37.45 94.44 40.04 101.21 34.15" class="geometry color_" stroke="#B6CBC0"/>
+        <path fill="none" d="M26.73,40.04 L 33.5 39.54 40.27 41.76 47.04 42.77 53.81 43.2 60.59 44.71 67.36 43.78 74.13 46.86 80.9 46.65 87.67 49.45 94.44 51.54 101.21 48.16" class="geometry color_" stroke="#C69C80"/>
+        <path fill="none" d="M26.73,36.95 L 33.5 40.33 40.27 40.9 47.04 39.75 53.81 43.78 60.59 42.77 67.36 43.42 74.13 41.48 80.9 39.18 87.67 42.19 94.44 38.03 101.21 40.61" class="geometry color_" stroke="#C7C8B5"/>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-c238cd6d-16">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-72bc2e29-16">
     <text x="16.96" y="58.72" text-anchor="end" dy="0.35em">30</text>
     <text x="16.96" y="50.1" text-anchor="end" dy="0.35em">40</text>
     <text x="16.96" y="41.48" text-anchor="end" dy="0.35em">50</text>
@@ -193,12 +193,12 @@
     <text x="16.96" y="15.62" text-anchor="end" dy="0.35em">80</text>
     <text x="16.96" y="7" text-anchor="end" dy="0.35em">90</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-c238cd6d-17">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-72bc2e29-17">
     <text x="8.81" y="30.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 32.86)">Approve</text>
   </g>
 </g>
 <defs>
-  <clipPath id="img-c238cd6d-9">
+  <clipPath id="img-72bc2e29-9">
   <path d="M17.96,5 L 123.53 5 123.53 60.72 17.96 60.72" />
 </clipPath>
 </defs>
