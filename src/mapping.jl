@@ -2,7 +2,7 @@ module Col
 
 using Compat
 using DataFrames
-import Iterators
+import IterTools
 import Base: ==
 
 immutable GroupedColumn
@@ -141,7 +141,7 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
 
     vi = 1
     for ui in 1:um
-        for colidx in Iterators.product(colidxs...)
+        for colidx in IterTools.product(colidxs...)
             # copy grouped columns
             for (vj, uj) in enumerate(colidx)
                 V[vj][vi] = U[ui, uj]
@@ -201,7 +201,7 @@ function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
 
     vi = 1
     for ui in 1:um
-        for colidx in Iterators.product(colidxs...)
+        for colidx in IterTools.product(colidxs...)
             # copy grouped columns
             for (vj, uj) in enumerate(colidx)
                 V[vi, vj] = U[ui, uj]

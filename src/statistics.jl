@@ -16,7 +16,7 @@ import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, nonzero_length, setfield!
 import KernelDensity
 import Distributions: Uniform, Distribution, qqbuild
-import Iterators: chain, distinct
+import IterTools: chain, distinct
 import Compat.Iterators: cycle, product
 
 include("bincount.jl")
@@ -1099,20 +1099,20 @@ function apply_statistic(stat::SmoothStatistic,
 
     max_num_steps = 750
     aes_color = aes.color === nothing ? [nothing] : aes.color
-    
+
         groups = Dict(c => (eltype(aes.x)[], eltype(aes.y)[]) for c in unique(aes_color))
         for (x, y, c) in zip(aes.x, aes.y, cycle(aes_color))
                 push!(groups[c][1], x)
                 push!(groups[c][2], y)
         end
-    
+
         local xs, ys, xsp
         aes.x = eltype(aes.x)[]
-        # For aes.y returning a Float is ok if `y` is an Int or a Float 
+        # For aes.y returning a Float is ok if `y` is an Int or a Float
         # There does not seem to be strong demand for other types of `y`
         aes.y = Float64[]
         colors = eltype(aes_color)[]
- 
+
 
         for (c, (xv, yv)) in groups
             x_min, x_max = minimum(xv), maximum(xv)
@@ -1125,9 +1125,9 @@ function apply_statistic(stat::SmoothStatistic,
             catch e
                 error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
             end
-                
+
             nudge = 1e-5 * (x_max - x_min)
-            
+
             dx = (x_max-x_min)*(1/max_num_steps)
             # For a Date, dx might be 0 days, so correct
             # For Ints, correct dx
@@ -1146,13 +1146,13 @@ function apply_statistic(stat::SmoothStatistic,
                 lmcoeff = linreg(xs,ys)
                 smoothys = lmcoeff[2].*xsp .+ lmcoeff[1]
             end
-        
-        # New aes 
+
+        # New aes
             append!(aes.x, steps)
             append!(aes.y, smoothys)
             append!(colors, fill(c, length(steps)))
         end
-    
+
 
         if !(aes.color===nothing)
             aes.color = PooledDataArray(colors)
@@ -1783,14 +1783,14 @@ function apply_statistic(stat::VecFieldStatistic,
     else
         error("Stat.vectorfield requires either a matrix or a function")
     end
-    
+
     X = vcat([[x y] for x in xs, y in ys]...)
     Z = vec(zs)
     # The next two lines make use of the package CoupledFields.jl
     kpars = GaussianKP(X)
     ∇g = hcat(gradvecfield([stat.smoothness -7.0], X, Z[:,1:1], kpars)...)'
-    vecf = [X-∇g*stat.scale X+∇g*stat.scale] 
-    
+    vecf = [X-∇g*stat.scale X+∇g*stat.scale]
+
     aes.z = nothing
     aes.x = vecf[:,1]
     aes.y = vecf[:,2]
@@ -1798,7 +1798,7 @@ function apply_statistic(stat::VecFieldStatistic,
     aes.yend = vecf[:,4]
     color_scale = get(scales, :color, Gadfly.Scale.color_continuous_gradient())
     Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=Z))
-    
+
 end
 
 

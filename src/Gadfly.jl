@@ -11,8 +11,8 @@ using DataStructures
 using JSON
 using Showoff
 
-import Iterators
-import Iterators: distinct, drop, chain
+import IterTools
+import IterTools: distinct, drop, chain
 import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant
 @compat import Base: +, -, /, *,
              copy, push!, start, next, done, show, getindex, cat,
@@ -668,7 +668,7 @@ function render_prepare(plot::Plot)
     end
 
     # I. Scales
-    layer_aess = Scale.apply_scales(Iterators.distinct(values(scales)),
+    layer_aess = Scale.apply_scales(IterTools.distinct(values(scales)),
                                     datas..., subplot_datas...)
 
     # set default labels

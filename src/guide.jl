@@ -5,7 +5,7 @@ using Colors
 using Compose
 using DataStructures
 using Gadfly
-using Iterators
+using IterTools
 using JSON
 
 import Gadfly: render, escape_id, default_statistic, jsdata, jsplotdata,
