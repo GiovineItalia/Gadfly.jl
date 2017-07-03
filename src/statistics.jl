@@ -336,7 +336,7 @@ function apply_statistic(stat::HistogramStatistic,
             for x in xs
                 Gadfly.isconcrete(x) || continue
                 if isdiscrete
-                    bincounts[int(x)] += 1
+                    bincounts[round(Int,x)] += 1
                 else
                     bin = max(1, min(d, (@compat ceil(Int, (x - x_min) / binwidth))))
                     bincounts[bin] += 1
