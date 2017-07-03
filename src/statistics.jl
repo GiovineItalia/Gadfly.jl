@@ -62,7 +62,7 @@ const identity = Identity
 
 # Determine bounds of bars positioned at the given values.
 function barminmax(values, iscontinuous::Bool)
-    minvalue, maxvalue = minimum(values), maximum(values)
+    minvalue, maxvalue = extrema(values)
     span_type = typeof((maxvalue - minvalue) / 1.0)
     barspan = one(span_type)
 
@@ -134,7 +134,7 @@ BarStatistic(; position=:stack, orientation=:vertical) = BarStatistic(position, 
 
 input_aesthetics(stat::BarStatistic) = stat.orientation == :vertical ? [:x] : [:y]
 output_aesthetics(stat::BarStatistic) =
-    stat.orientation == :vertical ? [:ymin, :ymax] : [:xmin, :xmax]
+    stat.orientation == :vertical ? [:xmin, :xmax] : [:ymin, :ymax]
 
 function default_scales(stat::BarStatistic)
     if stat.orientation == :vertical
@@ -150,9 +150,8 @@ function apply_statistic(stat::BarStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    Gadfly.assert_aesthetics_defined("BarStatistic", aes, :x, :y)
-
     if stat.orientation == :horizontal
+        in(:y, Gadfly.defined_aesthetics(aes)) || return
         var = :y
         othervar = :x
         minvar = :ymin
@@ -163,6 +162,7 @@ function apply_statistic(stat::BarStatistic,
         other_viewmaxvar = :yviewmax
         labelvar = :x_label
     else
+        in(:x, Gadfly.defined_aesthetics(aes)) || return
         var = :x
         othervar = :y
         minvar = :xmin
@@ -175,7 +175,7 @@ function apply_statistic(stat::BarStatistic,
     end
 
     values = getfield(aes, var)
-    if isempty(getfield(aes, var))
+    if isempty(values)
       setfield!(aes, minvar, Float64[1.0])
       setfield!(aes, maxvar, Float64[1.0])
       setfield!(aes, var, Float64[1.0])
@@ -232,7 +232,7 @@ end
 
 input_aesthetics(stat::HistogramStatistic) = stat.orientation == :vertical ? [:x] : [:y]
 output_aesthetics(stat::HistogramStatistic) =
-    stat.orientation == :vertical ? [:x, :y, :ymin, :ymax] : [:y, :x, :xmin, :xmax]
+    stat.orientation == :vertical ? [:x, :y, :xmin, :xmax] : [:y, :x, :ymin, :ymax]
 
 function default_scales(stat::HistogramStatistic)
     if stat.orientation == :vertical
@@ -1702,7 +1702,7 @@ immutable EnumerateStatistic <: Gadfly.StatisticElement
 end
 
 input_aesthetics(stat::EnumerateStatistic) = [stat.var]
-output_aesthetics(stat::EnumerateStatistic) = [stat.var == :x ? :y : :x]
+output_aesthetics(stat::EnumerateStatistic) = [stat.var]
 
 function default_scales(stat::EnumerateStatistic)
     if stat.var == :y

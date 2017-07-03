@@ -363,7 +363,7 @@ function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygro
         if typeof(vals) <: AbstractArray
             if xgroup !== nothing && length(vals) !== length(xgroup) ||
                ygroup !== nothing && length(vals) !== length(ygroup)
-                error("Aesthetic $(var) must be the same length as xgroup or ygroup")
+                continue
             end
 
             for i in 1:n, j in 1:m

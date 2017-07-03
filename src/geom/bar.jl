@@ -37,7 +37,8 @@ function histogram(; position=:stack, bincount=nothing,
         tag)
 end
 
-element_aesthetics(::BarGeometry) = [:x, :xmin, :xmax, :y, :ymin, :ymax, :color]
+element_aesthetics(geom::BarGeometry) = geom.orientation == :vertical ?
+            [:xmin, :xmax, :y, :color] : [:ymin, :ymax, :x, :color]
 
 default_statistic(geom::BarGeometry) = geom.default_statistic
 
@@ -262,15 +263,9 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     if geom.orientation == :horizontal
         Gadfly.assert_aesthetics_defined("BarGeometry", aes, :ymin, :ymax, :x)
         Gadfly.assert_aesthetics_equal_length("BarGeometry", aes, :ymin, :ymax, :x)
-        var = :y
-        minvar = :ymin
-        maxvar = :ymax
     else
         Gadfly.assert_aesthetics_defined("BarGeometry", aes, :xmin, :xmax, :y)
         Gadfly.assert_aesthetics_equal_length("BarGeometry", aes, :xmin, :xmax, :y)
-        var = :x
-        minvar = :xmin
-        maxvar = :xmax
     end
 
     if aes.color === nothing

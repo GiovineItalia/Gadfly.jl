@@ -101,6 +101,10 @@ end
 
 element_coordinate_type(::SubplotGrid) = Gadfly.Coord.subplot_grid
 
+default_statistic(geom::SubplotGrid) = isempty(geom.statistics) ?
+        [default_statistic(l.geom) for l in geom.layers] : geom.statistics
+
+
 # Render a subplot grid geometry, which consists of rendering and arranging
 # many smaller plots.
 function render(geom::SubplotGrid, theme::Gadfly.Theme,

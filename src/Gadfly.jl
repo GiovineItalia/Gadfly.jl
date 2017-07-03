@@ -450,8 +450,8 @@ function render_prepare(plot::Plot)
     # Add default statistics for geometries.
     layer_stats = Array{Vector{StatisticElement}}(length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
-        layer_stats[i] = isempty(layer.statistics) ?
-            [default_statistic(layer.geom)] : layer.statistics
+        layer_stats[i] = isempty(layer.statistics) ? ( isa(layer.geom, Geom.SubplotGeometry) ?
+                default_statistic(layer.geom) : [default_statistic(layer.geom)] ) : layer.statistics
     end
 
     # auto-enumeration: add Stat.x/y_enumerate when x and y is needed but only
@@ -464,10 +464,11 @@ function render_prepare(plot::Plot)
             union!(layer_defined_aes, output_aesthetics(stat))
         end
 
-        if :x in layer_needed_aes && :y in layer_needed_aes
-            if !(:x in layer_defined_aes)
+        if mapreduce(x->in(x,layer_needed_aes),|,[:x,:xmax,:xmin]) &&
+                mapreduce(y->in(y,layer_needed_aes),|,[:y,:ymax,:ymin])
+            if !mapreduce(x->in(x,layer_defined_aes),|,[:x,:xmax,:xmin])
                 unshift!(layer_stats[i], Stat.x_enumerate)
-            elseif !(:y in layer_defined_aes)
+            elseif !mapreduce(y->in(y,layer_defined_aes),|,[:y,:ymax,:ymin])
                 unshift!(layer_stats[i], Stat.y_enumerate)
             end
         end
