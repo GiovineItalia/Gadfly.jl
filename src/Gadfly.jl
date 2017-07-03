@@ -386,9 +386,9 @@ function render_prepare(plot::Plot)
     # putting the layers in one subplot instead.
     if sum([isa(layer.geom, Geom.SubplotGeometry) for layer in plot.layers]) > 1
         error("""
-            Subplot geometries can not be used in multiple layers. Instead
-            use layers within one subplot geometry.
-            """)
+              Subplot geometries can not be used in multiple layers. Instead
+              use layers within one subplot geometry.
+              """)
     end
 
     # Process layers, filling inheriting mappings or data from the Plot where
@@ -479,10 +479,8 @@ function render_prepare(plot::Plot)
         union!(used_aesthetics, element_aesthetics(layer.geom))
     end
 
-    for stats in layer_stats
-        for stat in stats
-            union!(used_aesthetics, input_aesthetics(stat))
-        end
+    for stats in layer_stats, stat in stats
+        union!(used_aesthetics, input_aesthetics(stat))
     end
 
     mapped_aesthetics = Set(keys(plot.mapping))
@@ -492,8 +490,8 @@ function render_prepare(plot::Plot)
 
     defined_unused_aesthetics = setdiff(mapped_aesthetics, used_aesthetics)
     isempty(defined_unused_aesthetics) ||
-        warn("The following aesthetics are mapped, but not used by any geometry:\n",
-                 join([string(a) for a in defined_unused_aesthetics], ", "))
+            warn("The following aesthetics are mapped, but not used by any geometry:\n",
+                join([string(a) for a in defined_unused_aesthetics], ", "))
 
     scaled_aesthetics = Set{Symbol}()
     for scale in plot.scales

@@ -60,9 +60,7 @@ function cleanmapping(mapping::Dict)
     cleaned = Dict{Symbol, Any}()
     for (key, val) in mapping
         # skip the "order" pesudo-aesthetic, used to order layers
-        if key == :order
-            continue
-        end
+        key == :order && continue
 
         if haskey(aesthetic_aliases, key)
             key = aesthetic_aliases[key]
@@ -250,22 +248,20 @@ function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
                for colgroup in colgroups]
 
     vi = 1
-    for ui in 1:um
-        for colidx in IterTools.product(colidxs...)
-            # copy grouped columns
-            for (vj, uj) in enumerate(colidx)
-                V[vi, vj] = U[ui, uj]
-                col_indicators[vi, vj] = uj
-                row_indicators[vi, vj] = ui
-            end
-
-            # copy ungrouped columns
-            for (vj, uj) in enumerate(ungrouped_columns)
-                V[vi, vj + length(colgroups)] = U[ui, uj]
-            end
-
-            vi += 1
+    for ui in 1:um, colidx in IterTools.product(colidxs...)
+        # copy grouped columns
+        for (vj, uj) in enumerate(colidx)
+            V[vi, vj] = U[ui, uj]
+            col_indicators[vi, vj] = uj
+            row_indicators[vi, vj] = ui
         end
+
+        # copy ungrouped columns
+        for (vj, uj) in enumerate(ungrouped_columns)
+            V[vi, vj + length(colgroups)] = U[ui, uj]
+        end
+
+        vi += 1
     end
 
     # Map grouped and individual columns in U to columns in V

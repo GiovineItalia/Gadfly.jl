@@ -37,13 +37,10 @@ end
 
 add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.GuideElement) =
         subplot.guides[typeof(arg)] = arg
-
 add_subplot_element{T <: Gadfly.Element}(subplot::SubplotGeometry, arg::Type{T}) =
         add_subplot_element(subplot, arg())
-
 add_subplot_element(subplot::SubplotGeometry, coord::Gadfly.CoordinateElement) =
         subplot.coord = coord
-
 add_subplot_element(subplot::SubplotGeometry, arg) =
         error("Subplots do not support elements of type $(typeof(arg))")
 
@@ -150,8 +147,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     coord = geom.coord
     plot_stats = Gadfly.StatisticElement[stat for stat in geom.statistics]
     layer_stats = [isempty(layer.statistics) ?
-                        Gadfly.StatisticElement[Geom.default_statistic(layer.geom)] : layer.statistics
-                   for layer in geom.layers]
+            Gadfly.StatisticElement[Geom.default_statistic(layer.geom)] : layer.statistics
+                for layer in geom.layers]
 
     for i in 1:n, j in 1:m
         Scale.apply_scales(geom.scales,
@@ -186,13 +183,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         end
     end
 
-    if !geom.free_x_axis && !has_stat_xticks
-        push!(geom_stats, Stat.xticks())
-    end
-
-    if !geom.free_y_axis && !has_stat_yticks
-        push!(geom_stats, Stat.yticks())
-    end
+    !geom.free_x_axis && !has_stat_xticks && push!(geom_stats, Stat.xticks())
+    !geom.free_y_axis && !has_stat_yticks && push!(geom_stats, Stat.yticks())
 
     Stat.apply_statistics(geom_stats, scales, coord, geom_aes)
     aes_grid = [geom_aes for i in 1:n, j in 1:m]
