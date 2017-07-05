@@ -57,29 +57,29 @@ const identity = Identity
 
 
 # Determine bounds of bars positioned at the given values.
-function barminmax(values, iscontinuous::Bool)
-    minvalue, maxvalue = extrema(values)
+function barminmax(vals, iscontinuous::Bool)
+    minvalue, maxvalue = extrema(vals)
     span_type = typeof((maxvalue - minvalue) / 1.0)
     barspan = one(span_type)
 
-    if iscontinuous && length(values) > 1
-        sorted_values = sort(values)
-        T = typeof(sorted_values[2] - sorted_values[1])
+    if iscontinuous && length(vals) > 1
+        sorted_vals = sort(vals)
+        T = typeof(sorted_vals[2] - sorted_vals[1])
         z = zero(T)
         minspan = z
-        for i in 2:length(values)
-            span = sorted_values[i] - sorted_values[i-1]
+        for i in 2:length(vals)
+            span = sorted_vals[i] - sorted_vals[i-1]
             if span > z && (span < minspan || minspan == z)
                 minspan = span
             end
         end
         barspan = minspan
     end
-    position_type = promote_type(typeof(barspan/2.0), eltype(values))
-    minvals = Array{position_type}(length(values))
-    maxvals = Array{position_type}(length(values))
+    position_type = promote_type(typeof(barspan/2.0), eltype(vals))
+    minvals = Array{position_type}(length(vals))
+    maxvals = Array{position_type}(length(vals))
 
-    for (i, x) in enumerate(values)
+    for (i, x) in enumerate(vals)
         minvals[i] = x - barspan/2.0
         maxvals[i] = x + barspan/2.0
     end
@@ -164,8 +164,8 @@ function apply_statistic(stat::BarStatistic,
         labelvar = :y_label
     end
 
-    values = getfield(aes, var)
-    if isempty(values)
+    vals = getfield(aes, var)
+    if isempty(vals)
       setfield!(aes, minvar, Float64[1.0])
       setfield!(aes, maxvar, Float64[1.0])
       setfield!(aes, var, Float64[1.0])
@@ -176,7 +176,7 @@ function apply_statistic(stat::BarStatistic,
     iscontinuous = haskey(scales, var) && isa(scales[var], Scale.ContinuousScale)
 
     if getfield(aes, minvar) == nothing || getfield(aes, maxvar) == nothing
-        minvals, maxvals = barminmax(values, iscontinuous)
+        minvals, maxvals = barminmax(vals, iscontinuous)
 
         setfield!(aes, minvar, minvals)
         setfield!(aes, maxvar, maxvals)
@@ -187,6 +187,32 @@ function apply_statistic(stat::BarStatistic,
         setfield!(aes, viewminvar, z)
     elseif getfield(aes, viewmaxvar) == nothing && z > maximum(getfield(aes, othervar))
         setfield!(aes, viewmaxvar, z)
+    end
+
+    if stat.position == :stack && aes.color !== nothing
+        groups = Dict{Any,Float64}()
+        for (x, y) in zip(getfield(aes, othervar), vals)
+            Gadfly.isconcrete(x) || continue
+
+            if !haskey(groups, y)
+                groups[y] = Float64(x)
+            else
+                groups[y] += Float64(x)
+            end
+        end
+
+        stack_height = values(groups)
+        if any(x->x>0.0, stack_height)
+          viewextrema = @compat Float64(maximum(stack_height))
+          viewextremavar = viewmaxvar
+        else
+          viewextrema = @compat Float64(minimum(stack_height))
+          viewextremavar = viewminvar
+        end
+        aes_viewextrema = getfield(aes, viewextremavar)
+        if aes_viewextrema === nothing || aes_viewextrema < viewextrema
+            setfield!(aes, viewextremavar, viewextrema)
+        end
     end
 
     if !iscontinuous
@@ -253,7 +279,7 @@ function apply_statistic(stat::HistogramStatistic,
 
     Gadfly.assert_aesthetics_defined("HistogramStatistic", aes, var)
 
-    values = getfield(aes, var)
+    vals = getfield(aes, var)
     stat.minbincount > stat.maxbincount && error("Histogram minbincount > maxbincount")
 
     if isempty(getfield(aes, var))
@@ -266,30 +292,29 @@ function apply_statistic(stat::HistogramStatistic,
 
     if haskey(scales, var) && isa(scales[var], Scale.DiscreteScale)
         isdiscrete = true
-        x_min = minimum(values)
-        x_max = maximum(values)
+        x_min, x_max = extrema(vals)
         d = x_max - x_min + 1
         bincounts = zeros(Int, d)
-        for x in values
+        for x in vals
             bincounts[x - x_min + 1] += 1
         end
         x_min -= 0.5 # adjust the left side of the bar
         binwidth = 1.0
     else
-        x_min = Gadfly.concrete_minimum(values)
+        x_min = Gadfly.concrete_minimum(vals)
 
         isdiscrete = false
-        if estimate_distinct_proportion(values) <= 0.9
-            value_set = sort!(collect(Set(values[Bool[Gadfly.isconcrete(v) for v in values]])))
+        if estimate_distinct_proportion(vals) <= 0.9
+            value_set = sort!(collect(Set(vals[Bool[Gadfly.isconcrete(v) for v in vals]])))
             d, bincounts, x_max = choose_bin_count_1d_discrete(
-                        values, value_set, stat.minbincount, stat.maxbincount)
+                        vals, value_set, stat.minbincount, stat.maxbincount)
         else
             d, bincounts, x_max = choose_bin_count_1d(
-                        values, stat.minbincount, stat.maxbincount)
+                        vals, stat.minbincount, stat.maxbincount)
         end
 
         if stat.density
-            x_min = Gadfly.concrete_minimum(values)
+            x_min = Gadfly.concrete_minimum(vals)
             span = x_max - x_min
             binwidth = span / d
             bincounts = bincounts ./ (sum(bincounts) * binwidth)
@@ -312,7 +337,7 @@ function apply_statistic(stat::HistogramStatistic,
         end
     else
         groups = Dict()
-        for (x, c) in zip(values, cycle(aes.color))
+        for (x, c) in zip(vals, cycle(aes.color))
             Gadfly.isconcrete(x) || continue
 
             if !haskey(groups, c)
@@ -718,7 +743,7 @@ function apply_statistic(stat::TickStatistic,
 
     in_group_var = Symbol(stat.out_var, "group")
     minval, maxval = nothing, nothing
-    in_values = Any[]
+    in_vals = Any[]
     categorical = (:x in stat.in_vars && Scale.iscategorical(scales, :x)) ||
                   (:y in stat.in_vars && Scale.iscategorical(scales, :y))
 
@@ -748,13 +773,13 @@ function apply_statistic(stat::TickStatistic,
             size = aes.size === nothing ? [nothing] : aes.size
 
             minval, maxval = apply_statistic_typed(minval, maxval, vals, size, dsize)
-            push!(in_values, vals)
+            push!(in_vals, vals)
         end
     end
 
-    isempty(in_values) && return
+    isempty(in_vals) && return
 
-    in_values = chain(in_values...)
+    in_vals = chain(in_vals...)
 
     # consider forced tick marks
     if stat.ticks != :auto
@@ -764,7 +789,7 @@ function apply_statistic(stat::TickStatistic,
 
     # TODO: handle the outliers aesthetic
 
-    n = Gadfly.concrete_length(in_values)
+    n = Gadfly.concrete_length(in_vals)
 
     # check the x/yviewmin/max pesudo-aesthetics
     if stat.out_var == "x"
@@ -816,7 +841,7 @@ function apply_statistic(stat::TickStatistic,
         tickscale = fill(1.0, length(ticks))
     elseif categorical
         ticks = Set{Int}()
-        for val in in_values
+        for val in in_vals
             val>0 && push!(ticks, round(Int, val))
         end
         ticks = Int[t for t in ticks]
