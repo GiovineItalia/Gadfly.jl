@@ -96,11 +96,14 @@ function render_colorful_stacked_bar(geom::BarGeometry,
             stack_height_dict[aes.ymin[j]] += aes.x[j]
         end
 
-        compose!(ctx,
-            rectangle(stack_height,
-                [aes.ymin[i]*cy + theme.bar_spacing/2 for i in idxs],
-                [aes.x[i] for i in idxs],
-                [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs], geom.tag))
+        x0s = stack_height
+        y0s = [aes.ymin[i]*cy + theme.bar_spacing/2 for i in idxs]
+        widths = [abs(aes.x[i]) for i in idxs]
+        heights = [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs]
+        if any(aes.x .< 0)
+          x0s -= widths
+        end
+        compose!(ctx, rectangle(x0s, y0s, widths, heights, geom.tag))
     else
         stack_height_dict = Dict()
         T = eltype(aes.y)
@@ -115,11 +118,14 @@ function render_colorful_stacked_bar(geom::BarGeometry,
             stack_height_dict[aes.xmin[j]] += aes.y[j]
         end
 
-        compose!(ctx,
-            rectangle([aes.xmin[i]*cx + theme.bar_spacing/2 for i in idxs],
-                stack_height,
-                [(aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing for i in idxs],
-                [aes.y[i] for i in idxs], geom.tag))
+        x0s = [aes.xmin[i]*cx + theme.bar_spacing/2 for i in idxs]
+        y0s = stack_height
+        widths = [(aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing for i in idxs]
+        heights = [abs(aes.y[i]) for i in idxs]
+        if any(aes.y .< 0)
+          y0s -= heights
+        end
+        compose!(ctx, rectangle(x0s, y0s, widths, heights, geom.tag))
     end
 
     cs = [aes.color[i] for i in idxs]
