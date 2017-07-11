@@ -43,6 +43,7 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
         end
 
         point_dist = (2*theme.point_size + geom.padding).value
+        point_dist += eps(point_dist)
         offsets = Array{Length{:mm}}(length(val))
         positions = Array{Compose.Measure}(length(val))
 

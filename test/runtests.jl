@@ -140,6 +140,7 @@ tests = [
     ("matrix_lines",                          6inch, 4inch),
     ("matrix_lines",                          6inch, 4inch),
     ("wide_form",                             6inch, 4inch),
+    ("issue846",                              6inch, 3inch)
 ]
 
 
