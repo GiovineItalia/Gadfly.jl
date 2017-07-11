@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Guide.xlabel · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Ubuntu+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a><ul><li class="current"><a class="toctext" href="guide_xlabel.html">Guide.xlabel</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../guides.html">Guides</a></li><li><a href="guide_xlabel.html">Guide.xlabel</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/05f4df1d6ac01eacdab415ea20e874be3623f6a4/docs/src/lib/guides/guide_xlabel.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/></header><h1><a class="nav-anchor" id="Guide.xlabel-1" href="#Guide.xlabel-1">Guide.xlabel</a></h1><p>Sets the x-axis label for the plot.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>label</code>: X-axis label</p></li><li><p><code>orientation</code> (optional): <code>:horizontal</code>, <code>:vertical</code>, or <code>:auto</code> (default)</p></li></ul><p><code>label</code> is not a keyword parameter, it must be supplied as the first argument of <a href="guide_xlabel.html#Guide.xlabel-1">Guide.xlabel</a>.  Setting it to <code>nothing</code> will suppress the default label.</p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(cos, 0, 2π, Guide.xlabel(&quot;Angle&quot;))</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Guide.xlabel · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a><ul><li class="current"><a class="toctext" href="guide_xlabel.html">Guide.xlabel</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../guides.html">Guides</a></li><li><a href="guide_xlabel.html">Guide.xlabel</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/11b9dc156a8a641825f8a2798fe301f70a70510b/docs/src/lib/guides/guide_xlabel.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Guide.xlabel</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Guide.xlabel-1" href="#Guide.xlabel-1">Guide.xlabel</a></h1><p>Sets the x-axis label for the plot.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>label</code>: X-axis label</p></li><li><p><code>orientation</code> (optional): <code>:horizontal</code>, <code>:vertical</code>, or <code>:auto</code> (default)</p></li></ul><p><code>label</code> is not a keyword parameter, it must be supplied as the first argument of <a href="guide_xlabel.html#Guide.xlabel-1">Guide.xlabel</a>.  Setting it to <code>nothing</code> will suppress the default label.</p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(cos, 0, 2π, Guide.xlabel(&quot;Angle&quot;))</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
      xmlns:gadfly="http://www.gadflyjl.org/ns"
@@ -10,56 +10,56 @@
      stroke-width="0.3"
      font-size="3.88"
 >
-<g class="plotroot xscalable yscalable" id="img-4e727645-1">
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-4e727645-2">
+<g class="plotroot xscalable yscalable" id="img-039492c3-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-039492c3-2">
     <text x="77.37" y="68.39" text-anchor="middle" dy="0.6em">Angle</text>
   </g>
-  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-4e727645-3">
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-039492c3-3">
     <text x="21.75" y="61.72" text-anchor="middle" dy="0.6em">0</text>
     <text x="49.56" y="61.72" text-anchor="middle" dy="0.6em">2</text>
     <text x="77.37" y="61.72" text-anchor="middle" dy="0.6em">4</text>
     <text x="105.19" y="61.72" text-anchor="middle" dy="0.6em">6</text>
     <text x="133" y="61.72" text-anchor="middle" dy="0.6em">8</text>
   </g>
-<g clip-path="url(#img-4e727645-4)">
-  <g id="img-4e727645-5">
-    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-4e727645-6">
+<g clip-path="url(#img-039492c3-4)">
+  <g id="img-039492c3-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-039492c3-6">
       <rect x="19.75" y="5" width="115.26" height="55.72"/>
     </g>
-    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-4e727645-7">
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-039492c3-7">
       <path fill="none" d="M19.75,58.72 L 135 58.72"/>
       <path fill="none" d="M19.75,45.79 L 135 45.79"/>
       <path fill="none" d="M19.75,32.86 L 135 32.86"/>
       <path fill="none" d="M19.75,19.93 L 135 19.93"/>
       <path fill="none" d="M19.75,7 L 135 7"/>
     </g>
-    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-4e727645-8">
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-039492c3-8">
       <path fill="none" d="M21.75,5 L 21.75 60.72"/>
       <path fill="none" d="M49.56,5 L 49.56 60.72"/>
       <path fill="none" d="M77.37,5 L 77.37 60.72"/>
       <path fill="none" d="M105.19,5 L 105.19 60.72"/>
       <path fill="none" d="M133,5 L 133 60.72"/>
     </g>
-    <g class="plotpanel" id="img-4e727645-9">
-      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" class="geometry" stroke-dasharray="none" stroke="#00BFFF" id="img-4e727645-10">
+    <g class="plotpanel" id="img-039492c3-9">
+      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" class="geometry" stroke-dasharray="none" stroke="#00BFFF" id="img-039492c3-10">
         <path fill="none" d="M21.75,7 L 22.1 7.01 22.45 7.03 22.8 7.07 23.15 7.13 23.5 7.21 23.85 7.3 24.2 7.4 24.55 7.53 24.9 7.66 25.25 7.82 25.61 7.99 25.96 8.18 26.31 8.38 26.66 8.6 27.01 8.83 27.36 9.08 27.71 9.34 28.06 9.62 28.41 9.92 28.76 10.22 29.11 10.55 29.47 10.88 29.82 11.23 30.17 11.6 30.52 11.98 30.87 12.37 31.22 12.77 31.57 13.19 31.92 13.62 32.27 14.06 32.62 14.52 32.97 14.98 33.33 15.46 33.68 15.95 34.03 16.45 34.38 16.96 34.73 17.47 35.08 18 35.43 18.54 35.78 19.09 36.13 19.65 36.48 20.21 36.83 20.79 37.19 21.37 37.54 21.95 37.89 22.55 38.24 23.15 38.59 23.76 38.94 24.37 39.29 24.99 39.64 25.62 39.99 26.24 40.34 26.88 40.69 27.51 41.05 28.15 41.4 28.8 41.75 29.44 42.1 30.09 42.45 30.74 42.8 31.39 43.15 32.04 43.5 32.69 43.85 33.35 44.2 34 44.55 34.65 44.91 35.3 45.26 35.95 45.61 36.6 45.96 37.24 46.31 37.88 46.66 38.52 47.01 39.16 47.36 39.79 47.71 40.41 48.06 41.03 48.42 41.65 48.77 42.26 49.12 42.87 49.47 43.46 49.82 44.06 50.17 44.64 50.52 45.22 50.87 45.79 51.22 46.35 51.57 46.9 51.92 47.44 52.28 47.98 52.63 48.5 52.98 49.02 53.33 49.52 53.68 50.01 54.03 50.5 54.38 50.97 54.73 51.43 55.08 51.88 55.43 52.31 55.78 52.74 56.14 53.15 56.49 53.54 56.84 53.93 57.19 54.3 57.54 54.66 57.89 55 58.24 55.33 58.59 55.65 58.94 55.95 59.29 56.23 59.64 56.51 60 56.76 60.35 57 60.7 57.23 61.05 57.44 61.4 57.63 61.75 57.81 62.1 57.98 62.45 58.12 62.8 58.25 63.15 58.37 63.5 58.47 63.86 58.55 64.21 58.61 64.56 58.66 64.91 58.7 65.26 58.71 65.61 58.71 65.96 58.7 66.31 58.66 66.66 58.61 67.01 58.55 67.36 58.47 67.72 58.37 68.07 58.25 68.42 58.12 68.77 57.98 69.12 57.81 69.47 57.63 69.82 57.44 70.17 57.23 70.52 57 70.87 56.76 71.22 56.51 71.58 56.23 71.93 55.95 72.28 55.65 72.63 55.33 72.98 55 73.33 54.66 73.68 54.3 74.03 53.93 74.38 53.54 74.73 53.15 75.09 52.74 75.44 52.31 75.79 51.88 76.14 51.43 76.49 50.97 76.84 50.5 77.19 50.01 77.54 49.52 77.89 49.02 78.24 48.5 78.59 47.98 78.95 47.44 79.3 46.9 79.65 46.35 80 45.79 80.35 45.22 80.7 44.64 81.05 44.06 81.4 43.46 81.75 42.87 82.1 42.26 82.45 41.65 82.81 41.03 83.16 40.41 83.51 39.79 83.86 39.16 84.21 38.52 84.56 37.88 84.91 37.24 85.26 36.6 85.61 35.95 85.96 35.3 86.31 34.65 86.67 34 87.02 33.35 87.37 32.69 87.72 32.04 88.07 31.39 88.42 30.74 88.77 30.09 89.12 29.44 89.47 28.8 89.82 28.15 90.17 27.51 90.53 26.88 90.88 26.24 91.23 25.62 91.58 24.99 91.93 24.37 92.28 23.76 92.63 23.15 92.98 22.55 93.33 21.95 93.68 21.37 94.03 20.79 94.39 20.21 94.74 19.65 95.09 19.09 95.44 18.54 95.79 18 96.14 17.47 96.49 16.96 96.84 16.45 97.19 15.95 97.54 15.46 97.89 14.98 98.25 14.52 98.6 14.06 98.95 13.62 99.3 13.19 99.65 12.77 100 12.37 100.35 11.98 100.7 11.6 101.05 11.23 101.4 10.88 101.76 10.55 102.11 10.22 102.46 9.92 102.81 9.62 103.16 9.34 103.51 9.08 103.86 8.83 104.21 8.6 104.56 8.38 104.91 8.18 105.26 7.99 105.62 7.82 105.97 7.66 106.32 7.53 106.67 7.4 107.02 7.3 107.37 7.21 107.72 7.13 108.07 7.07 108.42 7.03 108.77 7.01 109.12 7"/>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-4e727645-11">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-039492c3-11">
     <text x="18.74" y="58.72" text-anchor="end" dy="0.35em">-1.0</text>
     <text x="18.74" y="45.79" text-anchor="end" dy="0.35em">-0.5</text>
     <text x="18.74" y="32.86" text-anchor="end" dy="0.35em">0.0</text>
     <text x="18.74" y="19.93" text-anchor="end" dy="0.35em">0.5</text>
     <text x="18.74" y="7" text-anchor="end" dy="0.35em">1.0</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-4e727645-12">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-039492c3-12">
     <text x="8.81" y="30.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 32.86)">f(x)</text>
   </g>
 </g>
 <defs>
-  <clipPath id="img-4e727645-4">
+  <clipPath id="img-039492c3-4">
   <path d="M19.75,5 L 135 5 135 60.72 19.75 60.72" />
 </clipPath>
 </defs>
@@ -75,56 +75,56 @@
      stroke-width="0.3"
      font-size="3.88"
 >
-<g class="plotroot xscalable yscalable" id="img-e088f4d6-1">
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-e088f4d6-2">
+<g class="plotroot xscalable yscalable" id="img-8327437b-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-8327437b-2">
     <text x="77.37" y="62.42" text-anchor="end" dy="0.35em" transform="rotate(-90, 77.37, 62.42)">Angle</text>
   </g>
-  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-e088f4d6-3">
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-8327437b-3">
     <text x="21.75" y="55.75" text-anchor="middle" dy="0.6em">0</text>
     <text x="49.56" y="55.75" text-anchor="middle" dy="0.6em">2</text>
     <text x="77.37" y="55.75" text-anchor="middle" dy="0.6em">4</text>
     <text x="105.19" y="55.75" text-anchor="middle" dy="0.6em">6</text>
     <text x="133" y="55.75" text-anchor="middle" dy="0.6em">8</text>
   </g>
-<g clip-path="url(#img-e088f4d6-4)">
-  <g id="img-e088f4d6-5">
-    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-e088f4d6-6">
+<g clip-path="url(#img-8327437b-4)">
+  <g id="img-8327437b-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-8327437b-6">
       <rect x="19.75" y="5" width="115.26" height="49.75"/>
     </g>
-    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-e088f4d6-7">
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-8327437b-7">
       <path fill="none" d="M19.75,52.75 L 135 52.75"/>
       <path fill="none" d="M19.75,41.31 L 135 41.31"/>
       <path fill="none" d="M19.75,29.87 L 135 29.87"/>
       <path fill="none" d="M19.75,18.44 L 135 18.44"/>
       <path fill="none" d="M19.75,7 L 135 7"/>
     </g>
-    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-e088f4d6-8">
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-8327437b-8">
       <path fill="none" d="M21.75,5 L 21.75 54.75"/>
       <path fill="none" d="M49.56,5 L 49.56 54.75"/>
       <path fill="none" d="M77.37,5 L 77.37 54.75"/>
       <path fill="none" d="M105.19,5 L 105.19 54.75"/>
       <path fill="none" d="M133,5 L 133 54.75"/>
     </g>
-    <g class="plotpanel" id="img-e088f4d6-9">
-      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" class="geometry" stroke-dasharray="none" stroke="#00BFFF" id="img-e088f4d6-10">
+    <g class="plotpanel" id="img-8327437b-9">
+      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" class="geometry" stroke-dasharray="none" stroke="#00BFFF" id="img-8327437b-10">
         <path fill="none" d="M21.75,7 L 22.1 7.01 22.45 7.03 22.8 7.07 23.15 7.12 23.5 7.18 23.85 7.26 24.2 7.36 24.55 7.46 24.9 7.59 25.25 7.72 25.61 7.88 25.96 8.04 26.31 8.22 26.66 8.41 27.01 8.62 27.36 8.84 27.71 9.07 28.06 9.32 28.41 9.58 28.76 9.85 29.11 10.14 29.47 10.44 29.82 10.75 30.17 11.07 30.52 11.4 30.87 11.75 31.22 12.11 31.57 12.48 31.92 12.86 32.27 13.25 32.62 13.65 32.97 14.06 33.33 14.48 33.68 14.91 34.03 15.36 34.38 15.81 34.73 16.27 35.08 16.73 35.43 17.21 35.78 17.7 36.13 18.19 36.48 18.69 36.83 19.19 37.19 19.71 37.54 20.23 37.89 20.76 38.24 21.29 38.59 21.82 38.94 22.37 39.29 22.92 39.64 23.47 39.99 24.02 40.34 24.58 40.69 25.15 41.05 25.71 41.4 26.28 41.75 26.85 42.1 27.43 42.45 28 42.8 28.58 43.15 29.15 43.5 29.73 43.85 30.31 44.2 30.88 44.55 31.46 44.91 32.03 45.26 32.61 45.61 33.18 45.96 33.75 46.31 34.32 46.66 34.88 47.01 35.44 47.36 36 47.71 36.56 48.06 37.11 48.42 37.65 48.77 38.19 49.12 38.73 49.47 39.26 49.82 39.78 50.17 40.3 50.52 40.81 50.87 41.31 51.22 41.81 51.57 42.3 51.92 42.78 52.28 43.25 52.63 43.71 52.98 44.17 53.33 44.61 53.68 45.05 54.03 45.48 54.38 45.89 54.73 46.3 55.08 46.7 55.43 47.08 55.78 47.46 56.14 47.82 56.49 48.17 56.84 48.51 57.19 48.84 57.54 49.16 57.89 49.46 58.24 49.75 58.59 50.03 58.94 50.3 59.29 50.55 59.64 50.79 60 51.02 60.35 51.23 60.7 51.43 61.05 51.62 61.4 51.79 61.75 51.95 62.1 52.09 62.45 52.22 62.8 52.34 63.15 52.44 63.5 52.53 63.86 52.6 64.21 52.66 64.56 52.7 64.91 52.73 65.26 52.75 65.61 52.75 65.96 52.73 66.31 52.7 66.66 52.66 67.01 52.6 67.36 52.53 67.72 52.44 68.07 52.34 68.42 52.22 68.77 52.09 69.12 51.95 69.47 51.79 69.82 51.62 70.17 51.43 70.52 51.23 70.87 51.02 71.22 50.79 71.58 50.55 71.93 50.3 72.28 50.03 72.63 49.75 72.98 49.46 73.33 49.16 73.68 48.84 74.03 48.51 74.38 48.17 74.73 47.82 75.09 47.46 75.44 47.08 75.79 46.7 76.14 46.3 76.49 45.89 76.84 45.48 77.19 45.05 77.54 44.61 77.89 44.17 78.24 43.71 78.59 43.25 78.95 42.78 79.3 42.3 79.65 41.81 80 41.31 80.35 40.81 80.7 40.3 81.05 39.78 81.4 39.26 81.75 38.73 82.1 38.19 82.45 37.65 82.81 37.11 83.16 36.56 83.51 36 83.86 35.44 84.21 34.88 84.56 34.32 84.91 33.75 85.26 33.18 85.61 32.61 85.96 32.03 86.31 31.46 86.67 30.88 87.02 30.31 87.37 29.73 87.72 29.15 88.07 28.58 88.42 28 88.77 27.43 89.12 26.85 89.47 26.28 89.82 25.71 90.17 25.15 90.53 24.58 90.88 24.02 91.23 23.47 91.58 22.92 91.93 22.37 92.28 21.82 92.63 21.29 92.98 20.76 93.33 20.23 93.68 19.71 94.03 19.19 94.39 18.69 94.74 18.19 95.09 17.7 95.44 17.21 95.79 16.73 96.14 16.27 96.49 15.81 96.84 15.36 97.19 14.91 97.54 14.48 97.89 14.06 98.25 13.65 98.6 13.25 98.95 12.86 99.3 12.48 99.65 12.11 100 11.75 100.35 11.4 100.7 11.07 101.05 10.75 101.4 10.44 101.76 10.14 102.11 9.85 102.46 9.58 102.81 9.32 103.16 9.07 103.51 8.84 103.86 8.62 104.21 8.41 104.56 8.22 104.91 8.04 105.26 7.88 105.62 7.72 105.97 7.59 106.32 7.46 106.67 7.36 107.02 7.26 107.37 7.18 107.72 7.12 108.07 7.07 108.42 7.03 108.77 7.01 109.12 7"/>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-e088f4d6-11">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-8327437b-11">
     <text x="18.74" y="52.75" text-anchor="end" dy="0.35em">-1.0</text>
     <text x="18.74" y="41.31" text-anchor="end" dy="0.35em">-0.5</text>
     <text x="18.74" y="29.87" text-anchor="end" dy="0.35em">0.0</text>
     <text x="18.74" y="18.44" text-anchor="end" dy="0.35em">0.5</text>
     <text x="18.74" y="7" text-anchor="end" dy="0.35em">1.0</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-e088f4d6-12">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-8327437b-12">
     <text x="8.81" y="27.87" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 29.87)">f(x)</text>
   </g>
 </g>
 <defs>
-  <clipPath id="img-e088f4d6-4">
+  <clipPath id="img-8327437b-4">
   <path d="M19.75,5 L 135 5 135 54.75 19.75 54.75" />
 </clipPath>
 </defs>
@@ -140,53 +140,53 @@
      stroke-width="0.3"
      font-size="3.88"
 >
-<g class="plotroot xscalable yscalable" id="img-d119bb6d-1">
-  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-d119bb6d-2">
+<g class="plotroot xscalable yscalable" id="img-c9e3ca77-1">
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-c9e3ca77-2">
     <text x="21.75" y="71.33" text-anchor="middle" dy="0.6em">0</text>
     <text x="49.56" y="71.33" text-anchor="middle" dy="0.6em">2</text>
     <text x="77.37" y="71.33" text-anchor="middle" dy="0.6em">4</text>
     <text x="105.19" y="71.33" text-anchor="middle" dy="0.6em">6</text>
     <text x="133" y="71.33" text-anchor="middle" dy="0.6em">8</text>
   </g>
-<g clip-path="url(#img-d119bb6d-3)">
-  <g id="img-d119bb6d-4">
-    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-d119bb6d-5">
+<g clip-path="url(#img-c9e3ca77-3)">
+  <g id="img-c9e3ca77-4">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-c9e3ca77-5">
       <rect x="19.75" y="5" width="115.26" height="65.33"/>
     </g>
-    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-d119bb6d-6">
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-c9e3ca77-6">
       <path fill="none" d="M19.75,68.33 L 135 68.33"/>
       <path fill="none" d="M19.75,53 L 135 53"/>
       <path fill="none" d="M19.75,37.66 L 135 37.66"/>
       <path fill="none" d="M19.75,22.33 L 135 22.33"/>
       <path fill="none" d="M19.75,7 L 135 7"/>
     </g>
-    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-d119bb6d-7">
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-c9e3ca77-7">
       <path fill="none" d="M21.75,5 L 21.75 70.33"/>
       <path fill="none" d="M49.56,5 L 49.56 70.33"/>
       <path fill="none" d="M77.37,5 L 77.37 70.33"/>
       <path fill="none" d="M105.19,5 L 105.19 70.33"/>
       <path fill="none" d="M133,5 L 133 70.33"/>
     </g>
-    <g class="plotpanel" id="img-d119bb6d-8">
-      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" class="geometry" stroke-dasharray="none" stroke="#00BFFF" id="img-d119bb6d-9">
+    <g class="plotpanel" id="img-c9e3ca77-8">
+      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" class="geometry" stroke-dasharray="none" stroke="#00BFFF" id="img-c9e3ca77-9">
         <path fill="none" d="M21.75,7 L 22.1 7.01 22.45 7.04 22.8 7.09 23.15 7.16 23.5 7.24 23.85 7.35 24.2 7.48 24.55 7.62 24.9 7.79 25.25 7.97 25.61 8.17 25.96 8.4 26.31 8.64 26.66 8.89 27.01 9.17 27.36 9.47 27.71 9.78 28.06 10.11 28.41 10.46 28.76 10.82 29.11 11.21 29.47 11.6 29.82 12.02 30.17 12.45 30.52 12.9 30.87 13.37 31.22 13.85 31.57 14.34 31.92 14.85 32.27 15.37 32.62 15.91 32.97 16.47 33.33 17.03 33.68 17.61 34.03 18.2 34.38 18.81 34.73 19.42 35.08 20.05 35.43 20.69 35.78 21.34 36.13 22 36.48 22.67 36.83 23.35 37.19 24.04 37.54 24.73 37.89 25.44 38.24 26.15 38.59 26.87 38.94 27.6 39.29 28.34 39.64 29.08 39.99 29.82 40.34 30.57 40.69 31.33 41.05 32.08 41.4 32.85 41.75 33.61 42.1 34.38 42.45 35.15 42.8 35.92 43.15 36.7 43.5 37.47 43.85 38.24 44.2 39.02 44.55 39.79 44.91 40.56 45.26 41.33 45.61 42.1 45.96 42.86 46.31 43.62 46.66 44.38 47.01 45.13 47.36 45.88 47.71 46.62 48.06 47.36 48.42 48.09 48.77 48.81 49.12 49.53 49.47 50.24 49.82 50.94 50.17 51.64 50.52 52.32 50.87 53 51.22 53.66 51.57 54.32 51.92 54.96 52.28 55.59 52.63 56.21 52.98 56.82 53.33 57.42 53.68 58.01 54.03 58.58 54.38 59.14 54.73 59.68 55.08 60.22 55.43 60.73 55.78 61.24 56.14 61.72 56.49 62.19 56.84 62.65 57.19 63.09 57.54 63.52 57.89 63.92 58.24 64.31 58.59 64.69 58.94 65.05 59.29 65.39 59.64 65.71 60 66.01 60.35 66.3 60.7 66.56 61.05 66.81 61.4 67.04 61.75 67.26 62.1 67.45 62.45 67.62 62.8 67.78 63.15 67.92 63.5 68.03 63.86 68.13 64.21 68.21 64.56 68.27 64.91 68.3 65.26 68.32 65.61 68.32 65.96 68.3 66.31 68.27 66.66 68.21 67.01 68.13 67.36 68.03 67.72 67.92 68.07 67.78 68.42 67.62 68.77 67.45 69.12 67.26 69.47 67.04 69.82 66.81 70.17 66.56 70.52 66.3 70.87 66.01 71.22 65.71 71.58 65.39 71.93 65.05 72.28 64.69 72.63 64.31 72.98 63.92 73.33 63.52 73.68 63.09 74.03 62.65 74.38 62.19 74.73 61.72 75.09 61.24 75.44 60.73 75.79 60.22 76.14 59.68 76.49 59.14 76.84 58.58 77.19 58.01 77.54 57.42 77.89 56.82 78.24 56.21 78.59 55.59 78.95 54.96 79.3 54.32 79.65 53.66 80 52.99 80.35 52.32 80.7 51.64 81.05 50.94 81.4 50.24 81.75 49.53 82.1 48.81 82.45 48.09 82.81 47.36 83.16 46.62 83.51 45.88 83.86 45.13 84.21 44.38 84.56 43.62 84.91 42.86 85.26 42.1 85.61 41.33 85.96 40.56 86.31 39.79 86.67 39.02 87.02 38.24 87.37 37.47 87.72 36.7 88.07 35.92 88.42 35.15 88.77 34.38 89.12 33.61 89.47 32.85 89.82 32.08 90.17 31.33 90.53 30.57 90.88 29.82 91.23 29.08 91.58 28.34 91.93 27.6 92.28 26.87 92.63 26.15 92.98 25.44 93.33 24.73 93.68 24.04 94.03 23.35 94.39 22.67 94.74 22 95.09 21.34 95.44 20.69 95.79 20.05 96.14 19.42 96.49 18.81 96.84 18.2 97.19 17.61 97.54 17.03 97.89 16.47 98.25 15.91 98.6 15.37 98.95 14.85 99.3 14.34 99.65 13.85 100 13.37 100.35 12.9 100.7 12.45 101.05 12.02 101.4 11.6 101.76 11.21 102.11 10.82 102.46 10.46 102.81 10.11 103.16 9.78 103.51 9.47 103.86 9.17 104.21 8.89 104.56 8.64 104.91 8.4 105.26 8.17 105.62 7.97 105.97 7.79 106.32 7.62 106.67 7.48 107.02 7.35 107.37 7.24 107.72 7.16 108.07 7.09 108.42 7.04 108.77 7.01 109.12 7"/>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-d119bb6d-10">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-c9e3ca77-10">
     <text x="18.74" y="68.33" text-anchor="end" dy="0.35em">-1.0</text>
     <text x="18.74" y="53" text-anchor="end" dy="0.35em">-0.5</text>
     <text x="18.74" y="37.66" text-anchor="end" dy="0.35em">0.0</text>
     <text x="18.74" y="22.33" text-anchor="end" dy="0.35em">0.5</text>
     <text x="18.74" y="7" text-anchor="end" dy="0.35em">1.0</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-d119bb6d-11">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-c9e3ca77-11">
     <text x="8.81" y="35.66" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 37.66)">f(x)</text>
   </g>
 </g>
 <defs>
-  <clipPath id="img-d119bb6d-3">
+  <clipPath id="img-c9e3ca77-3">
   <path d="M19.75,5 L 135 5 135 70.33 19.75 70.33" />
 </clipPath>
 </defs>
