@@ -135,7 +135,11 @@ tests = [
     ("issue996",                              6inch, 3inch),
     ("issue997",                              6inch, 3inch),
     ("issue1004",                             6inch, 3inch),
-    ("issue1005",                             6inch, 3inch)
+    ("issue1005",                             6inch, 3inch),
+    ("array_of_arrays",                       4inch, 4inch),
+    ("matrix_lines",                          6inch, 4inch),
+    ("matrix_lines",                          6inch, 4inch),
+    ("wide_form",                             6inch, 4inch),
 ]
 
 
