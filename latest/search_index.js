@@ -281,70 +281,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/dev_pipeline.html#",
-    "page": "Rendering Pipeline",
-    "title": "Rendering Pipeline",
-    "category": "page",
-    "text": "Author = \"Darwin Darakananda\""
-},
-
-{
-    "location": "lib/dev_pipeline.html#Rendering-Pipeline-1",
-    "page": "Rendering Pipeline",
-    "title": "Rendering Pipeline",
-    "category": "section",
-    "text": "using DataFrames\nusing Colors\nusing Compose\nusing RDatasets\nusing Showoff\nusing GadflyHow does the function calldf = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)actually get turned into the following plot?df = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)p # hide"
-},
-
-{
-    "location": "lib/dev_pipeline.html#The-10,000-foot-View-1",
-    "page": "Rendering Pipeline",
-    "title": "The 10,000-foot View",
-    "category": "section",
-    "text": "The rendering pipeline transforms a plot specification into a Compose scene graph that contains a set of guides (e.g. axis ticks, color keys) and one or more layers of geometry (e.g. points, lines). The specification of each layer hasa data source (e.g. dataset(\"ggplot2\", \"diamonds\"))\na geometry to represent the layer's data (e.g. point, line, etc.)\nmappings to associate aesthetics of the geometry with elements of the data source (e.g.  :color => :Cut)\nlayer-wise statistics (optional) to be applied to the layer's dataAll layers of a plot share the sameCoordinates for the geometry (e.g. cartesian, polar, etc.)\naxis Scales (e.g. loglog, semilog, etc.)\nplot-wise Statistics (optional) to be applied to all layers\nGuidesA full plot specification must describe these shared elements as well as all the layer specifications. In the example above, we see that only the data source, statistics, geometry, and mapping are specified. The missing elements are either inferred from the data (e.g. categorical values in df[:Cut] implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale). For example, invoking plot with all the elements will look something likep = plot(layer(df,\n               x = :Price, color = :Cut,\n		       Stat.histogram,\n		       Geom.bar),\n	  	 Scale.x_continuous,\n		 Scale.color_discrete,\n		 Coord.cartesian,\n		 Guide.xticks, Guide.yticks,\n		 Guide.xlabel(\"Price\"),\n		 Guide.colorkey(\"Cut\"))Once a full plot specification is filled out, the rendering process proceeds as follows:(Image: )For each layer in the plot, we first map subsets of the data source to a Data object. The Price and Cut columns of the diamond dataset are mapped to the :x and :color fields of Data, respectively.\nScales are applied to the data to obtain plottable aesthetics. Scale.x_continuous keeps the values of df[:Price] unchanged, while Scale.color_discrete_hue maps the unique elements of df[:Cut] (an array of strings) to actual color values.\nThe aesthetics are transformed by layer-wise and plot-wise statistics, in order. Stat.histogram replaces the x field of the aesthetics with bin positions, and sets the y field with the corresponding counts.\nUsing the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. Coord.cartesian creates a Compose context that maps a vertical distance of 3000 counts to about two inches in the rendered plot.\nEach layer renders its own geometry.\nFinally, we compute the layout of the guides and render them on top of the plot context."
-},
-
-{
-    "location": "lib/dev_pipeline.html#More-Detailed-Walkthrough-1",
-    "page": "Rendering Pipeline",
-    "title": "More Detailed Walkthrough",
-    "category": "section",
-    "text": ""
-},
-
-{
-    "location": "lib/dev_pipeline.html#Data-Source-to-Aesthetics-1",
-    "page": "Rendering Pipeline",
-    "title": "Data Source to Aesthetics",
-    "category": "section",
-    "text": ""
-},
-
-{
-    "location": "lib/dev_pipeline.html#Aesthetics-to-Geometry-1",
-    "page": "Rendering Pipeline",
-    "title": "Aesthetics to Geometry",
-    "category": "section",
-    "text": ""
-},
-
-{
-    "location": "lib/dev_pipeline.html#Rendering-Geometry-1",
-    "page": "Rendering Pipeline",
-    "title": "Rendering Geometry",
-    "category": "section",
-    "text": ""
-},
-
-{
-    "location": "lib/dev_pipeline.html#Guide-Layout-1",
-    "page": "Rendering Pipeline",
-    "title": "Guide Layout",
-    "category": "section",
-    "text": ""
-},
-
-{
     "location": "lib/geometries.html#",
     "page": "Geometries",
     "title": "Geometries",
@@ -2398,6 +2334,38 @@ var documenterSearchIndex = {"docs": [
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Treat numerical y data as categories\nplot(x=rand(20), y=rand(1:3, 20), Scale.y_discrete, Geom.point)"
+},
+
+{
+    "location": "dev/pipeline.html#",
+    "page": "Rendering Pipeline",
+    "title": "Rendering Pipeline",
+    "category": "page",
+    "text": "Author = \"Darwin Darakananda\""
+},
+
+{
+    "location": "dev/pipeline.html#Rendering-Pipeline-1",
+    "page": "Rendering Pipeline",
+    "title": "Rendering Pipeline",
+    "category": "section",
+    "text": "using DataFrames\nusing Colors\nusing Compose\nusing RDatasets\nusing Showoff\nusing GadflyHow does the function calldf = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)actually get turned into the following plot?df = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)p # hideThe rendering pipeline transforms a plot specification into a Compose scene graph that contains a set of guides (e.g. axis ticks, color keys) and one or more layers of geometry (e.g. points, lines). The specification of each layer hasa data source (e.g. dataset(\"ggplot2\", \"diamonds\"))\na geometry to represent the layer's data (e.g. point, line, etc.)\nmappings to associate aesthetics of the geometry with elements of the data source (e.g.  :color => :Cut)\nlayer-wise statistics (optional) to be applied to the layer's dataAll layers of a plot share the sameCoordinates for the geometry (e.g. cartesian, polar, etc.)\naxis Scales (e.g. loglog, semilog, etc.)\nplot-wise Statistics (optional) to be applied to all layers\nGuidesA full plot specification must describe these shared elements as well as all the layer specifications. In the example above, we see that only the data source, statistics, geometry, and mapping are specified. The missing elements are either inferred from the data (e.g. categorical values in df[:Cut] implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale). For example, invoking plot with all the elements will look something likep = plot(layer(df,\n               x = :Price, color = :Cut,\n		       Stat.histogram,\n		       Geom.bar),\n	  	 Scale.x_continuous,\n		 Scale.color_discrete,\n		 Coord.cartesian,\n		 Guide.xticks, Guide.yticks,\n		 Guide.xlabel(\"Price\"),\n		 Guide.colorkey(\"Cut\"))Once a full plot specification is filled out, the rendering process proceeds as follows:(Image: )For each layer in the plot, we first map subsets of the data source to a Data object. The Price and Cut columns of the diamond dataset are mapped to the :x and :color fields of Data, respectively.\nScales are applied to the data to obtain plottable aesthetics. Scale.x_continuous keeps the values of df[:Price] unchanged, while Scale.color_discrete_hue maps the unique elements of df[:Cut] (an array of strings) to actual color values.\nThe aesthetics are transformed by layer-wise and plot-wise statistics, in order. Stat.histogram replaces the x field of the aesthetics with bin positions, and sets the y field with the corresponding counts.\nUsing the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. Coord.cartesian creates a Compose context that maps a vertical distance of 3000 counts to about two inches in the rendered plot.\nEach layer renders its own geometry.\nFinally, we compute the layout of the guides and render them on top of the plot context."
+},
+
+{
+    "location": "dev/regression.html#",
+    "page": "Regression Testing",
+    "title": "Regression Testing",
+    "category": "page",
+    "text": "Author = \"Ben Arthur\""
+},
+
+{
+    "location": "dev/regression.html#Regression-Testing-1",
+    "page": "Regression Testing",
+    "title": "Regression Testing",
+    "category": "section",
+    "text": "Running Pkg.test(\"Gadfly\") evaluates all of the files in Gadfly/test/testscripts.  Any errors or warnings are printed to the REPL.  In addition, the figures that are produced are put into either the gennedoutput/ or cachedoutput/ sub-directories.  Nominally, the former represents the changes in a pull request while the latter are used for comparison. Specifically, runtests.jl examines the currently checkout out git commit, and sets the output directory to cachedoutput/ if it is the HEAD of the master branch or if it is detached.  Otherwise, it assumes you are at the tip of a development branch and saves the figures to gennedoutput/.  After evaluating all the test scripts, runtests.jl checks to see if both of the output directories are not empty.  If so, compare_examples.jl is called, and any differences between the new and old figures will be displayed in the REPL and the browser.So the automated regression analysis workflow is then as follows:In a branch other than master,\ndevelop your new feature or fix your old bug,\ncommit all your changes,\nPkg.test(\"Gadfly\"),\ncheckout master,\nPkg.test again,\ncheck that any of the reported differences are as intended."
 },
 
 ]}

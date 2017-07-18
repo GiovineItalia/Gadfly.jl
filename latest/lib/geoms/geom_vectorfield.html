@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.vectorfield · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../dev_pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_vectorfield.html">Geom.vectorfield</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_vectorfield.html">Geom.vectorfield</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/11b9dc156a8a641825f8a2798fe301f70a70510b/docs/src/lib/geoms/geom_vectorfield.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Geom.vectorfield</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Geom.vectorfield-1" href="#Geom.vectorfield-1">Geom.vectorfield</a></h1><p>Draw a vectorfield of a 2D function or a matrix. A vectorfield consists of gradient vectors calculated for particular points in a space.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>z</code>: 2D function or a matrix that represent &quot;heights&quot; relative to to the x-y plane.</p></li><li><p><code>x</code> (optional): Vector of X-coordinates.  If <code>z</code> is a matrix, then the length of <code>x</code> must be equal to the number of <em>rows</em> in <code>z</code>.</p></li><li><p><code>y</code> (optional): Vector of Y-coordinates.  If <code>z</code> is a matrix, then the length of <code>y</code> must be equal to the number of <em>columns</em> in <code>z</code>.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>smoothness</code> (optional): Sets the smoothness of the vectorfield, defaults to 1.0. Smaller values (→0) result in more local smoothing. Larger values (→∞) will approach a plane of best fit.</p></li><li><p><code>scale</code> (optional): Sets the size of vectors, defaults to 1.0. </p></li><li><p><code>samples</code> (optional): Sets the size of the grid at which to estimate vectors, defaults to 20 (i.e. grid is 20 x 20). See the first example below.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.vectorfield · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_vectorfield.html">Geom.vectorfield</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li><li><span class="toctext">Development</span><ul><li><a class="toctext" href="../../dev/pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../../dev/regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_vectorfield.html">Geom.vectorfield</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/d081f68566b9eb96ebb15282045fdf0b5af8e35e/docs/src/lib/geoms/geom_vectorfield.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Geom.vectorfield</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Geom.vectorfield-1" href="#Geom.vectorfield-1">Geom.vectorfield</a></h1><p>Draw a vectorfield of a 2D function or a matrix. A vectorfield consists of gradient vectors calculated for particular points in a space.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><ul><li><p><code>z</code>: 2D function or a matrix that represent &quot;heights&quot; relative to to the x-y plane.</p></li><li><p><code>x</code> (optional): Vector of X-coordinates.  If <code>z</code> is a matrix, then the length of <code>x</code> must be equal to the number of <em>rows</em> in <code>z</code>.</p></li><li><p><code>y</code> (optional): Vector of Y-coordinates.  If <code>z</code> is a matrix, then the length of <code>y</code> must be equal to the number of <em>columns</em> in <code>z</code>.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>smoothness</code> (optional): Sets the smoothness of the vectorfield, defaults to 1.0. Smaller values (→0) result in more local smoothing. Larger values (→∞) will approach a plane of best fit.</p></li><li><p><code>scale</code> (optional): Sets the size of vectors, defaults to 1.0. </p></li><li><p><code>samples</code> (optional): Sets the size of the grid at which to estimate vectors, defaults to 20 (i.e. grid is 20 x 20). See the first example below.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)
 plot(coord, z=(x,y)-&gt;x*exp(-(x^2+y^2)),
         xmin=[-2], xmax=[2], ymin=[-2], ymax=[2],
 # or:     x=-2:0.25:2.0, y=-2:0.25:2.0,
@@ -18,26 +18,26 @@ plot(coord, z=(x,y)-&gt;x*exp(-(x^2+y^2)),
      stroke-width="0.3"
      font-size="3.88"
 >
-<g class="plotroot xscalable yscalable" id="img-7cb1b369-1">
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-7cb1b369-2">
+<g class="plotroot xscalable yscalable" id="img-1d8c3e59-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-1d8c3e59-2">
     <text x="70.29" y="68.39" text-anchor="middle" dy="0.6em">x</text>
   </g>
-  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-7cb1b369-3">
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-1d8c3e59-3">
     <text x="17.59" y="61.72" text-anchor="middle" dy="0.6em">-2</text>
     <text x="43.94" y="61.72" text-anchor="middle" dy="0.6em">-1</text>
     <text x="70.29" y="61.72" text-anchor="middle" dy="0.6em">0</text>
     <text x="96.64" y="61.72" text-anchor="middle" dy="0.6em">1</text>
     <text x="122.99" y="61.72" text-anchor="middle" dy="0.6em">2</text>
   </g>
-  <g class="guide colorkey" id="img-7cb1b369-4">
-    <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-7cb1b369-5">
+  <g class="guide colorkey" id="img-1d8c3e59-4">
+    <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-1d8c3e59-5">
       <text x="129.3" y="54.12" dy="0.35em">-0.5</text>
-      <text x="129.3" y="26.81" dy="0.35em">0.5</text>
-      <text x="129.3" y="47.3" dy="0.35em"></text>
       <text x="129.3" y="40.47" dy="0.35em">0.0</text>
       <text x="129.3" y="33.64" dy="0.35em"></text>
+      <text x="129.3" y="47.3" dy="0.35em"></text>
+      <text x="129.3" y="26.81" dy="0.35em">0.5</text>
     </g>
-    <g shape-rendering="crispEdges" stroke="#000000" stroke-opacity="0.000" id="img-7cb1b369-6">
+    <g shape-rendering="crispEdges" stroke="#000000" stroke-opacity="0.000" id="img-1d8c3e59-6">
       <rect x="126.99" y="53.44" width="1.31" height="0.68" fill="#004D84"/>
       <rect x="126.99" y="52.76" width="1.31" height="0.68" fill="#005B8D"/>
       <rect x="126.99" y="52.08" width="1.31" height="0.68" fill="#006995"/>
@@ -78,39 +78,39 @@ plot(coord, z=(x,y)-&gt;x*exp(-(x^2+y^2)),
       <rect x="126.99" y="28.18" width="1.31" height="0.68" fill="#96484A"/>
       <rect x="126.99" y="27.5" width="1.31" height="0.68" fill="#8B3844"/>
       <rect x="126.99" y="26.81" width="1.31" height="0.68" fill="#7E273E"/>
-      <g stroke="#FFFFFF" stroke-width="0.2" id="img-7cb1b369-7">
+      <g stroke="#FFFFFF" stroke-width="0.2" id="img-1d8c3e59-7">
         <path fill="none" d="M126.99,54.12 L 128.3 54.12"/>
-        <path fill="none" d="M126.99,26.81 L 128.3 26.81"/>
-        <path fill="none" d="M126.99,47.3 L 128.3 47.3"/>
         <path fill="none" d="M126.99,40.47 L 128.3 40.47"/>
         <path fill="none" d="M126.99,33.64 L 128.3 33.64"/>
+        <path fill="none" d="M126.99,47.3 L 128.3 47.3"/>
+        <path fill="none" d="M126.99,26.81 L 128.3 26.81"/>
       </g>
     </g>
-    <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-7cb1b369-8">
+    <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-1d8c3e59-8">
       <text x="126.99" y="22.81">z</text>
     </g>
   </g>
-<g clip-path="url(#img-7cb1b369-9)">
-  <g id="img-7cb1b369-10">
-    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-7cb1b369-11">
+<g clip-path="url(#img-1d8c3e59-9)">
+  <g id="img-1d8c3e59-10">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-1d8c3e59-11">
       <rect x="15.59" y="5" width="109.39" height="55.72"/>
     </g>
-    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-7cb1b369-12">
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-1d8c3e59-12">
       <path fill="none" d="M15.59,58.72 L 124.99 58.72"/>
       <path fill="none" d="M15.59,45.79 L 124.99 45.79"/>
       <path fill="none" d="M15.59,32.86 L 124.99 32.86"/>
       <path fill="none" d="M15.59,19.93 L 124.99 19.93"/>
       <path fill="none" d="M15.59,7 L 124.99 7"/>
     </g>
-    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-7cb1b369-13">
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-1d8c3e59-13">
       <path fill="none" d="M17.59,5 L 17.59 60.72"/>
       <path fill="none" d="M43.94,5 L 43.94 60.72"/>
       <path fill="none" d="M70.29,5 L 70.29 60.72"/>
       <path fill="none" d="M96.64,5 L 96.64 60.72"/>
       <path fill="none" d="M122.99,5 L 122.99 60.72"/>
     </g>
-    <g class="plotpanel" id="img-7cb1b369-14">
-      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" stroke-dasharray="none" id="img-7cb1b369-15">
+    <g class="plotpanel" id="img-1d8c3e59-14">
+      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" stroke-dasharray="none" id="img-1d8c3e59-15">
         <path fill="none" d="M41.87,36.85 L 41.64 36.62 41.53 36.5 41.24 36.15 40.97 35.81 40.93 35.75 40.75 35.46 40.55 35.11 40.39 34.77 40.25 34.42 40.23 34.35 40.14 34.07 40.06 33.73 40.01 33.38 39.98 33.03 39.98 32.68 40.01 32.34 40.06 31.99 40.14 31.64 40.23 31.37 40.25 31.3 40.39 30.95 40.55 30.6 40.75 30.25 40.93 29.97 40.97 29.91 41.24 29.56 41.53 29.21 41.64 29.1 41.87 28.87 42.24 28.52 42.35 28.43 42.67 28.17 43.06 27.88 43.14 27.82 43.68 27.48 43.76 27.43 44.29 27.13 44.47 27.04 45 26.78 45.18 26.7 45.82 26.44 45.89 26.41 46.59 26.16 46.82 26.09 47.3 25.95 48.01 25.77 48.14 25.74 48.72 25.63 49.42 25.51 50.13 25.43 50.59 25.4 50.84 25.38 51.54 25.36 52.25 25.37 52.7 25.4 52.96 25.41 53.67 25.49 54.37 25.61 54.96 25.74 55.08 25.77 55.79 25.98 56.1 26.09 56.5 26.24 56.93 26.44 57.2 26.57 57.59 26.78 57.91 26.98 58.14 27.13 58.61 27.48 58.62 27.48 59 27.82 59.33 28.14 59.36 28.17 59.65 28.52 59.92 28.87 60.03 29.02 60.16 29.21 60.36 29.56 60.54 29.91 60.69 30.25 60.74 30.38 60.82 30.6 60.93 30.95 61.02 31.3 61.09 31.64 61.14 31.99 61.17 32.34 61.19 32.68 61.19 33.03 61.17 33.38 61.14 33.73 61.09 34.07 61.02 34.42 60.93 34.77 60.82 35.11 60.74 35.34 60.69 35.46 60.54 35.81 60.36 36.15 60.16 36.5 60.03 36.69 59.92 36.85 59.65 37.2 59.36 37.54 59.33 37.58 59 37.89 58.62 38.23 58.61 38.24 58.14 38.58 57.91 38.74 57.59 38.93 57.2 39.15 56.93 39.28 56.5 39.47 56.1 39.63 55.79 39.74 55.08 39.94 54.96 39.97 54.37 40.1 53.67 40.22 52.96 40.3 52.7 40.32 52.25 40.35 51.54 40.36 50.84 40.34 50.59 40.32 50.13 40.29 49.42 40.2 48.72 40.09 48.14 39.97 48.01 39.94 47.3 39.77 46.82 39.63 46.59 39.55 45.89 39.31 45.82 39.28 45.18 39.01 45 38.93 44.47 38.68 44.29 38.58 43.76 38.29 43.68 38.24 43.14 37.89 43.06 37.83 42.67 37.54 42.35 37.29 42.24 37.2 41.87 36.85" stroke="#188AA7" class="geometry color_"/>
         <path fill="none" d="M52.96,20.99 L 52.25 20.96 51.54 20.95 50.84 20.97 50.13 21 49.42 21.05 48.72 21.12 48.01 21.21 47.89 21.23 47.3 21.32 46.59 21.44 45.94 21.58 45.89 21.59 45.18 21.75 44.51 21.92 44.47 21.94 43.76 22.14 43.34 22.27 43.06 22.36 42.35 22.61 42.33 22.62 41.64 22.88 41.43 22.97 40.93 23.17 40.63 23.31 40.23 23.5 39.89 23.66 39.52 23.85 39.22 24.01 38.81 24.24 38.61 24.35 38.11 24.66 38.04 24.7 37.51 25.05 37.4 25.13 37.02 25.4 36.69 25.65 36.57 25.74 36.15 26.09 35.98 26.23 35.75 26.44 35.39 26.78 35.28 26.9 35.05 27.13 34.74 27.48 34.57 27.68 34.45 27.82 34.18 28.17 33.94 28.52 33.86 28.64 33.72 28.87 33.51 29.21 33.33 29.56 33.17 29.91 33.15 29.94 33.02 30.25 32.9 30.6 32.79 30.95 32.7 31.3 32.63 31.64 32.58 31.99 32.55 32.34 32.53 32.68 32.53 33.03 32.55 33.38 32.58 33.73 32.63 34.07 32.7 34.42 32.79 34.77 32.9 35.11 33.02 35.46 33.15 35.77 33.17 35.81 33.33 36.15 33.51 36.5 33.72 36.85 33.86 37.08 33.94 37.2 34.18 37.54 34.45 37.89 34.57 38.03 34.74 38.24 35.05 38.58 35.28 38.82 35.39 38.93 35.75 39.28 35.98 39.48 36.15 39.63 36.57 39.97 36.69 40.07 37.02 40.32 37.4 40.59 37.51 40.67 38.04 41.01 38.11 41.06 38.61 41.36 38.81 41.48 39.22 41.71 39.52 41.87 39.89 42.06 40.23 42.22 40.63 42.4 40.93 42.54 41.43 42.75 41.64 42.84 42.33 43.1 42.35 43.11 43.06 43.35 43.34 43.44 43.76 43.58 44.47 43.78 44.51 43.79 45.18 43.96 45.89 44.13 45.94 44.14 46.59 44.27 47.3 44.4 47.89 44.48 48.01 44.5 48.72 44.59 49.42 44.66 50.13 44.71 50.84 44.75 51.54 44.76 52.25 44.75 52.96 44.73 53.67 44.68 54.37 44.6 55.08 44.5 55.19 44.48 55.79 44.38 56.5 44.22 56.82 44.14 57.2 44.04 57.91 43.81 57.97 43.79 58.62 43.55 58.86 43.44 59.33 43.23 59.6 43.1 60.03 42.86 60.23 42.75 60.74 42.43 60.77 42.4 61.25 42.06 61.45 41.9 61.68 41.71 62.06 41.36 62.16 41.27 62.4 41.01 62.71 40.67 62.86 40.49 62.99 40.32 63.25 39.97 63.48 39.63 63.57 39.48 63.69 39.28 63.88 38.93 64.06 38.58 64.22 38.24 64.28 38.1 64.36 37.89 64.49 37.54 64.61 37.2 64.72 36.85 64.81 36.5 64.9 36.15 64.98 35.81 64.98 35.77 65.04 35.46 65.1 35.11 65.15 34.77 65.19 34.42 65.22 34.07 65.24 33.73 65.26 33.38 65.26 33.03 65.26 32.68 65.26 32.34 65.24 31.99 65.22 31.64 65.19 31.3 65.15 30.95 65.1 30.6 65.04 30.25 64.98 29.95 64.98 29.91 64.9 29.56 64.81 29.21 64.72 28.87 64.61 28.52 64.49 28.17 64.36 27.82 64.28 27.62 64.22 27.48 64.06 27.13 63.88 26.78 63.69 26.44 63.57 26.23 63.48 26.09 63.25 25.74 62.99 25.4 62.86 25.23 62.71 25.05 62.4 24.7 62.16 24.44 62.06 24.35 61.68 24.01 61.45 23.81 61.25 23.66 60.77 23.31 60.74 23.29 60.23 22.97 60.03 22.85 59.6 22.62 59.33 22.48 58.86 22.27 58.62 22.17 57.97 21.92 57.91 21.9 57.2 21.68 56.82 21.58 56.5 21.49 55.79 21.34 55.19 21.23 55.08 21.21 54.37 21.11 53.67 21.04 52.96 20.99" stroke="#96CBC8" class="geometry color_"/>
         <path fill="none" d="M66.93,43.79 L 66.77 44.14 66.59 44.48 66.4 44.83 66.4 44.83 66.19 45.18 65.96 45.53 65.71 45.87 65.69 45.89 65.43 46.22 65.12 46.57 64.98 46.72 64.79 46.91 64.42 47.26 64.28 47.39 64.01 47.61 63.57 47.94 63.55 47.96 63.03 48.3 62.86 48.41 62.44 48.65 62.16 48.81 61.77 49 61.45 49.15 60.99 49.34 60.74 49.45 60.07 49.69 60.03 49.7 59.33 49.93 58.91 50.04 58.62 50.12 57.91 50.28 57.4 50.39 57.2 50.43 56.5 50.55 55.79 50.65 55.08 50.73 55.01 50.73 54.37 50.79 53.67 50.84 52.96 50.87 52.25 50.89 51.54 50.9 50.84 50.89 50.13 50.87 49.42 50.83 48.72 50.78 48.09 50.73 48.01 50.73 47.3 50.66 46.59 50.58 45.89 50.48 45.23 50.39 45.18 50.38 44.47 50.26 43.76 50.14 43.26 50.04 43.06 50 42.35 49.85 41.66 49.69 41.64 49.69 40.93 49.51 40.29 49.34 40.23 49.33 39.52 49.13 39.07 49 38.81 48.92 38.11 48.7 37.96 48.65 37.4 48.46 36.95 48.3 36.69 48.21 36.02 47.96 35.98 47.94 35.28 47.66 35.15 47.61 34.57 47.37 34.33 47.26 33.86 47.05 33.56 46.91 33.15 46.72 32.84 46.57 32.45 46.37 32.16 46.22 31.74 46 31.51 45.87 31.03 45.6 30.9 45.53 30.32 45.18 30.32 45.18 29.76 44.83 29.62 44.74 29.24 44.48 28.91 44.26 28.73 44.14 28.26 43.79 28.2 43.75 27.8 43.44 27.5 43.2 27.37 43.1 26.95 42.75 26.79 42.6 26.56 42.4 26.18 42.06 26.08 41.95 25.83 41.71 25.49 41.36 25.37 41.24 25.16 41.01 24.86 40.67 24.67 40.43 24.57 40.32 24.29 39.97 24.04 39.63 23.96 39.51 23.79 39.28 23.56 38.93 23.35 38.58 23.25 38.42 23.14 38.24 22.95 37.89 22.78 37.54 22.62 37.2 22.54 37.01 22.47 36.85 22.33 36.5 22.21 36.15 22.1 35.81 22 35.46 21.92 35.11 21.85 34.77 21.84 34.69 21.79 34.42 21.74 34.07 21.7 33.73 21.68 33.38 21.66 33.03 21.66 32.68 21.68 32.34 21.7 31.99 21.74 31.64 21.79 31.3 21.84 31.02 21.85 30.95 21.92 30.6 22 30.25 22.1 29.91 22.21 29.56 22.33 29.21 22.47 28.87 22.54 28.7 22.62 28.52 22.78 28.17 22.95 27.82 23.14 27.48 23.25 27.3 23.35 27.13 23.56 26.78 23.79 26.44 23.96 26.2 24.04 26.09 24.29 25.74 24.57 25.4 24.67 25.28 24.86 25.05 25.16 24.7 25.37 24.48 25.49 24.35 25.83 24.01 26.08 23.76 26.18 23.66 26.56 23.31 26.79 23.11 26.95 22.97 27.37 22.62 27.5 22.52 27.8 22.27 28.2 21.97 28.26 21.92 28.73 21.58 28.91 21.46 29.24 21.23 29.62 20.98 29.76 20.88 30.32 20.54 30.32 20.53 30.9 20.19 31.03 20.11 31.51 19.84 31.74 19.72 32.16 19.49 32.45 19.35 32.84 19.15 33.15 18.99 33.56 18.8 33.86 18.66 34.33 18.45 34.57 18.35 35.15 18.11 35.28 18.05 35.98 17.77 36.02 17.76 36.69 17.51 36.95 17.41 37.4 17.25 37.96 17.07 38.11 17.02 38.81 16.79 39.07 16.72 39.52 16.58 40.23 16.39 40.29 16.37 40.93 16.2 41.64 16.03 41.66 16.02 42.35 15.87 43.06 15.72 43.26 15.68 43.76 15.58 44.47 15.45 45.18 15.34 45.23 15.33 45.89 15.23 46.59 15.14 47.3 15.06 48.01 14.99 48.09 14.98 48.72 14.93 49.42 14.88 50.13 14.85 50.84 14.83 51.54 14.82 52.25 14.82 52.96 14.84 53.67 14.88 54.37 14.92 55.01 14.98 55.08 14.99 55.79 15.07 56.5 15.17 57.2 15.29 57.4 15.33 57.91 15.43 58.62 15.6 58.91 15.68 59.33 15.79 60.03 16.01 60.07 16.02 60.74 16.27 60.99 16.37 61.45 16.56 61.77 16.72 62.16 16.91 62.44 17.07 62.86 17.3 63.03 17.41 63.55 17.76 63.57 17.77 64.01 18.11 64.28 18.33 64.42 18.45 64.79 18.8 64.98 19 65.12 19.15 65.43 19.49 65.69 19.82 65.71 19.84 65.96 20.19 66.19 20.54 66.4 20.88 66.4 20.88 66.59 21.23 66.77 21.58 66.93 21.92 67.09 22.27 67.11 22.32 67.23 22.62 67.35 22.97 67.47 23.31 67.58 23.66 67.68 24.01 67.78 24.35 67.81 24.49 67.87 24.7 67.95 25.05 68.02 25.4 68.09 25.74 68.15 26.09 68.21 26.44 68.26 26.78 68.31 27.13 68.36 27.48 68.4 27.82 68.44 28.17 68.47 28.52 68.51 28.87 68.52 29.05 68.53 29.21 68.56 29.56 68.58 29.91 68.6 30.25 68.62 30.6 68.63 30.95 68.65 31.3 68.65 31.64 68.66 31.99 68.67 32.34 68.67 32.68 68.67 33.03 68.67 33.38 68.66 33.73 68.65 34.07 68.65 34.42 68.63 34.77 68.62 35.11 68.6 35.46 68.58 35.81 68.56 36.15 68.53 36.5 68.52 36.66 68.51 36.85 68.47 37.2 68.44 37.54 68.4 37.89 68.36 38.24 68.31 38.58 68.26 38.93 68.21 39.28 68.15 39.63 68.09 39.97 68.02 40.32 67.95 40.67 67.87 41.01 67.81 41.23 67.78 41.36 67.68 41.71 67.58 42.06 67.47 42.4 67.35 42.75 67.23 43.1 67.11 43.4 67.09 43.44 66.93 43.79" stroke="#B8CBBE" class="geometry color_"/>
@@ -118,7 +118,7 @@ plot(coord, z=(x,y)-&gt;x*exp(-(x^2+y^2)),
         <path fill="none" d="M80.98,43.1 L 81.25 43.23 81.72 43.44 81.96 43.55 82.61 43.79 82.67 43.81 83.38 44.04 83.76 44.14 84.08 44.22 84.79 44.38 85.39 44.48 85.5 44.5 86.2 44.6 86.91 44.68 87.62 44.73 88.33 44.75 89.03 44.76 89.74 44.75 90.45 44.71 91.16 44.66 91.86 44.59 92.57 44.5 92.69 44.48 93.28 44.4 93.99 44.27 94.63 44.14 94.69 44.13 95.4 43.96 96.06 43.79 96.11 43.78 96.81 43.58 97.24 43.44 97.52 43.35 98.23 43.11 98.25 43.1 98.94 42.84 99.15 42.75 99.64 42.54 99.95 42.4 100.35 42.22 100.69 42.06 101.06 41.87 101.36 41.71 101.77 41.48 101.97 41.36 102.47 41.06 102.54 41.01 103.07 40.67 103.18 40.59 103.56 40.32 103.89 40.07 104.01 39.97 104.43 39.63 104.6 39.48 104.83 39.28 105.19 38.93 105.3 38.82 105.53 38.58 105.84 38.24 106.01 38.03 106.13 37.89 106.4 37.54 106.64 37.2 106.72 37.08 106.86 36.85 107.07 36.5 107.25 36.15 107.41 35.81 107.43 35.77 107.55 35.46 107.68 35.11 107.79 34.77 107.88 34.42 107.95 34.07 108 33.73 108.03 33.38 108.05 33.03 108.05 32.68 108.03 32.34 108 31.99 107.95 31.64 107.88 31.3 107.79 30.95 107.68 30.6 107.55 30.25 107.43 29.94 107.41 29.91 107.25 29.56 107.07 29.21 106.86 28.87 106.72 28.64 106.64 28.52 106.4 28.17 106.13 27.82 106.01 27.68 105.84 27.48 105.53 27.13 105.3 26.9 105.19 26.78 104.83 26.44 104.6 26.23 104.43 26.09 104.01 25.74 103.89 25.65 103.56 25.4 103.18 25.13 103.07 25.05 102.54 24.7 102.47 24.66 101.97 24.35 101.77 24.24 101.36 24.01 101.06 23.85 100.69 23.66 100.35 23.5 99.95 23.31 99.64 23.17 99.15 22.97 98.94 22.88 98.25 22.62 98.23 22.61 97.52 22.36 97.24 22.27 96.81 22.14 96.11 21.94 96.06 21.92 95.4 21.75 94.69 21.59 94.63 21.58 93.99 21.44 93.28 21.32 92.69 21.23 92.57 21.21 91.86 21.12 91.16 21.05 90.45 21 89.74 20.97 89.03 20.95 88.33 20.96 87.62 20.99 86.91 21.04 86.2 21.11 85.5 21.21 85.39 21.23 84.79 21.34 84.08 21.49 83.76 21.58 83.38 21.68 82.67 21.9 82.61 21.92 81.96 22.17 81.72 22.27 81.25 22.48 80.98 22.62 80.55 22.85 80.35 22.97 79.84 23.29 79.8 23.31 79.33 23.66 79.13 23.81 78.9 24.01 78.52 24.35 78.42 24.44 78.18 24.7 77.87 25.05 77.72 25.23 77.59 25.4 77.33 25.74 77.1 26.09 77.01 26.23 76.89 26.44 76.7 26.78 76.52 27.13 76.36 27.48 76.3 27.62 76.22 27.82 76.09 28.17 75.97 28.52 75.86 28.87 75.77 29.21 75.68 29.56 75.6 29.91 75.59 29.95 75.54 30.25 75.48 30.6 75.43 30.95 75.39 31.3 75.36 31.64 75.34 31.99 75.32 32.34 75.31 32.68 75.31 33.03 75.32 33.38 75.34 33.73 75.36 34.07 75.39 34.42 75.43 34.77 75.48 35.11 75.54 35.46 75.59 35.77 75.6 35.81 75.68 36.15 75.77 36.5 75.86 36.85 75.97 37.2 76.09 37.54 76.22 37.89 76.3 38.1 76.36 38.24 76.52 38.58 76.7 38.93 76.89 39.28 77.01 39.48 77.1 39.63 77.33 39.97 77.59 40.32 77.72 40.49 77.87 40.67 78.18 41.01 78.42 41.27 78.52 41.36 78.9 41.71 79.13 41.9 79.33 42.06 79.8 42.4 79.84 42.43 80.35 42.75 80.55 42.86 80.98 43.1" stroke="#D6BEA0" class="geometry color_"/>
         <path fill="none" d="M87.88,25.4 L 88.33 25.37 89.03 25.36 89.74 25.38 89.99 25.4 90.45 25.43 91.16 25.51 91.86 25.63 92.44 25.74 92.57 25.77 93.28 25.95 93.75 26.09 93.99 26.16 94.69 26.41 94.76 26.44 95.4 26.7 95.58 26.78 96.11 27.04 96.29 27.13 96.81 27.43 96.9 27.48 97.44 27.82 97.52 27.88 97.91 28.17 98.23 28.43 98.34 28.52 98.71 28.87 98.94 29.1 99.05 29.21 99.34 29.56 99.6 29.91 99.64 29.97 99.83 30.25 100.03 30.6 100.19 30.95 100.33 31.3 100.35 31.37 100.44 31.64 100.52 31.99 100.57 32.34 100.6 32.68 100.6 33.03 100.57 33.38 100.52 33.73 100.44 34.07 100.35 34.35 100.33 34.42 100.19 34.77 100.03 35.11 99.83 35.46 99.64 35.75 99.6 35.81 99.34 36.15 99.05 36.5 98.94 36.62 98.71 36.85 98.34 37.2 98.23 37.29 97.91 37.54 97.52 37.83 97.44 37.89 96.9 38.24 96.81 38.29 96.29 38.58 96.11 38.68 95.58 38.93 95.4 39.01 94.76 39.28 94.69 39.31 93.99 39.55 93.75 39.63 93.28 39.77 92.57 39.94 92.44 39.97 91.86 40.09 91.16 40.2 90.45 40.29 89.99 40.32 89.74 40.34 89.03 40.36 88.33 40.35 87.88 40.32 87.62 40.3 86.91 40.22 86.2 40.1 85.62 39.97 85.5 39.94 84.79 39.74 84.48 39.63 84.08 39.47 83.65 39.28 83.38 39.15 82.99 38.93 82.67 38.74 82.44 38.58 81.97 38.24 81.96 38.23 81.58 37.89 81.25 37.58 81.22 37.54 80.92 37.2 80.66 36.85 80.55 36.69 80.42 36.5 80.22 36.15 80.04 35.81 79.89 35.46 79.84 35.34 79.76 35.11 79.65 34.77 79.56 34.42 79.49 34.07 79.44 33.73 79.4 33.38 79.39 33.03 79.39 32.68 79.4 32.34 79.44 31.99 79.49 31.64 79.56 31.3 79.65 30.95 79.76 30.6 79.84 30.38 79.89 30.25 80.04 29.91 80.22 29.56 80.42 29.21 80.55 29.02 80.66 28.87 80.92 28.52 81.22 28.17 81.25 28.14 81.58 27.82 81.96 27.48 81.97 27.48 82.44 27.13 82.67 26.98 82.99 26.78 83.38 26.57 83.65 26.44 84.08 26.24 84.48 26.09 84.79 25.98 85.5 25.77 85.62 25.74 86.2 25.61 86.91 25.49 87.62 25.41 87.88 25.4" stroke="#AF6E5F" class="geometry color_"/>
       </g>
-      <g stroke-dasharray="none" stroke-width="0.3" id="img-7cb1b369-16">
+      <g stroke-dasharray="none" stroke-width="0.3" id="img-1d8c3e59-16">
         <path fill="none" d="M18.21,58.9 L 16.98 58.53" stroke="#BECAB9" class="geometry color_"/>
         <path fill="none" d="M24.48,58.35 L 23.88 59.08" stroke="#BECAB9" class="geometry color_"/>
         <path fill="none" d="M30.81,58.19 L 30.73 59.24" stroke="#BECAB9" class="geometry color_"/>
@@ -408,7 +408,7 @@ plot(coord, z=(x,y)-&gt;x*exp(-(x^2+y^2)),
         <path fill="none" d="M109.85,6.47 L 109.77 7.53" stroke="#BFCAB9" class="geometry color_"/>
         <path fill="none" d="M116.7,6.63 L 116.1 7.37" stroke="#BECAB9" class="geometry color_"/>
         <path fill="none" d="M123.6,7.18 L 122.37 6.82" stroke="#BECAB9" class="geometry color_"/>
-        <g stroke-dasharray="none" stroke-width="0.3" id="img-7cb1b369-17">
+        <g stroke-dasharray="none" stroke-width="0.3" id="img-1d8c3e59-17">
           <path fill="none" d="M17.28,58.58 L 16.98 58.53 17.21 58.64" stroke="#BECAB9" class="geometry color_"/>
           <path fill="none" d="M23.94,58.91 L 23.88 59.08 24.08 58.94" stroke="#BECAB9" class="geometry color_"/>
           <path fill="none" d="M30.64,59.01 L 30.73 59.24 30.85 59.01" stroke="#BECAB9" class="geometry color_"/>
@@ -703,19 +703,19 @@ plot(coord, z=(x,y)-&gt;x*exp(-(x^2+y^2)),
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-7cb1b369-18">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-1d8c3e59-18">
     <text x="14.59" y="58.72" text-anchor="end" dy="0.35em">-2</text>
     <text x="14.59" y="45.79" text-anchor="end" dy="0.35em">-1</text>
     <text x="14.59" y="32.86" text-anchor="end" dy="0.35em">0</text>
     <text x="14.59" y="19.93" text-anchor="end" dy="0.35em">1</text>
     <text x="14.59" y="7" text-anchor="end" dy="0.35em">2</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-7cb1b369-19">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-1d8c3e59-19">
     <text x="8.81" y="32.86" text-anchor="end" dy="0.35em">y</text>
   </g>
 </g>
 <defs>
-  <clipPath id="img-7cb1b369-9">
+  <clipPath id="img-1d8c3e59-9">
   <path d="M15.59,5 L 124.99 5 124.99 60.72 15.59 60.72" />
 </clipPath>
 </defs>
@@ -740,34 +740,34 @@ plot(coord, z=volc, x=1.0:22, y=1.0:16,
      stroke-width="0.3"
      font-size="3.88"
 >
-<g class="plotroot xscalable yscalable" id="img-871775fa-1">
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-871775fa-2">
+<g class="plotroot xscalable yscalable" id="img-88fe996b-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-88fe996b-2">
     <text x="75.58" y="68.39" text-anchor="middle" dy="0.6em">x</text>
   </g>
-  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-871775fa-3">
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-88fe996b-3">
     <text x="40.03" y="61.72" text-anchor="middle" dy="0.6em">5</text>
     <text x="67.37" y="61.72" text-anchor="middle" dy="0.6em">10</text>
     <text x="94.72" y="61.72" text-anchor="middle" dy="0.6em">15</text>
     <text x="122.06" y="61.72" text-anchor="middle" dy="0.6em">20</text>
   </g>
-<g clip-path="url(#img-871775fa-4)">
-  <g id="img-871775fa-5">
-    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-871775fa-6">
+<g clip-path="url(#img-88fe996b-4)">
+  <g id="img-88fe996b-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-88fe996b-6">
       <rect x="16.15" y="5" width="118.85" height="55.72"/>
     </g>
-    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-871775fa-7">
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-88fe996b-7">
       <path fill="none" d="M16.15,44.92 L 135 44.92"/>
       <path fill="none" d="M16.15,27.69 L 135 27.69"/>
       <path fill="none" d="M16.15,10.45 L 135 10.45"/>
     </g>
-    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-871775fa-8">
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-88fe996b-8">
       <path fill="none" d="M40.03,5 L 40.03 60.72"/>
       <path fill="none" d="M67.37,5 L 67.37 60.72"/>
       <path fill="none" d="M94.72,5 L 94.72 60.72"/>
       <path fill="none" d="M122.06,5 L 122.06 60.72"/>
     </g>
-    <g class="plotpanel" id="img-871775fa-9">
-      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" stroke-dasharray="none" id="img-871775fa-10">
+    <g class="plotpanel" id="img-88fe996b-9">
+      <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" stroke-dasharray="none" id="img-88fe996b-10">
         <path fill="none" d="M118.56,58.72 L 120.77 55.27 121.99 51.82 122.06 51.68 124.31 48.37 122.06 45.89 121.72 44.92 122.06 42.99 122.86 41.48 127.39 38.03 127.53 37.94 133 35.66" stroke="#00769C" class="geometry color_"/>
         <path fill="none" d="M133,33.5 L 128.49 31.13 127.53 30.7 123.34 27.69 122.06 26.88 117.28 24.24 116.59 23.81 111.81 20.79 111.12 20.36 106.94 17.34 105.66 16.05 100.19 15.69 94.72 14 94.55 13.9 89.25 10.56 88.91 10.45 83.78 8.83 78.31 7.11 77.63 7" stroke="#00769C" class="geometry color_"/>
         <path fill="none" d="M18.15,12.39 L 21.23 10.45 23.62 8.94 26.7 7" stroke="#00769C" class="geometry color_"/>
@@ -783,7 +783,7 @@ plot(coord, z=volc, x=1.0:22, y=1.0:16,
         <path fill="none" d="M36.95,27.69 L 40.03 25.19 41.54 24.24 45.5 21.33 48.92 20.79 50.97 20.4 56.43 20.01 57.97 20.79 56.43 21.44 50.97 21.76 49.76 24.24 48.15 27.69 47.58 31.13 49.4 34.58 50.97 36.11 56.43 37.79 57.97 38.03 56.43 39.32 53.87 41.48 50.97 42.04 48.06 41.48 45.5 40.98 40.03 38.93 39.21 38.03 38.17 34.58 36.77 31.13 36.95 27.69" stroke="#853041" class="geometry color_"/>
         <path fill="none" d="M67.3,34.58 L 67.37 35.01 67.49 34.58 67.37 34.53 67.3 34.58" stroke="#853041" class="geometry color_"/>
       </g>
-      <g stroke-dasharray="none" stroke-width="0.3" id="img-871775fa-11">
+      <g stroke-dasharray="none" stroke-width="0.3" id="img-88fe996b-11">
         <path fill="none" d="M15.98,60.26 L 20.32 57.17" stroke="#ABCEC4" class="geometry color_"/>
         <path fill="none" d="M23.92,59.63 L 23.32 57.8" stroke="#B1CCC2" class="geometry color_"/>
         <path fill="none" d="M30.63,59.14 L 27.55 58.29" stroke="#B5CCC1" class="geometry color_"/>
@@ -1136,7 +1136,7 @@ plot(coord, z=volc, x=1.0:22, y=1.0:16,
         <path fill="none" d="M121.55,6.72 L 122.58 7.28" stroke="#A4CFC7" class="geometry color_"/>
         <path fill="none" d="M127.3,6.87 L 127.76 7.13" stroke="#A3CFC8" class="geometry color_"/>
         <path fill="none" d="M133.39,7.2 L 132.61 6.8" stroke="#A1D0C9" class="geometry color_"/>
-        <g stroke-dasharray="none" stroke-width="0.3" id="img-871775fa-12">
+        <g stroke-dasharray="none" stroke-width="0.3" id="img-88fe996b-12">
           <path fill="none" d="M19.69,57.94 L 20.32 57.17 19.05 57.76" stroke="#ABCEC4" class="geometry color_"/>
           <path fill="none" d="M23.64,58.19 L 23.32 57.8 23.26 58.21" stroke="#B1CCC2" class="geometry color_"/>
           <path fill="none" d="M28.32,58.41 L 27.55 58.29 28.14 58.54" stroke="#B5CCC1" class="geometry color_"/>
@@ -1494,17 +1494,17 @@ plot(coord, z=volc, x=1.0:22, y=1.0:16,
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-871775fa-13">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-88fe996b-13">
     <text x="15.15" y="44.92" text-anchor="end" dy="0.35em">5</text>
     <text x="15.15" y="27.69" text-anchor="end" dy="0.35em">10</text>
     <text x="15.15" y="10.45" text-anchor="end" dy="0.35em">15</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-871775fa-14">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-88fe996b-14">
     <text x="8.81" y="32.86" text-anchor="end" dy="0.35em">y</text>
   </g>
 </g>
 <defs>
-  <clipPath id="img-871775fa-4">
+  <clipPath id="img-88fe996b-4">
   <path d="M16.15,5 L 135 5 135 60.72 16.15 60.72" />
 </clipPath>
 </defs>
