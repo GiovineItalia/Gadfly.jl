@@ -17,12 +17,15 @@ makedocs(
             "Themes" => "man/themes.md",
         ],
         "Library" => Any[
-            "Rendering Pipeline" => "lib/dev_pipeline.md",
             hide("Geometries" => "lib/geometries.md", load_dir("geoms")),
             hide("Guides" => "lib/guides.md", load_dir("guides")),
             hide("Statistics" => "lib/stats.md", load_dir("stats")),
             hide("Coords" => "lib/coords.md", load_dir("coords")),
             hide("Scales" => "lib/scales.md", load_dir("scales")),
+        ],
+        "Development" => Any[
+            "Rendering Pipeline" => "dev/pipeline.md",
+            "Regression Testing" => "dev/regression.md",
         ]
     ]
 )

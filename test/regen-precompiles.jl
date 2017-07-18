@@ -1,5 +1,3 @@
-#!/usr/bin/env julia
-
 using SnoopCompile
 
 SnoopCompile.@snoop "gadfly_compiles.csv" begin
