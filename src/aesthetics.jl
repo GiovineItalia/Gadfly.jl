@@ -132,9 +132,7 @@ getindex(aes::Aesthetics, i::Integer, j::AbstractString) = getfield(aes, Symbol(
 function defined_aesthetics(aes::Aesthetics)
     vars = Set{Symbol}()
     for name in fieldnames(Aesthetics)
-        if getfield(aes, name) !== nothing
-            push!(vars, name)
-        end
+        getfield(aes, name) === nothing || push!(vars, name)
     end
     vars
 end
@@ -258,10 +256,8 @@ function cat_aes_var!(a::Dict, b::Dict)
 end
 
 cat_aes_var!{T <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{T}) = append!(a, b)
-
-function cat_aes_var!{T <: Base.Callable, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U})
-    a=[promote(a..., b...)...]
-end
+cat_aes_var!{T <: Base.Callable, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U}) =
+        a=[promote(a..., b...)...]
 
 # Let arrays of numbers clobber arrays of functions. This is slightly odd
 # behavior, comes up with with function statistics applied on a layer-wise
@@ -321,8 +317,7 @@ end
 #
 function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygroup,
                                                    num_xgroups, num_ygroups)
-    @assert xgroup === nothing || ygroup === nothing ||
-            length(xgroup) == length(ygroup)
+    @assert xgroup === nothing || ygroup === nothing || length(xgroup) == length(ygroup)
 
     n = num_ygroups
     m = num_xgroups
@@ -336,16 +331,12 @@ function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygro
         aes_grid[i, j] = T()
     end
 
-    if xgroup === nothing && ygroup === nothing
-        return aes_grid
-    end
+    xgroup === nothing && ygroup === nothing && return aes_grid
 
-    function make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},
-                                             arr::AbstractArray)
-        PooledDataArray(convert(Array{T}, arr))
-    end
-    make_pooled_data_array{T, U, V}(::Type{PooledDataArray{T,U,V}},
-                                    arr::PooledDataArray{T, U, V}) = arr
+    make_pooled_data_array{T,U,V}(::Type{PooledDataArray{T,U,V}}, arr::AbstractArray) =
+            PooledDataArray(convert(Array{T}, arr))
+    make_pooled_data_array{T,U,V}(::Type{PooledDataArray{T,U,V}},
+            arr::PooledDataArray{T,U,V}) = arr
 
     for var in fieldnames(T)
         # Skipped aesthetics. Don't try to partition aesthetics for which it
@@ -363,7 +354,7 @@ function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygro
         if typeof(vals) <: AbstractArray
             if xgroup !== nothing && length(vals) !== length(xgroup) ||
                ygroup !== nothing && length(vals) !== length(ygroup)
-                error("Aesthetic $(var) must be the same length as xgroup or ygroup")
+                continue
             end
 
             for i in 1:n, j in 1:m
@@ -419,13 +410,9 @@ function inherit!(a::Aesthetics, b::Aesthetics;
         elseif aval === nothing || aval === string || aval == showoff
             setfield!(a, field, bval)
         elseif field == :xviewmin || field == :yviewmin
-            if bval != nothing && (aval == nothing || aval > bval)
-                setfield!(a, field, bval)
-            end
+            bval != nothing && (aval == nothing || aval > bval) && setfield!(a, field, bval)
         elseif field == :xviewmax || field == :yviewmax
-            if bval != nothing && (aval == nothing || aval < bval)
-                setfield!(a, field, bval)
-            end
+            bval != nothing && (aval == nothing || aval < bval) && setfield!(a, field, bval)
         elseif typeof(aval) <: Dict && typeof(bval) <: Dict
             merge!(aval, getfield(b, field))
         end

@@ -1,33 +1,22 @@
 # Bar geometry summarizes data as vertical bars.
 immutable BarGeometry <: Gadfly.GeometryElement
-    # How bars should be positioned if they are grouped by color.
-    # Valid options are:
-    #   :stack -> place bars on top of each other (default)
-    #   :dodge -> place bar next to each other
-    position::Symbol
-
-    # :vertical or :horizontal
-    orientation::Symbol
-
+    position::Symbol  # :stack (default) or :dodge
+    orientation::Symbol # :vertical (default) or :horizontal
     default_statistic::Gadfly.StatisticElement
-
     tag::Symbol
 end
-
-function BarGeometry(; position=:stack, orientation=:vertical, tag=empty_tag)
-    BarGeometry(position, orientation, Gadfly.Stat.bar(position=position,
-        orientation = orientation), tag)
-end
+BarGeometry(; position=:stack, orientation=:vertical, tag=empty_tag) =
+        BarGeometry(position, orientation, Gadfly.Stat.bar(position=position,
+            orientation = orientation), tag)
 
 const bar = BarGeometry
 
-function histogram(; position=:stack, bincount=nothing,
+histogram(; position=:stack, bincount=nothing,
                    minbincount=3, maxbincount=150,
                    orientation::Symbol=:vertical,
                    density::Bool=false,
-                   tag::Symbol=empty_tag)
-    return BarGeometry(
-        position, orientation,
+                   tag::Symbol=empty_tag) =
+    BarGeometry(position, orientation,
         Gadfly.Stat.histogram(bincount=bincount,
                               minbincount=minbincount,
                               maxbincount=maxbincount,
@@ -35,9 +24,9 @@ function histogram(; position=:stack, bincount=nothing,
                               orientation=orientation,
                               density=density),
         tag)
-end
 
-element_aesthetics(::BarGeometry) = [:x, :xmin, :xmax, :y, :ymin, :ymax, :color]
+element_aesthetics(geom::BarGeometry) = geom.orientation == :vertical ?
+            [:xmin, :xmax, :y, :color] : [:ymin, :ymax, :x, :color]
 
 default_statistic(geom::BarGeometry) = geom.default_statistic
 
@@ -49,8 +38,7 @@ function render_colorless_bar(geom::BarGeometry,
     if orientation == :horizontal
         XT = eltype(aes.x)
         xz = convert(XT, zero(XT))
-        ctx = compose!(
-            context(),
+        ctx = compose!(context(),
             rectangle([min(xz, x) for x in aes.x],
                       [ymin*cy + theme.bar_spacing/2 for ymin in aes.ymin],
                       abs.(aes.x),
@@ -60,8 +48,7 @@ function render_colorless_bar(geom::BarGeometry,
     else
         YT = eltype(aes.y)
         yz = convert(YT, zero(YT))
-        ctx = compose!(
-            context(),
+        ctx = compose!(context(),
             rectangle([xmin*cx + theme.bar_spacing/2 for xmin in aes.xmin],
                       [min(yz, y) for y in aes.y],
                       [(xmax - xmin)*cx - theme.bar_spacing
@@ -109,14 +96,15 @@ function render_colorful_stacked_bar(geom::BarGeometry,
             stack_height_dict[aes.ymin[j]] += aes.x[j]
         end
 
-        compose!(
-            ctx,
-            rectangle(
-                stack_height,
-                [aes.ymin[i]*cy + theme.bar_spacing/2 for i in idxs],
-                [aes.x[i] for i in idxs],
-                [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs], geom.tag))
-    elseif orientation == :vertical
+        x0s = stack_height
+        y0s = [aes.ymin[i]*cy + theme.bar_spacing/2 for i in idxs]
+        widths = [abs(aes.x[i]) for i in idxs]
+        heights = [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs]
+        if any(aes.x .< 0)
+          x0s -= widths
+        end
+        compose!(ctx, rectangle(x0s, y0s, widths, heights, geom.tag))
+    else
         stack_height_dict = Dict()
         T = eltype(aes.y)
         z = convert(T, zero(T))
@@ -130,15 +118,14 @@ function render_colorful_stacked_bar(geom::BarGeometry,
             stack_height_dict[aes.xmin[j]] += aes.y[j]
         end
 
-        compose!(
-            ctx,
-            rectangle(
-                [aes.xmin[i]*cx + theme.bar_spacing/2 for i in idxs],
-                stack_height,
-                [(aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing for i in idxs],
-                [aes.y[i] for i in idxs], geom.tag))
-    else
-        error("Orientation must be :horizontal or :vertical")
+        x0s = [aes.xmin[i]*cx + theme.bar_spacing/2 for i in idxs]
+        y0s = stack_height
+        widths = [(aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing for i in idxs]
+        heights = [abs(aes.y[i]) for i in idxs]
+        if any(aes.y .< 0)
+          y0s -= heights
+        end
+        compose!(ctx, rectangle(x0s, y0s, widths, heights, geom.tag))
     end
 
     cs = [aes.color[i] for i in idxs]
@@ -191,15 +178,13 @@ function render_colorful_dodged_bar(geom::BarGeometry,
         xz = convert(XT, zero(XT))
 
         aes_x = aes.x[idxs]
-        compose!(
-            ctx,
-            rectangle(
-                [min(xz, x) for x in aes_x],
+        compose!(ctx,
+            rectangle([min(xz, x) for x in aes_x],
                 dodge_pos,
                 abs.(aes_x),
                 [((aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing) / dodge_count[aes.ymin[i]]
                  for i in idxs], geom.tag))
-    elseif orientation == :vertical
+    else
         dodge_count = DefaultDict(() -> 0)
         for i in idxs
             dodge_count[aes.xmin[i]] += 1
@@ -223,16 +208,12 @@ function render_colorful_dodged_bar(geom::BarGeometry,
         yz = convert(YT, zero(YT))
 
         aes_y = aes.y[idxs]
-        compose!(
-            ctx,
-            rectangle(
-                dodge_pos,
+        compose!(ctx,
+            rectangle(dodge_pos,
                 [min(yz, y) for y in aes_y],
                 [((aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing) / dodge_count[aes.xmin[i]]
                  for i in idxs],
                 abs.(aes_y), geom.tag))
-    else
-        error("Orientation must be :horizontal or :vertical")
     end
 
     cs = [aes.color[i] for i in idxs]
@@ -262,15 +243,11 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     if geom.orientation == :horizontal
         Gadfly.assert_aesthetics_defined("BarGeometry", aes, :ymin, :ymax, :x)
         Gadfly.assert_aesthetics_equal_length("BarGeometry", aes, :ymin, :ymax, :x)
-        var = :y
-        minvar = :ymin
-        maxvar = :ymax
-    else
+    elseif geom.orientation == :vertical
         Gadfly.assert_aesthetics_defined("BarGeometry", aes, :xmin, :xmax, :y)
         Gadfly.assert_aesthetics_equal_length("BarGeometry", aes, :xmin, :xmax, :y)
-        var = :x
-        minvar = :xmin
-        maxvar = :xmax
+    else
+        error("Orientation must be :horizontal or :vertical")
     end
 
     if aes.color === nothing
@@ -283,9 +260,7 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         error("$(geom.position) is not a valid position for the bar geometry.")
     end
 
-    return compose!(
-        context(),
-        ctx,
+    return compose!(context(), ctx,
         linewidth(theme.highlight_width),
         svgattribute("shape-rendering", "crispEdges"))
 end

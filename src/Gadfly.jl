@@ -386,9 +386,9 @@ function render_prepare(plot::Plot)
     # putting the layers in one subplot instead.
     if sum([isa(layer.geom, Geom.SubplotGeometry) for layer in plot.layers]) > 1
         error("""
-            Subplot geometries can not be used in multiple layers. Instead
-            use layers within one subplot geometry.
-            """)
+              Subplot geometries can not be used in multiple layers. Instead
+              use layers within one subplot geometry.
+              """)
     end
 
     # Process layers, filling inheriting mappings or data from the Plot where
@@ -450,8 +450,8 @@ function render_prepare(plot::Plot)
     # Add default statistics for geometries.
     layer_stats = Array{Vector{StatisticElement}}(length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
-        layer_stats[i] = isempty(layer.statistics) ?
-            [default_statistic(layer.geom)] : layer.statistics
+        layer_stats[i] = isempty(layer.statistics) ? ( isa(layer.geom, Geom.SubplotGeometry) ?
+                default_statistic(layer.geom) : [default_statistic(layer.geom)] ) : layer.statistics
     end
 
     # auto-enumeration: add Stat.x/y_enumerate when x and y is needed but only
@@ -464,10 +464,11 @@ function render_prepare(plot::Plot)
             union!(layer_defined_aes, output_aesthetics(stat))
         end
 
-        if :x in layer_needed_aes && :y in layer_needed_aes
-            if !(:x in layer_defined_aes)
+        if mapreduce(x->in(x,layer_needed_aes),|,[:x,:xmax,:xmin]) &&
+                mapreduce(y->in(y,layer_needed_aes),|,[:y,:ymax,:ymin])
+            if !mapreduce(x->in(x,layer_defined_aes),|,[:x,:xmax,:xmin])
                 unshift!(layer_stats[i], Stat.x_enumerate)
-            elseif !(:y in layer_defined_aes)
+            elseif !mapreduce(y->in(y,layer_defined_aes),|,[:y,:ymax,:ymin])
                 unshift!(layer_stats[i], Stat.y_enumerate)
             end
         end
@@ -478,10 +479,8 @@ function render_prepare(plot::Plot)
         union!(used_aesthetics, element_aesthetics(layer.geom))
     end
 
-    for stats in layer_stats
-        for stat in stats
-            union!(used_aesthetics, input_aesthetics(stat))
-        end
+    for stats in layer_stats, stat in stats
+        union!(used_aesthetics, input_aesthetics(stat))
     end
 
     mapped_aesthetics = Set(keys(plot.mapping))
@@ -491,8 +490,8 @@ function render_prepare(plot::Plot)
 
     defined_unused_aesthetics = setdiff(mapped_aesthetics, used_aesthetics)
     isempty(defined_unused_aesthetics) ||
-        warn("The following aesthetics are mapped, but not used by any geometry:\n",
-                 join([string(a) for a in defined_unused_aesthetics], ", "))
+            warn("The following aesthetics are mapped, but not used by any geometry:\n",
+                join([string(a) for a in defined_unused_aesthetics], ", "))
 
     scaled_aesthetics = Set{Symbol}()
     for scale in plot.scales
