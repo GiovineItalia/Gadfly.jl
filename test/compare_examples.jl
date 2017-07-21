@@ -5,7 +5,8 @@ cachedout = joinpath((@compat @__DIR__), "cachedoutput")
 gennedout = joinpath((@compat @__DIR__), "gennedoutput")
 ndifferentfiles = 0
 const creator_producer = r"(Creator|Producer)"
-for file in readdir(cachedout)
+for file in filter(x->x[1]!='.', readdir(cachedout))
+    print("Comparing ", file, " ... ")
     cached = open(readlines, joinpath(cachedout, file))
     genned = open(readlines, joinpath(gennedout, file))
     same = (n=length(cached)) == length(genned)
@@ -22,10 +23,13 @@ for file in readdir(cachedout)
         end
         same = same & all(lsame)
     end
-    if !same
+    if same
+        println("same!")
+    else
         ndifferentfiles +=1
-        println(string(file, " differs:\n", readstring(ignorestatus(
-                `diff $(joinpath(cachedout, file)) $(joinpath(gennedout, file))`))))
+        println("different :(")
+        println(readstring(ignorestatus(
+                `diff $(joinpath(cachedout, file)) $(joinpath(gennedout, file))`)))
         run(`open $(joinpath(cachedout,file))`)
         run(`open $(joinpath(gennedout,file))`)
         println("Press the return/enter key to continue")
