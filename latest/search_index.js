@@ -181,7 +181,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Layers and Stacks",
     "title": "Stacks",
     "category": "section",
-    "text": "Plots can also be stacked horizontally with hstack or vertically with vstack, and arranged into a rectangular array with gridstack. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.  Use title to add a descriptive string at the top.p1 = plot(x=[1,2,3], y=[4,5,6])\np2 = plot(x=[1,2,3], y=[6,7,8])\nvstack(p1,p2)\n\np3 = plot(x=[5,7,8], y=[8,9,10])\np4 = plot(x=[5,7,8], y=[10,11,12])\n\n# these two are equivalent\nvstack(hstack(p1,p2),hstack(p3,p4))\ngridstack([p1 p2; p3 p4])\n\ntitle(\"My great data\", hstack(p3,p4))"
+    "text": "Plots can also be stacked horizontally with hstack or vertically with vstack, and arranged into a rectangular array with gridstack. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.  Use title to add a descriptive string at the top, and context() to leave a panel empty.p1 = plot(x=[1,2,3], y=[4,5,6])\np2 = plot(x=[1,2,3], y=[6,7,8])\nvstack(p1,p2)\n\np3 = plot(x=[5,7,8], y=[8,9,10])\np4 = plot(x=[5,7,8], y=[10,11,12])\n\n# these two are equivalent\nvstack(hstack(p1,p2),hstack(p3,p4))\ngridstack([p1 p2; p3 p4])\n\ntitle(hstack(p3,p4), \"My great data\")\n\n# empty panel\ngridstack(Union{Plot,Compose.Context}[p1 p2; p3 Compose.context()])"
 },
 
 {
