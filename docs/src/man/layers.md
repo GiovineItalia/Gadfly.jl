@@ -54,7 +54,7 @@ Plots can also be stacked horizontally with `hstack` or vertically with `vstack`
 and arranged into a rectangular array with `gridstack`.
 This allows more customization in regards to tick marks, axis labeling, and other
 plot details than is available with [Geom.subplot_grid](@ref).  Use `title` to add
-a descriptive string at the top.
+a descriptive string at the top, and `context()` to leave a panel empty.
 
 ```julia
 p1 = plot(x=[1,2,3], y=[4,5,6])
@@ -68,5 +68,8 @@ p4 = plot(x=[5,7,8], y=[10,11,12])
 vstack(hstack(p1,p2),hstack(p3,p4))
 gridstack([p1 p2; p3 p4])
 
-title("My great data", hstack(p3,p4))
+title(hstack(p3,p4), "My great data")
+
+# empty panel
+gridstack(Union{Plot,Compose.Context}[p1 p2; p3 Compose.context()])
 ```

@@ -880,39 +880,58 @@ title(ctx::Context, str::String, props::Compose.Property...) = vstack(
 
 # Convenience stacking functions
 """
+    vstack(ps::Union{Plot,Context}...)
+    vstack(ps::Vector)
+
+Arrange plots into a vertical column.  Use `context()` as a placeholder for an empty panel.  Heterogeneous vectors must be typed.  See also `hstack`, `gridstack`, `subplot_grid`.
+
+# Examples
+
 ```
-vstack(ps::Plot...) = vstack(Context[render(p) for p in ps]...)
-vstack(ps::Vector{Plot}) = vstack(Context[render(p) for p in ps]...)
-vstack(p::Plot, c::Context) = vstack(render(p), c)
-vstack(c::Context, p::Plot) = vstack(c, render(p))
-```
-Plots can be stacked vertically to allow more customization in regards to tick marks, axis labeling, and other plot details than what is available with subplot_grid
+p1 = plot(x=[1,2], y=[3,4], Geom.line);
+p2 = Compose.context();
+vstack(p1, p2)
+vstack(Union{Plot,Compose.Context}[p1, p2])
 """
-vstack(ps::Plot...) = vstack(Context[render(p) for p in ps]...)
-vstack(ps::Vector{Plot}) = vstack(Context[render(p) for p in ps]...)
-vstack(p::Plot, c::Context) = vstack(render(p), c)
-vstack(c::Context, p::Plot) = vstack(c, render(p))
+vstack(ps::Union{Plot,Context}...) = vstack([typeof(p)==Plot ? render(p) : p for p in ps]...)
+vstack(ps::Vector{Plot}) = vstack(ps...)
+vstack(ps::Vector{Union{Plot,Context}}) = vstack(ps...)
 
 """
+    hstack(ps::Union{Plot,Context}...)
+    hstack(ps::Vector)
+
+Arrange plots into a horizontal row.  Use `context()` as a placeholder for an empty panel.  Heterogeneous vectors must be typed.  See also `vstack`, `gridstack`, `subplot_grid`.
+
+# Examples
+
 ```
-hstack(ps::Plot...) = hstack(Context[render(p) for p in ps]...)
-hstack(ps::Vector{Plot}) = hstack(Context[render(p) for p in ps]...)
-hstack(p::Plot, c::Context) = hstack(render(p), c)
-hstack(c::Context, p::Plot) = hstack(c, render(p))
-```
-Plots can be stacked horizontally to allow more customization in regards to tick marks, axis labeling, and other plot details than what is available with subplot_grid
+p1 = plot(x=[1,2], y=[3,4], Geom.line);
+p2 = Compose.context();
+hstack(p1, p2)
+hstack(Union{Plot,Compose.Context}[p1, p2])
 """
-hstack(ps::Plot...) = hstack(Context[render(p) for p in ps]...)
-hstack(ps::Vector{Plot}) = hstack(Context[render(p) for p in ps]...)
-hstack(p::Plot, c::Context) = hstack(render(p), c)
-hstack(c::Context, p::Plot) = hstack(c, render(p))
+hstack(ps::Union{Plot,Context}...) = hstack([typeof(p)==Plot ? render(p) : p for p in ps]...)
+hstack(ps::Vector{Plot}) = hstack(ps...)
+hstack(ps::Vector{Union{Plot,Context}}) = hstack(ps...)
 
 """
-    gridstack(ps::Matrix{Plot}) -> Context
+    gridstack(ps::Matrix{Union{Plot,Context}})
 
-Arrange plots into a rectangular array.
+Arrange plots into a rectangular array.  Use `context()` as a placeholder for an empty panel.  Heterogeneous matrices must be typed.  See also `hstack`, `vstack`.
+
+# Examples
+
+```
+p1 = plot(x=[1,2], y=[3,4], Geom.line);
+p2 = Compose.context();
+gridstack([p1 p1; p1 p1])
+gridstack(Union{Plot,Compose.Context}[p1 p2; p2 p1])
+```
 """
-gridstack(ps::Matrix{Plot}) = gridstack(map(render, ps))
+_gridstack(ps::Matrix) = gridstack(map(p->typeof(p)==Plot ? render(p) : p, ps))
+gridstack(ps::Matrix{Plot}) = _gridstack(ps)
+gridstack(ps::Matrix{Union{Plot,Context}}) = _gridstack(ps)
 
 # show functions for all supported compose backends.
 
