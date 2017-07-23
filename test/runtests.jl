@@ -23,10 +23,11 @@ backends = @compat Dict{AbstractString, Function}(
 )
 
 testdir = joinpath((@compat @__DIR__),"testscripts")
-testfiles = isempty(ARGS) ? [splitext(filename)[1] for filename in readdir(testdir)] : ARGS
+testfiles = isempty(ARGS) ?
+        [splitext(filename)[1] for filename in readdir(testdir) if filename[1]!='.'] :
+        ARGS
 
 for filename in testfiles, (backend_name, backend) in backends
-    startswith(filename,'.') && continue
     println(STDERR, "Rendering $(filename) on $(backend_name) backend.")
     try
         srand(1)
@@ -77,5 +78,5 @@ end
 if !haskey(ENV, "TRAVIS") &&
             !isempty(readdir(joinpath((@compat @__DIR__),"cachedoutput"))) &&
             !isempty(readdir(joinpath((@compat @__DIR__),"gennedoutput")))
-    include("compare_examples.jl")
+    run(`julia compare_examples.jl`)  # `include`ing causes it to hang.  bug in julia 0.6?
 end

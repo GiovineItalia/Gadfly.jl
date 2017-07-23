@@ -1,8 +1,10 @@
-using Gadfly, RDatasets
+using Gadfly, RDatasets, Compat
 
-set_default_plot_size(30cm, 10cm)
+set_default_plot_size(15cm, 15cm)
 
-plot(dataset("mlmRev", "Chem97"),
+d = dataset("mlmRev", "Chem97")
+idx = find((d[:Score] .> 4) .& (d[:Age] .> 0))
+plot(d[idx[1:4:end], :],
      x=:GCSEScore,
      ygroup=:Gender,
      xgroup=:Score,
