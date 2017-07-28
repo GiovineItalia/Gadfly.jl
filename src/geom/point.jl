@@ -29,10 +29,12 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     default_aes.size = Measure[theme.point_size]
     aes = inherit(aes, default_aes)
 
-    size_min, size_max = extrema(aes.size)
-    size_range = size_max - size_min
-    point_size_range = theme.point_size_max - theme.point_size_min
-    interpolate_size(x) = theme.point_size_min + (x-size_min) / size_range * point_size_range
+    if eltype(aes.size) <: Int
+      size_min, size_max = extrema(aes.size)
+      size_range = size_max - size_min
+      point_size_range = theme.point_size_max - theme.point_size_min
+      interpolate_size(x) = theme.point_size_min + (x-size_min) / size_range * point_size_range
+    end
 
     ctx = context()
 
