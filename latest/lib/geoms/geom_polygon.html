@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.polygon · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_polygon.html">Geom.polygon</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li><li><span class="toctext">Development</span><ul><li><a class="toctext" href="../../dev/pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../../dev/regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_polygon.html">Geom.polygon</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/a02f6b3263db57297c5eb6080bee515a50441505/docs/src/lib/geoms/geom_polygon.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Geom.polygon</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Geom.polygon-1" href="#Geom.polygon-1">Geom.polygon</a></h1><p>Draw polygons.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><p>Aesthetics used directly:</p><ul><li><p><code>x</code>: X-axis position.</p></li><li><p><code>y</code>: Y-axis position.</p></li><li><p><code>group</code> (optional): Group categorically.</p></li><li><p><code>color</code> (optional): Group categorically and indicate by color.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>order</code>: Z-order relative to other geometry.</p></li><li><p><code>fill</code>: If true, fill the polygon and stroke according to <code>Theme.discrete_highlight_color</code>. If false (default), only stroke.</p></li><li><p><code>preserve_order</code>: If true, connect points in the order they are given. If false (default) order the points around their centroid.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Geom.polygon · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/highlightjs/default.css" rel="stylesheet" type="text/css"/><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../geometries.html">Geometries</a><ul><li class="current"><a class="toctext" href="geom_polygon.html">Geom.polygon</a><ul class="internal"><li><a class="toctext" href="#Aesthetics-1">Aesthetics</a></li><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li></ul></li><li><span class="toctext">Development</span><ul><li><a class="toctext" href="../../dev/pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../../dev/regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../geometries.html">Geometries</a></li><li><a href="geom_polygon.html">Geom.polygon</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/2a50caa2090f7b35324854cd851e2215666f62df/docs/src/lib/geoms/geom_polygon.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Geom.polygon</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Geom.polygon-1" href="#Geom.polygon-1">Geom.polygon</a></h1><p>Draw polygons.</p><h2><a class="nav-anchor" id="Aesthetics-1" href="#Aesthetics-1">Aesthetics</a></h2><p>Aesthetics used directly:</p><ul><li><p><code>x</code>: X-axis position.</p></li><li><p><code>y</code>: Y-axis position.</p></li><li><p><code>group</code> (optional): Group categorically.</p></li><li><p><code>color</code> (optional): Group categorically and indicate by color.</p></li></ul><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>order</code>: Z-order relative to other geometry.</p></li><li><p><code>fill</code>: If true, fill the polygon and stroke according to <code>Theme.discrete_highlight_color</code>. If false (default), only stroke.</p></li><li><p><code>preserve_order</code>: If true, connect points in the order they are given. If false (default) order the points around their centroid.</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia">plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],
      y=[0, 0, 1, 1, 0, 0, 3, 3, 2, 2, 3, 3, 0, 0, 3, 3],
      group=[&quot;H&quot;, &quot;H&quot;, &quot;H&quot;, &quot;H&quot;, &quot;H&quot;, &quot;H&quot;, &quot;H&quot;, &quot;H&quot;,
             &quot;H&quot;, &quot;H&quot;, &quot;H&quot;, &quot;H&quot;, &quot;I&quot;, &quot;I&quot;, &quot;I&quot;, &quot;I&quot;],
@@ -14,11 +14,11 @@
      stroke-width="0.3"
      font-size="3.88"
 >
-<g class="plotroot xscalable yscalable" id="img-0f4bb6c4-1">
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-0f4bb6c4-2">
+<g class="plotroot xscalable yscalable" id="img-66562246-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-66562246-2">
     <text x="74.74" y="68.39" text-anchor="middle" dy="0.6em">x</text>
   </g>
-  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-0f4bb6c4-3">
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-66562246-3">
     <text x="16.48" y="61.72" text-anchor="middle" dy="0.6em">0</text>
     <text x="39.78" y="61.72" text-anchor="middle" dy="0.6em">1</text>
     <text x="63.09" y="61.72" text-anchor="middle" dy="0.6em">2</text>
@@ -26,18 +26,18 @@
     <text x="109.7" y="61.72" text-anchor="middle" dy="0.6em">4</text>
     <text x="133" y="61.72" text-anchor="middle" dy="0.6em">5</text>
   </g>
-<g clip-path="url(#img-0f4bb6c4-4)">
-  <g id="img-0f4bb6c4-5">
-    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-0f4bb6c4-6">
+<g clip-path="url(#img-66562246-4)">
+  <g id="img-66562246-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-66562246-6">
       <rect x="14.48" y="5" width="120.52" height="55.72"/>
     </g>
-    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-0f4bb6c4-7">
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-66562246-7">
       <path fill="none" d="M14.48,58.72 L 135 58.72"/>
       <path fill="none" d="M14.48,41.48 L 135 41.48"/>
       <path fill="none" d="M14.48,24.24 L 135 24.24"/>
       <path fill="none" d="M14.48,7 L 135 7"/>
     </g>
-    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-0f4bb6c4-8">
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-66562246-8">
       <path fill="none" d="M16.48,5 L 16.48 60.72"/>
       <path fill="none" d="M39.78,5 L 39.78 60.72"/>
       <path fill="none" d="M63.09,5 L 63.09 60.72"/>
@@ -45,26 +45,26 @@
       <path fill="none" d="M109.7,5 L 109.7 60.72"/>
       <path fill="none" d="M133,5 L 133 60.72"/>
     </g>
-    <g class="plotpanel" id="img-0f4bb6c4-9">
-      <g class="geometry" stroke-width="0.3" id="img-0f4bb6c4-10">
+    <g class="plotpanel" id="img-66562246-9">
+      <g class="geometry" stroke-width="0.3" id="img-66562246-10">
         <path d="M16.48,58.72 L 39.78 58.72 39.78 41.48 63.09 41.48 63.09 58.72 86.39 58.72 86.39 7 63.09 7 63.09 24.24 39.78 24.24 39.78 7 16.48 7 z" fill="#00BFFF" stroke="#FFFFFF"/>
         <path d="M109.7,58.72 L 133 58.72 133 7 109.7 7 z" fill="#00BFFF" stroke="#FFFFFF"/>
       </g>
     </g>
   </g>
 </g>
-  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-0f4bb6c4-11">
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-66562246-11">
     <text x="13.48" y="58.72" text-anchor="end" dy="0.35em">0</text>
     <text x="13.48" y="41.48" text-anchor="end" dy="0.35em">1</text>
     <text x="13.48" y="24.24" text-anchor="end" dy="0.35em">2</text>
     <text x="13.48" y="7" text-anchor="end" dy="0.35em">3</text>
   </g>
-  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-0f4bb6c4-12">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-66562246-12">
     <text x="8.81" y="32.86" text-anchor="end" dy="0.35em">y</text>
   </g>
 </g>
 <defs>
-  <clipPath id="img-0f4bb6c4-4">
+  <clipPath id="img-66562246-4">
   <path d="M14.48,5 L 135 5 135 60.72 14.48 60.72" />
 </clipPath>
 </defs>
