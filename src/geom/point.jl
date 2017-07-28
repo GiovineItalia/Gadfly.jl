@@ -48,7 +48,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     compose!(ctx, linewidth(theme.highlight_width))
 
     if !(aes.color_key_continuous != nothing && aes.color_key_continuous)
-        classes = Gadfly.pooled_map(Compat.ASCIIString,
+        classes = Gadfly.pooled_map(Compat.String,
                 c -> svg_color_class_from_label(escape_id(aes.color_label([c])[1])),
                 aes.color)
         compose!(ctx, svgclass(classes))
