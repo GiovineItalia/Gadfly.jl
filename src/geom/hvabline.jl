@@ -81,7 +81,7 @@ function render(geom::VLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     style = map(Gadfly.get_stroke_vector, style)
 
-    root = compose(context(), svgclass("xfixed"))
+    root = compose(context(), svgclass("yfixed"))
     for (idx,x) in enumerate(aes.xintercept)
         compose!(root, (context(),
                 Compose.line([(x, 0h), (x, 1h)], geom.tag),
@@ -151,7 +151,7 @@ function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     y0s = [x0 * m + b for (m,b) in zip(aes.slope, aes.intercept)]
     y1s = [x1 * m + b for (m,b) in zip(aes.slope, aes.intercept)]
 
-    root = compose(context(), svgclass("xfixed"))
+    root = compose(context(), svgclass("geometry"))
     for (idx,(y0,y1)) in enumerate(zip(y0s,y1s))
         compose!(root, (context(),
                 Compose.line([(x0,y0), (x1,y1)], geom.tag),
