@@ -129,14 +129,14 @@ To illustrate the difference consider some historical London birth rate data.
 births = RDatasets.dataset("HistData", "Arbuthnot")[[:Year, :Males, :Females]]
 ```
 
- | Row | Year | Males | Females |
- |-----|------|-------|---------|
- | 1   | 1629 | 5218  | 4683    |
- | 2   | 1630 | 4858  | 4457    |
- | 3   | 1631 | 4422  | 4102    |
- | 4   | 1632 | 4994  | 4590    |
- | 5   | 1633 | 5158  | 4839    |
- | 6   | 1634 | 5035  | 4820    |
+| Row | Year | Males | Females |
+|-----|------|-------|---------|
+| 1   | 1629 | 5218  | 4683    |
+| 2   | 1630 | 4858  | 4457    |
+| 3   | 1631 | 4422  | 4102    |
+| 4   | 1632 | 4994  | 4590    |
+| 5   | 1633 | 5158  | 4839    |
+| 6   | 1634 | 5035  | 4820    |
 
 This table is wide form because "Males" and "Females" are two columns both
 measuring number of births. Wide form data can always be transformed to long
@@ -147,30 +147,31 @@ inconvenient, especially if the data is not already in a DataFrame.
 stack(births, [:Males, :Females])
 ```
 
- | Row | variable | value | Year |
- |-----|----------|-------|------|
- | 1   | Males    | 5218  | 1629 |
- | 2   | Males    | 4858  | 1630 |
- | 3   | Males    | 4422  | 1631 |
- | 4   | Males    | 4994  | 1632 |
- | 5   | Males    | 5158  | 1633 |
- | 6   | Males    | 5035  | 1634 |
+| Row | variable | value | Year |
+|-----|----------|-------|------|
+| 1   | Males    | 5218  | 1629 |
+| 2   | Males    | 4858  | 1630 |
+| 3   | Males    | 4422  | 1631 |
+| ... | ...      | ...   | ...  |
+| 162 | Females  | 7623  | 1708 |
+| 163 | Females  | 7380  | 1709 |
+| 164 | Females  | 7288  | 1710 |
 
 The resulting table is long form with number of births in one columns, here
 with the default name given by `stack`: "value". Data in this form can be
 plotted very conveniently with Gadfly.
 
- ```@example 1
+```@example 1
 births = RDatasets.dataset("HistData", "Arbuthnot")[[:Year, :Males, :Females]] # hide
-plot(stack(births, [:Males, :Females]), x=:Year, y=:value color=:variable,
+plot(stack(births, [:Males, :Females]), x=:Year, y=:value, color=:variable,
      Geom.line)
- ```
+```
 
 In some cases, explicitly transforming the data can be burdensome. Gadfly
 lets you avoid this be referring to columns or groups of columns in a
 implicit long-form version of the data.
 
- ```@example 1
+```@example 1
 plot(births, x=:Year, y=Col.value(:Males, :Females),
      color=Col.index(:Males, :Females), Geom.line)
 ```

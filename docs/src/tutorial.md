@@ -182,4 +182,5 @@ code to provide some level of dynamism.
 Though not a replacement for full-fledged custom interactive visualizations of
 the sort produced by d3, this sort of mild interactivity can improve a lot of
 standard plots. The fuel efficiency plot is made more clear by toggling off some
-of the countries, for example.
+of the countries, for example.  To do so, simply click or shift-click in the
+colored squares in the table of keys to the right.
