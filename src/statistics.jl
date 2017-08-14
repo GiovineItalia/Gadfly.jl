@@ -201,17 +201,14 @@ function apply_statistic(stat::BarStatistic,
             end
         end
 
-        stack_height = values(groups)
-        if any(x->x>0.0, stack_height)
-          viewextrema = @compat Float64(maximum(stack_height))
-          viewextremavar = viewmaxvar
-        else
-          viewextrema = @compat Float64(minimum(stack_height))
-          viewextremavar = viewminvar
+        viewmin, viewmax = extrema(values(groups))
+        aes_viewminvar = getfield(aes, viewminvar)
+        if aes_viewminvar === nothing || aes_viewminvar > viewmin
+            setfield!(aes, viewminvar, viewmin)
         end
-        aes_viewextrema = getfield(aes, viewextremavar)
-        if aes_viewextrema === nothing || aes_viewextrema < viewextrema
-            setfield!(aes, viewextremavar, viewextrema)
+        aes_viewmaxvar = getfield(aes, viewmaxvar)
+        if aes_viewmaxvar === nothing || aes_viewmaxvar < viewmax
+            setfield!(aes, viewmaxvar, viewmax)
         end
     end
 

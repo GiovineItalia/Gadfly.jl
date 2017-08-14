@@ -39,9 +39,21 @@ If `x` is given, a bar will be drawn at each x value, specifying both `xmin` and
 ```@setup 1
 using RDatasets
 using Gadfly
-Gadfly.set_default_plot_size(12cm, 8cm)
+set_default_plot_size(12cm, 8cm)
 ```
 
 ```@example 1
 plot(dataset("HistData", "ChestSizes"), x="Chest", y="Count", Geom.bar)
+```
+
+```@setup 2
+using RDatasets
+using Gadfly
+set_default_plot_size(12cm, 8cm)
+```
+
+```@example 1
+plot(by(dataset("datasets","HairEyeColor"),[:Eye,:Sex], d->sum(d[:Freq])),
+    color="Eye", y="x1", x="Sex",
+    Geom.bar(position=:dodge), Guide.ylabel("Freq"))
 ```

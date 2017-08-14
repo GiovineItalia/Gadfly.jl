@@ -31,7 +31,7 @@ element_aesthetics(geom::BarGeometry) = geom.orientation == :vertical ?
 default_statistic(geom::BarGeometry) = geom.default_statistic
 
 # Render a single color bar chart
-function render_colorless_bar(geom::BarGeometry,
+function render_bar(geom::BarGeometry,
                               theme::Gadfly.Theme,
                               aes::Gadfly.Aesthetics,
                               orientation::Symbol)
@@ -57,7 +57,8 @@ function render_colorless_bar(geom::BarGeometry,
             svgclass("geometry"))
     end
 
-    compose!(ctx, fill(theme.default_color))
+    cs = aes.color === nothing ? theme.default_color : aes.color
+    compose!(ctx, fill(cs), svgclass("geometry"))
     if isa(theme.bar_highlight, Function)
         compose!(ctx, stroke(theme.bar_highlight(theme.default_color)))
     elseif isa(theme.bar_highlight, Color)
@@ -70,7 +71,7 @@ end
 
 
 # Render a bar chart grouped by discrete colors and stacked.
-function render_colorful_stacked_bar(geom::BarGeometry,
+function render_stacked_bar(geom::BarGeometry,
                                      theme::Gadfly.Theme,
                                      aes::Gadfly.Aesthetics,
                                      orientation::Symbol)
@@ -92,17 +93,19 @@ function render_colorful_stacked_bar(geom::BarGeometry,
         stack_height = zeros(eltype(aes.x), length(idxs))
 
         for (i, j) in enumerate(idxs)
-            stack_height[i] = stack_height_dict[aes.ymin[j]]
-            stack_height_dict[aes.ymin[j]] += aes.x[j]
+            if aes.x[j]>0
+                stack_height[i] = stack_height_dict[aes.ymin[j]]
+                stack_height_dict[aes.ymin[j]] += aes.x[j]
+            else
+                stack_height_dict[aes.ymin[j]] += aes.x[j]
+                stack_height[i] = stack_height_dict[aes.ymin[j]]
+            end
         end
 
         x0s = stack_height
         y0s = [aes.ymin[i]*cy + theme.bar_spacing/2 for i in idxs]
         widths = [abs(aes.x[i]) for i in idxs]
         heights = [(aes.ymax[i] - aes.ymin[i])*cy - theme.bar_spacing for i in idxs]
-        if any(aes.x .< 0)
-          x0s -= widths
-        end
         compose!(ctx, rectangle(x0s, y0s, widths, heights, geom.tag))
     else
         stack_height_dict = Dict()
@@ -114,17 +117,19 @@ function render_colorful_stacked_bar(geom::BarGeometry,
         stack_height = zeros(eltype(aes.y), length(idxs))
 
         for (i, j) in enumerate(idxs)
-            stack_height[i] = stack_height_dict[aes.xmin[j]]
-            stack_height_dict[aes.xmin[j]] += aes.y[j]
+            if aes.y[j]>0
+                stack_height[i] = stack_height_dict[aes.xmin[j]]
+                stack_height_dict[aes.xmin[j]] += aes.y[j]
+            else
+                stack_height_dict[aes.xmin[j]] += aes.y[j]
+                stack_height[i] = stack_height_dict[aes.xmin[j]]
+            end
         end
 
         x0s = [aes.xmin[i]*cx + theme.bar_spacing/2 for i in idxs]
         y0s = stack_height
         widths = [(aes.xmax[i] - aes.xmin[i])*cx - theme.bar_spacing for i in idxs]
         heights = [abs(aes.y[i]) for i in idxs]
-        if any(aes.y .< 0)
-          y0s -= heights
-        end
         compose!(ctx, rectangle(x0s, y0s, widths, heights, geom.tag))
     end
 
@@ -142,7 +147,7 @@ end
 
 
 # Render a bar chart grouped by discrete colors and stuck next to each other.
-function render_colorful_dodged_bar(geom::BarGeometry,
+function render_dodged_bar(geom::BarGeometry,
                                     theme::Gadfly.Theme,
                                     aes::Gadfly.Aesthetics,
                                     orientation::Symbol)
@@ -250,12 +255,25 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         error("Orientation must be :horizontal or :vertical")
     end
 
-    if aes.color === nothing
-        ctx = render_colorless_bar(geom, theme, aes, geom.orientation)
+    if aes.color === nothing || allunique(aes.color)
+        ctx = render_bar(geom, theme, aes, geom.orientation)
     elseif geom.position == :stack
-        ctx = render_colorful_stacked_bar(geom, theme, aes, geom.orientation)
+        if geom.orientation == :horizontal
+            for y in unique(aes.ymin)
+               signs = map(sign, aes.x[aes.ymin.==y])
+               in(1, signs) && in(-1, signs) &&
+                       error("x values must be of the same sign for each unique y value")
+            end
+        elseif geom.orientation == :vertical
+            for x in unique(aes.xmin)
+               signs = map(sign, aes.y[aes.xmin.==x])
+               in(1, signs) && in(-1, signs) &&
+                       error("y values must be of the same sign for each unique x value")
+            end
+        end
+        ctx = render_stacked_bar(geom, theme, aes, geom.orientation)
     elseif geom.position == :dodge
-        ctx = render_colorful_dodged_bar(geom, theme, aes, geom.orientation)
+        ctx = render_dodged_bar(geom, theme, aes, geom.orientation)
     else
         error("$(geom.position) is not a valid position for the bar geometry.")
     end
