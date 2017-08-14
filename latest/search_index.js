@@ -381,7 +381,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.bar",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)plot(dataset(\"HistData\", \"ChestSizes\"), x=\"Chest\", y=\"Count\", Geom.bar)"
+    "text": "using RDatasets\nusing Gadfly\nset_default_plot_size(12cm, 8cm)plot(dataset(\"HistData\", \"ChestSizes\"), x=\"Chest\", y=\"Count\", Geom.bar)using RDatasets\nusing Gadfly\nset_default_plot_size(12cm, 8cm)plot(by(dataset(\"datasets\",\"HairEyeColor\"),[:Eye,:Sex], d->sum(d[:Freq])),\n    color=\"Eye\", y=\"x1\", x=\"Sex\",\n    Geom.bar(position=:dodge), Guide.ylabel(\"Freq\"))"
 },
 
 {
