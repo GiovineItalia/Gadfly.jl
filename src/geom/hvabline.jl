@@ -1,3 +1,5 @@
+using Compose: x_measure, y_measure
+
 function check_arguments(arg::Vector, len)
     if length(arg)>1
         @assert length(arg) == len
@@ -42,7 +44,7 @@ function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     root = compose(context(), svgclass("xfixed"))
     for (idx,y) in enumerate(aes.yintercept)
         compose!(root, (context(),
-            Compose.line([(0w, y), (1w, y)], geom.tag),
+            Compose.line([(0w, y_measure(y)), (1w, y_measure(y))], geom.tag),
             stroke(color[idx]),
             linewidth(size[idx]),
             strokedash(style[idx])))
@@ -84,7 +86,7 @@ function render(geom::VLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     root = compose(context(), svgclass("yfixed"))
     for (idx,x) in enumerate(aes.xintercept)
         compose!(root, (context(),
-                Compose.line([(x, 0h), (x, 1h)], geom.tag),
+                Compose.line([(x_measure(x), 0h), (x_measure(x), 1h)], geom.tag),
                 stroke(color[idx]),
                 linewidth(size[idx]),
                 strokedash(style[idx])))
@@ -154,7 +156,8 @@ function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     root = compose(context(), svgclass("geometry"))
     for (idx,(y0,y1)) in enumerate(zip(y0s,y1s))
         compose!(root, (context(),
-                Compose.line([(x0,y0), (x1,y1)], geom.tag),
+                Compose.line([(x_measure(x0),y_measure(y0)),
+                              (x_measure(x1),y_measure(y1))], geom.tag),
                 stroke(color[idx]),
                 linewidth(size[idx]),
                 strokedash(style[idx])))
