@@ -178,10 +178,6 @@ Gadfly.plot_mouseover = function(event) {
     ygridlines.attribute("stroke-dasharray", "none")
               .selectAll("path")
               .animate({stroke: destcolor}, 250);
-
-    // reveal zoom slider
-    root.select(".zoomslider")
-        .animate({opacity: 1.0}, 250);
 };
 
 // Reset pan and zoom on double click
@@ -209,10 +205,6 @@ Gadfly.plot_mouseout = function(event) {
     ygridlines.attribute("stroke-dasharray", ygridlines.data("unfocused_strokedash"))
               .selectAll("path")
               .animate({stroke: destcolor}, 250);
-
-    // hide zoom slider
-    root.select(".zoomslider")
-        .animate({opacity: 0.0}, 250);
 };
 
 
@@ -764,34 +756,6 @@ Gadfly.guide_background_scroll = function(event) {
     }
 };
 
-
-Gadfly.zoomslider_button_mouseover = function(event) {
-    this.select(".button_logo")
-         .animate({fill: this.data("mouseover_color")}, 100);
-};
-
-
-Gadfly.zoomslider_button_mouseout = function(event) {
-     this.select(".button_logo")
-         .animate({fill: this.data("mouseout_color")}, 100);
-};
-
-
-Gadfly.zoomslider_zoomout_click = function(event) {
-    increase_zoom_by_position(this.plotroot(), -0.1, true);
-};
-
-
-Gadfly.zoomslider_zoomin_click = function(event) {
-    increase_zoom_by_position(this.plotroot(), 0.1, true);
-};
-
-
-Gadfly.zoomslider_track_click = function(event) {
-    // TODO
-};
-
-
 // Map slider position x to scale y using the function y = a*exp(b*x)+c.
 // The constants a, b, and c are solved using the constraint that the function
 // should go through the points (0; min_scale), (0.5; 1), and (1; max_scale).
@@ -842,60 +806,6 @@ var set_zoom = function(root, scale, animate) {
 var update_plot_scale = function(root, new_scale) {
     var trans = scale_centered_translation(root, new_scale);
     set_plot_pan_zoom(root, trans.x, trans.y, new_scale);
-
-    root.selectAll(".zoomslider_thumb")
-        .forEach(function (element, i) {
-            var min_pos = element.data("min_pos"),
-                max_pos = element.data("max_pos"),
-                min_scale = root.data("min_scale"),
-                max_scale = root.data("max_scale");
-            var xmid = (min_pos + max_pos) / 2;
-            var xpos = slider_position_from_scale(new_scale, min_scale, max_scale);
-            element.transform(new Snap.Matrix().translate(
-                Math.max(min_pos, Math.min(
-                         max_pos, min_pos + (max_pos - min_pos) * xpos)) - xmid, 0));
-    });
-};
-
-
-Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y, event) {
-    var root = this.plotroot();
-    var min_pos = this.data("min_pos"),
-        max_pos = this.data("max_pos"),
-        min_scale = root.data("min_scale"),
-        max_scale = root.data("max_scale"),
-        old_scale = root.data("old_scale");
-
-    var px_per_mm = root.data("px_per_mm");
-    dx /= px_per_mm;
-    dy /= px_per_mm;
-
-    var xmid = (min_pos + max_pos) / 2;
-    var xpos = slider_position_from_scale(old_scale, min_scale, max_scale) +
-                   dx / (max_pos - min_pos);
-
-    // compute the new scale
-    var new_scale = scale_from_slider_position(xpos, min_scale, max_scale);
-    new_scale = Math.min(max_scale, Math.max(min_scale, new_scale));
-
-    update_plot_scale(root, new_scale);
-    event.stopPropagation();
-};
-
-
-Gadfly.zoomslider_thumb_dragstart = function(x, y, event) {
-    this.animate({fill: this.data("mouseover_color")}, 100);
-    var root = this.plotroot();
-
-    // keep track of what the scale was when we started dragging
-    root.data("old_scale", root.data("scale"));
-    event.stopPropagation();
-};
-
-
-Gadfly.zoomslider_thumb_dragend = function(event) {
-    this.animate({fill: this.data("mouseout_color")}, 100);
-    event.stopPropagation();
 };
 
 

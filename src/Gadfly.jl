@@ -620,10 +620,6 @@ function render_prepare(plot::Plot)
             push!(guides, Guide.background())
         end
 
-        if !in(Guide.ZoomSlider, explicit_guide_types)
-            push!(guides, Guide.zoomslider())
-        end
-
         if !in(Guide.XTicks, explicit_guide_types)
             push!(guides, Guide.xticks())
         end

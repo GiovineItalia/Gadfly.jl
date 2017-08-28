@@ -184,3 +184,12 @@ the sort produced by d3, this sort of mild interactivity can improve a lot of
 standard plots. The fuel efficiency plot is made more clear by toggling off some
 of the countries, for example.  To do so, simply click or shift-click in the
 colored squares in the table of keys to the right.
+
+One can also zoom in and out by pressing the shift key while either scrolling
+the mouse wheel or clicking and dragging a box.  Should your mouse not work,
+try the plus, minus, I, and O, keys.  Panning is similarly easy: click and drag
+without depressing the shift key, or use the arrow keys.  For Vim enthusiasts,
+the H, J, K, and L keys pan as expected.  To reset the plot to it's initial
+state, double click it or hit R.
+
+Lastly, press C to toggle on and off a numerical display of the cursor coordinates.
