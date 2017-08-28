@@ -14,7 +14,7 @@ using Showoff
 import IterTools
 import IterTools: distinct, drop, chain
 import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant
-@compat import Base: +, -, /, *,
+import Base: +, -, /, *,
              copy, push!, start, next, done, show, getindex, cat,
              show, isfinite, display
 import Distributions: Distribution
@@ -45,7 +45,7 @@ function __init__()
 end
 
 
-const ColorOrNothing = @compat(Union{Colorant, (@compat Void)})
+const ColorOrNothing = Union{Colorant, (Void)}
 
 element_aesthetics(::Any) = []
 input_aesthetics(::Any) = []
@@ -78,7 +78,7 @@ include("theme.jl")
 
 # The layer and plot functions can also take functions that are evaluated with
 # no arguments and are expected to produce an element.
-@compat const ElementOrFunction{T <: Element} = @compat(Union{Element, Base.Callable, Theme})
+@compat const ElementOrFunction{T <: Element} = Union{Element, Base.Callable, Theme}
 
 const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 
@@ -107,11 +107,11 @@ set_default_plot_format(fmt::Symbol) = Compose.set_default_graphic_format(fmt)
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 type Layer <: Element
-    data_source::@compat(Union{(@compat Void), MeltedData, AbstractArray, AbstractDataFrame})
+    data_source::Union{(Void), MeltedData, AbstractArray, AbstractDataFrame}
     mapping::Dict
     statistics::Vector{StatisticElement}
     geom::GeometryElement
-    theme::@compat(Union{(@compat Void), Theme})
+    theme::Union{(Void), Theme}
     order::Int
 end
 Layer() = Layer(nothing, Dict(), StatisticElement[], Geom.nil(), nothing, 0)
@@ -135,7 +135,7 @@ Creates layers based on elements
 ### Returns
 An array of layers
 """
-function layer(data_source::@compat(Union{AbstractDataFrame, (@compat Void)}),
+function layer(data_source::Union{AbstractDataFrame, (Void)},
                elements::ElementOrFunction...; mapping...)
     mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
@@ -188,11 +188,11 @@ add_plot_element!(lyrs::Vector{Layer}, arg::Theme) = [lyr.theme = arg for lyr in
 # A full plot specification.
 type Plot
     layers::Vector{Layer}
-    data_source::@compat(Union{(@compat Void), MeltedData, AbstractArray, AbstractDataFrame})
+    data_source::Union{(Void), MeltedData, AbstractArray, AbstractDataFrame}
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
-    coord::@compat(Union{(@compat Void), CoordinateElement})
+    coord::Union{(Void), CoordinateElement}
     guides::Vector{GuideElement}
     theme::Theme
     mapping::Dict
@@ -254,7 +254,7 @@ add_plot_element!(p::Plot, theme::Theme) = p.theme = theme
 # because a call to layer() expands to a vector of layers (one for each Geom
 # supplied), we need to allow Vector{Layer} to count as an Element for the
 # purposes of plot().
-const ElementOrFunctionOrLayers = @compat(Union{ElementOrFunction, Vector{Layer}})
+const ElementOrFunctionOrLayers = Union{ElementOrFunction, Vector{Layer}}
 
 
 """
@@ -280,7 +280,7 @@ Where "time" and "price" are the names of columns in my_data.
 * elements: Geometries, statistics, etc.
 * mapping: Aesthetics symbols (e.g. :x, :y, :color) mapped to names of columns in the data frame or other expressions.
 """
-function plot(data_source::@compat(Union{AbstractArray, AbstractDataFrame}),
+function plot(data_source::Union{AbstractArray, AbstractDataFrame},
               elements::ElementOrFunctionOrLayers...; mapping...)
     mappingdict = Dict{Symbol, Any}(mapping)
     return plot(data_source, mappingdict, elements...)
@@ -326,7 +326,7 @@ to expressions or columns in the data frame.
 ### Returns:
 A Plot object.
 """
-function plot(data_source::@compat(Union{(@compat Void), AbstractArray, AbstractDataFrame}),
+function plot(data_source::Union{(Void), AbstractArray, AbstractDataFrame},
               mapping::Dict, elements::ElementOrFunctionOrLayers...)
     mapping = cleanmapping(mapping)
     p = Plot()
@@ -936,7 +936,7 @@ gridstack(ps::Matrix{Union{Plot,Context}}) = _gridstack(ps)
 # show functions for all supported compose backends.
 
 
-@compat function show(io::IO, m::MIME"text/html", p::Plot)
+function show(io::IO, m::MIME"text/html", p::Plot)
     buf = IOBuffer()
     svg = SVGJS(buf, Compose.default_graphic_width,
                 Compose.default_graphic_height, false)
@@ -945,7 +945,7 @@ gridstack(ps::Matrix{Union{Plot,Context}}) = _gridstack(ps)
 end
 
 
-@compat function show(io::IO, m::MIME"image/svg+xml", p::Plot)
+function show(io::IO, m::MIME"image/svg+xml", p::Plot)
     buf = IOBuffer()
     svg = SVG(buf, Compose.default_graphic_width,
               Compose.default_graphic_height, false)
@@ -957,7 +957,7 @@ end
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
     global show
-    @compat function show(io::IO, ::MIME"image/png", p::Plot)
+    function show(io::IO, ::MIME"image/png", p::Plot)
         draw(PNG(io, Compose.default_graphic_width,
                  Compose.default_graphic_height), p)
     end
@@ -966,13 +966,13 @@ end
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
     global show
-    @compat function show(io::IO, ::MIME"application/postscript", p::Plot)
+    function show(io::IO, ::MIME"application/postscript", p::Plot)
         draw(PS(io, Compose.default_graphic_width,
              Compose.default_graphic_height), p);
     end
 end
 
-@compat function show(io::IO, ::MIME"text/plain", p::Plot)
+function show(io::IO, ::MIME"text/plain", p::Plot)
     write(io, "Plot(...)")
 end
 
@@ -1215,7 +1215,7 @@ end
 
 # Determine whether the input is categorical or numerical
 
-const CategoricalType = @compat(Union{AbstractString, Bool, Symbol})
+const CategoricalType = Union{AbstractString, Bool, Symbol}
 
 classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N}) = :categorical
 classify_data{N, T <: Union{Base.Callable,Measure,Colorant}}(data::AbstractArray{T, N}) = :functional

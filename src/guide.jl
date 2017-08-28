@@ -169,7 +169,7 @@ end
 
 
 immutable ColorKey <: Gadfly.GuideElement
-    title::@compat(Union{AbstractString, (@compat Void)})
+    title::Union{AbstractString, (Void)}
 end
 ColorKey() = ColorKey(nothing)
 
@@ -479,7 +479,7 @@ end
 
 
 immutable ManualColorKey{C<:Color} <: Gadfly.GuideElement
-    title::@compat(Union{AbstractString, (@compat Void)})
+    title::Union{AbstractString, (Void)}
     labels::Vector{AbstractString}
     colors::Vector{C}
 end
@@ -532,7 +532,7 @@ end
 
 immutable XTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})
+    ticks::Union{(Void), Symbol, AbstractArray}
     orientation::Symbol
 
     function XTicks(label, ticks, orientation)
@@ -694,7 +694,7 @@ end
 
 immutable YTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::@compat(Union{(@compat Void), Symbol, AbstractArray})
+    ticks::Union{(Void), Symbol, AbstractArray}
     orientation::Symbol
 
     function YTicks(label, ticks, orientation)
@@ -872,7 +872,7 @@ end
 
 # X-axis label Guide
 immutable XLabel <: Gadfly.GuideElement
-    label::@compat(Union{(@compat Void), AbstractString})
+    label::Union{(Void), AbstractString}
     orientation::Symbol
 end
 XLabel(label; orientation=:auto) = XLabel(label, orientation)
@@ -933,7 +933,7 @@ end
 
 # Y-axis label Guide
 immutable YLabel <: Gadfly.GuideElement
-    label::@compat(Union{(@compat Void), AbstractString})
+    label::Union{(Void), AbstractString}
     orientation::Symbol
 end
 YLabel(label; orientation=:auto) = YLabel(label, orientation)
@@ -988,7 +988,7 @@ end
 
 # Title Guide
 immutable Title <: Gadfly.GuideElement
-    label::@compat(Union{(@compat Void), AbstractString})
+    label::Union{(Void), AbstractString}
 end
 
 const title = Title
@@ -1072,7 +1072,7 @@ function layout_guides(plot_context::Context,
                        theme::Gadfly.Theme,
                        positioned_guides::PositionedGuide...)
     # Organize guides by position
-    guides = DefaultDict(() -> (@compat Tuple{Vector{Context}, Int})[])
+    guides = DefaultDict(() -> (Tuple{Vector{Context}, Int})[])
     for positioned_guide in positioned_guides
         push!(guides[positioned_guide.position],
               (positioned_guide.ctxs, positioned_guide.order))

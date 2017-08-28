@@ -12,9 +12,9 @@ check_arguments(arg, len) = fill(arg, len)
 
 
 immutable HLineGeometry <: Gadfly.GeometryElement
-    color::@compat(Union{Vector, Color, (@compat Void)})
-    size::@compat(Union{Vector, Measure, (@compat Void)})
-    style::@compat(Union{Vector, Symbol, (@compat Void)})
+    color::Union{Vector, Color, (Void)}
+    size::Union{Vector, Measure, (Void)}
+    style::Union{Vector, Symbol, (Void)}
     tag::Symbol
 
     HLineGeometry(color, size, style, tag) =
@@ -54,9 +54,9 @@ end
 
 
 immutable VLineGeometry <: Gadfly.GeometryElement
-    color::@compat(Union{Vector, Color, (@compat Void)})
-    size::@compat(Union{Vector, Measure, (@compat Void)})
-    style::@compat(Union{Vector, Symbol, (@compat Void)})
+    color::Union{Vector, Color, (Void)}
+    size::Union{Vector, Measure, (Void)}
+    style::Union{Vector, Symbol, (Void)}
     tag::Symbol
 
     VLineGeometry(color, size, style, tag) =
@@ -96,9 +96,9 @@ end
 
 
 immutable ABLineGeometry <: Gadfly.GeometryElement
-    color::@compat(Union{Vector, Color, (@compat Void)})
-    size::@compat(Union{Vector, Measure, (@compat Void)})
-    style::@compat(Union{Vector, Symbol, (@compat Void)})
+    color::Union{Vector, Color, (Void)}
+    size::Union{Vector, Measure, (Void)}
+    style::Union{Vector, Symbol, (Void)}
     tag::Symbol
 
     ABLineGeometry(color, size, style, tag) =

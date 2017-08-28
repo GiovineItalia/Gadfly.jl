@@ -63,7 +63,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     ctx = context(order=geom.order)
     XT, YT, CT = eltype(aes.x), eltype(aes.y), eltype(aes.color)
-    XYT = @compat Tuple{XT, YT}
+    XYT = Tuple{XT, YT}
 
     line_style = Gadfly.get_stroke_vector(theme.line_style)
 
@@ -89,7 +89,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         elseif length(aes_color) > length(aes_group)
             p = sortperm(aes_color, lt=Gadfly.color_isless)
         else
-            p = sortperm(collect((@compat Tuple{GT, CT}),zip(aes_group, aes_color)),
+            p = sortperm(collect((Tuple{GT, CT}),zip(aes_group, aes_color)),
                          lt=Gadfly.group_color_isless)
         end
         permute!(aes_group, p)
@@ -132,7 +132,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     elseif length(aes.color) == 1 &&
             !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
-        T = (@compat Tuple{eltype(aes.x), eltype(aes.y)})
+        T = (Tuple{eltype(aes.x), eltype(aes.y)})
         points = T[(x, y) for (x, y) in zip(aes.x, aes.y)]
         geom.preserve_order || sort!(points, by=first)
         ctx = compose!(ctx, Compose.line([points],geom.tag),

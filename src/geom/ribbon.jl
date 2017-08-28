@@ -36,18 +36,18 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
             fill(theme.lowlight_color(aes.color[1])))
     else
         XT, YT = eltype(aes_x), promote_type(eltype(aes_ymin), eltype(aes_ymax))
-        max_points = Dict{RGB{Float32}, Vector{(@compat Tuple{XT, YT})}}()
+        max_points = Dict{RGB{Float32}, Vector{(Tuple{XT, YT})}}()
         for (x, y, c) in zip(aes_x, aes_ymax, aes.color)
             if !haskey(max_points, c)
-                max_points[c] = Array{@compat Tuple{XT, YT}}(0)
+                max_points[c] = Array{Tuple{XT, YT}}(0)
             end
             push!(max_points[c], (x, y))
         end
 
-        min_points = Dict{RGB{Float32}, Vector{(@compat Tuple{XT, YT})}}()
+        min_points = Dict{RGB{Float32}, Vector{(Tuple{XT, YT})}}()
         for (x, y, c) in zip(aes.x, aes.ymin, aes.color)
             if !haskey(min_points, c)
-                min_points[c] = Array{@compat Tuple{XT, YT}}(0)
+                min_points[c] = Array{Tuple{XT, YT}}(0)
             end
             push!(min_points[c], (x, y))
         end
@@ -59,7 +59,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
 
         ctx = compose!(
             context(),
-            Compose.polygon([collect((@compat Tuple{XT, YT}), chain(min_points[c], max_points[c]))
+            Compose.polygon([collect((Tuple{XT, YT}), chain(min_points[c], max_points[c]))
                      for c in keys(max_points)], geom.tag),
             fill([theme.lowlight_color(c) for c in keys(max_points)]))
     end

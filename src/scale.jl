@@ -97,7 +97,7 @@ immutable ContinuousScale <: Gadfly.ScaleElement
     maxvalue
     minticks
     maxticks
-    labels::@compat(Union{(@compat Void), Function})
+    labels::Union{(Void), Function}
     format
     scalable
 
@@ -326,14 +326,14 @@ immutable DiscreteScale <: Gadfly.ScaleElement
     # an array of string labels, a vector of string labels of the same length
     # as the number of unique values in the discrete data, or nothing to use
     # the default labels.
-    labels::@compat(Union{(@compat Void), Function})
+    labels::Union{(Void), Function}
 
     # If non-nothing, give values for the scale. Order will be respected and
     # anything in the data that's not represented in values will be set to NA.
-    levels::@compat(Union{(@compat Void), AbstractVector})
+    levels::Union{(Void), AbstractVector}
 
     # If non-nothing, a permutation of the pool of values.
-    order::@compat(Union{(@compat Void), AbstractVector})
+    order::Union{(Void), AbstractVector}
 end
 DiscreteScale(vals; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale(vals, labels, levels, order)
@@ -429,10 +429,10 @@ immutable DiscreteColorScale <: Gadfly.ScaleElement
 
     # If non-nothing, give values for the scale. Order will be respected and
     # anything in the data that's not represented in values will be set to NA.
-    levels::@compat(Union{(@compat Void), AbstractVector})
+    levels::Union{(Void), AbstractVector}
 
     # If non-nothing, a permutation of the pool of values.
-    order::@compat(Union{(@compat Void), AbstractVector})
+    order::Union{(Void), AbstractVector}
 
     # If true, order levels as they appear in the data
     preserve_order::Bool
@@ -501,7 +501,7 @@ function apply_scale(scale::DiscreteColorScale,
     scale.order == nothing || permute!(scale_levels, scale.order)
     colors = convert(Vector{RGB{Float32}}, scale.f(length(scale_levels)))
 
-    color_map = @compat Dict([(color, string(label))
+    color_map = Dict([(color, string(label))
                               for (label, color) in zip(scale_levels, colors)])
     labeler(xs) = [color_map[x] for x in xs]
 

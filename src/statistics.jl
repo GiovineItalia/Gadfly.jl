@@ -360,7 +360,7 @@ function apply_statistic(stat::HistogramStatistic,
                 if isdiscrete
                     bincounts[round(Int,x)] += 1
                 else
-                    bin = max(1, min(d, (@compat ceil(Int, (x - x_min) / binwidth))))
+                    bin = max(1, min(d, (ceil(Int, (x - x_min) / binwidth))))
                     bincounts[bin] += 1
                 end
             end
@@ -392,7 +392,7 @@ function apply_statistic(stat::HistogramStatistic,
         end
 
         if stat.position == :stack
-            viewmax = @compat Float64(maximum(stack_height))
+            viewmax = Float64(maximum(stack_height))
             aes_viewmax = getfield(aes, viewmaxvar)
             if aes_viewmax === nothing || aes_viewmax < viewmax
                 setfield!(aes, viewmaxvar, viewmax)
@@ -689,7 +689,7 @@ immutable TickStatistic <: Gadfly.StatisticElement
     niceness_weight::Float64
 
     # fixed ticks, or nothing
-    ticks::@compat(Union{Symbol, AbstractArray})
+    ticks::Union{Symbol, AbstractArray}
 end
 
 @deprecate xticks(ticks) xticks(ticks=ticks)
@@ -1158,7 +1158,7 @@ function apply_statistic(stat::HexBinStatistic,
     xsize = xspan / stat.xbincount
     ysize = yspan / stat.ybincount
 
-    counts = Dict{(@compat Tuple{Int, Int}), Int}()
+    counts = Dict{(Tuple{Int, Int}), Int}()
     for (x, y) in zip(aes.x, aes.y)
         h = convert(HexagonOffsetOddR, cube_round(x - xmin + xspan/2,
                                                   y - ymin + yspan/2,

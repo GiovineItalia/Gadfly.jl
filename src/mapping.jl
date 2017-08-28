@@ -20,7 +20,7 @@ Base.show(io::IO, gc::GroupedColumn) = print(io, "Column")
 
 index() = GroupedColumn(Nullable{Vector}())
 
-index{T <: (@compat Union{Int, Symbol})}(xs::T...) = GroupedColumn(Nullable(collect(T, xs)))
+index{T <: (Union{Int, Symbol})}(xs::T...) = GroupedColumn(Nullable(collect(T, xs)))
 
 immutable GroupedColumnValue
     columns::Nullable{Vector}
@@ -30,7 +30,7 @@ Base.show(io::IO, gc::GroupedColumnValue) = print(io, "Column Value")
 
 value() = GroupedColumnValue(Nullable{Vector}())
 
-value{T <: (@compat Union{Int, Symbol})}(xs::T...) = GroupedColumnValue(Nullable(collect(T, xs)))
+value{T <: (Union{Int, Symbol})}(xs::T...) = GroupedColumnValue(Nullable(collect(T, xs)))
 
 end # module Col
 
@@ -46,7 +46,7 @@ end
 
 index() = GroupedColumnRowIndex(Nullable{Vector}())
 
-index{T <: (@compat Union{Int, Symbol})}(xs::T...) = GroupedColumnRowIndex(Nullable(collect(T, xs)))
+index{T <: (Union{Int, Symbol})}(xs::T...) = GroupedColumnRowIndex(Nullable(collect(T, xs)))
 
 end # module Row
 

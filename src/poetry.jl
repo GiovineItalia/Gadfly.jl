@@ -33,7 +33,7 @@ function plot{T <: Base.Callable}(fs::Vector{T}, a::Number, b::Number, elements:
         push!(elements, Coord.cartesian(xflip=true))
     end
 
-    mappingdict = @compat Dict{Symbol, Any}(:y => fs, :xmin => [a], :xmax => [b])
+    mappingdict = Dict{Symbol, Any}(:y => fs, :xmin => [a], :xmax => [b])
     for (k, v) in mapping
         mappingdict[k] = v
     end
@@ -81,7 +81,7 @@ function layer(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Numb
     end
 
 
-    mappingdict = @compat Dict{Symbol, Any}(:z    => f, :xmin => [xmin], :xmax => [xmax],
+    mappingdict = Dict{Symbol, Any}(:z    => f, :xmin => [xmin], :xmax => [xmax],
                                             :ymin => [ymin], :ymax => [ymax])
     for (k, v) in mapping
         mappingdict[k] = v

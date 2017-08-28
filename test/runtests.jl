@@ -7,13 +7,13 @@ end
 
 using Gadfly, Compat, Base.LibGit2
 
-repo = GitRepo(dirname(@compat @__DIR__))
+repo = GitRepo(dirname(@__DIR__))
 outputdir = in(LibGit2.headname(repo)[1:6], ["master","(detac"]) ? "cachedoutput" : "gennedoutput"
 
 run(pipeline(`git log -n 1`,joinpath(outputdir,".log")))
 run(pipeline(`git status`,joinpath(outputdir,".status")))
 
-backends = @compat Dict{AbstractString, Function}(
+backends = Dict{AbstractString, Function}(
     "svg" => (name, width, height) -> SVG(joinpath(outputdir,"$(name).svg"), width, height),
     "svgjs" => (name, width, height) -> SVGJS(joinpath(outputdir,"$(name).js.svg"), width, height, jsmode=:linkabs),
     "png" => (name, width, height) -> PNG(joinpath(outputdir,"$(name).png"), width, height),
@@ -22,7 +22,7 @@ backends = @compat Dict{AbstractString, Function}(
     "pgf" => (name, width, height) -> PGF(joinpath(outputdir,"$(name).tex"), width, height)
 )
 
-testdir = joinpath((@compat @__DIR__),"testscripts")
+testdir = joinpath((@__DIR__),"testscripts")
 testfiles = isempty(ARGS) ?
         [splitext(filename)[1] for filename in readdir(testdir) if filename[1]!='.'] :
         ARGS
@@ -76,7 +76,7 @@ if prev_theme !== nothing
 end
 
 if !haskey(ENV, "TRAVIS") &&
-            !isempty(readdir(joinpath((@compat @__DIR__),"cachedoutput"))) &&
-            !isempty(readdir(joinpath((@compat @__DIR__),"gennedoutput")))
+            !isempty(readdir(joinpath((@__DIR__),"cachedoutput"))) &&
+            !isempty(readdir(joinpath((@__DIR__),"gennedoutput")))
     run(`julia compare_examples.jl`)  # `include`ing causes it to hang.  bug in julia 0.6?
 end
