@@ -182,7 +182,7 @@ Gadfly.plot_mouseover = function(event) {
 
 // Reset pan and zoom on double click
 Gadfly.plot_dblclick = function(event) {
-  set_plot_pan_zoom(this.plotroot(), 0.0, 0.0, 1.0);
+  set_plot_pan_zoom(this.plotroot(), 0.0, 0.0, 1.0, 1.0);
 };
 
 // Unemphasize grid lines on mouse out.
@@ -208,14 +208,15 @@ Gadfly.plot_mouseout = function(event) {
 };
 
 
-var set_geometry_transform = function(root, tx, ty, scale) {
+var set_geometry_transform = function(root, tx, ty, xscale, yscale) {
     var xscalable = root.hasClass("xscalable"),
         yscalable = root.hasClass("yscalable");
 
-    var old_scale = root.data("scale");
+    var old_xscale = root.data("xscale"),
+        old_yscale = root.data("yscale");
 
-    var xscale = xscalable ? scale : 1.0,
-        yscale = yscalable ? scale : 1.0;
+    var xscale = xscalable ? xscale : 1.0,
+        yscale = yscalable ? yscale : 1.0;
 
     tx = xscalable ? tx : 0.0;
     ty = yscalable ? ty : 0.0;
@@ -245,10 +246,10 @@ var set_geometry_transform = function(root, tx, ty, scale) {
                         cy = element.asPX("y");
                     var st = element.data("static_transform");
                     unscale_t = new Snap.Matrix();
-                    unscale_t.scale(1, 1/scale, cx, cy).add(st);
+                    unscale_t.scale(1, 1/yscale, cx, cy).add(st);
                     element.transform(unscale_t);
 
-                    var y = cy * scale + ty;
+                    var y = cy * yscale + ty;
                     element.attr("visibility",
                         bounds.y0 <= y && y <= bounds.y1 ? "visible" : "hidden");
                 }
@@ -272,18 +273,18 @@ var set_geometry_transform = function(root, tx, ty, scale) {
                         cy = element.asPX("y");
                     var st = element.data("static_transform");
                     unscale_t = new Snap.Matrix();
-                    unscale_t.scale(1/scale, 1, cx, cy).add(st);
+                    unscale_t.scale(1/xscale, 1, cx, cy).add(st);
 
                     element.transform(unscale_t);
 
-                    var x = cx * scale + tx;
+                    var x = cx * xscale + tx;
                     element.attr("visibility",
                         bounds.x0 <= x && x <= bounds.x1 ? "visible" : "hidden");
                     }
             });
     }
 
-    // we must unscale anything that is scale invariance: widths, raiduses, etc.
+    // we must unscale anything that is scale invariant: widths, radii, etc.
     var size_attribs = ["font-size"];
     var unscaled_selection = ".geometry, .geometry *";
     if (xscalable) {
@@ -311,7 +312,7 @@ var set_geometry_transform = function(root, tx, ty, scale) {
                 var key = size_attribs[i];
                 var val = parseFloat(element.attribute(key));
                 if (val !== undefined && val != 0 && !isNaN(val)) {
-                    element.attribute(key, val * old_scale / scale);
+                    element.attribute(key, val * old_xscale / xscale);  // yscale???
                 }
             }
         });
@@ -353,21 +354,22 @@ var update_tickscale = function(root, scale, axis) {
 };
 
 
-var set_plot_pan_zoom = function(root, tx, ty, scale) {
-    var old_scale = root.data("scale");
+var set_plot_pan_zoom = function(root, tx, ty, xscale, yscale) {
+    var old_xscale = root.data("xscale"),
+        old_yscale = root.data("yscale");
     var bounds = root.plotbounds();
 
     var width = bounds.x1 - bounds.x0,
         height = bounds.y1 - bounds.y0;
 
-    // compute the viewport derived from tx, ty, and scale
-    var x_min = -width * scale - (scale * width - width),
-        x_max = width * scale,
-        y_min = -height * scale - (scale * height - height),
-        y_max = height * scale;
+    // compute the viewport derived from tx, ty, xscale, and yscale
+    var x_min = -width * xscale - (xscale * width - width),
+        x_max = width * xscale,
+        y_min = -height * yscale - (yscale * height - height),
+        y_max = height * yscale;
 
-    var x0 = bounds.x0 - scale * bounds.x0,
-        y0 = bounds.y0 - scale * bounds.y0;
+    var x0 = bounds.x0 - xscale * bounds.x0,
+        y0 = bounds.y0 - yscale * bounds.y0;
 
     var tx = Math.max(Math.min(tx - x0, x_max), x_min),
         ty = Math.max(Math.min(ty - y0, y_max), y_min);
@@ -375,22 +377,25 @@ var set_plot_pan_zoom = function(root, tx, ty, scale) {
     tx += x0;
     ty += y0;
 
-    // when the scale change, we may need to alter which set of
-    // ticks is being displayed
-    if (scale != old_scale) {
-        update_tickscale(root, scale, "x");
-        update_tickscale(root, scale, "y");
+    // when the scale changes, we may need to alter which set of
+    // ticks are being displayed
+    if (xscale != old_xscale) {
+        update_tickscale(root, xscale, "x");
+    }
+    if (yscale != old_yscale) {
+        update_tickscale(root, yscale, "y");
     }
 
-    set_geometry_transform(root, tx, ty, scale);
+    set_geometry_transform(root, tx, ty, xscale, yscale);
 
-    root.data("scale", scale);
+    root.data("xscale", xscale);
+    root.data("yscale", yscale);
     root.data("tx", tx);
     root.data("ty", ty);
 };
 
 
-var scale_centered_translation = function(root, scale) {
+var scale_centered_translation = function(root, xscale, yscale) {
     var bounds = root.plotbounds();
 
     var width = bounds.x1 - bounds.x0,
@@ -399,23 +404,24 @@ var scale_centered_translation = function(root, scale) {
     var tx0 = root.data("tx"),
         ty0 = root.data("ty");
 
-    var scale0 = root.data("scale");
+    var xscale0 = root.data("xscale"),
+        yscale0 = root.data("yscale");
 
     // how off from center the current view is
-    var xoff = tx0 - (bounds.x0 * (1 - scale0) + (width * (1 - scale0)) / 2),
-        yoff = ty0 - (bounds.y0 * (1 - scale0) + (height * (1 - scale0)) / 2);
+    var xoff = tx0 - (bounds.x0 * (1 - xscale0) + (width * (1 - xscale0)) / 2),
+        yoff = ty0 - (bounds.y0 * (1 - yscale0) + (height * (1 - yscale0)) / 2);
 
     // rescale offsets
-    xoff = xoff * scale / scale0;
-    yoff = yoff * scale / scale0;
+    xoff = xoff * xscale / xscale0;
+    yoff = yoff * yscale / yscale0;
 
     // adjust for the panel position being scaled
-    var x_edge_adjust = bounds.x0 * (1 - scale),
-        y_edge_adjust = bounds.y0 * (1 - scale);
+    var x_edge_adjust = bounds.x0 * (1 - xscale),
+        y_edge_adjust = bounds.y0 * (1 - yscale);
 
     return {
-        x: xoff + x_edge_adjust + (width - width * scale) / 2,
-        y: yoff + y_edge_adjust + (height - height * scale) / 2
+        x: xoff + x_edge_adjust + (width - width * xscale) / 2,
+        y: yoff + y_edge_adjust + (height - height * yscale) / 2
     };
 };
 
@@ -458,7 +464,8 @@ var init_pan_zoom = function(root) {
 
     if (root.data("tx") === undefined) root.data("tx", 0);
     if (root.data("ty") === undefined) root.data("ty", 0);
-    if (root.data("scale") === undefined) root.data("scale", 1.0);
+    if (root.data("xscale") === undefined) root.data("xscale", 1.0);
+    if (root.data("yscale") === undefined) root.data("yscale", 1.0);
     if (root.data("xtickscales") === undefined) {
 
         // index all the tick scales that are listed
@@ -479,6 +486,7 @@ var init_pan_zoom = function(root) {
         root.data("xtickscales", xtickscales);
         root.data("ytickscales", ytickscales);
         root.data("xtickscale", 1.0);
+        root.data("ytickscale", 1.0);  // ???
     }
 
     var min_scale = 1.0, max_scale = 1.0;
@@ -601,13 +609,14 @@ var pan_action = {
         var tx = tx0 + dx,
             ty = ty0 + dy;
 
-        set_plot_pan_zoom(root, tx, ty, root.data("scale"));
+        set_plot_pan_zoom(root, tx, ty, root.data("xscale"), root.data("yscale"));
     },
     end: function(root, event) {
 
     },
     cancel: function(root) {
-        set_plot_pan_zoom(root, root.data("tx0"), root.data("ty0"), root.data("scale"));
+        set_plot_pan_zoom(root, root.data("tx0"), root.data("ty0"),
+                root.data("xscale"), root.data("yscale"));
     }
 };
 
@@ -617,7 +626,6 @@ var zoom_action = {
         var bounds = root.plotbounds();
         var width = bounds.x1 - bounds.x0,
             height = bounds.y1 - bounds.y0;
-        var ratio = width / height;
         var xscalable = root.hasClass("xscalable"),
             yscalable = root.hasClass("yscalable");
         var px_per_mm = root.data("px_per_mm");
@@ -629,7 +637,6 @@ var zoom_action = {
             "fill": "#000",
             "opacity": 0.25
         });
-        zoom_box.data("ratio", ratio);
     },
     update: function(root, dx, dy, x, y, event) {
         var xscalable = root.hasClass("xscalable"),
@@ -653,13 +660,6 @@ var zoom_action = {
 
         dx = x - zoom_box.attr("x");
         dy = y - zoom_box.attr("y");
-        if (xscalable && yscalable) {
-            var ratio = zoom_box.data("ratio");
-            var width = Math.min(Math.abs(dx), ratio * Math.abs(dy));
-            var height = Math.min(Math.abs(dy), Math.abs(dx) / ratio);
-            dx = width * dx / Math.abs(dx);
-            dy = height * dy / Math.abs(dy);
-        }
         var xoffset = 0,
             yoffset = 0;
         if (dx < 0) {
@@ -688,15 +688,18 @@ var zoom_action = {
             return;
         }
         var plot_bounds = root.plotbounds();
-        var zoom_factor = 1.0;
-        if (yscalable) {
-            zoom_factor = (plot_bounds.y1 - plot_bounds.y0) / zoom_bounds.height;
-        } else {
-            zoom_factor = (plot_bounds.x1 - plot_bounds.x0) / zoom_bounds.width;
+        var xzoom_factor = 1.0,
+            yzoom_factor = 1.0;
+        if (xscalable) {
+            xzoom_factor = (plot_bounds.x1 - plot_bounds.x0) / zoom_bounds.width;
         }
-        var tx = (root.data("tx") - zoom_bounds.x) * zoom_factor + plot_bounds.x0,
-            ty = (root.data("ty") - zoom_bounds.y) * zoom_factor + plot_bounds.y0;
-        set_plot_pan_zoom(root, tx, ty, root.data("scale") * zoom_factor);
+        if (yscalable) {
+            yzoom_factor = (plot_bounds.y1 - plot_bounds.y0) / zoom_bounds.height;
+        }
+        var tx = (root.data("tx") - zoom_bounds.x) * xzoom_factor + plot_bounds.x0,
+            ty = (root.data("ty") - zoom_bounds.y) * yzoom_factor + plot_bounds.y0;
+        set_plot_pan_zoom(root, tx, ty,
+                root.data("xscale") * xzoom_factor, root.data("yscale") * yzoom_factor);
         zoom_box.remove();
     },
     cancel: function(root) {
@@ -775,37 +778,35 @@ var slider_position_from_scale = function(scale, min_scale, max_scale) {
 }
 
 var increase_zoom_by_position = function(root, delta_position, animate) {
-    var scale = root.data("scale"),
+    var old_xscale = root.data("xscale"),
+        old_yscale = root.data("yscale"),
         min_scale = root.data("min_scale"),
         max_scale = root.data("max_scale");
-    var position = slider_position_from_scale(scale, min_scale, max_scale);
-    position += delta_position;
-    scale = scale_from_slider_position(position, min_scale, max_scale);
-    set_zoom(root, scale, animate);
-}
-
-var set_zoom = function(root, scale, animate) {
-    var min_scale = root.data("min_scale"),
-        max_scale = root.data("max_scale"),
-        old_scale = root.data("scale");
-    var new_scale = Math.max(min_scale, Math.min(scale, max_scale));
+    var xposition = slider_position_from_scale(old_xscale, min_scale, max_scale),
+        yposition = slider_position_from_scale(old_yscale, min_scale, max_scale);
+    xposition += (root.hasClass("xscalable") ? delta_position : 0.0);
+    yposition += (root.hasClass("yscalable") ? delta_position : 0.0);
+    old_xscale = scale_from_slider_position(xposition, min_scale, max_scale);
+    old_yscale = scale_from_slider_position(yposition, min_scale, max_scale);
+    var new_xscale = Math.max(min_scale, Math.min(old_xscale, max_scale)),
+        new_yscale = Math.max(min_scale, Math.min(old_yscale, max_scale));
     if (animate) {
         Snap.animate(
-            old_scale,
-            new_scale,
+            [old_xscale, old_yscale],
+            [new_xscale, new_yscale],
             function (new_scale) {
-                update_plot_scale(root, new_scale);
+                update_plot_scale(root, new_scale[0], new_scale[1]);
             },
             200);
     } else {
-        update_plot_scale(root, new_scale);
+        update_plot_scale(root, new_xscale, new_yscale);
     }
 }
 
 
-var update_plot_scale = function(root, new_scale) {
-    var trans = scale_centered_translation(root, new_scale);
-    set_plot_pan_zoom(root, trans.x, trans.y, new_scale);
+var update_plot_scale = function(root, new_xscale, new_yscale) {
+    var trans = scale_centered_translation(root, new_xscale, new_yscale);
+    set_plot_pan_zoom(root, trans.x, trans.y, new_xscale, new_yscale);
 };
 
 
