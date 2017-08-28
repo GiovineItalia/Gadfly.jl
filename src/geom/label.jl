@@ -251,7 +251,7 @@ function deferred_label_context(geom::LabelGeometry,
 end
 
 
-const label_layouts = @compat Dict(
+const label_layouts = Dict(
     :left     => (hright,  vcenter, -2mm,  0mm),
     :right    => (hleft,   vcenter,  2mm,  0mm),
     :above    => (hcenter, vbottom,  0mm, -2mm),

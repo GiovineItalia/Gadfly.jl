@@ -13,14 +13,14 @@ const polygon = PolygonGeometry
 element_aesthetics(::PolygonGeometry) = [:x, :y, :color, :group]
 
 function polygon_points(xs, ys, preserve_order)
-    T = (@compat Tuple{eltype(xs), eltype(ys)})
+    T = (Tuple{eltype(xs), eltype(ys)})
     if preserve_order
-        return T[(x, y)for (x, y) in zip(xs, ys)]
+        return T[(x, y) for (x, y) in zip(xs, ys)]
     else
         centroid_x, centroid_y = mean(xs), mean(ys)
         θ = atan2(xs - centroid_x, ys - centroid_y)
         perm = sortperm(θ)
-        return T[(x, y)for (x, y) in zip(xs[perm], ys[perm])]
+        return T[(x, y) for (x, y) in zip(xs[perm], ys[perm])]
     end
 end
 

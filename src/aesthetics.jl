@@ -1,17 +1,17 @@
 const NumericalOrCategoricalAesthetic =
-    @compat(Union{(@compat Void), Vector, DataArray, PooledDataArray})
+    Union{(Void), Vector, DataArray, PooledDataArray}
 
 const CategoricalAesthetic =
-    @compat(Union{(@compat Void), PooledDataArray})
+    Union{(Void), PooledDataArray}
 
 const NumericalAesthetic =
-    @compat(Union{(@compat Void), Matrix, Vector, DataArray})
+    Union{(Void), Matrix, Vector, DataArray}
 
 
 @varset Aesthetics begin
-    x,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
-    y,            @compat(Union{NumericalOrCategoricalAesthetic, Distribution})
-    z,            @compat(Union{(@compat Void), Function, Matrix})
+    x,            Union{NumericalOrCategoricalAesthetic, Distribution}
+    y,            Union{NumericalOrCategoricalAesthetic, Distribution}
+    z,            Union{(Void), Function, Matrix}
     xend,         NumericalAesthetic
     yend,         NumericalAesthetic
 
@@ -105,7 +105,7 @@ end
 
 # Alternate aesthetic names
 const aesthetic_aliases =
-    @compat Dict{Symbol, Symbol}(:colour        => :color,
+    Dict{Symbol, Symbol}(:colour        => :color,
                                  :x_min         => :xmin,
                                  :x_max         => :xmax,
                                  :y_min         => :ymin,
@@ -244,10 +244,10 @@ function concat(aess::Aesthetics...)
 end
 
 
-cat_aes_var!(a::(@compat Void), b::(@compat Void)) = a
-cat_aes_var!(a::(@compat Void), b::Union{Function,AbstractString}) = b
-cat_aes_var!(a::(@compat Void), b) = copy(b)
-cat_aes_var!(a, b::(@compat Void)) = a
+cat_aes_var!(a::(Void), b::(Void)) = a
+cat_aes_var!(a::(Void), b::Union{Function,AbstractString}) = b
+cat_aes_var!(a::(Void), b) = copy(b)
+cat_aes_var!(a, b::(Void)) = a
 cat_aes_var!(a::Function, b::Function) = a === string || a == showoff ? b : a
 
 function cat_aes_var!(a::Dict, b::Dict)
@@ -315,7 +315,7 @@ end
 #   A Array{Aesthetics} of size max(1, length(xgroup)) by
 #   max(1, length(ygroup))
 #
-function by_xy_group{T <: @compat(Union{Data, Aesthetics})}(aes::T, xgroup, ygroup,
+function by_xy_group{T <: Union{Data, Aesthetics}}(aes::T, xgroup, ygroup,
                                                    num_xgroups, num_ygroups)
     @assert xgroup === nothing || ygroup === nothing || length(xgroup) == length(ygroup)
 

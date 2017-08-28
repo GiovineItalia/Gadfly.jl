@@ -350,7 +350,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         # bottom guides
         if i == n
             for k in 2:size(subtbl, 1)
-                tbl[i + k - 1, hascolorkey ? 2 + 2*j - 1: 2 + j] =
+                tbl[i + k - 1, hascolorkey ? 2 + 2*j - 1 : 2 + j] =
                     pad(subtbl[k, 1 + joff],
                         j > 1 ? subplot_padding : 0mm,
                         subplot_padding,

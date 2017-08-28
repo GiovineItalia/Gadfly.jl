@@ -29,7 +29,7 @@ immutable Cartesian <: Gadfly.CoordinateElement
     xflip::Bool
     yflip::Bool
     fixed::Bool
-    aspect_ratio::@compat(Union{(@compat Void), Float64})
+    aspect_ratio::Union{(Void), Float64}
     raster::Bool
 
     Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster) =
@@ -99,7 +99,7 @@ end
 #   A common type.
 function aesthetics_type(aess::Vector{Gadfly.Aesthetics},
                               vars::Vector{Symbol})
-    T = @compat(Union{})
+    T = Union{}
     for var in vars
         for aes in aess
             vals = getfield(aes, var)

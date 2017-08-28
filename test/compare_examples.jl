@@ -1,8 +1,8 @@
 using Base.Test, Compat
 
 # Compare with cached output
-cachedout = joinpath((@compat @__DIR__), "cachedoutput")
-gennedout = joinpath((@compat @__DIR__), "gennedoutput")
+cachedout = joinpath((@__DIR__), "cachedoutput")
+gennedout = joinpath((@__DIR__), "gennedoutput")
 ndifferentfiles = 0
 const creator_producer = r"(Creator|Producer)"
 for file in filter(x->x[1]!='.', readdir(cachedout))

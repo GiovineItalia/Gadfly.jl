@@ -1,6 +1,6 @@
 #Is this usable data?
 isconcrete{T<:Number}(x::T) = !isna(x) && isfinite(x)
-isconcrete(x::(@compat Irrational)) = true
+isconcrete(x::(Irrational)) = true
 isconcrete(x) = !isna(x)
 
 hasna(xs) = false
@@ -272,7 +272,7 @@ function has{T,N}(xs::AbstractArray{T,N}, y::T)
     return false
 end
 
-Maybe(T) = @compat(Union{T, (@compat Void)})
+Maybe(T) = Union{T, (Void)}
 
 
 lerp(x::Float64, a, b) = a + (b - a) * max(min(x, 1.0), 0.0)
@@ -402,8 +402,8 @@ function color_isless(a::RGBA{Float32}, b::RGBA{Float32})
 end
 
 
-function group_color_isless{S, T <: Colorant}(a::(@compat Tuple{S, T}),
-                                              b::(@compat Tuple{S, T}))
+function group_color_isless{S, T <: Colorant}(a::(Tuple{S, T}),
+                                              b::(Tuple{S, T}))
     if a[1] < b[1]
         return true
     elseif a[1] == b[1]

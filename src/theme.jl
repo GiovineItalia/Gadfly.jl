@@ -44,7 +44,7 @@ end
 default_middle_color(fill_color::TransparentColor) = RGBA{Float32}(
         default_middle_color(color(fill_color)), fill_color.alpha)
  
-get_stroke_vector(::@compat(Void)) = []
+get_stroke_vector(::Void) = []
 get_stroke_vector(vec::AbstractVector) = vec
 function get_stroke_vector(linestyle::Symbol)
   dash = 4 * Compose.mm
@@ -180,7 +180,7 @@ end
     key_position,          Symbol,          :right
 
     # True if bars in bar plots should be stroked. Stroke color is
-    bar_highlight,         @compat(Union{(@compat Void), Function, Color}),   nothing
+    bar_highlight,         Union{(Void), Function, Color},   nothing
 
     rug_size,             Measure,          2.0mm
 
