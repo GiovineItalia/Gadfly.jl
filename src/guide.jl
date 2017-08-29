@@ -35,13 +35,17 @@ const questionmark = QuestionMark
 
 function render(guide::QuestionMark, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
-    text_color = theme.background_color != nothing ?
-            distinguishable_colors(2,theme.background_color)[2] : colorant"black"
-    text_box = compose!(
-        context(),
-        text(1w,0h+1px,"?",hright,vtop),
+    text_color = theme.background_color == nothing ?
+            colorant"black" : distinguishable_colors(2,theme.background_color)[2]
+    text_box = compose!( context(),
+        text(1w,0h+2px,"?",hright,vtop),
         fill(text_color),
-        svgclass("text_box"))
+        svgclass("text_box"),
+        jscall(
+            """
+            mouseenter(Gadfly.helpscreen_visible)
+            .mouseleave(Gadfly.helpscreen_hidden)
+            """))
 
     root = compose!(
         context(withjs=true, units=UnitBox()),
@@ -60,19 +64,28 @@ const helpscreen = HelpScreen
 
 function render(guide::HelpScreen, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
-    text_color = theme.background_color != nothing ?
-            distinguishable_colors(2,theme.background_color)[2] : colorant"black"
-    box_color = distinguishable_colors(2,text_color)[2]
+    box_color = theme.background_color == nothing ?
+            colorant"black" : distinguishable_colors(2,theme.background_color)[2]
+    text_color = distinguishable_colors(2,box_color)[2]
+    text_strings = ["h,j,k,l,arrows,drag to pan",
+                    "i,o,+,-,scroll,shift-drag to zoom",
+                    "r,dbl-click to reset",
+                    "c for coordinates",
+                    "? for help"]
+    nlines = length(text_strings)
+    max_text_width, max_text_height = max_text_extents(
+          theme.major_label_font, theme.major_label_font_size, text_strings...)
     text_box = compose!(context(),
         (context(),
-          text(0.5w,0.5h-20pt,"h,j,k,l,arrows,drag to pan",hcenter,vcenter),
-          text(0.5w,0.5h-10pt,"i,o,+,-,scroll,shift-drag to zoom",hcenter,vcenter),
-          text(0.5w,0.5h,"r,dbl-click to reset",hcenter,vcenter),
-          text(0.5w,0.5h+10pt,"c for coordinates",hcenter,vcenter),
-          text(0.5w,0.5h+20pt,"? for help",hcenter,vcenter),
+          text([0.5w], [0.5h+i*max_text_height for i=-(nlines-1)/2:(nlines-1)/2],
+               text_strings, [hcenter], [vcenter]),
+          font(theme.major_label_font),
+          fontsize(theme.major_label_font_size),
           fill(text_color)),
         (context(),
-          rectangle(0.5w-75pt,0.5h-30pt,150pt,60pt),fill(box_color)),
+          rectangle(0.5w-max_text_width/2*1.1, 0.5h-max_text_height*nlines/2*1.1,
+                    max_text_width*1.1, max_text_height*nlines*1.1),
+          fill(box_color)),
         svgclass("text_box"))
 
     root = compose!(
@@ -83,6 +96,31 @@ function render(guide::HelpScreen, theme::Gadfly.Theme,
 
     return [PositionedGuide([root], 0, over_guide_position)]
 end
+
+immutable CrossHair <: Gadfly.GuideElement
+end
+
+const crosshair = CrossHair
+
+function render(guide::CrossHair, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    text_color = theme.background_color == nothing ?
+            colorant"black" : distinguishable_colors(2,theme.background_color)[2]
+    text_box = compose!(
+        context(),
+        text(1w-20pt,0h+2px,"",hright,vtop),
+        fill(text_color),
+        svgclass("text_box"))
+
+    root = compose!(
+        context(withjs=true, units=UnitBox()),
+        text_box,
+        svgclass("guide crosshair"),
+        fillopacity(0.0))
+
+    return [PositionedGuide([root], 0, over_guide_position)]
+end
+
 
 # A guide graphic is a position associated with one or more contexts.
 # Multiple contexts represent multiple layout possibilites that will be

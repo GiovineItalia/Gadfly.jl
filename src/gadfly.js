@@ -132,6 +132,7 @@ Snap.plugin(function (Snap, Element, Paper, global) {
 
     Element.prototype.init_gadfly = function() {
         this.mouseenter(Gadfly.plot_mouseover)
+            .mousemove(Gadfly.plot_mousemove)
             .mouseleave(Gadfly.plot_mouseout)
             .dblclick(Gadfly.plot_dblclick)
             .mousewheel(Gadfly.guide_background_scroll)
@@ -146,9 +147,57 @@ Snap.plugin(function (Snap, Element, Paper, global) {
 });
 
 
+Gadfly.plot_mousemove = function(event, x_px, y_px) {
+    var root = this.plotroot();
+    if (root.data("crosshair")) {
+        px_per_mm = root.data("px_per_mm");
+        bB = root.select('boundingbox').node.getAttribute('value').split(' ');
+        uB = root.select('unitbox').node.getAttribute('value').split(' ');
+        xscale = root.data("xscale");
+        yscale = root.data("yscale");
+        xtranslate = root.data("tx");
+        ytranslate = root.data("ty");
+
+        xoff_mm = bB[0].substr(0,bB[0].length-2)/1;
+        yoff_mm = bB[1].substr(0,bB[1].length-2)/1;
+        xoff_unit = uB[0]/1;
+        yoff_unit = uB[1]/1;
+        mm_per_xunit = bB[2].substr(0,bB[2].length-2) / uB[2];
+        mm_per_yunit = bB[3].substr(0,bB[3].length-2) / uB[3];
+         
+        x_unit = ((x_px / px_per_mm - xtranslate) / xscale - xoff_mm) / mm_per_xunit + xoff_unit;
+        y_unit = ((y_px / px_per_mm - ytranslate) / yscale - yoff_mm) / mm_per_yunit + yoff_unit;
+
+        root.select('.crosshair').select('.primitive').node.innerHTML =
+                x_unit.toPrecision(3)+","+y_unit.toPrecision(3);
+    };
+};
+
+Gadfly.helpscreen_visible = function(event) {
+    helpscreen_visible(this.plotroot());
+};
+var helpscreen_visible = function(root) {
+    root.select(".helpscreen").animate({opacity: 1.0}, 250);
+};
+
+Gadfly.helpscreen_hidden = function(event) {
+    helpscreen_hidden(this.plotroot());
+};
+var helpscreen_hidden = function(root) {
+    root.select(".helpscreen").animate({opacity: 0.0}, 250);
+};
+
 // When the plot is moused over, emphasize the grid lines.
 Gadfly.plot_mouseover = function(event) {
     var root = this.plotroot();
+
+    var keyboard_help = function(event) {
+        if (event.which == 191) { // ?
+            helpscreen_visible(root);
+        }
+    };
+    root.data("keyboard_help", keyboard_help);
+    window.addEventListener("keydown", keyboard_help);
 
     var keyboard_pan_zoom = function(event) {
         var bounds = root.plotbounds(),
@@ -173,9 +222,11 @@ Gadfly.plot_mouseover = function(event) {
         } else if (event.which == 82) { // r
             set_plot_pan_zoom(root, 0.0, 0.0, 1.0, 1.0);
         } else if (event.which == 191) { // ?
-            root.data("helpscreen",!root.data("helpscreen"));
-            root.select(".helpscreen")
-                .animate({opacity: root.data("helpscreen") ? 1.0 : 0.0}, 250);
+            helpscreen_hidden(root);
+        } else if (event.which == 67) { // c
+            root.data("crosshair",!root.data("crosshair"));
+            root.select(".crosshair")
+                .animate({opacity: root.data("crosshair") ? 1.0 : 0.0}, 250);
         }
     };
     root.data("keyboard_pan_zoom", keyboard_pan_zoom);
@@ -200,9 +251,9 @@ Gadfly.plot_mouseover = function(event) {
               .selectAll("path")
               .animate({stroke: destcolor}, 250);
 
+    root.select(".crosshair")
+        .animate({opacity: root.data("crosshair") ? 1.0 : 0.0}, 250);
     root.select(".questionmark").animate({opacity: 1.0}, 250);
-    root.select(".helpscreen")
-        .animate({opacity: root.data("helpscreen") ? 1.0 : 0.0}, 250);
 };
 
 // Reset pan and zoom on double click
@@ -216,6 +267,8 @@ Gadfly.plot_mouseout = function(event) {
 
     window.removeEventListener("keyup", root.data("keyboard_pan_zoom"));
     root.data("keyboard_pan_zoom", undefined);
+    window.removeEventListener("keydown", root.data("keyboard_help"));
+    root.data("keyboard_help", undefined);
 
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
@@ -231,8 +284,9 @@ Gadfly.plot_mouseout = function(event) {
               .selectAll("path")
               .animate({stroke: destcolor}, 250);
 
+    root.select(".crosshair").animate({opacity: 0.0}, 250);
     root.select(".questionmark").animate({opacity: 0.0}, 250);
-    root.select(".helpscreen").animate({opacity: 0.0}, 250);
+    helpscreen_hidden(root);
 };
 
 
@@ -460,7 +514,7 @@ var init_pan_zoom = function(root) {
         return;
     }
 
-    root.data("helpscreen",false);
+    root.data("crosshair",false);
 
     // The non-scaling-stroke trick. Rather than try to correct for the
     // stroke-width when zooming, we force it to a fixed value.
