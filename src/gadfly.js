@@ -150,15 +150,36 @@ Snap.plugin(function (Snap, Element, Paper, global) {
 Gadfly.plot_mouseover = function(event) {
     var root = this.plotroot();
 
-    var keyboard_zoom = function(event) {
-        if (event.which == 187) { // plus
+    var keyboard_pan_zoom = function(event) {
+        var bounds = root.plotbounds(),
+            width = bounds.x1 - bounds.x0;
+            height = bounds.y1 - bounds.y0;
+        if (event.which == 187 || event.which == 73) { // plus or i
             increase_zoom_by_position(root, 0.1, true);
-        } else if (event.which == 189) { // minus
+        } else if (event.which == 189 || event.which == 79) { // minus or o
             increase_zoom_by_position(root, -0.1, true);
+        } else if (event.which == 39 || event.which == 76) { // right-arrow or l
+            set_plot_pan_zoom(root, root.data("tx")-width/10, root.data("ty"),
+                    root.data("xscale"), root.data("yscale"));
+        } else if (event.which == 40 || event.which == 74) { // down-arrow or j
+            set_plot_pan_zoom(root, root.data("tx"), root.data("ty")-height/10,
+                    root.data("xscale"), root.data("yscale"));
+        } else if (event.which == 37 || event.which == 72) { // left-arrow or h
+            set_plot_pan_zoom(root, root.data("tx")+width/10, root.data("ty"),
+                    root.data("xscale"), root.data("yscale"));
+        } else if (event.which == 38 || event.which == 75) { // up-arrow or k
+            set_plot_pan_zoom(root, root.data("tx"), root.data("ty")+height/10,
+                    root.data("xscale"), root.data("yscale"));
+        } else if (event.which == 82) { // r
+            set_plot_pan_zoom(root, 0.0, 0.0, 1.0, 1.0);
+        } else if (event.which == 191) { // ?
+            root.data("helpscreen",!root.data("helpscreen"));
+            root.select(".helpscreen")
+                .animate({opacity: root.data("helpscreen") ? 1.0 : 0.0}, 250);
         }
     };
-    root.data("keyboard_zoom", keyboard_zoom);
-    window.addEventListener("keyup", keyboard_zoom);
+    root.data("keyboard_pan_zoom", keyboard_pan_zoom);
+    window.addEventListener("keyup", keyboard_pan_zoom);
 
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
@@ -178,6 +199,10 @@ Gadfly.plot_mouseover = function(event) {
     ygridlines.attribute("stroke-dasharray", "none")
               .selectAll("path")
               .animate({stroke: destcolor}, 250);
+
+    root.select(".questionmark").animate({opacity: 1.0}, 250);
+    root.select(".helpscreen")
+        .animate({opacity: root.data("helpscreen") ? 1.0 : 0.0}, 250);
 };
 
 // Reset pan and zoom on double click
@@ -189,8 +214,8 @@ Gadfly.plot_dblclick = function(event) {
 Gadfly.plot_mouseout = function(event) {
     var root = this.plotroot();
 
-    window.removeEventListener("keyup", root.data("keyboard_zoom"));
-    root.data("keyboard_zoom", undefined);
+    window.removeEventListener("keyup", root.data("keyboard_pan_zoom"));
+    root.data("keyboard_pan_zoom", undefined);
 
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
@@ -205,6 +230,9 @@ Gadfly.plot_mouseout = function(event) {
     ygridlines.attribute("stroke-dasharray", ygridlines.data("unfocused_strokedash"))
               .selectAll("path")
               .animate({stroke: destcolor}, 250);
+
+    root.select(".questionmark").animate({opacity: 0.0}, 250);
+    root.select(".helpscreen").animate({opacity: 0.0}, 250);
 };
 
 
@@ -431,6 +459,8 @@ var init_pan_zoom = function(root) {
     if (root.data("zoompan-ready")) {
         return;
     }
+
+    root.data("helpscreen",false);
 
     // The non-scaling-stroke trick. Rather than try to correct for the
     // stroke-width when zooming, we force it to a fixed value.

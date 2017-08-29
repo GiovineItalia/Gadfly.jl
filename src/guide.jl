@@ -28,6 +28,61 @@ const left_guide_position   = LeftGuidePosition()
 const under_guide_position  = UnderGuidePosition()
 const over_guide_position   = OverGuidePosition()
 
+immutable QuestionMark <: Gadfly.GuideElement
+end
+
+const questionmark = QuestionMark
+
+function render(guide::QuestionMark, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    text_color = theme.background_color != nothing ?
+            distinguishable_colors(2,theme.background_color)[2] : colorant"black"
+    text_box = compose!(
+        context(),
+        text(1w,0h+1px,"?",hright,vtop),
+        fill(text_color),
+        svgclass("text_box"))
+
+    root = compose!(
+        context(withjs=true, units=UnitBox()),
+        text_box,
+        svgclass("guide questionmark"),
+        fillopacity(0.0))
+
+    return [PositionedGuide([root], 0, over_guide_position)]
+end
+
+
+immutable HelpScreen <: Gadfly.GuideElement
+end
+
+const helpscreen = HelpScreen
+
+function render(guide::HelpScreen, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    text_color = theme.background_color != nothing ?
+            distinguishable_colors(2,theme.background_color)[2] : colorant"black"
+    box_color = distinguishable_colors(2,text_color)[2]
+    text_box = compose!(context(),
+        (context(),
+          text(0.5w,0.5h-20pt,"h,j,k,l,arrows,drag to pan",hcenter,vcenter),
+          text(0.5w,0.5h-10pt,"i,o,+,-,scroll,shift-drag to zoom",hcenter,vcenter),
+          text(0.5w,0.5h,"r,dbl-click to reset",hcenter,vcenter),
+          text(0.5w,0.5h+10pt,"c for coordinates",hcenter,vcenter),
+          text(0.5w,0.5h+20pt,"? for help",hcenter,vcenter),
+          fill(text_color)),
+        (context(),
+          rectangle(0.5w-75pt,0.5h-30pt,150pt,60pt),fill(box_color)),
+        svgclass("text_box"))
+
+    root = compose!(
+        context(withjs=true, units=UnitBox()),
+        text_box,
+        svgclass("guide helpscreen"),
+        fillopacity(0.0))
+
+    return [PositionedGuide([root], 0, over_guide_position)]
+end
 
 # A guide graphic is a position associated with one or more contexts.
 # Multiple contexts represent multiple layout possibilites that will be
