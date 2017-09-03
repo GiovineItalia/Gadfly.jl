@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Rendering Pipeline · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../index.html"><img class="logo" src="../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../index.html">Home</a></li><li><a class="toctext" href="../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../man/backends.html">Backends</a></li><li><a class="toctext" href="../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../lib/geometries.html">Geometries</a></li><li><a class="toctext" href="../lib/guides.html">Guides</a></li><li><a class="toctext" href="../lib/stats.html">Statistics</a></li><li><a class="toctext" href="../lib/coords.html">Coords</a></li><li><a class="toctext" href="../lib/scales.html">Scales</a></li></ul></li><li><span class="toctext">Development</span><ul><li class="current"><a class="toctext" href="pipeline.html">Rendering Pipeline</a><ul class="internal"></ul></li><li><a class="toctext" href="regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Development</li><li><a href="pipeline.html">Rendering Pipeline</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/aa6a1ad45e701a5af5a7761721dd617af8ee5c42/docs/src/dev/pipeline.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Rendering Pipeline</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Rendering-Pipeline-1" href="#Rendering-Pipeline-1">Rendering Pipeline</a></h1><div></div><p>How does the function call</p><pre><code class="language-julia">df = dataset(&quot;ggplot2&quot;, &quot;diamonds&quot;)
+p = plot(df,
+         x = :Price, color = :Cut,
+		 Stat.histogram,
+		 Geom.bar)</code></pre><p>actually get turned into the following plot?</p><div></div><div><?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:gadfly="http://www.gadflyjl.org/ns"
+     version="1.2"
+     width="120mm" height="80mm" viewBox="0 0 120 80"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+     font-size="3.88"
+>
+<g class="plotroot xscalable yscalable" id="img-7cb1b369-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-7cb1b369-2">
+    <text x="57.81" y="68.39" text-anchor="middle" dy="0.6em">Price</text>
+  </g>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-7cb1b369-3">
+    <text x="18.77" y="61.72" text-anchor="middle" dy="0.6em">0</text>
+    <text x="38.29" y="61.72" text-anchor="middle" dy="0.6em">5.0×10³</text>
+    <text x="57.81" y="61.72" text-anchor="middle" dy="0.6em">1.0×10⁴</text>
+    <text x="77.33" y="61.72" text-anchor="middle" dy="0.6em">1.5×10⁴</text>
+    <text x="96.85" y="61.72" text-anchor="middle" dy="0.6em">2.0×10⁴</text>
+  </g>
+  <g class="guide colorkey" id="img-7cb1b369-4">
+    <g fill="#4C404B" font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" id="img-7cb1b369-5">
+      <text x="102.67" y="27.42" dy="0.35em" id="img-7cb1b369-6" class="color_Ideal">Ideal</text>
+      <text x="102.67" y="31.04" dy="0.35em" id="img-7cb1b369-7" class="color_Premium">Premium</text>
+      <text x="102.67" y="34.67" dy="0.35em" id="img-7cb1b369-8" class="color_Good">Good</text>
+      <text x="102.67" y="38.3" dy="0.35em" id="img-7cb1b369-9" class="color_Very_Good">Very Good</text>
+      <text x="102.67" y="41.92" dy="0.35em" id="img-7cb1b369-10" class="color_Fair">Fair</text>
+    </g>
+    <g stroke="#000000" stroke-opacity="0.000" id="img-7cb1b369-11">
+      <rect x="99.85" y="26.51" width="1.81" height="1.81" id="img-7cb1b369-12" fill="#00BFFF" class="color_Ideal"/>
+      <rect x="99.85" y="30.14" width="1.81" height="1.81" id="img-7cb1b369-13" fill="#D4CA3A" class="color_Premium"/>
+      <rect x="99.85" y="33.76" width="1.81" height="1.81" id="img-7cb1b369-14" fill="#FF6DAE" class="color_Good"/>
+      <rect x="99.85" y="37.39" width="1.81" height="1.81" id="img-7cb1b369-15" fill="#00B78D" class="color_Very_Good"/>
+      <rect x="99.85" y="41.02" width="1.81" height="1.81" id="img-7cb1b369-16" fill="#BEA9FF" class="color_Fair"/>
+    </g>
+    <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-7cb1b369-17">
+      <text x="99.85" y="23.6" id="img-7cb1b369-18">Cut</text>
+    </g>
+  </g>
+<g clip-path="url(#img-7cb1b369-19)">
+  <g id="img-7cb1b369-20">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-7cb1b369-21">
+      <rect x="16.77" y="5" width="82.09" height="55.72" id="img-7cb1b369-22"/>
+    </g>
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-7cb1b369-23">
+      <path fill="none" d="M16.77,58.72 L 98.85 58.72" id="img-7cb1b369-24"/>
+      <path fill="none" d="M16.77,45.79 L 98.85 45.79" id="img-7cb1b369-25"/>
+      <path fill="none" d="M16.77,32.86 L 98.85 32.86" id="img-7cb1b369-26"/>
+      <path fill="none" d="M16.77,19.93 L 98.85 19.93" id="img-7cb1b369-27"/>
+      <path fill="none" d="M16.77,7 L 98.85 7" id="img-7cb1b369-28"/>
+    </g>
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-7cb1b369-29">
+      <path fill="none" d="M18.77,5 L 18.77 60.72" id="img-7cb1b369-30"/>
+      <path fill="none" d="M38.29,5 L 38.29 60.72" id="img-7cb1b369-31"/>
+      <path fill="none" d="M57.81,5 L 57.81 60.72" id="img-7cb1b369-32"/>
+      <path fill="none" d="M77.33,5 L 77.33 60.72" id="img-7cb1b369-33"/>
+      <path fill="none" d="M96.85,5 L 96.85 60.72" id="img-7cb1b369-34"/>
+    </g>
+    <g class="plotpanel" id="img-7cb1b369-35">
+      <g shape-rendering="crispEdges" stroke-width="0.3" id="img-7cb1b369-36">
+        <g stroke="#000000" stroke-opacity="0.000" class="geometry" id="img-7cb1b369-37">
+          <g fill="#D4CA3A" id="img-7cb1b369-38">
+            <rect x="20.01" y="47.58" width="0.53" height="1.44" id="img-7cb1b369-39"/>
+            <rect x="20.5" y="26.16" width="0.53" height="5.53" id="img-7cb1b369-40"/>
+            <rect x="20.98" y="14.65" width="0.53" height="9.61" id="img-7cb1b369-41"/>
+            <rect x="21.46" y="12.37" width="0.53" height="11.11" id="img-7cb1b369-42"/>
+            <rect x="21.94" y="20.76" width="0.53" height="9.23" id="img-7cb1b369-43"/>
+            <rect x="22.42" y="26.73" width="0.53" height="9.24" id="img-7cb1b369-44"/>
+            <rect x="22.9" y="37.2" width="0.53" height="5.57" id="img-7cb1b369-45"/>
+            <rect x="23.38" y="42.92" width="0.53" height="3.31" id="img-7cb1b369-46"/>
+            <rect x="23.87" y="44.36" width="0.53" height="2.62" id="img-7cb1b369-47"/>
+            <rect x="24.35" y="54.19" width="0.53" height="0.79" id="img-7cb1b369-48"/>
+            <rect x="24.83" y="42.33" width="0.53" height="3.58" id="img-7cb1b369-49"/>
+            <rect x="25.31" y="43.85" width="0.53" height="3.14" id="img-7cb1b369-50"/>
+            <rect x="25.79" y="43.98" width="0.53" height="3.23" id="img-7cb1b369-51"/>
+            <rect x="26.27" y="47.58" width="0.53" height="2.34" id="img-7cb1b369-52"/>
+            <rect x="26.75" y="48.51" width="0.53" height="1.5" id="img-7cb1b369-53"/>
+            <rect x="27.24" y="48.81" width="0.53" height="2" id="img-7cb1b369-54"/>
+            <rect x="27.72" y="45.93" width="0.53" height="3.3" id="img-7cb1b369-55"/>
+            <rect x="28.2" y="49.51" width="0.53" height="2.07" id="img-7cb1b369-56"/>
+            <rect x="28.68" y="49.59" width="0.53" height="1.84" id="img-7cb1b369-57"/>
+            <rect x="29.16" y="49.9" width="0.53" height="2.13" id="img-7cb1b369-58"/>
+            <rect x="29.64" y="48.95" width="0.53" height="2.9" id="img-7cb1b369-59"/>
+            <rect x="30.13" y="51.36" width="0.53" height="1.28" id="img-7cb1b369-60"/>
+            <rect x="30.61" y="51.89" width="0.53" height="1.19" id="img-7cb1b369-61"/>
+            <rect x="31.09" y="51.55" width="0.53" height="1.14" id="img-7cb1b369-62"/>
+            <rect x="31.57" y="51.89" width="0.53" height="1.54" id="img-7cb1b369-63"/>
+            <rect x="32.05" y="52.37" width="0.53" height="1.2" id="img-7cb1b369-64"/>
+            <rect x="32.53" y="52.54" width="0.53" height="1.55" id="img-7cb1b369-65"/>
+            <rect x="33.01" y="51.68" width="0.53" height="1.75" id="img-7cb1b369-66"/>
+            <rect x="33.5" y="51.89" width="0.53" height="1.84" id="img-7cb1b369-67"/>
+            <rect x="33.98" y="52.28" width="0.53" height="1.65" id="img-7cb1b369-68"/>
+            <rect x="34.46" y="51.47" width="0.53" height="2.25" id="img-7cb1b369-69"/>
+            <rect x="34.94" y="50.36" width="0.53" height="2.43" id="img-7cb1b369-70"/>
+            <rect x="35.42" y="50.84" width="0.53" height="2.52" id="img-7cb1b369-71"/>
+            <rect x="35.9" y="50.41" width="0.53" height="2.46" id="img-7cb1b369-72"/>
+            <rect x="36.38" y="51.59" width="0.53" height="1.93" id="img-7cb1b369-73"/>
+            <rect x="36.87" y="51.13" width="0.53" height="2.42" id="img-7cb1b369-74"/>
+            <rect x="37.35" y="51.98" width="0.53" height="1.9" id="img-7cb1b369-75"/>
+            <rect x="37.83" y="52.29" width="0.53" height="2" id="img-7cb1b369-76"/>
+            <rect x="38.31" y="52.74" width="0.53" height="1.78" id="img-7cb1b369-77"/>
+            <rect x="38.79" y="52.43" width="0.53" height="2.02" id="img-7cb1b369-78"/>
+            <rect x="39.27" y="53.61" width="0.53" height="1.84" id="img-7cb1b369-79"/>
+            <rect x="39.75" y="53.71" width="0.53" height="1.53" id="img-7cb1b369-80"/>
+            <rect x="40.24" y="53.79" width="0.53" height="1.53" id="img-7cb1b369-81"/>
+            <rect x="40.72" y="54.42" width="0.53" height="1.53" id="img-7cb1b369-82"/>
+            <rect x="41.2" y="54.36" width="0.53" height="1.34" id="img-7cb1b369-83"/>
+            <rect x="41.68" y="54.49" width="0.53" height="1.44" id="img-7cb1b369-84"/>
+            <rect x="42.16" y="54.67" width="0.53" height="1.32" id="img-7cb1b369-85"/>
+            <rect x="42.64" y="54.9" width="0.53" height="1.33" id="img-7cb1b369-86"/>
+            <rect x="43.12" y="54.49" width="0.53" height="1.28" id="img-7cb1b369-87"/>
+            <rect x="43.61" y="55.19" width="0.53" height="1.01" id="img-7cb1b369-88"/>
+            <rect x="44.09" y="54.88" width="0.53" height="1.23" id="img-7cb1b369-89"/>
+            <rect x="44.57" y="55.24" width="0.53" height="1.12" id="img-7cb1b369-90"/>
+            <rect x="45.05" y="55.25" width="0.53" height="0.84" id="img-7cb1b369-91"/>
+            <rect x="45.53" y="55.96" width="0.53" height="0.81" id="img-7cb1b369-92"/>
+            <rect x="46.01" y="55.88" width="0.53" height="0.78" id="img-7cb1b369-93"/>
+            <rect x="46.49" y="55.74" width="0.53" height="0.66" id="img-7cb1b369-94"/>
+            <rect x="46.98" y="55.96" width="0.53" height="0.92" id="img-7cb1b369-95"/>
+            <rect x="47.46" y="55.86" width="0.53" height="0.75" id="img-7cb1b369-96"/>
+            <rect x="47.94" y="55.81" width="0.53" height="0.96" id="img-7cb1b369-97"/>
+            <rect x="48.42" y="56.28" width="0.53" height="0.78" id="img-7cb1b369-98"/>
+            <rect x="48.9" y="56.12" width="0.53" height="0.92" id="img-7cb1b369-99"/>
+            <rect x="49.38" y="56.66" width="0.53" height="0.59" id="img-7cb1b369-100"/>
+            <rect x="49.86" y="56.37" width="0.53" height="0.58" id="img-7cb1b369-101"/>
+            <rect x="50.35" y="56.8" width="0.53" height="0.66" id="img-7cb1b369-102"/>
+            <rect x="50.83" y="56.79" width="0.53" height="0.47" id="img-7cb1b369-103"/>
+            <rect x="51.31" y="56.84" width="0.53" height="0.53" id="img-7cb1b369-104"/>
+            <rect x="51.79" y="56.81" width="0.53" height="0.61" id="img-7cb1b369-105"/>
+            <rect x="52.27" y="56.47" width="0.53" height="0.69" id="img-7cb1b369-106"/>
+            <rect x="52.75" y="56.47" width="0.53" height="0.76" id="img-7cb1b369-107"/>
+            <rect x="53.23" y="56.45" width="0.53" height="0.72" id="img-7cb1b369-108"/>
+            <rect x="53.72" y="56.7" width="0.53" height="0.53" id="img-7cb1b369-109"/>
+            <rect x="54.2" y="57.1" width="0.53" height="0.4" id="img-7cb1b369-110"/>
+            <rect x="54.68" y="56.79" width="0.53" height="0.58" id="img-7cb1b369-111"/>
+            <rect x="55.16" y="57" width="0.53" height="0.47" id="img-7cb1b369-112"/>
+            <rect x="55.64" y="56.8" width="0.53" height="0.54" id="img-7cb1b369-113"/>
+            <rect x="56.12" y="57.2" width="0.53" height="0.41" id="img-7cb1b369-114"/>
+            <rect x="56.61" y="57.01" width="0.53" height="0.5" id="img-7cb1b369-115"/>
+            <rect x="57.09" y="57.18" width="0.53" height="0.48" id="img-7cb1b369-116"/>
+            <rect x="57.57" y="57.12" width="0.53" height="0.59" id="img-7cb1b369-117"/>
+            <rect x="58.05" y="57.12" width="0.53" height="0.44" id="img-7cb1b369-118"/>
+            <rect x="58.53" y="57.27" width="0.53" height="0.41" id="img-7cb1b369-119"/>
+            <rect x="59.01" y="57.15" width="0.53" height="0.52" id="img-7cb1b369-120"/>
+            <rect x="59.49" y="57.32" width="0.53" height="0.43" id="img-7cb1b369-121"/>
+            <rect x="59.98" y="57.32" width="0.53" height="0.37" id="img-7cb1b369-122"/>
+            <rect x="60.46" y="57.1" width="0.53" height="0.41" id="img-7cb1b369-123"/>
+            <rect x="60.94" y="57.36" width="0.53" height="0.52" id="img-7cb1b369-124"/>
+            <rect x="61.42" y="57.31" width="0.53" height="0.45" id="img-7cb1b369-125"/>
+            <rect x="61.9" y="57" width="0.53" height="0.63" id="img-7cb1b369-126"/>
+            <rect x="62.38" y="57.24" width="0.53" height="0.54" id="img-7cb1b369-127"/>
+            <rect x="62.86" y="57.47" width="0.53" height="0.43" id="img-7cb1b369-128"/>
+            <rect x="63.35" y="57.34" width="0.53" height="0.45" id="img-7cb1b369-129"/>
+            <rect x="63.83" y="57.34" width="0.53" height="0.44" id="img-7cb1b369-130"/>
+            <rect x="64.31" y="57.8" width="0.53" height="0.26" id="img-7cb1b369-131"/>
+            <rect x="64.79" y="57.54" width="0.53" height="0.48" id="img-7cb1b369-132"/>
+            <rect x="65.27" y="57.67" width="0.53" height="0.26" id="img-7cb1b369-133"/>
+            <rect x="65.75" y="57.65" width="0.53" height="0.37" id="img-7cb1b369-134"/>
+            <rect x="66.23" y="57.49" width="0.53" height="0.35" id="img-7cb1b369-135"/>
+            <rect x="66.72" y="57.49" width="0.53" height="0.5" id="img-7cb1b369-136"/>
+            <rect x="67.2" y="57.81" width="0.53" height="0.35" id="img-7cb1b369-137"/>
+            <rect x="67.68" y="57.45" width="0.53" height="0.26" id="img-7cb1b369-138"/>
+            <rect x="68.16" y="57.62" width="0.53" height="0.35" id="img-7cb1b369-139"/>
+            <rect x="68.64" y="57.58" width="0.53" height="0.39" id="img-7cb1b369-140"/>
+            <rect x="69.12" y="57.64" width="0.53" height="0.31" id="img-7cb1b369-141"/>
+            <rect x="69.6" y="57.73" width="0.53" height="0.47" id="img-7cb1b369-142"/>
+            <rect x="70.09" y="57.69" width="0.53" height="0.37" id="img-7cb1b369-143"/>
+            <rect x="70.57" y="57.67" width="0.53" height="0.43" id="img-7cb1b369-144"/>
+            <rect x="71.05" y="57.95" width="0.53" height="0.27" id="img-7cb1b369-145"/>
+            <rect x="71.53" y="57.69" width="0.53" height="0.34" id="img-7cb1b369-146"/>
+            <rect x="72.01" y="57.76" width="0.53" height="0.41" id="img-7cb1b369-147"/>
+            <rect x="72.49" y="57.71" width="0.53" height="0.36" id="img-7cb1b369-148"/>
+            <rect x="72.97" y="57.93" width="0.53" height="0.3" id="img-7cb1b369-149"/>
+            <rect x="73.46" y="57.93" width="0.53" height="0.26" id="img-7cb1b369-150"/>
+            <rect x="73.94" y="57.78" width="0.53" height="0.41" id="img-7cb1b369-151"/>
+            <rect x="74.42" y="57.82" width="0.53" height="0.37" id="img-7cb1b369-152"/>
+            <rect x="74.9" y="57.64" width="0.53" height="0.41" id="img-7cb1b369-153"/>
+            <rect x="75.38" y="58.03" width="0.53" height="0.22" id="img-7cb1b369-154"/>
+            <rect x="75.86" y="57.89" width="0.53" height="0.3" id="img-7cb1b369-155"/>
+            <rect x="76.34" y="58.02" width="0.53" height="0.23" id="img-7cb1b369-156"/>
+            <rect x="76.83" y="58.09" width="0.53" height="0.28" id="img-7cb1b369-157"/>
+            <rect x="77.31" y="57.86" width="0.53" height="0.27" id="img-7cb1b369-158"/>
+            <rect x="77.79" y="57.89" width="0.53" height="0.35" id="img-7cb1b369-159"/>
+            <rect x="78.27" y="57.93" width="0.53" height="0.26" id="img-7cb1b369-160"/>
+            <rect x="78.75" y="57.95" width="0.53" height="0.3" id="img-7cb1b369-161"/>
+            <rect x="79.23" y="58.03" width="0.53" height="0.27" id="img-7cb1b369-162"/>
+            <rect x="79.72" y="58.07" width="0.53" height="0.17" id="img-7cb1b369-163"/>
+            <rect x="80.2" y="57.65" width="0.53" height="0.27" id="img-7cb1b369-164"/>
+            <rect x="80.68" y="57.87" width="0.53" height="0.35" id="img-7cb1b369-165"/>
+            <rect x="81.16" y="58.02" width="0.53" height="0.26" id="img-7cb1b369-166"/>
+            <rect x="81.64" y="58.07" width="0.53" height="0.25" id="img-7cb1b369-167"/>
+            <rect x="82.12" y="57.94" width="0.53" height="0.25" id="img-7cb1b369-168"/>
+            <rect x="82.6" y="58" width="0.53" height="0.21" id="img-7cb1b369-169"/>
+            <rect x="83.09" y="58.09" width="0.53" height="0.19" id="img-7cb1b369-170"/>
+            <rect x="83.57" y="57.99" width="0.53" height="0.22" id="img-7cb1b369-171"/>
+            <rect x="84.05" y="57.94" width="0.53" height="0.36" id="img-7cb1b369-172"/>
+            <rect x="84.53" y="58.12" width="0.53" height="0.3" id="img-7cb1b369-173"/>
+            <rect x="85.01" y="57.9" width="0.53" height="0.3" id="img-7cb1b369-174"/>
+            <rect x="85.49" y="57.93" width="0.53" height="0.36" id="img-7cb1b369-175"/>
+            <rect x="85.97" y="58.08" width="0.53" height="0.23" id="img-7cb1b369-176"/>
+            <rect x="86.46" y="58.12" width="0.53" height="0.18" id="img-7cb1b369-177"/>
+            <rect x="86.94" y="58.16" width="0.53" height="0.21" id="img-7cb1b369-178"/>
+            <rect x="87.42" y="58.13" width="0.53" height="0.25" id="img-7cb1b369-179"/>
+            <rect x="87.9" y="58.13" width="0.53" height="0.23" id="img-7cb1b369-180"/>
+            <rect x="88.38" y="58.04" width="0.53" height="0.19" id="img-7cb1b369-181"/>
+            <rect x="88.86" y="58.06" width="0.53" height="0.19" id="img-7cb1b369-182"/>
+            <rect x="89.34" y="58.03" width="0.53" height="0.21" id="img-7cb1b369-183"/>
+            <rect x="89.83" y="58.07" width="0.53" height="0.25" id="img-7cb1b369-184"/>
+            <rect x="90.31" y="58.09" width="0.53" height="0.23" id="img-7cb1b369-185"/>
+            <rect x="90.79" y="58.09" width="0.53" height="0.14" id="img-7cb1b369-186"/>
+            <rect x="91.27" y="58.34" width="0.53" height="0.12" id="img-7cb1b369-187"/>
+            <rect x="91.75" y="58.16" width="0.53" height="0.23" id="img-7cb1b369-188"/>
+          </g>
+          <g fill="#00B78D" id="img-7cb1b369-189">
+            <rect x="20.01" y="49.02" width="0.53" height="4.41" id="img-7cb1b369-190"/>
+            <rect x="20.5" y="31.69" width="0.53" height="10.68" id="img-7cb1b369-191"/>
+            <rect x="20.98" y="24.26" width="0.53" height="11.08" id="img-7cb1b369-192"/>
+            <rect x="21.46" y="23.47" width="0.53" height="8.53" id="img-7cb1b369-193"/>
+            <rect x="21.94" y="29.99" width="0.53" height="5.46" id="img-7cb1b369-194"/>
+            <rect x="22.42" y="35.97" width="0.53" height="3.76" id="img-7cb1b369-195"/>
+            <rect x="22.9" y="42.77" width="0.53" height="3.08" id="img-7cb1b369-196"/>
+            <rect x="23.38" y="46.23" width="0.53" height="3.06" id="img-7cb1b369-197"/>
+            <rect x="23.87" y="46.99" width="0.53" height="3.13" id="img-7cb1b369-198"/>
+            <rect x="24.35" y="54.98" width="0.53" height="1.36" id="img-7cb1b369-199"/>
+            <rect x="24.83" y="45.92" width="0.53" height="3.63" id="img-7cb1b369-200"/>
+            <rect x="25.31" y="46.99" width="0.53" height="2.48" id="img-7cb1b369-201"/>
+            <rect x="25.79" y="47.21" width="0.53" height="2.43" id="img-7cb1b369-202"/>
+            <rect x="26.27" y="49.92" width="0.53" height="2.42" id="img-7cb1b369-203"/>
+            <rect x="26.75" y="50.01" width="0.53" height="2.57" id="img-7cb1b369-204"/>
+            <rect x="27.24" y="50.82" width="0.53" height="2.57" id="img-7cb1b369-205"/>
+            <rect x="27.72" y="49.23" width="0.53" height="2.91" id="img-7cb1b369-206"/>
+            <rect x="28.2" y="51.58" width="0.53" height="2.47" id="img-7cb1b369-207"/>
+            <rect x="28.68" y="51.42" width="0.53" height="2.37" id="img-7cb1b369-208"/>
+            <rect x="29.16" y="52.03" width="0.53" height="2.07" id="img-7cb1b369-209"/>
+            <rect x="29.64" y="51.85" width="0.53" height="2.08" id="img-7cb1b369-210"/>
+            <rect x="30.13" y="52.64" width="0.53" height="1.94" id="img-7cb1b369-211"/>
+            <rect x="30.61" y="53.08" width="0.53" height="1.85" id="img-7cb1b369-212"/>
+            <rect x="31.09" y="52.69" width="0.53" height="1.56" id="img-7cb1b369-213"/>
+            <rect x="31.57" y="53.43" width="0.53" height="1.53" id="img-7cb1b369-214"/>
+            <rect x="32.05" y="53.57" width="0.53" height="1.55" id="img-7cb1b369-215"/>
+            <rect x="32.53" y="54.09" width="0.53" height="1.53" id="img-7cb1b369-216"/>
+            <rect x="33.01" y="53.43" width="0.53" height="1.56" id="img-7cb1b369-217"/>
+            <rect x="33.5" y="53.72" width="0.53" height="1.65" id="img-7cb1b369-218"/>
+            <rect x="33.98" y="53.93" width="0.53" height="1.8" id="img-7cb1b369-219"/>
+            <rect x="34.46" y="53.72" width="0.53" height="1.76" id="img-7cb1b369-220"/>
+            <rect x="34.94" y="52.79" width="0.53" height="2.24" id="img-7cb1b369-221"/>
+            <rect x="35.42" y="53.36" width="0.53" height="2.15" id="img-7cb1b369-222"/>
+            <rect x="35.9" y="52.87" width="0.53" height="2.25" id="img-7cb1b369-223"/>
+            <rect x="36.38" y="53.52" width="0.53" height="1.99" id="img-7cb1b369-224"/>
+            <rect x="36.87" y="53.54" width="0.53" height="1.97" id="img-7cb1b369-225"/>
+            <rect x="37.35" y="53.88" width="0.53" height="1.62" id="img-7cb1b369-226"/>
+            <rect x="37.83" y="54.29" width="0.53" height="1.63" id="img-7cb1b369-227"/>
+            <rect x="38.31" y="54.53" width="0.53" height="1.56" id="img-7cb1b369-228"/>
+            <rect x="38.79" y="54.45" width="0.53" height="1.51" id="img-7cb1b369-229"/>
+            <rect x="39.27" y="55.44" width="0.53" height="1.03" id="img-7cb1b369-230"/>
+            <rect x="39.75" y="55.24" width="0.53" height="1.18" id="img-7cb1b369-231"/>
+            <rect x="40.24" y="55.31" width="0.53" height="1.28" id="img-7cb1b369-232"/>
+            <rect x="40.72" y="55.95" width="0.53" height="1.02" id="img-7cb1b369-233"/>
+            <rect x="41.2" y="55.7" width="0.53" height="1.06" id="img-7cb1b369-234"/>
+            <rect x="41.68" y="55.92" width="0.53" height="0.89" id="img-7cb1b369-235"/>
+            <rect x="42.16" y="55.99" width="0.53" height="1.02" id="img-7cb1b369-236"/>
+            <rect x="42.64" y="56.23" width="0.53" height="1" id="img-7cb1b369-237"/>
+            <rect x="43.12" y="55.77" width="0.53" height="0.91" id="img-7cb1b369-238"/>
+            <rect x="43.61" y="56.19" width="0.53" height="0.71" id="img-7cb1b369-239"/>
+            <rect x="44.09" y="56.1" width="0.53" height="0.98" id="img-7cb1b369-240"/>
+            <rect x="44.57" y="56.36" width="0.53" height="0.81" id="img-7cb1b369-241"/>
+            <rect x="45.05" y="56.09" width="0.53" height="1" id="img-7cb1b369-242"/>
+            <rect x="45.53" y="56.78" width="0.53" height="0.7" id="img-7cb1b369-243"/>
+            <rect x="46.01" y="56.66" width="0.53" height="0.61" id="img-7cb1b369-244"/>
+            <rect x="46.49" y="56.4" width="0.53" height="0.72" id="img-7cb1b369-245"/>
+            <rect x="46.98" y="56.88" width="0.53" height="0.63" id="img-7cb1b369-246"/>
+            <rect x="47.46" y="56.61" width="0.53" height="0.72" id="img-7cb1b369-247"/>
+            <rect x="47.94" y="56.76" width="0.53" height="0.69" id="img-7cb1b369-248"/>
+            <rect x="48.42" y="57.06" width="0.53" height="0.59" id="img-7cb1b369-249"/>
+            <rect x="48.9" y="57.03" width="0.53" height="0.61" id="img-7cb1b369-250"/>
+            <rect x="49.38" y="57.25" width="0.53" height="0.45" id="img-7cb1b369-251"/>
+            <rect x="49.86" y="56.96" width="0.53" height="0.5" id="img-7cb1b369-252"/>
+            <rect x="50.35" y="57.46" width="0.53" height="0.35" id="img-7cb1b369-253"/>
+            <rect x="50.83" y="57.25" width="0.53" height="0.39" id="img-7cb1b369-254"/>
+            <rect x="51.31" y="57.37" width="0.53" height="0.43" id="img-7cb1b369-255"/>
+            <rect x="51.79" y="57.42" width="0.53" height="0.44" id="img-7cb1b369-256"/>
+            <rect x="52.27" y="57.15" width="0.53" height="0.49" id="img-7cb1b369-257"/>
+            <rect x="52.75" y="57.23" width="0.53" height="0.35" id="img-7cb1b369-258"/>
+            <rect x="53.23" y="57.18" width="0.53" height="0.52" id="img-7cb1b369-259"/>
+            <rect x="53.72" y="57.23" width="0.53" height="0.44" id="img-7cb1b369-260"/>
+            <rect x="54.2" y="57.5" width="0.53" height="0.44" id="img-7cb1b369-261"/>
+            <rect x="54.68" y="57.37" width="0.53" height="0.34" id="img-7cb1b369-262"/>
+            <rect x="55.16" y="57.46" width="0.53" height="0.37" id="img-7cb1b369-263"/>
+            <rect x="55.64" y="57.34" width="0.53" height="0.44" id="img-7cb1b369-264"/>
+            <rect x="56.12" y="57.62" width="0.53" height="0.35" id="img-7cb1b369-265"/>
+            <rect x="56.61" y="57.51" width="0.53" height="0.49" id="img-7cb1b369-266"/>
+            <rect x="57.09" y="57.65" width="0.53" height="0.31" id="img-7cb1b369-267"/>
+            <rect x="57.57" y="57.72" width="0.53" height="0.47" id="img-7cb1b369-268"/>
+            <rect x="58.05" y="57.56" width="0.53" height="0.4" id="img-7cb1b369-269"/>
+            <rect x="58.53" y="57.68" width="0.53" height="0.26" id="img-7cb1b369-270"/>
+            <rect x="59.01" y="57.67" width="0.53" height="0.34" id="img-7cb1b369-271"/>
+            <rect x="59.49" y="57.75" width="0.53" height="0.36" id="img-7cb1b369-272"/>
+            <rect x="59.98" y="57.69" width="0.53" height="0.35" id="img-7cb1b369-273"/>
+            <rect x="60.46" y="57.51" width="0.53" height="0.32" id="img-7cb1b369-274"/>
+            <rect x="60.94" y="57.87" width="0.53" height="0.22" id="img-7cb1b369-275"/>
+            <rect x="61.42" y="57.76" width="0.53" height="0.27" id="img-7cb1b369-276"/>
+            <rect x="61.9" y="57.63" width="0.53" height="0.3" id="img-7cb1b369-277"/>
+            <rect x="62.38" y="57.78" width="0.53" height="0.25" id="img-7cb1b369-278"/>
+            <rect x="62.86" y="57.9" width="0.53" height="0.26" id="img-7cb1b369-279"/>
+            <rect x="63.35" y="57.8" width="0.53" height="0.28" id="img-7cb1b369-280"/>
+            <rect x="63.83" y="57.78" width="0.53" height="0.34" id="img-7cb1b369-281"/>
+            <rect x="64.31" y="58.06" width="0.53" height="0.35" id="img-7cb1b369-282"/>
+            <rect x="64.79" y="58.02" width="0.53" height="0.25" id="img-7cb1b369-283"/>
+            <rect x="65.27" y="57.93" width="0.53" height="0.28" id="img-7cb1b369-284"/>
+            <rect x="65.75" y="58.03" width="0.53" height="0.18" id="img-7cb1b369-285"/>
+            <rect x="66.23" y="57.84" width="0.53" height="0.3" id="img-7cb1b369-286"/>
+            <rect x="66.72" y="57.99" width="0.53" height="0.36" id="img-7cb1b369-287"/>
+            <rect x="67.2" y="58.16" width="0.53" height="0.12" id="img-7cb1b369-288"/>
+            <rect x="67.68" y="57.71" width="0.53" height="0.3" id="img-7cb1b369-289"/>
+            <rect x="68.16" y="57.97" width="0.53" height="0.18" id="img-7cb1b369-290"/>
+            <rect x="68.64" y="57.97" width="0.53" height="0.27" id="img-7cb1b369-291"/>
+            <rect x="69.12" y="57.95" width="0.53" height="0.22" id="img-7cb1b369-292"/>
+            <rect x="69.6" y="58.2" width="0.53" height="0.19" id="img-7cb1b369-293"/>
+            <rect x="70.09" y="58.07" width="0.53" height="0.19" id="img-7cb1b369-294"/>
+            <rect x="70.57" y="58.09" width="0.53" height="0.18" id="img-7cb1b369-295"/>
+            <rect x="71.05" y="58.22" width="0.53" height="0.12" id="img-7cb1b369-296"/>
+            <rect x="71.53" y="58.03" width="0.53" height="0.27" id="img-7cb1b369-297"/>
+            <rect x="72.01" y="58.17" width="0.53" height="0.18" id="img-7cb1b369-298"/>
+            <rect x="72.49" y="58.07" width="0.53" height="0.19" id="img-7cb1b369-299"/>
+            <rect x="72.97" y="58.22" width="0.53" height="0.16" id="img-7cb1b369-300"/>
+            <rect x="73.46" y="58.18" width="0.53" height="0.14" id="img-7cb1b369-301"/>
+            <rect x="73.94" y="58.2" width="0.53" height="0.19" id="img-7cb1b369-302"/>
+            <rect x="74.42" y="58.2" width="0.53" height="0.18" id="img-7cb1b369-303"/>
+            <rect x="74.9" y="58.06" width="0.53" height="0.17" id="img-7cb1b369-304"/>
+            <rect x="75.38" y="58.25" width="0.53" height="0.14" id="img-7cb1b369-305"/>
+            <rect x="75.86" y="58.18" width="0.53" height="0.19" id="img-7cb1b369-306"/>
+            <rect x="76.34" y="58.25" width="0.53" height="0.19" id="img-7cb1b369-307"/>
+            <rect x="76.83" y="58.38" width="0.53" height="0.09" id="img-7cb1b369-308"/>
+            <rect x="77.31" y="58.13" width="0.53" height="0.25" id="img-7cb1b369-309"/>
+            <rect x="77.79" y="58.24" width="0.53" height="0.14" id="img-7cb1b369-310"/>
+            <rect x="78.27" y="58.18" width="0.53" height="0.17" id="img-7cb1b369-311"/>
+            <rect x="78.75" y="58.25" width="0.53" height="0.13" id="img-7cb1b369-312"/>
+            <rect x="79.23" y="58.3" width="0.53" height="0.12" id="img-7cb1b369-313"/>
+            <rect x="79.72" y="58.24" width="0.53" height="0.16" id="img-7cb1b369-314"/>
+            <rect x="80.2" y="57.93" width="0.53" height="0.27" id="img-7cb1b369-315"/>
+            <rect x="80.68" y="58.22" width="0.53" height="0.23" id="img-7cb1b369-316"/>
+            <rect x="81.16" y="58.28" width="0.53" height="0.19" id="img-7cb1b369-317"/>
+            <rect x="81.64" y="58.31" width="0.53" height="0.17" id="img-7cb1b369-318"/>
+            <rect x="82.12" y="58.18" width="0.53" height="0.1" id="img-7cb1b369-319"/>
+            <rect x="82.6" y="58.21" width="0.53" height="0.22" id="img-7cb1b369-320"/>
+            <rect x="83.09" y="58.29" width="0.53" height="0.09" id="img-7cb1b369-321"/>
+            <rect x="83.57" y="58.21" width="0.53" height="0.17" id="img-7cb1b369-322"/>
+            <rect x="84.05" y="58.3" width="0.53" height="0.14" id="img-7cb1b369-323"/>
+            <rect x="84.53" y="58.42" width="0.53" height="0.12" id="img-7cb1b369-324"/>
+            <rect x="85.01" y="58.2" width="0.53" height="0.23" id="img-7cb1b369-325"/>
+            <rect x="85.49" y="58.29" width="0.53" height="0.13" id="img-7cb1b369-326"/>
+            <rect x="85.97" y="58.31" width="0.53" height="0.13" id="img-7cb1b369-327"/>
+            <rect x="86.46" y="58.3" width="0.53" height="0.09" id="img-7cb1b369-328"/>
+            <rect x="86.94" y="58.37" width="0.53" height="0.13" id="img-7cb1b369-329"/>
+            <rect x="87.42" y="58.38" width="0.53" height="0.12" id="img-7cb1b369-330"/>
+            <rect x="87.9" y="58.37" width="0.53" height="0.14" id="img-7cb1b369-331"/>
+            <rect x="88.38" y="58.24" width="0.53" height="0.18" id="img-7cb1b369-332"/>
+            <rect x="88.86" y="58.25" width="0.53" height="0.14" id="img-7cb1b369-333"/>
+            <rect x="89.34" y="58.24" width="0.53" height="0.21" id="img-7cb1b369-334"/>
+            <rect x="89.83" y="58.31" width="0.53" height="0.1" id="img-7cb1b369-335"/>
+            <rect x="90.31" y="58.33" width="0.53" height="0.13" id="img-7cb1b369-336"/>
+            <rect x="90.79" y="58.24" width="0.53" height="0.18" id="img-7cb1b369-337"/>
+            <rect x="91.27" y="58.46" width="0.53" height="0.06" id="img-7cb1b369-338"/>
+            <rect x="91.75" y="58.39" width="0.53" height="0.1" id="img-7cb1b369-339"/>
+          </g>
+          <g fill="#FF6DAE" id="img-7cb1b369-340">
+            <rect x="20.01" y="53.43" width="0.53" height="1.6" id="img-7cb1b369-341"/>
+            <rect x="20.5" y="42.37" width="0.53" height="3.84" id="img-7cb1b369-342"/>
+            <rect x="20.98" y="35.34" width="0.53" height="3.87" id="img-7cb1b369-343"/>
+            <rect x="21.46" y="32" width="0.53" height="2.78" id="img-7cb1b369-344"/>
+            <rect x="21.94" y="35.44" width="0.53" height="1.42" id="img-7cb1b369-345"/>
+            <rect x="22.42" y="39.74" width="0.53" height="1.4" id="img-7cb1b369-346"/>
+            <rect x="22.9" y="45.85" width="0.53" height="1.54" id="img-7cb1b369-347"/>
+            <rect x="23.38" y="49.29" width="0.53" height="1.71" id="img-7cb1b369-348"/>
+            <rect x="23.87" y="50.12" width="0.53" height="1.51" id="img-7cb1b369-349"/>
+            <rect x="24.35" y="56.34" width="0.53" height="0.44" id="img-7cb1b369-350"/>
+            <rect x="24.83" y="49.55" width="0.53" height="1.07" id="img-7cb1b369-351"/>
+            <rect x="25.31" y="49.47" width="0.53" height="1.1" id="img-7cb1b369-352"/>
+            <rect x="25.79" y="49.64" width="0.53" height="0.98" id="img-7cb1b369-353"/>
+            <rect x="26.27" y="52.34" width="0.53" height="0.92" id="img-7cb1b369-354"/>
+            <rect x="26.75" y="52.59" width="0.53" height="1.18" id="img-7cb1b369-355"/>
+            <rect x="27.24" y="53.39" width="0.53" height="1.15" id="img-7cb1b369-356"/>
+            <rect x="27.72" y="52.13" width="0.53" height="1.38" id="img-7cb1b369-357"/>
+            <rect x="28.2" y="54.05" width="0.53" height="0.87" id="img-7cb1b369-358"/>
+            <rect x="28.68" y="53.79" width="0.53" height="0.79" id="img-7cb1b369-359"/>
+            <rect x="29.16" y="54.1" width="0.53" height="0.79" id="img-7cb1b369-360"/>
+            <rect x="29.64" y="53.93" width="0.53" height="0.75" id="img-7cb1b369-361"/>
+            <rect x="30.13" y="54.58" width="0.53" height="0.58" id="img-7cb1b369-362"/>
+            <rect x="30.61" y="54.93" width="0.53" height="0.84" id="img-7cb1b369-363"/>
+            <rect x="31.09" y="54.25" width="0.53" height="0.85" id="img-7cb1b369-364"/>
+            <rect x="31.57" y="54.95" width="0.53" height="0.88" id="img-7cb1b369-365"/>
+            <rect x="32.05" y="55.12" width="0.53" height="0.89" id="img-7cb1b369-366"/>
+            <rect x="32.53" y="55.61" width="0.53" height="0.88" id="img-7cb1b369-367"/>
+            <rect x="33.01" y="54.99" width="0.53" height="1.12" id="img-7cb1b369-368"/>
+            <rect x="33.5" y="55.38" width="0.53" height="1.14" id="img-7cb1b369-369"/>
+            <rect x="33.98" y="55.73" width="0.53" height="1.16" id="img-7cb1b369-370"/>
+            <rect x="34.46" y="55.48" width="0.53" height="0.94" id="img-7cb1b369-371"/>
+            <rect x="34.94" y="55.03" width="0.53" height="1.55" id="img-7cb1b369-372"/>
+            <rect x="35.42" y="55.51" width="0.53" height="0.97" id="img-7cb1b369-373"/>
+            <rect x="35.9" y="55.12" width="0.53" height="1.31" id="img-7cb1b369-374"/>
+            <rect x="36.38" y="55.51" width="0.53" height="1.09" id="img-7cb1b369-375"/>
+            <rect x="36.87" y="55.51" width="0.53" height="0.76" id="img-7cb1b369-376"/>
+            <rect x="37.35" y="55.5" width="0.53" height="0.72" id="img-7cb1b369-377"/>
+            <rect x="37.83" y="55.92" width="0.53" height="0.7" id="img-7cb1b369-378"/>
+            <rect x="38.31" y="56.09" width="0.53" height="0.57" id="img-7cb1b369-379"/>
+            <rect x="38.79" y="55.96" width="0.53" height="0.54" id="img-7cb1b369-380"/>
+            <rect x="39.27" y="56.48" width="0.53" height="0.39" id="img-7cb1b369-381"/>
+            <rect x="39.75" y="56.41" width="0.53" height="0.53" id="img-7cb1b369-382"/>
+            <rect x="40.24" y="56.59" width="0.53" height="0.52" id="img-7cb1b369-383"/>
+            <rect x="40.72" y="56.97" width="0.53" height="0.36" id="img-7cb1b369-384"/>
+            <rect x="41.2" y="56.76" width="0.53" height="0.45" id="img-7cb1b369-385"/>
+            <rect x="41.68" y="56.81" width="0.53" height="0.39" id="img-7cb1b369-386"/>
+            <rect x="42.16" y="57.01" width="0.53" height="0.44" id="img-7cb1b369-387"/>
+            <rect x="42.64" y="57.23" width="0.53" height="0.47" id="img-7cb1b369-388"/>
+            <rect x="43.12" y="56.67" width="0.53" height="0.45" id="img-7cb1b369-389"/>
+            <rect x="43.61" y="56.9" width="0.53" height="0.34" id="img-7cb1b369-390"/>
+            <rect x="44.09" y="57.09" width="0.53" height="0.28" id="img-7cb1b369-391"/>
+            <rect x="44.57" y="57.18" width="0.53" height="0.26" id="img-7cb1b369-392"/>
+            <rect x="45.05" y="57.09" width="0.53" height="0.35" id="img-7cb1b369-393"/>
+            <rect x="45.53" y="57.47" width="0.53" height="0.23" id="img-7cb1b369-394"/>
+            <rect x="46.01" y="57.27" width="0.53" height="0.32" id="img-7cb1b369-395"/>
+            <rect x="46.49" y="57.12" width="0.53" height="0.35" id="img-7cb1b369-396"/>
+            <rect x="46.98" y="57.51" width="0.53" height="0.27" id="img-7cb1b369-397"/>
+            <rect x="47.46" y="57.33" width="0.53" height="0.25" id="img-7cb1b369-398"/>
+            <rect x="47.94" y="57.45" width="0.53" height="0.23" id="img-7cb1b369-399"/>
+            <rect x="48.42" y="57.65" width="0.53" height="0.19" id="img-7cb1b369-400"/>
+            <rect x="48.9" y="57.64" width="0.53" height="0.17" id="img-7cb1b369-401"/>
+            <rect x="49.38" y="57.71" width="0.53" height="0.18" id="img-7cb1b369-402"/>
+            <rect x="49.86" y="57.46" width="0.53" height="0.16" id="img-7cb1b369-403"/>
+            <rect x="50.35" y="57.81" width="0.53" height="0.26" id="img-7cb1b369-404"/>
+            <rect x="50.83" y="57.64" width="0.53" height="0.19" id="img-7cb1b369-405"/>
+            <rect x="51.31" y="57.8" width="0.53" height="0.17" id="img-7cb1b369-406"/>
+            <rect x="51.79" y="57.86" width="0.53" height="0.16" id="img-7cb1b369-407"/>
+            <rect x="52.27" y="57.64" width="0.53" height="0.08" id="img-7cb1b369-408"/>
+            <rect x="52.75" y="57.58" width="0.53" height="0.26" id="img-7cb1b369-409"/>
+            <rect x="53.23" y="57.69" width="0.53" height="0.21" id="img-7cb1b369-410"/>
+            <rect x="53.72" y="57.67" width="0.53" height="0.21" id="img-7cb1b369-411"/>
+            <rect x="54.2" y="57.94" width="0.53" height="0.14" id="img-7cb1b369-412"/>
+            <rect x="54.68" y="57.71" width="0.53" height="0.14" id="img-7cb1b369-413"/>
+            <rect x="55.16" y="57.84" width="0.53" height="0.09" id="img-7cb1b369-414"/>
+            <rect x="55.64" y="57.78" width="0.53" height="0.09" id="img-7cb1b369-415"/>
+            <rect x="56.12" y="57.97" width="0.53" height="0.1" id="img-7cb1b369-416"/>
+            <rect x="56.61" y="58" width="0.53" height="0.16" id="img-7cb1b369-417"/>
+            <rect x="57.09" y="57.97" width="0.53" height="0.12" id="img-7cb1b369-418"/>
+            <rect x="57.57" y="58.18" width="0.53" height="0.08" id="img-7cb1b369-419"/>
+            <rect x="58.05" y="57.97" width="0.53" height="0.17" id="img-7cb1b369-420"/>
+            <rect x="58.53" y="57.94" width="0.53" height="0.09" id="img-7cb1b369-421"/>
+            <rect x="59.01" y="58" width="0.53" height="0.08" id="img-7cb1b369-422"/>
+            <rect x="59.49" y="58.11" width="0.53" height="0.04" id="img-7cb1b369-423"/>
+            <rect x="59.98" y="58.04" width="0.53" height="0.1" id="img-7cb1b369-424"/>
+            <rect x="60.46" y="57.84" width="0.53" height="0.1" id="img-7cb1b369-425"/>
+            <rect x="60.94" y="58.09" width="0.53" height="0.08" id="img-7cb1b369-426"/>
+            <rect x="61.42" y="58.03" width="0.53" height="0.08" id="img-7cb1b369-427"/>
+            <rect x="61.9" y="57.93" width="0.53" height="0.05" id="img-7cb1b369-428"/>
+            <rect x="62.38" y="58.03" width="0.53" height="0.1" id="img-7cb1b369-429"/>
+            <rect x="62.86" y="58.16" width="0.53" height="0.1" id="img-7cb1b369-430"/>
+            <rect x="63.35" y="58.08" width="0.53" height="0.12" id="img-7cb1b369-431"/>
+            <rect x="63.83" y="58.12" width="0.53" height="0.09" id="img-7cb1b369-432"/>
+            <rect x="64.31" y="58.4" width="0.53" height="0.09" id="img-7cb1b369-433"/>
+            <rect x="64.79" y="58.26" width="0.53" height="0.1" id="img-7cb1b369-434"/>
+            <rect x="65.27" y="58.21" width="0.53" height="0.06" id="img-7cb1b369-435"/>
+            <rect x="65.75" y="58.21" width="0.53" height="0.04" id="img-7cb1b369-436"/>
+            <rect x="66.23" y="58.13" width="0.53" height="0.09" id="img-7cb1b369-437"/>
+            <rect x="66.72" y="58.35" width="0.53" height="0.04" id="img-7cb1b369-438"/>
+            <rect x="67.2" y="58.28" width="0.53" height="0.06" id="img-7cb1b369-439"/>
+            <rect x="67.68" y="58" width="0.53" height="0.09" id="img-7cb1b369-440"/>
+            <rect x="68.16" y="58.15" width="0.53" height="0.1" id="img-7cb1b369-441"/>
+            <rect x="68.64" y="58.24" width="0.53" height="0.05" id="img-7cb1b369-442"/>
+            <rect x="69.12" y="58.17" width="0.53" height="0.12" id="img-7cb1b369-443"/>
+            <rect x="69.6" y="58.39" width="0.53" height="0.05" id="img-7cb1b369-444"/>
+            <rect x="70.09" y="58.26" width="0.53" height="0.08" id="img-7cb1b369-445"/>
+            <rect x="70.57" y="58.28" width="0.53" height="0.09" id="img-7cb1b369-446"/>
+            <rect x="71.05" y="58.34" width="0.53" height="0.06" id="img-7cb1b369-447"/>
+            <rect x="71.53" y="58.3" width="0.53" height="0.1" id="img-7cb1b369-448"/>
+            <rect x="72.01" y="58.35" width="0.53" height="0.05" id="img-7cb1b369-449"/>
+            <rect x="72.49" y="58.26" width="0.53" height="0.06" id="img-7cb1b369-450"/>
+            <rect x="72.97" y="58.38" width="0.53" height="0.12" id="img-7cb1b369-451"/>
+            <rect x="73.46" y="58.33" width="0.53" height="0.05" id="img-7cb1b369-452"/>
+            <rect x="73.94" y="58.39" width="0.53" height="0.08" id="img-7cb1b369-453"/>
+            <rect x="74.42" y="58.38" width="0.53" height="0.04" id="img-7cb1b369-454"/>
+            <rect x="74.9" y="58.22" width="0.53" height="0.08" id="img-7cb1b369-455"/>
+            <rect x="75.38" y="58.39" width="0.53" height="0.03" id="img-7cb1b369-456"/>
+            <rect x="75.86" y="58.38" width="0.53" height="0.06" id="img-7cb1b369-457"/>
+            <rect x="76.34" y="58.44" width="0.53" height="0.04" id="img-7cb1b369-458"/>
+            <rect x="76.83" y="58.47" width="0.53" height="0.1" id="img-7cb1b369-459"/>
+            <rect x="77.31" y="58.38" width="0.53" height="0.09" id="img-7cb1b369-460"/>
+            <rect x="77.79" y="58.38" width="0.53" height="0.04" id="img-7cb1b369-461"/>
+            <rect x="78.27" y="58.35" width="0.53" height="0.05" id="img-7cb1b369-462"/>
+            <rect x="78.75" y="58.38" width="0.53" height="0.08" id="img-7cb1b369-463"/>
+            <rect x="79.23" y="58.42" width="0.53" height="0.01" id="img-7cb1b369-464"/>
+            <rect x="79.72" y="58.39" width="0.53" height="0.06" id="img-7cb1b369-465"/>
+            <rect x="80.2" y="58.2" width="0.53" height="0.06" id="img-7cb1b369-466"/>
+            <rect x="80.68" y="58.46" width="0.53" height="0.08" id="img-7cb1b369-467"/>
+            <rect x="81.16" y="58.47" width="0.53" height="0.06" id="img-7cb1b369-468"/>
+            <rect x="81.64" y="58.48" width="0.53" height="0.08" id="img-7cb1b369-469"/>
+            <rect x="82.12" y="58.29" width="0.53" height="0.09" id="img-7cb1b369-470"/>
+            <rect x="82.6" y="58.43" width="0.53" height="0.06" id="img-7cb1b369-471"/>
+            <rect x="83.09" y="58.38" width="0.53" height="0.08" id="img-7cb1b369-472"/>
+            <rect x="83.57" y="58.38" width="0.53" height="0.04" id="img-7cb1b369-473"/>
+            <rect x="84.05" y="58.44" width="0.53" height="0.08" id="img-7cb1b369-474"/>
+            <rect x="84.53" y="58.53" width="0.53" height="0.01" id="img-7cb1b369-475"/>
+            <rect x="85.01" y="58.43" width="0.53" height="0.03" id="img-7cb1b369-476"/>
+            <rect x="85.49" y="58.42" width="0.53" height="0.04" id="img-7cb1b369-477"/>
+            <rect x="85.97" y="58.44" width="0.53" height="0.04" id="img-7cb1b369-478"/>
+            <rect x="86.46" y="58.39" width="0.53" height="0.06" id="img-7cb1b369-479"/>
+            <rect x="86.94" y="58.5" width="0.53" height="0.05" id="img-7cb1b369-480"/>
+            <rect x="87.42" y="58.5" width="0.53" height="0.04" id="img-7cb1b369-481"/>
+            <rect x="87.9" y="58.51" width="0.53" height="0.05" id="img-7cb1b369-482"/>
+            <rect x="88.38" y="58.42" width="0.53" height="0.06" id="img-7cb1b369-483"/>
+            <rect x="88.86" y="58.39" width="0.53" height="0.06" id="img-7cb1b369-484"/>
+            <rect x="89.34" y="58.44" width="0.53" height="0.01" id="img-7cb1b369-485"/>
+            <rect x="89.83" y="58.42" width="0.53" height="0.05" id="img-7cb1b369-486"/>
+            <rect x="90.31" y="58.46" width="0.53" height="0.04" id="img-7cb1b369-487"/>
+            <rect x="90.79" y="58.42" width="0.53" height="0.09" id="img-7cb1b369-488"/>
+            <rect x="91.27" y="58.52" width="0.53" height="0.05" id="img-7cb1b369-489"/>
+            <rect x="91.75" y="58.5" width="0.53" height="0.03" id="img-7cb1b369-490"/>
+          </g>
+          <g fill="#BEA9FF" id="img-7cb1b369-491">
+            <rect x="20.01" y="55.03" width="0.53" height="0.06" id="img-7cb1b369-492"/>
+            <rect x="20.5" y="46.21" width="0.53" height="0.06" id="img-7cb1b369-493"/>
+            <rect x="20.98" y="39.21" width="0.53" height="0.32" id="img-7cb1b369-494"/>
+            <rect x="21.46" y="34.78" width="0.53" height="0.36" id="img-7cb1b369-495"/>
+            <rect x="21.94" y="36.87" width="0.53" height="0.26" id="img-7cb1b369-496"/>
+            <rect x="22.42" y="41.13" width="0.53" height="0.67" id="img-7cb1b369-497"/>
+            <rect x="22.9" y="47.39" width="0.53" height="0.74" id="img-7cb1b369-498"/>
+            <rect x="23.38" y="51" width="0.53" height="0.4" id="img-7cb1b369-499"/>
+            <rect x="23.87" y="51.63" width="0.53" height="0.5" id="img-7cb1b369-500"/>
+            <rect x="24.35" y="56.78" width="0.53" height="0.06" id="img-7cb1b369-501"/>
+            <rect x="24.83" y="50.62" width="0.53" height="0.22" id="img-7cb1b369-502"/>
+            <rect x="25.31" y="50.57" width="0.53" height="0.59" id="img-7cb1b369-503"/>
+            <rect x="25.79" y="50.62" width="0.53" height="0.39" id="img-7cb1b369-504"/>
+            <rect x="26.27" y="53.26" width="0.53" height="0.57" id="img-7cb1b369-505"/>
+            <rect x="26.75" y="53.76" width="0.53" height="0.63" id="img-7cb1b369-506"/>
+            <rect x="27.24" y="54.54" width="0.53" height="0.36" id="img-7cb1b369-507"/>
+            <rect x="27.72" y="53.52" width="0.53" height="0.94" id="img-7cb1b369-508"/>
+            <rect x="28.2" y="54.91" width="0.53" height="0.32" id="img-7cb1b369-509"/>
+            <rect x="28.68" y="54.58" width="0.53" height="0.34" id="img-7cb1b369-510"/>
+            <rect x="29.16" y="54.89" width="0.53" height="0.44" id="img-7cb1b369-511"/>
+            <rect x="29.64" y="54.68" width="0.53" height="0.71" id="img-7cb1b369-512"/>
+            <rect x="30.13" y="55.16" width="0.53" height="0.49" id="img-7cb1b369-513"/>
+            <rect x="30.61" y="55.77" width="0.53" height="0.45" id="img-7cb1b369-514"/>
+            <rect x="31.09" y="55.11" width="0.53" height="0.52" id="img-7cb1b369-515"/>
+            <rect x="31.57" y="55.83" width="0.53" height="0.34" id="img-7cb1b369-516"/>
+            <rect x="32.05" y="56.01" width="0.53" height="0.25" id="img-7cb1b369-517"/>
+            <rect x="32.53" y="56.49" width="0.53" height="0.36" id="img-7cb1b369-518"/>
+            <rect x="33.01" y="56.12" width="0.53" height="0.5" id="img-7cb1b369-519"/>
+            <rect x="33.5" y="56.52" width="0.53" height="0.52" id="img-7cb1b369-520"/>
+            <rect x="33.98" y="56.89" width="0.53" height="0.27" id="img-7cb1b369-521"/>
+            <rect x="34.46" y="56.43" width="0.53" height="0.45" id="img-7cb1b369-522"/>
+            <rect x="34.94" y="56.58" width="0.53" height="0.3" id="img-7cb1b369-523"/>
+            <rect x="35.42" y="56.48" width="0.53" height="0.41" id="img-7cb1b369-524"/>
+            <rect x="35.9" y="56.43" width="0.53" height="0.31" id="img-7cb1b369-525"/>
+            <rect x="36.38" y="56.59" width="0.53" height="0.23" id="img-7cb1b369-526"/>
+            <rect x="36.87" y="56.27" width="0.53" height="0.37" id="img-7cb1b369-527"/>
+            <rect x="37.35" y="56.22" width="0.53" height="0.32" id="img-7cb1b369-528"/>
+            <rect x="37.83" y="56.62" width="0.53" height="0.21" id="img-7cb1b369-529"/>
+            <rect x="38.31" y="56.66" width="0.53" height="0.21" id="img-7cb1b369-530"/>
+            <rect x="38.79" y="56.5" width="0.53" height="0.19" id="img-7cb1b369-531"/>
+            <rect x="39.27" y="56.87" width="0.53" height="0.1" id="img-7cb1b369-532"/>
+            <rect x="39.75" y="56.94" width="0.53" height="0.22" id="img-7cb1b369-533"/>
+            <rect x="40.24" y="57.11" width="0.53" height="0.14" id="img-7cb1b369-534"/>
+            <rect x="40.72" y="57.33" width="0.53" height="0.16" id="img-7cb1b369-535"/>
+            <rect x="41.2" y="57.22" width="0.53" height="0.12" id="img-7cb1b369-536"/>
+            <rect x="41.68" y="57.2" width="0.53" height="0.12" id="img-7cb1b369-537"/>
+            <rect x="42.16" y="57.45" width="0.53" height="0.16" id="img-7cb1b369-538"/>
+            <rect x="42.64" y="57.69" width="0.53" height="0.09" id="img-7cb1b369-539"/>
+            <rect x="43.12" y="57.12" width="0.53" height="0.22" id="img-7cb1b369-540"/>
+            <rect x="43.61" y="57.24" width="0.53" height="0.1" id="img-7cb1b369-541"/>
+            <rect x="44.09" y="57.37" width="0.53" height="0.1" id="img-7cb1b369-542"/>
+            <rect x="44.57" y="57.44" width="0.53" height="0.09" id="img-7cb1b369-543"/>
+            <rect x="45.05" y="57.44" width="0.53" height="0.12" id="img-7cb1b369-544"/>
+            <rect x="45.53" y="57.71" width="0.53" height="0.08" id="img-7cb1b369-545"/>
+            <rect x="46.01" y="57.59" width="0.53" height="0.12" id="img-7cb1b369-546"/>
+            <rect x="46.49" y="57.47" width="0.53" height="0.1" id="img-7cb1b369-547"/>
+            <rect x="46.98" y="57.78" width="0.53" height="0.13" id="img-7cb1b369-548"/>
+            <rect x="47.46" y="57.58" width="0.53" height="0.1" id="img-7cb1b369-549"/>
+            <rect x="47.94" y="57.68" width="0.53" height="0.05" id="img-7cb1b369-550"/>
+            <rect x="48.42" y="57.85" width="0.53" height="0.04" id="img-7cb1b369-551"/>
+            <rect x="48.9" y="57.81" width="0.53" height="0.06" id="img-7cb1b369-552"/>
+            <rect x="49.38" y="57.89" width="0.53" height="0.1" id="img-7cb1b369-553"/>
+            <rect x="49.86" y="57.62" width="0.53" height="0.09" id="img-7cb1b369-554"/>
+            <rect x="50.35" y="58.07" width="0.53" height="0.04" id="img-7cb1b369-555"/>
+            <rect x="50.83" y="57.84" width="0.53" height="0.05" id="img-7cb1b369-556"/>
+            <rect x="51.31" y="57.97" width="0.53" height="0.04" id="img-7cb1b369-557"/>
+            <rect x="51.79" y="58.02" width="0.53" height="0.03" id="img-7cb1b369-558"/>
+            <rect x="52.27" y="57.72" width="0.53" height="0.06" id="img-7cb1b369-559"/>
+            <rect x="52.75" y="57.84" width="0.53" height="0.12" id="img-7cb1b369-560"/>
+            <rect x="53.23" y="57.9" width="0.53" height="0.05" id="img-7cb1b369-561"/>
+            <rect x="53.72" y="57.87" width="0.53" height="0.03" id="img-7cb1b369-562"/>
+            <rect x="54.2" y="58.08" width="0.53" height="0.03" id="img-7cb1b369-563"/>
+            <rect x="54.68" y="57.85" width="0.53" height="0.03" id="img-7cb1b369-564"/>
+            <rect x="55.16" y="57.93" width="0.53" height="0.01" id="img-7cb1b369-565"/>
+            <rect x="55.64" y="57.87" width="0.53" height="0.04" id="img-7cb1b369-566"/>
+            <rect x="56.12" y="58.07" width="0.53" height="0.04" id="img-7cb1b369-567"/>
+            <rect x="56.61" y="58.16" width="0.53" height="0.03" id="img-7cb1b369-568"/>
+            <rect x="57.09" y="58.08" width="0.53" height="0.03" id="img-7cb1b369-569"/>
+            <rect x="57.57" y="58.26" width="0.53" height="0.03" id="img-7cb1b369-570"/>
+            <rect x="58.05" y="58.13" width="0.53" height="0.05" id="img-7cb1b369-571"/>
+            <rect x="58.53" y="58.03" width="0.53" height="0.03" id="img-7cb1b369-572"/>
+            <rect x="59.01" y="58.08" width="0.53" height="0.03" id="img-7cb1b369-573"/>
+            <rect x="59.49" y="58.15" width="0.53" height="0.05" id="img-7cb1b369-574"/>
+            <rect x="59.98" y="58.15" width="0.53" height="0.06" id="img-7cb1b369-575"/>
+            <rect x="60.46" y="57.94" width="0.53" height="0.08" id="img-7cb1b369-576"/>
+            <rect x="60.94" y="58.17" width="0.53" height="0.05" id="img-7cb1b369-577"/>
+            <rect x="61.42" y="58.11" width="0.53" height="0.03" id="img-7cb1b369-578"/>
+            <rect x="61.9" y="57.98" width="0.53" height="0.06" id="img-7cb1b369-579"/>
+            <rect x="62.38" y="58.13" width="0.53" height="0.05" id="img-7cb1b369-580"/>
+            <rect x="62.86" y="58.26" width="0.53" height="0.03" id="img-7cb1b369-581"/>
+            <rect x="63.35" y="58.2" width="0.53" height="0.01" id="img-7cb1b369-582"/>
+            <rect x="63.83" y="58.21" width="0.53" height="0.04" id="img-7cb1b369-583"/>
+            <rect x="64.31" y="58.5" width="0.53" height="0.01" id="img-7cb1b369-584"/>
+            <rect x="64.79" y="58.37" width="0.53" height="0.01" id="img-7cb1b369-585"/>
+            <rect x="65.27" y="58.28" width="0.53" height="0.05" id="img-7cb1b369-586"/>
+            <rect x="65.75" y="58.25" width="0.53" height="0.01" id="img-7cb1b369-587"/>
+            <rect x="66.23" y="58.22" width="0.53" height="0.01" id="img-7cb1b369-588"/>
+            <rect x="66.72" y="58.39" width="0.53" height="0.01" id="img-7cb1b369-589"/>
+            <rect x="67.2" y="58.34" width="0.53" height="0.05" id="img-7cb1b369-590"/>
+            <rect x="67.68" y="58.09" width="0.53" height="0.1" id="img-7cb1b369-591"/>
+            <rect x="68.16" y="58.25" width="0.53" height="0.01" id="img-7cb1b369-592"/>
+            <rect x="68.64" y="58.29" width="0.53" height="0.05" id="img-7cb1b369-593"/>
+            <rect x="69.12" y="58.29" width="0.53" height="0.06" id="img-7cb1b369-594"/>
+            <rect x="69.6" y="58.44" width="0.53" height="0.01" id="img-7cb1b369-595"/>
+            <rect x="70.09" y="58.34" width="0.53" height="0.01" id="img-7cb1b369-596"/>
+            <rect x="70.57" y="58.37" width="0.53" height="0.05" id="img-7cb1b369-597"/>
+            <rect x="71.05" y="58.4" width="0.53" height="0.04" id="img-7cb1b369-598"/>
+            <rect x="71.53" y="58.4" width="0.53" height="0.05" id="img-7cb1b369-599"/>
+            <rect x="72.01" y="58.4" width="0.53" height="0.06" id="img-7cb1b369-600"/>
+            <rect x="72.49" y="58.33" width="0.53" height="0.04" id="img-7cb1b369-601"/>
+            <rect x="72.97" y="58.5" width="0.53" height="0.01" id="img-7cb1b369-602"/>
+            <rect x="73.46" y="58.38" width="0.53" height="0.01" id="img-7cb1b369-603"/>
+            <rect x="73.94" y="58.47" width="0.53" height="0.04" id="img-7cb1b369-604"/>
+            <rect x="74.42" y="58.42" width="0.53" height="0.01" id="img-7cb1b369-605"/>
+            <rect x="74.9" y="58.3" width="0.53" height="0.03" id="img-7cb1b369-606"/>
+            <rect x="75.38" y="58.42" width="0.53" height="0.01" id="img-7cb1b369-607"/>
+            <rect x="75.86" y="58.44" width="0.53" height="0.05" id="img-7cb1b369-608"/>
+            <rect x="76.34" y="58.48" width="0.53" height="0.03" id="img-7cb1b369-609"/>
+            <rect x="76.83" y="58.57" width="0.53" height="0.03" id="img-7cb1b369-610"/>
+            <rect x="77.31" y="58.47" width="0.53" height="0.01" id="img-7cb1b369-611"/>
+            <rect x="77.79" y="58.42" width="0.53" height="0.01" id="img-7cb1b369-612"/>
+            <rect x="78.27" y="58.4" width="0.53" height="0.04" id="img-7cb1b369-613"/>
+            <rect x="78.75" y="58.46" width="0.53" height="0.01" id="img-7cb1b369-614"/>
+            <rect x="79.23" y="58.43" width="0.53" height="0.05" id="img-7cb1b369-615"/>
+            <rect x="79.72" y="58.46" width="0.53" height="0.04" id="img-7cb1b369-616"/>
+            <rect x="80.2" y="58.26" width="0.53" height="0.05" id="img-7cb1b369-617"/>
+            <rect x="80.68" y="58.53" width="0.53" height="0.03" id="img-7cb1b369-618"/>
+            <rect x="81.16" y="58.53" width="0.53" height="0.01" id="img-7cb1b369-619"/>
+            <rect x="81.64" y="58.56" width="0.53" height="0.01" id="img-7cb1b369-620"/>
+            <rect x="82.12" y="58.38" width="0.53" height="0.01" id="img-7cb1b369-621"/>
+            <rect x="82.6" y="58.5" width="0.53" height="0.03" id="img-7cb1b369-622"/>
+            <rect x="83.09" y="58.46" width="0.53" height="0.01" id="img-7cb1b369-623"/>
+            <rect x="83.57" y="58.42" width="0.53" height="0.01" id="img-7cb1b369-624"/>
+            <rect x="84.05" y="58.52" width="0.53" height="0.01" id="img-7cb1b369-625"/>
+            <rect x="84.53" y="58.53" width="0.53" height="0.01" id="img-7cb1b369-626"/>
+            <rect x="85.01" y="58.46" width="0.53" height="0.01" id="img-7cb1b369-627"/>
+            <rect x="85.49" y="58.46" width="0.53" height="0.01" id="img-7cb1b369-628"/>
+            <rect x="85.97" y="58.48" width="0.53" height="0.01" id="img-7cb1b369-629"/>
+            <rect x="86.46" y="58.46" width="0.53" height="0.03" id="img-7cb1b369-630"/>
+            <rect x="86.94" y="58.55" width="0.53" height="0.01" id="img-7cb1b369-631"/>
+            <rect x="87.42" y="58.53" width="0.53" height="0.01" id="img-7cb1b369-632"/>
+            <rect x="87.9" y="58.56" width="0.53" height="0.01" id="img-7cb1b369-633"/>
+            <rect x="88.38" y="58.48" width="0.53" height="0.01" id="img-7cb1b369-634"/>
+            <rect x="88.86" y="58.46" width="0.53" height="0.04" id="img-7cb1b369-635"/>
+            <rect x="89.34" y="58.44" width="0.53" height="0.01" id="img-7cb1b369-636"/>
+            <rect x="89.83" y="58.47" width="0.53" height="0.04" id="img-7cb1b369-637"/>
+            <rect x="90.31" y="58.5" width="0.53" height="0.01" id="img-7cb1b369-638"/>
+            <rect x="90.79" y="58.51" width="0.53" height="0.05" id="img-7cb1b369-639"/>
+            <rect x="91.27" y="58.57" width="0.53" height="0.01" id="img-7cb1b369-640"/>
+            <rect x="91.75" y="58.52" width="0.53" height="0.01" id="img-7cb1b369-641"/>
+          </g>
+          <g fill="#00BFFF" id="img-7cb1b369-642">
+            <rect x="20.01" y="55.09" width="0.53" height="3.62" id="img-7cb1b369-643"/>
+            <rect x="20.5" y="46.28" width="0.53" height="12.44" id="img-7cb1b369-644"/>
+            <rect x="20.98" y="39.53" width="0.53" height="19.19" id="img-7cb1b369-645"/>
+            <rect x="21.46" y="35.15" width="0.53" height="23.57" id="img-7cb1b369-646"/>
+            <rect x="21.94" y="37.12" width="0.53" height="21.59" id="img-7cb1b369-647"/>
+            <rect x="22.42" y="41.8" width="0.53" height="16.91" id="img-7cb1b369-648"/>
+            <rect x="22.9" y="48.13" width="0.53" height="10.59" id="img-7cb1b369-649"/>
+            <rect x="23.38" y="51.4" width="0.53" height="7.32" id="img-7cb1b369-650"/>
+            <rect x="23.87" y="52.13" width="0.53" height="6.58" id="img-7cb1b369-651"/>
+            <rect x="24.35" y="56.84" width="0.53" height="1.87" id="img-7cb1b369-652"/>
+            <rect x="24.83" y="50.84" width="0.53" height="7.87" id="img-7cb1b369-653"/>
+            <rect x="25.31" y="51.16" width="0.53" height="7.55" id="img-7cb1b369-654"/>
+            <rect x="25.79" y="51.01" width="0.53" height="7.71" id="img-7cb1b369-655"/>
+            <rect x="26.27" y="53.83" width="0.53" height="4.89" id="img-7cb1b369-656"/>
+            <rect x="26.75" y="54.4" width="0.53" height="4.32" id="img-7cb1b369-657"/>
+            <rect x="27.24" y="54.9" width="0.53" height="3.81" id="img-7cb1b369-658"/>
+            <rect x="27.72" y="54.46" width="0.53" height="4.25" id="img-7cb1b369-659"/>
+            <rect x="28.2" y="55.24" width="0.53" height="3.48" id="img-7cb1b369-660"/>
+            <rect x="28.68" y="54.91" width="0.53" height="3.8" id="img-7cb1b369-661"/>
+            <rect x="29.16" y="55.33" width="0.53" height="3.39" id="img-7cb1b369-662"/>
+            <rect x="29.64" y="55.39" width="0.53" height="3.32" id="img-7cb1b369-663"/>
+            <rect x="30.13" y="55.65" width="0.53" height="3.06" id="img-7cb1b369-664"/>
+            <rect x="30.61" y="56.22" width="0.53" height="2.5" id="img-7cb1b369-665"/>
+            <rect x="31.09" y="55.63" width="0.53" height="3.09" id="img-7cb1b369-666"/>
+            <rect x="31.57" y="56.17" width="0.53" height="2.55" id="img-7cb1b369-667"/>
+            <rect x="32.05" y="56.26" width="0.53" height="2.46" id="img-7cb1b369-668"/>
+            <rect x="32.53" y="56.85" width="0.53" height="1.86" id="img-7cb1b369-669"/>
+            <rect x="33.01" y="56.62" width="0.53" height="2.09" id="img-7cb1b369-670"/>
+            <rect x="33.5" y="57.03" width="0.53" height="1.68" id="img-7cb1b369-671"/>
+            <rect x="33.98" y="57.16" width="0.53" height="1.55" id="img-7cb1b369-672"/>
+            <rect x="34.46" y="56.88" width="0.53" height="1.84" id="img-7cb1b369-673"/>
+            <rect x="34.94" y="56.88" width="0.53" height="1.84" id="img-7cb1b369-674"/>
+            <rect x="35.42" y="56.89" width="0.53" height="1.82" id="img-7cb1b369-675"/>
+            <rect x="35.9" y="56.74" width="0.53" height="1.98" id="img-7cb1b369-676"/>
+            <rect x="36.38" y="56.83" width="0.53" height="1.89" id="img-7cb1b369-677"/>
+            <rect x="36.87" y="56.65" width="0.53" height="2.07" id="img-7cb1b369-678"/>
+            <rect x="37.35" y="56.54" width="0.53" height="2.17" id="img-7cb1b369-679"/>
+            <rect x="37.83" y="56.83" width="0.53" height="1.89" id="img-7cb1b369-680"/>
+            <rect x="38.31" y="56.87" width="0.53" height="1.85" id="img-7cb1b369-681"/>
+            <rect x="38.79" y="56.7" width="0.53" height="2.02" id="img-7cb1b369-682"/>
+            <rect x="39.27" y="56.97" width="0.53" height="1.75" id="img-7cb1b369-683"/>
+            <rect x="39.75" y="57.16" width="0.53" height="1.55" id="img-7cb1b369-684"/>
+            <rect x="40.24" y="57.25" width="0.53" height="1.46" id="img-7cb1b369-685"/>
+            <rect x="40.72" y="57.49" width="0.53" height="1.23" id="img-7cb1b369-686"/>
+            <rect x="41.2" y="57.33" width="0.53" height="1.38" id="img-7cb1b369-687"/>
+            <rect x="41.68" y="57.32" width="0.53" height="1.4" id="img-7cb1b369-688"/>
+            <rect x="42.16" y="57.6" width="0.53" height="1.11" id="img-7cb1b369-689"/>
+            <rect x="42.64" y="57.78" width="0.53" height="0.93" id="img-7cb1b369-690"/>
+            <rect x="43.12" y="57.34" width="0.53" height="1.37" id="img-7cb1b369-691"/>
+            <rect x="43.61" y="57.34" width="0.53" height="1.37" id="img-7cb1b369-692"/>
+            <rect x="44.09" y="57.47" width="0.53" height="1.24" id="img-7cb1b369-693"/>
+            <rect x="44.57" y="57.53" width="0.53" height="1.19" id="img-7cb1b369-694"/>
+            <rect x="45.05" y="57.55" width="0.53" height="1.16" id="img-7cb1b369-695"/>
+            <rect x="45.53" y="57.78" width="0.53" height="0.93" id="img-7cb1b369-696"/>
+            <rect x="46.01" y="57.71" width="0.53" height="1.01" id="img-7cb1b369-697"/>
+            <rect x="46.49" y="57.58" width="0.53" height="1.14" id="img-7cb1b369-698"/>
+            <rect x="46.98" y="57.91" width="0.53" height="0.8" id="img-7cb1b369-699"/>
+            <rect x="47.46" y="57.68" width="0.53" height="1.03" id="img-7cb1b369-700"/>
+            <rect x="47.94" y="57.73" width="0.53" height="0.98" id="img-7cb1b369-701"/>
+            <rect x="48.42" y="57.89" width="0.53" height="0.83" id="img-7cb1b369-702"/>
+            <rect x="48.9" y="57.87" width="0.53" height="0.84" id="img-7cb1b369-703"/>
+            <rect x="49.38" y="57.99" width="0.53" height="0.72" id="img-7cb1b369-704"/>
+            <rect x="49.86" y="57.71" width="0.53" height="1.01" id="img-7cb1b369-705"/>
+            <rect x="50.35" y="58.11" width="0.53" height="0.61" id="img-7cb1b369-706"/>
+            <rect x="50.83" y="57.89" width="0.53" height="0.83" id="img-7cb1b369-707"/>
+            <rect x="51.31" y="58" width="0.53" height="0.71" id="img-7cb1b369-708"/>
+            <rect x="51.79" y="58.04" width="0.53" height="0.67" id="img-7cb1b369-709"/>
+            <rect x="52.27" y="57.78" width="0.53" height="0.93" id="img-7cb1b369-710"/>
+            <rect x="52.75" y="57.95" width="0.53" height="0.76" id="img-7cb1b369-711"/>
+            <rect x="53.23" y="57.95" width="0.53" height="0.76" id="img-7cb1b369-712"/>
+            <rect x="53.72" y="57.9" width="0.53" height="0.81" id="img-7cb1b369-713"/>
+            <rect x="54.2" y="58.11" width="0.53" height="0.61" id="img-7cb1b369-714"/>
+            <rect x="54.68" y="57.87" width="0.53" height="0.84" id="img-7cb1b369-715"/>
+            <rect x="55.16" y="57.94" width="0.53" height="0.78" id="img-7cb1b369-716"/>
+            <rect x="55.64" y="57.91" width="0.53" height="0.8" id="img-7cb1b369-717"/>
+            <rect x="56.12" y="58.11" width="0.53" height="0.61" id="img-7cb1b369-718"/>
+            <rect x="56.61" y="58.18" width="0.53" height="0.53" id="img-7cb1b369-719"/>
+            <rect x="57.09" y="58.11" width="0.53" height="0.61" id="img-7cb1b369-720"/>
+            <rect x="57.57" y="58.29" width="0.53" height="0.43" id="img-7cb1b369-721"/>
+            <rect x="58.05" y="58.18" width="0.53" height="0.53" id="img-7cb1b369-722"/>
+            <rect x="58.53" y="58.06" width="0.53" height="0.66" id="img-7cb1b369-723"/>
+            <rect x="59.01" y="58.11" width="0.53" height="0.61" id="img-7cb1b369-724"/>
+            <rect x="59.49" y="58.2" width="0.53" height="0.52" id="img-7cb1b369-725"/>
+            <rect x="59.98" y="58.21" width="0.53" height="0.5" id="img-7cb1b369-726"/>
+            <rect x="60.46" y="58.02" width="0.53" height="0.7" id="img-7cb1b369-727"/>
+            <rect x="60.94" y="58.22" width="0.53" height="0.49" id="img-7cb1b369-728"/>
+            <rect x="61.42" y="58.13" width="0.53" height="0.58" id="img-7cb1b369-729"/>
+            <rect x="61.9" y="58.04" width="0.53" height="0.67" id="img-7cb1b369-730"/>
+            <rect x="62.38" y="58.18" width="0.53" height="0.53" id="img-7cb1b369-731"/>
+            <rect x="62.86" y="58.29" width="0.53" height="0.43" id="img-7cb1b369-732"/>
+            <rect x="63.35" y="58.21" width="0.53" height="0.5" id="img-7cb1b369-733"/>
+            <rect x="63.83" y="58.25" width="0.53" height="0.47" id="img-7cb1b369-734"/>
+            <rect x="64.31" y="58.51" width="0.53" height="0.21" id="img-7cb1b369-735"/>
+            <rect x="64.79" y="58.37" width="0.53" height="0.35" id="img-7cb1b369-736"/>
+            <rect x="65.27" y="58.33" width="0.53" height="0.39" id="img-7cb1b369-737"/>
+            <rect x="65.75" y="58.25" width="0.53" height="0.47" id="img-7cb1b369-738"/>
+            <rect x="66.23" y="58.24" width="0.53" height="0.48" id="img-7cb1b369-739"/>
+            <rect x="66.72" y="58.39" width="0.53" height="0.32" id="img-7cb1b369-740"/>
+            <rect x="67.2" y="58.39" width="0.53" height="0.32" id="img-7cb1b369-741"/>
+            <rect x="67.68" y="58.2" width="0.53" height="0.52" id="img-7cb1b369-742"/>
+            <rect x="68.16" y="58.26" width="0.53" height="0.45" id="img-7cb1b369-743"/>
+            <rect x="68.64" y="58.34" width="0.53" height="0.37" id="img-7cb1b369-744"/>
+            <rect x="69.12" y="58.35" width="0.53" height="0.36" id="img-7cb1b369-745"/>
+            <rect x="69.6" y="58.44" width="0.53" height="0.27" id="img-7cb1b369-746"/>
+            <rect x="70.09" y="58.34" width="0.53" height="0.37" id="img-7cb1b369-747"/>
+            <rect x="70.57" y="58.42" width="0.53" height="0.3" id="img-7cb1b369-748"/>
+            <rect x="71.05" y="58.44" width="0.53" height="0.27" id="img-7cb1b369-749"/>
+            <rect x="71.53" y="58.46" width="0.53" height="0.26" id="img-7cb1b369-750"/>
+            <rect x="72.01" y="58.47" width="0.53" height="0.25" id="img-7cb1b369-751"/>
+            <rect x="72.49" y="58.37" width="0.53" height="0.35" id="img-7cb1b369-752"/>
+            <rect x="72.97" y="58.5" width="0.53" height="0.22" id="img-7cb1b369-753"/>
+            <rect x="73.46" y="58.39" width="0.53" height="0.32" id="img-7cb1b369-754"/>
+            <rect x="73.94" y="58.51" width="0.53" height="0.21" id="img-7cb1b369-755"/>
+            <rect x="74.42" y="58.42" width="0.53" height="0.3" id="img-7cb1b369-756"/>
+            <rect x="74.9" y="58.33" width="0.53" height="0.39" id="img-7cb1b369-757"/>
+            <rect x="75.38" y="58.42" width="0.53" height="0.3" id="img-7cb1b369-758"/>
+            <rect x="75.86" y="58.5" width="0.53" height="0.22" id="img-7cb1b369-759"/>
+            <rect x="76.34" y="58.51" width="0.53" height="0.21" id="img-7cb1b369-760"/>
+            <rect x="76.83" y="58.6" width="0.53" height="0.12" id="img-7cb1b369-761"/>
+            <rect x="77.31" y="58.48" width="0.53" height="0.23" id="img-7cb1b369-762"/>
+            <rect x="77.79" y="58.43" width="0.53" height="0.28" id="img-7cb1b369-763"/>
+            <rect x="78.27" y="58.44" width="0.53" height="0.27" id="img-7cb1b369-764"/>
+            <rect x="78.75" y="58.46" width="0.53" height="0.26" id="img-7cb1b369-765"/>
+            <rect x="79.23" y="58.48" width="0.53" height="0.23" id="img-7cb1b369-766"/>
+            <rect x="79.72" y="58.5" width="0.53" height="0.22" id="img-7cb1b369-767"/>
+            <rect x="80.2" y="58.31" width="0.53" height="0.4" id="img-7cb1b369-768"/>
+            <rect x="80.68" y="58.56" width="0.53" height="0.16" id="img-7cb1b369-769"/>
+            <rect x="81.16" y="58.55" width="0.53" height="0.17" id="img-7cb1b369-770"/>
+            <rect x="81.64" y="58.56" width="0.53" height="0.16" id="img-7cb1b369-771"/>
+            <rect x="82.12" y="58.39" width="0.53" height="0.32" id="img-7cb1b369-772"/>
+            <rect x="82.6" y="58.52" width="0.53" height="0.19" id="img-7cb1b369-773"/>
+            <rect x="83.09" y="58.47" width="0.53" height="0.25" id="img-7cb1b369-774"/>
+            <rect x="83.57" y="58.42" width="0.53" height="0.3" id="img-7cb1b369-775"/>
+            <rect x="84.05" y="58.52" width="0.53" height="0.19" id="img-7cb1b369-776"/>
+            <rect x="84.53" y="58.55" width="0.53" height="0.17" id="img-7cb1b369-777"/>
+            <rect x="85.01" y="58.47" width="0.53" height="0.25" id="img-7cb1b369-778"/>
+            <rect x="85.49" y="58.47" width="0.53" height="0.25" id="img-7cb1b369-779"/>
+            <rect x="85.97" y="58.5" width="0.53" height="0.22" id="img-7cb1b369-780"/>
+            <rect x="86.46" y="58.48" width="0.53" height="0.23" id="img-7cb1b369-781"/>
+            <rect x="86.94" y="58.55" width="0.53" height="0.17" id="img-7cb1b369-782"/>
+            <rect x="87.42" y="58.55" width="0.53" height="0.17" id="img-7cb1b369-783"/>
+            <rect x="87.9" y="58.56" width="0.53" height="0.16" id="img-7cb1b369-784"/>
+            <rect x="88.38" y="58.5" width="0.53" height="0.22" id="img-7cb1b369-785"/>
+            <rect x="88.86" y="58.5" width="0.53" height="0.22" id="img-7cb1b369-786"/>
+            <rect x="89.34" y="58.44" width="0.53" height="0.27" id="img-7cb1b369-787"/>
+            <rect x="89.83" y="58.51" width="0.53" height="0.21" id="img-7cb1b369-788"/>
+            <rect x="90.31" y="58.5" width="0.53" height="0.22" id="img-7cb1b369-789"/>
+            <rect x="90.79" y="58.56" width="0.53" height="0.16" id="img-7cb1b369-790"/>
+            <rect x="91.27" y="58.57" width="0.53" height="0.14" id="img-7cb1b369-791"/>
+            <rect x="91.75" y="58.52" width="0.53" height="0.19" id="img-7cb1b369-792"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</g>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-7cb1b369-793">
+    <text x="15.77" y="58.72" text-anchor="end" dy="0.35em" id="img-7cb1b369-794">0</text>
+    <text x="15.77" y="45.79" text-anchor="end" dy="0.35em" id="img-7cb1b369-795">1×10³</text>
+    <text x="15.77" y="32.86" text-anchor="end" dy="0.35em" id="img-7cb1b369-796">2×10³</text>
+    <text x="15.77" y="19.93" text-anchor="end" dy="0.35em" id="img-7cb1b369-797">3×10³</text>
+    <text x="15.77" y="7" text-anchor="end" dy="0.35em" id="img-7cb1b369-798">4×10³</text>
+  </g>
+</g>
+<defs>
+  <clipPath id="img-7cb1b369-19">
+  <path d="M16.77,5 L 98.85 5 98.85 60.72 16.77 60.72" />
+</clipPath>
+</defs>
+</svg>
+</div><p>The rendering pipeline transforms a plot specification into a <a href="http://www.composejl.org">Compose</a> scene graph that contains a set of guides (e.g. axis ticks, color keys) and one or more layers of geometry (e.g. points, lines). The specification of each layer has</p><ul><li><p>a <strong>data source</strong> (e.g. <code>dataset(&quot;ggplot2&quot;, &quot;diamonds&quot;)</code>)</p></li><li><p>a <strong>geometry</strong> to represent the layer&#39;s data (e.g. point, line, etc.)</p></li><li><p><strong>mappings</strong> to associate aesthetics of the geometry with elements of the data source (e.g.  <code>:color =&gt; :Cut</code>)</p></li><li><p>layer-wise <strong>statistics</strong> (optional) to be applied to the layer&#39;s data</p></li></ul><p>All layers of a plot share the same</p><ul><li><p><a href="../lib/coords.html#Coordinates-1">Coordinates</a> for the geometry (e.g. cartesian, polar, etc.)</p></li><li><p>axis <a href="../lib/scales.html#Scales-1">Scales</a> (e.g. loglog, semilog, etc.)</p></li><li><p>plot-wise <a href="../lib/stats.html#Statistics-1">Statistics</a> (optional) to be applied to all layers</p></li><li><p><a href="../lib/guides.html#Guides-1">Guides</a></p></li></ul><p>A full plot specification must describe these shared elements as well as all the layer specifications. In the example above, we see that only the data source, statistics, geometry, and mapping are specified. The missing elements are either inferred from the data (e.g. categorical values in <code>df[:Cut]</code> implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale). For example, invoking <code>plot</code> with all the elements will look something like</p><pre><code class="language-julia">p = plot(layer(df,
+               x = :Price, color = :Cut,
+		       Stat.histogram,
+		       Geom.bar),
+	  	 Scale.x_continuous,
+		 Scale.color_discrete,
+		 Coord.cartesian,
+		 Guide.xticks, Guide.yticks,
+		 Guide.xlabel(&quot;Price&quot;),
+		 Guide.colorkey(&quot;Cut&quot;))</code></pre><p>Once a full plot specification is filled out, the rendering process proceeds as follows:</p><p><img src="../assets/pipeline.svg" alt/></p><ol><li><p>For each layer in the plot, we first map subsets of the data source to a <code>Data</code> object. The <code>Price</code> and <code>Cut</code> columns of the <code>diamond</code> dataset are mapped to the <code>:x</code> and <code>:color</code> fields of <code>Data</code>, respectively.</p></li><li><p>Scales are applied to the data to obtain plottable aesthetics. <a href="../lib/scales/scale_x_continuous.html#Scale.x_continuous-1">Scale.x_continuous</a> keeps the values of <code>df[:Price]</code> unchanged, while <a href="../lib/scales/scale_color_discrete_hue.html#Scale.color_discrete_hue-1">Scale.color_discrete_hue</a> maps the unique elements of <code>df[:Cut]</code> (an array of strings) to actual color values.</p></li><li><p>The aesthetics are transformed by layer-wise and plot-wise statistics, in order. <a href="dev/@ref">Stat.histogram</a> replaces the <code>x</code> field of the aesthetics with bin positions, and sets the <code>y</code> field with the corresponding counts.</p></li><li><p>Using the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. <a href="../lib/coords/coord_cartesian.html#Coord.cartesian-1">Coord.cartesian</a> creates a Compose context that maps a vertical distance of <code>3000</code> counts to about two inches in the rendered plot.</p></li><li><p>Each layer renders its own geometry.</p></li><li><p>Finally, we compute the layout of the guides and render them on top of the plot context.</p></li></ol><footer><hr/><a class="previous" href="../lib/scales/scale_y_discrete.html"><span class="direction">Previous</span><span class="title">Scale.y_discrete</span></a><a class="next" href="regression.html"><span class="direction">Next</span><span class="title">Regression Testing</span></a></footer></article></body></html>

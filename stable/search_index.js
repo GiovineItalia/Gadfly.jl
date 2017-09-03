@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Interactivity",
     "category": "section",
-    "text": "One advantage of generating our own SVG is that the files are much more compact than those produced by Cairo, by virtue of having a higher level API. Another advantage is that we can annotate our SVG output and embed Javascript code to provide some level of dynamism.Though not a replacement for full-fledged custom interactive visualizations of the sort produced by d3, this sort of mild interactivity can improve a lot of standard plots. The fuel efficiency plot is made more clear by toggling off some of the countries, for example."
+    "text": "One advantage of generating our own SVG is that the files are much more compact than those produced by Cairo, by virtue of having a higher level API. Another advantage is that we can annotate our SVG output and embed Javascript code to provide some level of dynamism.Though not a replacement for full-fledged custom interactive visualizations of the sort produced by d3, this sort of mild interactivity can improve a lot of standard plots. The fuel efficiency plot is made more clear by toggling off some of the countries, for example.  To do so, simply click or shift-click in the colored squares in the table of keys to the right."
 },
 
 {
@@ -149,7 +149,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Plotting",
     "title": "Plotting wide-formatted data",
     "category": "section",
-    "text": "Gadfly is designed to plot data is so-called \"long form\", in which data that is of the same type, or measuring the same quantity, are stored in a single column, and any factors or groups are specified by additional columns. This is how data is typically stored in a database.Sometimes data tables are organized by grouping values of the same type into multiple columns, with a column name used to distinguish the grouping. We refer to this as \"wide form\" data.To illustrate the difference consider some historical London birth rate data.births = RDatasets.dataset(\"HistData\", \"Arbuthnot\")[[:Year, :Males, :Females]]| Row | Year | Males | Females |  |––-|–––|–––-|––––-|  | 1   | 1629 | 5218  | 4683    |  | 2   | 1630 | 4858  | 4457    |  | 3   | 1631 | 4422  | 4102    |  | 4   | 1632 | 4994  | 4590    |  | 5   | 1633 | 5158  | 4839    |  | 6   | 1634 | 5035  | 4820    |This table is wide form because \"Males\" and \"Females\" are two columns both measuring number of births. Wide form data can always be transformed to long form, e.g. with the stack function in DataFrames, but this can be inconvenient, especially if the data is not already in a DataFrame.stack(births, [:Males, :Females])| Row | variable | value | Year |  |––-|–––––|–––-|–––|  | 1   | Males    | 5218  | 1629 |  | 2   | Males    | 4858  | 1630 |  | 3   | Males    | 4422  | 1631 |  | 4   | Males    | 4994  | 1632 |  | 5   | Males    | 5158  | 1633 |  | 6   | Males    | 5035  | 1634 |The resulting table is long form with number of births in one columns, here with the default name given by stack: \"value\". Data in this form can be plotted very conveniently with Gadfly.births = RDatasets.dataset(\"HistData\", \"Arbuthnot\")[[:Year, :Males, :Females]] # hide\nplot(stack(births, [:Males, :Females]), x=:Year, y=:value color=:variable,\n     Geom.line)\n ```\n\nIn some cases, explicitly transforming the data can be burdensome. Gadfly\nlets you avoid this be referring to columns or groups of columns in a\nimplicit long-form version of the data.\n\n ```@example 1\nplot(births, x=:Year, y=Col.value(:Males, :Females),\n     color=Col.index(:Males, :Females), Geom.line)Here Col.value produces the concatenated values from a set of columns, and Col.index refers to a vector labeling each value in that concatenation by the column it came from. Also useful is Row.index, which will give the row index of items in a concatenation.This syntax also lets us more conveniently plot data that is not in a DataFrame, such as matrices or arrays of arrays. Here we plot each column of a matrix as a separate line.X = randn(40, 20) * diagm(1:20)\nplot(X, x=Row.index, y=Col.value, color=Col.index, Geom.line)When given no arguments Row.index, Col.index, and Col.value assume all columns are being concatenated, but we could have equivalently used Col.index(1:20...), etc.Plotting arrays of vectors works in much the same way as matrices, but constituent vectors maybe be of varying lengths.X = [randn(rand(10:20)) for _ in 1:10]\nplot(X, x=Row.index, y=Col.value, color=Col.index, Geom.line)"
+    "text": "Gadfly is designed to plot data is so-called \"long form\", in which data that is of the same type, or measuring the same quantity, are stored in a single column, and any factors or groups are specified by additional columns. This is how data is typically stored in a database.Sometimes data tables are organized by grouping values of the same type into multiple columns, with a column name used to distinguish the grouping. We refer to this as \"wide form\" data.To illustrate the difference consider some historical London birth rate data.births = RDatasets.dataset(\"HistData\", \"Arbuthnot\")[[:Year, :Males, :Females]]Row Year Males Females\n1 1629 5218 4683\n2 1630 4858 4457\n3 1631 4422 4102\n4 1632 4994 4590\n5 1633 5158 4839\n6 1634 5035 4820This table is wide form because \"Males\" and \"Females\" are two columns both measuring number of births. Wide form data can always be transformed to long form, e.g. with the stack function in DataFrames, but this can be inconvenient, especially if the data is not already in a DataFrame.stack(births, [:Males, :Females])Row variable value Year\n1 Males 5218 1629\n2 Males 4858 1630\n3 Males 4422 1631\n... ... ... ...\n162 Females 7623 1708\n163 Females 7380 1709\n164 Females 7288 1710The resulting table is long form with number of births in one columns, here with the default name given by stack: \"value\". Data in this form can be plotted very conveniently with Gadfly.births = RDatasets.dataset(\"HistData\", \"Arbuthnot\")[[:Year, :Males, :Females]] # hide\nplot(stack(births, [:Males, :Females]), x=:Year, y=:value, color=:variable,\n     Geom.line)In some cases, explicitly transforming the data can be burdensome. Gadfly lets you avoid this be referring to columns or groups of columns in a implicit long-form version of the data.plot(births, x=:Year, y=Col.value(:Males, :Females),\n     color=Col.index(:Males, :Females), Geom.line)Here Col.value produces the concatenated values from a set of columns, and Col.index refers to a vector labeling each value in that concatenation by the column it came from. Also useful is Row.index, which will give the row index of items in a concatenation.This syntax also lets us more conveniently plot data that is not in a DataFrame, such as matrices or arrays of arrays. Here we plot each column of a matrix as a separate line.X = randn(40, 20) * diagm(1:20)\nplot(X, x=Row.index, y=Col.value, color=Col.index, Geom.line)When given no arguments Row.index, Col.index, and Col.value assume all columns are being concatenated, but we could have equivalently used Col.index(1:20...), etc.Plotting arrays of vectors works in much the same way as matrices, but constituent vectors maybe be of varying lengths.X = [randn(rand(10:20)) for _ in 1:10]\nplot(X, x=Row.index, y=Col.value, color=Col.index, Geom.line)"
 },
 
 {
@@ -181,7 +181,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Layers and Stacks",
     "title": "Stacks",
     "category": "section",
-    "text": "Plots can also be stacked horizontally with hstack or vertically with vstack, and arranged into a rectangular array with gridstack. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.  Use title to add a descriptive string at the top.p1 = plot(x=[1,2,3], y=[4,5,6])\np2 = plot(x=[1,2,3], y=[6,7,8])\nvstack(p1,p2)\n\np3 = plot(x=[5,7,8], y=[8,9,10])\np4 = plot(x=[5,7,8], y=[10,11,12])\n\n# these two are equivalent\nvstack(hstack(p1,p2),hstack(p3,p4))\ngridstack([p1 p2; p3 p4])\n\ntitle(\"My great data\", hstack(p3,p4))"
+    "text": "Plots can also be stacked horizontally with hstack or vertically with vstack, and arranged into a rectangular array with gridstack. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.  Use title to add a descriptive string at the top, and context() to leave a panel empty.p1 = plot(x=[1,2,3], y=[4,5,6])\np2 = plot(x=[1,2,3], y=[6,7,8])\nvstack(p1,p2)\n\np3 = plot(x=[5,7,8], y=[8,9,10])\np4 = plot(x=[5,7,8], y=[10,11,12])\n\n# these two are equivalent\nvstack(hstack(p1,p2),hstack(p3,p4))\ngridstack([p1 p2; p3 p4])\n\ntitle(hstack(p3,p4), \"My great data\")\n\n# empty panel\ngridstack(Union{Plot,Compose.Context}[p1 p2; p3 Compose.context()])"
 },
 
 {
@@ -278,70 +278,6 @@ var documenterSearchIndex = {"docs": [
     "title": "The Dark theme",
     "category": "section",
     "text": "This is one of the two themes the ship with Gadfly the other being :default. Here are a few plots that use the dark theme.Gadfly.push_theme(:dark)\nnothing # hideplot(dataset(\"datasets\", \"iris\"),\n    x=\"SepalLength\", y=\"SepalWidth\", color=\"Species\", Geom.point)using RDatasets\n\ngasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)using DataFrames\n\nxs = 0:0.1:20\n\ndf_cos = DataFrame(\n    x=xs,\n    y=cos.(xs),\n    ymin=cos.(xs) .- 0.5,\n    ymax=cos.(xs) .+ 0.5,\n    f=\"cos\"\n)\n\ndf_sin = DataFrame(\n    x=xs,\n    y=sin.(xs),\n    ymin=sin.(xs) .- 0.5,\n    ymax=sin.(xs) .+ 0.5,\n    f=\"sin\"\n)\n\ndf = vcat(df_cos, df_sin)\np = plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)using Distributions\n\nX = rand(MultivariateNormal([0.0, 0.0], [1.0 0.5; 0.5 1.0]), 10000);\nplot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))Gadfly.pop_theme()"
-},
-
-{
-    "location": "lib/dev_pipeline.html#",
-    "page": "Rendering Pipeline",
-    "title": "Rendering Pipeline",
-    "category": "page",
-    "text": "Author = \"Darwin Darakananda\""
-},
-
-{
-    "location": "lib/dev_pipeline.html#Rendering-Pipeline-1",
-    "page": "Rendering Pipeline",
-    "title": "Rendering Pipeline",
-    "category": "section",
-    "text": "using DataFrames\nusing Colors\nusing Compose\nusing RDatasets\nusing Showoff\nusing GadflyHow does the function calldf = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)actually get turned into the following plot?df = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)p # hide"
-},
-
-{
-    "location": "lib/dev_pipeline.html#The-10,000-foot-View-1",
-    "page": "Rendering Pipeline",
-    "title": "The 10,000-foot View",
-    "category": "section",
-    "text": "The rendering pipeline transforms a plot specification into a Compose scene graph that contains a set of guides (e.g. axis ticks, color keys) and one or more layers of geometry (e.g. points, lines). The specification of each layer hasa data source (e.g. dataset(\"ggplot2\", \"diamonds\"))\na geometry to represent the layer's data (e.g. point, line, etc.)\nmappings to associate aesthetics of the geometry with elements of the data source (e.g.  :color => :Cut)\nlayer-wise statistics (optional) to be applied to the layer's dataAll layers of a plot share the sameCoordinates for the geometry (e.g. cartesian, polar, etc.)\naxis Scales (e.g. loglog, semilog, etc.)\nplot-wise Statistics (optional) to be applied to all layers\nGuidesA full plot specification must describe these shared elements as well as all the layer specifications. In the example above, we see that only the data source, statistics, geometry, and mapping are specified. The missing elements are either inferred from the data (e.g. categorical values in df[:Cut] implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale). For example, invoking plot with all the elements will look something likep = plot(layer(df,\n               x = :Price, color = :Cut,\n		       Stat.histogram,\n		       Geom.bar),\n	  	 Scale.x_continuous,\n		 Scale.color_discrete,\n		 Coord.cartesian,\n		 Guide.xticks, Guide.yticks,\n		 Guide.xlabel(\"Price\"),\n		 Guide.colorkey(\"Cut\"))Once a full plot specification is filled out, the rendering process proceeds as follows:(Image: )For each layer in the plot, we first map subsets of the data source to a Data object. The Price and Cut columns of the diamond dataset are mapped to the :x and :color fields of Data, respectively.\nScales are applied to the data to obtain plottable aesthetics. Scale.x_continuous keeps the values of df[:Price] unchanged, while Scale.color_discrete_hue maps the unique elements of df[:Cut] (an array of strings) to actual color values.\nThe aesthetics are transformed by layer-wise and plot-wise statistics, in order. Stat.histogram replaces the x field of the aesthetics with bin positions, and sets the y field with the corresponding counts.\nUsing the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. Coord.cartesian creates a Compose context that maps a vertical distance of 3000 counts to about two inches in the rendered plot.\nEach layer renders its own geometry.\nFinally, we compute the layout of the guides and render them on top of the plot context."
-},
-
-{
-    "location": "lib/dev_pipeline.html#More-Detailed-Walkthrough-1",
-    "page": "Rendering Pipeline",
-    "title": "More Detailed Walkthrough",
-    "category": "section",
-    "text": ""
-},
-
-{
-    "location": "lib/dev_pipeline.html#Data-Source-to-Aesthetics-1",
-    "page": "Rendering Pipeline",
-    "title": "Data Source to Aesthetics",
-    "category": "section",
-    "text": ""
-},
-
-{
-    "location": "lib/dev_pipeline.html#Aesthetics-to-Geometry-1",
-    "page": "Rendering Pipeline",
-    "title": "Aesthetics to Geometry",
-    "category": "section",
-    "text": ""
-},
-
-{
-    "location": "lib/dev_pipeline.html#Rendering-Geometry-1",
-    "page": "Rendering Pipeline",
-    "title": "Rendering Geometry",
-    "category": "section",
-    "text": ""
-},
-
-{
-    "location": "lib/dev_pipeline.html#Guide-Layout-1",
-    "page": "Rendering Pipeline",
-    "title": "Guide Layout",
-    "category": "section",
-    "text": ""
 },
 
 {
@@ -445,7 +381,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.bar",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)plot(dataset(\"HistData\", \"ChestSizes\"), x=\"Chest\", y=\"Count\", Geom.bar)"
+    "text": "using RDatasets\nusing Gadfly\nset_default_plot_size(12cm, 8cm)plot(dataset(\"HistData\", \"ChestSizes\"), x=\"Chest\", y=\"Count\", Geom.bar)using RDatasets\nusing Gadfly\nset_default_plot_size(12cm, 8cm)plot(by(dataset(\"datasets\",\"HairEyeColor\"),[:Eye,:Sex], d->sum(d[:Freq])),\n    color=\"Eye\", y=\"x1\", x=\"Sex\",\n    Geom.bar(position=:dodge), Guide.ylabel(\"Freq\"))"
 },
 
 {
@@ -2398,6 +2334,38 @@ var documenterSearchIndex = {"docs": [
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Treat numerical y data as categories\nplot(x=rand(20), y=rand(1:3, 20), Scale.y_discrete, Geom.point)"
+},
+
+{
+    "location": "dev/pipeline.html#",
+    "page": "Rendering Pipeline",
+    "title": "Rendering Pipeline",
+    "category": "page",
+    "text": "Author = \"Darwin Darakananda\""
+},
+
+{
+    "location": "dev/pipeline.html#Rendering-Pipeline-1",
+    "page": "Rendering Pipeline",
+    "title": "Rendering Pipeline",
+    "category": "section",
+    "text": "using DataFrames\nusing Colors\nusing Compose\nusing RDatasets\nusing Showoff\nusing GadflyHow does the function calldf = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)actually get turned into the following plot?df = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)p # hideThe rendering pipeline transforms a plot specification into a Compose scene graph that contains a set of guides (e.g. axis ticks, color keys) and one or more layers of geometry (e.g. points, lines). The specification of each layer hasa data source (e.g. dataset(\"ggplot2\", \"diamonds\"))\na geometry to represent the layer's data (e.g. point, line, etc.)\nmappings to associate aesthetics of the geometry with elements of the data source (e.g.  :color => :Cut)\nlayer-wise statistics (optional) to be applied to the layer's dataAll layers of a plot share the sameCoordinates for the geometry (e.g. cartesian, polar, etc.)\naxis Scales (e.g. loglog, semilog, etc.)\nplot-wise Statistics (optional) to be applied to all layers\nGuidesA full plot specification must describe these shared elements as well as all the layer specifications. In the example above, we see that only the data source, statistics, geometry, and mapping are specified. The missing elements are either inferred from the data (e.g. categorical values in df[:Cut] implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale). For example, invoking plot with all the elements will look something likep = plot(layer(df,\n               x = :Price, color = :Cut,\n		       Stat.histogram,\n		       Geom.bar),\n	  	 Scale.x_continuous,\n		 Scale.color_discrete,\n		 Coord.cartesian,\n		 Guide.xticks, Guide.yticks,\n		 Guide.xlabel(\"Price\"),\n		 Guide.colorkey(\"Cut\"))Once a full plot specification is filled out, the rendering process proceeds as follows:(Image: )For each layer in the plot, we first map subsets of the data source to a Data object. The Price and Cut columns of the diamond dataset are mapped to the :x and :color fields of Data, respectively.\nScales are applied to the data to obtain plottable aesthetics. Scale.x_continuous keeps the values of df[:Price] unchanged, while Scale.color_discrete_hue maps the unique elements of df[:Cut] (an array of strings) to actual color values.\nThe aesthetics are transformed by layer-wise and plot-wise statistics, in order. Stat.histogram replaces the x field of the aesthetics with bin positions, and sets the y field with the corresponding counts.\nUsing the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. Coord.cartesian creates a Compose context that maps a vertical distance of 3000 counts to about two inches in the rendered plot.\nEach layer renders its own geometry.\nFinally, we compute the layout of the guides and render them on top of the plot context."
+},
+
+{
+    "location": "dev/regression.html#",
+    "page": "Regression Testing",
+    "title": "Regression Testing",
+    "category": "page",
+    "text": "Author = \"Ben Arthur\""
+},
+
+{
+    "location": "dev/regression.html#Regression-Testing-1",
+    "page": "Regression Testing",
+    "title": "Regression Testing",
+    "category": "section",
+    "text": "Running Pkg.test(\"Gadfly\") evaluates all of the files in Gadfly/test/testscripts.  Any errors or warnings are printed to the REPL.  In addition, the figures that are produced are put into either the gennedoutput/ or cachedoutput/ sub-directories.  Nominally, the former represents the changes in a pull request while the latter are used for comparison. Specifically, runtests.jl examines the currently checkout out git commit, and sets the output directory to cachedoutput/ if it is the HEAD of the master branch or if it is detached.  Otherwise, it assumes you are at the tip of a development branch and saves the figures to gennedoutput/.  After evaluating all the test scripts, runtests.jl checks to see if both of the output directories are not empty.  If so, compare_examples.jl is called, and any differences between the new and old figures will be displayed in the REPL and the browser.So the automated regression analysis workflow is then as follows:In a branch other than master,\ndevelop your new feature or fix your old bug,\ncommit all your changes,\nPkg.test(\"Gadfly\"),\ncheckout master,\nPkg.test again,\ncheck that any of the reported differences are as intended."
 },
 
 ]}
