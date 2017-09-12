@@ -25,6 +25,11 @@ defined:
   * `y`: Sample from which to draw the boxplot.
 
 
+## Arguments
+
+  * `suppress_outliers`: If true, don't draw points indicating outliers. (Default is false.)
+
+
 ## Examples
 
 ```@setup 1

@@ -1,7 +1,9 @@
 immutable BoxplotGeometry <: Gadfly.GeometryElement
+    suppress_outliers::Bool
     tag::Symbol
 end
-BoxplotGeometry(; tag=empty_tag) = BoxplotGeometry(tag)
+BoxplotGeometry(; suppress_outliers=false, tag=empty_tag) =
+    BoxplotGeometry(suppress_outliers, tag)
 
 const boxplot = BoxplotGeometry
 
@@ -104,7 +106,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         svgclass("geometry"))
 
     # Outliers
-    if aes.outliers != nothing && !isempty(aes.outliers)
+    if !geom.suppress_outliers && aes.outliers != nothing && !isempty(aes.outliers)
         xys = collect(chain([zip(cycle([x]), ys, cycle([c]))
                              for (x, ys, c) in zip(xs, aes.outliers, cs)]...))
         compose!(ctx,
