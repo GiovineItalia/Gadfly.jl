@@ -31,7 +31,9 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
 
     bw = 1w / n - theme.boxplot_spacing # boxplot width
     if length(aes.x) > 1
-        minspan = minimum([xj - xi for (xi, xj) in zip(aes.x[1:end-1], aes.x[2:end])])
+        xs_sorted = sort(aes.x)
+        minspan = minimum([xj - xi for (xi, xj) in zip(xs_sorted[1:end-1],
+                                                       xs_sorted[2:end])])
         bw = minspan*cx - theme.boxplot_spacing
     end
 
