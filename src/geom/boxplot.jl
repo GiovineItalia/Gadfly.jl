@@ -1,9 +1,13 @@
 immutable BoxplotGeometry <: Gadfly.GeometryElement
+    default_statistic::Gadfly.StatisticElement
     suppress_outliers::Bool
     tag::Symbol
 end
-BoxplotGeometry(; suppress_outliers=false, tag=empty_tag) =
-    BoxplotGeometry(suppress_outliers, tag)
+
+
+BoxplotGeometry(; method=:tukey, suppress_outliers=false, tag=empty_tag) =
+    BoxplotGeometry(Gadfly.Stat.boxplot(method=method), suppress_outliers, tag)
+
 
 const boxplot = BoxplotGeometry
 
@@ -12,7 +16,7 @@ element_aesthetics(::BoxplotGeometry) = [:x, :y, :color,
                                          :upper_fence, :lower_fence,
                                          :upper_hinge, :lower_hinge]
 
-default_statistic(::BoxplotGeometry) = Gadfly.Stat.boxplot()
+default_statistic(geom::BoxplotGeometry) = geom.default_statistic
 
 function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.bar", aes,

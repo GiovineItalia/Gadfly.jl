@@ -28,6 +28,10 @@ defined:
 ## Arguments
 
   * `suppress_outliers`: If true, don't draw points indicating outliers. (Default is false.)
+  * `method`: How boxplot statistics are computed. Either `:tukey` (default)
+    which uses Tukey's rule (i.e. fences are 1.5 times inter-quartile range), or
+    a vector of 5 numbers giving quantiles for lower fence, lower hinge, middle,
+    upper hinge, and upper fence in that order.
 
 
 ## Examples
