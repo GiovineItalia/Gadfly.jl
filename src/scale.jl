@@ -459,7 +459,7 @@ function color_discrete_hue(f=default_discrete_colors;
                             order=nothing,
                             preserve_order=true)
     DiscreteColorScale(
-        default_discrete_colors,
+        f,
         levels=levels,
         order=order,
         preserve_order=preserve_order)
