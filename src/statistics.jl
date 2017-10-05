@@ -954,7 +954,13 @@ function minvalmaxval{T}(minval::T, maxval::T, val, s, ds)
 end
 
 
-immutable BoxplotStatistic <: Gadfly.StatisticElement end
+immutable BoxplotStatistic <: Gadfly.StatisticElement
+    method::Union{Symbol, Vector}
+end
+
+
+BoxplotStatistic(; method=:tukey) = BoxplotStatistic(method)
+
 
 input_aesthetics(stat::BoxplotStatistic) = [:x, :y]
 output_aesthetics(stat::BoxplotStatistic) =
@@ -1013,15 +1019,28 @@ function apply_statistic(stat::BoxplotStatistic,
             sort!(ys)
 
             aes.x[i] = x
-            aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
-                    quantile!(ys, [0.25, 0.5, 0.75])
-            iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
 
-            idx = searchsortedfirst(ys, aes.lower_hinge[i] - 1.5iqr)
-            aes.lower_fence[i] = ys[idx]
+            if stat.method == :tukey
+                aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
+                        quantile!(ys, [0.25, 0.5, 0.75])
+                iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
 
-            idx = searchsortedlast(ys, aes.upper_hinge[i] + 1.5iqr)
-            aes.upper_fence[i] = ys[idx]
+                idx = searchsortedfirst(ys, aes.lower_hinge[i] - 1.5iqr)
+                aes.lower_fence[i] = ys[idx]
+
+                idx = searchsortedlast(ys, aes.upper_hinge[i] + 1.5iqr)
+                aes.upper_fence[i] = ys[idx]
+            elseif isa(stat.method, Vector)
+                qs = stat.method
+                if length(qs) != 5
+                    error("Stat.boxplot requires exactly five quantiles.")
+                end
+
+                aes.lower_fence[i], aes.lower_hinge[i], aes.middle[i],
+                aes.upper_hinge[i], aes.upper_fence[i] = quantile!(ys, qs)
+            else
+                error("Invalid method specified for State.boxplot")
+            end
 
             push!(aes.outliers,
                  filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))

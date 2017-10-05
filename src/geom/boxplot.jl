@@ -1,7 +1,13 @@
 immutable BoxplotGeometry <: Gadfly.GeometryElement
+    default_statistic::Gadfly.StatisticElement
+    suppress_outliers::Bool
     tag::Symbol
 end
-BoxplotGeometry(; tag=empty_tag) = BoxplotGeometry(tag)
+
+
+BoxplotGeometry(; method=:tukey, suppress_outliers=false, tag=empty_tag) =
+    BoxplotGeometry(Gadfly.Stat.boxplot(method=method), suppress_outliers, tag)
+
 
 const boxplot = BoxplotGeometry
 
@@ -10,7 +16,7 @@ element_aesthetics(::BoxplotGeometry) = [:x, :y, :color,
                                          :upper_fence, :lower_fence,
                                          :upper_hinge, :lower_hinge]
 
-default_statistic(::BoxplotGeometry) = Gadfly.Stat.boxplot()
+default_statistic(geom::BoxplotGeometry) = geom.default_statistic
 
 function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.bar", aes,
@@ -29,7 +35,9 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
 
     bw = 1w / n - theme.boxplot_spacing # boxplot width
     if length(aes.x) > 1
-        minspan = minimum([xj - xi for (xi, xj) in zip(aes.x[1:end-1], aes.x[2:end])])
+        xs_sorted = sort(aes.x)
+        minspan = minimum([xj - xi for (xi, xj) in zip(xs_sorted[1:end-1],
+                                                       xs_sorted[2:end])])
         bw = minspan*cx - theme.boxplot_spacing
     end
 
@@ -104,7 +112,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         svgclass("geometry"))
 
     # Outliers
-    if aes.outliers != nothing && !isempty(aes.outliers)
+    if !geom.suppress_outliers && aes.outliers != nothing && !isempty(aes.outliers)
         xys = collect(chain([zip(cycle([x]), ys, cycle([c]))
                              for (x, ys, c) in zip(xs, aes.outliers, cs)]...))
         compose!(ctx,
