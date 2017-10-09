@@ -44,14 +44,17 @@ These parameters can either be used with `Theme` or `style`
   * `grid_color_focused`: In the D3 backend, mousing over the plot makes the
     grid lines emphasised by transitioning to this color. (Color or Nothing)
   * `grid_line_width`: Width of grid lines. (Measure)
-  * `minor_label_font`: Font used for minor labels such as guide entries and
-    labels. (String)
+  * `minor_label_font`: Font used for minor labels such as tick labels and entries
+    in keys. (String)
   * `minor_label_font_size`: Font size used for minor labels. (Measure)
   * `minor_label_color`: Color used for minor labels. (Color)
   * `major_label_font`: Font used for major labels such as guide titles and axis
     labels. (String)
   * `major_label_font_size`: Font size used for major labels. (Measure)
   * `major_label_color`: Color used for major labels. (Color)
+  * `point_label_font`: Font used for labels in Geom.label. (String)
+  * `point_label_font_size`: Font size used for labels. (Measure)
+  * `point_label_color`: Color used for labels. (Color)
   * `key_position`: Where key should be placed relative to the plot panel. One
     of `:left`, `:right`, `:top`, `:bottom`, or `:none`. Setting to `:none`
     disables the key. (Symbol)
