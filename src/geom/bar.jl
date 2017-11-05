@@ -255,7 +255,7 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         error("Orientation must be :horizontal or :vertical")
     end
 
-    if aes.color === nothing || allunique(aes.color)
+    if aes.color === nothing
         ctx = render_bar(geom, theme, aes, geom.orientation)
     elseif geom.position == :stack
         if geom.orientation == :horizontal
