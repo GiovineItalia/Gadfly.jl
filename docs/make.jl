@@ -22,6 +22,7 @@ makedocs(
             hide("Statistics" => "lib/stats.md", load_dir("stats")),
             hide("Coords" => "lib/coords.md", load_dir("coords")),
             hide("Scales" => "lib/scales.md", load_dir("scales")),
+            "Shapes" => "lib/shapes.md",
         ],
         "Development" => Any[
             "Rendering Pipeline" => "dev/pipeline.md",

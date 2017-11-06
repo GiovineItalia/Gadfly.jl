@@ -19,10 +19,22 @@ import Base: +, -, /, *,
              show, isfinite, display
 import Distributions: Distribution
 
-export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, render, plot,
+export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, Shape, render, plot,
        style, layer, spy, set_default_plot_size, set_default_plot_format, prepare_display
-export circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2,
-       hexagon, octogon, hline, vline
+
+@deprecate circle Shape.circle
+@deprecate square Shape.square
+@deprecate diamond Shape.diamond
+@deprecate cross Shape.cross
+@deprecate xcross Shape.xcross
+@deprecate utriangle Shape.utriangle
+@deprecate dtriangle Shape.dtriangle
+@deprecate star1 Shape.star1
+@deprecate star2 Shape.star2
+@deprecate hexagon Shape.hexagon
+@deprecate octogon Shape.octogon
+@deprecate hline Shape.hline
+@deprecate vline Shape.vline
 
 # Re-export some essentials from Compose
 export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack, title, gridstack
