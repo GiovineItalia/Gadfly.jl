@@ -19,6 +19,7 @@ alias for [Scale.color_discrete_hue](@ref).
 
 ```@setup 1
 using Gadfly
+using Colors
 srand(1234)
 ```
 
