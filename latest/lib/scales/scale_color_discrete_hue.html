@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scale.color_discrete_hue · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a><ul><li class="current"><a class="toctext" href="scale_color_discrete_hue.html">Scale.color_discrete_hue</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li><li><a class="toctext" href="#Examples-2">Examples</a></li></ul></li></ul></li></ul></li><li><span class="toctext">Development</span><ul><li><a class="toctext" href="../../dev/pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../../dev/regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../scales.html">Scales</a></li><li><a href="scale_color_discrete_hue.html">Scale.color_discrete_hue</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/316becf9fa4a1e266060791c6d2611df4d981bdf/docs/src/lib/scales/scale_color_discrete_hue.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Scale.color_discrete_hue</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Scale.color_discrete_hue-1" href="#Scale.color_discrete_hue-1">Scale.color_discrete_hue</a></h1><p>Create a discrete color scale to be used for the plot. <code>Scale.color_discrete</code> is an alias for <a href="scale_color_discrete_hue.html#Scale.color_discrete_hue-1">Scale.color_discrete_hue</a>.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>f</code> (optional): A function <code>f(n)</code> that produces a vector of <code>n</code> colors. Usually <a href="https://github.com/JuliaGraphics/Colors.jl#distinguishable_colors"><code>distinguishable_colors</code></a> can be used for this, with parameters tuned to your liking.</p></li><li><p><code>levels</code> (optional, keyword): Explicitly set levels used by the scale.</p></li><li><p><code>order</code> (optional, keyword): A vector of integers giving a permutation of the levels default order.</p></li><li><p><code>preserve_order</code> (optional, keyword): If set to <code>true</code>, orders levels as they appear in the data</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><h2><a class="nav-anchor" id="Examples-2" href="#Examples-2">Examples</a></h2><p>You can set a discrete color scale of your choice in a plot.</p><div><pre><code class="language-julia">function gen_colors(n)
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scale.color_discrete_hue · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a><ul><li class="current"><a class="toctext" href="scale_color_discrete_hue.html">Scale.color_discrete_hue</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li><li><a class="toctext" href="#Examples-2">Examples</a></li></ul></li></ul></li></ul></li><li><span class="toctext">Development</span><ul><li><a class="toctext" href="../../dev/pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../../dev/regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../scales.html">Scales</a></li><li><a href="scale_color_discrete_hue.html">Scale.color_discrete_hue</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/6a6a9eb92e598b4f81824b3d447941968bf3f623/docs/src/lib/scales/scale_color_discrete_hue.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Scale.color_discrete_hue</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Scale.color_discrete_hue-1" href="#Scale.color_discrete_hue-1">Scale.color_discrete_hue</a></h1><p>Create a discrete color scale to be used for the plot. <code>Scale.color_discrete</code> is an alias for <a href="scale_color_discrete_hue.html#Scale.color_discrete_hue-1">Scale.color_discrete_hue</a>.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>f</code> (optional): A function <code>f(n)</code> that produces a vector of <code>n</code> colors. Usually <a href="https://github.com/JuliaGraphics/Colors.jl#distinguishable_colors"><code>distinguishable_colors</code></a> can be used for this, with parameters tuned to your liking.</p></li><li><p><code>levels</code> (optional, keyword): Explicitly set levels used by the scale.</p></li><li><p><code>order</code> (optional, keyword): A vector of integers giving a permutation of the levels default order.</p></li><li><p><code>preserve_order</code> (optional, keyword): If set to <code>true</code>, orders levels as they appear in the data</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><h2><a class="nav-anchor" id="Examples-2" href="#Examples-2">Examples</a></h2><p>You can set a discrete color scale of your choice in a plot.</p><div><pre><code class="language-julia">function gen_colors(n)
   cs = distinguishable_colors(n,
       [colorant&quot;#FE4365&quot;, colorant&quot;#eca25c&quot;], # seed colors
       lchoices=Float64[58, 45, 72.5, 90],     # lightness choices
@@ -45,9 +45,9 @@ plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
       <text x="123.22" y="38.3" dy="0.35em" id="img-82015f10-8" class="color_virginica">virginica</text>
     </g>
     <g stroke="#000000" stroke-opacity="0.000" id="img-82015f10-9">
-      <rect x="120.41" y="30.14" width="1.81" height="1.81" id="img-82015f10-10" fill="#00BFFF" class="color_setosa"/>
-      <rect x="120.41" y="33.76" width="1.81" height="1.81" id="img-82015f10-11" fill="#D4CA3A" class="color_versicolor"/>
-      <rect x="120.41" y="37.39" width="1.81" height="1.81" id="img-82015f10-12" fill="#FF6DAE" class="color_virginica"/>
+      <rect x="120.41" y="30.14" width="1.81" height="1.81" id="img-82015f10-10" fill="#FE4365" class="color_setosa"/>
+      <rect x="120.41" y="33.76" width="1.81" height="1.81" id="img-82015f10-11" fill="#ECA25C" class="color_versicolor"/>
+      <rect x="120.41" y="37.39" width="1.81" height="1.81" id="img-82015f10-12" fill="#236EAD" class="color_virginica"/>
     </g>
     <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-82015f10-13">
       <text x="120.41" y="27.22" id="img-82015f10-14">Species</text>
@@ -76,454 +76,454 @@ plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
     <g class="plotpanel" id="img-82015f10-32">
       <g class="geometry" id="img-82015f10-33">
         <g stroke-width="0.3" id="img-82015f10-34">
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-35">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-35">
             <use xlink:href="#img-82015f10-36" x="66.6" y="38.03" id="img-82015f10-37"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-38">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-38">
             <use xlink:href="#img-82015f10-39" x="73.86" y="29.75" id="img-82015f10-40"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-41">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-41">
             <use xlink:href="#img-82015f10-42" x="81.12" y="38.03" id="img-82015f10-43"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-44">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-44">
             <use xlink:href="#img-82015f10-45" x="76.28" y="48.37" id="img-82015f10-46"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-47">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-47">
             <use xlink:href="#img-82015f10-48" x="85.95" y="38.03" id="img-82015f10-49"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-50">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-50">
             <use xlink:href="#img-82015f10-51" x="85.95" y="31.82" id="img-82015f10-52"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-53">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-53">
             <use xlink:href="#img-82015f10-54" x="88.37" y="33.89" id="img-82015f10-55"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-56">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-56">
             <use xlink:href="#img-82015f10-57" x="64.18" y="44.23" id="img-82015f10-58"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-59">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-59">
             <use xlink:href="#img-82015f10-60" x="90.79" y="35.96" id="img-82015f10-61"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-62">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-62">
             <use xlink:href="#img-82015f10-63" x="85.95" y="35.96" id="img-82015f10-64"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-65">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-65">
             <use xlink:href="#img-82015f10-66" x="90.79" y="35.96" id="img-82015f10-67"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-68">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-68">
             <use xlink:href="#img-82015f10-69" x="69.02" y="38.03" id="img-82015f10-70"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-71">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-71">
             <use xlink:href="#img-82015f10-72" x="78.7" y="35.96" id="img-82015f10-73"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-74">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-74">
             <use xlink:href="#img-82015f10-75" x="76.28" y="29.75" id="img-82015f10-76"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-77">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-77">
             <use xlink:href="#img-82015f10-78" x="110.15" y="38.03" id="img-82015f10-79"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-80">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-80">
             <use xlink:href="#img-82015f10-81" x="71.44" y="46.3" id="img-82015f10-82"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-83">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-83">
             <use xlink:href="#img-82015f10-84" x="76.28" y="42.17" id="img-82015f10-85"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-86">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-86">
             <use xlink:href="#img-82015f10-87" x="78.7" y="42.17" id="img-82015f10-88"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-89">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-89">
             <use xlink:href="#img-82015f10-90" x="114.99" y="21.48" id="img-82015f10-91"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-92">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-92">
             <use xlink:href="#img-82015f10-93" x="102.89" y="42.17" id="img-82015f10-94"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-95">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-95">
             <use xlink:href="#img-82015f10-96" x="98.05" y="38.03" id="img-82015f10-97"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-98">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-98">
             <use xlink:href="#img-82015f10-99" x="78.7" y="42.17" id="img-82015f10-100"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-101">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-101">
             <use xlink:href="#img-82015f10-102" x="71.44" y="38.03" id="img-82015f10-103"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-104">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-104">
             <use xlink:href="#img-82015f10-105" x="73.86" y="42.17" id="img-82015f10-106"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-107">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-107">
             <use xlink:href="#img-82015f10-108" x="98.05" y="33.89" id="img-82015f10-109"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-110">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-110">
             <use xlink:href="#img-82015f10-111" x="85.95" y="31.82" id="img-82015f10-112"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-113">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-113">
             <use xlink:href="#img-82015f10-114" x="76.28" y="44.23" id="img-82015f10-115"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-116">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-116">
             <use xlink:href="#img-82015f10-117" x="110.15" y="42.17" id="img-82015f10-118"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-119">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-119">
             <use xlink:href="#img-82015f10-120" x="59.34" y="42.17" id="img-82015f10-121"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-122">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-122">
             <use xlink:href="#img-82015f10-123" x="90.79" y="33.89" id="img-82015f10-124"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-125">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-125">
             <use xlink:href="#img-82015f10-126" x="69.02" y="54.58" id="img-82015f10-127"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-128">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-128">
             <use xlink:href="#img-82015f10-129" x="110.15" y="46.3" id="img-82015f10-130"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-131">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-131">
             <use xlink:href="#img-82015f10-132" x="110.15" y="21.48" id="img-82015f10-133"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-134">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-134">
             <use xlink:href="#img-82015f10-135" x="81.12" y="38.03" id="img-82015f10-136"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-137">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-137">
             <use xlink:href="#img-82015f10-138" x="78.7" y="33.89" id="img-82015f10-139"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-140">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-140">
             <use xlink:href="#img-82015f10-141" x="64.18" y="42.17" id="img-82015f10-142"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-143">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-143">
             <use xlink:href="#img-82015f10-144" x="61.76" y="48.37" id="img-82015f10-145"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-146">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-146">
             <use xlink:href="#img-82015f10-147" x="88.37" y="38.03" id="img-82015f10-148"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-149">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-149">
             <use xlink:href="#img-82015f10-150" x="78.7" y="44.23" id="img-82015f10-151"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-152">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-152">
             <use xlink:href="#img-82015f10-153" x="81.12" y="33.89" id="img-82015f10-154"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-155">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-155">
             <use xlink:href="#img-82015f10-156" x="98.05" y="25.62" id="img-82015f10-157"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-158">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-158">
             <use xlink:href="#img-82015f10-159" x="85.95" y="48.37" id="img-82015f10-160"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-161">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-161">
             <use xlink:href="#img-82015f10-162" x="100.47" y="40.1" id="img-82015f10-163"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-164">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-164">
             <use xlink:href="#img-82015f10-165" x="42.41" y="48.37" id="img-82015f10-166"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-167">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-167">
             <use xlink:href="#img-82015f10-168" x="107.73" y="38.03" id="img-82015f10-169"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-170">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-170">
             <use xlink:href="#img-82015f10-171" x="81.12" y="38.03" id="img-82015f10-172"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-173">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-173">
             <use xlink:href="#img-82015f10-174" x="76.28" y="40.1" id="img-82015f10-175"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-176">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-176">
             <use xlink:href="#img-82015f10-177" x="95.63" y="38.03" id="img-82015f10-178"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-179">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-179">
             <use xlink:href="#img-82015f10-180" x="64.18" y="44.23" id="img-82015f10-181"/>
           </g>
-          <g class="color_virginica" stroke="#FFFFFF" fill="#FF6DAE" id="img-82015f10-182">
+          <g class="color_virginica" stroke="#FFFFFF" fill="#236EAD" id="img-82015f10-182">
             <use xlink:href="#img-82015f10-183" x="76.28" y="31.82" id="img-82015f10-184"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-185">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-185">
             <use xlink:href="#img-82015f10-186" x="61.76" y="42.17" id="img-82015f10-187"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-188">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-188">
             <use xlink:href="#img-82015f10-189" x="47.24" y="48.37" id="img-82015f10-190"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-191">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-191">
             <use xlink:href="#img-82015f10-192" x="73.86" y="40.1" id="img-82015f10-193"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-194">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-194">
             <use xlink:href="#img-82015f10-195" x="61.76" y="40.1" id="img-82015f10-196"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-197">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-197">
             <use xlink:href="#img-82015f10-198" x="61.76" y="38.03" id="img-82015f10-199"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-200">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-200">
             <use xlink:href="#img-82015f10-201" x="59.34" y="44.23" id="img-82015f10-202"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-203">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-203">
             <use xlink:href="#img-82015f10-204" x="44.83" y="52.51" id="img-82015f10-205"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-206">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-206">
             <use xlink:href="#img-82015f10-207" x="64.18" y="46.3" id="img-82015f10-208"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-209">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-209">
             <use xlink:href="#img-82015f10-210" x="71.44" y="38.03" id="img-82015f10-211"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-212">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-212">
             <use xlink:href="#img-82015f10-213" x="56.92" y="46.3" id="img-82015f10-214"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-215">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-215">
             <use xlink:href="#img-82015f10-216" x="56.92" y="48.37" id="img-82015f10-217"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-218">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-218">
             <use xlink:href="#img-82015f10-219" x="59.34" y="38.03" id="img-82015f10-220"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-221">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-221">
             <use xlink:href="#img-82015f10-222" x="76.28" y="52.51" id="img-82015f10-223"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-224">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-224">
             <use xlink:href="#img-82015f10-225" x="85.95" y="35.96" id="img-82015f10-226"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-227">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-227">
             <use xlink:href="#img-82015f10-228" x="69.02" y="29.75" id="img-82015f10-229"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-230">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-230">
             <use xlink:href="#img-82015f10-231" x="54.5" y="38.03" id="img-82015f10-232"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-233">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-233">
             <use xlink:href="#img-82015f10-234" x="69.02" y="44.23" id="img-82015f10-235"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-236">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-236">
             <use xlink:href="#img-82015f10-237" x="64.18" y="44.23" id="img-82015f10-238"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-239">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-239">
             <use xlink:href="#img-82015f10-240" x="56.92" y="50.44" id="img-82015f10-241"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-242">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-242">
             <use xlink:href="#img-82015f10-243" x="56.92" y="50.44" id="img-82015f10-244"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-245">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-245">
             <use xlink:href="#img-82015f10-246" x="61.76" y="46.3" id="img-82015f10-247"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-248">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-248">
             <use xlink:href="#img-82015f10-249" x="69.02" y="40.1" id="img-82015f10-250"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-251">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-251">
             <use xlink:href="#img-82015f10-252" x="85.95" y="38.03" id="img-82015f10-253"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-254">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-254">
             <use xlink:href="#img-82015f10-255" x="88.37" y="42.17" id="img-82015f10-256"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-257">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-257">
             <use xlink:href="#img-82015f10-258" x="83.54" y="38.03" id="img-82015f10-259"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-260">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-260">
             <use xlink:href="#img-82015f10-261" x="78.7" y="40.1" id="img-82015f10-262"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-263">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-263">
             <use xlink:href="#img-82015f10-264" x="71.44" y="42.17" id="img-82015f10-265"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-266">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-266">
             <use xlink:href="#img-82015f10-267" x="76.28" y="48.37" id="img-82015f10-268"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-269">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-269">
             <use xlink:href="#img-82015f10-270" x="71.44" y="42.17" id="img-82015f10-271"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-272">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-272">
             <use xlink:href="#img-82015f10-273" x="66.6" y="33.89" id="img-82015f10-274"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-275">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-275">
             <use xlink:href="#img-82015f10-276" x="59.34" y="48.37" id="img-82015f10-277"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-278">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-278">
             <use xlink:href="#img-82015f10-279" x="73.86" y="54.58" id="img-82015f10-280"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-281">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-281">
             <use xlink:href="#img-82015f10-282" x="64.18" y="44.23" id="img-82015f10-283"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-284">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-284">
             <use xlink:href="#img-82015f10-285" x="59.34" y="38.03" id="img-82015f10-286"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-287">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-287">
             <use xlink:href="#img-82015f10-288" x="85.95" y="35.96" id="img-82015f10-289"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-290">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-290">
             <use xlink:href="#img-82015f10-291" x="59.34" y="40.1" id="img-82015f10-292"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-293">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-293">
             <use xlink:href="#img-82015f10-294" x="71.44" y="40.1" id="img-82015f10-295"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-296">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-296">
             <use xlink:href="#img-82015f10-297" x="69.02" y="54.58" id="img-82015f10-298"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-299">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-299">
             <use xlink:href="#img-82015f10-300" x="66.6" y="38.03" id="img-82015f10-301"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-302">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-302">
             <use xlink:href="#img-82015f10-303" x="44.83" y="58.72" id="img-82015f10-304"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-305">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-305">
             <use xlink:href="#img-82015f10-306" x="49.66" y="44.23" id="img-82015f10-307"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-308">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-308">
             <use xlink:href="#img-82015f10-309" x="83.54" y="40.1" id="img-82015f10-310"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-311">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-311">
             <use xlink:href="#img-82015f10-312" x="42.41" y="50.44" id="img-82015f10-313"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-314">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-314">
             <use xlink:href="#img-82015f10-315" x="76.28" y="31.82" id="img-82015f10-316"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-317">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-317">
             <use xlink:href="#img-82015f10-318" x="61.76" y="42.17" id="img-82015f10-319"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-320">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-320">
             <use xlink:href="#img-82015f10-321" x="81.12" y="42.17" id="img-82015f10-322"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-323">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-323">
             <use xlink:href="#img-82015f10-324" x="56.92" y="52.51" id="img-82015f10-325"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-326">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-326">
             <use xlink:href="#img-82015f10-327" x="90.79" y="35.96" id="img-82015f10-328"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-329">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-329">
             <use xlink:href="#img-82015f10-330" x="78.7" y="33.89" id="img-82015f10-331"/>
           </g>
-          <g class="color_versicolor" stroke="#FFFFFF" fill="#D4CA3A" id="img-82015f10-332">
+          <g class="color_versicolor" stroke="#FFFFFF" fill="#ECA25C" id="img-82015f10-332">
             <use xlink:href="#img-82015f10-333" x="93.21" y="33.89" id="img-82015f10-334"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-335">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-335">
             <use xlink:href="#img-82015f10-336" x="44.83" y="31.82" id="img-82015f10-337"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-338">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-338">
             <use xlink:href="#img-82015f10-339" x="52.08" y="23.55" id="img-82015f10-340"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-341">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-341">
             <use xlink:href="#img-82015f10-342" x="35.15" y="33.89" id="img-82015f10-343"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-344">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-344">
             <use xlink:href="#img-82015f10-345" x="47.24" y="21.48" id="img-82015f10-346"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-347">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-347">
             <use xlink:href="#img-82015f10-348" x="39.99" y="38.03" id="img-82015f10-349"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-350">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-350">
             <use xlink:href="#img-82015f10-351" x="47.24" y="21.48" id="img-82015f10-352"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-353">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-353">
             <use xlink:href="#img-82015f10-354" x="44.83" y="27.69" id="img-82015f10-355"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-356">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-356">
             <use xlink:href="#img-82015f10-357" x="30.31" y="33.89" id="img-82015f10-358"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-359">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-359">
             <use xlink:href="#img-82015f10-360" x="32.73" y="52.51" id="img-82015f10-361"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-362">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-362">
             <use xlink:href="#img-82015f10-363" x="44.83" y="27.69" id="img-82015f10-364"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-365">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-365">
             <use xlink:href="#img-82015f10-366" x="47.24" y="29.75" id="img-82015f10-367"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-368">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-368">
             <use xlink:href="#img-82015f10-369" x="30.31" y="38.03" id="img-82015f10-370"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-371">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-371">
             <use xlink:href="#img-82015f10-372" x="42.41" y="25.62" id="img-82015f10-373"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-374">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-374">
             <use xlink:href="#img-82015f10-375" x="56.92" y="27.69" id="img-82015f10-376"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-377">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-377">
             <use xlink:href="#img-82015f10-378" x="44.83" y="33.89" id="img-82015f10-379"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-380">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-380">
             <use xlink:href="#img-82015f10-381" x="42.41" y="35.96" id="img-82015f10-382"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-383">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-383">
             <use xlink:href="#img-82015f10-384" x="56.92" y="13.21" id="img-82015f10-385"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-386">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-386">
             <use xlink:href="#img-82015f10-387" x="49.66" y="15.27" id="img-82015f10-388"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-389">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-389">
             <use xlink:href="#img-82015f10-390" x="54.5" y="29.75" id="img-82015f10-391"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-392">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-392">
             <use xlink:href="#img-82015f10-393" x="39.99" y="35.96" id="img-82015f10-394"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-395">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-395">
             <use xlink:href="#img-82015f10-396" x="37.57" y="33.89" id="img-82015f10-397"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-398">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-398">
             <use xlink:href="#img-82015f10-399" x="49.66" y="29.75" id="img-82015f10-400"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-401">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-401">
             <use xlink:href="#img-82015f10-402" x="49.66" y="27.69" id="img-82015f10-403"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-404">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-404">
             <use xlink:href="#img-82015f10-405" x="44.83" y="29.75" id="img-82015f10-406"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-407">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-407">
             <use xlink:href="#img-82015f10-408" x="44.83" y="38.03" id="img-82015f10-409"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-410">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-410">
             <use xlink:href="#img-82015f10-411" x="39.99" y="29.75" id="img-82015f10-412"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-413">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-413">
             <use xlink:href="#img-82015f10-414" x="47.24" y="31.82" id="img-82015f10-415"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-416">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-416">
             <use xlink:href="#img-82015f10-417" x="35.15" y="25.62" id="img-82015f10-418"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-419">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-419">
             <use xlink:href="#img-82015f10-420" x="47.24" y="23.55" id="img-82015f10-421"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-422">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-422">
             <use xlink:href="#img-82015f10-423" x="54.5" y="29.75" id="img-82015f10-424"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-425">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-425">
             <use xlink:href="#img-82015f10-426" x="47.24" y="21.48" id="img-82015f10-427"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-428">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-428">
             <use xlink:href="#img-82015f10-429" x="61.76" y="21.48" id="img-82015f10-430"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-431">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-431">
             <use xlink:href="#img-82015f10-432" x="47.24" y="27.69" id="img-82015f10-433"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-434">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-434">
             <use xlink:href="#img-82015f10-435" x="54.5" y="19.41" id="img-82015f10-436"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-437">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-437">
             <use xlink:href="#img-82015f10-438" x="61.76" y="9.07" id="img-82015f10-439"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-440">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-440">
             <use xlink:href="#img-82015f10-441" x="64.18" y="17.34" id="img-82015f10-442"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-443">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-443">
             <use xlink:href="#img-82015f10-444" x="27.89" y="38.03" id="img-82015f10-445"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-446">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-446">
             <use xlink:href="#img-82015f10-447" x="39.99" y="38.03" id="img-82015f10-448"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-449">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-449">
             <use xlink:href="#img-82015f10-450" x="39.99" y="29.75" id="img-82015f10-451"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-452">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-452">
             <use xlink:href="#img-82015f10-453" x="54.5" y="23.55" id="img-82015f10-454"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-455">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-455">
             <use xlink:href="#img-82015f10-456" x="42.41" y="35.96" id="img-82015f10-457"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-458">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-458">
             <use xlink:href="#img-82015f10-459" x="30.31" y="40.1" id="img-82015f10-460"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-461">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-461">
             <use xlink:href="#img-82015f10-462" x="44.83" y="29.75" id="img-82015f10-463"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-464">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-464">
             <use xlink:href="#img-82015f10-465" x="35.15" y="29.75" id="img-82015f10-466"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-467">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-467">
             <use xlink:href="#img-82015f10-468" x="54.5" y="19.41" id="img-82015f10-469"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-470">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-470">
             <use xlink:href="#img-82015f10-471" x="44.83" y="25.62" id="img-82015f10-472"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-473">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-473">
             <use xlink:href="#img-82015f10-474" x="35.15" y="35.96" id="img-82015f10-475"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-476">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-476">
             <use xlink:href="#img-82015f10-477" x="37.57" y="33.89" id="img-82015f10-478"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-479">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-479">
             <use xlink:href="#img-82015f10-480" x="42.41" y="38.03" id="img-82015f10-481"/>
           </g>
-          <g class="color_setosa" stroke="#FFFFFF" fill="#00BFFF" id="img-82015f10-482">
+          <g class="color_setosa" stroke="#FFFFFF" fill="#FE4365" id="img-82015f10-482">
             <use xlink:href="#img-82015f10-483" x="47.24" y="27.69" id="img-82015f10-484"/>
           </g>
         </g>
@@ -1149,4 +1149,4 @@ plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
     style(
         discrete_color_scale=Scale.color_discrete(gen_colors)
     )
-)</code></pre><pre><code class="language-none">Gadfly.Theme(LCHab{Float32}(70.0f0,60.0f0,240.0f0),0.9mm,0.45mm,1.8mm,Function[Compose.circle,Gadfly.square,Gadfly.diamond,Gadfly.cross,Gadfly.xcross,Gadfly.utriangle,Gadfly.dtriangle,Gadfly.star1,Gadfly.star2,Gadfly.hexagon,Gadfly.octagon,Gadfly.hline,Gadfly.vline],0.3mm,:solid,nothing,nothing,1.0,nothing,5.0mm,RGB{N0f8}(0.816,0.816,0.878),Measures.Length{:mm,Float64}[0.5mm,0.5mm],RGB{N0f8}(0.627,0.627,0.627),0.2mm,&quot;&#39;PT Sans Caption&#39;,&#39;Helvetica Neue&#39;,&#39;Helvetica&#39;,sans-serif&quot;,2.822222222222222mm,RGB{N0f8}(0.424,0.376,0.42),&quot;&#39;PT Sans&#39;,&#39;Helvetica Neue&#39;,&#39;Helvetica&#39;,sans-serif&quot;,3.880555555555555mm,RGB{N0f8}(0.337,0.29,0.333),&quot;&#39;PT Sans Caption&#39;,&#39;Helvetica Neue&#39;,&#39;Helvetica&#39;,sans-serif&quot;,2.822222222222222mm,RGB{N0f8}(0.298,0.251,0.294),&quot;&#39;PT Sans&#39;,&#39;Helvetica Neue&#39;,&#39;Helvetica&#39;,sans-serif&quot;,3.880555555555555mm,RGB{N0f8}(0.212,0.165,0.208),&quot;&#39;PT Sans&#39;,&#39;Helvetica Neue&#39;,&#39;Helvetica&#39;,sans-serif&quot;,2.822222222222222mm,RGB{N0f8}(0.298,0.251,0.294),40,-0.05mm,1.0mm,3.0mm,Gadfly.default_stroke_color,0.3mm,Gadfly.default_discrete_highlight_color,Gadfly.default_continuous_highlight_color,Gadfly.default_lowlight_color,0.6,Gadfly.default_middle_color,0.6mm,:left,:square,:right,nothing,2.0mm,1000,10.0,0.5,0.2,4,Gadfly.Scale.DiscreteColorScale(Gadfly.Scale.default_discrete_colors,nothing,nothing,true),Gadfly.Scale.ContinuousColorScale(Gadfly.Scale.#71,Gadfly.Scale.ContinuousScaleTransform(identity,identity,Gadfly.Scale.identity_formatter),nothing,nothing))</code></pre></div><footer><hr/><a class="previous" href="scale_color_continuous.html"><span class="direction">Previous</span><span class="title">Scale.color_continuous</span></a><a class="next" href="scale_color_discrete_manual.html"><span class="direction">Next</span><span class="title">Scale.color_discrete_manual</span></a></footer></article></body></html>
+)</code></pre><pre><code class="language-none">Gadfly.Theme(LCHab{Float32}(70.0f0,60.0f0,240.0f0),0.9mm,0.45mm,1.8mm,Function[Compose.circle,Gadfly.square,Gadfly.diamond,Gadfly.cross,Gadfly.xcross,Gadfly.utriangle,Gadfly.dtriangle,Gadfly.star1,Gadfly.star2,Gadfly.hexagon,Gadfly.octagon,Gadfly.hline,Gadfly.vline],0.3mm,:solid,nothing,nothing,1.0,nothing,5.0mm,RGB{N0f8}(0.816,0.816,0.878),Measures.Length{:mm,Float64}[0.5mm,0.5mm],RGB{N0f8}(0.627,0.627,0.627),0.2mm,&quot;&#39;PT Sans Caption&#39;,&#39;Helvetica Neue&#39;,&#39;Helvetica&#39;,sans-serif&quot;,2.822222222222222mm,RGB{N0f8}(0.424,0.376,0.42),&quot;&#39;PT Sans&#39;,&#39;Helvetica Neue&#39;,&#39;Helvetica&#39;,sans-serif&quot;,3.880555555555555mm,RGB{N0f8}(0.337,0.29,0.333),&quot;&#39;PT Sans Caption&#39;,&#39;Helvetica Neue&#39;,&#39;Helvetica&#39;,sans-serif&quot;,2.822222222222222mm,RGB{N0f8}(0.298,0.251,0.294),&quot;&#39;PT Sans&#39;,&#39;Helvetica Neue&#39;,&#39;Helvetica&#39;,sans-serif&quot;,3.880555555555555mm,RGB{N0f8}(0.212,0.165,0.208),&quot;&#39;PT Sans&#39;,&#39;Helvetica Neue&#39;,&#39;Helvetica&#39;,sans-serif&quot;,2.822222222222222mm,RGB{N0f8}(0.298,0.251,0.294),40,-0.05mm,1.0mm,3.0mm,Gadfly.default_stroke_color,0.3mm,Gadfly.default_discrete_highlight_color,Gadfly.default_continuous_highlight_color,Gadfly.default_lowlight_color,0.6,Gadfly.default_middle_color,0.6mm,:left,:square,:right,nothing,2.0mm,1000,10.0,0.5,0.2,4,Gadfly.Scale.DiscreteColorScale(ex-1.gen_colors,nothing,nothing,true),Gadfly.Scale.ContinuousColorScale(Gadfly.Scale.#71,Gadfly.Scale.ContinuousScaleTransform(identity,identity,Gadfly.Scale.identity_formatter),nothing,nothing))</code></pre></div><footer><hr/><a class="previous" href="scale_color_continuous.html"><span class="direction">Previous</span><span class="title">Scale.color_continuous</span></a><a class="next" href="scale_color_discrete_manual.html"><span class="direction">Next</span><span class="title">Scale.color_discrete_manual</span></a></footer></article></body></html>
