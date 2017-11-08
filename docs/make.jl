@@ -32,7 +32,7 @@ makedocs(
 
 deploydocs(
     repo   = "github.com/GiovineItalia/Gadfly.jl.git",
-    julia  = "0.5",
+    julia  = "0.6",
     osname = "linux",
     deps = nothing,
     make = nothing,
