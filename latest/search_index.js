@@ -33,14 +33,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#Manual-outline-1",
-    "page": "Home",
-    "title": "Manual outline",
-    "category": "section",
-    "text": "Pages = [\n    \"man/plotting.md\",\n    \"man/layers.md\",\n    \"man/backends.md\",\n    \"man/themes.md\"\n]\nDepth = 1"
-},
-
-{
     "location": "index.html#Credits-1",
     "page": "Home",
     "title": "Credits",
@@ -2342,6 +2334,30 @@ var documenterSearchIndex = {"docs": [
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Treat numerical y data as categories\nplot(x=rand(20), y=rand(1:3, 20), Scale.y_discrete, Geom.point)"
+},
+
+{
+    "location": "lib/shapes.html#",
+    "page": "Shapes",
+    "title": "Shapes",
+    "category": "page",
+    "text": "Author = \"Ben J. Arthur\""
+},
+
+{
+    "location": "lib/shapes.html#Shapes-1",
+    "page": "Shapes",
+    "title": "Shapes",
+    "category": "section",
+    "text": "Shapes, when combined with Geom.point, specify the appearance of markers.  Available shapes include circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octogon, hline, and vline."
+},
+
+{
+    "location": "lib/shapes.html#Examples-1",
+    "page": "Shapes",
+    "title": "Examples",
+    "category": "section",
+    "text": "using RDatasets\nusing Gadfly\nset_default_plot_size(12cm, 8cm)plot(dataset(\"HistData\",\"DrinksWages\"),\n    x=\"Wage\", y=\"Drinks\", shape=[Shape.square],\n    Geom.point, Scale.y_log10)"
 },
 
 {

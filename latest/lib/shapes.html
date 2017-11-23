@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Shapes · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../index.html"><img class="logo" src="../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../index.html">Home</a></li><li><a class="toctext" href="../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../man/backends.html">Backends</a></li><li><a class="toctext" href="../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="geometries.html">Geometries</a></li><li><a class="toctext" href="guides.html">Guides</a></li><li><a class="toctext" href="stats.html">Statistics</a></li><li><a class="toctext" href="coords.html">Coords</a></li><li><a class="toctext" href="scales.html">Scales</a></li><li class="current"><a class="toctext" href="shapes.html">Shapes</a><ul class="internal"><li class="toplevel"><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><span class="toctext">Development</span><ul><li><a class="toctext" href="../dev/pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../dev/regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="shapes.html">Shapes</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/88a053520024c96ae3a6e6456b3f2fa846a59f01/docs/src/lib/shapes.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Shapes</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Shapes-1" href="#Shapes-1">Shapes</a></h1><p>Shapes, when combined with <a href="geoms/geom_point.html#Geom.point-1">Geom.point</a>, specify the appearance of markers.  Available shapes include circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octogon, hline, and vline.</p><h1><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h1><div></div><div><pre><code class="language-julia">plot(dataset(&quot;HistData&quot;,&quot;DrinksWages&quot;),
+    x=&quot;Wage&quot;, y=&quot;Drinks&quot;, shape=[Shape.square],
+    Geom.point, Scale.y_log10)</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:gadfly="http://www.gadflyjl.org/ns"
+     version="1.2"
+     width="120mm" height="80mm" viewBox="0 0 120 80"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+     font-size="3.88"
+>
+<g class="plotroot xscalable yscalable" id="img-3ccf3e11-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-3ccf3e11-2">
+    <text x="68.49" y="68.39" text-anchor="middle" dy="0.6em">Wage</text>
+  </g>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-3ccf3e11-3">
+    <text x="23.98" y="61.72" text-anchor="middle" dy="0.6em">0</text>
+    <text x="46.23" y="61.72" text-anchor="middle" dy="0.6em">10</text>
+    <text x="68.49" y="61.72" text-anchor="middle" dy="0.6em">20</text>
+    <text x="90.74" y="61.72" text-anchor="middle" dy="0.6em">30</text>
+    <text x="113" y="61.72" text-anchor="middle" dy="0.6em">40</text>
+  </g>
+<g clip-path="url(#img-3ccf3e11-4)">
+  <g id="img-3ccf3e11-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-3ccf3e11-6">
+      <rect x="21.98" y="5" width="93.02" height="55.72"/>
+    </g>
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-3ccf3e11-7">
+      <path fill="none" d="M21.98,58.72 L 115 58.72"/>
+      <path fill="none" d="M21.98,45.79 L 115 45.79"/>
+      <path fill="none" d="M21.98,32.86 L 115 32.86"/>
+      <path fill="none" d="M21.98,19.93 L 115 19.93"/>
+      <path fill="none" d="M21.98,7 L 115 7"/>
+    </g>
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-3ccf3e11-8">
+      <path fill="none" d="M23.98,5 L 23.98 60.72"/>
+      <path fill="none" d="M46.23,5 L 46.23 60.72"/>
+      <path fill="none" d="M68.49,5 L 68.49 60.72"/>
+      <path fill="none" d="M90.74,5 L 90.74 60.72"/>
+      <path fill="none" d="M113,5 L 113 60.72"/>
+    </g>
+    <g class="plotpanel" id="img-3ccf3e11-9">
+      <g class="geometry" id="img-3ccf3e11-10">
+        <g stroke-width="0.3" id="img-3ccf3e11-11">
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-12">
+            <rect x="112.36" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-13">
+            <rect x="94.56" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-14">
+            <rect x="92.52" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-15">
+            <rect x="104.57" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-16">
+            <rect x="103.65" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-17">
+            <rect x="93.63" y="42.51" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-18">
+            <rect x="112.36" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-19">
+            <rect x="100.12" y="40" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-20">
+            <rect x="93.63" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-21">
+            <rect x="92.52" y="26.94" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-22">
+            <rect x="90.48" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-23">
+            <rect x="109.77" y="40" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-24">
+            <rect x="99.2" y="26.26" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-25">
+            <rect x="91.96" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-26">
+            <rect x="91.96" y="33.4" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-27">
+            <rect x="97.9" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-28">
+            <rect x="105.69" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-29">
+            <rect x="95.67" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-30">
+            <rect x="95.86" y="42.51" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-31">
+            <rect x="103.46" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-32">
+            <rect x="90.66" y="37.96" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-33">
+            <rect x="104.57" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-34">
+            <rect x="99.01" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-35">
+            <rect x="83.43" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-36">
+            <rect x="83.43" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-37">
+            <rect x="85.66" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-38">
+            <rect x="83.99" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-39">
+            <rect x="81.58" y="32.22" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-40">
+            <rect x="90.11" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-41">
+            <rect x="84.92" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-42">
+            <rect x="80.09" y="22.87" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-43">
+            <rect x="90.11" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-44">
+            <rect x="85.66" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-45">
+            <rect x="90.11" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-46">
+            <rect x="81.21" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-47">
+            <rect x="86.77" y="42.51" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-48">
+            <rect x="83.43" y="27.67" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-49">
+            <rect x="90.11" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-50">
+            <rect x="85.66" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-51">
+            <rect x="86.58" y="40" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-52">
+            <rect x="83.43" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-53">
+            <rect x="81.21" y="40" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-54">
+            <rect x="78.98" y="45.74" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-55">
+            <rect x="78.98" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-56">
+            <rect x="78.98" y="45.74" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-57">
+            <rect x="64.51" y="8.19" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-58">
+            <rect x="63.4" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-59">
+            <rect x="50.05" y="45.74" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-60">
+            <rect x="67.85" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-61">
+            <rect x="63.4" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-62">
+            <rect x="68.97" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-63">
+            <rect x="64.51" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-64">
+            <rect x="67.85" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-65">
+            <rect x="53.39" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-66">
+            <rect x="77.13" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-67">
+            <rect x="74.53" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-68">
+            <rect x="74.16" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-69">
+            <rect x="74.16" y="33.4" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-70">
+            <rect x="71.19" y="42.51" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-71">
+            <rect x="76.01" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-72">
+            <rect x="72.67" y="22.87" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-73">
+            <rect x="61.92" y="36.23" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-74">
+            <rect x="74.53" y="40" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-75">
+            <rect x="77.5" y="50.29" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-76">
+            <rect x="68.97" y="34.73" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-77">
+            <rect x="65.63" y="Inf" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-78">
+            <rect x="70.45" y="40" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-79">
+            <rect x="71.19" y="58.08" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-80">
+            <rect x="64.33" y="32.22" width="1.27" height="1.27"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-3ccf3e11-81">
+            <rect x="76.75" y="58.08" width="1.27" height="1.27"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</g>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-3ccf3e11-82">
+    <text x="20.98" y="58.72" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">0.0</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="20.98" y="45.79" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">0.5</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="20.98" y="32.86" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">1.0</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="20.98" y="19.93" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">1.5</tspan><tspan dy="0.498000em"></tspan></text>
+    <text x="20.98" y="7" text-anchor="end" dy="0.35em">10<tspan style="dominant-baseline:inherit" dy="-0.6em" font-size="83%">2.0</tspan><tspan dy="0.498000em"></tspan></text>
+  </g>
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-3ccf3e11-83">
+    <text x="8.81" y="30.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 32.86)">Drinks</text>
+  </g>
+</g>
+<defs>
+  <clipPath id="img-3ccf3e11-4">
+  <path d="M21.98,5 L 115 5 115 60.72 21.98 60.72" />
+</clipPath>
+</defs>
+</svg>
+</div><footer><hr/><a class="previous" href="scales/scale_y_discrete.html"><span class="direction">Previous</span><span class="title">Scale.y_discrete</span></a><a class="next" href="../dev/pipeline.html"><span class="direction">Next</span><span class="title">Rendering Pipeline</span></a></footer></article></body></html>
