@@ -129,9 +129,9 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
         end
 
         if geom.orientation == :horizontal
-            f = circle(val, positions, aes.size, geom.tag)
+            f = Shape.circle(val, positions, aes.size, geom.tag)
         else
-            f = circle(positions, val, aes.size, geom.tag)
+            f = Shape.circle(positions, val, aes.size, geom.tag)
         end
 
         return compose(context(), f, fill(aes.color),

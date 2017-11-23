@@ -39,18 +39,6 @@ julia> using Gadfly
 Now that you have it loaded, check out the [Tutorial](@ref) for a tour of
 basic plotting and the various manual pages for more advanced usages.
 
-## Manual outline
-
-```@contents
-Pages = [
-    "man/plotting.md",
-    "man/layers.md",
-    "man/backends.md",
-    "man/themes.md"
-]
-Depth = 1
-```
-
 ## Credits
 
 Gadfly is predominantly the work of Daniel C. Jones who initiated the

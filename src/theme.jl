@@ -69,9 +69,9 @@ end
     point_size_max,        Measure,         1.8mm
 
     # Symbol forms used for the shape aesthetic
-    point_shapes,          Vector{Function},  [circle, square, diamond, cross, xcross,
-                                               utriangle, dtriangle, star1, star2,
-                                               hexagon, octagon, hline, vline]
+    point_shapes,          Vector{Function},  [Shape.circle, Shape.square, Shape.diamond, Shape.cross, Shape.xcross,
+                                               Shape.utriangle, Shape.dtriangle, Shape.star1, Shape.star2,
+                                               Shape.hexagon, Shape.octagon, Shape.hline, Shape.vline]
 
     # Width of lines in the line geometry.
     line_width,            Measure,         0.3mm

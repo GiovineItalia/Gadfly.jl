@@ -1,6 +1,9 @@
 # Compose pseudo-forms for simple symbols, all parameterized by center and size
 
-using Compose: x_measure, y_measure
+module Shape
+
+using Measures
+using Compose: x_measure, y_measure, circle, rectangle, polygon
 
 function square(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
@@ -216,3 +219,5 @@ function vline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
 
     return line(line_ps)
 end
+
+end  # module Shape
