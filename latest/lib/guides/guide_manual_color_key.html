@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Guide.manual_color_key · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a><ul><li class="current"><a class="toctext" href="guide_manual_color_key.html">Guide.manual_color_key</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li><li><a class="toctext" href="../shapes.html">Shapes</a></li></ul></li><li><span class="toctext">Development</span><ul><li><a class="toctext" href="../../dev/pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../../dev/regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../guides.html">Guides</a></li><li><a href="guide_manual_color_key.html">Guide.manual_color_key</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/d6523f373696772b040d47d99729712775cc9a54/docs/src/lib/guides/guide_manual_color_key.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Guide.manual_color_key</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Guide.manual_color_key-1" href="#Guide.manual_color_key-1">Guide.manual_color_key</a></h1><p>Manually define a color key</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>title</code>: Legend title</p></li><li><p><code>labels</code>: Item labels</p></li><li><p><code>colors</code>: Item colors</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><p>Combine two layers into a plot, and set a custom color of one layer.  Add a manual color key with labels that match the two layers.  (Note that &quot;deepskyblue&quot; is the default color for Geom.line and others.)</p><div></div><div><pre><code class="language-julia">points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Guide.manual_color_key · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a><ul><li class="current"><a class="toctext" href="guide_manual_color_key.html">Guide.manual_color_key</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a></li><li><a class="toctext" href="../shapes.html">Shapes</a></li></ul></li><li><span class="toctext">Development</span><ul><li><a class="toctext" href="../../dev/pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../../dev/regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../guides.html">Guides</a></li><li><a href="guide_manual_color_key.html">Guide.manual_color_key</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/blob/master/docs/src/lib/guides/guide_manual_color_key.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Guide.manual_color_key</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Guide.manual_color_key-1" href="#Guide.manual_color_key-1">Guide.manual_color_key</a></h1><p>Manually define a color key</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>title</code>: Legend title</p></li><li><p><code>labels</code>: Item labels</p></li><li><p><code>colors</code>: Item colors</p></li></ul><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><p>Combine two layers into a plot, and set a custom color of one layer.  Add a manual color key with labels that match the two layers.  (Note that &quot;deepskyblue&quot; is the default color for Geom.line and others.)</p><div></div><div><pre><code class="language-julia">points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))
 line = DataFrame(val=rand(1:10,11), index = collect(0:10))
 pointLayer = layer(points, x=&quot;index&quot;, y=&quot;val&quot;, Geom.point,Theme(default_color=&quot;green&quot;))
 lineLayer = layer(line, x=&quot;index&quot;, y=&quot;val&quot;, Geom.line)
@@ -19,7 +19,7 @@ plot(pointLayer, lineLayer, Guide.manual_color_key(&quot;Legend&quot;, [&quot;Po
     <text x="71.53" y="68.39" text-anchor="middle" dy="0.6em">index</text>
   </g>
   <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-9ccc6d30-3">
-    <text x="22.31" y="61.72" text-anchor="middle" dy="0.6em">0</text>
+    <text x="22.3" y="61.72" text-anchor="middle" dy="0.6em">0</text>
     <text x="71.53" y="61.72" text-anchor="middle" dy="0.6em">5</text>
     <text x="120.76" y="61.72" text-anchor="middle" dy="0.6em">10</text>
   </g>
@@ -39,23 +39,23 @@ plot(pointLayer, lineLayer, Guide.manual_color_key(&quot;Legend&quot;, [&quot;Po
 <g clip-path="url(#img-9ccc6d30-8)">
   <g id="img-9ccc6d30-9">
     <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-9ccc6d30-10">
-      <rect x="20.31" y="5" width="102.46" height="55.72"/>
+      <rect x="20.3" y="5" width="102.46" height="55.72"/>
     </g>
     <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-9ccc6d30-11">
-      <path fill="none" d="M20.31,58.71 L 122.76 58.71"/>
-      <path fill="none" d="M20.31,45.79 L 122.76 45.79"/>
-      <path fill="none" d="M20.31,32.86 L 122.76 32.86"/>
-      <path fill="none" d="M20.31,19.93 L 122.76 19.93"/>
-      <path fill="none" d="M20.31,7 L 122.76 7"/>
+      <path fill="none" d="M20.3,58.71 L 122.76 58.71"/>
+      <path fill="none" d="M20.3,45.79 L 122.76 45.79"/>
+      <path fill="none" d="M20.3,32.86 L 122.76 32.86"/>
+      <path fill="none" d="M20.3,19.93 L 122.76 19.93"/>
+      <path fill="none" d="M20.3,7 L 122.76 7"/>
     </g>
     <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-9ccc6d30-12">
-      <path fill="none" d="M22.31,5 L 22.31 60.72"/>
+      <path fill="none" d="M22.3,5 L 22.3 60.72"/>
       <path fill="none" d="M71.53,5 L 71.53 60.72"/>
       <path fill="none" d="M120.76,5 L 120.76 60.72"/>
     </g>
     <g class="plotpanel" id="img-9ccc6d30-13">
       <g stroke-width="0.3" fill="#000000" fill-opacity="0.000" class="geometry" stroke-dasharray="none" stroke="#00BFFF" id="img-9ccc6d30-14">
-        <path fill="none" d="M22.31,32.86 L 32.15 38.03 42 17.34 51.84 32.86 61.69 27.69 71.53 7 81.38 17.34 91.23 27.69 101.07 48.37 110.92 43.2 120.76 7"/>
+        <path fill="none" d="M22.3,32.86 L 32.15 38.03 42 17.34 51.84 32.86 61.69 27.69 71.53 7 81.38 17.34 91.23 27.69 101.07 48.37 110.92 43.2 120.76 7"/>
       </g>
       <g class="geometry" id="img-9ccc6d30-15">
         <g stroke-width="0.3" id="img-9ccc6d30-16">
@@ -105,7 +105,7 @@ plot(pointLayer, lineLayer, Guide.manual_color_key(&quot;Legend&quot;, [&quot;Po
             <use xlink:href="#img-9ccc6d30-46" x="71.53" y="32.86"/>
           </g>
           <g class="color_RGBA{Float32}(0.0f0,0.5019608f0,0.0f0,1.0f0)" stroke="#FFFFFF" fill="#008000" id="img-9ccc6d30-47">
-            <use xlink:href="#img-9ccc6d30-48" x="22.31" y="7"/>
+            <use xlink:href="#img-9ccc6d30-48" x="22.3" y="7"/>
           </g>
           <g class="color_RGBA{Float32}(0.0f0,0.5019608f0,0.0f0,1.0f0)" stroke="#FFFFFF" fill="#008000" id="img-9ccc6d30-49">
             <use xlink:href="#img-9ccc6d30-50" x="81.38" y="7"/>
@@ -126,7 +126,7 @@ plot(pointLayer, lineLayer, Guide.manual_color_key(&quot;Legend&quot;, [&quot;Po
             <use xlink:href="#img-9ccc6d30-60" x="120.76" y="27.69"/>
           </g>
           <g class="color_RGBA{Float32}(0.0f0,0.5019608f0,0.0f0,1.0f0)" stroke="#FFFFFF" fill="#008000" id="img-9ccc6d30-61">
-            <use xlink:href="#img-9ccc6d30-62" x="22.31" y="22.51"/>
+            <use xlink:href="#img-9ccc6d30-62" x="22.3" y="22.51"/>
           </g>
           <g class="color_RGBA{Float32}(0.0f0,0.5019608f0,0.0f0,1.0f0)" stroke="#FFFFFF" fill="#008000" id="img-9ccc6d30-63">
             <use xlink:href="#img-9ccc6d30-64" x="61.69" y="43.2"/>
@@ -167,7 +167,7 @@ plot(pointLayer, lineLayer, Guide.manual_color_key(&quot;Legend&quot;, [&quot;Po
 </g>
 <defs>
   <clipPath id="img-9ccc6d30-8">
-  <path d="M20.31,5 L 122.76 5 122.76 60.72 20.31 60.72" />
+  <path d="M20.3,5 L 122.76 5 122.76 60.72 20.3 60.72" />
 </clipPath>
   <g id="img-9ccc6d30-18">
     <circle cx="0" cy="0" r="0.9"/>
