@@ -84,7 +84,7 @@ for brevity.
 In this plot we've mapped the x aesthetic to the `SepalLength` column and
 the y aesthetic to the `SepalWidth`. The last argument,
 [Geom.point](@ref), is a geometry element which takes bound aesthetics and
-render delightful figures. Adding other geometries produces layers, which
+renders delightful figures. Adding other geometries produces layers, which
 may or may not result in a coherent plot.
 
 ```@example 1
@@ -142,7 +142,7 @@ plot(gasoline, x=:Year, y=:LGasPCar, color=:Country,
 ```
 
 We could have added [Scale.x_discrete](@ref) explicitly, but this is
-detected and the right default is chosen. This is the case with most of
+detected and the right default is chosen. This is the case with most of the
 elements in the grammar: we've omitted [Scale.x_continuous](@ref) and
 [Scale.y_continuous](@ref) in the previous plots, as well as
 [Coord.cartesian](@ref), and guide elements such as [Guide.xticks](@ref),
