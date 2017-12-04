@@ -5,13 +5,48 @@ if haskey(ENV, "GADFLY_THEME")
     pop!(ENV, "GADFLY_THEME")
 end
 
-using Gadfly, Compat, Base.LibGit2
+using Gadfly, Compat
 
-repo = GitRepo(dirname(@__DIR__))
+repo = LibGit2.GitRepo(dirname(@__DIR__))
 outputdir = in(LibGit2.headname(repo)[1:6], ["master","(detac"]) ? "cachedoutput" : "gennedoutput"
 
-run(pipeline(`git log -n 1`,joinpath(outputdir,".log")))
-run(pipeline(`git status`,joinpath(outputdir,".status")))
+if VERSION>=v"0.6"
+    function mimic_git_log_n1(io::IO, head)
+        hash = LibGit2.GitHash(head)
+        println(io, "commit ",string(hash))
+        commit = LibGit2.GitCommit(repo, hash)
+        author = LibGit2.author(commit)
+        println(io, "Author: ",author.name," <",author.email,">")
+        datetime = Dates.unix2datetime(author.time + 60*author.time_offset)
+        println(io, "Date:   ",Dates.format(datetime, "e u d HH:MM:SS YYYY"))
+        println(io, "    ",LibGit2.message(commit))
+    end
+
+    function mimic_git_status(io::IO, head)
+        println(io, "On branch ",LibGit2.shortname(head))
+        status = LibGit2.GitStatus(repo)
+        println(io, "Changes not staged for commit:")
+        for i in 1:length(status)
+            entry = status[i]
+            index_to_workdir = unsafe_load(entry.index_to_workdir)
+            if index_to_workdir.status == Int(LibGit2.Consts.DELTA_MODIFIED)
+                println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
+            end
+        end
+        println(io, "Untracked files:")
+        for i in 1:length(status)
+            entry = status[i]
+            index_to_workdir = unsafe_load(entry.index_to_workdir)
+            if index_to_workdir.status == Int(LibGit2.Consts.DELTA_UNTRACKED)
+                println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
+            end
+        end
+    end
+
+    head = LibGit2.head(repo)
+    open(io->mimic_git_log_n1(io,head), joinpath(outputdir,"git.log"), "w")
+    open(io->mimic_git_status(io,head), joinpath(outputdir,"git.status"), "w")
+end
 
 backends = Dict{AbstractString, Function}(
     "svg" => (name, width, height) -> SVG(joinpath(outputdir,"$(name).svg"), width, height),
@@ -75,8 +110,8 @@ if prev_theme !== nothing
     ENV["GADFLY_THEME"] = prev_theme
 end
 
-if !haskey(ENV, "TRAVIS") &&
+if !haskey(ENV, "TRAVIS") && !isinteractive() &&
             !isempty(readdir(joinpath((@__DIR__),"cachedoutput"))) &&
             !isempty(readdir(joinpath((@__DIR__),"gennedoutput")))
-    run(`julia compare_examples.jl`)  # `include`ing causes it to hang.  bug in julia 0.6?
+    run(`$(Base.julia_cmd()) compare_examples.jl`)  # `include`ing causes it to hang.
 end
