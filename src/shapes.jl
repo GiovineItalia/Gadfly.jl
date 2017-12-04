@@ -3,7 +3,7 @@
 module Shape
 
 using Measures
-using Compose: x_measure, y_measure, circle, rectangle, polygon
+using Compose: x_measure, y_measure, circle, rectangle, polygon, line
 
 function square(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
