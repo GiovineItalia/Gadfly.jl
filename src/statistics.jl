@@ -1779,4 +1779,35 @@ function apply_statistic(stat::VecFieldStatistic,
 
 end
 
+
+immutable HairStatistic <: Gadfly.StatisticElement
+    intercept
+    orientation::Symbol # :horizontal or :vertical like BarStatistic
+end
+HairStatistic(;intercept=0.0, orientation=:vertical) = HairStatistic(intercept, orientation)
+
+input_aesthetics(stat::HairStatistic) = [:x, :y]
+
+output_aesthetics(stat::HairStatistic) = [:x, :y, :xend, :yend]
+
+default_scales(stat::HairStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
+
+const hair = HairStatistic
+
+function apply_statistic(stat::HairStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    if stat.orientation == :vertical
+        aes.xend = aes.x
+        aes.yend = fill(stat.intercept, length(aes.y))
+    else
+        aes.yend = aes.y
+        aes.xend = fill(stat.intercept, length(aes.x))
+    end
+end
+
+
+
+
 end # module Stat
