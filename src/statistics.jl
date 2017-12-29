@@ -1022,7 +1022,7 @@ function apply_statistic(stat::BoxplotStatistic,
 
             if stat.method == :tukey
                 aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
-                        quantile!(ys, [0.25, 0.5, 0.75])
+                        quantile(ys, [0.25, 0.5, 0.75])
                 iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
 
                 idx = searchsortedfirst(ys, aes.lower_hinge[i] - 1.5iqr)
