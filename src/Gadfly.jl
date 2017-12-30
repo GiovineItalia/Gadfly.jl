@@ -766,7 +766,7 @@ function render(plot::Plot)
                                    layer_subplot_datas,
                                    scales, guides)
 
-    ctx =  pad_inner(root_context, plot.theme.plot_padding)
+    ctx =  pad_inner(root_context, plot.theme.plot_padding...)
 
     if plot.theme.background_color != nothing
         compose!(ctx, (context(order=-1000000),

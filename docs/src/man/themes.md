@@ -39,7 +39,7 @@ These parameters can either be used with `Theme` or `style`
     Nothing)
   * `background_color`: Background color for the entire plot. If nothing, no
     background. (Color or Nothing)
-  * `plot_padding`: How much padding should be put around the plot as a whole (Measure)
+  * `plot_padding`: Padding around the plot. The order of padding is: `plot_padding=[left, right, top, bottom]`. If a vector of length one is provided e.g.  `[5mm]` then that value is applied to all sides. Absolute or relative units can be used. (Vector{<:Measure})
   * `grid_color`: Color of grid lines. (Color or Nothing)
   * `grid_color_focused`: In the D3 backend, mousing over the plot makes the
     grid lines emphasised by transitioning to this color. (Color or Nothing)
