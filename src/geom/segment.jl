@@ -15,6 +15,9 @@ const segment = SegmentGeometry
 # Leave this as a function, pending extra arguments e.g. arrow attributes
 vector(; filled::Bool=false) = SegmentGeometry(arrow=true, filled=filled)
 
+hair(;intercept=0.0, orientation=:vertical) = 
+    SegmentGeometry(Gadfly.Stat.hair(intercept, orientation))
+
 function vectorfield(;smoothness=1.0, scale=1.0, samples=20, filled::Bool=false)
     return SegmentGeometry(
         Gadfly.Stat.vectorfield(smoothness, scale, samples), 
