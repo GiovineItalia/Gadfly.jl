@@ -609,6 +609,46 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/geoms/geom_hair.html#",
+    "page": "Geom.hair",
+    "title": "Geom.hair",
+    "category": "page",
+    "text": "Author = \"Mattriks\""
+},
+
+{
+    "location": "lib/geoms/geom_hair.html#Geom.hair-1",
+    "page": "Geom.hair",
+    "title": "Geom.hair",
+    "category": "section",
+    "text": "Draws a line from the points to some intercept (base line). Looks like hairs standing on end, hence called a hair plot. Also known as a lollipop chart if the end points are plotted."
+},
+
+{
+    "location": "lib/geoms/geom_hair.html#Aesthetics-1",
+    "page": "Geom.hair",
+    "title": "Aesthetics",
+    "category": "section",
+    "text": "x: Position of points.\ny: Position of points.\ncolor (optional): Color."
+},
+
+{
+    "location": "lib/geoms/geom_hair.html#Arguments-1",
+    "page": "Geom.hair",
+    "title": "Arguments",
+    "category": "section",
+    "text": "intercept: Base of hairs. Defaults to zero. \norientation: :vertical (default) or :horizontal"
+},
+
+{
+    "location": "lib/geoms/geom_hair.html#Examples-1",
+    "page": "Geom.hair",
+    "title": "Examples",
+    "category": "section",
+    "text": "using Gadfly\nGadfly.set_default_plot_size(15cm, 7.5cm)x= 1:10\ns = [-1,-1,1,1,-1,-1,1,1,-1,-1]\npa = plot(x=x, y=x.^2, Geom.hair, Geom.point)\npb = plot(x=s.*(x.^2), y=x, Geom.hair(orientation=:horizontal), Geom.point, color=string.(s), Theme(key_position=:none))\nhstack(pa, pb)"
+},
+
+{
     "location": "lib/geoms/geom_hexbin.html#",
     "page": "Geom.hexbin",
     "title": "Geom.hexbin",
