@@ -238,10 +238,10 @@ function deferred_label_context(geom::LabelGeometry,
 
     return compose!(
         context(),
-        text([positions[i].x0[1] + extents[i][1]/2 + parent_box.x0[1] for i in 1:n],
+        (context(), text([positions[i].x0[1] + extents[i][1]/2 + parent_box.x0[1] for i in 1:n],
              [positions[i].x0[2] + extents[i][2]/2 + parent_box.x0[2] for i in 1:n],
              aes.label,
-             [hcenter], [vcenter]; tag=geom.tag),
+             [hcenter], [vcenter]; tag=geom.tag), svgclass("marker")),
         visible(label_visibility),
         font(theme.point_label_font),
         fontsize(theme.point_label_font_size),
@@ -277,10 +277,10 @@ function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
         return compose!(
             context(),
-            text([Compose.x_measure(x) + xoff for x in aes.x],
+            (context(), text([Compose.x_measure(x) + xoff for x in aes.x],
                  [Compose.y_measure(y) + yoff for y in aes.y],
                  aes.label,
-                 [hpos], [vpos]; tag=geom.tag),
+                 [hpos], [vpos]; tag=geom.tag), svgclass("marker")),
             font(theme.point_label_font),
             fontsize(theme.point_label_font_size),
             fill(theme.point_label_color),

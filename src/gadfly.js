@@ -304,13 +304,18 @@ var set_geometry_transform = function(root, tx, ty, xscale, yscale) {
     ty = yscalable ? ty : 0.0;
 
     var t = new Snap.Matrix().translate(tx, ty).scale(xscale, yscale);
-
-    root.selectAll(".geometry, image")
-        .forEach(function (element, i) {
+    root.selectAll(".geometry, image").forEach(function (element, i) {
             element.transform(t);
         });
 
+    var t = new Snap.Matrix().scale(1.0/xscale, 1.0/yscale);
+    root.selectAll('.marker').forEach(function (element, i) {
+        element.selectAll('.primitive').forEach(function (element, i) {
+            element.transform(t);
+        }) });
+
     bounds = root.plotbounds();
+    px_per_mm = root.data("px_per_mm");
 
     if (yscalable) {
         var xfixed_t = new Snap.Matrix().translate(0, ty).scale(1.0, yscale);
@@ -321,17 +326,14 @@ var set_geometry_transform = function(root, tx, ty, xscale, yscale) {
 
         root.select(".ylabels")
             .transform(xfixed_t)
-            .selectAll("text")
+            .selectAll("g")
             .forEach(function (element, i) {
                 if (element.attribute("gadfly:inscale") == "true") {
-                    var cx = element.asPX("x"),
-                        cy = element.asPX("y");
-                    var st = element.data("static_transform");
                     unscale_t = new Snap.Matrix();
-                    unscale_t.scale(1, 1/yscale, cx, cy).add(st);
-                    element.transform(unscale_t);
+                    unscale_t.scale(1, 1/yscale);
+                    element.select("text").transform(unscale_t);
 
-                    var y = cy * yscale + ty;
+                    var y = element.attr("transform").globalMatrix.f / px_per_mm;
                     element.attr("visibility",
                         bounds.y0 <= y && y <= bounds.y1 ? "visible" : "hidden");
                 }
@@ -348,56 +350,19 @@ var set_geometry_transform = function(root, tx, ty, xscale, yscale) {
 
         root.select(".xlabels")
             .transform(yfixed_t)
-            .selectAll("text")
+            .selectAll("g")
             .forEach(function (element, i) {
                 if (element.attribute("gadfly:inscale") == "true") {
-                    var cx = element.asPX("x"),
-                        cy = element.asPX("y");
-                    var st = element.data("static_transform");
                     unscale_t = new Snap.Matrix();
-                    unscale_t.scale(1/xscale, 1, cx, cy).add(st);
+                    unscale_t.scale(1/xscale, 1);
+                    element.select("text").transform(unscale_t);
 
-                    element.transform(unscale_t);
-
-                    var x = cx * xscale + tx;
+                    var x = element.attr("transform").globalMatrix.e / px_per_mm;
                     element.attr("visibility",
                         bounds.x0 <= x && x <= bounds.x1 ? "visible" : "hidden");
                     }
             });
     }
-
-    // we must unscale anything that is scale invariant: widths, radii, etc.
-    var size_attribs = ["font-size"];
-    var unscaled_selection = ".geometry, .geometry *";
-    if (xscalable) {
-        size_attribs.push("rx");
-        unscaled_selection += ", .xgridlines";
-    }
-    if (yscalable) {
-        size_attribs.push("ry");
-        unscaled_selection += ", .ygridlines";
-    }
-
-    root.selectAll(unscaled_selection)
-        .forEach(function (element, i) {
-            // circle need special help
-            if (element.node.nodeName == "circle") {
-                var cx = element.attribute("cx"),
-                    cy = element.attribute("cy");
-                unscale_t = new Snap.Matrix().scale(1/xscale, 1/yscale,
-                                                        cx, cy);
-                element.transform(unscale_t);
-                return;
-            }
-
-            for (i in size_attribs) {
-                var key = size_attribs[i];
-                var val = parseFloat(element.attribute(key));
-                if (val !== undefined && val != 0 && !isNaN(val)) {
-                    element.attribute(key, val * old_xscale / xscale);  // yscale???
-                }
-            }
-        });
 };
 
 
@@ -430,8 +395,8 @@ var update_tickscale = function(root, scale, axis) {
             element.attr("visibility", inscale ? "visible" : "hidden");
         };
 
-        root.select("." + axis + "gridlines").selectAll("path").forEach(mark_inscale_gridlines);
-        root.select("." + axis + "labels").selectAll("text").forEach(mark_inscale_labels);
+        root.select("." + axis + "gridlines").selectAll("g").forEach(mark_inscale_gridlines);
+        root.select("." + axis + "labels").selectAll("g").forEach(mark_inscale_labels);
     }
 };
 
@@ -534,7 +499,7 @@ var init_pan_zoom = function(root) {
     });
 
     // Store ticks labels original tranformation
-    root.selectAll(".xlabels > text, .ylabels > text")
+    root.selectAll(".xlabels > g, .ylabels > g")
         .forEach(function (element, i) {
             var lm = element.transform().localMatrix;
             element.data("static_transform",
@@ -562,10 +527,10 @@ var init_pan_zoom = function(root) {
             ytickscales[element.attribute("gadfly:scale")] = true;
         };
 
-        if (xgridlines) xgridlines.selectAll("path").forEach(add_x_tick_scales);
-        if (ygridlines) ygridlines.selectAll("path").forEach(add_y_tick_scales);
-        if (xlabels) xlabels.selectAll("text").forEach(add_x_tick_scales);
-        if (ylabels) ylabels.selectAll("text").forEach(add_y_tick_scales);
+        if (xgridlines) xgridlines.selectAll("g").forEach(add_x_tick_scales);
+        if (ygridlines) ygridlines.selectAll("g").forEach(add_y_tick_scales);
+        if (xlabels) xlabels.selectAll("g").forEach(add_x_tick_scales);
+        if (ylabels) ylabels.selectAll("g").forEach(add_y_tick_scales);
 
         root.data("xtickscales", xtickscales);
         root.data("ytickscales", ytickscales);
@@ -587,14 +552,14 @@ var init_pan_zoom = function(root) {
 
     // store the original positions of labels
     if (xlabels) {
-        xlabels.selectAll("text")
+        xlabels.selectAll("g")
                .forEach(function (element, i) {
                    element.data("x", element.asPX("x"));
                });
     }
 
     if (ylabels) {
-        ylabels.selectAll("text")
+        ylabels.selectAll("g")
                .forEach(function (element, i) {
                    element.data("y", element.asPX("y"));
                });
@@ -605,10 +570,10 @@ var init_pan_zoom = function(root) {
         element.attribute("gadfly:inscale", element.attribute("gadfly:scale") == 1.0);
     };
 
-    if (xgridlines) xgridlines.selectAll("path").forEach(mark_inscale);
-    if (ygridlines) ygridlines.selectAll("path").forEach(mark_inscale);
-    if (xlabels) xlabels.selectAll("text").forEach(mark_inscale);
-    if (ylabels) ylabels.selectAll("text").forEach(mark_inscale);
+    if (xgridlines) xgridlines.selectAll("g").forEach(mark_inscale);
+    if (ygridlines) ygridlines.selectAll("g").forEach(mark_inscale);
+    if (xlabels) xlabels.selectAll("g").forEach(mark_inscale);
+    if (ylabels) ylabels.selectAll("g").forEach(mark_inscale);
 
     // figure out the upper ond lower bounds on panning using the maximum
     // and minum grid lines
@@ -622,7 +587,7 @@ var init_pan_zoom = function(root) {
 
     if (xgridlines) {
         xgridlines
-            .selectAll("path")
+            .selectAll("g")
             .forEach(function (element, i) {
                 if (element.attribute("gadfly:inscale") == "true") {
                     var bbox = element.node.getBBox();
@@ -639,7 +604,7 @@ var init_pan_zoom = function(root) {
 
     if (ygridlines) {
         ygridlines
-            .selectAll("path")
+            .selectAll("g")
             .forEach(function (element, i) {
                 if (element.attribute("gadfly:inscale") == "true") {
                     var bbox = element.node.getBBox();

@@ -45,8 +45,9 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
                     theme.continuous_highlight_color(color) :
                     theme.discrete_highlight_color(color)
         class = svg_color_class_from_label(aes.color_label([color])[1])
-        compose!(ctx, (context(), shapefun([x], [y], [sizeval]), fill(color), stroke(strokecolor),
-              svgclass(class)))
+        compose!(ctx, (context(),
+              (context(), shapefun([x], [y], [sizeval]), svgclass("marker")),
+              fill(color), stroke(strokecolor), svgclass(class)))
     end
 
     compose!(ctx, linewidth(theme.highlight_width))
