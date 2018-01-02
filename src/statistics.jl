@@ -1522,32 +1522,32 @@ function apply_statistic(stat::ViolinStatistic,
 
     isa(aes.y[1], Real) || error("Kernel density estimation only works on Real types.")
 
-    if aes.x === nothing
-        y_f64 = collect(Float64, aes.y)
-        window = stat.n > 1 ? KernelDensity.default_bandwidth(y_f64) : 0.1
-        f = KernelDensity.kde(y_f64, bandwidth=window, npoints=stat.n)
-        aes.y = collect(Float64, f.x)
-        aes.width = f.density
-    else
-        grouped_y = DefaultDict{eltype(aes.x), Vector{Float64}}(() -> Float64[])
-        for (x, y) in zip(cycle(aes.x), aes.y)
-            push!(grouped_y[x], y)
-        end
+    grouped_y = Dict(1=>aes.y)
+    grouped_color = Dict{Int, Gadfly.ColorOrNothing}(1=>nothing)
+    ux = unique(aes.x)
+    uxflag = length(ux) < length(aes.x)
+    colorflag = aes.color != nothing
+    
+    uxflag && (grouped_y = Dict(x=>aes.y[aes.x.==x] for x in ux))
+    
+    grouped_color = (colorflag ? Dict(x=>first(aes.color[aes.x.==x]) for x in ux) : 
+        uxflag && Dict(x=>nothing for x in ux) )
+    
+    aes.x     = Array{Float64}(0)
+    aes.y     = Array{Float64}(0)
+    aes.width = Array{Float64}(0)
+    colors = eltype(aes.color)[]
 
-        aes.x     = Array{Float64}(0)
-        aes.y     = Array{Float64}(0)
-        aes.width = Array{Float64}(0)
-
-        for (x, ys) in grouped_y
-            window = stat.n > 1 ? KernelDensity.default_bandwidth(ys) : 0.1
-            f = KernelDensity.kde(ys, bandwidth=window, npoints=stat.n)
-            append!(aes.y, f.x)
-            append!(aes.width, f.density)
-            for _ in 1:length(f.x)
-                push!(aes.x, x)
-            end
-        end
+    for (x, ys) in grouped_y
+        window = stat.n > 1 ? KernelDensity.default_bandwidth(ys) : 0.1
+        f = KernelDensity.kde(ys, bandwidth=window, npoints=stat.n)
+        append!(aes.x, fill(x, length(f.x)))
+        append!(aes.y, f.x)
+        append!(aes.width, f.density)
+        append!(colors, fill(grouped_color[x], length(f.x)))
     end
+    
+    colorflag  && (aes.color = colors)
 
     pad = 0.1
     maxwidth = maximum(aes.width)

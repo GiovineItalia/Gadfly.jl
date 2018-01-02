@@ -17,25 +17,24 @@ function render(geom::ViolinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     Gadfly.assert_aesthetics_equal_length("Geom.violin", aes, :y, :width)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
-    default_aes.x = Float64[0.5]
-    aes = inherit(aes, default_aes)
+    default_aes.color = fill(theme.default_color, length(aes.y))
+    aes = Gadfly.inherit(aes, default_aes)
+    
+    # Group y, width and color by x
+    ux = unique(aes.x)
+    grouped_color = Dict(x => first(aes.color[aes.x.==x]) for x in ux)
+    grouped_y = Dict(x => aes.y[aes.x.==x] for x in ux)
+    grouped_width = Dict(x => aes.width[aes.x.==x] for x in ux)
 
-    n = length(aes.y)
-
-    # Group y and width by x
-    grouped_y     = DefaultDict{eltype(aes.x), typeof(aes.y)}(() -> similar(aes.y, 0))
-    grouped_width = DefaultDict{eltype(aes.x), typeof(aes.width)}(() -> similar(aes.width, 0))
-    for (x, y, w) in zip(cycle(aes.x), aes.y, aes.width)
-        push!(grouped_y[x], y)
-        push!(grouped_width[x], w)
-    end
+    kgy = keys(grouped_y)
+    violins = [vcat([(x - w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])],
+                reverse!([(x + w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])]))
+                for x in kgy]
+    colors = [grouped_color[x] for x in kgy]
 
     ctx = context(order=geom.order)
-    compose!(ctx, Compose.polygon(
-            [vcat([(x - w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])],
-                    reverse!([(x + w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])]))
-                for x in keys(grouped_y)], geom.tag))
+    compose!(ctx, Compose.polygon(violins, geom.tag), fill(colors))
 
-    compose!(ctx, fill(theme.default_color), svgclass("geometry"))
+    compose!(ctx, svgclass("geometry"))
+
 end
