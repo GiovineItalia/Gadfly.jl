@@ -93,7 +93,7 @@ end
     background_color,      ColorOrNothing,  nothing
 
     # Padding around the entire plot
-    plot_padding,          Measure,         5mm
+    plot_padding,          (@compat Vector{<:Measure}),         [5mm]
 
     # Grid line color.
     grid_color,            ColorOrNothing,  colorant"#D0D0E0"
