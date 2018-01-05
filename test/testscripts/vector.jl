@@ -16,7 +16,7 @@ plot(z=(x,y)->x*exp(-(x^2+y^2)),
         Geom.vectorfield(scale=0.4, samples=17),
         Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),
         Scale.y_continuous(minvalue=-2.0, maxvalue=2.0),
-        Guide.xlabel("x"), Guide.ylabel("y"), Guide.colorkey("z")
+        Guide.xlabel("x"), Guide.ylabel("y"), Guide.colorkey(title="z")
     )
 
 Z = fill(1.0, 5, 5)
