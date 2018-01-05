@@ -66,7 +66,7 @@ p = plot(layer(df,
 		 Coord.cartesian,
 		 Guide.xticks, Guide.yticks,
 		 Guide.xlabel("Price"),
-		 Guide.colorkey("Cut"))
+		 Guide.colorkey(title="Cut"))
 ```
 
 Once a full plot specification is filled out, the rendering process proceeds as follows:

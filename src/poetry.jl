@@ -62,7 +62,7 @@ function plot(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Numbe
     end
 
     if !in(Guide.ColorKey, element_types) && !in(Guide.ManualColorKey, element_types)
-        push!(default_elements, Guide.colorkey("f(x,y)"))
+        push!(default_elements, Guide.colorkey(title="f(x,y)"))
     end
 
     push!(default_elements, Coord.cartesian(xflip=xmin > xmax, yflip=ymin > ymax))

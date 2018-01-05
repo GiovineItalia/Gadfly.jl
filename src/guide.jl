@@ -170,8 +170,13 @@ end
 
 immutable ColorKey <: Gadfly.GuideElement
     title::Union{AbstractString, (Void)}
+    labels::Union{Vector{String}, (Void)}
 end
-ColorKey() = ColorKey(nothing)
+ColorKey(;title=nothing, labels=nothing) = ColorKey(title, labels)
+
+@deprecate ColorKey(title) ColorKey(title=title)
+
+# ColorKey() = ColorKey(nothing)
 
 const colorkey = ColorKey
 
@@ -414,6 +419,10 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     end
 
     color_key_labels = aes.color_label(keys(aes.color_key_colors))
+    if !continuous_guide && (guide.labels != nothing)
+        color_key_labels = guide.labels
+    end
+
     for (color, label) in zip(keys(aes.color_key_colors), color_key_labels)
         if !in(color, used_colors)
             push!(used_colors, color)
