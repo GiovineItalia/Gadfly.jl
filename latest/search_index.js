@@ -1285,7 +1285,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.violin",
     "title": "Aesthetics",
     "category": "section",
-    "text": "Aesthetics used directly:x: Group categorically on the X-axis\ny: Y-axis position.\nwidth: Density at a given y value.With the default statistic Stat.violin, only the following need be defined:x (optional): Group categorically on the X-axis.\ny: Sample from which to draw the density plot."
+    "text": "Aesthetics used directly:x: Group categorically on the X-axis\ny: Y-axis position.\nwidth: Density at a given y value.\ncolor (optional): Violin color.  A suitable discrete variable is needed here. See example below.With the default statistic Stat.violin, only the following need be defined:x (optional): Group categorically on the X-axis.\ny: Sample from which to draw the density plot."
 },
 
 {
@@ -1293,7 +1293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.violin",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.violin)"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)Dsing = dataset(\"lattice\",\"singer\")\nDsing[:Voice] = [x[1:5] for x in Dsing[:VoicePart]]\nplot(Dsing, x=:VoicePart, y=:Height, color=:Voice, Geom.violin)"
 },
 
 {
