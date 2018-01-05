@@ -6,7 +6,7 @@ plot(coord, z=(x,y)-&gt;x*exp(-(x^2+y^2)),
         Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),
         Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),
         Scale.y_continuous(minvalue=-2.0, maxvalue=2.0),
-        Guide.xlabel(&quot;x&quot;), Guide.ylabel(&quot;y&quot;), Guide.colorkey(&quot;z&quot;)
+        Guide.xlabel(&quot;x&quot;), Guide.ylabel(&quot;y&quot;), Guide.colorkey(title=&quot;z&quot;)
     )</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -31,10 +31,10 @@ plot(coord, z=(x,y)-&gt;x*exp(-(x^2+y^2)),
   </g>
   <g class="guide colorkey" id="img-1d8c3e59-4">
     <g font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#4C404B" id="img-1d8c3e59-5">
-      <text x="129.3" y="26.81" dy="0.35em">0.5</text>
-      <text x="129.3" y="40.47" dy="0.35em">0.0</text>
-      <text x="129.3" y="47.3" dy="0.35em"></text>
       <text x="129.3" y="33.64" dy="0.35em"></text>
+      <text x="129.3" y="40.47" dy="0.35em">0.0</text>
+      <text x="129.3" y="26.81" dy="0.35em">0.5</text>
+      <text x="129.3" y="47.3" dy="0.35em"></text>
       <text x="129.3" y="54.12" dy="0.35em">-0.5</text>
     </g>
     <g shape-rendering="crispEdges" stroke="#000000" stroke-opacity="0.000" id="img-1d8c3e59-6">
@@ -79,10 +79,10 @@ plot(coord, z=(x,y)-&gt;x*exp(-(x^2+y^2)),
       <rect x="126.99" y="27.5" width="1.31" height="0.68" fill="#8B3844"/>
       <rect x="126.99" y="26.81" width="1.31" height="0.68" fill="#7E273E"/>
       <g stroke="#FFFFFF" stroke-width="0.2" id="img-1d8c3e59-7">
-        <path fill="none" d="M126.99,26.81 L 128.3 26.81"/>
-        <path fill="none" d="M126.99,40.47 L 128.3 40.47"/>
-        <path fill="none" d="M126.99,47.3 L 128.3 47.3"/>
         <path fill="none" d="M126.99,33.64 L 128.3 33.64"/>
+        <path fill="none" d="M126.99,40.47 L 128.3 40.47"/>
+        <path fill="none" d="M126.99,26.81 L 128.3 26.81"/>
+        <path fill="none" d="M126.99,47.3 L 128.3 47.3"/>
         <path fill="none" d="M126.99,54.12 L 128.3 54.12"/>
       </g>
     </g>

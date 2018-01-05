@@ -1261,7 +1261,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.vectorfield",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)\nplot(coord, z=(x,y)->x*exp(-(x^2+y^2)), \n        xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], \n# or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     \n        Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),\n        Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),\n        Scale.y_continuous(minvalue=-2.0, maxvalue=2.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"), Guide.colorkey(\"z\")\n    )volcano = Matrix{Float64}(dataset(\"datasets\", \"volcano\"))\nvolc = volcano[1:4:end, 1:4:end] \ncoord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)\nplot(coord, z=volc, x=1.0:22, y=1.0:16,\n        Geom.vectorfield(scale=0.05), Geom.contour(levels=7),\n        Scale.x_continuous(minvalue=1.0, maxvalue=22.0),\n        Scale.y_continuous(minvalue=1.0, maxvalue=16.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"),\n        Theme(key_position=:none)\n    )"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)\nplot(coord, z=(x,y)->x*exp(-(x^2+y^2)), \n        xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], \n# or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     \n        Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),\n        Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),\n        Scale.y_continuous(minvalue=-2.0, maxvalue=2.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"), Guide.colorkey(title=\"z\")\n    )volcano = Matrix{Float64}(dataset(\"datasets\", \"volcano\"))\nvolc = volcano[1:4:end, 1:4:end] \ncoord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)\nplot(coord, z=volc, x=1.0:22, y=1.0:16,\n        Geom.vectorfield(scale=0.05), Geom.contour(levels=7),\n        Scale.x_continuous(minvalue=1.0, maxvalue=22.0),\n        Scale.y_continuous(minvalue=1.0, maxvalue=16.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"),\n        Theme(key_position=:none)\n    )"
 },
 
 {
@@ -1397,7 +1397,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.colorkey",
     "title": "Guide.colorkey",
     "category": "page",
-    "text": "Author = \"Daniel C. Jones\""
+    "text": "Author = \"Daniel C. Jones. Additions by Mattriks\""
 },
 
 {
@@ -1405,7 +1405,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.colorkey",
     "title": "Guide.colorkey",
     "category": "section",
-    "text": "Set the title for the plot legend"
+    "text": "Guide.colorkey enables control of some fields of the auto-generated colorkey. Currently, you can change the colorkey title (for any plot), and the item labels (for plots with a discrete color scale). The fields can be named e.g. Guide.colorkey(title=\"Group\", labels=[\"A\",\"B\"]), or given in order e.g. Guide.colorkey(\"Group\", [\"A\",\"B\"])."
 },
 
 {
@@ -1413,7 +1413,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.colorkey",
     "title": "Arguments",
     "category": "section",
-    "text": "title: Legend title"
+    "text": "title: Legend title (for any plot)\nlabels: Legend item labels (for plots with a discrete color scale)"
 },
 
 {
@@ -1421,7 +1421,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.colorkey",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)volcano = float(convert(Array, dataset(\"datasets\", \"volcano\")))\nplot(z=volcano, Geom.contour, Guide.colorkey(\"Elevation\"))"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 7cm)Dsleep = dataset(\"ggplot2\", \"msleep\")[[:Vore,:BrainWt,:BodyWt,:SleepTotal]]\ncompletecases!(Dsleep)\nDsleep[:SleepTime] = Dsleep[:SleepTotal] .> 8\nplot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:SleepTime, \n    Guide.colorkey(title=\"Sleep \\n(hours/day)\\n \", labels=[\">8\",\"≤8\"]),\n    Scale.x_log10, Scale.y_log10 )\n"
 },
 
 {
@@ -2413,7 +2413,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Rendering Pipeline",
     "title": "Rendering Pipeline",
     "category": "section",
-    "text": "using DataFrames\nusing Colors\nusing Compose\nusing RDatasets\nusing Showoff\nusing GadflyHow does the function calldf = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)actually get turned into the following plot?df = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)p # hideThe rendering pipeline transforms a plot specification into a Compose scene graph that contains a set of guides (e.g. axis ticks, color keys) and one or more layers of geometry (e.g. points, lines). The specification of each layer hasa data source (e.g. dataset(\"ggplot2\", \"diamonds\"))\na geometry to represent the layer's data (e.g. point, line, etc.)\nmappings to associate aesthetics of the geometry with elements of the data source (e.g.  :color => :Cut)\nlayer-wise statistics (optional) to be applied to the layer's dataAll layers of a plot share the sameCoordinates for the geometry (e.g. cartesian, polar, etc.)\naxis Scales (e.g. loglog, semilog, etc.)\nplot-wise Statistics (optional) to be applied to all layers\nGuidesA full plot specification must describe these shared elements as well as all the layer specifications. In the example above, we see that only the data source, statistics, geometry, and mapping are specified. The missing elements are either inferred from the data (e.g. categorical values in df[:Cut] implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale). For example, invoking plot with all the elements will look something likep = plot(layer(df,\n               x = :Price, color = :Cut,\n		       Stat.histogram,\n		       Geom.bar),\n	  	 Scale.x_continuous,\n		 Scale.color_discrete,\n		 Coord.cartesian,\n		 Guide.xticks, Guide.yticks,\n		 Guide.xlabel(\"Price\"),\n		 Guide.colorkey(\"Cut\"))Once a full plot specification is filled out, the rendering process proceeds as follows:(Image: )For each layer in the plot, we first map subsets of the data source to a Data object. The Price and Cut columns of the diamond dataset are mapped to the :x and :color fields of Data, respectively.\nScales are applied to the data to obtain plottable aesthetics. Scale.x_continuous keeps the values of df[:Price] unchanged, while Scale.color_discrete_hue maps the unique elements of df[:Cut] (an array of strings) to actual color values.\nThe aesthetics are transformed by layer-wise and plot-wise statistics, in order. Stat.histogram replaces the x field of the aesthetics with bin positions, and sets the y field with the corresponding counts.\nUsing the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. Coord.cartesian creates a Compose context that maps a vertical distance of 3000 counts to about two inches in the rendered plot.\nEach layer renders its own geometry.\nFinally, we compute the layout of the guides and render them on top of the plot context."
+    "text": "using DataFrames\nusing Colors\nusing Compose\nusing RDatasets\nusing Showoff\nusing GadflyHow does the function calldf = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)actually get turned into the following plot?df = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)p # hideThe rendering pipeline transforms a plot specification into a Compose scene graph that contains a set of guides (e.g. axis ticks, color keys) and one or more layers of geometry (e.g. points, lines). The specification of each layer hasa data source (e.g. dataset(\"ggplot2\", \"diamonds\"))\na geometry to represent the layer's data (e.g. point, line, etc.)\nmappings to associate aesthetics of the geometry with elements of the data source (e.g.  :color => :Cut)\nlayer-wise statistics (optional) to be applied to the layer's dataAll layers of a plot share the sameCoordinates for the geometry (e.g. cartesian, polar, etc.)\naxis Scales (e.g. loglog, semilog, etc.)\nplot-wise Statistics (optional) to be applied to all layers\nGuidesA full plot specification must describe these shared elements as well as all the layer specifications. In the example above, we see that only the data source, statistics, geometry, and mapping are specified. The missing elements are either inferred from the data (e.g. categorical values in df[:Cut] implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale). For example, invoking plot with all the elements will look something likep = plot(layer(df,\n               x = :Price, color = :Cut,\n		       Stat.histogram,\n		       Geom.bar),\n	  	 Scale.x_continuous,\n		 Scale.color_discrete,\n		 Coord.cartesian,\n		 Guide.xticks, Guide.yticks,\n		 Guide.xlabel(\"Price\"),\n		 Guide.colorkey(title=\"Cut\"))Once a full plot specification is filled out, the rendering process proceeds as follows:(Image: )For each layer in the plot, we first map subsets of the data source to a Data object. The Price and Cut columns of the diamond dataset are mapped to the :x and :color fields of Data, respectively.\nScales are applied to the data to obtain plottable aesthetics. Scale.x_continuous keeps the values of df[:Price] unchanged, while Scale.color_discrete_hue maps the unique elements of df[:Cut] (an array of strings) to actual color values.\nThe aesthetics are transformed by layer-wise and plot-wise statistics, in order. Stat.histogram replaces the x field of the aesthetics with bin positions, and sets the y field with the corresponding counts.\nUsing the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. Coord.cartesian creates a Compose context that maps a vertical distance of 3000 counts to about two inches in the rendered plot.\nEach layer renders its own geometry.\nFinally, we compute the layout of the guides and render them on top of the plot context."
 },
 
 {
