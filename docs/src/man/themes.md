@@ -56,8 +56,7 @@ These parameters can either be used with `Theme` or `style`
   * `point_label_font_size`: Font size used for labels. (Measure)
   * `point_label_color`: Color used for labels. (Color)
   * `key_position`: Where key should be placed relative to the plot panel. One
-    of `:left`, `:right`, `:top`, `:bottom`, or `:none`. Setting to `:none`
-    disables the key. (Symbol)
+    of `:left`, `:right`, `:top`, `:bottom`, `:inside` or `:none`. Setting to `:none` disables the key. Setting to `:inside` places the key in the lower right quadrant of the plot. (Symbol)
   * `key_title_font`: Font used for titles of keys. (String)
   * `key_title_font_size`: Font size used for key titles. (Measure)
   * `key_title_color`: Color used for key titles. (Color)
