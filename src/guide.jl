@@ -171,8 +171,9 @@ end
 immutable ColorKey <: Gadfly.GuideElement
     title::Union{AbstractString, (Void)}
     labels::Union{Vector{String}, (Void)}
+    pos::Union{Vector, (Void)}
 end
-ColorKey(;title=nothing, labels=nothing) = ColorKey(title, labels)
+ColorKey(;title=nothing, labels=nothing, pos=nothing) = ColorKey(title, labels, pos)
 
 @deprecate ColorKey(title) ColorKey(title=title)
 
@@ -400,6 +401,8 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
 
     (theme.key_position == :none || isempty(aes.color_key_colors)) && return PositionedGuide[]
+    gpos = guide.pos
+    (theme.key_position == :inside && gpos === nothing) &&  (gpos = [0.7w, 0.25h])
 
     used_colors = Set{Color}()
     colors = Array{Color}(0) # to preserve ordering
@@ -473,7 +476,10 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     end
 
     position = right_guide_position
-    if theme.key_position == :left
+    if gpos != nothing
+        position = over_guide_position
+        ctxs = [compose(context(), (context(gpos[1],gpos[2]), ctxs[1]))]
+    elseif theme.key_position == :left
         position = left_guide_position
     elseif theme.key_position == :right
         position = right_guide_position
