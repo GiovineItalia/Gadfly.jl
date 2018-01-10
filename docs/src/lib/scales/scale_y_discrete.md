@@ -19,7 +19,7 @@ easiest way to get that data to plot appropriately.
     should map a value in `x` to a string giving its label.
   * `levels`: If non-nothing, give values for the scale. Order will be respected
     and anything in the data that's not respresented in `levels` will be set to
-    `NA`.
+    `missing`.
   * `order`: If non-nothing, give a vector of integers giving a permutation of
     the values pool of the data.
 

@@ -10,6 +10,7 @@ using DataFrames
 using DataStructures
 using JSON
 using Showoff
+using PooledArrays
 
 import IterTools
 import IterTools: distinct, drop, chain
@@ -35,6 +36,17 @@ export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, Shape, ren
 @deprecate octogon Shape.octogon
 @deprecate hline Shape.hline
 @deprecate vline Shape.vline
+
+# Things that should go into other packages.
+# (Probably in a more efficient version)
+## PooledArrays
+function Base.append!(x::PooledArray{T,R,N,RA}, y::PooledArray{T,R,N,RA}) where {T,R,N,RA}
+    if x.pool == y.pool
+        append!(x.refs, y.refs)
+        return x
+    end
+    throw(ArgumentError("pools not identical"))
+end
 
 # Re-export some essentials from Compose
 export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack, title, gridstack

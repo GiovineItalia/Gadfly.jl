@@ -12,6 +12,7 @@ using Distributions
 using Hexagons
 using Loess
 using CoupledFields # It is registered in METADATA.jl
+using PooledArrays
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, nonzero_length, setfield!
@@ -400,7 +401,7 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
 
-        aes.color = PooledDataArray(colors)
+        aes.color = PooledArray(colors)
     end
 
     getfield(aes, viewminvar) === nothing && setfield!(aes, viewminvar, 0.0)
@@ -527,7 +528,7 @@ function apply_statistic(stat::DensityStatistic,
                 push!(colors, c)
             end
         end
-        aes.color = PooledDataArray(colors)
+        aes.color = PooledArray(colors)
     end
     aes.y_label = Gadfly.Scale.identity_formatter
 end
@@ -666,13 +667,13 @@ function apply_statistic(stat::Histogram2DStatistic,
 
     if x_categorial
         aes.xmin, aes.xmax = barminmax(aes.x, false)
-        aes.x = PooledDataArray(aes.x)
+        aes.x = PooledArray(aes.x)
         aes.pad_categorical_x = Nullable(false)
     end
 
     if y_categorial
         aes.ymin, aes.ymax = barminmax(aes.y, false)
-        aes.y = PooledDataArray(aes.y)
+        aes.y = PooledArray(aes.y)
         aes.pad_categorical_y = Nullable(false)
     end
 
@@ -986,7 +987,7 @@ function apply_statistic(stat::BoxplotStatistic,
         end
 
         if aes.color !== nothing
-            aes.color = PooledDataArray([c for (x, c) in groups],
+            aes.color = PooledArray([c for (x, c) in groups],
                                         levels(aes.color))
         end
 
@@ -1066,12 +1067,12 @@ function apply_statistic(stat::BoxplotStatistic,
         end
     end
 
-    if isa(aes_x, PooledDataArray)
-        aes.x = PooledDataArray(aes.x, aes_x.pool)
+    if isa(aes_x, PooledArray)
+        aes.x = PooledArray(aes.x, aes_x.pool)
     end
 
     if aes.color !== nothing
-        aes.color = PooledDataArray(RGB{Float32}[c for (x, c) in keys(groups)],
+        aes.color = PooledArray(RGB{Float32}[c for (x, c) in keys(groups)],
                                     levels(aes.color))
     end
 
@@ -1156,7 +1157,7 @@ function apply_statistic(stat::SmoothStatistic,
     end
 
     if !(aes.color===nothing)
-        aes.color = PooledDataArray(colors)
+        aes.color = PooledArray(colors)
     end
 end
 
@@ -1343,7 +1344,7 @@ function apply_statistic(stat::FunctionStatistic,
             aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = func_color[i]
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
-        aes.group = PooledDataArray(groups)
+        aes.group = PooledArray(groups)
     elseif length(aes.y) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
         data.color = Array{AbstractString}(length(aes.y) * stat.num_samples)
@@ -1354,7 +1355,7 @@ function apply_statistic(stat::FunctionStatistic,
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
         Scale.apply_scale(scales[:color], [aes], data)
-        aes.group = PooledDataArray(groups)
+        aes.group = PooledArray(groups)
     end
 
     data = Gadfly.Data()
@@ -1417,7 +1418,7 @@ function apply_statistic(stat::ContourStatistic,
 
     stat_levels = typeof(stat.levels) <: Function ? stat.levels(zs) : stat.levels
 
-    groups = PooledDataArray(Int[])
+    groups = PooledArray(Int[])
     group = 0
     for level in Contour.levels(Contour.contours(xs, ys, zs, stat_levels))
         for line in Contour.lines(level)
@@ -1661,7 +1662,7 @@ function apply_statistic(stat::BinMeanStatistic,
                 push!(colors, c)
             end
         end
-        aes.color = PooledDataArray(colors)
+        aes.color = PooledArray(colors)
     end
 end
 

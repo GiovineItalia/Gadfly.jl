@@ -7,6 +7,7 @@ using DataArrays
 using DataStructures
 using Gadfly
 using Showoff
+using PooledArrays
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length,
                nonzero_length
@@ -202,7 +203,7 @@ function apply_scale(scale::ContinuousScale,
                 T = Measure
             end
 
-            ds = Gadfly.hasna(vals) ? DataArray(T, length(vals)) : Array{T}(length(vals))
+            ds = any(ismissing, vals) ? DataArray(T, length(vals)) : Array{T}(length(vals))
             apply_scale_typed!(ds, vals, scale)
 
             if var == :xviewmin || var == :xviewmax ||
@@ -251,43 +252,43 @@ function apply_scale_typed!(ds, field, scale::ContinuousScale)
 end
 
 # Reorder the levels of a pooled data array
-function reorder_levels(da::PooledDataArray, order::AbstractVector)
+function reorder_levels(da::PooledArray, order::AbstractVector)
     level_values = levels(da)
     length(order) != length(level_values) &&
             error("Discrete scale order is not of the same length as the data's levels.")
     permute!(level_values, order)
-    return PooledDataArray(da, level_values)
+    return PooledArray(da, level_values)
 end
 
 function discretize_make_pda(values::Vector, levels=nothing)
     if levels == nothing
-        return PooledDataArray(values)
+        return PooledArray(values)
     else
-        return PooledDataArray(convert(Vector{eltype(levels)}, values), levels)
+        return PooledArray(convert(Vector{eltype(levels)}, values), levels)
     end
 end
 
 function discretize_make_pda(values::DataArray, levels=nothing)
     if levels == nothing
-        return PooledDataArray(values)
+        return PooledArray(values)
     else
-        return PooledDataArray(convert(DataArray{eltype(levels)}, values), levels)
+        return PooledArray(convert(DataArray{eltype(levels)}, values), levels)
     end
 end
 
 function discretize_make_pda(values::Range, levels=nothing)
     if levels == nothing
-        return PooledDataArray(collect(values))
+        return PooledArray(collect(values))
     else
-        return PooledDataArray(collect(values), levels)
+        return PooledArray(collect(values), levels)
     end
 end
 
-function discretize_make_pda(values::PooledDataArray, levels=nothing)
+function discretize_make_pda(values::PooledArray, levels=nothing)
     if levels == nothing
         return values
     else
-        return PooledDataArray(values, convert(Vector{eltype(values)}, levels))
+        return PooledArray(values, convert(Vector{eltype(values)}, levels))
     end
 end
 
@@ -329,7 +330,7 @@ immutable DiscreteScale <: Gadfly.ScaleElement
     labels::Union{(Void), Function}
 
     # If non-nothing, give values for the scale. Order will be respected and
-    # anything in the data that's not represented in values will be set to NA.
+    # anything in the data that's not represented in values will be set to missing.
     levels::Union{(Void), AbstractVector}
 
     # If non-nothing, a permutation of the pool of values.
@@ -364,7 +365,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
             getfield(data, var) === nothing && continue
 
             disc_data = discretize(getfield(data, var), scale.levels, scale.order)
-            setfield!(aes, var, PooledDataArray([round(Int64,x) for x in disc_data.refs]))
+            setfield!(aes, var, PooledArray([round(Int64,x) for x in disc_data.refs]))
 
             # The leveler for discrete scales is a closure over the discretized data.
             if scale.labels === nothing
@@ -418,7 +419,7 @@ function apply_scale(scale::IdentityColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
-        aes.color = PooledDataArray(data.color)
+        aes.color = PooledArray(data.color)
         aes.color_key_colors = Dict()
     end
 end
@@ -428,7 +429,7 @@ immutable DiscreteColorScale <: Gadfly.ScaleElement
     f::Function # A function f(n) that produces a vector of n colors.
 
     # If non-nothing, give values for the scale. Order will be respected and
-    # anything in the data that's not represented in values will be set to NA.
+    # anything in the data that's not represented in values will be set to missing.
     levels::Union{(Void), AbstractVector}
 
     # If non-nothing, a permutation of the pool of values.
@@ -488,7 +489,7 @@ function apply_scale(scale::DiscreteColorScale,
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
         for d in data.color
-            isna(d) || push!(levelset, d)
+            ismissing(d) || push!(levelset, d)
         end
     end
 
@@ -517,7 +518,7 @@ function apply_scale(scale::DiscreteColorScale,
             end
         end
 
-        colored_ds = PooledDataArray(colorvals, colors)
+        colored_ds = PooledArray(colorvals, colors)
         aes.color = colored_ds
 
         aes.color_label = labeler
@@ -580,7 +581,7 @@ function apply_scale(scale::ContinuousColorScale,
         data.color === nothing && continue
 
         for c in data.color
-            c === NA && continue
+            ismissing(c) && continue
 
             c = convert(Float64, c)
             if c < cmin
@@ -652,7 +653,7 @@ function apply_scale_typed!(ds, field, scale::ContinuousColorScale,
             ds[i] = convert(RGB{Float32},
                         scale.f((convert(Float64, scale.trans.f(d)) - cmin) / cspan))
         else
-            ds[i] = NA
+            ds[i] = missing
         end
     end
 end

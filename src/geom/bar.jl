@@ -76,7 +76,7 @@ function render_stacked_bar(geom::BarGeometry,
                                      aes::Gadfly.Aesthetics,
                                      orientation::Symbol)
     # preserve factor orders of pooled data arrays
-    if isa(aes.color, PooledDataArray)
+    if isa(aes.color, PooledArray)
         idxs = sortperm(aes.color.refs, rev=true)
     else
         idxs = 1:length(aes.color)
@@ -152,7 +152,7 @@ function render_dodged_bar(geom::BarGeometry,
                                     aes::Gadfly.Aesthetics,
                                     orientation::Symbol)
     # preserve factor orders of pooled data arrays
-    if isa(aes.color, PooledDataArray)
+    if isa(aes.color, PooledArray)
         idxs = sortperm(aes.color.refs, rev=true)
     else
         idxs = 1:length(aes.color)

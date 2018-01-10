@@ -16,7 +16,7 @@ element_aesthetics(geom::HexagonalBinGeometry) = [:x, :y, :xsize, :ysize, :color
 
 function render(geom::HexagonalBinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
+    default_aes.color = PooledArray(RGB{Float32}[theme.default_color])
     default_aes.xsize = [1.0]
     default_aes.ysize = [1.0]
     aes = inherit(aes, default_aes)
@@ -25,7 +25,7 @@ function render(geom::HexagonalBinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aes
     Gadfly.assert_aesthetics_equal_length("Geom.hexbin", aes, :x, :y)
 
     n = length(aes.x)
-    visibility = Bool[!isna(c) for c in takestrict(cycle(aes.color), n)]
+    visibility = Bool[!ismissing(c) for c in takestrict(cycle(aes.color), n)]
     xs = aes.x[visibility]
     ys = aes.y[visibility]
     xsizes = collect(eltype(aes.xsize), takestrict(cycle(aes.xsize), n))[visibility]
