@@ -9,8 +9,8 @@ using Base.Test, Gadfly, Compat
 
 repo = LibGit2.GitRepo(dirname(@__DIR__))
 branch = LibGit2.headname(repo)
-outputdir = mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
-        "cachedoutput" : "gennedoutput"
+outputdir = joinpath(@__DIR__, mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
+        "cachedoutput" : "gennedoutput")
 
 if VERSION>=v"0.6"
     function mimic_git_log_n1(io::IO, head)
@@ -107,4 +107,10 @@ close(output)
 
 if prev_theme !== nothing
     ENV["GADFLY_THEME"] = prev_theme
+end
+
+if !haskey(ENV, "TRAVIS") && !isinteractive() &&
+            !isempty(readdir(joinpath((@__DIR__),"cachedoutput"))) &&
+            !isempty(readdir(joinpath((@__DIR__),"gennedoutput")))
+    run(`$(Base.julia_cmd()) $(joinpath(@__DIR__, "compare_examples.jl"))`)  # `include`ing causes it to hang.
 end
