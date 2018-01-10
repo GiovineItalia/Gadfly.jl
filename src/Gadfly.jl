@@ -11,6 +11,7 @@ using DataStructures
 using JSON
 using Showoff
 using PooledArrays
+using CategoricalArrays
 
 import IterTools
 import IterTools: distinct, drop, chain

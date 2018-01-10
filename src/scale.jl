@@ -8,6 +8,7 @@ using DataStructures
 using Gadfly
 using Showoff
 using PooledArrays
+using CategoricalArrays
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length,
                nonzero_length
@@ -284,7 +285,7 @@ function discretize_make_pda(values::Range, levels=nothing)
     end
 end
 
-function discretize_make_pda(values::PooledArray, levels=nothing)
+function discretize_make_pda(values::Union{PooledArray,CategoricalArray}, levels=nothing)
     if levels == nothing
         return values
     else
