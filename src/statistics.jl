@@ -7,6 +7,7 @@ using Colors
 using Compat
 using Compose
 using DataArrays
+using CategoricalArrays
 using DataStructures
 using Hexagons
 using Loess
@@ -399,7 +400,7 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
 
-        aes.color = PooledDataArray(colors)
+        aes.color = CategoricalArray(colors)
     end
 
     getfield(aes, viewminvar) === nothing && setfield!(aes, viewminvar, 0.0)
@@ -524,7 +525,7 @@ function apply_statistic(stat::DensityStatistic,
                 push!(colors, c)
             end
         end
-        aes.color = PooledDataArray(colors)
+        aes.color = CategoricalArray(colors)
     end
     aes.y_label = Gadfly.Scale.identity_formatter
 end
@@ -663,13 +664,13 @@ function apply_statistic(stat::Histogram2DStatistic,
 
     if x_categorial
         aes.xmin, aes.xmax = barminmax(aes.x, false)
-        aes.x = PooledDataArray(aes.x)
+        aes.x = CategoricalArray(aes.x)
         aes.pad_categorical_x = Nullable(false)
     end
 
     if y_categorial
         aes.ymin, aes.ymax = barminmax(aes.y, false)
-        aes.y = PooledDataArray(aes.y)
+        aes.y = CategoricalArray(aes.y)
         aes.pad_categorical_y = Nullable(false)
     end
 
@@ -698,7 +699,7 @@ xticks(; ticks=:auto,
          granularity_weight=1/4,
          simplicity_weight=1/6,
          coverage_weight=1/3,
-         niceness_weight=1/4) = 
+         niceness_weight=1/4) =
     TickStatistic([:x, :xmin, :xmax, :xintercept], "x",
               granularity_weight, simplicity_weight, coverage_weight, niceness_weight, ticks)
 
@@ -983,8 +984,9 @@ function apply_statistic(stat::BoxplotStatistic,
         end
 
         if aes.color !== nothing
-            aes.color = PooledDataArray([c for (x, c) in groups],
-                                        levels(aes.color))
+            color = aes.color
+            aes.color = CategoricalArray([c for (x, c) in groups])
+            levels!(aes.color, color)
         end
 
         return
@@ -1063,13 +1065,15 @@ function apply_statistic(stat::BoxplotStatistic,
         end
     end
 
-    if isa(aes_x, PooledDataArray)
-        aes.x = PooledDataArray(aes.x, aes_x.pool)
+    if isa(aes_x, CategoricalArray)
+        aes.x = CategoricalArray(aes.x)
+        levels!(aes.x, aes_x.pool)
     end
 
     if aes.color !== nothing
-        aes.color = PooledDataArray(RGB{Float32}[c for (x, c) in keys(groups)],
-                                    levels(aes.color))
+        color = aes.color
+        aes.color = CategoricalArray(RGB{Float32}[c for (x, c) in keys(groups)])
+        levels!(aes.color, color)
     end
 
     nothing
@@ -1101,7 +1105,7 @@ function apply_statistic(stat::SmoothStatistic,
 
     max_num_steps = 750
     aes_color = aes.color === nothing ? [nothing] : aes.color
-    
+
     groups = Dict(c => (eltype(aes.x)[], eltype(aes.y)[]) for c in unique(aes_color))
     for (x, y, c) in zip(aes.x, aes.y, cycle(aes_color))
         push!(groups[c][1], x)
@@ -1110,7 +1114,7 @@ function apply_statistic(stat::SmoothStatistic,
 
     local xs, ys, xsp
     aes.x = eltype(aes.x)[]
-    # For aes.y returning a Float is ok if `y` is an Int or a Float 
+    # For aes.y returning a Float is ok if `y` is an Int or a Float
     # There does not seem to be strong demand for other types of `y`
     aes.y = Float64[]
     colors = eltype(aes_color)[]
@@ -1124,9 +1128,9 @@ function apply_statistic(stat::SmoothStatistic,
         catch e
             error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
         end
-            
+
         nudge = 1e-5 * (x_max - x_min)
-        
+
         dx = (x_max-x_min)*(1/max_num_steps)
         # For a Date, dx might be 0 days, so correct
         # For Ints, correct dx
@@ -1145,15 +1149,15 @@ function apply_statistic(stat::SmoothStatistic,
             lmcoeff = linreg(xs,ys)
             smoothys = lmcoeff[2].*xsp .+ lmcoeff[1]
         end
-    
-    # New aes 
+
+    # New aes
         append!(aes.x, steps)
         append!(aes.y, smoothys)
         append!(colors, fill(c, length(steps)))
     end
 
     if !(aes.color===nothing)
-        aes.color = PooledDataArray(colors)
+        aes.color = CategoricalArray(colors)
     end
 end
 
@@ -1340,7 +1344,7 @@ function apply_statistic(stat::FunctionStatistic,
             aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = func_color[i]
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
-        aes.group = PooledDataArray(groups)
+        aes.group = CategoricalArray(groups)
     elseif length(aes.y) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
         data.color = Array{AbstractString}(length(aes.y) * stat.num_samples)
@@ -1351,7 +1355,7 @@ function apply_statistic(stat::FunctionStatistic,
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
         Scale.apply_scale(scales[:color], [aes], data)
-        aes.group = PooledDataArray(groups)
+        aes.group = CategoricalArray(groups)
     end
 
     data = Gadfly.Data()
@@ -1414,7 +1418,7 @@ function apply_statistic(stat::ContourStatistic,
 
     stat_levels = typeof(stat.levels) <: Function ? stat.levels(zs) : stat.levels
 
-    groups = PooledDataArray(Int[])
+    groups = CategoricalArray(Int[])
     group = 0
     for level in Contour.levels(Contour.contours(xs, ys, zs, stat_levels))
         for line in Contour.lines(level)
@@ -1527,12 +1531,12 @@ function apply_statistic(stat::ViolinStatistic,
     ux = unique(aes.x)
     uxflag = length(ux) < length(aes.x)
     colorflag = aes.color != nothing
-    
+
     uxflag && (grouped_y = Dict(x=>aes.y[aes.x.==x] for x in ux))
-    
-    grouped_color = (colorflag ? Dict(x=>first(aes.color[aes.x.==x]) for x in ux) : 
+
+    grouped_color = (colorflag ? Dict(x=>first(aes.color[aes.x.==x]) for x in ux) :
         uxflag && Dict(x=>nothing for x in ux) )
-    
+
     aes.x     = Array{Float64}(0)
     aes.y     = Array{Float64}(0)
     aes.width = Array{Float64}(0)
@@ -1546,7 +1550,7 @@ function apply_statistic(stat::ViolinStatistic,
         append!(aes.width, f.density)
         append!(colors, fill(grouped_color[x], length(f.x)))
     end
-    
+
     colorflag  && (aes.color = colors)
 
     pad = 0.1
@@ -1658,7 +1662,7 @@ function apply_statistic(stat::BinMeanStatistic,
                 push!(colors, c)
             end
         end
-        aes.color = PooledDataArray(colors)
+        aes.color = CategoricalArray(colors)
     end
 end
 

@@ -4,8 +4,9 @@ Compat 0.18.0
 Compose 0.5.2
 Contour 0.1.1
 CoupledFields
-DataFrames 0.4.2
-DataArrays
+DataFrames 0.11.0
+DataArrays 0.7.0
+CategoricalArrays
 DataStructures
 Distributions
 Hexagons

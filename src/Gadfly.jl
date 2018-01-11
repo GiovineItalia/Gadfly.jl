@@ -6,6 +6,7 @@ using Colors
 using Compat
 using Compose
 using DataArrays
+using CategoricalArrays
 using DataFrames
 using DataStructures
 using JSON

@@ -155,7 +155,7 @@ A plot object.
 """
 
 function spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...)
-    is, js, values = _findnz(x->!isnan(x), M)
+    is, js, values = _findnz(x->!ismissingn(x), M)
     n,m = size(M)
     df = DataFrames.DataFrame(i=is, j=js, value=values)
     plot(df, x=:j, y=:i, color=:value,

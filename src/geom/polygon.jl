@@ -30,7 +30,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
     Gadfly.assert_aesthetics_defined("Geom.polygon", aes, :x, :y)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGBA{Float32}[theme.default_color])
+    default_aes.color = CategoricalArray(RGBA{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
     ctx = context(order=geom.order)
@@ -56,7 +56,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
             compose!(ctx, fill(nothing), stroke(cs))
         end
     elseif length(aes.color) == 1 &&
-            !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
+            !(isa(aes.color, CategoricalArray) && length(levels(aes.color)) > 1)
         compose!(ctx, Compose.polygon(polygon_points(aes.x, aes.y, geom.preserve_order), geom.tag))
         if geom.fill
             compose!(ctx, fill(aes.color[1]),

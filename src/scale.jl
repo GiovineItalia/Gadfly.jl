@@ -4,6 +4,7 @@ using Colors
 using Compat
 using Compose
 using DataArrays
+using CategoricalArrays
 using DataStructures
 using Gadfly
 using Showoff
@@ -250,67 +251,26 @@ function apply_scale_typed!(ds, field, scale::ContinuousScale)
     end
 end
 
-# Reorder the levels of a pooled data array
-function reorder_levels(da::PooledDataArray, order::AbstractVector)
+# Reorder the levels of a categorical array
+function reorder_levels(da::CategoricalArray, order::AbstractVector)
     level_values = levels(da)
     length(order) != length(level_values) &&
             error("Discrete scale order is not of the same length as the data's levels.")
     permute!(level_values, order)
-    return PooledDataArray(da, level_values)
-end
-
-function discretize_make_pda(values::Vector, levels=nothing)
-    if levels == nothing
-        return PooledDataArray(values)
-    else
-        return PooledDataArray(convert(Vector{eltype(levels)}, values), levels)
-    end
-end
-
-function discretize_make_pda(values::DataArray, levels=nothing)
-    if levels == nothing
-        return PooledDataArray(values)
-    else
-        return PooledDataArray(convert(DataArray{eltype(levels)}, values), levels)
-    end
-end
-
-function discretize_make_pda(values::Range, levels=nothing)
-    if levels == nothing
-        return PooledDataArray(collect(values))
-    else
-        return PooledDataArray(collect(values), levels)
-    end
-end
-
-function discretize_make_pda(values::PooledDataArray, levels=nothing)
-    if levels == nothing
-        return values
-    else
-        return PooledDataArray(values, convert(Vector{eltype(values)}, levels))
-    end
+    levels!(da, level_values)
 end
 
 function discretize(values, levels=nothing, order=nothing, preserve_order=true)
-    if levels == nothing
-        if preserve_order
-            levels = OrderedSet()
-            for value in values
-                push!(levels, value)
-            end
-            da = discretize_make_pda(values, collect(eltype(values), levels))
-        else
-            da = discretize_make_pda(values)
-        end
+    if preserve_order
+        da = CategoricalArray(values, ordered=true)
     else
-        da = discretize_make_pda(values, levels)
+        da = CategoricalArray(values)
     end
 
     if order != nothing
-        return reorder_levels(da, order)
-    else
-        return da
+        reorder_levels(da, order)
     end
+    return da
 end
 
 
@@ -364,7 +324,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
             getfield(data, var) === nothing && continue
 
             disc_data = discretize(getfield(data, var), scale.levels, scale.order)
-            setfield!(aes, var, PooledDataArray([round(Int64,x) for x in disc_data.refs]))
+            setfield!(aes, var, CategoricalArray([round(Int64,x) for x in disc_data.refs]))
 
             # The leveler for discrete scales is a closure over the discretized data.
             if scale.labels === nothing
@@ -418,7 +378,7 @@ function apply_scale(scale::IdentityColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
-        aes.color = PooledDataArray(data.color)
+        aes.color = CategoricalArray(data.color)
         aes.color_key_colors = Dict()
     end
 end
@@ -488,7 +448,7 @@ function apply_scale(scale::DiscreteColorScale,
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
         for d in data.color
-            isna(d) || push!(levelset, d)
+            ismissing(d) || push!(levelset, d)
         end
     end
 
@@ -517,7 +477,7 @@ function apply_scale(scale::DiscreteColorScale,
             end
         end
 
-        colored_ds = PooledDataArray(colorvals, colors)
+        colored_ds = CategoricalArray(colorvals)
         aes.color = colored_ds
 
         aes.color_label = labeler
