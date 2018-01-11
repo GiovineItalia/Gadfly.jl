@@ -4,6 +4,7 @@ using Colors
 using Compat
 using Compose
 using DataArrays
+using CategoricalArrays
 using DataStructures
 using Gadfly
 using Measures

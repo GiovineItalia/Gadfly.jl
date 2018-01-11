@@ -42,7 +42,7 @@ element_aesthetics(::RectangularBinGeometry) =
 function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGBA{Float32}[theme.default_color])
+    default_aes.color = CategoricalArray(RGBA{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
     Gadfly.assert_aesthetics_defined("RectangularBinGeometry", aes, :xmin, :xmax, :ymin, :ymax)

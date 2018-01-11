@@ -1,13 +1,13 @@
 #Is this usable data?
-isconcrete{T<:Number}(x::T) = !isna(x) && isfinite(x)
+isconcrete{T<:Number}(x::T) = !ismissing(x) && isfinite(x)
 isconcrete(x::(Irrational)) = true
-isconcrete(x) = !isna(x)
+isconcrete(x) = !ismissing(x)
 
 hasna(xs) = false
 
 function hasna(xs::AbstractDataArray)
     for x in xs
-        if isna(x)
+        if ismissing(x)
             return true
         end
     end
