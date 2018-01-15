@@ -812,6 +812,7 @@ Gadfly.guide_background_scroll = function(event) {
 // The constants a, b, and c are solved using the constraint that the function
 // should go through the points (0; min_scale), (0.5; 1), and (1; max_scale).
 var scale_from_slider_position = function(position, min_scale, max_scale) {
+    if (min_scale==max_scale) { return 1; }
     var a = (1 - 2 * min_scale + min_scale * min_scale) / (min_scale + max_scale - 2),
         b = 2 * Math.log((max_scale - 1) / (1 - min_scale)),
         c = (min_scale * max_scale - 1) / (min_scale + max_scale - 2);
@@ -820,6 +821,7 @@ var scale_from_slider_position = function(position, min_scale, max_scale) {
 
 // inverse of scale_from_slider_position
 var slider_position_from_scale = function(scale, min_scale, max_scale) {
+    if (min_scale==max_scale) { return min_scale; }
     var a = (1 - 2 * min_scale + min_scale * min_scale) / (min_scale + max_scale - 2),
         b = 2 * Math.log((max_scale - 1) / (1 - min_scale)),
         c = (min_scale * max_scale - 1) / (min_scale + max_scale - 2);
