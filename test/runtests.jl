@@ -113,5 +113,5 @@ end
 if !haskey(ENV, "TRAVIS") && !isinteractive() &&
             !isempty(readdir(joinpath((@__DIR__),"cachedoutput"))) &&
             !isempty(readdir(joinpath((@__DIR__),"gennedoutput")))
-    run(`$(Base.julia_cmd()) compare_examples.jl`)  # `include`ing causes it to hang.
+    run(`$(Base.julia_cmd()) compare_examples.jl`)
 end
