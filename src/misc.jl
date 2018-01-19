@@ -342,16 +342,6 @@ end
 
 svg_color_class_from_label(label::AbstractString) = @sprintf("color_%s", escape_id(label))
 
-
-
-"""
-A faster map function for PooledDataVector
-"""
-function pooled_map(T::Type, f::Function, xs::PooledDataVector)
-    newpool = T[f(x) for x in xs.pool]
-    return T[newpool[i] for i in xs.refs]
-end
-
 using Base.Dates
 
 # Arbitrarily order colors

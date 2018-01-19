@@ -58,7 +58,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledArray(RGBA{Float32}[theme.default_color])
+    default_aes.color = IndirectArray(RGBA{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
     ctx = context(order=geom.order)
@@ -132,7 +132,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                       svgclass("geometry"))
 
     elseif length(aes.color) == 1 &&
-            !(isa(aes.color, PooledArray) && length(levels(aes.color)) > 1)
+            !(isa(aes.color, IndirectArray) && length(levels(aes.color)) > 1)
         T = (Tuple{eltype(aes.x), eltype(aes.y)})
         points = T[(x, y) for (x, y) in zip(aes.x, aes.y)]
         geom.preserve_order || sort!(points, by=first)

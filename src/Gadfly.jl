@@ -10,7 +10,7 @@ using DataFrames
 using DataStructures
 using JSON
 using Showoff
-using PooledArrays
+using IndirectArrays
 using CategoricalArrays
 
 import IterTools
@@ -37,17 +37,6 @@ export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, Shape, ren
 @deprecate octogon Shape.octogon
 @deprecate hline Shape.hline
 @deprecate vline Shape.vline
-
-# Things that should go into other packages.
-# (Probably in a more efficient version)
-## PooledArrays
-function Base.append!(x::PooledArray{T,R,N,RA}, y::PooledArray{T,R,N,RA}) where {T,R,N,RA}
-    if x.pool == y.pool
-        append!(x.refs, y.refs)
-        return x
-    end
-    throw(ArgumentError("pools not identical"))
-end
 
 # Re-export some essentials from Compose
 export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack, title, gridstack
@@ -1126,7 +1115,7 @@ end
 
 import Juno: Juno, @render, media, Media
 
-media(Plot, Media.Plot)
+# media(Plot, Media.Plot)
 
 @render Juno.PlotPane p::Plot begin
     x, y = Juno.plotsize()
@@ -1232,9 +1221,9 @@ end
 
 # Determine whether the input is categorical or numerical
 
-const CategoricalType = Union{AbstractString, Bool, Symbol}
+const CategoricalType = Union{AbstractString, Bool, Symbol, CategoricalArrays.CategoricalValue, CategoricalArrays.CategoricalString}
 
-classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N}) = :categorical
+classify_data{N, T <: Union{CategoricalType,Missing}}(data::AbstractArray{T, N})        = :categorical
 classify_data{N, T <: Union{Base.Callable,Measure,Colorant}}(data::AbstractArray{T, N}) = :functional
 classify_data{T <: Base.Callable}(data::T) = :functional
 classify_data(data::AbstractArray) = :numerical

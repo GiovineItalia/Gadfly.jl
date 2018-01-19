@@ -7,7 +7,7 @@ using DataArrays
 using DataStructures
 using Gadfly
 using Showoff
-using PooledArrays
+using IndirectArrays
 using CategoricalArrays
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length,
@@ -253,44 +253,46 @@ function apply_scale_typed!(ds, field, scale::ContinuousScale)
 end
 
 # Reorder the levels of a pooled data array
-function reorder_levels(da::PooledArray, order::AbstractVector)
+function reorder_levels(da::IndirectArray, order::AbstractVector)
     level_values = levels(da)
     length(order) != length(level_values) &&
             error("Discrete scale order is not of the same length as the data's levels.")
     permute!(level_values, order)
-    return PooledArray(da, level_values)
+    return IndirectArray(da, level_values)
 end
 
-function discretize_make_pda(values::Vector, levels=nothing)
-    if levels == nothing
-        return PooledArray(values)
-    else
-        return PooledArray(convert(Vector{eltype(levels)}, values), levels)
-    end
-end
+discretize_make_pda(values::Vector)         = IndirectArray(values)
+discretize_make_pda(values::Vector, ::Void) = IndirectArray(values)
+discretize_make_pda(values::Vector, levels) =
+    IndirectArray(map(t -> findfirst(levels, t), values), levels)
 
-function discretize_make_pda(values::DataArray, levels=nothing)
-    if levels == nothing
-        return PooledArray(values)
-    else
-        return PooledArray(convert(DataArray{eltype(levels)}, values), levels)
-    end
-end
+discretize_make_pda(values::DataArray)         = IndirectArray(values)
+discretize_make_pda(values::DataArray, ::Void) = IndirectArray(values)
+discretize_make_pda(values::DataArray, levels) =
+    IndirectArray(convert(DataArray{eltype(levels)}, values), levels)
 
-function discretize_make_pda(values::Range, levels=nothing)
-    if levels == nothing
-        return PooledArray(collect(values))
-    else
-        return PooledArray(collect(values), levels)
-    end
-end
+discretize_make_pda(values::Range)         = IndirectArray(collect(values))
+discretize_make_pda(values::Range, ::Void) = IndirectArray(collect(values))
+discretize_make_pda(values::Range, levels) = IndirectArray(collect(values), levels)
 
-function discretize_make_pda(values::Union{PooledArray,CategoricalArray}, levels=nothing)
-    if levels == nothing
-        return values
-    else
-        return PooledArray(values, convert(Vector{eltype(values)}, levels))
-    end
+discretize_make_pda(values::IndirectArray)         = values
+discretize_make_pda(values::IndirectArray, ::Void) = values
+discretize_make_pda(values::IndirectArray, levels) =
+    IndirectArray(values, convert(Vector{eltype(values)}, levels))
+
+discretize_make_pda(values::CategoricalArray)         = discretize_make_pda(values, unique(values))
+discretize_make_pda(values::CategoricalArray, ::Void) = discretize_make_pda(values)
+function discretize_make_pda(values::CategoricalArray{T}, levels::Vector) where {T}
+    # _values = map!(t -> ismissing(t) ? t : get(t), Array{T}(size(values)...), values)
+    index = map!(t -> ismissing(t) ?
+                    findfirst(ismissing, levels) :
+                        findfirst(s -> !(ismissing(s) || s != get(t)), levels),
+                 Array{UInt8}(size(values)...), values)
+    return IndirectArray(index, convert(Vector{T},levels))
+end
+function discretize_make_pda(values::CategoricalArray{T}, levels::CategoricalVector{T}) where T
+    _levels = map!(t -> ismissing(t) ? t : get(t), Vector{T}(length(levels)), levels)
+    discretize_make_pda(values, _levels)
 end
 
 function discretize(values, levels=nothing, order=nothing, preserve_order=true)
@@ -366,7 +368,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
             getfield(data, var) === nothing && continue
 
             disc_data = discretize(getfield(data, var), scale.levels, scale.order)
-            setfield!(aes, var, PooledArray([round(Int64,x) for x in disc_data.refs]))
+            setfield!(aes, var, IndirectArray([round(Int64,x) for x in disc_data.index]))
 
             # The leveler for discrete scales is a closure over the discretized data.
             if scale.labels === nothing
@@ -420,7 +422,7 @@ function apply_scale(scale::IdentityColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
-        aes.color = PooledArray(data.color)
+        aes.color = IndirectArray(data.color)
         aes.color_key_colors = Dict()
     end
 end
@@ -490,7 +492,8 @@ function apply_scale(scale::DiscreteColorScale,
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
         for d in data.color
-            ismissing(d) || push!(levelset, d)
+            # ismissing(d) ||
+            push!(levelset, d)
         end
     end
 
@@ -510,16 +513,16 @@ function apply_scale(scale::DiscreteColorScale,
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
         ds = discretize(data.color, scale_levels)
-        colorvals = Array{RGB{Float32}}(nonzero_length(ds.refs))
+        colorvals = Array{RGB{Float32}}(nonzero_length(ds.index))
         i = 1
-        for k in ds.refs
+        for k in ds.index
             if k != 0
                 colorvals[i] = colors[k]
                 i += 1
             end
         end
 
-        colored_ds = PooledArray(colorvals, colors)
+        colored_ds = IndirectArray(colorvals, colors)
         aes.color = colored_ds
 
         aes.color_label = labeler

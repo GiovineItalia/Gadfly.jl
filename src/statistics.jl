@@ -12,7 +12,7 @@ using Distributions
 using Hexagons
 using Loess
 using CoupledFields # It is registered in METADATA.jl
-using PooledArrays
+using IndirectArrays
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, nonzero_length, setfield!
@@ -401,7 +401,7 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
 
-        aes.color = PooledArray(colors)
+        aes.color = IndirectArray(colors)
     end
 
     getfield(aes, viewminvar) === nothing && setfield!(aes, viewminvar, 0.0)
@@ -528,7 +528,7 @@ function apply_statistic(stat::DensityStatistic,
                 push!(colors, c)
             end
         end
-        aes.color = PooledArray(colors)
+        aes.color = IndirectArray(colors)
     end
     aes.y_label = Gadfly.Scale.identity_formatter
 end
@@ -667,20 +667,19 @@ function apply_statistic(stat::Histogram2DStatistic,
 
     if x_categorial
         aes.xmin, aes.xmax = barminmax(aes.x, false)
-        aes.x = PooledArray(aes.x)
+        aes.x = IndirectArray(aes.x)
         aes.pad_categorical_x = Nullable(false)
     end
 
     if y_categorial
         aes.ymin, aes.ymax = barminmax(aes.y, false)
-        aes.y = PooledArray(aes.y)
+        aes.y = IndirectArray(aes.y)
         aes.pad_categorical_y = Nullable(false)
     end
 
     Scale.apply_scale(color_scale, [aes], data)
     nothing
 end
-
 
 # Find reasonable places to put tick marks and grid lines.
 immutable TickStatistic <: Gadfly.StatisticElement
@@ -718,14 +717,14 @@ yticks(; ticks=:auto,
         granularity_weight, simplicity_weight, coverage_weight, niceness_weight, ticks)
 
 # Apply a tick statistic.
-#
+
 # Args:
 #   stat: statistic.
 #   aes: aesthetics.
-#
+
 # Returns:
 #   nothing
-#
+
 # Modifies:
 #   aes
 #
@@ -987,7 +986,7 @@ function apply_statistic(stat::BoxplotStatistic,
         end
 
         if aes.color !== nothing
-            aes.color = PooledArray([c for (x, c) in groups],
+            aes.color = IndirectArray([c for (x, c) in groups],
                                         levels(aes.color))
         end
 
@@ -1067,12 +1066,12 @@ function apply_statistic(stat::BoxplotStatistic,
         end
     end
 
-    if isa(aes_x, PooledArray)
-        aes.x = PooledArray(aes.x, aes_x.pool)
+    if isa(aes_x, IndirectArray)
+        aes.x = IndirectArray(aes.x, aes_x.values)
     end
 
     if aes.color !== nothing
-        aes.color = PooledArray(RGB{Float32}[c for (x, c) in keys(groups)],
+        aes.color = IndirectArray(RGB{Float32}[c for (x, c) in keys(groups)],
                                     levels(aes.color))
     end
 
@@ -1105,7 +1104,7 @@ function apply_statistic(stat::SmoothStatistic,
 
     max_num_steps = 750
     aes_color = aes.color === nothing ? [nothing] : aes.color
-    
+
     groups = Dict(c => (eltype(aes.x)[], eltype(aes.y)[]) for c in unique(aes_color))
     for (x, y, c) in zip(aes.x, aes.y, cycle(aes_color))
         push!(groups[c][1], x)
@@ -1114,7 +1113,7 @@ function apply_statistic(stat::SmoothStatistic,
 
     local xs, ys, xsp
     aes.x = eltype(aes.x)[]
-    # For aes.y returning a Float is ok if `y` is an Int or a Float 
+    # For aes.y returning a Float is ok if `y` is an Int or a Float
     # There does not seem to be strong demand for other types of `y`
     aes.y = Float64[]
     colors = eltype(aes_color)[]
@@ -1128,9 +1127,9 @@ function apply_statistic(stat::SmoothStatistic,
         catch e
             error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
         end
-            
+
         nudge = 1e-5 * (x_max - x_min)
-        
+
         dx = (x_max-x_min)*(1/max_num_steps)
         # For a Date, dx might be 0 days, so correct
         # For Ints, correct dx
@@ -1149,15 +1148,15 @@ function apply_statistic(stat::SmoothStatistic,
             lmcoeff = linreg(xs,ys)
             smoothys = lmcoeff[2].*xsp .+ lmcoeff[1]
         end
-    
-    # New aes 
+
+    # New aes
         append!(aes.x, steps)
         append!(aes.y, smoothys)
         append!(colors, fill(c, length(steps)))
     end
 
     if !(aes.color===nothing)
-        aes.color = PooledArray(colors)
+        aes.color = IndirectArray(colors)
     end
 end
 
@@ -1344,7 +1343,7 @@ function apply_statistic(stat::FunctionStatistic,
             aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = func_color[i]
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
-        aes.group = PooledArray(groups)
+        aes.group = IndirectArray(groups)
     elseif length(aes.y) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
         data.color = Array{AbstractString}(length(aes.y) * stat.num_samples)
@@ -1355,7 +1354,7 @@ function apply_statistic(stat::FunctionStatistic,
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
         Scale.apply_scale(scales[:color], [aes], data)
-        aes.group = PooledArray(groups)
+        aes.group = IndirectArray(groups)
     end
 
     data = Gadfly.Data()
@@ -1418,7 +1417,7 @@ function apply_statistic(stat::ContourStatistic,
 
     stat_levels = typeof(stat.levels) <: Function ? stat.levels(zs) : stat.levels
 
-    groups = PooledArray(Int[])
+    groups = IndirectArray(Int[])
     group = 0
     for level in Contour.levels(Contour.contours(xs, ys, zs, stat_levels))
         for line in Contour.lines(level)
@@ -1531,12 +1530,12 @@ function apply_statistic(stat::ViolinStatistic,
     ux = unique(aes.x)
     uxflag = length(ux) < length(aes.x)
     colorflag = aes.color != nothing
-    
+
     uxflag && (grouped_y = Dict(x=>aes.y[aes.x.==x] for x in ux))
-    
+
     grouped_color = (colorflag ? Dict(x=>first(aes.color[aes.x.==x]) for x in ux) : 
         uxflag && Dict(x=>nothing for x in ux) )
-    
+
     aes.x     = Array{Float64}(0)
     aes.y     = Array{Float64}(0)
     aes.width = Array{Float64}(0)
@@ -1550,7 +1549,7 @@ function apply_statistic(stat::ViolinStatistic,
         append!(aes.width, f.density)
         append!(colors, fill(grouped_color[x], length(f.x)))
     end
-    
+
     colorflag  && (aes.color = colors)
 
     pad = 0.1
@@ -1662,7 +1661,7 @@ function apply_statistic(stat::BinMeanStatistic,
                 push!(colors, c)
             end
         end
-        aes.color = PooledArray(colors)
+        aes.color = IndirectArray(colors)
     end
 end
 
@@ -1813,7 +1812,6 @@ function apply_statistic(stat::HairStatistic,
     end
 end
 
-
 ### Ellipse Statistic
 
 immutable EllipseStatistic <: Gadfly.StatisticElement
@@ -1822,9 +1820,9 @@ immutable EllipseStatistic <: Gadfly.StatisticElement
     nsegments::Int
 end
 
-function EllipseStatistic(; 
+function EllipseStatistic(;
         distribution::(@compat Type{<:ContinuousMultivariateDistribution})=MvNormal,
-        levels::Vector{Float64}=[0.95], 
+        levels::Vector{Float64}=[0.95],
         nsegments::Int=51 )
     return EllipseStatistic(distribution, levels, nsegments)
 end
@@ -1847,16 +1845,16 @@ function Gadfly.Stat.apply_statistic(stat::EllipseStatistic,
     aes.group = (colorflag ? aes.color : aes.group)
 
     if aes.group != nothing
-        ug = unique(aes.group) 
+        ug = unique(aes.group)
         grouped_xy = Dict(g=>Dat[aes.group.==g,:] for g in ug)
         grouped_color = Dict(g=>first(aes.group[aes.group.==g]) for g in ug)
     end
-    
+
     levels = Float64[]
     colors = eltype(aes.color)[]
     ellipse_x = eltype(Dat)[]
     ellipse_y = eltype(Dat)[]
-    
+
     dfn = 2
     θ = 2π*(0:stat.nsegments)/stat.nsegments
     n = length(θ)
@@ -1880,8 +1878,5 @@ function Gadfly.Stat.apply_statistic(stat::EllipseStatistic,
     aes.x = ellipse_x
     aes.y = ellipse_y
 end
-
-
-
 
 end # module Stat
