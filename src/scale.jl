@@ -283,7 +283,6 @@ discretize_make_pda(values::IndirectArray, levels) =
 discretize_make_pda(values::CategoricalArray)         = discretize_make_pda(values, unique(values))
 discretize_make_pda(values::CategoricalArray, ::Void) = discretize_make_pda(values)
 function discretize_make_pda(values::CategoricalArray{T}, levels::Vector) where {T}
-    # _values = map!(t -> ismissing(t) ? t : get(t), Array{T}(size(values)...), values)
     index = map!(t -> ismissing(t) ?
                     findfirst(ismissing, levels) :
                         findfirst(s -> !(ismissing(s) || s != get(t)), levels),
@@ -294,6 +293,11 @@ function discretize_make_pda(values::CategoricalArray{T}, levels::CategoricalVec
     _levels = map!(t -> ismissing(t) ? t : get(t), Vector{T}(length(levels)), levels)
     discretize_make_pda(values, _levels)
 end
+
+# These methods convert WeakRefStringArrays to Vector{String} and shouldn't really be necessary
+# since it has been decided that WeakRefStrings shouldn't be used externally anymore
+discretize_make_pda(s::AbstractArray{<:AbstractString}) = discretize_make_pda(Vector{String}(s))
+discretize_make_pda(s::AbstractArray{<:AbstractString}, levels) = discretize_make_pda(Vector{String}(s), levels)
 
 function discretize(values, levels=nothing, order=nothing, preserve_order=true)
     if levels == nothing
