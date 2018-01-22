@@ -1115,7 +1115,7 @@ end
 
 import Juno: Juno, @render, media, Media
 
-# media(Plot, Media.Plot)
+media(Plot, Media.Plot)
 
 @render Juno.PlotPane p::Plot begin
     x, y = Juno.plotsize()
