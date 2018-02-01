@@ -32,6 +32,7 @@ easiest way to get that data to plot appropriately.
 
 ```@setup 1
 using RDatasets
+using DataFrames
 using Gadfly
 Gadfly.set_default_plot_size(12cm, 8cm)
 srand(1234)
@@ -40,4 +41,10 @@ srand(1234)
 ```@example 1
 # Treat numerical x data as categories
 plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)
+```
+
+```@example 1
+# To perserve the order of the columns in the plot when plotting a DataFrame
+df = DataFrame(v1 = randn(10), v2 = randn(10), v3 = randn(10))
+plot(df, x=Col.index, y=Col.value, Scale.x_discrete(levels=df.colindex.names))
 ```
