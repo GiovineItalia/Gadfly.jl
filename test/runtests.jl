@@ -8,7 +8,9 @@ end
 using Gadfly, Compat
 
 repo = LibGit2.GitRepo(dirname(@__DIR__))
-outputdir = in(LibGit2.headname(repo)[1:6], ["master","(detac"]) ? "cachedoutput" : "gennedoutput"
+branch = LibGit2.headname(repo)
+outputdir = mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
+        "cachedoutput" : "gennedoutput"
 
 if VERSION>=v"0.6"
     function mimic_git_log_n1(io::IO, head)
