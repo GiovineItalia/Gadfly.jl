@@ -254,7 +254,7 @@ end
 
 # Reorder the levels of a pooled data array
 function reorder_levels(da::IndirectArray, order::AbstractVector)
-    level_values = levels(da)
+    level_values = da.values
     length(order) != length(level_values) &&
             error("Discrete scale order is not of the same length as the data's levels.")
     permute!(level_values, order)
@@ -377,7 +377,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
             # The leveler for discrete scales is a closure over the discretized data.
             if scale.labels === nothing
                 function default_labeler(xs)
-                    lvls = levels(disc_data)
+                    lvls = filter(!ismissing, disc_data.values)
                     vals = Any[1 <= x <= length(lvls) ? lvls[x] : "" for x in xs]
                     if all([isa(val, AbstractFloat) for val in vals])
                         return showoff(vals)
@@ -388,7 +388,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
                 labeler = default_labeler
             else
                 function explicit_labeler(xs)
-                    lvls = levels(disc_data)
+                    lvls = filter(!ismissing, disc_data.values)
                     return [string(scale.labels(lvls[x])) for x in xs]
                 end
                 labeler = explicit_labeler

@@ -66,7 +66,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
             compose!(ctx, fill(nothing), stroke(cs))
         end
     elseif length(aes.color) == 1 &&
-            !(isa(aes.color, IndirectArray) && length(levels(aes.color)) > 1)
+            !(isa(aes.color, IndirectArray) && length(filter(!ismissing, aes.color.values)) > 1)
         compose!(ctx, Compose.polygon(polygon_points(aes.x, aes.y, geom.preserve_order), geom.tag))
         if geom.fill
             compose!(ctx, fill(aes.color[1]),

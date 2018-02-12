@@ -987,7 +987,7 @@ function apply_statistic(stat::BoxplotStatistic,
 
         if aes.color !== nothing
             aes.color = IndirectArray([c for (x, c) in groups],
-                                        levels(aes.color))
+                                        filter(!ismissing, aes.color.values))
         end
 
         return
@@ -1072,7 +1072,7 @@ function apply_statistic(stat::BoxplotStatistic,
 
     if aes.color !== nothing
         aes.color = IndirectArray(RGB{Float32}[c for (x, c) in keys(groups)],
-                                    levels(aes.color))
+                                    aes.color.levels)
     end
 
     nothing

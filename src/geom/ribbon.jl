@@ -23,7 +23,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     aes_x, aes_ymin, aes_ymax = concretize(aes.x, aes.ymin, aes.ymax)
 
     if length(aes.color) == 1 &&
-        !(isa(aes.color, IndirectArray) && length(levels(aes.color)) > 1)
+        !(isa(aes.color, IndirectArray) && length(filter(!ismissing, aes.color.values)) > 1)
         max_points = collect(zip(aes_x, aes_ymax))
         sort!(max_points, by=first)
 
