@@ -2293,7 +2293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.x_discrete",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Treat numerical x data as categories\nplot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)"
+    "text": "using RDatasets\nusing DataFrames\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Treat numerical x data as categories\nplot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)# To perserve the order of the columns in the plot when plotting a DataFrame\ndf = DataFrame(v1 = randn(10), v2 = randn(10), v3 = randn(10))\nplot(df, x=Col.index, y=Col.value, Scale.x_discrete(levels=df.colindex.names))"
 },
 
 {
