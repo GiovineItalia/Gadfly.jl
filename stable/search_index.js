@@ -33,14 +33,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#Manual-outline-1",
-    "page": "Home",
-    "title": "Manual outline",
-    "category": "section",
-    "text": "Pages = [\n    \"man/plotting.md\",\n    \"man/layers.md\",\n    \"man/backends.md\",\n    \"man/themes.md\"\n]\nDepth = 1"
-},
-
-{
     "location": "index.html#Credits-1",
     "page": "Home",
     "title": "Credits",
@@ -61,7 +53,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Tutorial",
     "category": "section",
-    "text": "Gadfly is an implementation of a \"grammar of graphics\" style statistical graphics system for Julia. This tutorial will outline general usage patterns and will give you a feel for the overall system.To begin, we need some data. Gadfly works best when the data is supplied in a DataFrame. In this tutorial, we'll pick and choose some examples from the RDatasets package.Let us use Fisher's iris dataset as a starting point.using Gadfly\nusing RDatasets\n\niris = dataset(\"datasets\", \"iris\")\nnothing # hideThe plot function in Gadfly is of the form:plot(data::DataFrame, mapping::Dict, elements::Element...)The first argument is the data to be plotted, the second is a dictionary mapping \"aesthetics\" to columns in the data frame, and this is followed by some number of elements, which are the nouns and verbs, so to speak, that form the grammar.Let's get to it.p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point);\nnothing # hideThis produces a Plot object. It can be saved to a file by drawing to one or more backends using draw.img = SVG(\"iris_plot.svg\", 6inch, 4inch)\ndraw(img, p)Now we have the following charming little SVG image.p # hideIf you are working at the REPL, a quicker way to see the image is to omit the semi-colon trailing plot.  This automatically renders the image to your default multimedia display, typically an internet browser.  No need to capture the output argument in this case.plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)Alternatively one can manually call display on a Plot object.  This workflow is necessary when display would not otherwise be called automatically.function get_to_it(d)\n  ppoint = plot(d, x=:SepalLength, y=:SepalWidth, Geom.point)\n  pline = plot(d, x=:SepalLength, y=:SepalWidth, Geom.line)\n  ppoint, pline\nend\nps = get_to_it(iris)\nmap(display, ps)For the rest of the demonstrations, we'll simply omit the trailing semi-colon for brevity.In this plot we've mapped the x aesthetic to the SepalLength column and the y aesthetic to the SepalWidth. The last argument, Geom.point, is a geometry element which takes bound aesthetics and render delightful figures. Adding other geometries produces layers, which may or may not result in a coherent plot.plot(iris, x=:SepalLength, y=:SepalWidth,\n         Geom.point, Geom.line)This is the grammar of graphics equivalent of \"colorless green ideas sleep furiously\". It is valid grammar, but not particularly meaningful."
+    "text": "Gadfly is an implementation of a \"grammar of graphics\" style statistical graphics system for Julia. This tutorial will outline general usage patterns and will give you a feel for the overall system.To begin, we need some data. Gadfly works best when the data is supplied in a DataFrame. In this tutorial, we'll pick and choose some examples from the RDatasets package.Let us use Fisher's iris dataset as a starting point.using Gadfly\nusing RDatasets\n\niris = dataset(\"datasets\", \"iris\")\nnothing # hideThe plot function in Gadfly is of the form:plot(data::DataFrame, mapping::Dict, elements::Element...)The first argument is the data to be plotted, the second is a dictionary mapping \"aesthetics\" to columns in the data frame, and this is followed by some number of elements, which are the nouns and verbs, so to speak, that form the grammar.Let's get to it.p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point);\nnothing # hideThis produces a Plot object. It can be saved to a file by drawing to one or more backends using draw.img = SVG(\"iris_plot.svg\", 6inch, 4inch)\ndraw(img, p)Now we have the following charming little SVG image.p # hideIf you are working at the REPL, a quicker way to see the image is to omit the semi-colon trailing plot.  This automatically renders the image to your default multimedia display, typically an internet browser.  No need to capture the output argument in this case.plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)Alternatively one can manually call display on a Plot object.  This workflow is necessary when display would not otherwise be called automatically.function get_to_it(d)\n  ppoint = plot(d, x=:SepalLength, y=:SepalWidth, Geom.point)\n  pline = plot(d, x=:SepalLength, y=:SepalWidth, Geom.line)\n  ppoint, pline\nend\nps = get_to_it(iris)\nmap(display, ps)For the rest of the demonstrations, we'll simply omit the trailing semi-colon for brevity.In this plot we've mapped the x aesthetic to the SepalLength column and the y aesthetic to the SepalWidth. The last argument, Geom.point, is a geometry element which takes bound aesthetics and renders delightful figures. Adding other geometries produces layers, which may or may not result in a coherent plot.plot(iris, x=:SepalLength, y=:SepalWidth,\n         Geom.point, Geom.line)This is the grammar of graphics equivalent of \"colorless green ideas sleep furiously\". It is valid grammar, but not particularly meaningful."
 },
 
 {
@@ -85,7 +77,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Discrete scales",
     "category": "section",
-    "text": "Since all continuous analysis is just degenerate discrete analysis, let's take a crack at the latter using some fuel efficiency data.gasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of elements in the grammar: we've omitted Scale.x_continuous and Scale.y_continuous in the previous plots, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel, and so on. As much as possible the system tries to fill in the gaps with reasonable defaults."
+    "text": "Since all continuous analysis is just degenerate discrete analysis, let's take a crack at the latter using some fuel efficiency data.gasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of the elements in the grammar: we've omitted Scale.x_continuous and Scale.y_continuous in the previous plots, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel, and so on. As much as possible the system tries to fill in the gaps with reasonable defaults."
 },
 
 {
@@ -253,7 +245,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Parameters",
     "category": "section",
-    "text": "These parameters can either be used with Theme or styledefault_color: When the color aesthetic is not bound, geometry uses this color for drawing. (Color)\npoint_size: Size of points in the point, boxplot, and beeswarm geometries.  (Measure)\npoint_size_min: Minimum size of points in the point geometry.  (Measure)\npoint_size_max: Maximum size of points in the point geometry.  (Measure)\npoint_shapes: Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)\nline_width: Width of lines in the line geometry. (Measure)\nline_style: Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)\npanel_fill: Background color used in the main plot panel. ( Color or Nothing)\npanel_opacity: Opacity of the plot background panel. (Float in [0.0, 1.0])\npanel_stroke: Border color of the main plot panel. (Color or Nothing)\nbackground_color: Background color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding: How much padding should be put around the plot as a whole (Measure)\ngrid_color: Color of grid lines. (Color or Nothing)\ngrid_color_focused: In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width: Width of grid lines. (Measure)\nminor_label_font: Font used for minor labels such as guide entries and labels. (String)\nminor_label_font_size: Font size used for minor labels. (Measure)\nminor_label_color: Color used for minor labels. (Color)\nmajor_label_font: Font used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size: Font size used for major labels. (Measure)\nmajor_label_color: Color used for major labels. (Color)\nkey_position: Where key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, or :none. Setting to :none disables the key. (Symbol)\nkey_title_font: Font used for titles of keys. (String)\nkey_title_font_size: Font size used for key titles. (Measure)\nkey_title_color: Color used for key titles. (Color)\nkey_label_font: Font used for key entry labels. (String)\nkey_label_font_size: Font size used for key entry labels. (Measure)\nkey_label_color: Color used for key entry labels. (Color)\nkey_max_columns: Maximum number of columns for key entry labels. (Int)\nbar_spacing: Spacing between bars in Geom.bar. (Measure)\nboxplot_spacing: Spacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length: Length of caps on error bars. (Measure)\nhighlight_width: Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color and continuous_highlight_color: Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color: Color used to draw background geometry, such as Geom.ribbon. This is a function that alters the fill color of the geometry. (Function)\nlowlight_opacity: Opacity of background geometry such as Geom.ribbon. (Float64)\nmiddle_color: Color altering function used to draw the midline in boxplots. (Function)\nmiddle_width: Width of the middle line in boxplots. (Measure)\nguide_title_position: One of :left, :center, :right indicating the  placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape: The shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nbar_highlight: Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\ndiscrete_color_scheme: A DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scheme: A ContinuousColorScale see Scale.color_continuous"
+    "text": "These parameters can either be used with Theme or styledefault_color: When the color aesthetic is not bound, geometry uses this color for drawing. (Color)\npoint_size: Size of points in the point, boxplot, and beeswarm geometries.  (Measure)\npoint_size_min: Minimum size of points in the point geometry.  (Measure)\npoint_size_max: Maximum size of points in the point geometry.  (Measure)\npoint_shapes: Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)\nline_width: Width of lines in the line geometry. (Measure)\nline_style: Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)\npanel_fill: Background color used in the main plot panel. ( Color or Nothing)\npanel_opacity: Opacity of the plot background panel. (Float in [0.0, 1.0])\npanel_stroke: Border color of the main plot panel. (Color or Nothing)\nbackground_color: Background color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding: Padding around the plot. The order of padding is: plot_padding=[left, right, top, bottom]. If a vector of length one is provided e.g.  [5mm] then that value is applied to all sides. Absolute or relative units can be used. (Vector{<:Measure})\ngrid_color: Color of grid lines. (Color or Nothing)\ngrid_color_focused: In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width: Width of grid lines. (Measure)\nminor_label_font: Font used for minor labels such as tick labels and entries in keys. (String)\nminor_label_font_size: Font size used for minor labels. (Measure)\nminor_label_color: Color used for minor labels. (Color)\nmajor_label_font: Font used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size: Font size used for major labels. (Measure)\nmajor_label_color: Color used for major labels. (Color)\npoint_label_font: Font used for labels in Geom.label. (String)\npoint_label_font_size: Font size used for labels. (Measure)\npoint_label_color: Color used for labels. (Color)\nkey_position: Where key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, :inside or :none. Setting to :none disables the key. Setting to :inside places the key in the lower right quadrant of the plot. (Symbol)\nkey_title_font: Font used for titles of keys. (String)\nkey_title_font_size: Font size used for key titles. (Measure)\nkey_title_color: Color used for key titles. (Color)\nkey_label_font: Font used for key entry labels. (String)\nkey_label_font_size: Font size used for key entry labels. (Measure)\nkey_label_color: Color used for key entry labels. (Color)\nkey_max_columns: Maximum number of columns for key entry labels. (Int)\nbar_spacing: Spacing between bars in Geom.bar. (Measure)\nboxplot_spacing: Spacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length: Length of caps on error bars. (Measure)\nhighlight_width: Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color and continuous_highlight_color: Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color: Color used to draw background geometry, such as Geom.ribbon. This is a function that alters the fill color of the geometry. (Function)\nlowlight_opacity: Opacity of background geometry such as Geom.ribbon. (Float64)\nmiddle_color: Color altering function used to draw the midline in boxplots. (Function)\nmiddle_width: Width of the middle line in boxplots. (Measure)\nguide_title_position: One of :left, :center, :right indicating the  placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape: The shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nbar_highlight: Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\ndiscrete_color_scheme: A DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scheme: A ContinuousColorScale see Scale.color_continuous"
 },
 
 {
@@ -449,6 +441,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/geoms/geom_boxplot.html#Arguments-1",
+    "page": "Geom.boxplot",
+    "title": "Arguments",
+    "category": "section",
+    "text": "suppress_outliers: If true, don't draw points indicating outliers. (Default is false.)\nmethod: How boxplot statistics are computed. Either :tukey (default) which uses Tukey's rule (i.e. fences are 1.5 times inter-quartile range), or a vector of 5 numbers giving quantiles for lower fence, lower hinge, middle, upper hinge, and upper fence in that order."
+},
+
+{
     "location": "lib/geoms/geom_boxplot.html#Examples-1",
     "page": "Geom.boxplot",
     "title": "Examples",
@@ -606,6 +606,46 @@ var documenterSearchIndex = {"docs": [
     "title": "Examples",
     "category": "section",
     "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)\nsrand(1234)using Distributions\n\nsds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]\nn = 10\nys = [mean(rand(Normal(0, sd), n)) for sd in sds]\nymins = ys .- (1.96 * sds / sqrt(n))\nymaxs = ys .+ (1.96 * sds / sqrt(n))\n\nplot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs,\n     Geom.point, Geom.errorbar)"
+},
+
+{
+    "location": "lib/geoms/geom_hair.html#",
+    "page": "Geom.hair",
+    "title": "Geom.hair",
+    "category": "page",
+    "text": "Author = \"Mattriks\""
+},
+
+{
+    "location": "lib/geoms/geom_hair.html#Geom.hair-1",
+    "page": "Geom.hair",
+    "title": "Geom.hair",
+    "category": "section",
+    "text": "Draws a line from the points to some intercept (base line). Looks like hairs standing on end, hence called a hair plot. Also known as a lollipop chart if the end points are plotted."
+},
+
+{
+    "location": "lib/geoms/geom_hair.html#Aesthetics-1",
+    "page": "Geom.hair",
+    "title": "Aesthetics",
+    "category": "section",
+    "text": "x: Position of points.\ny: Position of points.\ncolor (optional): Color."
+},
+
+{
+    "location": "lib/geoms/geom_hair.html#Arguments-1",
+    "page": "Geom.hair",
+    "title": "Arguments",
+    "category": "section",
+    "text": "intercept: Base of hairs. Defaults to zero. \norientation: :vertical (default) or :horizontal"
+},
+
+{
+    "location": "lib/geoms/geom_hair.html#Examples-1",
+    "page": "Geom.hair",
+    "title": "Examples",
+    "category": "section",
+    "text": "using Gadfly\nGadfly.set_default_plot_size(15cm, 7.5cm)x= 1:10\ns = [-1,-1,1,1,-1,-1,1,1,-1,-1]\npa = plot(x=x, y=x.^2, Geom.hair, Geom.point)\npb = plot(x=s.*(x.^2), y=x, Geom.hair(orientation=:horizontal), Geom.point, color=string.(s), Theme(key_position=:none))\nhstack(pa, pb)"
 },
 
 {
@@ -1221,7 +1261,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.vectorfield",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)\nplot(coord, z=(x,y)->x*exp(-(x^2+y^2)), \n        xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], \n# or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     \n        Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),\n        Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),\n        Scale.y_continuous(minvalue=-2.0, maxvalue=2.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"), Guide.colorkey(\"z\")\n    )volcano = Matrix{Float64}(dataset(\"datasets\", \"volcano\"))\nvolc = volcano[1:4:end, 1:4:end] \ncoord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)\nplot(coord, z=volc, x=1.0:22, y=1.0:16,\n        Geom.vectorfield(scale=0.05), Geom.contour(levels=7),\n        Scale.x_continuous(minvalue=1.0, maxvalue=22.0),\n        Scale.y_continuous(minvalue=1.0, maxvalue=16.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"),\n        Theme(key_position=:none)\n    )"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)\nplot(coord, z=(x,y)->x*exp(-(x^2+y^2)), \n        xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], \n# or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     \n        Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),\n        Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),\n        Scale.y_continuous(minvalue=-2.0, maxvalue=2.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"), Guide.colorkey(title=\"z\")\n    )volcano = Matrix{Float64}(dataset(\"datasets\", \"volcano\"))\nvolc = volcano[1:4:end, 1:4:end] \ncoord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)\nplot(coord, z=volc, x=1.0:22, y=1.0:16,\n        Geom.vectorfield(scale=0.05), Geom.contour(levels=7),\n        Scale.x_continuous(minvalue=1.0, maxvalue=22.0),\n        Scale.y_continuous(minvalue=1.0, maxvalue=16.0),\n        Guide.xlabel(\"x\"), Guide.ylabel(\"y\"),\n        Theme(key_position=:none)\n    )"
 },
 
 {
@@ -1245,7 +1285,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.violin",
     "title": "Aesthetics",
     "category": "section",
-    "text": "Aesthetics used directly:x: Group categorically on the X-axis\ny: Y-axis position.\nwidth: Density at a given y value.With the default statistic Stat.violin, only the following need be defined:x (optional): Group categorically on the X-axis.\ny: Sample from which to draw the density plot."
+    "text": "Aesthetics used directly:x: Group categorically on the X-axis\ny: Y-axis position.\nwidth: Density at a given y value.\ncolor (optional): Violin color.  A suitable discrete variable is needed here. See example below.With the default statistic Stat.violin, only the following need be defined:x (optional): Group categorically on the X-axis.\ny: Sample from which to draw the density plot."
 },
 
 {
@@ -1253,7 +1293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.violin",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.violin)"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)Dsing = dataset(\"lattice\",\"singer\")\nDsing[:Voice] = [x[1:5] for x in Dsing[:VoicePart]]\nplot(Dsing, x=:VoicePart, y=:Height, color=:Voice, Geom.violin)"
 },
 
 {
@@ -1357,7 +1397,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.colorkey",
     "title": "Guide.colorkey",
     "category": "page",
-    "text": "Author = \"Daniel C. Jones\""
+    "text": "Author = \"Daniel C. Jones. Additions by Mattriks\""
 },
 
 {
@@ -1365,7 +1405,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.colorkey",
     "title": "Guide.colorkey",
     "category": "section",
-    "text": "Set the title for the plot legend"
+    "text": "Guide.colorkey enables control of some fields of the auto-generated colorkey. Currently, you can change the colorkey title (for any plot), the item labels (for plots with a discrete color scale), and put the colorkey inside any plot. The fields can be named e.g. Guide.colorkey(title=\"Group\", labels=[\"A\",\"B\"], pos=[0w,0h]), or given in order e.g. Guide.colorkey(\"Group\", [\"A\",\"B\"], [0w,0h])."
 },
 
 {
@@ -1373,7 +1413,15 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.colorkey",
     "title": "Arguments",
     "category": "section",
-    "text": "title: Legend title"
+    "text": "title: Legend title (for any plot)\nlabels: Legend item labels (for plots with a discrete color scale)\npos: [x,y] position of the colorkey inside any plot. Setting Guide.colorkey(pos=) will override the Theme(key_position=) setting. Setting Theme(key_position=:inside) without setting pos will place the key in the lower right quadrant of the plot (see example below)"
+},
+
+{
+    "location": "lib/guides/guide_colorkey.html#Colorkey-position-1",
+    "page": "Guide.colorkey",
+    "title": "Colorkey position",
+    "category": "section",
+    "text": "pos can be given in relative or absolute units (do using Compose before plotting):  _Relative units_: e.g. [0.7w, 0.2h] will place the key in the lower right quadrant, [0.05w, -0.25h] in the upper left (see example below).  \n_Absolute units_: e.g. [0mm, 0mm] the key is left-centered, or use the plot scales like [x,y]. For the latter, the x-position will make sense, but the key will be offset below the y-position, because of the way the key is rendered.  "
 },
 
 {
@@ -1381,7 +1429,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.colorkey",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)volcano = float(convert(Array, dataset(\"datasets\", \"volcano\")))\nplot(z=volcano, Geom.contour, Guide.colorkey(\"Elevation\"))"
+    "text": "using RDatasets\nusing Compose\nusing Gadfly\nGadfly.set_default_plot_size(16cm, 8cm)Dsleep = dataset(\"ggplot2\", \"msleep\")[[:Vore,:BrainWt,:BodyWt,:SleepTotal]]\ncompletecases!(Dsleep)\nDsleep[:SleepTime] = Dsleep[:SleepTotal] .> 8\nplot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:SleepTime, \n    Guide.colorkey(title=\"Sleep \\n(hours/day)\\n \", labels=[\">8\",\"≤8\"]),\n    Scale.x_log10, Scale.y_log10 )\niris = dataset(\"datasets\",\"iris\")\npa = plot(iris, x=:SepalLength, y=:PetalLength, color=:Species, Geom.point,\n      Theme(key_position=:inside) )\npb = plot(iris, x=:SepalLength, y=:PetalLength, color=:Species, Geom.point, \n      Guide.colorkey(title=\"Iris\", pos=[0.05w,-0.28h]) )\nhstack(pa, pb)"
 },
 
 {
@@ -2085,7 +2133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.color_discrete_hue",
     "title": "Examples",
     "category": "section",
-    "text": "using Gadfly\nsrand(1234)"
+    "text": "using Gadfly\nusing Colors\nsrand(1234)"
 },
 
 {
@@ -2245,7 +2293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.x_discrete",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Treat numerical x data as categories\nplot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)"
+    "text": "using RDatasets\nusing DataFrames\nusing Gadfly\nGadfly.set_default_plot_size(12cm, 8cm)\nsrand(1234)# Treat numerical x data as categories\nplot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)# To perserve the order of the columns in the plot when plotting a DataFrame\ndf = DataFrame(v1 = randn(10), v2 = randn(10), v3 = randn(10))\nplot(df, x=Col.index, y=Col.value, Scale.x_discrete(levels=df.colindex.names))"
 },
 
 {
@@ -2337,6 +2385,30 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/shapes.html#",
+    "page": "Shapes",
+    "title": "Shapes",
+    "category": "page",
+    "text": "Author = \"Ben J. Arthur\""
+},
+
+{
+    "location": "lib/shapes.html#Shapes-1",
+    "page": "Shapes",
+    "title": "Shapes",
+    "category": "section",
+    "text": "Shapes, when combined with Geom.point, specify the appearance of markers.  Available shapes include circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octogon, hline, and vline."
+},
+
+{
+    "location": "lib/shapes.html#Examples-1",
+    "page": "Shapes",
+    "title": "Examples",
+    "category": "section",
+    "text": "using RDatasets\nusing Gadfly\nset_default_plot_size(12cm, 8cm)plot(dataset(\"HistData\",\"DrinksWages\"),\n    x=\"Wage\", y=\"Drinks\", shape=[Shape.square],\n    Geom.point, Scale.y_log10)"
+},
+
+{
     "location": "dev/pipeline.html#",
     "page": "Rendering Pipeline",
     "title": "Rendering Pipeline",
@@ -2349,7 +2421,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Rendering Pipeline",
     "title": "Rendering Pipeline",
     "category": "section",
-    "text": "using DataFrames\nusing Colors\nusing Compose\nusing RDatasets\nusing Showoff\nusing GadflyHow does the function calldf = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)actually get turned into the following plot?df = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)p # hideThe rendering pipeline transforms a plot specification into a Compose scene graph that contains a set of guides (e.g. axis ticks, color keys) and one or more layers of geometry (e.g. points, lines). The specification of each layer hasa data source (e.g. dataset(\"ggplot2\", \"diamonds\"))\na geometry to represent the layer's data (e.g. point, line, etc.)\nmappings to associate aesthetics of the geometry with elements of the data source (e.g.  :color => :Cut)\nlayer-wise statistics (optional) to be applied to the layer's dataAll layers of a plot share the sameCoordinates for the geometry (e.g. cartesian, polar, etc.)\naxis Scales (e.g. loglog, semilog, etc.)\nplot-wise Statistics (optional) to be applied to all layers\nGuidesA full plot specification must describe these shared elements as well as all the layer specifications. In the example above, we see that only the data source, statistics, geometry, and mapping are specified. The missing elements are either inferred from the data (e.g. categorical values in df[:Cut] implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale). For example, invoking plot with all the elements will look something likep = plot(layer(df,\n               x = :Price, color = :Cut,\n		       Stat.histogram,\n		       Geom.bar),\n	  	 Scale.x_continuous,\n		 Scale.color_discrete,\n		 Coord.cartesian,\n		 Guide.xticks, Guide.yticks,\n		 Guide.xlabel(\"Price\"),\n		 Guide.colorkey(\"Cut\"))Once a full plot specification is filled out, the rendering process proceeds as follows:(Image: )For each layer in the plot, we first map subsets of the data source to a Data object. The Price and Cut columns of the diamond dataset are mapped to the :x and :color fields of Data, respectively.\nScales are applied to the data to obtain plottable aesthetics. Scale.x_continuous keeps the values of df[:Price] unchanged, while Scale.color_discrete_hue maps the unique elements of df[:Cut] (an array of strings) to actual color values.\nThe aesthetics are transformed by layer-wise and plot-wise statistics, in order. Stat.histogram replaces the x field of the aesthetics with bin positions, and sets the y field with the corresponding counts.\nUsing the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. Coord.cartesian creates a Compose context that maps a vertical distance of 3000 counts to about two inches in the rendered plot.\nEach layer renders its own geometry.\nFinally, we compute the layout of the guides and render them on top of the plot context."
+    "text": "using DataFrames\nusing Colors\nusing Compose\nusing RDatasets\nusing Showoff\nusing GadflyHow does the function calldf = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)actually get turned into the following plot?df = dataset(\"ggplot2\", \"diamonds\")\np = plot(df,\n         x = :Price, color = :Cut,\n		 Stat.histogram,\n		 Geom.bar)p # hideThe rendering pipeline transforms a plot specification into a Compose scene graph that contains a set of guides (e.g. axis ticks, color keys) and one or more layers of geometry (e.g. points, lines). The specification of each layer hasa data source (e.g. dataset(\"ggplot2\", \"diamonds\"))\na geometry to represent the layer's data (e.g. point, line, etc.)\nmappings to associate aesthetics of the geometry with elements of the data source (e.g.  :color => :Cut)\nlayer-wise statistics (optional) to be applied to the layer's dataAll layers of a plot share the sameCoordinates for the geometry (e.g. cartesian, polar, etc.)\naxis Scales (e.g. loglog, semilog, etc.)\nplot-wise Statistics (optional) to be applied to all layers\nGuidesA full plot specification must describe these shared elements as well as all the layer specifications. In the example above, we see that only the data source, statistics, geometry, and mapping are specified. The missing elements are either inferred from the data (e.g. categorical values in df[:Cut] implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale). For example, invoking plot with all the elements will look something likep = plot(layer(df,\n               x = :Price, color = :Cut,\n		       Stat.histogram,\n		       Geom.bar),\n	  	 Scale.x_continuous,\n		 Scale.color_discrete,\n		 Coord.cartesian,\n		 Guide.xticks, Guide.yticks,\n		 Guide.xlabel(\"Price\"),\n		 Guide.colorkey(title=\"Cut\"))Once a full plot specification is filled out, the rendering process proceeds as follows:(Image: )For each layer in the plot, we first map subsets of the data source to a Data object. The Price and Cut columns of the diamond dataset are mapped to the :x and :color fields of Data, respectively.\nScales are applied to the data to obtain plottable aesthetics. Scale.x_continuous keeps the values of df[:Price] unchanged, while Scale.color_discrete_hue maps the unique elements of df[:Cut] (an array of strings) to actual color values.\nThe aesthetics are transformed by layer-wise and plot-wise statistics, in order. Stat.histogram replaces the x field of the aesthetics with bin positions, and sets the y field with the corresponding counts.\nUsing the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. Coord.cartesian creates a Compose context that maps a vertical distance of 3000 counts to about two inches in the rendered plot.\nEach layer renders its own geometry.\nFinally, we compute the layout of the guides and render them on top of the plot context."
 },
 
 {

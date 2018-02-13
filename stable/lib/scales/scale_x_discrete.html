@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scale.x_discrete · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a><ul><li class="current"><a class="toctext" href="scale_x_discrete.html">Scale.x_discrete</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li></ul></li><li><span class="toctext">Development</span><ul><li><a class="toctext" href="../../dev/pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../../dev/regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../scales.html">Scales</a></li><li><a href="scale_x_discrete.html">Scale.x_discrete</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/tree/aa6a1ad45e701a5af5a7761721dd617af8ee5c42/docs/src/lib/scales/scale_x_discrete.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Scale.x_discrete</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Scale.x_discrete-1" href="#Scale.x_discrete-1">Scale.x_discrete</a></h1><p>Map data categorical to Cartesian coordinates. Unlike <a href="scale_x_continuous.html#Scale.x_continuous-1">Scale.x_continuous</a>, each unique x value will be mapped to a equally spaced positions, regardless of value.</p><p>By default continuous scales are applied to numerical data. If data consists of numbers specifying categories, explicitly adding <a href="scale_x_discrete.html#Scale.x_discrete-1">Scale.x_discrete</a> is the easiest way to get that data to plot appropriately.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>labels</code>: Either a <code>Function</code> or <code>nothing</code>. When a function is given, values are formatted using this function. The function should map a value in <code>x</code> to a string giving its label.</p></li><li><p><code>levels</code>: If non-nothing, give values for the scale. Order will be respected and anything in the data that&#39;s not respresented in <code>levels</code> will be set to <code>NA</code>.</p></li><li><p><code>order</code>: If non-nothing, give a vector of integers giving a permutation of the values pool of the data.</p></li></ul><h3><a class="nav-anchor" id="Aesthetics-Acted-On-1" href="#Aesthetics-Acted-On-1">Aesthetics Acted On</a></h3><p><code>x</code>, <code>xmin</code>, <code>xmax</code>, <code>xintercept</code></p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia"># Treat numerical x data as categories
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scale.x_discrete · Gadfly.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="Gadfly.jl logo"/></a><h1>Gadfly.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../index.html">Home</a></li><li><a class="toctext" href="../../tutorial.html">Tutorial</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../../man/plotting.html">Plotting</a></li><li><a class="toctext" href="../../man/layers.html">Layers and Stacks</a></li><li><a class="toctext" href="../../man/backends.html">Backends</a></li><li><a class="toctext" href="../../man/themes.html">Themes</a></li></ul></li><li><span class="toctext">Library</span><ul><li><a class="toctext" href="../geometries.html">Geometries</a></li><li><a class="toctext" href="../guides.html">Guides</a></li><li><a class="toctext" href="../stats.html">Statistics</a></li><li><a class="toctext" href="../coords.html">Coords</a></li><li><a class="toctext" href="../scales.html">Scales</a><ul><li class="current"><a class="toctext" href="scale_x_discrete.html">Scale.x_discrete</a><ul class="internal"><li><a class="toctext" href="#Arguments-1">Arguments</a></li><li><a class="toctext" href="#Examples-1">Examples</a></li></ul></li></ul></li><li><a class="toctext" href="../shapes.html">Shapes</a></li></ul></li><li><span class="toctext">Development</span><ul><li><a class="toctext" href="../../dev/pipeline.html">Rendering Pipeline</a></li><li><a class="toctext" href="../../dev/regression.html">Regression Testing</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li>Library</li><li><a href="../scales.html">Scales</a></li><li><a href="scale_x_discrete.html">Scale.x_discrete</a></li></ul><a class="edit-page" href="https://github.com/GiovineItalia/Gadfly.jl/blob/master/docs/src/lib/scales/scale_x_discrete.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Scale.x_discrete</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Scale.x_discrete-1" href="#Scale.x_discrete-1">Scale.x_discrete</a></h1><p>Map data categorical to Cartesian coordinates. Unlike <a href="scale_x_continuous.html#Scale.x_continuous-1">Scale.x_continuous</a>, each unique x value will be mapped to a equally spaced positions, regardless of value.</p><p>By default continuous scales are applied to numerical data. If data consists of numbers specifying categories, explicitly adding <a href="scale_x_discrete.html#Scale.x_discrete-1">Scale.x_discrete</a> is the easiest way to get that data to plot appropriately.</p><h2><a class="nav-anchor" id="Arguments-1" href="#Arguments-1">Arguments</a></h2><ul><li><p><code>labels</code>: Either a <code>Function</code> or <code>nothing</code>. When a function is given, values are formatted using this function. The function should map a value in <code>x</code> to a string giving its label.</p></li><li><p><code>levels</code>: If non-nothing, give values for the scale. Order will be respected and anything in the data that&#39;s not respresented in <code>levels</code> will be set to <code>NA</code>.</p></li><li><p><code>order</code>: If non-nothing, give a vector of integers giving a permutation of the values pool of the data.</p></li></ul><h3><a class="nav-anchor" id="Aesthetics-Acted-On-1" href="#Aesthetics-Acted-On-1">Aesthetics Acted On</a></h3><p><code>x</code>, <code>xmin</code>, <code>xmax</code>, <code>xintercept</code></p><h2><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h2><div></div><div><pre><code class="language-julia"># Treat numerical x data as categories
 plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)</code></pre><?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -173,6 +173,251 @@ plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)</code></pre><?xml version="1
     <circle cx="0" cy="0" r="0.9"/>
   </g>
   <g id="img-434e4ec2-51">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+</defs>
+</svg>
+</div><div><pre><code class="language-julia"># To perserve the order of the columns in the plot when plotting a DataFrame
+df = DataFrame(v1 = randn(10), v2 = randn(10), v3 = randn(10))
+plot(df, x=Col.index, y=Col.value, Scale.x_discrete(levels=df.colindex.names))</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:gadfly="http://www.gadflyjl.org/ns"
+     version="1.2"
+     width="120mm" height="80mm" viewBox="0 0 120 80"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+     font-size="3.88"
+>
+<g class="plotroot yscalable" id="img-b72d0b30-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-b72d0b30-2">
+    <text x="65.3" y="68.39" text-anchor="middle" dy="0.6em">x</text>
+  </g>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-b72d0b30-3">
+    <text x="32.16" y="61.72" text-anchor="middle" dy="0.6em">v1</text>
+    <text x="65.3" y="61.72" text-anchor="middle" dy="0.6em">v2</text>
+    <text x="98.43" y="61.72" text-anchor="middle" dy="0.6em">v3</text>
+  </g>
+<g clip-path="url(#img-b72d0b30-4)">
+  <g id="img-b72d0b30-5">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-b72d0b30-6">
+      <rect x="15.59" y="5" width="99.41" height="55.72"/>
+    </g>
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-b72d0b30-7">
+      <path fill="none" d="M15.59,58.72 L 115 58.72"/>
+      <path fill="none" d="M15.59,48.37 L 115 48.37"/>
+      <path fill="none" d="M15.59,38.03 L 115 38.03"/>
+      <path fill="none" d="M15.59,27.69 L 115 27.69"/>
+      <path fill="none" d="M15.59,17.34 L 115 17.34"/>
+      <path fill="none" d="M15.59,7 L 115 7"/>
+    </g>
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-b72d0b30-8">
+      <path fill="none" d="M48.73,5 L 48.73 60.72"/>
+      <path fill="none" d="M81.86,5 L 81.86 60.72"/>
+    </g>
+    <g class="plotpanel" id="img-b72d0b30-9">
+      <g class="geometry" id="img-b72d0b30-10">
+        <g stroke-width="0.3" id="img-b72d0b30-11">
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-12">
+            <use xlink:href="#img-b72d0b30-13" x="32.16" y="45.13"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-14">
+            <use xlink:href="#img-b72d0b30-15" x="65.3" y="22.7"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-16">
+            <use xlink:href="#img-b72d0b30-17" x="98.43" y="52.66"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-18">
+            <use xlink:href="#img-b72d0b30-19" x="32.16" y="43.63"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-20">
+            <use xlink:href="#img-b72d0b30-21" x="65.3" y="48.24"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-22">
+            <use xlink:href="#img-b72d0b30-23" x="98.43" y="16.69"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-24">
+            <use xlink:href="#img-b72d0b30-25" x="32.16" y="50.72"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-26">
+            <use xlink:href="#img-b72d0b30-27" x="65.3" y="48.94"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-28">
+            <use xlink:href="#img-b72d0b30-29" x="98.43" y="36.14"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-30">
+            <use xlink:href="#img-b72d0b30-31" x="32.16" y="43.65"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-32">
+            <use xlink:href="#img-b72d0b30-33" x="65.3" y="38.55"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-34">
+            <use xlink:href="#img-b72d0b30-35" x="98.43" y="31.6"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-36">
+            <use xlink:href="#img-b72d0b30-37" x="32.16" y="48.47"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-38">
+            <use xlink:href="#img-b72d0b30-39" x="65.3" y="25.15"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-40">
+            <use xlink:href="#img-b72d0b30-41" x="98.43" y="34.24"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-42">
+            <use xlink:href="#img-b72d0b30-43" x="32.16" y="42.25"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-44">
+            <use xlink:href="#img-b72d0b30-45" x="65.3" y="41.21"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-46">
+            <use xlink:href="#img-b72d0b30-47" x="98.43" y="42.13"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-48">
+            <use xlink:href="#img-b72d0b30-49" x="32.16" y="36.31"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-50">
+            <use xlink:href="#img-b72d0b30-51" x="65.3" y="13.03"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-52">
+            <use xlink:href="#img-b72d0b30-53" x="98.43" y="33.4"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-54">
+            <use xlink:href="#img-b72d0b30-55" x="32.16" y="39.21"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-56">
+            <use xlink:href="#img-b72d0b30-57" x="65.3" y="32.7"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-58">
+            <use xlink:href="#img-b72d0b30-59" x="98.43" y="36.67"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-60">
+            <use xlink:href="#img-b72d0b30-61" x="32.16" y="52.11"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-62">
+            <use xlink:href="#img-b72d0b30-63" x="65.3" y="41.41"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-64">
+            <use xlink:href="#img-b72d0b30-65" x="98.43" y="54.38"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-66">
+            <use xlink:href="#img-b72d0b30-67" x="32.16" y="41.29"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-68">
+            <use xlink:href="#img-b72d0b30-69" x="65.3" y="45.4"/>
+          </g>
+          <g class="color_RGBA{Float32}(0.0f0,0.74736935f0,1.0f0,1.0f0)" stroke="#FFFFFF" fill="#00BFFF" id="img-b72d0b30-70">
+            <use xlink:href="#img-b72d0b30-71" x="98.43" y="43.44"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</g>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-b72d0b30-72">
+    <text x="14.59" y="58.72" text-anchor="end" dy="0.35em">-2</text>
+    <text x="14.59" y="48.37" text-anchor="end" dy="0.35em">-1</text>
+    <text x="14.59" y="38.03" text-anchor="end" dy="0.35em">0</text>
+    <text x="14.59" y="27.69" text-anchor="end" dy="0.35em">1</text>
+    <text x="14.59" y="17.34" text-anchor="end" dy="0.35em">2</text>
+    <text x="14.59" y="7" text-anchor="end" dy="0.35em">3</text>
+  </g>
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-b72d0b30-73">
+    <text x="8.81" y="32.86" text-anchor="end" dy="0.35em">y</text>
+  </g>
+</g>
+<defs>
+  <clipPath id="img-b72d0b30-4">
+  <path d="M15.59,5 L 115 5 115 60.72 15.59 60.72" />
+</clipPath>
+  <g id="img-b72d0b30-13">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-15">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-17">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-19">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-21">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-23">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-25">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-27">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-29">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-31">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-33">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-35">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-37">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-39">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-41">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-43">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-45">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-47">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-49">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-51">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-53">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-55">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-57">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-59">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-61">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-63">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-65">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-67">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-69">
+    <circle cx="0" cy="0" r="0.9"/>
+  </g>
+  <g id="img-b72d0b30-71">
     <circle cx="0" cy="0" r="0.9"/>
   </g>
 </defs>
