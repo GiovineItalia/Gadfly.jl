@@ -5,7 +5,7 @@ if haskey(ENV, "GADFLY_THEME")
     pop!(ENV, "GADFLY_THEME")
 end
 
-using Gadfly, Compat
+using Base.Test, Gadfly, Compat
 
 repo = LibGit2.GitRepo(dirname(@__DIR__))
 branch = LibGit2.headname(repo)
@@ -51,12 +51,12 @@ if VERSION>=v"0.6"
 end
 
 backends = Dict{AbstractString, Function}(
-    "svg" => (name, width, height) -> SVG(joinpath(outputdir,"$(name).svg"), width, height),
-    "svgjs" => (name, width, height) -> SVGJS(joinpath(outputdir,"$(name).js.svg"), width, height, jsmode=:linkabs),
-    "png" => (name, width, height) -> PNG(joinpath(outputdir,"$(name).png"), width, height),
-    #"ps"  => (name, width, height) -> PS(joinpath(outputdir,"$(name).ps"),   width, height),
-    #"pdf" => (name, width, height) -> PDF(joinpath(outputdir,"$(name).pdf"), width, height)
-    "pgf" => (name, width, height) -> PGF(joinpath(outputdir,"$(name).tex"), width, height)
+    "svg" => name -> SVG(joinpath(outputdir,"$(name).svg")),
+    "svgjs" => name -> SVGJS(joinpath(outputdir,"$(name).js.svg"), jsmode=:linkabs),
+    "png" => name -> PNG(joinpath(outputdir,"$(name).png")),
+    "ps"  => name -> PS(joinpath(outputdir,"$(name).ps")),
+    "pdf" => name -> PDF(joinpath(outputdir,"$(name).pdf")),
+    "pgf" => name -> PGF(joinpath(outputdir,"$(name).tex"))
 )
 
 testdir = joinpath((@__DIR__),"testscripts")
@@ -64,17 +64,14 @@ testfiles = isempty(ARGS) ?
         [splitext(filename)[1] for filename in readdir(testdir) if filename[1]!='.'] :
         ARGS
 
-for filename in testfiles, (backend_name, backend) in backends
-    println(STDERR, "Rendering $(filename) on $(backend_name) backend.")
-    try
+@testset "Gadfly" begin
+    for filename in testfiles, (backend_name, backend) in backends
+        info(filename,'.',backend_name)
         srand(1)
         p = evalfile(joinpath(testdir, "$(filename).jl"))
-        width = Compose.default_graphic_width
-        height = Compose.default_graphic_height
-        @time eval(Expr(:call, ()->draw(backend(filename, width, height), p) ))
-    catch
-        println(STDERR, "FAILED!")
-        rethrow()
+        @test typeof(p) in [Plot,Compose.Context]
+        r = draw(backend(filename), p)
+        @test typeof(r) in [Bool,Void]
     end
 end
 
