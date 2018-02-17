@@ -1119,7 +1119,7 @@ end
 
 # Display in Juno
 
-import Juno: Juno, @render, media, Media, Hiccup
+import Juno: Juno, @render, media, Media
 
 media(Plot, Media.Plot)
 
