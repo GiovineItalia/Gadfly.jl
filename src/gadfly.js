@@ -862,8 +862,9 @@ var update_plot_scale = function(root, new_xscale, new_yscale) {
 
 
 var toggle_color_class = function(root, color_class, ison) {
-    var guides = root.selectAll(".guide." + color_class + ",.guide ." + color_class);
-    var geoms = root.selectAll(".geometry." + color_class + ",.geometry ." + color_class);
+    var escaped_color_class = color_class.replace(/([^0-9a-zA-z])/g,"\\$1");
+    var guides = root.selectAll(".guide." + escaped_color_class + ",.guide ." + escaped_color_class);
+    var geoms = root.selectAll(".geometry." + escaped_color_class + ",.geometry ." + escaped_color_class);
     if (ison) {
         guides.animate({opacity: 0.5}, 250);
         geoms.animate({opacity: 0.0}, 250);
@@ -879,10 +880,10 @@ Gadfly.colorkey_swatch_click = function(event) {
     var color_class = this.data("color_class");
 
     if (event.shiftKey) {
-        root.selectAll(".colorkey text")
+        root.selectAll(".colorkey g")
             .forEach(function (element) {
                 var other_color_class = element.data("color_class");
-                if (other_color_class != color_class) {
+                if (typeof other_color_class !== 'undefined' && other_color_class != color_class) {
                     toggle_color_class(root, other_color_class,
                                        element.attr("opacity") == 1.0);
                 }
