@@ -235,21 +235,23 @@ Gadfly.plot_mouseover = function(event) {
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
 
-    xgridlines.data("unfocused_strokedash",
-                    xgridlines.attribute("stroke-dasharray").replace(/(\d)(,|$)/g, "$1mm$2"));
-    ygridlines.data("unfocused_strokedash",
-                    ygridlines.attribute("stroke-dasharray").replace(/(\d)(,|$)/g, "$1mm$2"));
+    if (xgridlines) {
+        xgridlines.data("unfocused_strokedash",
+                        xgridlines.attribute("stroke-dasharray").replace(/(\d)(,|$)/g, "$1mm$2"));
+        var destcolor = root.data("focused_xgrid_color");
+        xgridlines.attribute("stroke-dasharray", "none")
+                  .selectAll("path")
+                  .animate({stroke: destcolor}, 250);
+    }
 
-    // emphasize grid lines
-    var destcolor = root.data("focused_xgrid_color");
-    xgridlines.attribute("stroke-dasharray", "none")
-              .selectAll("path")
-              .animate({stroke: destcolor}, 250);
-
-    destcolor = root.data("focused_ygrid_color");
-    ygridlines.attribute("stroke-dasharray", "none")
-              .selectAll("path")
-              .animate({stroke: destcolor}, 250);
+    if (ygridlines) {
+        ygridlines.data("unfocused_strokedash",
+                        ygridlines.attribute("stroke-dasharray").replace(/(\d)(,|$)/g, "$1mm$2"));
+        var destcolor = root.data("focused_ygrid_color");
+        ygridlines.attribute("stroke-dasharray", "none")
+                  .selectAll("path")
+                  .animate({stroke: destcolor}, 250);
+    }
 
     root.select(".crosshair")
         .animate({opacity: root.data("crosshair") ? 1.0 : 0.0}, 250);
@@ -273,16 +275,19 @@ Gadfly.plot_mouseout = function(event) {
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
 
-    var destcolor = root.data("unfocused_xgrid_color");
+    if (xgridlines) {
+        var destcolor = root.data("unfocused_xgrid_color");
+        xgridlines.attribute("stroke-dasharray", xgridlines.data("unfocused_strokedash"))
+                  .selectAll("path")
+                  .animate({stroke: destcolor}, 250);
+    }
 
-    xgridlines.attribute("stroke-dasharray", xgridlines.data("unfocused_strokedash"))
-              .selectAll("path")
-              .animate({stroke: destcolor}, 250);
-
-    destcolor = root.data("unfocused_ygrid_color");
-    ygridlines.attribute("stroke-dasharray", ygridlines.data("unfocused_strokedash"))
-              .selectAll("path")
-              .animate({stroke: destcolor}, 250);
+    if (ygridlines) {
+        var destcolor = root.data("unfocused_ygrid_color");
+        ygridlines.attribute("stroke-dasharray", ygridlines.data("unfocused_strokedash"))
+                  .selectAll("path")
+                  .animate({stroke: destcolor}, 250);
+    }
 
     root.select(".crosshair").animate({opacity: 0.0}, 250);
     root.select(".questionmark").animate({opacity: 0.0}, 250);
@@ -324,20 +329,22 @@ var set_geometry_transform = function(root, tx, ty, xscale, yscale) {
                 element.transform(xfixed_t);
             });
 
-        root.select(".ylabels")
-            .transform(xfixed_t)
-            .selectAll("g")
-            .forEach(function (element, i) {
-                if (element.attribute("gadfly:inscale") == "true") {
-                    unscale_t = new Snap.Matrix();
-                    unscale_t.scale(1, 1/yscale);
-                    element.select("text").transform(unscale_t);
-
-                    var y = element.attr("transform").globalMatrix.f / px_per_mm;
-                    element.attr("visibility",
-                        bounds.y0 <= y && y <= bounds.y1 ? "visible" : "hidden");
-                }
-            });
+        ylabels = root.select(".ylabels");
+        if (ylabels) {
+            ylabels.transform(xfixed_t)
+                   .selectAll("g")
+                   .forEach(function (element, i) {
+                       if (element.attribute("gadfly:inscale") == "true") {
+                           unscale_t = new Snap.Matrix();
+                           unscale_t.scale(1, 1/yscale);
+                           element.select("text").transform(unscale_t);
+ 
+                           var y = element.attr("transform").globalMatrix.f / px_per_mm;
+                           element.attr("visibility",
+                               bounds.y0 <= y && y <= bounds.y1 ? "visible" : "hidden");
+                       }
+                   });
+        }
     }
 
     if (xscalable) {
@@ -348,20 +355,22 @@ var set_geometry_transform = function(root, tx, ty, xscale, yscale) {
                 element.transform(yfixed_t);
             });
 
-        root.select(".xlabels")
-            .transform(yfixed_t)
-            .selectAll("g")
-            .forEach(function (element, i) {
-                if (element.attribute("gadfly:inscale") == "true") {
-                    unscale_t = new Snap.Matrix();
-                    unscale_t.scale(1/xscale, 1);
-                    element.select("text").transform(unscale_t);
+        xlabels = root.select(".xlabels");
+        if (xlabels) {
+            xlabels.transform(yfixed_t)
+                   .selectAll("g")
+                   .forEach(function (element, i) {
+                       if (element.attribute("gadfly:inscale") == "true") {
+                           unscale_t = new Snap.Matrix();
+                           unscale_t.scale(1/xscale, 1);
+                           element.select("text").transform(unscale_t);
 
-                    var x = element.attr("transform").globalMatrix.e / px_per_mm;
-                    element.attr("visibility",
-                        bounds.x0 <= x && x <= bounds.x1 ? "visible" : "hidden");
-                    }
-            });
+                           var x = element.attr("transform").globalMatrix.e / px_per_mm;
+                           element.attr("visibility",
+                               bounds.x0 <= x && x <= bounds.x1 ? "visible" : "hidden");
+                           }
+                   });
+        }
     }
 };
 
