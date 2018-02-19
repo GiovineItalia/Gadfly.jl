@@ -29,9 +29,9 @@
       <text x="129.98" y="38.3" dy="0.35em" id="img-1be299f1-8" class="color_c">c</text>
     </g>
     <g stroke="#000000" stroke-opacity="0.000" id="img-1be299f1-9">
-      <rect x="127.16" y="30.14" width="1.81" height="1.81" id="img-1be299f1-10" fill="#FF0000" class="color_a"/>
-      <rect x="127.16" y="33.76" width="1.81" height="1.81" id="img-1be299f1-11" fill="#800080" class="color_b"/>
-      <rect x="127.16" y="37.39" width="1.81" height="1.81" id="img-1be299f1-12" fill="#008000" class="color_c"/>
+      <rect x="127.16" y="30.14" width="1.81" height="1.81" id="img-1be299f1-10" class="color_a" fill="#FF0000"/>
+      <rect x="127.16" y="33.76" width="1.81" height="1.81" id="img-1be299f1-11" class="color_b" fill="#800080"/>
+      <rect x="127.16" y="37.39" width="1.81" height="1.81" id="img-1be299f1-12" class="color_c" fill="#008000"/>
     </g>
     <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-1be299f1-13">
       <text x="127.16" y="27.22" id="img-1be299f1-14">Color</text>
@@ -147,6 +147,171 @@
   <g id="img-1be299f1-66">
     <circle cx="0" cy="0" r="0.9" id="img-1be299f1-85"/>
   </g>
+</defs>
+</svg>
+</div><div></div><div><pre><code class="language-julia">D = by(dataset(&quot;datasets&quot;,&quot;HairEyeColor&quot;), [:Eye,:Sex], d-&gt;sum(d[:Freq]))
+ rename!(D, :x1, :Frequency)
+# Is there a hazel color?
+palette = [&quot;blue&quot;,&quot;brown&quot;,&quot;green&quot;,&quot;tan&quot;]
+
+pa= plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),
+    Scale.color_discrete_manual(palette...)
+)
+pb= plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),
+    Scale.color_discrete_manual(palette[4:-1:1]..., order=[4,3,2,1])
+)
+hstack(pa, pb)</code></pre><?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:gadfly="http://www.gadflyjl.org/ns"
+     version="1.2"
+     width="140mm" height="80mm" viewBox="0 0 140 80"
+     stroke="none"
+     fill="#000000"
+     stroke-width="0.3"
+     font-size="3.88"
+>
+<g class="plotroot yscalable" id="img-14860634-1">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-14860634-2">
+    <text x="106.54" y="68.39" text-anchor="middle" dy="0.6em">Sex</text>
+  </g>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-14860634-3">
+    <text x="98.09" y="61.72" text-anchor="middle" dy="0.6em">Female</text>
+    <text x="115" y="61.72" text-anchor="middle" dy="0.6em">Male</text>
+  </g>
+  <g class="guide colorkey" id="img-14860634-4">
+    <g fill="#4C404B" font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" id="img-14860634-5">
+      <text x="127.27" y="29.23" dy="0.35em" id="img-14860634-6" class="color_Hazel">Hazel</text>
+      <text x="127.27" y="32.86" dy="0.35em" id="img-14860634-7" class="color_Green">Green</text>
+      <text x="127.27" y="36.48" dy="0.35em" id="img-14860634-8" class="color_Brown">Brown</text>
+      <text x="127.27" y="40.11" dy="0.35em" id="img-14860634-9" class="color_Blue">Blue</text>
+    </g>
+    <g stroke="#000000" stroke-opacity="0.000" id="img-14860634-10">
+      <rect x="124.45" y="28.32" width="1.81" height="1.81" id="img-14860634-11" class="color_Hazel" fill="#D2B48C"/>
+      <rect x="124.45" y="31.95" width="1.81" height="1.81" id="img-14860634-12" class="color_Green" fill="#008000"/>
+      <rect x="124.45" y="35.58" width="1.81" height="1.81" id="img-14860634-13" class="color_Brown" fill="#A52A2A"/>
+      <rect x="124.45" y="39.2" width="1.81" height="1.81" id="img-14860634-14" class="color_Blue" fill="#0000FF"/>
+    </g>
+    <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-14860634-15">
+      <text x="124.45" y="25.41" id="img-14860634-16">Eye</text>
+    </g>
+  </g>
+<g clip-path="url(#img-14860634-17)">
+  <g id="img-14860634-18">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-14860634-19">
+      <rect x="89.63" y="5" width="33.82" height="55.72" id="img-14860634-20"/>
+    </g>
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-14860634-21">
+      <path fill="none" d="M89.63,58.72 L 123.45 58.72" id="img-14860634-22"/>
+      <path fill="none" d="M89.63,45.79 L 123.45 45.79" id="img-14860634-23"/>
+      <path fill="none" d="M89.63,32.86 L 123.45 32.86" id="img-14860634-24"/>
+      <path fill="none" d="M89.63,19.93 L 123.45 19.93" id="img-14860634-25"/>
+      <path fill="none" d="M89.63,7 L 123.45 7" id="img-14860634-26"/>
+    </g>
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-14860634-27">
+      <path fill="none" d="M106.54,5 L 106.54 60.72" id="img-14860634-28"/>
+    </g>
+    <g class="plotpanel" id="img-14860634-29">
+      <g shape-rendering="crispEdges" stroke-width="0.3" id="img-14860634-30">
+        <g stroke="#000000" stroke-opacity="0.000" class="geometry" id="img-14860634-31">
+          <rect x="89.61" y="43.98" width="16.96" height="14.74" id="img-14860634-32" fill="#0000FF"/>
+          <rect x="106.52" y="45.66" width="16.96" height="13.06" id="img-14860634-33" fill="#0000FF"/>
+          <rect x="89.61" y="28.2" width="16.96" height="15.77" id="img-14860634-34" fill="#A52A2A"/>
+          <rect x="106.52" y="32.99" width="16.96" height="12.67" id="img-14860634-35" fill="#A52A2A"/>
+          <rect x="89.61" y="24.2" width="16.96" height="4.01" id="img-14860634-36" fill="#008000"/>
+          <rect x="106.52" y="28.72" width="16.96" height="4.27" id="img-14860634-37" fill="#008000"/>
+          <rect x="89.61" y="18.25" width="16.96" height="5.95" id="img-14860634-38" fill="#D2B48C"/>
+          <rect x="106.52" y="22.64" width="16.96" height="6.08" id="img-14860634-39" fill="#D2B48C"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</g>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-14860634-40">
+    <text x="88.63" y="58.72" text-anchor="end" dy="0.35em" id="img-14860634-41">0</text>
+    <text x="88.63" y="45.79" text-anchor="end" dy="0.35em" id="img-14860634-42">100</text>
+    <text x="88.63" y="32.86" text-anchor="end" dy="0.35em" id="img-14860634-43">200</text>
+    <text x="88.63" y="19.93" text-anchor="end" dy="0.35em" id="img-14860634-44">300</text>
+    <text x="88.63" y="7" text-anchor="end" dy="0.35em" id="img-14860634-45">400</text>
+  </g>
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-14860634-46">
+    <text x="78.81" y="30.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 78.81, 32.86)" id="img-14860634-47">Frequency</text>
+  </g>
+</g>
+<g class="plotroot yscalable" id="img-14860634-48">
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-14860634-49">
+    <text x="36.54" y="68.39" text-anchor="middle" dy="0.6em" id="img-14860634-50">Sex</text>
+  </g>
+  <g class="guide xlabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-14860634-51">
+    <text x="28.09" y="61.72" text-anchor="middle" dy="0.6em" id="img-14860634-52">Female</text>
+    <text x="45" y="61.72" text-anchor="middle" dy="0.6em" id="img-14860634-53">Male</text>
+  </g>
+  <g class="guide colorkey" id="img-14860634-54">
+    <g fill="#4C404B" font-size="2.82" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" id="img-14860634-55">
+      <text x="57.27" y="29.23" dy="0.35em" id="img-14860634-56" class="color_Blue">Blue</text>
+      <text x="57.27" y="32.86" dy="0.35em" id="img-14860634-57" class="color_Brown">Brown</text>
+      <text x="57.27" y="36.48" dy="0.35em" id="img-14860634-58" class="color_Green">Green</text>
+      <text x="57.27" y="40.11" dy="0.35em" id="img-14860634-59" class="color_Hazel">Hazel</text>
+    </g>
+    <g stroke="#000000" stroke-opacity="0.000" id="img-14860634-60">
+      <rect x="54.45" y="28.32" width="1.81" height="1.81" id="img-14860634-61" class="color_Blue" fill="#0000FF"/>
+      <rect x="54.45" y="31.95" width="1.81" height="1.81" id="img-14860634-62" class="color_Brown" fill="#A52A2A"/>
+      <rect x="54.45" y="35.58" width="1.81" height="1.81" id="img-14860634-63" class="color_Green" fill="#008000"/>
+      <rect x="54.45" y="39.2" width="1.81" height="1.81" id="img-14860634-64" class="color_Hazel" fill="#D2B48C"/>
+    </g>
+    <g fill="#362A35" font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" stroke="#000000" stroke-opacity="0.000" id="img-14860634-65">
+      <text x="54.45" y="25.41" id="img-14860634-66">Eye</text>
+    </g>
+  </g>
+<g clip-path="url(#img-14860634-67)">
+  <g id="img-14860634-68">
+    <g pointer-events="visible" opacity="1" fill="#000000" fill-opacity="0.000" stroke="#000000" stroke-opacity="0.000" class="guide background" id="img-14860634-69">
+      <rect x="19.63" y="5" width="33.82" height="55.72" id="img-14860634-70"/>
+    </g>
+    <g class="guide ygridlines xfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-14860634-71">
+      <path fill="none" d="M19.63,58.72 L 53.45 58.72" id="img-14860634-72"/>
+      <path fill="none" d="M19.63,45.79 L 53.45 45.79" id="img-14860634-73"/>
+      <path fill="none" d="M19.63,32.86 L 53.45 32.86" id="img-14860634-74"/>
+      <path fill="none" d="M19.63,19.93 L 53.45 19.93" id="img-14860634-75"/>
+      <path fill="none" d="M19.63,7 L 53.45 7" id="img-14860634-76"/>
+    </g>
+    <g class="guide xgridlines yfixed" stroke-dasharray="0.5,0.5" stroke-width="0.2" stroke="#D0D0E0" id="img-14860634-77">
+      <path fill="none" d="M36.54,5 L 36.54 60.72" id="img-14860634-78"/>
+    </g>
+    <g class="plotpanel" id="img-14860634-79">
+      <g shape-rendering="crispEdges" stroke-width="0.3" id="img-14860634-80">
+        <g stroke="#000000" stroke-opacity="0.000" class="geometry" id="img-14860634-81">
+          <rect x="19.61" y="52.77" width="16.96" height="5.95" id="img-14860634-82" fill="#D2B48C"/>
+          <rect x="36.52" y="52.64" width="16.96" height="6.08" id="img-14860634-83" fill="#D2B48C"/>
+          <rect x="19.61" y="48.76" width="16.96" height="4.01" id="img-14860634-84" fill="#008000"/>
+          <rect x="36.52" y="48.37" width="16.96" height="4.27" id="img-14860634-85" fill="#008000"/>
+          <rect x="19.61" y="32.99" width="16.96" height="15.77" id="img-14860634-86" fill="#A52A2A"/>
+          <rect x="36.52" y="35.7" width="16.96" height="12.67" id="img-14860634-87" fill="#A52A2A"/>
+          <rect x="19.61" y="18.25" width="16.96" height="14.74" id="img-14860634-88" fill="#0000FF"/>
+          <rect x="36.52" y="22.64" width="16.96" height="13.06" id="img-14860634-89" fill="#0000FF"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</g>
+  <g class="guide ylabels" font-size="2.82" font-family="'PT Sans Caption','Helvetica Neue','Helvetica',sans-serif" fill="#6C606B" id="img-14860634-90">
+    <text x="18.63" y="58.72" text-anchor="end" dy="0.35em" id="img-14860634-91">0</text>
+    <text x="18.63" y="45.79" text-anchor="end" dy="0.35em" id="img-14860634-92">100</text>
+    <text x="18.63" y="32.86" text-anchor="end" dy="0.35em" id="img-14860634-93">200</text>
+    <text x="18.63" y="19.93" text-anchor="end" dy="0.35em" id="img-14860634-94">300</text>
+    <text x="18.63" y="7" text-anchor="end" dy="0.35em" id="img-14860634-95">400</text>
+  </g>
+  <g font-size="3.88" font-family="'PT Sans','Helvetica Neue','Helvetica',sans-serif" fill="#564A55" stroke="#000000" stroke-opacity="0.000" id="img-14860634-96">
+    <text x="8.81" y="30.86" text-anchor="middle" dy="0.35em" transform="rotate(-90, 8.81, 32.86)" id="img-14860634-97">Frequency</text>
+  </g>
+</g>
+<defs>
+  <clipPath id="img-14860634-17">
+  <path d="M89.63,5 L 123.45 5 123.45 60.72 89.63 60.72" />
+</clipPath>
+  <clipPath id="img-14860634-67">
+  <path d="M19.63,5 L 53.45 5 53.45 60.72 19.63 60.72" />
+</clipPath>
 </defs>
 </svg>
 </div><footer><hr/><a class="previous" href="scale_color_discrete_hue.html"><span class="direction">Previous</span><span class="title">Scale.color_discrete_hue</span></a><a class="next" href="scale_color_none.html"><span class="direction">Next</span><span class="title">Scale.color_none</span></a></footer></article></body></html>
