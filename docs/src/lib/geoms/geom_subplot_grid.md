@@ -52,11 +52,44 @@ plot(dataset("vcd", "Suicide"), xgroup="Sex", ygroup="Method", x="Age", y="Freq"
      Geom.subplot_grid(Geom.bar))
 ```
 
-### Free/fixed scales:
+
+### Multiple layers/dataframes:
+
+```@setup 2
+using RDatasets, DataFrames, Gadfly
+Gadfly.set_default_plot_size(14cm, 8cm)
+```
 
 ```@example 2
-using Gadfly # hide
-using RDatasets # hid
+iris = dataset("datasets", "iris")
+sp = unique(iris[:Species])
+Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5, 2.5, 4.0], Species=repeat(sp, inner=[2]) )
+# Try this one too:
+# Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5], Species=repeat(sp[1:2], inner=[2]) )
+
+plot(iris, xgroup=:Species, x=:SepalLength, y=:SepalWidth,
+    Geom.subplot_grid(
+        layer(Geom.point),
+        layer(Dhl, xgroup=:Species, yintercept=:yint, Geom.hline(color="red", style=:dot) )
+    )
+)
+```
+or:  
+```@example 2
+plot(iris, xgroup=:Species,
+    Geom.subplot_grid(
+        layer(x=:SepalLength, y=:SepalWidth, Geom.point),
+        layer(Dhl, xgroup=:Species, yintercept=:yint, Geom.hline(color="red", style=:dot)),
+        ),
+    Guide.xlabel("Xlabel"), Guide.ylabel("Ylabel")
+)
+```
+
+
+### Free/fixed scales:
+
+```@example 3
+using RDatasets, Gadfly # hide
 using DataFrames
 set_default_plot_size(8cm, 12cm)
 
@@ -67,12 +100,13 @@ nothing # hide
 
 Default behavior is for the axes' scales to be fixed across the subplots:
 
-```@example 2
+```@example 3
 plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point))
 ```
 
 We can change this default behavior where appropriate:
 
-```@example 2
+```@example 3
 plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point, free_y_axis=true))
 ```
+

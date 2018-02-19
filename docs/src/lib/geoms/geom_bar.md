@@ -46,14 +46,33 @@ set_default_plot_size(12cm, 8cm)
 plot(dataset("HistData", "ChestSizes"), x="Chest", y="Count", Geom.bar)
 ```
 
-```@setup 2
-using RDatasets
-using Gadfly
-set_default_plot_size(12cm, 8cm)
-```
-
 ```@example 1
 plot(by(dataset("datasets","HairEyeColor"),[:Eye,:Sex], d->sum(d[:Freq])),
     color="Eye", y="x1", x="Sex",
     Geom.bar(position=:dodge), Guide.ylabel("Freq"))
 ```
+
+```@setup 2
+using RDatasets
+using DataFrames, Gadfly
+set_default_plot_size(14cm, 8cm)
+```
+
+```@example 2
+D = by(dataset("datasets","HairEyeColor"), [:Eye,:Sex], d->sum(d[:Freq]))
+ rename!(D, :x1, :Frequency)
+# Is there a hazel color?
+palette = ["blue","brown","green","tan"]
+
+pa= plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),
+    Scale.color_discrete_manual(palette...)
+)
+pb= plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),
+    Scale.color_discrete_manual(palette[4:-1:1]..., order=[4,3,2,1])
+)
+hstack(pa, pb)
+```
+See [Scale.color_discrete_manual](@ref) for more information.
+
+
+
