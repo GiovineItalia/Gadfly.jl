@@ -424,6 +424,7 @@ function render_prepare(plot::Plot)
 
             evalmapping!(layer.mapping, layer.data_source, datas[i])
         end
+        if isa(layer.geom, Geom.Nil); layer.geom = Geom.point(); end # see #1062
     end
 
     # We need to process subplot layers somewhat as though they were regular
