@@ -108,9 +108,3 @@ close(output)
 if prev_theme !== nothing
     ENV["GADFLY_THEME"] = prev_theme
 end
-
-if !haskey(ENV, "TRAVIS") && isinteractive() &&
-            length(readdir(joinpath((@__DIR__),"cachedoutput")))>1 &&
-            length(readdir(joinpath((@__DIR__),"gennedoutput")))>1
-    run(`$(Base.julia_cmd()) compare_examples.jl`)
-end

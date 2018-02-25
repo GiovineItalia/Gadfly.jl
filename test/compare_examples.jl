@@ -1,29 +1,49 @@
-using Base.Test, Rsvg, Cairo, Images
+using ArgParse
 
-if !isempty(ARGS)
-    regex_filter = Regex(ARGS[1])
+s = ArgParseSettings()
+@add_arg_table s begin
+    "--diff"
+        help = "print to STDOUT the output of `diff`"
+        action = :store_true
+    "--two"
+        help = "open and display both files"
+        action = :store_true
+    "--bw"
+        help = "generate, save and display a B&W difference image for PNG and SVG files.  requires Rsvg, Cairo, and Images"
+        action = :store_true
+    "filter"
+        help = "a regular expression describing the filenames to compare"
+        default=""
 end
 
-function svg2img(filename)
-  r = Rsvg.handle_new_from_file(filename)
-  d = Rsvg.handle_get_dimensions(r)
-  cs = Cairo.CairoImageSurface(d.width,d.height,Cairo.FORMAT_ARGB32)
-  c = Cairo.CairoContext(cs)
-  Rsvg.handle_render_cairo(c,r)
-  fout = tempname()
-  Cairo.write_to_png(cs,fout)
-  png = load(fout)
-  rm(fout)
-  png
+args = parse_args(s)
+
+if args["bw"]
+    using Rsvg, Cairo, Images
+
+    function svg2img(filename)
+        r = Rsvg.handle_new_from_file(filename)
+        d = Rsvg.handle_get_dimensions(r)
+        cs = Cairo.CairoImageSurface(d.width,d.height,Cairo.FORMAT_ARGB32)
+        c = Cairo.CairoContext(cs)
+        Rsvg.handle_render_cairo(c,r)
+        fout = tempname()
+        Cairo.write_to_png(cs,fout)
+        png = load(fout)
+        rm(fout)
+        png
+    end
 end
 
 # Compare with cached output
 cachedout = joinpath((@__DIR__), "cachedoutput")
 gennedout = joinpath((@__DIR__), "gennedoutput")
+diffedout = joinpath((@__DIR__), "diffedoutput")
 ndifferentfiles = 0
 const creator_producer = r"(Creator|Producer)"
-for file in filter(x->!startswith(x,"git."), readdir(cachedout))
-    isdefined(:regex_filter) && !ismatch(regex_filter,file) && continue
+filter_mkdir_git(x) = !mapreduce(y->x==y,|,[".mkdir","git.log","git.status"])
+filter_regex(x) = ismatch(Regex(args["filter"]), x)
+for file in filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(cachedout))
     print("Comparing ", file, " ... ")
     cached = open(readlines, joinpath(cachedout, file))
     genned = open(readlines, joinpath(gennedout, file))
@@ -46,25 +66,32 @@ for file in filter(x->!startswith(x,"git."), readdir(cachedout))
     else
         ndifferentfiles +=1
         println("different :(")
-        run(ignorestatus(`diff $(joinpath(cachedout, file)) $(joinpath(gennedout, file))`))
-        run(`open $(joinpath(cachedout,file))`)
-        run(`open $(joinpath(gennedout,file))`)
-        if endswith(file,".svg")
-            gimg = svg2img(joinpath(gennedout,file));
-            cimg = svg2img(joinpath(cachedout,file));
-        elseif endswith(file,".png")
-            gimg = load(joinpath(gennedout,file));
-            cimg = load(joinpath(cachedout,file));
+        if args["diff"]
+            diffcmd = `diff $(joinpath(cachedout, file)) $(joinpath(gennedout, file))`
+            run(ignorestatus(diffcmd))
         end
-        if endswith(file,".svg") || endswith(file,".png")
-            dimg = convert(Matrix{Gray}, gimg.==cimg)
-            fout = joinpath(tempdir(),file*".png")
-            Images.save(fout, dimg)
-            run(`open $fout`)
+        args["two"] && run(`open $(joinpath(cachedout,file))`)
+        args["two"] && run(`open $(joinpath(gennedout,file))`)
+        if args["bw"]
+          if endswith(file,".svg")
+              gimg = svg2img(joinpath(gennedout,file));
+              cimg = svg2img(joinpath(cachedout,file));
+          elseif endswith(file,".png")
+              gimg = load(joinpath(gennedout,file));
+              cimg = load(joinpath(cachedout,file));
+          end
+          if endswith(file,".svg") || endswith(file,".png")
+              dimg = convert(Matrix{Gray}, gimg.==cimg)
+              fout = joinpath(diffedout,file*".png")
+              Images.save(fout, dimg)
+              args["bw"] && run(`open $fout`)
+          end
         end
-        println("Press the return/enter key to continue")
+        args["diff"] || args["two"] || args["bw"] || continue
+        println("Press ENTER to continue, CTRL-C to quit")
         readline()
-        (endswith(file,".svg") || endswith(file,".png")) && rm(fout)
     end
 end
-@test ndifferentfiles==0
+
+infoorwarn = ndifferentfiles==0 ? info : warn
+infoorwarn("# different images = ",ndifferentfiles)
