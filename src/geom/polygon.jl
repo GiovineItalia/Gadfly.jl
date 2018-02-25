@@ -1,16 +1,24 @@
 immutable PolygonGeometry <: Gadfly.GeometryElement
+    default_statistic::Gadfly.StatisticElement
     order::Int
     fill::Bool
     preserve_order::Bool
     tag::Symbol
 end
 
-PolygonGeometry(; order=0, fill=false, preserve_order=false, tag=empty_tag) =
-        PolygonGeometry(order, fill, preserve_order, tag)
+PolygonGeometry(default_statistic=Gadfly.Stat.identity(); order=0, fill=false, preserve_order=false, tag=empty_tag) =
+        PolygonGeometry(default_statistic, order, fill, preserve_order, tag)
 
 const polygon = PolygonGeometry
 
 element_aesthetics(::PolygonGeometry) = [:x, :y, :color, :group]
+
+ellipse(;distribution::(@compat Type{<:ContinuousMultivariateDistribution})=MvNormal,
+    levels::Vector=[0.95], nsegments::Int=51, fill::Bool=false) =
+    PolygonGeometry(Gadfly.Stat.ellipse(distribution, levels, nsegments), preserve_order=true, fill=fill)
+
+default_statistic(geom::PolygonGeometry) = geom.default_statistic
+
 
 function polygon_points(xs, ys, preserve_order)
     T = (Tuple{eltype(xs), eltype(ys)})
@@ -35,6 +43,8 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
 
     ctx = context(order=geom.order)
     T = (eltype(aes.x), eltype(aes.y))
+
+    line_style = Gadfly.get_stroke_vector(theme.line_style)
 
     if aes.group != nothing
         XT, YT = eltype(aes.x), eltype(aes.y)
@@ -86,5 +96,5 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
         end
     end
 
-    return compose!(ctx, linewidth(theme.line_width), svgclass("geometry"))
+    return compose!(ctx, linewidth(theme.line_width), strokedash(line_style), svgclass("geometry"))
 end

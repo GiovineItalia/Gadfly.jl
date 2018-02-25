@@ -8,6 +8,7 @@ using Compat
 using Compose
 using DataArrays
 using DataStructures
+using Distributions
 using Hexagons
 using Loess
 using CoupledFields # It is registered in METADATA.jl
@@ -15,7 +16,7 @@ using CoupledFields # It is registered in METADATA.jl
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, nonzero_length, setfield!
 import KernelDensity
-import Distributions: Uniform, Distribution, qqbuild
+# import Distributions: Uniform, Distribution, qqbuild
 import IterTools: chain, distinct
 import Compat.Iterators: cycle, product
 
@@ -1712,6 +1713,7 @@ function apply_statistic(stat::EnumerateStatistic,
     end
 end
 
+### Vector Field Statistic 
 
 immutable VecFieldStatistic <: Gadfly.StatisticElement
     smoothness::Float64
@@ -1779,6 +1781,7 @@ function apply_statistic(stat::VecFieldStatistic,
 
 end
 
+### Hair Statistic
 
 immutable HairStatistic <: Gadfly.StatisticElement
     intercept
@@ -1805,6 +1808,74 @@ function apply_statistic(stat::HairStatistic,
         aes.yend = aes.y
         aes.xend = fill(stat.intercept, length(aes.x))
     end
+end
+
+
+### Ellipse Statistic
+
+immutable EllipseStatistic <: Gadfly.StatisticElement
+    distribution::@compat Type{<:ContinuousMultivariateDistribution}
+    levels::@compat Vector{<:AbstractFloat}
+    nsegments::Int
+end
+
+function EllipseStatistic(; 
+        distribution::(@compat Type{<:ContinuousMultivariateDistribution})=MvNormal,
+        levels::Vector{Float64}=[0.95], 
+        nsegments::Int=51 )
+    return EllipseStatistic(distribution, levels, nsegments)
+end
+
+Gadfly.input_aesthetics(stat::EllipseStatistic) = [:x, :y]
+Gadfly.output_aesthetics(stat::EllipseStatistic) = [:x, :y]
+Gadfly.default_scales(stat::EllipseStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
+
+const ellipse = EllipseStatistic
+
+function Gadfly.Stat.apply_statistic(stat::EllipseStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+
+    Dat = [aes.x aes.y]
+    grouped_xy = Dict(1=>Dat)
+    grouped_color = Dict{Int, Gadfly.ColorOrNothing}(1=>nothing)
+    colorflag = aes.color != nothing
+    aes.group = (colorflag ? aes.color : aes.group)
+
+    if aes.group != nothing
+        ug = unique(aes.group) 
+        grouped_xy = Dict(g=>Dat[aes.group.==g,:] for g in ug)
+        grouped_color = Dict(g=>first(aes.group[aes.group.==g]) for g in ug)
+    end
+    
+    levels = Float64[]
+    colors = eltype(aes.color)[]
+    ellipse_x = eltype(Dat)[]
+    ellipse_y = eltype(Dat)[]
+    
+    dfn = 2
+    θ = 2π*(0:stat.nsegments)/stat.nsegments
+    n = length(θ)
+    for (g, data) in grouped_xy
+        dfd = size(data,1)-1
+        dhat = fit(stat.distribution, data')
+        Σ½ = chol(cov(dhat))
+        rv = sqrt.(dfn*[quantile(FDist(dfn,dfd), p) for p in stat.levels])
+        ellxy =  [cos.(θ) sin.(θ)] * Σ½
+        μ = mean(dhat)
+        for r in rv
+            append!(ellipse_x, r*ellxy[:,1].+μ[1])
+            append!(ellipse_y, r*ellxy[:,2].+μ[2])
+            append!(colors, fill(grouped_color[g], n))
+            append!(levels, fill(r, n))
+        end
+    end
+
+    aes.group = PooledDataArray(levels)
+    colorflag && (aes.color = colors)
+    aes.x = ellipse_x
+    aes.y = ellipse_y
 end
 
 

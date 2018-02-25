@@ -5,6 +5,7 @@ using Compat
 using Compose
 using DataArrays
 using DataStructures
+using Distributions
 using Gadfly
 using Measures
 
