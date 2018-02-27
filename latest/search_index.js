@@ -577,6 +577,46 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/geoms/geom_ellipse.html#",
+    "page": "Geom.ellipse",
+    "title": "Geom.ellipse",
+    "category": "page",
+    "text": "Author = \"Mattriks\""
+},
+
+{
+    "location": "lib/geoms/geom_ellipse.html#Geom.ellipse-1",
+    "page": "Geom.ellipse",
+    "title": "Geom.ellipse",
+    "category": "section",
+    "text": "Confidence ellipse for a scatter or group of points, using a parametric multivariate distribution e.g. multivariate normal. Geom.ellipse is an instance of Geom.polygon"
+},
+
+{
+    "location": "lib/geoms/geom_ellipse.html#Aesthetics-1",
+    "page": "Geom.ellipse",
+    "title": "Aesthetics",
+    "category": "section",
+    "text": "x: Position of points.\ny: Position of points.\ncolor (optional): Color.\ngroup (optional): Group."
+},
+
+{
+    "location": "lib/geoms/geom_ellipse.html#Arguments-1",
+    "page": "Geom.ellipse",
+    "title": "Arguments",
+    "category": "section",
+    "text": "distribution: A multivariate distribution. Default is MvNormal.\nlevels: The quantiles for which confidence ellipses are calculated. Default is [0.95].\nnsegments: Number of segments to draw each ellipse. Default is 51."
+},
+
+{
+    "location": "lib/geoms/geom_ellipse.html#Examples-1",
+    "page": "Geom.ellipse",
+    "title": "Examples",
+    "category": "section",
+    "text": "using RDatasets, Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)D = dataset(\"datasets\",\"faithful\")\nD[:g] = D[:Eruptions].>3.0\n\ncoord = Coord.cartesian(ymin=35, ymax=100)\n\npa = plot(D, coord,\n    x=:Eruptions, y=:Waiting, group=:g,\n    Geom.point, Geom.ellipse\n)\npb = plot(D, coord,\n    x=:Eruptions, y=:Waiting, color=:g,\n    Geom.point, Geom.ellipse,\n    layer(Geom.ellipse(levels=[0.99]), style(line_style=:dot)),\n    style(key_position=:none), Guide.ylabel(nothing)\n)\nhstack(pa,pb)"
+},
+
+{
     "location": "lib/geoms/geom_errorbar.html#",
     "page": "Geom.errorbar",
     "title": "Geom.errorbar",
