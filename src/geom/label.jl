@@ -236,12 +236,14 @@ function deferred_label_context(geom::LabelGeometry,
 
     end
 
-    return compose!(
-        context(),
-        (context(), text([positions[i].x0[1] + extents[i][1]/2 + parent_box.x0[1] for i in 1:n],
-             [positions[i].x0[2] + extents[i][2]/2 + parent_box.x0[2] for i in 1:n],
+    return compose!(context(),
+        (context(), text([point_positions[i][1] + parent_box.x0[1] for i in 1:n],
+             [point_positions[i][2] + parent_box.x0[2] for i in 1:n],
              aes.label,
-             [hcenter], [vcenter]; tag=geom.tag), svgclass("marker")),
+             [hcenter], [vcenter], [Rotation()],
+             [(positions[i].x0[1] - point_positions[i][1] + extents[i][1]/2,
+               positions[i].x0[2] - point_positions[i][2] + extents[i][2]/2) for i in 1:n],
+             tag=geom.tag), svgclass("marker")),
         visible(label_visibility),
         font(theme.point_label_font),
         fontsize(theme.point_label_font_size),
@@ -275,12 +277,12 @@ function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
         hpos, vpos, xoff, yoff = label_layouts[geom.position]
 
-        return compose!(
-            context(),
-            (context(), text([Compose.x_measure(x) + xoff for x in aes.x],
-                 [Compose.y_measure(y) + yoff for y in aes.y],
+        return compose!(context(),
+            (context(), text([Compose.x_measure(x)for x in aes.x],
+                 [Compose.y_measure(y) for y in aes.y],
                  aes.label,
-                 [hpos], [vpos]; tag=geom.tag), svgclass("marker")),
+                 [hpos], [vpos], [Rotation()], [(xoff,yoff)], tag=geom.tag),
+                 svgclass("marker")),
             font(theme.point_label_font),
             fontsize(theme.point_label_font_size),
             fill(theme.point_label_color),

@@ -168,8 +168,8 @@ Gadfly.plot_mousemove = function(event, x_px, y_px) {
         x_unit = ((x_px / px_per_mm - xtranslate) / xscale - xoff_mm) / mm_per_xunit + xoff_unit;
         y_unit = ((y_px / px_per_mm - ytranslate) / yscale - yoff_mm) / mm_per_yunit + yoff_unit;
 
-        root.select('.crosshair').select('.primitive').node.innerHTML =
-                x_unit.toPrecision(3)+","+y_unit.toPrecision(3);
+        root.select('.crosshair').select('.primitive').select('text')
+                .node.innerHTML = x_unit.toPrecision(3)+","+y_unit.toPrecision(3);
     };
 };
 
@@ -393,12 +393,14 @@ var update_tickscale = function(root, scale, axis) {
     if (best_tickscale != root.data(axis + "tickscale")) {
         root.data(axis + "tickscale", best_tickscale);
         var mark_inscale_gridlines = function (element, i) {
+            if (element.attribute("gadfly:inscale") == null) { return; }
             var inscale = element.attr("gadfly:scale") == best_tickscale;
             element.attribute("gadfly:inscale", inscale);
             element.attr("visibility", inscale ? "visible" : "hidden");
         };
 
         var mark_inscale_labels = function (element, i) {
+            if (element.attribute("gadfly:inscale") == null) { return; }
             var inscale = element.attr("gadfly:scale") == best_tickscale;
             element.attribute("gadfly:inscale", inscale);
             element.attr("visibility", inscale ? "visible" : "hidden");
@@ -530,9 +532,11 @@ var init_pan_zoom = function(root) {
         var xtickscales = {};
         var ytickscales = {};
         var add_x_tick_scales = function (element, i) {
+            if (element.attribute("gadfly:scale")==null) { return; }
             xtickscales[element.attribute("gadfly:scale")] = true;
         };
         var add_y_tick_scales = function (element, i) {
+            if (element.attribute("gadfly:scale")==null) { return; }
             ytickscales[element.attribute("gadfly:scale")] = true;
         };
 
@@ -576,6 +580,7 @@ var init_pan_zoom = function(root) {
 
     // mark grid lines and ticks as in or out of scale.
     var mark_inscale = function (element, i) {
+        if (element.attribute("gadfly:scale") == null) { return; }
         element.attribute("gadfly:inscale", element.attribute("gadfly:scale") == 1.0);
     };
 
