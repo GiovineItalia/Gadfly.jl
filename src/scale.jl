@@ -261,43 +261,44 @@ function reorder_levels(da::IndirectArray, order::AbstractVector)
     return IndirectArray(da, level_values)
 end
 
-discretize_make_pda(values::Vector)         = IndirectArray(values)
-discretize_make_pda(values::Vector, ::Void) = IndirectArray(values)
-discretize_make_pda(values::Vector, levels) =
+discretize_make_ia(values::Vector)         = IndirectArray(values)
+discretize_make_ia(values::Vector, ::Void) = IndirectArray(values)
+discretize_make_ia(values::Vector, levels) =
     IndirectArray(map(t -> findfirst(levels, t), values), levels)
 
-discretize_make_pda(values::DataArray)         = IndirectArray(values)
-discretize_make_pda(values::DataArray, ::Void) = IndirectArray(values)
-discretize_make_pda(values::DataArray, levels) =
+discretize_make_ia(values::DataArray)         = IndirectArray(values)
+discretize_make_ia(values::DataArray, ::Void) = IndirectArray(values)
+discretize_make_ia(values::DataArray, levels) =
     IndirectArray(convert(DataArray{eltype(levels)}, values), levels)
 
-discretize_make_pda(values::Range)         = IndirectArray(collect(values))
-discretize_make_pda(values::Range, ::Void) = IndirectArray(collect(values))
-discretize_make_pda(values::Range, levels) = IndirectArray(collect(values), levels)
+discretize_make_ia(values::Range)         = IndirectArray(collect(values))
+discretize_make_ia(values::Range, ::Void) = IndirectArray(collect(values))
+discretize_make_ia(values::Range, levels) = IndirectArray(collect(values), levels)
 
-discretize_make_pda(values::IndirectArray)         = values
-discretize_make_pda(values::IndirectArray, ::Void) = values
-discretize_make_pda(values::IndirectArray, levels) =
-    IndirectArray(values, convert(Vector{eltype(values)}, levels))
+discretize_make_ia(values::IndirectArray)         = values
+discretize_make_ia(values::IndirectArray, ::Void) = values
+discretize_make_ia(values::IndirectArray, levels) = IndirectArray(values, levels)
 
-discretize_make_pda(values::CategoricalArray)         = discretize_make_pda(values, unique(values))
-discretize_make_pda(values::CategoricalArray, ::Void) = discretize_make_pda(values)
-function discretize_make_pda(values::CategoricalArray{T}, levels::Vector) where {T}
+discretize_make_ia(values::CategoricalArray) =
+    discretize_make_ia(values, intersect(push!(levels(values), missing), unique(values)))
+discretize_make_ia(values::CategoricalArray, ::Void) = discretize_make_ia(values)
+function discretize_make_ia(values::CategoricalArray{T}, levels::Vector) where {T}
     index = map!(t -> ismissing(t) ?
                     findfirst(ismissing, levels) :
-                        findfirst(s -> !(ismissing(s) || s != get(t)), levels),
-                 Array{UInt8}(size(values)...), values)
+                    findfirst(s -> !(ismissing(s) || s != get(t)), levels),
+                 Array{UInt8}(size(values)...),
+                 values)
     return IndirectArray(index, convert(Vector{T},levels))
 end
-function discretize_make_pda(values::CategoricalArray{T}, levels::CategoricalVector{T}) where T
+function discretize_make_ia(values::CategoricalArray{T}, levels::CategoricalVector{T}) where T
     _levels = map!(t -> ismissing(t) ? t : get(t), Vector{T}(length(levels)), levels)
-    discretize_make_pda(values, _levels)
+    discretize_make_ia(values, _levels)
 end
 
 # These methods convert WeakRefStringArrays to Vector{String} and shouldn't really be necessary
 # since it has been decided that WeakRefStrings shouldn't be used externally anymore
-discretize_make_pda(s::AbstractArray{<:AbstractString}) = discretize_make_pda(Vector{String}(s))
-discretize_make_pda(s::AbstractArray{<:AbstractString}, levels) = discretize_make_pda(Vector{String}(s), levels)
+discretize_make_ia(s::AbstractArray{<:AbstractString})         = discretize_make_ia(Vector{String}(s))
+discretize_make_ia(s::AbstractArray{<:AbstractString}, levels) = discretize_make_ia(Vector{String}(s), levels)
 
 function discretize(values, levels=nothing, order=nothing, preserve_order=true)
     if levels == nothing
@@ -306,12 +307,12 @@ function discretize(values, levels=nothing, order=nothing, preserve_order=true)
             for value in values
                 push!(levels, value)
             end
-            da = discretize_make_pda(values, collect(eltype(values), levels))
+            da = discretize_make_ia(values, collect(eltype(values), levels))
         else
-            da = discretize_make_pda(values)
+            da = discretize_make_ia(values)
         end
     else
-        da = discretize_make_pda(values, levels)
+        da = discretize_make_ia(values, levels)
     end
 
     if order != nothing
@@ -496,7 +497,6 @@ function apply_scale(scale::DiscreteColorScale,
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
         for d in data.color
-            # ismissing(d) ||
             push!(levelset, d)
         end
     end

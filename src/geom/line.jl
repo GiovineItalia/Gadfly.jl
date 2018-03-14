@@ -132,7 +132,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                       svgclass("geometry"))
 
     elseif length(aes.color) == 1 &&
-            !(isa(aes.color, IndirectArray) && length(filter(!ismissing, aes.color.values)) > 1)
+            !(isa(aes.color, IndirectArray) && count(!ismissing, aes.color.values) > 1)
         T = (Tuple{eltype(aes.x), eltype(aes.y)})
         points = T[(x, y) for (x, y) in zip(aes.x, aes.y)]
         geom.preserve_order || sort!(points, by=first)
