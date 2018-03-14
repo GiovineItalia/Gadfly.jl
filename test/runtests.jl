@@ -108,9 +108,3 @@ close(output)
 if prev_theme !== nothing
     ENV["GADFLY_THEME"] = prev_theme
 end
-
-if !haskey(ENV, "TRAVIS") && !isinteractive() &&
-            !isempty(readdir(joinpath((@__DIR__),"cachedoutput"))) &&
-            !isempty(readdir(joinpath((@__DIR__),"gennedoutput")))
-    run(`$(Base.julia_cmd()) $(joinpath(@__DIR__, "compare_examples.jl"))`)  # `include`ing causes it to hang.
-end
