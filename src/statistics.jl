@@ -1873,7 +1873,7 @@ function Gadfly.Stat.apply_statistic(stat::EllipseStatistic,
         end
     end
 
-    aes.group = PooledDataArray(levels)
+    aes.group = IndirectArray(levels)
     colorflag && (aes.color = colors)
     aes.x = ellipse_x
     aes.y = ellipse_y

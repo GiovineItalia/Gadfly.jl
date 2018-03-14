@@ -288,20 +288,6 @@ function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
     return ab
 end
 
-function cat_aes_var!{T}(xs::PooledDataVector{T}, ys::PooledDataVector{T})
-    newpool = T[x for x in union(Set(xs.values), Set(ys.values))]
-    newdata = vcat(T[x for x in xs], T[y for y in ys])
-    IndirectArray(newdata, newpool)
-end
-
-function cat_aes_var!{T, U}(xs::PooledDataVector{T}, ys::PooledDataVector{U})
-    V = promote_type(T, U)
-    newpool = V[x for x in union(Set(xs.values), Set(ys.values))]
-    newdata = vcat(V[x for x in xs], V[y for y in ys])
-    IndirectArray(newdata, newpool)
-end
-
-
 # Summarizing aesthetics
 
 # Produce a matrix of Aesthetic or Data objects partitioning the original
