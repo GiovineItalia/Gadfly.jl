@@ -283,11 +283,10 @@ discretize_make_ia(values::CategoricalArray) =
     discretize_make_ia(values, intersect(push!(levels(values), missing), unique(values)))
 discretize_make_ia(values::CategoricalArray, ::Void) = discretize_make_ia(values)
 function discretize_make_ia(values::CategoricalArray{T}, levels::Vector) where {T}
-    index = map!(t -> ismissing(t) ?
-                    findfirst(ismissing, levels) :
-                    findfirst(s -> !(ismissing(s) || s != get(t)), levels),
-                 Array{UInt8}(size(values)...),
-                 values)
+    mapping = coalesce.(indexin(CategoricalArrays.index(values.pool), levels), 0)
+    unshift!(mapping, coalesce(findfirst(ismissing, levels), 0))
+    index = [mapping[x+1] for x in values.refs]
+    any(iszero, index) && throw(ArgumentError("values not in levels encountered"))
     return IndirectArray(index, convert(Vector{T},levels))
 end
 function discretize_make_ia(values::CategoricalArray{T}, levels::CategoricalVector{T}) where T
