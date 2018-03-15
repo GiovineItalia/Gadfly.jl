@@ -17,10 +17,7 @@ script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia -e 'Pkg.clone(pwd()); Pkg.build("Gadfly");'
   - julia -e 'Pkg.checkout("Compose")'
-  # because of a bug in Julia 0.6.2 we temporarily use --compilecache=no.
-  # The bug is fixed on master and will be included in 0.6.3 so when it
-  # has been releases, we can bump the requirement and remove the flag.
-  - julia --check-bounds=yes --compilecache=no -e 'Pkg.test("Gadfly", coverage=true)'
+  - julia --check-bounds=yes -e 'Pkg.test("Gadfly", coverage=true)'
 after_success:
   - julia -e 'cd(Pkg.dir("Gadfly")); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
   - julia -e 'Pkg.checkout("Compose")'
