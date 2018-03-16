@@ -430,6 +430,8 @@ function apply_statistic(stat::HistogramStatistic,
                     naive_stackheight += othervals[idx]
                 end
 
+                naive_stackheight == 0 && continue
+
                 for i in 1:length(groups)
                     idx = (i-1)*d + j
                     othervals[idx] = scaled_stackheight[j] * othervals[idx] / naive_stackheight

@@ -28,6 +28,99 @@ const left_guide_position   = LeftGuidePosition()
 const under_guide_position  = UnderGuidePosition()
 const over_guide_position   = OverGuidePosition()
 
+immutable QuestionMark <: Gadfly.GuideElement
+end
+
+const questionmark = QuestionMark
+
+function render(guide::QuestionMark, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    text_color = theme.background_color == nothing ?
+            colorant"black" : distinguishable_colors(2,theme.background_color)[2]
+    text_box = compose!( context(),
+        text(1w,0h+2px,"?",hright,vtop),
+        fill(text_color),
+        svgclass("text_box"),
+        jscall(
+            """
+            mouseenter(Gadfly.helpscreen_visible)
+            .mouseleave(Gadfly.helpscreen_hidden)
+            """))
+
+    root = compose!(
+        context(withjs=true, units=UnitBox()),
+        text_box,
+        svgclass("guide questionmark"),
+        fillopacity(0.0))
+
+    return [PositionedGuide([root], 0, over_guide_position)]
+end
+
+
+immutable HelpScreen <: Gadfly.GuideElement
+end
+
+const helpscreen = HelpScreen
+
+function render(guide::HelpScreen, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    box_color = theme.background_color == nothing ?
+            colorant"black" : distinguishable_colors(2,theme.background_color)[2]
+    text_color = distinguishable_colors(2,box_color)[2]
+    text_strings = ["h,j,k,l,arrows,drag to pan",
+                    "i,o,+,-,scroll,shift-drag to zoom",
+                    "r,dbl-click to reset",
+                    "c for coordinates",
+                    "? for help"]
+    nlines = length(text_strings)
+    max_text_width, max_text_height = max_text_extents(
+          theme.major_label_font, theme.major_label_font_size, text_strings...)
+    text_box = compose!(context(),
+        (context(),
+          text([0.5w], [0.5h+i*max_text_height for i=-(nlines-1)/2:(nlines-1)/2],
+               text_strings, [hcenter], [vcenter]),
+          font(theme.major_label_font),
+          fontsize(theme.major_label_font_size),
+          fill(text_color)),
+        (context(),
+          rectangle(0.5w-max_text_width/2*1.1, 0.5h-max_text_height*nlines/2*1.1,
+                    max_text_width*1.1, max_text_height*nlines*1.1),
+          fill(box_color)),
+        svgclass("text_box"))
+
+    root = compose!(
+        context(withjs=true, units=UnitBox()),
+        text_box,
+        svgclass("guide helpscreen"),
+        fillopacity(0.0))
+
+    return [PositionedGuide([root], 0, over_guide_position)]
+end
+
+immutable CrossHair <: Gadfly.GuideElement
+end
+
+const crosshair = CrossHair
+
+function render(guide::CrossHair, theme::Gadfly.Theme,
+                aes::Gadfly.Aesthetics)
+    text_color = theme.background_color == nothing ?
+            colorant"black" : distinguishable_colors(2,theme.background_color)[2]
+    text_box = compose!(
+        context(),
+        text(1w-20pt,0h+2px,"",hright,vtop),
+        fill(text_color),
+        svgclass("text_box"))
+
+    root = compose!(
+        context(withjs=true, units=UnitBox()),
+        text_box,
+        svgclass("guide crosshair"),
+        fillopacity(0.0))
+
+    return [PositionedGuide([root], 0, over_guide_position)]
+end
+
 
 # A guide graphic is a position associated with one or more contexts.
 # Multiple contexts represent multiple layout possibilites that will be
@@ -59,112 +152,6 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
                     svgattribute("pointer-events", "visible"))
 
     return [PositionedGuide([back], 0, under_guide_position)]
-end
-
-
-immutable ZoomSlider <: Gadfly.GuideElement
-end
-
-const zoomslider = ZoomSlider
-
-
-function render(guide::ZoomSlider, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
-
-    edge_pad = 3mm
-    slide_pad = 0.5mm
-    button_size = 4mm
-    slider_size = 20mm
-    background_color = colorant"#eaeaea"
-    foreground_color = colorant"#6a6a6a"
-    highlight_color = colorant"#cd5c5c";
-
-    minus_button = compose!(
-        context(1w - edge_pad - 2*button_size - slider_size,
-                edge_pad, button_size, button_size),
-        rectangle(),
-        stroke(foreground_color),
-        strokeopacity(0.0),
-        linewidth(0.3mm),
-        (context(),
-         polygon([(0.2, 0.4), (0.8, 0.4),
-                  (0.8, 0.6), (0.2, 0.6)]),
-         fill(foreground_color),
-         svgclass("button_logo")),
-        fill(background_color),
-        jscall(
-            """
-            click(Gadfly.zoomslider_zoomout_click)
-            .mouseenter(Gadfly.zoomslider_button_mouseover)
-            .mouseleave(Gadfly.zoomslider_button_mouseout)
-            """),
-        jsdata("mouseout_color", "\"#$(hex(foreground_color))\""),
-        jsdata("mouseover_color", "\"#$(hex(highlight_color))\""))
-
-    slider_width = 2mm
-    slider_xpos = 1w - edge_pad - button_size - slider_size + slide_pad
-
-    slider_min_pos = slider_xpos + slider_width/2
-    slider_max_pos = slider_xpos + slider_size - 2*slide_pad - slider_width/2
-
-    slider = compose!(
-        context(slider_xpos, edge_pad, slider_size - 2 * slide_pad, button_size),
-        (context(),
-         rectangle(),
-         fill(background_color),
-         jscall("click(Gadfly.zoomslider_track_click)"),
-         jsdata("min_pos", "%x", Measure[slider_min_pos]),
-         jsdata("max_pos", "%x", Measure[slider_max_pos])),
-        (context(order=1),
-         rectangle(0.5cx - slider_width/2, 0.0, slider_width, 1h),
-         fill(foreground_color),
-         svgclass("zoomslider_thumb"),
-         jscall(
-            """
-            drag(Gadfly.zoomslider_thumb_dragmove,
-                 Gadfly.zoomslider_thumb_dragstart,
-                 Gadfly.zoomslider_thumb_dragend)
-            """),
-         jsdata("mouseout_color", "\"#$(hex(foreground_color))\""),
-         jsdata("mouseover_color", "\"#$(hex(highlight_color))\""),
-         jsdata("min_pos", "%x", Measure[slider_min_pos]),
-         jsdata("max_pos", "%x", Measure[slider_max_pos])))
-
-    plus_button = compose!(
-        context(1w - edge_pad - button_size, edge_pad,
-                button_size, button_size),
-        rectangle(),
-        stroke(foreground_color),
-        strokeopacity(0.0),
-        linewidth(0.3mm),
-        (context(),
-         polygon([(0.2, 0.4), (0.4, 0.4), (0.4, 0.2),
-                  (0.6, 0.2), (0.6, 0.4), (0.8, 0.4),
-                  (0.8, 0.6), (0.6, 0.6), (0.6, 0.8),
-                  (0.4, 0.8), (0.4, 0.6), (0.2, 0.6)]),
-         fill(foreground_color),
-         svgclass("button_logo")),
-        fill(background_color),
-        jscall(
-            """
-            click(Gadfly.zoomslider_zoomin_click)
-            .mouseenter(Gadfly.zoomslider_button_mouseover)
-            .mouseleave(Gadfly.zoomslider_button_mouseout)
-            """),
-        jsdata("mouseout_color", "\"#$(hex(foreground_color))\""),
-        jsdata("mouseover_color", "\"#$(hex(highlight_color))\""))
-
-    root = compose!(
-        context(withjs=true, units=UnitBox()),
-        minus_button,
-        slider,
-        plus_button,
-        stroke(nothing),
-        #stroke(foreground_color),
-        svgclass("guide zoomslider"),
-        fillopacity(0.0))
-
-    return [PositionedGuide([root], 0, over_guide_position)]
 end
 
 

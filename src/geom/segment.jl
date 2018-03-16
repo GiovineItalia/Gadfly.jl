@@ -68,13 +68,14 @@ function render(geom::SegmentGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
     segments = [ [(x,y), (xend,yend)]
         for (x, y, xend, yend) in zip(aes.x, aes.y, aes.xend, aes.yend) ]  
        
-    classes = [string("geometry ", svg_color_class_from_label( aes.color_label([c])[1] ))
-        for c in aes.color ]
+    classes = [svg_color_class_from_label( aes.color_label([c])[1] ) for c in aes.color ]
     
     ctx = context()
 
-    compose!( ctx, Compose.line(segments, geom.tag), stroke(aes.color), linewidth(theme.line_width), 
-        strokedash(line_style), svgclass( classes )  )
+    compose!( ctx, (context(), Compose.line(segments, geom.tag),
+                stroke(aes.color), linewidth(theme.line_width), 
+                strokedash(line_style), svgclass( classes )),
+              svgclass("geometry")  )
     if geom.arrow
         if geom.filled
             compose!(ctx, (context(), Compose.polygon(arrows), fill(aes.color), strokedash([])) )

@@ -134,7 +134,7 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
             f = Shape.circle(positions, val, aes.size, geom.tag)
         end
 
-        return compose(context(), f, fill(aes.color),
+        return compose(context(), f, fill(aes.color), svgclass("marker"),
                        linewidth(theme.highlight_width), stroke(nothing))
     end
 

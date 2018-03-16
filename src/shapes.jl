@@ -96,6 +96,7 @@ function utriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scal
     polys[i] = Tuple{Measure, Measure}[
       (x - r, y + u),
       (x + r, y + u),
+      (x, y - u),  # two of these so the centroid is such that it zooms well
       (x, y - u)
     ]
   end

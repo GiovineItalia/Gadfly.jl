@@ -122,22 +122,23 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
             push!(points[end], (x, y))
         end
 
-        classes = [string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
+        classes = [svg_color_class_from_label(aes.color_label([c])[1])
                    for (c, g) in zip(points_colors, points_groups)]
 
-        ctx = compose!(ctx, Compose.line(points,geom.tag),
-                      stroke(points_colors),
-                      strokedash(line_style),
-                      svgclass(classes))
+        ctx = compose!(ctx, (context(), Compose.line(points,geom.tag),
+                        stroke(points_colors),
+                        strokedash(line_style),
+                        svgclass(classes)),
+                      svgclass("geometry"))
 
     elseif length(aes.color) == 1 &&
             !(isa(aes.color, PooledDataArray) && length(levels(aes.color)) > 1)
         T = (Tuple{eltype(aes.x), eltype(aes.y)})
         points = T[(x, y) for (x, y) in zip(aes.x, aes.y)]
         geom.preserve_order || sort!(points, by=first)
-        ctx = compose!(ctx, Compose.line([points],geom.tag),
+        ctx = compose!(ctx, (context(), Compose.line([points],geom.tag),
                        stroke(aes.color[1]),
-                       strokedash(line_style),
+                       strokedash(line_style)),
                        svgclass("geometry"))
     else
         if !geom.preserve_order
@@ -180,13 +181,14 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
             push!(points[end], (x, y))
         end
 
-        classes = [string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
+        classes = [svg_color_class_from_label(aes.color_label([c])[1])
                    for c in points_colors]
 
-        ctx = compose!(ctx, Compose.line(points,geom.tag),
-                      stroke(points_colors),
-                      strokedash(line_style),
-                      svgclass(classes))
+        ctx = compose!(ctx, (context(), Compose.line(points,geom.tag),
+                        stroke(points_colors),
+                        strokedash(line_style),
+                        svgclass(classes)),
+                      svgclass("geometry"))
     end
 
     return compose!(ctx, fill(nothing), linewidth(theme.line_width))

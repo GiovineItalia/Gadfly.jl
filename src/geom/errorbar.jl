@@ -44,7 +44,7 @@ function render(geom::ErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
     else
         yctx = nothing
     end
-    compose(context(order=3), xctx, yctx)
+    compose(context(order=3), xctx, yctx, svgclass("geometry"))
 end
 
 function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
@@ -59,27 +59,32 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
     caplen = theme.errorbar_cap_length/2
     ttc, teb, tbc = subtags(geom.tag, :top_cap, :error_bar, :bottom_cap)
 
-    return compose!(
+    ctx = compose!(
         context(order=3; tag=geom.tag),
 
         # top cap
-        Compose.line([[(x*cx - caplen, ymax), (x*cx + caplen, ymax)]
+        (context(),
+            Compose.line([[(x*cx - caplen, ymax), (x*cx + caplen, ymax)]
                       for (x, ymax) in zip(aes.x, aes.ymax)], ttc),
+            svgclass("marker")),
 
         # error bar
         Compose.line([[(x*cx, ymax), (x*cx, ymin)]
                       for (x, ymin, ymax) in zip(aes.x, aes.ymin, aes.ymax)], teb),
 
         # bottom cap
-        Compose.line([[(x*cx - caplen, ymin), (x*cx + caplen, ymin)]
+        (context(),
+            Compose.line([[(x*cx - caplen, ymin), (x*cx + caplen, ymin)]
                       for (x, ymin) in zip(aes.x, aes.ymin)], tbc),
+            svgclass("marker")),
 
         stroke([theme.stroke_color(c) for c in aes.color]),
-        linewidth(theme.line_width),
-        aes.color_key_continuous == true ?
-            svgclass("geometry") :
-            svgclass([string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
-                      for c in aes.color]))
+        linewidth(theme.line_width))
+
+    aes.color_key_continuous == true && compose!(ctx,
+            svgclass([svg_color_class_from_label(aes.color_label([c])[1]) for c in aes.color]))
+
+    return ctx
 end
 
 function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
@@ -95,25 +100,31 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
     caplen = theme.errorbar_cap_length/2
     tlc, teb, trc = subtags(geom.tag, :left_cap, :error_bar, :right_cap)
 
-    return compose!(
+    ctx = compose!(
         context(order=3, tag=geom.tag),
 
         # left cap
-        Compose.line([[(xmin, y*cy - caplen), (xmin, y*cy + caplen)]
+        (context(),
+            Compose.line([[(xmin, y*cy - caplen), (xmin, y*cy + caplen)]
                       for (xmin, y) in zip(aes.xmin, aes.y)], tlc),
+            svgclass("marker")),
 
         # error bar
         Compose.line([[(xmin, y*cy), (xmax, y*cy)]
                       for (xmin, xmax, y) in zip(aes.xmin, aes.xmax, aes.y)], teb),
 
         # right cap
-        Compose.line([[(xmax, y*cy - caplen), (xmax, y*cy + caplen)]
+        (context(),
+            Compose.line([[(xmax, y*cy - caplen), (xmax, y*cy + caplen)]
                       for (xmax, y) in zip(aes.xmax, aes.y)], trc),
+            svgclass("marker")),
 
         stroke([theme.stroke_color(c) for c in aes.color]),
-        linewidth(theme.line_width),
-        (aes.color_key_continuous == true || !colored) ?
-            svgclass("geometry") :
-            svgclass([string("geometry ", svg_color_class_from_label(aes.color_label([c])[1]))
+        linewidth(theme.line_width))
+
+    (aes.color_key_continuous == true || !colored) && compose!(ctx,
+            svgclass([svg_color_class_from_label(aes.color_label([c])[1])
                       for c in aes.color]))
+
+    return ctx
 end

@@ -115,11 +115,10 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
     if !geom.suppress_outliers && aes.outliers != nothing && !isempty(aes.outliers)
         xys = collect(chain([zip(cycle([x]), ys, cycle([c]))
                              for (x, ys, c) in zip(xs, aes.outliers, cs)]...))
-        compose!(ctx,
-            (context(),
-             Shape.circle([x for (x, y, c) in xys],
+        compose!(ctx, (context(),
+            (context(), Shape.circle([x for (x, y, c) in xys],
                     [y for (x, y, c) in xys],
-                    [theme.point_size], to),
+                    [theme.point_size], to), svgclass("marker")),
              stroke([theme.discrete_highlight_color(c) for (x, y, c) in xys]),
              fill([c for (x, y, c) in xys])))
     end

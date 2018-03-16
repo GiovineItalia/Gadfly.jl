@@ -616,21 +616,12 @@ function render_prepare(plot::Plot)
     end
 
     if !facet_plot
-        if !in(Guide.PanelBackground, explicit_guide_types)
-            push!(guides, Guide.background())
-        end
-
-        if !in(Guide.ZoomSlider, explicit_guide_types)
-            push!(guides, Guide.zoomslider())
-        end
-
-        if !in(Guide.XTicks, explicit_guide_types)
-            push!(guides, Guide.xticks())
-        end
-
-        if !in(Guide.YTicks, explicit_guide_types)
-            push!(guides, Guide.yticks())
-        end
+        in(Guide.PanelBackground, explicit_guide_types) || push!(guides, Guide.background())
+        in(Guide.QuestionMark, explicit_guide_types) || push!(guides, Guide.questionmark())
+        in(Guide.HelpScreen, explicit_guide_types) || push!(guides, Guide.helpscreen())
+        in(Guide.CrossHair, explicit_guide_types) || push!(guides, Guide.crosshair())
+        in(Guide.XTicks, explicit_guide_types) || push!(guides, Guide.xticks())
+        in(Guide.YTicks, explicit_guide_types) || push!(guides, Guide.yticks())
     end
 
     for guide in guides
@@ -1084,7 +1075,7 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Union{Plot,Compose.Contex
             <title>Gadfly Plot</title>
             <meta charset="utf-8">
           </head>
-            <body>
+            <body style="margin:0">
             <script charset="utf-8">
                 $(readstring(Compose.snapsvgjs))
             </script>

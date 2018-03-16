@@ -132,6 +132,7 @@ Snap.plugin(function (Snap, Element, Paper, global) {
 
     Element.prototype.init_gadfly = function() {
         this.mouseenter(Gadfly.plot_mouseover)
+            .mousemove(Gadfly.plot_mousemove)
             .mouseleave(Gadfly.plot_mouseout)
             .dblclick(Gadfly.plot_dblclick)
             .mousewheel(Gadfly.guide_background_scroll)
@@ -146,96 +147,180 @@ Snap.plugin(function (Snap, Element, Paper, global) {
 });
 
 
+Gadfly.plot_mousemove = function(event, x_px, y_px) {
+    var root = this.plotroot();
+    if (root.data("crosshair")) {
+        px_per_mm = root.data("px_per_mm");
+        bB = root.select('boundingbox').node.getAttribute('value').split(' ');
+        uB = root.select('unitbox').node.getAttribute('value').split(' ');
+        xscale = root.data("xscale");
+        yscale = root.data("yscale");
+        xtranslate = root.data("tx");
+        ytranslate = root.data("ty");
+
+        xoff_mm = bB[0].substr(0,bB[0].length-2)/1;
+        yoff_mm = bB[1].substr(0,bB[1].length-2)/1;
+        xoff_unit = uB[0]/1;
+        yoff_unit = uB[1]/1;
+        mm_per_xunit = bB[2].substr(0,bB[2].length-2) / uB[2];
+        mm_per_yunit = bB[3].substr(0,bB[3].length-2) / uB[3];
+         
+        x_unit = ((x_px / px_per_mm - xtranslate) / xscale - xoff_mm) / mm_per_xunit + xoff_unit;
+        y_unit = ((y_px / px_per_mm - ytranslate) / yscale - yoff_mm) / mm_per_yunit + yoff_unit;
+
+        root.select('.crosshair').select('.primitive').select('text')
+                .node.innerHTML = x_unit.toPrecision(3)+","+y_unit.toPrecision(3);
+    };
+};
+
+Gadfly.helpscreen_visible = function(event) {
+    helpscreen_visible(this.plotroot());
+};
+var helpscreen_visible = function(root) {
+    root.select(".helpscreen").animate({opacity: 1.0}, 250);
+};
+
+Gadfly.helpscreen_hidden = function(event) {
+    helpscreen_hidden(this.plotroot());
+};
+var helpscreen_hidden = function(root) {
+    root.select(".helpscreen").animate({opacity: 0.0}, 250);
+};
+
 // When the plot is moused over, emphasize the grid lines.
 Gadfly.plot_mouseover = function(event) {
     var root = this.plotroot();
 
-    var keyboard_zoom = function(event) {
-        if (event.which == 187) { // plus
-            increase_zoom_by_position(root, 0.1, true);
-        } else if (event.which == 189) { // minus
-            increase_zoom_by_position(root, -0.1, true);
+    var keyboard_help = function(event) {
+        if (event.which == 191) { // ?
+            helpscreen_visible(root);
         }
     };
-    root.data("keyboard_zoom", keyboard_zoom);
-    window.addEventListener("keyup", keyboard_zoom);
+    root.data("keyboard_help", keyboard_help);
+    window.addEventListener("keydown", keyboard_help);
+
+    var keyboard_pan_zoom = function(event) {
+        var bounds = root.plotbounds(),
+            width = bounds.x1 - bounds.x0;
+            height = bounds.y1 - bounds.y0;
+        if (event.which == 187 || event.which == 73) { // plus or i
+            increase_zoom_by_position(root, 0.1, true);
+        } else if (event.which == 189 || event.which == 79) { // minus or o
+            increase_zoom_by_position(root, -0.1, true);
+        } else if (event.which == 39 || event.which == 76) { // right-arrow or l
+            set_plot_pan_zoom(root, root.data("tx")-width/10, root.data("ty"),
+                    root.data("xscale"), root.data("yscale"));
+        } else if (event.which == 40 || event.which == 74) { // down-arrow or j
+            set_plot_pan_zoom(root, root.data("tx"), root.data("ty")-height/10,
+                    root.data("xscale"), root.data("yscale"));
+        } else if (event.which == 37 || event.which == 72) { // left-arrow or h
+            set_plot_pan_zoom(root, root.data("tx")+width/10, root.data("ty"),
+                    root.data("xscale"), root.data("yscale"));
+        } else if (event.which == 38 || event.which == 75) { // up-arrow or k
+            set_plot_pan_zoom(root, root.data("tx"), root.data("ty")+height/10,
+                    root.data("xscale"), root.data("yscale"));
+        } else if (event.which == 82) { // r
+            set_plot_pan_zoom(root, 0.0, 0.0, 1.0, 1.0);
+        } else if (event.which == 191) { // ?
+            helpscreen_hidden(root);
+        } else if (event.which == 67) { // c
+            root.data("crosshair",!root.data("crosshair"));
+            root.select(".crosshair")
+                .animate({opacity: root.data("crosshair") ? 1.0 : 0.0}, 250);
+        }
+    };
+    root.data("keyboard_pan_zoom", keyboard_pan_zoom);
+    window.addEventListener("keyup", keyboard_pan_zoom);
 
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
 
-    xgridlines.data("unfocused_strokedash",
-                    xgridlines.attribute("stroke-dasharray").replace(/(\d)(,|$)/g, "$1mm$2"));
-    ygridlines.data("unfocused_strokedash",
-                    ygridlines.attribute("stroke-dasharray").replace(/(\d)(,|$)/g, "$1mm$2"));
+    if (xgridlines) {
+        xgridlines.data("unfocused_strokedash",
+                        xgridlines.attribute("stroke-dasharray").replace(/(\d)(,|$)/g, "$1mm$2"));
+        var destcolor = root.data("focused_xgrid_color");
+        xgridlines.attribute("stroke-dasharray", "none")
+                  .selectAll("path")
+                  .animate({stroke: destcolor}, 250);
+    }
 
-    // emphasize grid lines
-    var destcolor = root.data("focused_xgrid_color");
-    xgridlines.attribute("stroke-dasharray", "none")
-              .selectAll("path")
-              .animate({stroke: destcolor}, 250);
+    if (ygridlines) {
+        ygridlines.data("unfocused_strokedash",
+                        ygridlines.attribute("stroke-dasharray").replace(/(\d)(,|$)/g, "$1mm$2"));
+        var destcolor = root.data("focused_ygrid_color");
+        ygridlines.attribute("stroke-dasharray", "none")
+                  .selectAll("path")
+                  .animate({stroke: destcolor}, 250);
+    }
 
-    destcolor = root.data("focused_ygrid_color");
-    ygridlines.attribute("stroke-dasharray", "none")
-              .selectAll("path")
-              .animate({stroke: destcolor}, 250);
-
-    // reveal zoom slider
-    root.select(".zoomslider")
-        .animate({opacity: 1.0}, 250);
+    root.select(".crosshair")
+        .animate({opacity: root.data("crosshair") ? 1.0 : 0.0}, 250);
+    root.select(".questionmark").animate({opacity: 1.0}, 250);
 };
 
 // Reset pan and zoom on double click
 Gadfly.plot_dblclick = function(event) {
-  set_plot_pan_zoom(this.plotroot(), 0.0, 0.0, 1.0);
+  set_plot_pan_zoom(this.plotroot(), 0.0, 0.0, 1.0, 1.0);
 };
 
 // Unemphasize grid lines on mouse out.
 Gadfly.plot_mouseout = function(event) {
     var root = this.plotroot();
 
-    window.removeEventListener("keyup", root.data("keyboard_zoom"));
-    root.data("keyboard_zoom", undefined);
+    window.removeEventListener("keyup", root.data("keyboard_pan_zoom"));
+    root.data("keyboard_pan_zoom", undefined);
+    window.removeEventListener("keydown", root.data("keyboard_help"));
+    root.data("keyboard_help", undefined);
 
     var xgridlines = root.select(".xgridlines"),
         ygridlines = root.select(".ygridlines");
 
-    var destcolor = root.data("unfocused_xgrid_color");
+    if (xgridlines) {
+        var destcolor = root.data("unfocused_xgrid_color");
+        xgridlines.attribute("stroke-dasharray", xgridlines.data("unfocused_strokedash"))
+                  .selectAll("path")
+                  .animate({stroke: destcolor}, 250);
+    }
 
-    xgridlines.attribute("stroke-dasharray", xgridlines.data("unfocused_strokedash"))
-              .selectAll("path")
-              .animate({stroke: destcolor}, 250);
+    if (ygridlines) {
+        var destcolor = root.data("unfocused_ygrid_color");
+        ygridlines.attribute("stroke-dasharray", ygridlines.data("unfocused_strokedash"))
+                  .selectAll("path")
+                  .animate({stroke: destcolor}, 250);
+    }
 
-    destcolor = root.data("unfocused_ygrid_color");
-    ygridlines.attribute("stroke-dasharray", ygridlines.data("unfocused_strokedash"))
-              .selectAll("path")
-              .animate({stroke: destcolor}, 250);
-
-    // hide zoom slider
-    root.select(".zoomslider")
-        .animate({opacity: 0.0}, 250);
+    root.select(".crosshair").animate({opacity: 0.0}, 250);
+    root.select(".questionmark").animate({opacity: 0.0}, 250);
+    helpscreen_hidden(root);
 };
 
 
-var set_geometry_transform = function(root, tx, ty, scale) {
+var set_geometry_transform = function(root, tx, ty, xscale, yscale) {
     var xscalable = root.hasClass("xscalable"),
         yscalable = root.hasClass("yscalable");
 
-    var old_scale = root.data("scale");
+    var old_xscale = root.data("xscale"),
+        old_yscale = root.data("yscale");
 
-    var xscale = xscalable ? scale : 1.0,
-        yscale = yscalable ? scale : 1.0;
+    var xscale = xscalable ? xscale : 1.0,
+        yscale = yscalable ? yscale : 1.0;
 
     tx = xscalable ? tx : 0.0;
     ty = yscalable ? ty : 0.0;
 
     var t = new Snap.Matrix().translate(tx, ty).scale(xscale, yscale);
-
-    root.selectAll(".geometry, image")
-        .forEach(function (element, i) {
+    root.selectAll(".geometry, image").forEach(function (element, i) {
             element.transform(t);
         });
 
+    var t = new Snap.Matrix().scale(1.0/xscale, 1.0/yscale);
+    root.selectAll('.marker').forEach(function (element, i) {
+        element.selectAll('.primitive').forEach(function (element, i) {
+            element.transform(t);
+        }) });
+
     bounds = root.plotbounds();
+    px_per_mm = root.data("px_per_mm");
 
     if (yscalable) {
         var xfixed_t = new Snap.Matrix().translate(0, ty).scale(1.0, yscale);
@@ -244,23 +329,22 @@ var set_geometry_transform = function(root, tx, ty, scale) {
                 element.transform(xfixed_t);
             });
 
-        root.select(".ylabels")
-            .transform(xfixed_t)
-            .selectAll("text")
-            .forEach(function (element, i) {
-                if (element.attribute("gadfly:inscale") == "true") {
-                    var cx = element.asPX("x"),
-                        cy = element.asPX("y");
-                    var st = element.data("static_transform");
-                    unscale_t = new Snap.Matrix();
-                    unscale_t.scale(1, 1/scale, cx, cy).add(st);
-                    element.transform(unscale_t);
-
-                    var y = cy * scale + ty;
-                    element.attr("visibility",
-                        bounds.y0 <= y && y <= bounds.y1 ? "visible" : "hidden");
-                }
-            });
+        ylabels = root.select(".ylabels");
+        if (ylabels) {
+            ylabels.transform(xfixed_t)
+                   .selectAll("g")
+                   .forEach(function (element, i) {
+                       if (element.attribute("gadfly:inscale") == "true") {
+                           unscale_t = new Snap.Matrix();
+                           unscale_t.scale(1, 1/yscale);
+                           element.select("text").transform(unscale_t);
+ 
+                           var y = element.attr("transform").globalMatrix.f / px_per_mm;
+                           element.attr("visibility",
+                               bounds.y0 <= y && y <= bounds.y1 ? "visible" : "hidden");
+                       }
+                   });
+        }
     }
 
     if (xscalable) {
@@ -271,58 +355,23 @@ var set_geometry_transform = function(root, tx, ty, scale) {
                 element.transform(yfixed_t);
             });
 
-        root.select(".xlabels")
-            .transform(yfixed_t)
-            .selectAll("text")
-            .forEach(function (element, i) {
-                if (element.attribute("gadfly:inscale") == "true") {
-                    var cx = element.asPX("x"),
-                        cy = element.asPX("y");
-                    var st = element.data("static_transform");
-                    unscale_t = new Snap.Matrix();
-                    unscale_t.scale(1/scale, 1, cx, cy).add(st);
+        xlabels = root.select(".xlabels");
+        if (xlabels) {
+            xlabels.transform(yfixed_t)
+                   .selectAll("g")
+                   .forEach(function (element, i) {
+                       if (element.attribute("gadfly:inscale") == "true") {
+                           unscale_t = new Snap.Matrix();
+                           unscale_t.scale(1/xscale, 1);
+                           element.select("text").transform(unscale_t);
 
-                    element.transform(unscale_t);
-
-                    var x = cx * scale + tx;
-                    element.attr("visibility",
-                        bounds.x0 <= x && x <= bounds.x1 ? "visible" : "hidden");
-                    }
-            });
+                           var x = element.attr("transform").globalMatrix.e / px_per_mm;
+                           element.attr("visibility",
+                               bounds.x0 <= x && x <= bounds.x1 ? "visible" : "hidden");
+                           }
+                   });
+        }
     }
-
-    // we must unscale anything that is scale invariance: widths, raiduses, etc.
-    var size_attribs = ["font-size"];
-    var unscaled_selection = ".geometry, .geometry *";
-    if (xscalable) {
-        size_attribs.push("rx");
-        unscaled_selection += ", .xgridlines";
-    }
-    if (yscalable) {
-        size_attribs.push("ry");
-        unscaled_selection += ", .ygridlines";
-    }
-
-    root.selectAll(unscaled_selection)
-        .forEach(function (element, i) {
-            // circle need special help
-            if (element.node.nodeName == "circle") {
-                var cx = element.attribute("cx"),
-                    cy = element.attribute("cy");
-                unscale_t = new Snap.Matrix().scale(1/xscale, 1/yscale,
-                                                        cx, cy);
-                element.transform(unscale_t);
-                return;
-            }
-
-            for (i in size_attribs) {
-                var key = size_attribs[i];
-                var val = parseFloat(element.attribute(key));
-                if (val !== undefined && val != 0 && !isNaN(val)) {
-                    element.attribute(key, val * old_scale / scale);
-                }
-            }
-        });
 };
 
 
@@ -344,38 +393,41 @@ var update_tickscale = function(root, scale, axis) {
     if (best_tickscale != root.data(axis + "tickscale")) {
         root.data(axis + "tickscale", best_tickscale);
         var mark_inscale_gridlines = function (element, i) {
+            if (element.attribute("gadfly:inscale") == null) { return; }
             var inscale = element.attr("gadfly:scale") == best_tickscale;
             element.attribute("gadfly:inscale", inscale);
             element.attr("visibility", inscale ? "visible" : "hidden");
         };
 
         var mark_inscale_labels = function (element, i) {
+            if (element.attribute("gadfly:inscale") == null) { return; }
             var inscale = element.attr("gadfly:scale") == best_tickscale;
             element.attribute("gadfly:inscale", inscale);
             element.attr("visibility", inscale ? "visible" : "hidden");
         };
 
-        root.select("." + axis + "gridlines").selectAll("path").forEach(mark_inscale_gridlines);
-        root.select("." + axis + "labels").selectAll("text").forEach(mark_inscale_labels);
+        root.select("." + axis + "gridlines").selectAll("g").forEach(mark_inscale_gridlines);
+        root.select("." + axis + "labels").selectAll("g").forEach(mark_inscale_labels);
     }
 };
 
 
-var set_plot_pan_zoom = function(root, tx, ty, scale) {
-    var old_scale = root.data("scale");
+var set_plot_pan_zoom = function(root, tx, ty, xscale, yscale) {
+    var old_xscale = root.data("xscale"),
+        old_yscale = root.data("yscale");
     var bounds = root.plotbounds();
 
     var width = bounds.x1 - bounds.x0,
         height = bounds.y1 - bounds.y0;
 
-    // compute the viewport derived from tx, ty, and scale
-    var x_min = -width * scale - (scale * width - width),
-        x_max = width * scale,
-        y_min = -height * scale - (scale * height - height),
-        y_max = height * scale;
+    // compute the viewport derived from tx, ty, xscale, and yscale
+    var x_min = -width * xscale - (xscale * width - width),
+        x_max = width * xscale,
+        y_min = -height * yscale - (yscale * height - height),
+        y_max = height * yscale;
 
-    var x0 = bounds.x0 - scale * bounds.x0,
-        y0 = bounds.y0 - scale * bounds.y0;
+    var x0 = bounds.x0 - xscale * bounds.x0,
+        y0 = bounds.y0 - yscale * bounds.y0;
 
     var tx = Math.max(Math.min(tx - x0, x_max), x_min),
         ty = Math.max(Math.min(ty - y0, y_max), y_min);
@@ -383,22 +435,25 @@ var set_plot_pan_zoom = function(root, tx, ty, scale) {
     tx += x0;
     ty += y0;
 
-    // when the scale change, we may need to alter which set of
-    // ticks is being displayed
-    if (scale != old_scale) {
-        update_tickscale(root, scale, "x");
-        update_tickscale(root, scale, "y");
+    // when the scale changes, we may need to alter which set of
+    // ticks are being displayed
+    if (xscale != old_xscale) {
+        update_tickscale(root, xscale, "x");
+    }
+    if (yscale != old_yscale) {
+        update_tickscale(root, yscale, "y");
     }
 
-    set_geometry_transform(root, tx, ty, scale);
+    set_geometry_transform(root, tx, ty, xscale, yscale);
 
-    root.data("scale", scale);
+    root.data("xscale", xscale);
+    root.data("yscale", yscale);
     root.data("tx", tx);
     root.data("ty", ty);
 };
 
 
-var scale_centered_translation = function(root, scale) {
+var scale_centered_translation = function(root, xscale, yscale) {
     var bounds = root.plotbounds();
 
     var width = bounds.x1 - bounds.x0,
@@ -407,23 +462,24 @@ var scale_centered_translation = function(root, scale) {
     var tx0 = root.data("tx"),
         ty0 = root.data("ty");
 
-    var scale0 = root.data("scale");
+    var xscale0 = root.data("xscale"),
+        yscale0 = root.data("yscale");
 
     // how off from center the current view is
-    var xoff = tx0 - (bounds.x0 * (1 - scale0) + (width * (1 - scale0)) / 2),
-        yoff = ty0 - (bounds.y0 * (1 - scale0) + (height * (1 - scale0)) / 2);
+    var xoff = tx0 - (bounds.x0 * (1 - xscale0) + (width * (1 - xscale0)) / 2),
+        yoff = ty0 - (bounds.y0 * (1 - yscale0) + (height * (1 - yscale0)) / 2);
 
     // rescale offsets
-    xoff = xoff * scale / scale0;
-    yoff = yoff * scale / scale0;
+    xoff = xoff * xscale / xscale0;
+    yoff = yoff * yscale / yscale0;
 
     // adjust for the panel position being scaled
-    var x_edge_adjust = bounds.x0 * (1 - scale),
-        y_edge_adjust = bounds.y0 * (1 - scale);
+    var x_edge_adjust = bounds.x0 * (1 - xscale),
+        y_edge_adjust = bounds.y0 * (1 - yscale);
 
     return {
-        x: xoff + x_edge_adjust + (width - width * scale) / 2,
-        y: yoff + y_edge_adjust + (height - height * scale) / 2
+        x: xoff + x_edge_adjust + (width - width * xscale) / 2,
+        y: yoff + y_edge_adjust + (height - height * yscale) / 2
     };
 };
 
@@ -433,6 +489,8 @@ var init_pan_zoom = function(root) {
     if (root.data("zoompan-ready")) {
         return;
     }
+
+    root.data("crosshair",false);
 
     // The non-scaling-stroke trick. Rather than try to correct for the
     // stroke-width when zooming, we force it to a fixed value.
@@ -452,7 +510,7 @@ var init_pan_zoom = function(root) {
     });
 
     // Store ticks labels original tranformation
-    root.selectAll(".xlabels > text, .ylabels > text")
+    root.selectAll(".xlabels > g, .ylabels > g")
         .forEach(function (element, i) {
             var lm = element.transform().localMatrix;
             element.data("static_transform",
@@ -466,27 +524,31 @@ var init_pan_zoom = function(root) {
 
     if (root.data("tx") === undefined) root.data("tx", 0);
     if (root.data("ty") === undefined) root.data("ty", 0);
-    if (root.data("scale") === undefined) root.data("scale", 1.0);
+    if (root.data("xscale") === undefined) root.data("xscale", 1.0);
+    if (root.data("yscale") === undefined) root.data("yscale", 1.0);
     if (root.data("xtickscales") === undefined) {
 
         // index all the tick scales that are listed
         var xtickscales = {};
         var ytickscales = {};
         var add_x_tick_scales = function (element, i) {
+            if (element.attribute("gadfly:scale")==null) { return; }
             xtickscales[element.attribute("gadfly:scale")] = true;
         };
         var add_y_tick_scales = function (element, i) {
+            if (element.attribute("gadfly:scale")==null) { return; }
             ytickscales[element.attribute("gadfly:scale")] = true;
         };
 
-        if (xgridlines) xgridlines.selectAll("path").forEach(add_x_tick_scales);
-        if (ygridlines) ygridlines.selectAll("path").forEach(add_y_tick_scales);
-        if (xlabels) xlabels.selectAll("text").forEach(add_x_tick_scales);
-        if (ylabels) ylabels.selectAll("text").forEach(add_y_tick_scales);
+        if (xgridlines) xgridlines.selectAll("g").forEach(add_x_tick_scales);
+        if (ygridlines) ygridlines.selectAll("g").forEach(add_y_tick_scales);
+        if (xlabels) xlabels.selectAll("g").forEach(add_x_tick_scales);
+        if (ylabels) ylabels.selectAll("g").forEach(add_y_tick_scales);
 
         root.data("xtickscales", xtickscales);
         root.data("ytickscales", ytickscales);
         root.data("xtickscale", 1.0);
+        root.data("ytickscale", 1.0);  // ???
     }
 
     var min_scale = 1.0, max_scale = 1.0;
@@ -503,14 +565,14 @@ var init_pan_zoom = function(root) {
 
     // store the original positions of labels
     if (xlabels) {
-        xlabels.selectAll("text")
+        xlabels.selectAll("g")
                .forEach(function (element, i) {
                    element.data("x", element.asPX("x"));
                });
     }
 
     if (ylabels) {
-        ylabels.selectAll("text")
+        ylabels.selectAll("g")
                .forEach(function (element, i) {
                    element.data("y", element.asPX("y"));
                });
@@ -518,13 +580,14 @@ var init_pan_zoom = function(root) {
 
     // mark grid lines and ticks as in or out of scale.
     var mark_inscale = function (element, i) {
+        if (element.attribute("gadfly:scale") == null) { return; }
         element.attribute("gadfly:inscale", element.attribute("gadfly:scale") == 1.0);
     };
 
-    if (xgridlines) xgridlines.selectAll("path").forEach(mark_inscale);
-    if (ygridlines) ygridlines.selectAll("path").forEach(mark_inscale);
-    if (xlabels) xlabels.selectAll("text").forEach(mark_inscale);
-    if (ylabels) ylabels.selectAll("text").forEach(mark_inscale);
+    if (xgridlines) xgridlines.selectAll("g").forEach(mark_inscale);
+    if (ygridlines) ygridlines.selectAll("g").forEach(mark_inscale);
+    if (xlabels) xlabels.selectAll("g").forEach(mark_inscale);
+    if (ylabels) ylabels.selectAll("g").forEach(mark_inscale);
 
     // figure out the upper ond lower bounds on panning using the maximum
     // and minum grid lines
@@ -538,7 +601,7 @@ var init_pan_zoom = function(root) {
 
     if (xgridlines) {
         xgridlines
-            .selectAll("path")
+            .selectAll("g")
             .forEach(function (element, i) {
                 if (element.attribute("gadfly:inscale") == "true") {
                     var bbox = element.node.getBBox();
@@ -555,7 +618,7 @@ var init_pan_zoom = function(root) {
 
     if (ygridlines) {
         ygridlines
-            .selectAll("path")
+            .selectAll("g")
             .forEach(function (element, i) {
                 if (element.attribute("gadfly:inscale") == "true") {
                     var bbox = element.node.getBBox();
@@ -609,13 +672,14 @@ var pan_action = {
         var tx = tx0 + dx,
             ty = ty0 + dy;
 
-        set_plot_pan_zoom(root, tx, ty, root.data("scale"));
+        set_plot_pan_zoom(root, tx, ty, root.data("xscale"), root.data("yscale"));
     },
     end: function(root, event) {
 
     },
     cancel: function(root) {
-        set_plot_pan_zoom(root, root.data("tx0"), root.data("ty0"), root.data("scale"));
+        set_plot_pan_zoom(root, root.data("tx0"), root.data("ty0"),
+                root.data("xscale"), root.data("yscale"));
     }
 };
 
@@ -625,7 +689,6 @@ var zoom_action = {
         var bounds = root.plotbounds();
         var width = bounds.x1 - bounds.x0,
             height = bounds.y1 - bounds.y0;
-        var ratio = width / height;
         var xscalable = root.hasClass("xscalable"),
             yscalable = root.hasClass("yscalable");
         var px_per_mm = root.data("px_per_mm");
@@ -637,7 +700,6 @@ var zoom_action = {
             "fill": "#000",
             "opacity": 0.25
         });
-        zoom_box.data("ratio", ratio);
     },
     update: function(root, dx, dy, x, y, event) {
         var xscalable = root.hasClass("xscalable"),
@@ -661,13 +723,6 @@ var zoom_action = {
 
         dx = x - zoom_box.attr("x");
         dy = y - zoom_box.attr("y");
-        if (xscalable && yscalable) {
-            var ratio = zoom_box.data("ratio");
-            var width = Math.min(Math.abs(dx), ratio * Math.abs(dy));
-            var height = Math.min(Math.abs(dy), Math.abs(dx) / ratio);
-            dx = width * dx / Math.abs(dx);
-            dy = height * dy / Math.abs(dy);
-        }
         var xoffset = 0,
             yoffset = 0;
         if (dx < 0) {
@@ -696,15 +751,18 @@ var zoom_action = {
             return;
         }
         var plot_bounds = root.plotbounds();
-        var zoom_factor = 1.0;
-        if (yscalable) {
-            zoom_factor = (plot_bounds.y1 - plot_bounds.y0) / zoom_bounds.height;
-        } else {
-            zoom_factor = (plot_bounds.x1 - plot_bounds.x0) / zoom_bounds.width;
+        var xzoom_factor = 1.0,
+            yzoom_factor = 1.0;
+        if (xscalable) {
+            xzoom_factor = (plot_bounds.x1 - plot_bounds.x0) / zoom_bounds.width;
         }
-        var tx = (root.data("tx") - zoom_bounds.x) * zoom_factor + plot_bounds.x0,
-            ty = (root.data("ty") - zoom_bounds.y) * zoom_factor + plot_bounds.y0;
-        set_plot_pan_zoom(root, tx, ty, root.data("scale") * zoom_factor);
+        if (yscalable) {
+            yzoom_factor = (plot_bounds.y1 - plot_bounds.y0) / zoom_bounds.height;
+        }
+        var tx = (root.data("tx") - zoom_bounds.x) * xzoom_factor + plot_bounds.x0,
+            ty = (root.data("ty") - zoom_bounds.y) * yzoom_factor + plot_bounds.y0;
+        set_plot_pan_zoom(root, tx, ty,
+                root.data("xscale") * xzoom_factor, root.data("yscale") * yzoom_factor);
         zoom_box.remove();
     },
     cancel: function(root) {
@@ -764,38 +822,11 @@ Gadfly.guide_background_scroll = function(event) {
     }
 };
 
-
-Gadfly.zoomslider_button_mouseover = function(event) {
-    this.select(".button_logo")
-         .animate({fill: this.data("mouseover_color")}, 100);
-};
-
-
-Gadfly.zoomslider_button_mouseout = function(event) {
-     this.select(".button_logo")
-         .animate({fill: this.data("mouseout_color")}, 100);
-};
-
-
-Gadfly.zoomslider_zoomout_click = function(event) {
-    increase_zoom_by_position(this.plotroot(), -0.1, true);
-};
-
-
-Gadfly.zoomslider_zoomin_click = function(event) {
-    increase_zoom_by_position(this.plotroot(), 0.1, true);
-};
-
-
-Gadfly.zoomslider_track_click = function(event) {
-    // TODO
-};
-
-
 // Map slider position x to scale y using the function y = a*exp(b*x)+c.
 // The constants a, b, and c are solved using the constraint that the function
 // should go through the points (0; min_scale), (0.5; 1), and (1; max_scale).
 var scale_from_slider_position = function(position, min_scale, max_scale) {
+    if (min_scale==max_scale) { return 1; }
     var a = (1 - 2 * min_scale + min_scale * min_scale) / (min_scale + max_scale - 2),
         b = 2 * Math.log((max_scale - 1) / (1 - min_scale)),
         c = (min_scale * max_scale - 1) / (min_scale + max_scale - 2);
@@ -804,6 +835,7 @@ var scale_from_slider_position = function(position, min_scale, max_scale) {
 
 // inverse of scale_from_slider_position
 var slider_position_from_scale = function(scale, min_scale, max_scale) {
+    if (min_scale==max_scale) { return min_scale; }
     var a = (1 - 2 * min_scale + min_scale * min_scale) / (min_scale + max_scale - 2),
         b = 2 * Math.log((max_scale - 1) / (1 - min_scale)),
         c = (min_scale * max_scale - 1) / (min_scale + max_scale - 2);
@@ -811,97 +843,42 @@ var slider_position_from_scale = function(scale, min_scale, max_scale) {
 }
 
 var increase_zoom_by_position = function(root, delta_position, animate) {
-    var scale = root.data("scale"),
+    var old_xscale = root.data("xscale"),
+        old_yscale = root.data("yscale"),
         min_scale = root.data("min_scale"),
         max_scale = root.data("max_scale");
-    var position = slider_position_from_scale(scale, min_scale, max_scale);
-    position += delta_position;
-    scale = scale_from_slider_position(position, min_scale, max_scale);
-    set_zoom(root, scale, animate);
-}
-
-var set_zoom = function(root, scale, animate) {
-    var min_scale = root.data("min_scale"),
-        max_scale = root.data("max_scale"),
-        old_scale = root.data("scale");
-    var new_scale = Math.max(min_scale, Math.min(scale, max_scale));
+    var xposition = slider_position_from_scale(old_xscale, min_scale, max_scale),
+        yposition = slider_position_from_scale(old_yscale, min_scale, max_scale);
+    xposition += (root.hasClass("xscalable") ? delta_position : 0.0);
+    yposition += (root.hasClass("yscalable") ? delta_position : 0.0);
+    old_xscale = scale_from_slider_position(xposition, min_scale, max_scale);
+    old_yscale = scale_from_slider_position(yposition, min_scale, max_scale);
+    var new_xscale = Math.max(min_scale, Math.min(old_xscale, max_scale)),
+        new_yscale = Math.max(min_scale, Math.min(old_yscale, max_scale));
     if (animate) {
         Snap.animate(
-            old_scale,
-            new_scale,
+            [old_xscale, old_yscale],
+            [new_xscale, new_yscale],
             function (new_scale) {
-                update_plot_scale(root, new_scale);
+                update_plot_scale(root, new_scale[0], new_scale[1]);
             },
             200);
     } else {
-        update_plot_scale(root, new_scale);
+        update_plot_scale(root, new_xscale, new_yscale);
     }
 }
 
 
-var update_plot_scale = function(root, new_scale) {
-    var trans = scale_centered_translation(root, new_scale);
-    set_plot_pan_zoom(root, trans.x, trans.y, new_scale);
-
-    root.selectAll(".zoomslider_thumb")
-        .forEach(function (element, i) {
-            var min_pos = element.data("min_pos"),
-                max_pos = element.data("max_pos"),
-                min_scale = root.data("min_scale"),
-                max_scale = root.data("max_scale");
-            var xmid = (min_pos + max_pos) / 2;
-            var xpos = slider_position_from_scale(new_scale, min_scale, max_scale);
-            element.transform(new Snap.Matrix().translate(
-                Math.max(min_pos, Math.min(
-                         max_pos, min_pos + (max_pos - min_pos) * xpos)) - xmid, 0));
-    });
-};
-
-
-Gadfly.zoomslider_thumb_dragmove = function(dx, dy, x, y, event) {
-    var root = this.plotroot();
-    var min_pos = this.data("min_pos"),
-        max_pos = this.data("max_pos"),
-        min_scale = root.data("min_scale"),
-        max_scale = root.data("max_scale"),
-        old_scale = root.data("old_scale");
-
-    var px_per_mm = root.data("px_per_mm");
-    dx /= px_per_mm;
-    dy /= px_per_mm;
-
-    var xmid = (min_pos + max_pos) / 2;
-    var xpos = slider_position_from_scale(old_scale, min_scale, max_scale) +
-                   dx / (max_pos - min_pos);
-
-    // compute the new scale
-    var new_scale = scale_from_slider_position(xpos, min_scale, max_scale);
-    new_scale = Math.min(max_scale, Math.max(min_scale, new_scale));
-
-    update_plot_scale(root, new_scale);
-    event.stopPropagation();
-};
-
-
-Gadfly.zoomslider_thumb_dragstart = function(x, y, event) {
-    this.animate({fill: this.data("mouseover_color")}, 100);
-    var root = this.plotroot();
-
-    // keep track of what the scale was when we started dragging
-    root.data("old_scale", root.data("scale"));
-    event.stopPropagation();
-};
-
-
-Gadfly.zoomslider_thumb_dragend = function(event) {
-    this.animate({fill: this.data("mouseout_color")}, 100);
-    event.stopPropagation();
+var update_plot_scale = function(root, new_xscale, new_yscale) {
+    var trans = scale_centered_translation(root, new_xscale, new_yscale);
+    set_plot_pan_zoom(root, trans.x, trans.y, new_xscale, new_yscale);
 };
 
 
 var toggle_color_class = function(root, color_class, ison) {
-    var guides = root.selectAll(".guide." + color_class + ",.guide ." + color_class);
-    var geoms = root.selectAll(".geometry." + color_class + ",.geometry ." + color_class);
+    var escaped_color_class = color_class.replace(/([^0-9a-zA-z])/g,"\\$1");
+    var guides = root.selectAll(".guide." + escaped_color_class + ",.guide ." + escaped_color_class);
+    var geoms = root.selectAll(".geometry." + escaped_color_class + ",.geometry ." + escaped_color_class);
     if (ison) {
         guides.animate({opacity: 0.5}, 250);
         geoms.animate({opacity: 0.0}, 250);
@@ -917,10 +894,10 @@ Gadfly.colorkey_swatch_click = function(event) {
     var color_class = this.data("color_class");
 
     if (event.shiftKey) {
-        root.selectAll(".colorkey text")
+        root.selectAll(".colorkey g")
             .forEach(function (element) {
                 var other_color_class = element.data("color_class");
-                if (other_color_class != color_class) {
+                if (typeof other_color_class !== 'undefined' && other_color_class != color_class) {
                     toggle_color_class(root, other_color_class,
                                        element.attr("opacity") == 1.0);
                 }
