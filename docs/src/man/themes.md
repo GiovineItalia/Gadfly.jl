@@ -44,6 +44,7 @@ These parameters can either be used with `Theme` or `style`
   * `grid_color_focused`: In the D3 backend, mousing over the plot makes the
     grid lines emphasised by transitioning to this color. (Color or Nothing)
   * `grid_line_width`: Width of grid lines. (Measure)
+  * `grid_line_style`: Style of grid lines. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)   
   * `minor_label_font`: Font used for minor labels such as tick labels and entries
     in keys. (String)
   * `minor_label_font_size`: Font size used for minor labels. (Measure)
@@ -87,8 +88,8 @@ These parameters can either be used with `Theme` or `style`
   * `bar_highlight`: Color used to stroke bars in bar plots. If a function is
     given, it's used to transform the fill color of the bars to obtain a stroke
     color. (Function, Color, or Nothing)
-  * `discrete_color_scheme`: A `DiscreteColorScale` see [Scale.color_discrete_hue](@ref)
-  * `continuous_color_scheme`: A `ContinuousColorScale` see [Scale.color_continuous](@ref)
+  * `discrete_color_scale`: A `DiscreteColorScale` see [Scale.color_discrete_hue](@ref)
+  * `continuous_color_scale`: A `ContinuousColorScale` see [Scale.color_continuous](@ref)
 
 ## Examples
 

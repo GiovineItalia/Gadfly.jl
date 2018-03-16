@@ -97,7 +97,7 @@ end
 
     # Grid line color.
     grid_color,            ColorOrNothing,  colorant"#D0D0E0"
-    grid_strokedash,       Maybe(Vector),   [0.5mm, 0.5mm]
+    grid_line_style,       Union{Symbol,Vector},   [0.5mm, 0.5mm]
 
     # Grid lines for focused item.
     grid_color_focused,    ColorOrNothing,  colorant"#A0A0A0"
