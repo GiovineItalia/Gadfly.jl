@@ -72,6 +72,29 @@ end
 
 layers(geom::SubplotGrid) = geom.layers
 
+"""
+    Geom.subplot_grid[(elements...)]
+
+Draw multiple subplots in a grid organized by one or two categorial vectors.
+
+# Aesthetics
+- `xgroup` (optional): Arrange subplots on the X-axis by categorial data.
+- `ygroup` (optional): Arrange subplots on the Y-axis by categorial data.
+- `free_y_axis` (optional): Whether the y-axis scales can differ across
+  the subplots. Defaults to `false`. If `true`, scales are set appropriately for individual subplots.
+- `free_x_axis` (optional): Whether the x-axis scales can differ across
+  the subplots. Defaults to `false`. If `true`, scales are set appropriately for individual subplots.
+
+One or both of `xgroup` or `ygroup` must be bound. If only one, a single column
+or row of subplots is drawn, if both, a grid.
+
+# Arguments
+
+Unlike most geometries, [Geom.subplot_grid](@ref) is typically passed one or more
+parameters. The constructor works for the most part like the `layer` function.
+Arbitrary plot elements may be passed, while aesthetic bindings are inherited
+from the parent plot.
+"""
 const subplot_grid = SubplotGrid
 
 function element_aesthetics(geom::SubplotGrid)

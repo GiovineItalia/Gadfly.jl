@@ -166,6 +166,21 @@ ColorKey(;title=nothing, labels=nothing, pos=nothing) = ColorKey(title, labels, 
 
 # ColorKey() = ColorKey(nothing)
 
+"""
+    Guide.colorkey[(; title, labels, pos)]
+
+`Guide.colorkey` enables control of some fields of the auto-generated colorkey. Currently, you can change the colorkey title (for any plot), the item labels (for plots with a discrete color scale), and put the colorkey inside any plot. The fields can be named e.g. `Guide.colorkey(title="Group", labels=["A","B"], pos=[0w,0h])`, or given in order e.g. `Guide.colorkey("Group", ["A","B"], [0w,0h])`.
+
+# Arguments
+- `title`: Legend title (for any plot)
+- `labels`: Legend item labels (for plots with a discrete color scale)
+- `pos`: [x,y] position of the colorkey inside any plot. Setting `Guide.colorkey(pos=)` will override the `Theme(key_position=)` setting. Setting `Theme(key_position=:inside)` without setting `pos` will place the key in the lower right quadrant of the plot (see example below)
+
+# Colorkey position
+`pos` can be given in relative or absolute units (do `using Compose` before plotting):  
+- _Relative units_: e.g. [0.7w, 0.2h] will place the key in the lower right quadrant, [0.05w, -0.25h] in the upper left (see example below).  
+- _Absolute units_: e.g. [0mm, 0mm] the key is left-centered, or use the plot scales like [x,y]. For the latter, the x-position will make sense, but the key will be offset below the y-position, because of the way the key is rendered.  
+"""
 const colorkey = ColorKey
 
 # A helper for render(::ColorKey) for rendering guides for discrete color
@@ -490,6 +505,16 @@ ManualColorKey(title, labels, colors::Vector{C}) where {C<:Color} =
 ManualColorKey(title, labels, colors) =
         ManualColorKey(title, labels, Gadfly.parse_colorant(colors))
 
+"""
+    Guide.manual_color_key[(; title, labels, colors)]
+
+Manually define a color key
+
+# Arguments
+- `title`: Legend title
+- `labels`: Item labels
+- `colors`: Item colors
+"""
 const manual_color_key = ManualColorKey
 
 function render(guide::ManualColorKey, theme::Gadfly.Theme,
@@ -546,6 +571,19 @@ end
 
 XTicks(; label=true, ticks=:auto, orientation=:auto) = XTicks(label, ticks, orientation)
 
+"""
+    Guide.xticks[(; ticks, label, orientation)]
+
+Formats the tick marks and labels for the x-axis
+
+# Arguments
+- `ticks`: Array of tick locations on the x-axis, `:auto` to automatically
+    select ticks, or `nothing` to supress x-axis ticks.
+- `label`: Determines if the ticks are labeled, either
+    `true` (default) or `false`
+- `orientation`: Label orientation
+    (`:horizontal, :vertical, :auto`). Defaults to `:auto`
+"""
 const xticks = XTicks
 
 default_statistic(guide::XTicks) =
@@ -709,6 +747,19 @@ end
 
 YTicks(; label=true, ticks=:auto, orientation=:horizontal) = YTicks(label, ticks, orientation)
 
+"""
+    Guide.yticks[(; ticks, label, orientation)]
+
+Formats the tick marks and labels for the y-axis
+
+# Arguments
+- `ticks`: Array of tick locations on the y-axis, `:auto` to automatically
+    select ticks, or `nothing` to supress y-axis ticks.
+- `label`: Determines if the ticks are labeled, either
+    `true` (default) or `false`
+- `orientation`: Label orientation
+    (`:horizontal, :vertical, :auto`). Defaults to `:auto`
+"""
 const yticks = YTicks
 
 function default_statistic(guide::YTicks)
@@ -881,6 +932,19 @@ struct XLabel <: Gadfly.GuideElement
 end
 XLabel(label; orientation=:auto) = XLabel(label, orientation)
 
+"""
+    Guide.xlabel(label, orientation=:auto)
+
+Sets the x-axis label for the plot.
+
+# Arguments
+- `label`: X-axis label
+- `orientation` (optional): `:horizontal`, `:vertical`, or `:auto` (default)
+
+`label` is not a keyword parameter, it must be supplied as the first
+argument of [Guide.xlabel](@ref).  Setting it to `nothing` will suppress
+the default label.
+"""
 const xlabel = XLabel
 
 function render(guide::XLabel, theme::Gadfly.Theme,
@@ -942,6 +1006,19 @@ struct YLabel <: Gadfly.GuideElement
 end
 YLabel(label; orientation=:auto) = YLabel(label, orientation)
 
+"""
+    Guide.ylabel(label, orientation=:auto)
+
+Sets the y-axis label for the plot.
+
+# Arguments
+- `label`: Y-axis label
+- `orientation` (optional): `:horizontal`, `:vertical`, or `:auto` (default)
+
+`label` is not a keyword parameter, it must be supplied as the first
+argument of `Guide.ylabel`.  Setting it to `nothing` will suppress
+the default label.
+"""
 const ylabel = YLabel
 
 
@@ -995,6 +1072,14 @@ struct Title <: Gadfly.GuideElement
     label::Union{(Void), AbstractString}
 end
 
+"""
+    Geom.title(title)
+
+Set the plot title.
+
+# Arguments
+- `title`:  Plot title
+"""
 const title = Title
 
 function render(guide::Title, theme::Gadfly.Theme,
@@ -1023,6 +1108,14 @@ end
 struct XRug <: Gadfly.GuideElement
 end
 
+"""
+    Guide.xrug
+
+Draw a rug plot along the x-axis of a plot.
+
+# Aesthetics
+- `x`: X positions of notches.
+"""
 const xrug = XRug
 
 function render(guide::XRug, theme::Gadfly.Theme,
@@ -1044,6 +1137,14 @@ end
 struct YRug <: Gadfly.GuideElement
 end
 
+"""
+    Guide.yrug
+
+Draw a rug plot along the y-axis of a plot.
+
+# Aesthetics
+- `y`: Y positions of notches.
+"""
 const yrug = YRug
 
 function render(guide::YRug, theme::Gadfly.Theme,
@@ -1181,6 +1282,16 @@ struct Annotation <: Gadfly.GuideElement
     ctx::Context
 end
 
+"""
+    Guide.annotation(ctx)
+
+Overlay a plot with an arbitrary [Compose](http://composejl.org/) graphic. The
+context will inherit the plot's coordinate system, unless overridden with a
+custom unit box.
+
+# Arguments
+- `ctx`: A Compose Context.
+"""
 const annotation = Annotation
 
 function render(guide::Annotation, theme::Gadfly.Theme,

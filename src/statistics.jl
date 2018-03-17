@@ -697,6 +697,24 @@ end
 
 @deprecate xticks(ticks) xticks(ticks=ticks)
 
+"""
+    Stat.xticks(tics, granularity_weight=1/4, simplicity_weight=1/6,
+                coverage_weight=1/3, niceness_weight=1/4)
+
+Compute an appealing set of ticks that encompass the data.
+
+# Arguments
+- `ticks`: A fixed array of ticks, or `nothing` to indicate they should be
+    computed.
+- `granularity_weight`: Importance of having a reasonable number of ticks
+- `simplicity_weight`: Importance of including zero
+- `coverage_weight`: Importance of tightly fitting the span of the data
+- `niceness_weight`: Importance of having a nice numbering
+
+# Aesthetics
+All x-axis aesthetics are considered, and ticks are output to the `xtick` and
+`xgrid` aesthetics.
+"""
 xticks(; ticks=:auto,
          granularity_weight=1/4,
          simplicity_weight=1/6,
@@ -707,6 +725,24 @@ xticks(; ticks=:auto,
 
 @deprecate yticks(ticks) yticks(ticks=ticks)
 
+"""
+    Stat.yticks(tics, granularity_weight=1/4, simplicity_weight=1/6,
+                coverage_weight=1/3, niceness_weight=1/4)
+
+Compute an appealing set of ticks that encompass the data.
+
+# Arguments
+- `ticks`: A fixed array of ticks, or `nothing` to indicate they should be
+    computed.
+- `granularity_weight`: Importance of having a reasonable number of ticks.
+- `simplicity_weight`: Importance of including zero.
+- `coverage_weight`: Importance of tightly fitting the span of the data.
+- `niceness_weight`: Importance of having a nice numbering.
+
+# Aesthetics
+All y-axis aesthetics are considered, and ticks are output to the `ytick` and
+`ygrid` aesthetics.
+"""
 yticks(; ticks=:auto,
          granularity_weight=1/4,
          simplicity_weight=1/6,
@@ -1227,6 +1263,22 @@ struct StepStatistic <: Gadfly.StatisticElement
 end
 StepStatistic(; direction=:hv) = StepStatistic(direction)
 
+"""
+    Stat.step[(; direction)]
+
+Perform stepwise interpolation between points. If `x` and `y` define a a series
+of points, a new point in inserted between each. Between `(x[i], y[i])` and
+`(x[i+1], y[i+1])`, either `(x[i+1], y[i])` or `(x[i], y[i+1])` is inserted,
+depending on the `direction` argument.
+
+# Aesthetics
+- `x`: Point x-coordinate.
+- `y`: Point y-coordinate.
+
+# Arguments
+- `direction`: Either `:hv` for horizontal then vertical, or `:vh` for
+    vertical then horizontal.
+"""
 const step = StepStatistic
 
 input_aesthetics(::StepStatistic) = [:x, :y]
@@ -1453,6 +1505,17 @@ struct QQStatistic <: Gadfly.StatisticElement end
 input_aesthetics(::QQStatistic) = [:x, :y]
 output_aesthetics(::QQStatistic) = [:x, :y]
 
+"""
+    Stat.qq
+
+Generates quantile-quantile plots for `x` and `y`.  If each is a numeric vector,
+their sample quantiles will be compared.  If one is a `Distribution`, then its
+theoretical quantiles will be compared with the sample quantiles of the other.
+
+# Aesthetics
+- `x`: Data or `Distribution` to be plotted on the x-axis.
+- `y`: Data or `Distribution` to be plotted on the y-axis.
+"""
 const qq = QQStatistic
 
 default_scales(::QQStatistic) =
@@ -1576,7 +1639,36 @@ struct JitterStatistic <: Gadfly.StatisticElement
 end
 JitterStatistic(vars; range=0.8, seed=0x0af5a1f7) = JitterStatistic(vars, range, seed)
 
+"""
+    Stat.x_jitter[(; range, seed)]
+
+Nudge values on the x-axis to avoid overplotting.
+
+# Asethetics
+- `x`: Data to nudge.
+
+# Arguments
+- `range`: Maximum jitter is this number times the resolution of the data,
+    where the "resolution" is the smallest non-zero difference between two
+    points.
+- `seed`: Seed for RNG used to randomly jitter values.
+"""
 x_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:x], range=range, seed=seed)
+
+"""
+    Stat.y_jitter[(; range, seed)]
+
+Nudge values on the y-axis to avoid overplotting.
+
+# Asethetics
+- `y`: Data to nudge.
+
+# Arguments
+- `range`: Maximum jitter is this number times the resolution of the data,
+    where the "resolution" is the smallest non-zero difference between two
+    points.
+- `seed`: Seed for RNG used to randomly jitter values.
+"""
 y_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:y], range=range, seed=seed)
 
 input_aesthetics(stat::JitterStatistic) = stat.vars
@@ -1629,6 +1721,18 @@ struct BinMeanStatistic <: Gadfly.StatisticElement
 end
 BinMeanStatistic(; n=20) = BinMeanStatistic(n)
 
+"""
+    Stat.binmean[(; n)]
+
+Plot the mean of `y` against the mean of `x` within `n` quantile bins of `x`.
+
+# Aesthetics
+- `x`: Data to be plotted on the x-axis.
+- `y`: Data to be plotted on the y-axis.
+
+# Arguments
+- `n`: Number of bins
+"""
 const binmean = BinMeanStatistic
 
 input_aesthetics(::BinMeanStatistic) = [:x, :y]

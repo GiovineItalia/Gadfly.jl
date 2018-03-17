@@ -101,7 +101,7 @@ These parameters can either be used with `Theme` or `style`
 ```@setup 1
 using RDatasets
 using Gadfly
-Gadfly.set_default_plot_size(12cm, 8cm)
+set_default_plot_size(12cm, 8cm)
 srand(12345)
 ```
 

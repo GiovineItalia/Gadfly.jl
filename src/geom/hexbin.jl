@@ -9,6 +9,25 @@ HexagonalBinGeometry(default_statistic; tag=empty_tag) =
 HexagonalBinGeometry(; xbincount=200, ybincount=200, tag=empty_tag) =
         HexagonalBinGeometry(Gadfly.Stat.hexbin(xbincount=xbincount, ybincount=ybincount), tag)
 
+"""
+    Geom.hexbin[(; xbincount, ybincount)]
+
+Bin data into tiled hexagonal bins and color by count.
+
+# Aesthetics
+- `x`: Observations to be binned and plotted on the x-axis.
+- `y`: Observations to be binned and plotted on the y-axis.
+- `xsize`
+- `ysize`
+
+By default [Stat.hexbin](@ref) is applied which bins `x` and `y` observations and
+colors hexagons according to count. To override this, pass [Stat.identity](@ref) to
+`plot` and manually bind the `color` aesthetic.
+
+# Arguments
+- `xbincount`: Number of bins along the x-axis.
+- `ybincount`: Number of bins along the y-axis.
+"""
 const hexbin = HexagonalBinGeometry
 
 default_statistic(geom::HexagonalBinGeometry) = geom.default_statistic

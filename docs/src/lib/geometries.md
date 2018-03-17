@@ -10,9 +10,6 @@ draw things. For instance, the [Geom.point](@ref) geometry draws points using
 the `x` and `y` aesthetics, while the [Geom.line](@ref) geometry draws lines
 with those same two aesthetics.
 
-## Available Geometries
-
-```@contents
-Pages = map(file -> joinpath("geoms", file), readdir("geoms"))
-Depth = 1
+```@autodocs
+Modules = [Geom]
 ```

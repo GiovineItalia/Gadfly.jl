@@ -9,8 +9,61 @@ BarGeometry(; position=:stack, orientation=:vertical, tag=empty_tag) =
         BarGeometry(position, orientation, Gadfly.Stat.bar(position=position,
             orientation = orientation), tag)
 
+"""
+
+    Geom.bar[(; position, orientation)]
+
+Draw bar plots. This geometry works on pre-summarized data such as counts. To
+draw histograms from a series of observations, add [`Stat.histogram`](@ref) to the plot,
+or use the convenient geometry [`Geom.histogram`](@ref).
+
+# Aesthetics
+- `y`: Height of each bar.
+- `color` (optional): Group categorically by color.
+
+Either
+
+- `x`: Position of each bar.
+
+Or
+
+- `xmin`: Starting x positions for each bar.
+- `xmax`: End x positions for each bar.
+
+If `x` is given, a bar will be drawn at each x value, specifying both `xmin` and
+`xmax` allows bars of variable width to be drawn.
+
+# Arguments
+- `position`: Either `:stack` or `:dodge`. If the `color` aesthetic is
+    bound this determines how bars of different colors should be arranged:
+    stacked on top of each other, or placed side by side.
+
+- `orientation`: Either `:vertical` (default) or `:horizontal`. If
+    `:horizontal`, then the required aesthetics are `y` or `ymin/ymax`.
+"""
 const bar = BarGeometry
 
+"""
+    Geom.histogram[(; position, orientation, bincount, minbincount, maxbincount, density)]
+
+Draw histograms. An alias for [Geom.bar](@ref) with [Stat.histogram](@ref).
+
+# Aesthetics
+- `x`: Sample to draw histogram from.
+- `color` (optional): Group categorically by color.
+
+# Arguments
+- `position`: Either `:stack` or `:dodge`. If the `color` aesthetic is
+    bound this determines how bars of different colors should be arranged:
+    stacked on top of each other, or placed side by side.
+- `orientation`: Either `:vertical` (default) or `:horizontal`. If
+    `:horizontal`, then the required aesthetic is `y` instead of `x`.
+- `bincount`: Number of bins to use. If unspecified, an optimization method
+    is used to determine a reasonable value.
+- `minbincount`: Set a lower limit when automatically choosing a bin count.
+- `maxbincount`: Set an upper limit when automatically choosing a bin count.
+- `density`: If true, use density rather that counts.
+"""
 histogram(; position=:stack, bincount=nothing,
                    minbincount=3, maxbincount=150,
                    orientation::Symbol=:vertical,

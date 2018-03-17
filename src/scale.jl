@@ -142,7 +142,88 @@ function continuous_scale_partial(vars::Vector{Symbol}, trans::ContinuousScaleTr
 end
 
 # Commonly used scales.
+"""
+    Scale.x_continous[(; minvalue, maxvalue, labels, format,
+                       minticks, maxticks, scalable)]
+
+Map numerical data to x positions in cartesian coordinates.
+
+# Arguments
+- `minvalue`: Set scale lower bound to be ≤ this value.
+- `maxvalue`: Set scale lower bound to be ≥ this value.
+
+!!! note
+
+    `minvalue` and `maxvalue` here are soft bounds, Gadfly may choose to ignore
+    them when constructing an optimal plot. Use [Coord.cartesian](@ref) to enforce
+    a hard bound.
+
+- `labels`: Either a `Function` or `nothing`. When a
+    function is given, values are formatted using this function. The function
+    should map a value in `x` to a string giving its label. If the scale
+    applies a transformation, transformed label values will be passed to this
+    function.
+- `format`: How numbers should be formatted. One of `:plain`, `:scientific`,
+    `:engineering`, or `:auto`. The default in `:auto` which prints very large or very small
+    numbers in scientific notation, and other numbers plainly.
+- `scalable`: When set to false, scale is fixed when zooming (default: true)
+
+# Variations
+A number of transformed continuous scales are provided.
+
+- `Scale.x_continuous` (scale without any transformation).
+- `Scale.x_log10`
+- `Scale.x_log2`
+- `Scale.x_log`
+- `Scale.x_asinh`
+- `Scale.x_sqrt`
+
+
+# Aesthetics Acted On
+`x`, `xmin`, `xmax`, `xintercept`
+"""
 const x_continuous = continuous_scale_partial(x_vars, identity_transform)
+
+"""
+    Scale.y_continuous[(; minvalue, maxvalue, labels, format,
+                       minticks, maxticks, scalable)]
+
+Map numerical data to y positions in cartesian coordinates.
+
+# Arguments
+- `minvalue`: Set scale lower bound to be ≤ this value.
+- `maxvalue`: Set scale lower bound to be ≥ this value.
+
+!!! note
+
+    `minvalue` and `maxvalue` here are soft bounds, Gadfly may choose to ignore
+    them when constructing an optimal plot. Use [Coord.cartesian](@ref) to enforce
+    a hard bound.
+
+- `labels`: Either a `Function` or `nothing`. When a
+    function is given, values are formatted using this function. The function
+    should map a value in `x` to a string giving its label. If the scale
+    applies a transformation, transformed label values will be passed to this
+    function.
+- `format`: How numbers should be formatted. One of `:plain`, `:scientific`,
+    `:engineering`, or `:auto`. The default in `:auto` which prints very large or very small
+    numbers in scientific notation, and other numbers plainly.
+- `scalable`: When set to false, scale is fixed when zooming (default: true)
+
+# Variations
+A number of transformed continuous scales are provided.
+
+- `Scale.y_continuous` (scale without any transformation).
+- `Scale.y_log10`
+- `Scale.y_log2`
+- `Scale.y_log`
+- `Scale.y_asinh`
+- `Scale.y_sqrt`
+
+
+# Aesthetics
+`y`, `ymin`, `ymax`, `yintercept`
+"""
 const y_continuous = continuous_scale_partial(y_vars, identity_transform)
 const x_log10      = continuous_scale_partial(x_vars, log10_transform)
 const y_log10      = continuous_scale_partial(y_vars, log10_transform)
@@ -305,9 +386,58 @@ const discrete = DiscreteScale
 
 element_aesthetics(scale::DiscreteScale) = scale.vars
 
+"""
+  Scale.x_discrete[(; labels, levels, order)]
+
+Map data categorical to Cartesian coordinates. Unlike [Scale.x_continuous](@ref), each
+unique x value will be mapped to a equally spaced positions, regardless of
+value.
+
+By default continuous scales are applied to numerical data. If data consists of
+numbers specifying categories, explicitly adding [Scale.x_discrete](@ref) is the
+easiest way to get that data to plot appropriately.
+
+# Arguments
+- `labels`: Either a `Function` or `nothing`. When a
+    function is given, values are formatted using this function. The function
+    should map a value in `x` to a string giving its label.
+- `levels`: If non-nothing, give values for the scale. Order will be respected
+    and anything in the data that's not respresented in `levels` will be set to
+    `missing`.
+- `order`: If non-nothing, give a vector of integers giving a permutation of
+    the values pool of the data.
+
+# Aesthetics
+
+`x`, `xmin`, `xmax`, `xintercept`
+"""
 x_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale(x_vars, labels=labels, levels=levels, order=order)
 
+"""
+    Scale.y_discrete[(; labels, levels, order)]
+
+Map data categorical to Cartesian coordinates. Unlike [Scale.y_continuous](@ref), each
+unique y value will be mapped to a equally spaced positions, regardless of
+value.
+
+By default continuous scales are applied to numerical data. If data consists of
+numbers specifying categories, explicitly adding [Scale.y_discrete](@ref) is the
+easiest way to get that data to plot appropriately.
+
+# Arguments
+- `labels`: Either a `Function` or `nothing`. When a
+    function is given, values are formatted using this function. The function
+    should map a value in `x` to a string giving its label.
+- `levels`: If non-nothing, give values for the scale. Order will be respected
+    and anything in the data that's not respresented in `levels` will be set to
+    `missing`.
+- `order`: If non-nothing, give a vector of integers giving a permutation of
+    the values pool of the data.
+
+# Aesthetics
+`y`, `ymin`, `ymax`, `yintercept`
+"""
 y_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale(y_vars, labels=labels, levels=levels, order=order)
 
@@ -358,6 +488,14 @@ end
 struct NoneColorScale <: Gadfly.ScaleElement
 end
 
+"""
+    Scale.color_none
+
+Suppress a default color scale. Some statistics impose a default color scale.
+When no color scale is desired, explicitly including [Scale.color_none](@ref) will
+suppress this default.
+
+"""
 const color_none = NoneColorScale
 
 element_aesthetics(scale::NoneColorScale) = [:color]
@@ -417,6 +555,19 @@ function default_discrete_colors(n)
 end
 
 # Common discrete color scales
+"""
+    Scale.color_discrete_hue[(f; levels, order, preserve_order)]
+
+Create a discrete color scale to be used for the plot. `Scale.color_discrete` is an
+alias for [Scale.color_discrete_hue](@ref).
+
+# Arguments
+- `f`: A function `f(n)` that produces a vector of `n` colors. Usually [`distinguishable_colors`](https://github.com/JuliaGraphics/Colors.jl#distinguishable_colors) can be used for this, with parameters tuned to your liking.
+- `levels`: Explicitly set levels used by the scale.
+- `order`: A vector of integers giving a permutation of the levels
+    default order.
+- `preserve_order`: If set to `true`, orders levels as they appear in the data
+"""
 function color_discrete_hue(f=default_discrete_colors;
                             levels=nothing,
                             order=nothing,
@@ -434,6 +585,21 @@ const color_discrete = color_discrete_hue
 
 @deprecate discrete_color(; levels=nothing, order=nothing, preserve_order=true) color_discrete(; levels=levels, order=order, preserve_order=preserve_order)
 
+"""
+    Scale.color_discrete_manual[(; colors, levels, order)]
+
+Create a discrete color scale to be used for the plot.
+
+# Arguments
+- `colors...`: an iterable collection of things that can be converted to colors with `Colors.color` (e.g. "tomato", RGB(1.0,0.388,0.278), colorant"#FF6347")
+- `levels` (optional): Explicitly set levels used by the scale. Order is
+    respected.
+- `order` (optional): A vector of integers giving a permutation of the levels
+    default order.
+
+# Aesthetics Acted On
+`color`
+"""
 color_discrete_manual(colors::AbstractString...; levels=nothing, order=nothing) =
         color_discrete_manual(Gadfly.parse_colorant(colors)...; levels=levels, order=order)
 
@@ -519,6 +685,34 @@ function continuous_color_scale_partial(trans::ContinuousScaleTransform)
 end
 
 # Commonly used scales.
+"""
+    Scale.color_continuous[(; minvalue, maxvalue, colormap)]
+
+Create a continuous color scale that the plot will use.
+
+This can also be set as the `continuous_color_scheme` in a [`Theme`](@ref)
+
+# Arguments
+- `minvalue` (optional): the data value corresponding to the bottom of the color scale (will be based on the range of the data if not specified).
+- `maxvalue` (optional): the data value corresponding to the top of the color scale (will be based on the range of the data if not specified).
+- `colormap`: A function defined on the interval from 0 to 1 that returns a `Color` (as from the `Colors` package).
+
+# Variations
+
+`color_continuous_gradient` is an alias for [Scale.color_continuous](@ref).
+
+A number of transformed continuous scales are provided.
+
+- `Scale.color_continuous` (scale without any transformation).
+- `Scale.color_log10`
+- `Scale.color_log2`
+- `Scale.color_log`
+- `Scale.color_asinh`
+- `Scale.color_sqrt`
+
+# Aesthetics Acted On
+`color`
+"""
 const color_continuous = continuous_color_scale_partial(identity_transform)
 const color_log10      = continuous_color_scale_partial(log10_transform)
 const color_log2       = continuous_color_scale_partial(log2_transform)

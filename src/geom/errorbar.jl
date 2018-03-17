@@ -14,6 +14,23 @@ struct YErrorBarGeometry <: Gadfly.GeometryElement
 end
 YErrorBarGeometry(; tag=empty_tag) = YErrorBarGeometry(tag)
 
+"""
+    Geom.errorbar
+
+Draw vertical and/or horizontal error bars.
+
+# Aesthetics
+- `x`: X-position of the bar.
+- `ymin`: Lower Y-position.
+- `ymax`: Upper Y-position.
+- `y`: Y-position of the bar.
+- `xmin`: Left-most X-position
+- `ymax`: Right-most X-position.
+- `color` (optional): Bar color (categorial or continuous)
+
+The `x`, `ymin`, `ymax` and/or `y`, `xmin`, `xmax` aesthetics must be defined.
+With the later a vertical error bar is drawn, and the former, a horizontal bar.
+"""
 const errorbar = ErrorBarGeometry
 const xerrorbar = XErrorBarGeometry
 const yerrorbar = YErrorBarGeometry

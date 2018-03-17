@@ -7,6 +7,22 @@ end
 BeeswarmGeometry(; orientation=:vertical, padding=0.1mm, tag=empty_tag) =
         BeeswarmGeometry(orientation, padding, tag)
 
+"""
+    Geom.beeswarm[; (orientation,padding)]
+
+Plot points, shifting them on the x- or y-axis to avoid overlaps.
+
+# Aesthetics
+- `x`: X-axis position.
+- `y`: Y-axis position.
+- `color` (optional): Point color (categorial or continuous).
+
+# Arguments
+- `orientation`: `:horizontal` or `:vertical`.  Points will be shifted on the
+    y-axis to avoid overlap if orientation in horizontal, and on the x-axis, if
+    vertical.
+- `padding`: Minimum distance between two points.
+"""
 const beeswarm = BeeswarmGeometry
 
 element_aesthetics(geom::BeeswarmGeometry) = [:x, :y, :color]

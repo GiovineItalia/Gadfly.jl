@@ -10,9 +10,6 @@ boxplots typically uses the boxplot statistic ([Stat.boxplot](@ref)) that takes
 as input the `x` and `y` aesthetic, and outputs the middle, and upper and lower
 hinge, and upper and lower fence aesthetics.
 
-## Available Statistics
-
-```@contents
-Pages = map(file -> joinpath("stats", file), readdir("stats"))
-Depth = 1
+```@autodocs
+Modules = [Stat]
 ```

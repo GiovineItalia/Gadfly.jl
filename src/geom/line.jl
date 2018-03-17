@@ -16,8 +16,42 @@ function LineGeometry(default_statistic=Gadfly.Stat.identity();
     LineGeometry(default_statistic, preserve_order, order, tag)
 end
 
+"""
+    Geom.line[(; preserve_order)]
+
+# Aesthetics
+- `x`: X-axis position.
+- `y`: Y-axis position.
+- `group` (optional): Group categorically.
+- `color` (optional): Group categorically and indicate by color.
+
+# Arguments
+- `preserve_order`: Default behavior for `Geom.line` is to draw lines between
+  points in order along the x-axis. If this option is true, lines will be
+  drawn between points in the order they appear in the data. `Geom.path()` is
+  `Geom.line(preserve_order=true)`.
+"""
 const line = LineGeometry
 
+"""
+    Geom.contours[(; levels)]
+
+Draw contours of a 2D function or a matrix.
+
+# Aesthetics
+- `z`: 2D function or a matrix that represent "heights" relative to
+    to the x-y plane.
+- `x` (optional): Vector of X-coordinates.  If `z` is a matrix, then
+    the length of `x` must be equal to the number of *rows* in `z`.
+- `y` (optional): Vector of Y-coordinates.  If `z` is a matrix, then
+    the length of `y` must be equal to the number of *columns* in `z`.
+
+# Arguments
+- `levels` (optional): Sets the number of contours to draw, defaults
+    to 15.  It takes either a vector of contour levels;  an integer
+    that specifies the number of contours to draw;  or a function which
+    inputs `z` and outputs either a vector or an integer.
+"""
 function contour(; levels=15, samples=150, preserve_order=true)
     return LineGeometry(Gadfly.Stat.contour(levels=levels, samples=samples),
                                             preserve_order=preserve_order)
@@ -25,17 +59,85 @@ end
 
 # Only allowing identity statistic in paths b/c I don't think any
 # any of the others will work with `preserve_order=true` right now
+"""
+    Geom.path
+
+Draw lines between points in the order they appear in the data. This is an
+alias for [Geom.line](@ref) with `preserve_order=true`.
+
+# Aesthetics
+- `x`: X-axis position.
+- `y`: Y-axis position.
+- `color` (optional): Group categorically by color.
+"""
 path() = LineGeometry(preserve_order=true)
 
+"""
+    Geom.density[(; bandwidth)]
+
+Draw a kernel density estimate from data. An alias for [Geom.line](@ref) with
+[Stat.density](@ref).
+
+# Aesthetics
+- `x`: Sample to draw density estimate from.
+
+# Arguments
+- `bandwidth`: How closely the density estimate should mirror the data.
+    Larger values will smooth the density estimate out.
+"""
 density(; bandwidth::Real=-Inf) =
     LineGeometry(Gadfly.Stat.density(bandwidth=bandwidth))
 
+"""
+    Geom.density2d[(; bandwidth, levels)]
+
+Draw a kernel density estimate from data. An alias for [Geom.contour](@ref) with
+[Stat.density2d](@ref).
+
+# Aesthetics
+- `x`, `y`: Sample to draw density estimate from.
+
+# Arguments
+- `bandwidth`:  See [Geom.density](@ref).
+- `levels`:  See [Geom.contour](@ref).
+"""
 density2d(; bandwidth::Tuple{Real,Real}=(-Inf,-Inf), levels=15) =
     LineGeometry(Gadfly.Stat.density2d(bandwidth=bandwidth, levels=levels); preserve_order=true)
 
+"""
+    Geom.smooth[(; method, smoothing)]
+
+Plot a smooth function estimated from data. An alias for [Geom.line](@ref) with [Stat.smooth](@ref).
+
+# Aesthetics
+- `x`: Predictor data.
+- `y`: Response data.
+- `color`: (optional) Group categorically by color.
+
+# Arguments
+- `method`: `:loess` and `:lm` are supported.
+- `smoothing`: Method specific parameter controlling the degree of smoothing.
+    For loess, this is the span parameter giving the proportion of data
+    used for each local fit where 0.75 is the default. Smaller values use more
+    data (less local context), larger values use less data (more local context).
+"""
 smooth(; method::Symbol=:loess, smoothing::Float64=0.75) =
     LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing), order=5)
 
+"""
+    Geom.step[(; direction)]
+
+Connect points using a stepwise function. Equivalent to [Geom.line](@ref) with
+[Stat.step](@ref).
+
+# Aesthetics
+- `x`: Point x-coordinate.
+- `y`: Point y-coordinate.
+
+# Arguments
+- `direction`: Either `:hv` for horizontal then vertical, or `:vh` for
+    vertical then horizontal.
+"""
 step(; direction::Symbol=:hv) = LineGeometry(Gadfly.Stat.step(direction=direction))
 
 default_statistic(geom::LineGeometry) = geom.default_statistic

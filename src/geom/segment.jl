@@ -10,14 +10,68 @@ end
 SegmentGeometry(default_statistic=Gadfly.Stat.identity(); arrow=false, filled=false, tag=empty_tag) = 
     SegmentGeometry(default_statistic, arrow, filled, tag) 
 
+"""
+    Geom.segment[(; arrow)]
+
+Draw separate line segments/vectors/arrows.
+
+!!! note
+
+    If you want arrows, then you need to provide a `Scale` object for both axes. See example below.
+
+# Aesthetics
+- `x`: Start of line segment.
+- `y`: Start of line segment.
+- `xend`: End of line segment.
+- `yend`: End of line segment.
+- `color` (optional): Color of line segments.
+
+# Arguments
+- `arrow`: Default behavior for `Geom.segment` is to draw line segments without arrows. `Geom.vector` is `Geom.segment(arrow=true)`.
+"""
 const segment = SegmentGeometry
 
 # Leave this as a function, pending extra arguments e.g. arrow attributes
 vector(; filled::Bool=false) = SegmentGeometry(arrow=true, filled=filled)
 
+"""
+    Geom.hair[(; intercept, orientation)]
+
+Draws a line from the points to some `intercept` (base line). Looks like hairs standing on end, hence called a hair plot. Also known as a lollipop chart if the end points are plotted.
+
+# Aesthetics
+- `x`: Position of points.
+- `y`: Position of points.
+- `color` (optional): Color.
+
+# Arguments
+- `intercept`: Base of hairs. Defaults to zero. 
+- `orientation`: `:vertical` (default) or `:horizontal`
+"""
 hair(;intercept=0.0, orientation=:vertical) = 
     SegmentGeometry(Gadfly.Stat.hair(intercept, orientation))
 
+"""
+    Geom.vectorfield[(; smoothness, scale samples)]
+
+Draw a vectorfield of a 2D function or a matrix. A vectorfield consists of gradient vectors calculated for particular points in a space.
+
+# Aesthetics
+- `z`: 2D function or a matrix that represent "heights" relative to
+    to the x-y plane.
+- `x` (optional): Vector of X-coordinates.  If `z` is a matrix, then
+    the length of `x` must be equal to the number of *rows* in `z`.
+- `y` (optional): Vector of Y-coordinates.  If `z` is a matrix, then
+    the length of `y` must be equal to the number of *columns* in `z`.
+
+# Arguments
+- `smoothness` (optional): Sets the smoothness of the vectorfield,
+    defaults to 1.0. Smaller values (→0) result in more local smoothing.
+    Larger values (→∞) will approach a plane of best fit.
+- `scale` (optional): Sets the size of vectors, defaults to 1.0. 
+- `samples` (optional): Sets the size of the grid at which to estimate vectors,
+    defaults to 20 (i.e. grid is 20 x 20). See the first example below.
+"""
 function vectorfield(;smoothness=1.0, scale=1.0, samples=20, filled::Bool=false)
     return SegmentGeometry(
         Gadfly.Stat.vectorfield(smoothness, scale, samples), 

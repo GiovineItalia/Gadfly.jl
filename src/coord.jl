@@ -47,6 +47,21 @@ function Cartesian(
     Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster)
 end
 
+"""
+    Coord.cartesian(; xmin, xmax, ymin, ymax, xflip, yflip, aspect_ratio, fixed)
+
+# Arguments
+- `xmin`: Hard minimum value on the x-axis.
+- `xmax`: hard maximum value on the x-axis.
+- `ymin`: Hard minimum value on the y-axis.
+- `ymax`: Hard maximum value on the y-axis.
+- `xflip`: True if the x-axis should be flipped. (default: `false`)
+- `yflip`: True if the y-axis should be flipped. (default: `false`)
+- `aspect_ratio`: Aspect ratio, or `nothing` if no fixed aspect ratio. (default: nothing)
+- `fixed`: True if the ratio should follow the units of the plot. E.g. if the
+    y-axis is 5 units high and the x-axis in 10 units across, the plot will be
+    drawn at an aspect ratio of 2. Overrides `aspect_ratio` (default: false)
+"""
 const cartesian = Cartesian
 
 
