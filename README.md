@@ -4,7 +4,7 @@ alt="Gadfly Logo" width="210"></img> </div>
 
 | **Documentation** | **PackageEvaluator** | **Build Status** | **Help** |
 |:---:|:---:|:---:|:---:|
-| [![][docs-latest-img]][docs-latest-url] [![][docs-stable-img]][docs-stable-url] | [![][pkg-0.5-img]][pkg-0.5-url] [![][pkg-0.6-img]][pkg-0.6-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] | [![][gitter-img]][gitter-url] |
+| [![][docs-latest-img]][docs-latest-url] [![][docs-stable-img]][docs-stable-url] | [![][pkg-0.5-img]][pkg-0.5-url] [![][pkg-0.6-img]][pkg-0.6-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] | [![][slack-img]][slack-url] [![][gitter-img]][gitter-url] |
 
 **Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
@@ -43,8 +43,8 @@ issue](https://github.com/GiovineItalia/Gadfly.jl/issues/new) to report a
 bug, counterintuitive behavior, or even requesting a feature is extremely
 valuable in helping us prioritize what to work on, so don't hesitate.
 
-If you have a question then you can ask for help in the [plotting team of the
-Julia Slack channel][slack-url] or the [Gitter chat room][gitter-url].
+If you have a question then you can ask for help in the plotting team of the
+[Julia Slack channel][slack-url] or the [Gitter chat room][gitter-url].
 
 [docs-latest-img]: https://img.shields.io/badge/docs-latest-blue.svg
 [docs-latest-url]: http://gadflyjl.org/latest
@@ -67,6 +67,7 @@ Julia Slack channel][slack-url] or the [Gitter chat room][gitter-url].
 
 [gog-book]: http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html
 
+[slack-img]: https://img.shields.io/badge/chat-on%20slack-yellow.svg
 [slack-url]: https://julialang.slack.com
 
 [gitter-img]: https://badges.gitter.im/dcjnones/Gadfly.jl.svg
