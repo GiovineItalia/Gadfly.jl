@@ -43,7 +43,15 @@ ndifferentfiles = 0
 const creator_producer = r"(Creator|Producer)"
 filter_mkdir_git(x) = !mapreduce(y->x==y,|,[".mkdir","git.log","git.status"])
 filter_regex(x) = ismatch(Regex(args["filter"]), x)
-for file in filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(cachedout))
+cached_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(cachedout))
+genned_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(gennedout))
+cached_notin_genned = setdiff(cached_files, genned_files)
+isempty(cached_notin_genned) ||
+      warn("files in cachedoutput/ but not in gennedoutput/: ", cached_notin_genned...)
+genned_notin_cached = setdiff(genned_files, cached_files)
+isempty(genned_notin_cached) ||
+      warn("files in gennedoutput/ but not in cachedoutput/: ", genned_notin_cached...)
+for file in intersect(cached_files,genned_files)
     print("Comparing ", file, " ... ")
     cached = open(readlines, joinpath(cachedout, file))
     genned = open(readlines, joinpath(gennedout, file))
