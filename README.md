@@ -43,7 +43,8 @@ issue](https://github.com/GiovineItalia/Gadfly.jl/issues/new) to report a
 bug, counterintuitive behavior, or even requesting a feature is extremely
 valuable in helping us prioritize what to work on, so don't hesitate.
 
-If you have a question then you can ask for help in the [Gitter chat room][gitter-url].
+If you have a question then you can ask for help in the [plotting team of the
+Julia Slack channel][slack-url] or the [Gitter chat room][gitter-url].
 
 [docs-latest-img]: https://img.shields.io/badge/docs-latest-blue.svg
 [docs-latest-url]: http://gadflyjl.org/latest
@@ -65,6 +66,8 @@ If you have a question then you can ask for help in the [Gitter chat room][gitte
 [citation-url]: https://doi.org/10.5281/zenodo.437192
 
 [gog-book]: http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html
+
+[slack-url]: https://julialang.slack.com
 
 [gitter-img]: https://badges.gitter.im/dcjnones/Gadfly.jl.svg
 [gitter-url]: https://gitter.im/dcjones/Gadfly.jl
