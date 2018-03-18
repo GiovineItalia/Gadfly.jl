@@ -1,6 +1,8 @@
 
 # issue 1018
 using Compose, DataFrames, Gadfly
+set_default_plot_size(7inch, 3inch)
+
 Gadfly.push_theme(Theme(default_color=colorant"black", background_color="white"))
 
 xscale = Scale.x_continuous(format=:plain)

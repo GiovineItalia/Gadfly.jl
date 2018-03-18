@@ -2,13 +2,34 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
-# Version 0.6.1 (WIP)
+# Version 0.6.6
+  * Add `:ggplot` named theme (#1118)
+  * Replace `Theme(discrete_color_scale=, continuous_color_scale=)` with `Theme(discrete_colormap=, continuous_colormap=)` (#1118)   
+  * Change `Theme(grid_strokedash=)` to `Theme(grid_line_style=)` and include in docs (#1106)
+  * Add `Geom.ellipse` (#1103)  
+
+# Version 0.6.5
+  * Add arguments `Guide.colorkey(labels=, pos=)` (#1085, #1087)
+  * Enable the color aesthetic  for `Geom.violin` (#1081)
+  * Configure `Theme(plot_padding=[left, right, top, bottom])` (#1078)
+  * Add `Geom.hair` (#1076)
+
+# Version 0.6.4
+
+# Version 0.6.3
+
+# Version 0.6.2
+  * Add `Geom.rect` (#993)
+  * Add `Geom.vectorfield` (#992)
+
+# Version 0.6.1
+  * Improve `Stat.smooth` (#983)
 
 # Version 0.6.0
 
+  * Add `Geom.density2d` (#959)
   * Dramatically speed up precompilation by removing old, duplicate code (#958)
   * Add `Geom.abline` (#957)
-  * Add `Geom.density2d` (#959)
   * Drop support for Julia 0.4 (#954)
 
 # Version 0.5.3
@@ -16,6 +37,9 @@ Each release typically has a number of minor bug fixes beyond what is listed her
   * Support for size aesthetic for `Geom.point` (#952, @tlnagy & @Mattriks)
   * Various doc improvements (#923, #933, #943)
   * Improved Juno support (#920, @MikeInnes)
+
+# Version 0.4.4
+  * Add `Geom.segment` and `Geom.vector` (#823)
 
 # Version 0.4.1
 
