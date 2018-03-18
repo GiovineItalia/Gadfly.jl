@@ -157,17 +157,15 @@ function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     # the line extends to the edges of the graph.
 
     if typeof(aes.y) <: Array{Function}
-        low, high = aes.xmin[1], aes.xmax[1]
+        lowx, highx = aes.xmin[1], aes.xmax[1]
     else
-        xextrema = extrema(aes.x)
-        yextrema = extrema(aes.y)
-        low = min(xextrema[1], yextrema[1])
-        high = max(xextrema[2], yextrema[2])
+        lowx, highx = extrema(aes.x)
     end
 
-    range = high-low
-    x0 = low-range
-    x1 = high+range
+    # extending the line to width 3 times x-range of data should be enough
+    rangex = highx - lowx
+    x0 = lowx - rangex
+    x1 = highx + rangex
 
     y0s = [x0 * m + b for (m,b) in zip(aes.slope, aes.intercept)]
     y1s = [x1 * m + b for (m,b) in zip(aes.slope, aes.intercept)]
