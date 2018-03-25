@@ -35,6 +35,21 @@ if args["bw"]
     end
 end
 
+# delete diffedoutput/
+repo = LibGit2.GitRepo(dirname(@__DIR__))
+options = LibGit2.StatusOptions(flags=LibGit2.Consts.STATUS_OPT_INCLUDE_IGNORED |
+                                      LibGit2.Consts.STATUS_OPT_RECURSE_IGNORED_DIRS)
+status = LibGit2.GitStatus(repo, status_opts=options)
+for i in 1:length(status)
+    entry = status[i]
+    index_to_workdir = unsafe_load(entry.index_to_workdir)
+    if index_to_workdir.status == Int(LibGit2.Consts.DELTA_IGNORED)
+        filepath = unsafe_string(index_to_workdir.new_file.path)
+        startswith(filepath,joinpath("test/diffedoutput")) || continue
+        rm(filepath)
+    end
+end
+
 # Compare with cached output
 cachedout = joinpath((@__DIR__), "cachedoutput")
 gennedout = joinpath((@__DIR__), "gennedoutput")
@@ -47,10 +62,10 @@ cached_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(cachedo
 genned_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(gennedout))
 cached_notin_genned = setdiff(cached_files, genned_files)
 isempty(cached_notin_genned) ||
-      warn("files in cachedoutput/ but not in gennedoutput/: ", cached_notin_genned...)
+      warn("files in cachedoutput/ but not in gennedoutput/: ", join(cached_notin_genned,", "))
 genned_notin_cached = setdiff(genned_files, cached_files)
 isempty(genned_notin_cached) ||
-      warn("files in gennedoutput/ but not in cachedoutput/: ", genned_notin_cached...)
+      warn("files in gennedoutput/ but not in cachedoutput/: ", join(genned_notin_cached,", "))
 for file in intersect(cached_files,genned_files)
     print("Comparing ", file, " ... ")
     cached = open(readlines, joinpath(cachedout, file))
