@@ -78,24 +78,35 @@ for file in intersect(cached_files,genned_files)
             diffcmd = `diff $(joinpath(cachedout, file)) $(joinpath(gennedout, file))`
             run(ignorestatus(diffcmd))
         end
-        args["two"] && run(`open $(joinpath(cachedout,file))`)
-        args["two"] && run(`open $(joinpath(gennedout,file))`)
-        if args["bw"]
-          if endswith(file,".svg")
-              gimg = svg2img(joinpath(gennedout,file));
-              cimg = svg2img(joinpath(cachedout,file));
-          elseif endswith(file,".png")
-              gimg = load(joinpath(gennedout,file));
-              cimg = load(joinpath(cachedout,file));
-          end
-          if endswith(file,".svg") || endswith(file,".png")
-              dimg = convert(Matrix{Gray}, gimg.==cimg)
-              fout = joinpath(diffedout,file*".png")
-              Images.save(fout, dimg)
-              args["bw"] && run(`open $fout`)
-          end
+        if args["two"]
+            run(`open $(joinpath(cachedout,file))`)
+            run(`open $(joinpath(gennedout,file))`)
         end
-        args["diff"] || args["two"] || args["bw"] || continue
+        if args["bw"] && (endswith(file,".svg") || endswith(file,".png"))
+            wait_for_user = false
+            if endswith(file,".svg")
+                gimg = svg2img(joinpath(gennedout,file));
+                cimg = svg2img(joinpath(cachedout,file));
+            elseif endswith(file,".png")
+                gimg = load(joinpath(gennedout,file));
+                cimg = load(joinpath(cachedout,file));
+            end
+            if size(gimg)==size(cimg)
+                dimg = convert(Matrix{Gray}, gimg.==cimg)
+                if any(dimg.==0)
+                    fout = joinpath(diffedout,file*".png")
+                    Images.save(fout, dimg)
+                    wait_for_user = true
+                    run(`open $fout`)
+                else
+                    println("files are different but PNGs are the same")
+                end
+            else
+                wait_for_user = true
+                println("PNGs are different sizes :(")
+            end
+        end
+        args["diff"] || args["two"] || (args["bw"] && wait_for_user) || continue
         println("Press ENTER to continue, CTRL-C to quit")
         readline()
     end
