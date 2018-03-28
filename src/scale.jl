@@ -495,7 +495,9 @@ function apply_scale(scale::DiscreteColorScale,
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
         for d in data.color
-            push!(levelset, d)
+            # Remove missing values
+            # FixMe! The handling of missing values shouldn't be this scattered across the source
+            ismissing(d) || push!(levelset, d)
         end
     end
 
@@ -514,15 +516,11 @@ function apply_scale(scale::DiscreteColorScale,
 
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
-        ds = discretize(data.color, scale_levels)
-        colorvals = Array{RGB{Float32}}(count(!iszero, ds.index))
-        i = 1
-        for k in ds.index
-            if k != 0
-                colorvals[i] = colors[k]
-                i += 1
-            end
-        end
+        # Remove missing values
+        # FixMe! The handling of missing values shouldn't be this scattered across the source
+        ds = discretize([c for c in data.color if !ismissing(c)], scale_levels)
+
+        colorvals = colors[ds.index]
 
         colored_ds = IndirectArray(colorvals, colors)
         aes.color = colored_ds
