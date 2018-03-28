@@ -10,8 +10,7 @@ using Showoff
 using IndirectArrays
 using CategoricalArrays
 
-import Gadfly: element_aesthetics, isconcrete, concrete_length,
-               nonzero_length
+import Gadfly: element_aesthetics, isconcrete, concrete_length
 import Distributions: Distribution
 
 include("color_misc.jl")
@@ -516,7 +515,7 @@ function apply_scale(scale::DiscreteColorScale,
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
         ds = discretize(data.color, scale_levels)
-        colorvals = Array{RGB{Float32}}(nonzero_length(ds.index))
+        colorvals = Array{RGB{Float32}}(count(!iszero, ds.index))
         i = 1
         for k in ds.index
             if k != 0

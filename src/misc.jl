@@ -208,18 +208,6 @@ function concrete_minmax{T<:Real}(xs::IterTools.Chain, xmin::T, xmax::T)
 end
 
 
-
-function nonzero_length(xs)
-    n = 0
-    for x in xs
-        if x != 0
-            n += 1
-        end
-    end
-    n
-end
-
-
 # Create a new object of type T from a with missing values (i.e., those set to
 # nothing) inherited from b.
 function inherit{T}(a::T, b::T)

@@ -15,7 +15,7 @@ using CoupledFields # It is registered in METADATA.jl
 using IndirectArrays
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
-               default_scales, isconcrete, nonzero_length, setfield!
+               default_scales, isconcrete, setfield!
 import KernelDensity
 # import Distributions: Uniform, Distribution, qqbuild
 import IterTools: chain, distinct
