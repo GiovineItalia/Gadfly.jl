@@ -1221,10 +1221,11 @@ end
 
 # Determine whether the input is categorical or numerical
 
-const CategoricalType = Union{AbstractString, Bool, Symbol, CategoricalArrays.CategoricalValue, CategoricalArrays.CategoricalString}
+const CategoricalType = Union{AbstractString, Bool, Symbol}
 
 classify_data{N, T <: Union{CategoricalType,Missing}}(data::AbstractArray{T, N})        = :categorical
 classify_data{N, T <: Union{Base.Callable,Measure,Colorant}}(data::AbstractArray{T, N}) = :functional
+classify_data(data::CategoricalArray) = :categorical
 classify_data{T <: Base.Callable}(data::T) = :functional
 classify_data(data::AbstractArray) = :numerical
 classify_data(data::Distribution) = :distribution
