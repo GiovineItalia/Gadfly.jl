@@ -27,4 +27,7 @@ So the automated regression analysis workflow is then as follows:
 5. checkout master,
 6. `Pkg.test` again,
 7. `Pkg.add("ArgParse")` and, for B&W images, Cairo, Fontconfig, Rsvg, and Images as well,
-8. check for differences with `julia test/compare_examples.jl [--diff] [--two] [--bw] [-h] [filter]`
+8. check for differences with `julia test/compare_examples.jl [--diff] [--two]
+[--bw] [-h] [filter]`.  For example, `julia test/compare_examples.jl -bw
+.js.svg` will show black and white images hightlighting the differences between
+the svg test images.

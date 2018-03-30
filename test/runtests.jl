@@ -13,6 +13,20 @@ outputdir = mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
         "cachedoutput" : "gennedoutput"
 
 if VERSION>=v"0.6"
+    # delete outputdir/
+    options = LibGit2.StatusOptions(flags=LibGit2.Consts.STATUS_OPT_INCLUDE_IGNORED |
+                                          LibGit2.Consts.STATUS_OPT_RECURSE_IGNORED_DIRS)
+    status = LibGit2.GitStatus(repo, status_opts=options)
+    for i in 1:length(status)
+        entry = status[i]
+        index_to_workdir = unsafe_load(entry.index_to_workdir)
+        if index_to_workdir.status == Int(LibGit2.Consts.DELTA_IGNORED)
+            filepath = unsafe_string(index_to_workdir.new_file.path)
+            startswith(filepath,joinpath("test",outputdir)) || continue
+            rm(joinpath(dirname(@__DIR__),filepath))
+        end
+    end
+
     function mimic_git_log_n1(io::IO, head)
         hash = LibGit2.GitHash(head)
         println(io, "commit ",string(hash))
