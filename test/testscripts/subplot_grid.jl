@@ -3,11 +3,7 @@ using RDatasets, DataArrays, DataFrames, Gadfly
 set_default_plot_size(10inch, 10inch)
 
 barley = dataset("lattice", "barley")
-if isdefined(:setlevels!)
-    setlevels!(barley[:Year], ["1931", "1932"])
-else
-    set_levels!(barley[:Year], ["1931", "1932"])
-end
+levels!(barley[:Year], ["1931", "1932"])
 
 idx = [startswith(x,"No.") for x in barley[:Variety]]
 plot(barley[idx,:],

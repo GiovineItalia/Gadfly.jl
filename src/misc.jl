@@ -1,20 +1,7 @@
 #Is this usable data?
-isconcrete{T<:Number}(x::T) = !isna(x) && isfinite(x)
+isconcrete{T<:Number}(x::T) = !ismissing(x) && isfinite(x)
 isconcrete(x::(Irrational)) = true
-isconcrete(x) = !isna(x)
-
-hasna(xs) = false
-
-function hasna(xs::AbstractDataArray)
-    for x in xs
-        if isna(x)
-            return true
-        end
-    end
-    return false
-end
-
-
+isconcrete(x) = !ismissing(x)
 
 function isallconcrete(xs)
     ans = true
@@ -221,18 +208,6 @@ function concrete_minmax{T<:Real}(xs::IterTools.Chain, xmin::T, xmax::T)
 end
 
 
-
-function nonzero_length(xs)
-    n = 0
-    for x in xs
-        if x != 0
-            n += 1
-        end
-    end
-    n
-end
-
-
 # Create a new object of type T from a with missing values (i.e., those set to
 # nothing) inherited from b.
 function inherit{T}(a::T, b::T)
@@ -354,16 +329,6 @@ end
 
 
 svg_color_class_from_label(label::AbstractString) = @sprintf("color_%s", escape_id(label))
-
-
-
-"""
-A faster map function for PooledDataVector
-"""
-function pooled_map(T::Type, f::Function, xs::PooledDataVector)
-    newpool = T[f(x) for x in xs.pool]
-    return T[newpool[i] for i in xs.refs]
-end
 
 using Base.Dates
 

@@ -9,8 +9,8 @@ using Base.Test, Gadfly, Compat
 
 repo = LibGit2.GitRepo(dirname(@__DIR__))
 branch = LibGit2.headname(repo)
-outputdir = mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
-        "cachedoutput" : "gennedoutput"
+outputdir = joinpath(@__DIR__, mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
+        "cachedoutput" : "gennedoutput")
 
 if VERSION>=v"0.6"
     # delete outputdir/

@@ -10,6 +10,8 @@ using DataFrames
 using DataStructures
 using JSON
 using Showoff
+using IndirectArrays
+using CategoricalArrays
 
 import IterTools
 import IterTools: distinct, drop, chain
@@ -1221,8 +1223,9 @@ end
 
 const CategoricalType = Union{AbstractString, Bool, Symbol}
 
-classify_data{N, T <: CategoricalType}(data::AbstractArray{T, N}) = :categorical
+classify_data{N, T <: Union{CategoricalType,Missing}}(data::AbstractArray{T, N})        = :categorical
 classify_data{N, T <: Union{Base.Callable,Measure,Colorant}}(data::AbstractArray{T, N}) = :functional
+classify_data(data::CategoricalArray) = :categorical
 classify_data{T <: Base.Callable}(data::T) = :functional
 classify_data(data::AbstractArray) = :numerical
 classify_data(data::Distribution) = :distribution

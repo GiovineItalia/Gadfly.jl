@@ -1,8 +1,8 @@
 const NumericalOrCategoricalAesthetic =
-    Union{(Void), Vector, DataArray, PooledDataArray}
+    Union{(Void), Vector, DataArray, IndirectArray}
 
 const CategoricalAesthetic =
-    Union{(Void), PooledDataArray}
+    Union{(Void), IndirectArray}
 
 const NumericalAesthetic =
     Union{(Void), Matrix, Vector, DataArray}
@@ -235,6 +235,7 @@ function concat(aess::Aesthetics...)
                              mv == nothing ? mu :
                                  max(mu, mv))
             else
+                cat_aes_var!(getfield(cataes, var), getfield(aes, var))
                 setfield!(cataes, var,
                           cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
             end
@@ -287,20 +288,6 @@ function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
     return ab
 end
 
-function cat_aes_var!{T}(xs::PooledDataVector{T}, ys::PooledDataVector{T})
-    newpool = T[x for x in union(Set(xs.pool), Set(ys.pool))]
-    newdata = vcat(T[x for x in xs], T[y for y in ys])
-    PooledDataArray(newdata, newpool, [false for _ in newdata])
-end
-
-function cat_aes_var!{T, U}(xs::PooledDataVector{T}, ys::PooledDataVector{U})
-    V = promote_type(T, U)
-    newpool = V[x for x in union(Set(xs.pool), Set(ys.pool))]
-    newdata = vcat(V[x for x in xs], V[y for y in ys])
-    PooledDataArray(newdata, newpool, [false for _ in newdata])
-end
-
-
 # Summarizing aesthetics
 
 # Produce a matrix of Aesthetic or Data objects partitioning the original
@@ -333,10 +320,10 @@ function by_xy_group{T <: Union{Data, Aesthetics}}(aes::T, xgroup, ygroup,
 
     xgroup === nothing && ygroup === nothing && return aes_grid
 
-    make_pooled_data_array{T,U,V}(::Type{PooledDataArray{T,U,V}}, arr::AbstractArray) =
-            PooledDataArray(convert(Array{T}, arr))
-    make_pooled_data_array{T,U,V}(::Type{PooledDataArray{T,U,V}},
-            arr::PooledDataArray{T,U,V}) = arr
+    make_pooled_array{T,R,N,RA}(::Type{IndirectArray{T,R,N,RA}}, arr::AbstractArray) =
+            IndirectArray(convert(Array{T}, arr))
+    make_pooled_array{T,R,N,RA}(::Type{IndirectArray{T,R,N,RA}},
+            arr::IndirectArray{T,R,N,RA}) = arr
 
     for var in fieldnames(T)
         # Skipped aesthetics. Don't try to partition aesthetics for which it
@@ -366,9 +353,9 @@ function by_xy_group{T <: Union{Data, Aesthetics}}(aes::T, xgroup, ygroup,
             end
 
             for i in 1:n, j in 1:m
-                if typeof(vals) <: PooledDataArray
+                if typeof(vals) <: IndirectArray
                     setfield!(aes_grid[i, j], var,
-                              make_pooled_data_array(typeof(vals), staging[i, j]))
+                              make_pooled_array(typeof(vals), staging[i, j]))
                 else
                     if !applicable(convert, typeof(vals), staging[i, j])
                         T2 = eltype(vals)

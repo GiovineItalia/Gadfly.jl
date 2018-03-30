@@ -10,6 +10,9 @@ matrix:
     - julia: nightly
 notifications:
   email: false
+matrix:
+  allow_failures:
+  - julia: nightly
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia -e 'Pkg.clone(pwd()); Pkg.build("Gadfly");'

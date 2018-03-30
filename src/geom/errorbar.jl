@@ -54,7 +54,7 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
+    default_aes.color = IndirectArray(RGB{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
     caplen = theme.errorbar_cap_length/2
     ttc, teb, tbc = subtags(geom.tag, :top_cap, :error_bar, :bottom_cap)
@@ -95,7 +95,7 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
 
     colored = aes.color != nothing
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = PooledDataArray(RGB{Float32}[theme.default_color])
+    default_aes.color = IndirectArray(RGB{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
     caplen = theme.errorbar_cap_length/2
     tlc, teb, trc = subtags(geom.tag, :left_cap, :error_bar, :right_cap)
