@@ -2325,7 +2325,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.x_discrete",
     "title": "Arguments",
     "category": "section",
-    "text": "labels: Either a Function or nothing. When a function is given, values are formatted using this function. The function should map a value in x to a string giving its label.\nlevels: If non-nothing, give values for the scale. Order will be respected and anything in the data that\'s not respresented in levels will be set to NA.\norder: If non-nothing, give a vector of integers giving a permutation of the values pool of the data."
+    "text": "labels: Either a Function or nothing. When a function is given, values are formatted using this function. The function should map a value in x to a string giving its label.\nlevels: If non-nothing, give values for the scale. Order will be respected and anything in the data that\'s not respresented in levels will be set to missing.\norder: If non-nothing, give a vector of integers giving a permutation of the values pool of the data."
 },
 
 {
@@ -2413,7 +2413,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scale.y_discrete",
     "title": "Arguments",
     "category": "section",
-    "text": "labels: Either a Function or nothing. When a function is given, values are formatted using this function. The function should map a value in x to a string giving its label.\nlevels: If non-nothing, give values for the scale. Order will be respected and anything in the data that\'s not respresented in levels will be set to NA.\norder: If non-nothing, give a vector of integers giving a permutation of the values pool of the data."
+    "text": "labels: Either a Function or nothing. When a function is given, values are formatted using this function. The function should map a value in x to a string giving its label.\nlevels: If non-nothing, give values for the scale. Order will be respected and anything in the data that\'s not respresented in levels will be set to missing.\norder: If non-nothing, give a vector of integers giving a permutation of the values pool of the data."
 },
 
 {
@@ -2485,7 +2485,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Regression Testing",
     "title": "Regression Testing",
     "category": "section",
-    "text": "Running Pkg.test(\"Gadfly\") evaluates all of the files in Gadfly/test/testscripts.  Any errors or warnings are printed to the REPL.  In addition, the figures that are produced are put into either the gennedoutput/ or cachedoutput/ sub-directories.  Nominally, the former represents the changes in a pull request while the latter are used for comparison. Specifically, runtests.jl examines the currently checked out git commit, and sets the output directory to cachedoutput/ if it is the HEAD of the master branch or if it is detached.  Otherwise, it assumes you are at the tip of a development branch and saves the figures to gennedoutput/.  After running the tests on both of these branches, executing compare_examples.jl displays differences between the new and old figures.  This script can dump a diff of the files to the REPL, open both figures for manual comparison, and/or, for SVG and PNG files, display a black and white figure highlighting the spatial location of the differences.So the automated regression analysis workflow is then as follows:In a branch other than master,\ndevelop your new feature or fix your old bug,\ncommit all your changes,\nPkg.test(\"Gadfly\"),\ncheckout master,\nPkg.test again,\nPkg.add(\"ArgParse\") and, for B&W images, Cairo, Fontconfig, Rsvg, and Images as well,\ncheck for differences with julia test/compare_examples.jl [--diff] [--two] [--bw] [-h] [filter]"
+    "text": "Running Pkg.test(\"Gadfly\") evaluates all of the files in Gadfly/test/testscripts.  Any errors or warnings are printed to the REPL.  In addition, the figures that are produced are put into either the gennedoutput/ or cachedoutput/ sub-directories.  Nominally, the former represents the changes in a pull request while the latter are used for comparison. Specifically, runtests.jl examines the currently checked out git commit, and sets the output directory to cachedoutput/ if it is the HEAD of the master branch or if it is detached.  Otherwise, it assumes you are at the tip of a development branch and saves the figures to gennedoutput/.  After running the tests on both of these branches, executing compare_examples.jl displays differences between the new and old figures.  This script can dump a diff of the files to the REPL, open both figures for manual comparison, and/or, for SVG and PNG files, display a black and white figure highlighting the spatial location of the differences.So the automated regression analysis workflow is then as follows:In a branch other than master,\ndevelop your new feature or fix your old bug,\ncommit all your changes,\nPkg.test(\"Gadfly\"),\ncheckout master,\nPkg.test again,\nPkg.add(\"ArgParse\") and, for B&W images, Cairo, Fontconfig, Rsvg, and Images as well,\ncheck for differences with `julia test/compare_examples.jl [–diff] [–two][–bw] [-h] [filter].  For example,julia test/compare_examples.jl -bw .js.svg` will show black and white images hightlighting the differences between the svg test images."
 },
 
 ]}
