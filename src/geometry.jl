@@ -29,7 +29,7 @@ end
 
 
 # Geometry that renders nothing.
-immutable Nil <: Gadfly.GeometryElement
+struct Nil <: Gadfly.GeometryElement
 end
 
 const nil = Nil

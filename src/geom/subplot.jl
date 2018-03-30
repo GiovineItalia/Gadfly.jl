@@ -1,6 +1,6 @@
 # Subplot geometries
 
-@compat abstract type SubplotGeometry <: Gadfly.GeometryElement end
+abstract type SubplotGeometry <: Gadfly.GeometryElement end
 
 # Adding elements to subplots in a generic way.
 
@@ -37,14 +37,14 @@ end
 
 add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.GuideElement) =
         subplot.guides[typeof(arg)] = arg
-add_subplot_element{T <: Gadfly.Element}(subplot::SubplotGeometry, arg::Type{T}) =
+add_subplot_element(subplot::SubplotGeometry, arg::Type{T}) where {T <: Gadfly.Element} =
         add_subplot_element(subplot, arg())
 add_subplot_element(subplot::SubplotGeometry, coord::Gadfly.CoordinateElement) =
         subplot.coord = coord
 add_subplot_element(subplot::SubplotGeometry, arg) =
         error("Subplots do not support elements of type $(typeof(arg))")
 
-type SubplotGrid <: SubplotGeometry
+mutable struct SubplotGrid <: SubplotGeometry
     layers::Vector{Gadfly.Layer}
     statistics::Vector{Gadfly.StatisticElement}
     scales::Vector{Gadfly.ScaleElement}

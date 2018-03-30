@@ -13,13 +13,13 @@ import Gadfly: render, escape_id, default_statistic, jsdata, jsplotdata,
 
 
 # Where the guide should be placed in relation to the plot.
-@compat abstract type GuidePosition end
-immutable TopGuidePosition    <: GuidePosition end
-immutable RightGuidePosition  <: GuidePosition end
-immutable BottomGuidePosition <: GuidePosition end
-immutable LeftGuidePosition   <: GuidePosition end
-immutable UnderGuidePosition  <: GuidePosition end
-immutable OverGuidePosition   <: GuidePosition end
+abstract type GuidePosition end
+struct TopGuidePosition    <: GuidePosition end
+struct RightGuidePosition  <: GuidePosition end
+struct BottomGuidePosition <: GuidePosition end
+struct LeftGuidePosition   <: GuidePosition end
+struct UnderGuidePosition  <: GuidePosition end
+struct OverGuidePosition   <: GuidePosition end
 
 const top_guide_position    = TopGuidePosition()
 const right_guide_position  = RightGuidePosition()
@@ -28,7 +28,7 @@ const left_guide_position   = LeftGuidePosition()
 const under_guide_position  = UnderGuidePosition()
 const over_guide_position   = OverGuidePosition()
 
-immutable QuestionMark <: Gadfly.GuideElement
+struct QuestionMark <: Gadfly.GuideElement
 end
 
 const questionmark = QuestionMark
@@ -57,7 +57,7 @@ function render(guide::QuestionMark, theme::Gadfly.Theme,
 end
 
 
-immutable HelpScreen <: Gadfly.GuideElement
+struct HelpScreen <: Gadfly.GuideElement
 end
 
 const helpscreen = HelpScreen
@@ -97,7 +97,7 @@ function render(guide::HelpScreen, theme::Gadfly.Theme,
     return [PositionedGuide([root], 0, over_guide_position)]
 end
 
-immutable CrossHair <: Gadfly.GuideElement
+struct CrossHair <: Gadfly.GuideElement
 end
 
 const crosshair = CrossHair
@@ -125,14 +125,14 @@ end
 # A guide graphic is a position associated with one or more contexts.
 # Multiple contexts represent multiple layout possibilites that will be
 # optimized over.
-immutable PositionedGuide
+struct PositionedGuide
     ctxs::Vector{Context}
     order::Int
     position::GuidePosition
 end
 
 
-immutable PanelBackground <: Gadfly.GuideElement
+struct PanelBackground <: Gadfly.GuideElement
 end
 
 const background = PanelBackground
@@ -155,7 +155,7 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
 end
 
 
-immutable ColorKey <: Gadfly.GuideElement
+struct ColorKey <: Gadfly.GuideElement
     title::Union{AbstractString, (Void)}
     labels::Union{Vector{String}, (Void)}
     pos::Union{Vector, (Void)}
@@ -170,12 +170,12 @@ const colorkey = ColorKey
 
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
-function render_discrete_color_key{C<:Color}(colors::Vector{C},
-                                   labels::OrderedDict{Color, AbstractString},
-                                   aes_color_label,
-                                   title_ctx::Context,
-                                   title_width::Measure,
-                                   theme::Gadfly.Theme)
+function render_discrete_color_key(colors::Vector{C},
+                         labels::OrderedDict{Color, AbstractString},
+                         aes_color_label,
+                         title_ctx::Context,
+                         title_width::Measure,
+                         theme::Gadfly.Theme) where C<:Color
 
     n = length(colors)
 
@@ -480,12 +480,12 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
 end
 
 
-immutable ManualColorKey{C<:Color} <: Gadfly.GuideElement
+struct ManualColorKey{C<:Color} <: Gadfly.GuideElement
     title::Union{AbstractString, (Void)}
     labels::Vector{AbstractString}
     colors::Vector{C}
 end
-ManualColorKey{C<:Color}(title, labels, colors::Vector{C}) =
+ManualColorKey(title, labels, colors::Vector{C}) where {C<:Color} =
         ManualColorKey{C}(title, labels, colors)
 ManualColorKey(title, labels, colors) =
         ManualColorKey(title, labels, Gadfly.parse_colorant(colors))
@@ -532,7 +532,7 @@ function render(guide::ManualColorKey, theme::Gadfly.Theme,
 end
 
 
-immutable XTicks <: Gadfly.GuideElement
+struct XTicks <: Gadfly.GuideElement
     label::Bool
     ticks::Union{(Void), Symbol, AbstractArray}
     orientation::Symbol
@@ -695,7 +695,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
 end
 
 
-immutable YTicks <: Gadfly.GuideElement
+struct YTicks <: Gadfly.GuideElement
     label::Bool
     ticks::Union{(Void), Symbol, AbstractArray}
     orientation::Symbol
@@ -875,7 +875,7 @@ end
 
 
 # X-axis label Guide
-immutable XLabel <: Gadfly.GuideElement
+struct XLabel <: Gadfly.GuideElement
     label::Union{(Void), AbstractString}
     orientation::Symbol
 end
@@ -936,7 +936,7 @@ end
 
 
 # Y-axis label Guide
-immutable YLabel <: Gadfly.GuideElement
+struct YLabel <: Gadfly.GuideElement
     label::Union{(Void), AbstractString}
     orientation::Symbol
 end
@@ -991,7 +991,7 @@ function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 end
 
 # Title Guide
-immutable Title <: Gadfly.GuideElement
+struct Title <: Gadfly.GuideElement
     label::Union{(Void), AbstractString}
 end
 
@@ -1020,7 +1020,7 @@ function render(guide::Title, theme::Gadfly.Theme,
 end
 
 
-immutable XRug <: Gadfly.GuideElement
+struct XRug <: Gadfly.GuideElement
 end
 
 const xrug = XRug
@@ -1041,7 +1041,7 @@ function render(guide::XRug, theme::Gadfly.Theme,
 end
 
 
-immutable YRug <: Gadfly.GuideElement
+struct YRug <: Gadfly.GuideElement
 end
 
 const yrug = YRug
@@ -1177,7 +1177,7 @@ function layout_guides(plot_context::Context,
 end
 
 
-immutable Annotation <: Gadfly.GuideElement
+struct Annotation <: Gadfly.GuideElement
     ctx::Context
 end
 

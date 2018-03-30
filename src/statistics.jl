@@ -44,11 +44,11 @@ function apply_statistics(stats::Vector{Gadfly.StatisticElement},
     nothing
 end
 
-immutable Nil <: Gadfly.StatisticElement end
+struct Nil <: Gadfly.StatisticElement end
 
 const nil = Nil
 
-immutable Identity <: Gadfly.StatisticElement end
+struct Identity <: Gadfly.StatisticElement end
 
 apply_statistic(stat::Identity,
                 scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -90,7 +90,7 @@ function barminmax(vals, iscontinuous::Bool)
 end
 
 
-immutable RectbinStatistic <: Gadfly.StatisticElement end
+struct RectbinStatistic <: Gadfly.StatisticElement end
 
 const rectbin = RectbinStatistic
 
@@ -123,7 +123,7 @@ function apply_statistic(stat::RectbinStatistic,
 end
 
 
-immutable BarStatistic <: Gadfly.StatisticElement
+struct BarStatistic <: Gadfly.StatisticElement
     position::Symbol # :dodge or :stack
     orientation::Symbol # :horizontal or :vertical
 end
@@ -224,7 +224,7 @@ function apply_statistic(stat::BarStatistic,
 end
 
 
-immutable HistogramStatistic <: Gadfly.StatisticElement
+struct HistogramStatistic <: Gadfly.StatisticElement
     minbincount::Int
     maxbincount::Int
     position::Symbol # :dodge or :stack
@@ -445,7 +445,7 @@ function apply_statistic(stat::HistogramStatistic,
 end
 
 
-immutable Density2DStatistic <: Gadfly.StatisticElement
+struct Density2DStatistic <: Gadfly.StatisticElement
     n::Tuple{Int,Int} # Number of points sampled
     bw::Tuple{Real,Real} # Bandwidth used for the kernel density estimation
     levels::Union{Int,Vector,Function}
@@ -476,7 +476,7 @@ function apply_statistic(stat::Density2DStatistic,
 end
 
 
-immutable DensityStatistic <: Gadfly.StatisticElement
+struct DensityStatistic <: Gadfly.StatisticElement
     # Number of points sampled
     n::Int
     # Bandwidth used for the kernel density estimation
@@ -535,7 +535,7 @@ end
 
 
 
-immutable Histogram2DStatistic <: Gadfly.StatisticElement
+struct Histogram2DStatistic <: Gadfly.StatisticElement
     xminbincount::Int
     xmaxbincount::Int
     yminbincount::Int
@@ -682,7 +682,7 @@ function apply_statistic(stat::Histogram2DStatistic,
 end
 
 # Find reasonable places to put tick marks and grid lines.
-immutable TickStatistic <: Gadfly.StatisticElement
+struct TickStatistic <: Gadfly.StatisticElement
     in_vars::Vector{Symbol}
     out_var::AbstractString
 
@@ -904,7 +904,7 @@ function apply_statistic(stat::TickStatistic,
     nothing
 end
 
-function apply_statistic_typed{T}(minval::T, maxval::T, vals, size, dsize)
+function apply_statistic_typed(minval::T, maxval::T, vals, size, dsize) where T
 #     for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
     lensize  = length(size)
     lendsize = length(dsize)
@@ -919,7 +919,7 @@ function apply_statistic_typed{T}(minval::T, maxval::T, vals, size, dsize)
     minval, maxval
 end
 
-function apply_statistic_typed{T}(minval::T, maxval::T, vals::DataArray{T}, size, dsize)
+function apply_statistic_typed(minval::T, maxval::T, vals::DataArray{T}, size, dsize) where T
     lensize  = length(size)
     lendsize = length(dsize)
     for i = 1:length(vals)
@@ -934,7 +934,7 @@ function apply_statistic_typed{T}(minval::T, maxval::T, vals::DataArray{T}, size
     minval, maxval
 end
 
-function minvalmaxval{T}(minval::T, maxval::T, val, s, ds)
+function minvalmaxval(minval::T, maxval::T, val, s, ds) where T
     if val < minval || !isfinite(minval)
         minval = val
     end
@@ -957,7 +957,7 @@ function minvalmaxval{T}(minval::T, maxval::T, val, s, ds)
 end
 
 
-immutable BoxplotStatistic <: Gadfly.StatisticElement
+struct BoxplotStatistic <: Gadfly.StatisticElement
     method::Union{Symbol, Vector}
 end
 
@@ -1080,7 +1080,7 @@ end
 
 
 
-immutable SmoothStatistic <: Gadfly.StatisticElement
+struct SmoothStatistic <: Gadfly.StatisticElement
     method::Symbol
     smoothing::Float64
 end
@@ -1161,7 +1161,7 @@ function apply_statistic(stat::SmoothStatistic,
 end
 
 
-immutable HexBinStatistic <: Gadfly.StatisticElement
+struct HexBinStatistic <: Gadfly.StatisticElement
     xbincount::Int
     ybincount::Int
 end
@@ -1222,7 +1222,7 @@ end
 default_scales(::HexBinStatistic, t::Gadfly.Theme) = [t.continuous_color_scale]
 
 
-immutable StepStatistic <: Gadfly.StatisticElement
+struct StepStatistic <: Gadfly.StatisticElement
     direction::Symbol
 end
 StepStatistic(; direction=:hv) = StepStatistic(direction)
@@ -1300,7 +1300,7 @@ function apply_statistic(stat::StepStatistic,
 end
 
 
-immutable FunctionStatistic <: Gadfly.StatisticElement
+struct FunctionStatistic <: Gadfly.StatisticElement
     # Number of points to evaluate the function at
     num_samples::Int
 end
@@ -1363,7 +1363,7 @@ function apply_statistic(stat::FunctionStatistic,
 end
 
 
-immutable ContourStatistic <: Gadfly.StatisticElement
+struct ContourStatistic <: Gadfly.StatisticElement
     levels::Union{Int,Vector,Function}
     samples::Int
 end
@@ -1440,7 +1440,7 @@ function apply_statistic(stat::ContourStatistic,
 end
 
 
-immutable QQStatistic <: Gadfly.StatisticElement end
+struct QQStatistic <: Gadfly.StatisticElement end
 
 input_aesthetics(::QQStatistic) = [:x, :y]
 output_aesthetics(::QQStatistic) = [:x, :y]
@@ -1508,7 +1508,7 @@ function apply_statistic(stat::QQStatistic,
 end
 
 
-immutable ViolinStatistic <: Gadfly.StatisticElement
+struct ViolinStatistic <: Gadfly.StatisticElement
     # Number of points sampled
     n::Int
 end
@@ -1559,7 +1559,7 @@ function apply_statistic(stat::ViolinStatistic,
 end
 
 
-immutable JitterStatistic <: Gadfly.StatisticElement
+struct JitterStatistic <: Gadfly.StatisticElement
     vars::Vector{Symbol}
     range::Float64
     seed::UInt32
@@ -1614,7 +1614,7 @@ end
 
 
 # Bin mean returns the mean of x and y in n bins of x
-immutable BinMeanStatistic <: Gadfly.StatisticElement
+struct BinMeanStatistic <: Gadfly.StatisticElement
     n::Int
 end
 BinMeanStatistic(; n=20) = BinMeanStatistic(n)
@@ -1665,7 +1665,7 @@ function apply_statistic(stat::BinMeanStatistic,
     end
 end
 
-function mean_by_group{Tx, Ty}(x::Vector{Tx}, y::Vector{Ty}, breaks::Vector{Float64})
+function mean_by_group(x::Vector{Tx}, y::Vector{Ty}, breaks::Vector{Float64}) where {Tx, Ty}
     count = zeros(Int64, length(breaks))
     totalx = zeros(Tx, length(breaks))
     totaly = zeros(Ty, length(breaks))
@@ -1681,7 +1681,7 @@ function mean_by_group{Tx, Ty}(x::Vector{Tx}, y::Vector{Ty}, breaks::Vector{Floa
 end
 
 
-immutable EnumerateStatistic <: Gadfly.StatisticElement
+struct EnumerateStatistic <: Gadfly.StatisticElement
     var::Symbol
 end
 
@@ -1717,7 +1717,7 @@ end
 
 ### Vector Field Statistic 
 
-immutable VecFieldStatistic <: Gadfly.StatisticElement
+struct VecFieldStatistic <: Gadfly.StatisticElement
     smoothness::Float64
     scale::Float64
     samples::Int64
@@ -1785,7 +1785,7 @@ end
 
 ### Hair Statistic
 
-immutable HairStatistic <: Gadfly.StatisticElement
+struct HairStatistic <: Gadfly.StatisticElement
     intercept
     orientation::Symbol # :horizontal or :vertical like BarStatistic
 end
@@ -1814,14 +1814,14 @@ end
 
 ### Ellipse Statistic
 
-immutable EllipseStatistic <: Gadfly.StatisticElement
-    distribution::@compat Type{<:ContinuousMultivariateDistribution}
-    levels::@compat Vector{<:AbstractFloat}
+struct EllipseStatistic <: Gadfly.StatisticElement
+    distribution::Type{<:ContinuousMultivariateDistribution}
+    levels::Vector{<:AbstractFloat}
     nsegments::Int
 end
 
 function EllipseStatistic(;
-        distribution::(@compat Type{<:ContinuousMultivariateDistribution})=MvNormal,
+        distribution::(Type{<:ContinuousMultivariateDistribution})=MvNormal,
         levels::Vector{Float64}=[0.95],
         nsegments::Int=51 )
     return EllipseStatistic(distribution, levels, nsegments)

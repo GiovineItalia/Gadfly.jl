@@ -19,7 +19,7 @@ export cartesian
 #     from the data.
 #
 #
-immutable Cartesian <: Gadfly.CoordinateElement
+struct Cartesian <: Gadfly.CoordinateElement
     xvars::Vector{Symbol}
     yvars::Vector{Symbol}
     xmin
@@ -262,7 +262,7 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
 end
 
 
-immutable SubplotGrid <: Gadfly.CoordinateElement
+struct SubplotGrid <: Gadfly.CoordinateElement
 end
 
 

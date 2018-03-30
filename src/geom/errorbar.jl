@@ -1,15 +1,15 @@
-immutable ErrorBarGeometry <: Gadfly.GeometryElement
+struct ErrorBarGeometry <: Gadfly.GeometryElement
     tag::Symbol
 end
 ErrorBarGeometry(; tag=empty_tag) = ErrorBarGeometry(tag)
 
 
-immutable XErrorBarGeometry <: Gadfly.GeometryElement
+struct XErrorBarGeometry <: Gadfly.GeometryElement
     tag::Symbol
 end
 XErrorBarGeometry(; tag=empty_tag) = XErrorBarGeometry(tag)
 
-immutable YErrorBarGeometry <: Gadfly.GeometryElement
+struct YErrorBarGeometry <: Gadfly.GeometryElement
     tag::Symbol
 end
 YErrorBarGeometry(; tag=empty_tag) = YErrorBarGeometry(tag)

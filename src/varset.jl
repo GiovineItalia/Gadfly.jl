@@ -47,7 +47,7 @@ macro varset(name::Symbol, table)
 
     ex =
     quote
-        type $(name)
+        mutable struct $(name)
             $(vars...)
         end
 

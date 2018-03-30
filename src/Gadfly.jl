@@ -70,12 +70,12 @@ default_statistic(::Any) = Stat.identity()
 element_coordinate_type(::Any) = Coord.cartesian
 
 
-@compat abstract type Element end
-@compat abstract type ScaleElement       <: Element end
-@compat abstract type CoordinateElement  <: Element end
-@compat abstract type GeometryElement    <: Element end
-@compat abstract type GuideElement       <: Element end
-@compat abstract type StatisticElement   <: Element end
+abstract type Element end
+abstract type ScaleElement       <: Element end
+abstract type CoordinateElement  <: Element end
+abstract type GeometryElement    <: Element end
+abstract type GuideElement       <: Element end
+abstract type StatisticElement   <: Element end
 
 
 include("misc.jl")
@@ -92,7 +92,7 @@ include("theme.jl")
 
 # The layer and plot functions can also take functions that are evaluated with
 # no arguments and are expected to produce an element.
-@compat const ElementOrFunction{T <: Element} = Union{Element, Base.Callable, Theme}
+const ElementOrFunction{T <: Element} = Union{Element, Base.Callable, Theme}
 
 const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 
@@ -120,7 +120,7 @@ set_default_plot_format(fmt::Symbol) = Compose.set_default_graphic_format(fmt)
 
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
-type Layer <: Element
+mutable struct Layer <: Element
     data_source::Union{(Void), MeltedData, AbstractArray, AbstractDataFrame}
     mapping::Dict
     statistics::Vector{StatisticElement}
@@ -170,7 +170,7 @@ layer(elements::ElementOrFunction...; mapping...) =
         layer(nothing, elements...; mapping...)
 
 
-add_plot_element!{T<:Element}(lyrs::Vector{Layer}, arg::T) =
+add_plot_element!(lyrs::Vector{Layer}, arg::T) where {T<:Element} =
         error("Layers can't be used with elements of type $(typeof(arg))")
 
 
@@ -200,7 +200,7 @@ add_plot_element!(lyrs::Vector{Layer}, arg::Theme) = [lyr.theme = arg for lyr in
 
 
 # A full plot specification.
-type Plot
+mutable struct Plot
     layers::Vector{Layer}
     data_source::Union{(Void), MeltedData, AbstractArray, AbstractDataFrame}
     data::Data
@@ -243,7 +243,7 @@ add_plot_element!(p::Plot, arg::CoordinateElement) = p.coord = arg
 add_plot_element!(p::Plot, arg::GuideElement) = push!(p.guides, arg)
 add_plot_element!(p::Plot, arg::Layer) = push!(p.layers, arg)
 add_plot_element!(p::Plot, arg::Vector{Layer}) = append!(p.layers, arg)
-add_plot_element!{T <: Element}(p::Plot, f::Type{T}) = add_plot_element!(p, f())
+add_plot_element!(p::Plot, f::Type{T}) where {T <: Element} = add_plot_element!(p, f())
 add_plot_element!(p::Plot, theme::Theme) = p.theme = theme
 
 
@@ -1198,7 +1198,7 @@ const default_aes_scales = Dict{Symbol, Dict}(
 )
 
 
-get_scale{t,var}(::Val{t}, ::Val{var}, theme::Theme) = default_aes_scales[t][var]
+get_scale(::Val{t}, ::Val{var}, theme::Theme) where {t,var} = default_aes_scales[t][var]
 get_scale(t::Symbol, var::Symbol, theme::Theme) = get_scale(Val{t}(), Val{var}(), theme)
 
 ### Override default getters for color scales
@@ -1223,10 +1223,10 @@ end
 
 const CategoricalType = Union{AbstractString, Bool, Symbol}
 
-classify_data{N, T <: Union{CategoricalType,Missing}}(data::AbstractArray{T, N})        = :categorical
-classify_data{N, T <: Union{Base.Callable,Measure,Colorant}}(data::AbstractArray{T, N}) = :functional
+classify_data(data::AbstractArray{T, N}) where {N, T <: Union{CategoricalType,Missing}}        = :categorical
+classify_data(data::AbstractArray{T, N}) where {N, T <: Union{Base.Callable,Measure,Colorant}} = :functional
 classify_data(data::CategoricalArray) = :categorical
-classify_data{T <: Base.Callable}(data::T) = :functional
+classify_data(data::T) where {T <: Base.Callable} = :functional
 classify_data(data::AbstractArray) = :numerical
 classify_data(data::Distribution) = :distribution
 

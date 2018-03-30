@@ -1,6 +1,6 @@
 # Line geometry connects (x, y) coordinates with lines.
 
-immutable LineGeometry <: Gadfly.GeometryElement
+struct LineGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
 
     # Do not reorder points along the x-axis.

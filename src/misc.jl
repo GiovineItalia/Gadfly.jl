@@ -1,5 +1,5 @@
 #Is this usable data?
-isconcrete{T<:Number}(x::T) = !ismissing(x) && isfinite(x)
+isconcrete(x::T) where {T<:Number} = !ismissing(x) && isfinite(x)
 isconcrete(x::(Irrational)) = true
 isconcrete(x) = !ismissing(x)
 
@@ -68,7 +68,7 @@ function concrete_length(xs)
     n
 end
 
-function concrete_length{T}(xs::DataArray{T})
+function concrete_length(xs::DataArray{T}) where T
     n = 0
     for i = 1:length(xs)
         if !xs.na[i] && isconcrete(xs.data[i]::T)
@@ -130,7 +130,7 @@ function concrete_maximum(xs)
 end
 
 
-function concrete_minmax{T<:Real}(xs, xmin::T, xmax::T)
+function concrete_minmax(xs, xmin::T, xmax::T) where T<:Real
     if eltype(xs) <: Base.Callable
         return xmin, xmax
     end
@@ -150,7 +150,7 @@ function concrete_minmax{T<:Real}(xs, xmin::T, xmax::T)
 end
 
 
-function concrete_minmax{T<:Real, TA}(xs::DataArray{TA}, xmin::T, xmax::T)
+function concrete_minmax(xs::DataArray{TA}, xmin::T, xmax::T) where {T<:Real, TA}
     for i = 1:length(xs)
         if !xs.na[i]
             x = xs.data[i]::TA
@@ -167,7 +167,7 @@ function concrete_minmax{T<:Real, TA}(xs::DataArray{TA}, xmin::T, xmax::T)
 end
 
 
-function concrete_minmax{T}(xs, xmin::T, xmax::T)
+function concrete_minmax(xs, xmin::T, xmax::T) where T
     for x in xs
         if isconcrete(x)
             xT = convert(T, x)
@@ -183,7 +183,7 @@ function concrete_minmax{T}(xs, xmin::T, xmax::T)
 end
 
 
-function concrete_minmax{T, TA}(xs::DataArray{TA}, xmin::T, xmax::T)
+function concrete_minmax(xs::DataArray{TA}, xmin::T, xmax::T) where {T, TA}
     for i = 1:length(xs)
         if !xs.na[i]
             x = xs.data[i]::TA
@@ -200,7 +200,7 @@ function concrete_minmax{T, TA}(xs::DataArray{TA}, xmin::T, xmax::T)
 end
 
 
-function concrete_minmax{T<:Real}(xs::IterTools.Chain, xmin::T, xmax::T)
+function concrete_minmax(xs::IterTools.Chain, xmin::T, xmax::T) where T<:Real
     for obj in xs.xss
         xmin, xmax = concrete_minmax(obj, xmin, xmax)
     end
@@ -210,14 +210,14 @@ end
 
 # Create a new object of type T from a with missing values (i.e., those set to
 # nothing) inherited from b.
-function inherit{T}(a::T, b::T)
+function inherit(a::T, b::T) where T
     c = copy(a)
     inherit!(c, b)
     c
 end
 
 
-function inherit!{T}(a::T, b::T)
+function inherit!(a::T, b::T) where T
     for field in fieldnames(T)
         aval = getfield(a, field)
         bval = getfield(b, field)
@@ -238,7 +238,7 @@ issomething(u) = !isnothing(u)
 negate(f) = x -> !f(x)
 
 
-function has{T,N}(xs::AbstractArray{T,N}, y::T)
+function has(xs::AbstractArray{T,N}, y::T) where {T,N}
     for x in xs
         if x == y
             return true
@@ -274,7 +274,7 @@ end
 
 # Can a numerical value be treated as an integer
 is_int_compatable(::Integer) = true
-is_int_compatable{T <: AbstractFloat}(x::T) = abs(x) < maxintfloat(T) && float(int(x)) == x
+is_int_compatable(x::T) where {T <: AbstractFloat} = abs(x) < maxintfloat(T) && float(int(x)) == x
 is_int_compatable(::Any) = false
 
 
@@ -367,8 +367,8 @@ function color_isless(a::RGBA{Float32}, b::RGBA{Float32})
 end
 
 
-function group_color_isless{S, T <: Colorant}(a::(Tuple{S, T}),
-                                              b::(Tuple{S, T}))
+function group_color_isless(a::(Tuple{S, T}),
+                            b::(Tuple{S, T})) where {S, T <: Colorant}
     if a[1] < b[1]
         return true
     elseif a[1] == b[1]

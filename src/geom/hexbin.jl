@@ -1,6 +1,6 @@
 using Hexagons
 
-immutable HexagonalBinGeometry <: Gadfly.GeometryElement
+struct HexagonalBinGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
 end

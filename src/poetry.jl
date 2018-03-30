@@ -12,7 +12,7 @@
 # Returns:
 #   A plot objects.
 #
-function plot{T <: Base.Callable}(fs::Vector{T}, a::Number, b::Number, elements::ElementOrFunction...; mapping...)
+function plot(fs::Vector{T}, a::Number, b::Number, elements::ElementOrFunction...; mapping...) where T <: Base.Callable
     if isempty(elements)
         elements = ElementOrFunction[]
     elseif isa(elements, Tuple)
@@ -177,7 +177,7 @@ end
 # Hopefully at some point something like this will be in the standard library
 # and then this can be removed (https://github.com/JuliaLang/julia/pull/9340).
 #
-function _findnz{T}(testf::Function, A::AbstractMatrix{T})
+function _findnz(testf::Function, A::AbstractMatrix{T}) where T
     N = Base.count(testf, A)
     is = zeros(Int, N)
     js = zeros(Int, N)

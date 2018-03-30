@@ -9,8 +9,8 @@
 # Returns:
 #   A weighted mean color of type T.
 #
-function weighted_color_mean{S <: Number,T}(
-        cs::AbstractArray{Lab{T},1}, ws::AbstractArray{S,1})
+function weighted_color_mean(
+        cs::AbstractArray{Lab{T},1}, ws::AbstractArray{S,1}) where {S <: Number,T}
     l = 0.0
     a = 0.0
     b = 0.0
@@ -41,7 +41,7 @@ lab_rainbow(l, c, h0, n) = [LCHab(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
 luv_rainbow(l, c, h0, n) = [LCHuv(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
 
 # Helpful for Experimenting
-function plot_color_scale{T <: Color}(colors::Vector{T})
+function plot_color_scale(colors::Vector{T}) where T <: Color
     println(colors)
     canvas(UnitBox(length(colors), 1)) <<
             (compose([rectangle(i-1, 0, 1, 1) << fill(c)

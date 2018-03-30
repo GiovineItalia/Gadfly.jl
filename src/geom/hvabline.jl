@@ -11,7 +11,7 @@ end
 check_arguments(arg, len) = fill(arg, len)
 
 
-immutable HLineGeometry <: Gadfly.GeometryElement
+struct HLineGeometry <: Gadfly.GeometryElement
     color::Union{Vector, Color, (Void)}
     size::Union{Vector, Measure, (Void)}
     style::Union{Vector, Symbol, (Void)}
@@ -53,7 +53,7 @@ function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 end
 
 
-immutable VLineGeometry <: Gadfly.GeometryElement
+struct VLineGeometry <: Gadfly.GeometryElement
     color::Union{Vector, Color, (Void)}
     size::Union{Vector, Measure, (Void)}
     style::Union{Vector, Symbol, (Void)}
@@ -95,7 +95,7 @@ function render(geom::VLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 end
 
 
-immutable ABLineGeometry <: Gadfly.GeometryElement
+struct ABLineGeometry <: Gadfly.GeometryElement
     color::Union{Vector, Color, (Void)}
     size::Union{Vector, Measure, (Void)}
     style::Union{Vector, Symbol, (Void)}

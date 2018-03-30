@@ -1,4 +1,4 @@
-immutable ViolinGeometry <: Gadfly.GeometryElement
+struct ViolinGeometry <: Gadfly.GeometryElement
     order::Int
     tag::Symbol
 end

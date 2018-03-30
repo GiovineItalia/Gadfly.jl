@@ -45,7 +45,7 @@ end
 # Sample enough values to decide whether we're effectively
 # continuous (defined as >90% of the sampled values are unique)
 # By looking at a subset we ensure this isn't a bottleneck
-function estimate_distinct_proportion{T}(values::AbstractArray{T})
+function estimate_distinct_proportion(values::AbstractArray{T}) where T
     uvalues = Set{T}()
     n_sampled = n_tried = 0
     while n_sampled < 15 && n_tried < length(values)

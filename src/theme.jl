@@ -93,7 +93,7 @@ end
     background_color,      ColorOrNothing,  nothing
 
     # Padding around the entire plot
-    plot_padding,          (@compat Vector{<:Measure}),         [5mm]
+    plot_padding,          (Vector{<:Measure}),         [5mm]
 
     # Grid line color.
     grid_color,            ColorOrNothing,  colorant"#D0D0E0"
@@ -275,7 +275,7 @@ Register a theme by name.
 
 See also: push_theme, with_theme
 """
-get_theme{name}(::Val{name}) = error("No theme $name found")
+get_theme(::Val{name}) where {name} = error("No theme $name found")
 
 
 

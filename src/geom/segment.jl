@@ -1,7 +1,7 @@
 # Geometry for vectors/arrows/segments
 
 
-immutable SegmentGeometry <: Gadfly.GeometryElement
+struct SegmentGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
      arrow::Bool
      filled::Bool
@@ -32,7 +32,7 @@ function render(geom::SegmentGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
     
     Gadfly.assert_aesthetics_defined("Geom.segment", aes, :x, :y, :xend, :yend)
 
-    function arrow{T<:Real}(x::T, y::T, xmax::T, ymax::T, xyrange::Vector{T})
+    function arrow(x::T, y::T, xmax::T, ymax::T, xyrange::Vector{T}) where T<:Real
         dx = xmax-x
         dy = ymax-y
         vl = 0.225*hypot(dy/xyrange[2], dx/xyrange[1])
