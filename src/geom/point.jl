@@ -1,6 +1,6 @@
 # Geometry which displays points at given (x, y) positions.
 
-immutable PointGeometry <: Gadfly.GeometryElement
+struct PointGeometry <: Gadfly.GeometryElement
     tag::Symbol
 end
 PointGeometry(; tag=empty_tag) = PointGeometry(tag)

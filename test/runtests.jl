@@ -12,57 +12,51 @@ branch = LibGit2.headname(repo)
 outputdir = joinpath(@__DIR__, mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
         "cachedoutput" : "gennedoutput")
 
-if VERSION>=v"0.6"
-    # delete outputdir/
-    options = LibGit2.StatusOptions(flags=LibGit2.Consts.STATUS_OPT_INCLUDE_IGNORED |
-                                          LibGit2.Consts.STATUS_OPT_RECURSE_IGNORED_DIRS)
-    status = LibGit2.GitStatus(repo, status_opts=options)
+options = LibGit2.StatusOptions(flags=LibGit2.Consts.STATUS_OPT_INCLUDE_IGNORED |
+                                      LibGit2.Consts.STATUS_OPT_RECURSE_IGNORED_DIRS)
+status = LibGit2.GitStatus(repo, status_opts=options)
+for i in 1:length(status)
+    entry = status[i]
+    index_to_workdir = unsafe_load(entry.index_to_workdir)
+    if index_to_workdir.status == Int(LibGit2.Consts.DELTA_IGNORED)
+        filepath = unsafe_string(index_to_workdir.new_file.path)
+        startswith(filepath,joinpath("test",outputdir)) || continue
+        rm(joinpath(dirname(@__DIR__),filepath))
+    end
+end
+function mimic_git_log_n1(io::IO, head)
+    hash = LibGit2.GitHash(head)
+    println(io, "commit ",string(hash))
+    commit = LibGit2.GitCommit(repo, hash)
+    author = LibGit2.author(commit)
+    println(io, "Author: ",author.name," <",author.email,">")
+    datetime = Dates.unix2datetime(author.time + 60*author.time_offset)
+    println(io, "Date:   ",Dates.format(datetime, "e u d HH:MM:SS YYYY"))
+    println(io, "    ",LibGit2.message(commit))
+end
+function mimic_git_status(io::IO, head)
+    println(io, "On branch ",LibGit2.shortname(head))
+    status = LibGit2.GitStatus(repo)
+    println(io, "Changes not staged for commit:")
     for i in 1:length(status)
         entry = status[i]
         index_to_workdir = unsafe_load(entry.index_to_workdir)
-        if index_to_workdir.status == Int(LibGit2.Consts.DELTA_IGNORED)
-            filepath = unsafe_string(index_to_workdir.new_file.path)
-            startswith(filepath,joinpath("test",outputdir)) || continue
-            rm(joinpath(dirname(@__DIR__),filepath))
+        if index_to_workdir.status == Int(LibGit2.Consts.DELTA_MODIFIED)
+            println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
         end
     end
-
-    function mimic_git_log_n1(io::IO, head)
-        hash = LibGit2.GitHash(head)
-        println(io, "commit ",string(hash))
-        commit = LibGit2.GitCommit(repo, hash)
-        author = LibGit2.author(commit)
-        println(io, "Author: ",author.name," <",author.email,">")
-        datetime = Dates.unix2datetime(author.time + 60*author.time_offset)
-        println(io, "Date:   ",Dates.format(datetime, "e u d HH:MM:SS YYYY"))
-        println(io, "    ",LibGit2.message(commit))
-    end
-
-    function mimic_git_status(io::IO, head)
-        println(io, "On branch ",LibGit2.shortname(head))
-        status = LibGit2.GitStatus(repo)
-        println(io, "Changes not staged for commit:")
-        for i in 1:length(status)
-            entry = status[i]
-            index_to_workdir = unsafe_load(entry.index_to_workdir)
-            if index_to_workdir.status == Int(LibGit2.Consts.DELTA_MODIFIED)
-                println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
-            end
-        end
-        println(io, "Untracked files:")
-        for i in 1:length(status)
-            entry = status[i]
-            index_to_workdir = unsafe_load(entry.index_to_workdir)
-            if index_to_workdir.status == Int(LibGit2.Consts.DELTA_UNTRACKED)
-                println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
-            end
+    println(io, "Untracked files:")
+    for i in 1:length(status)
+        entry = status[i]
+        index_to_workdir = unsafe_load(entry.index_to_workdir)
+        if index_to_workdir.status == Int(LibGit2.Consts.DELTA_UNTRACKED)
+            println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
         end
     end
-
-    head = LibGit2.head(repo)
-    open(io->mimic_git_log_n1(io,head), joinpath(outputdir,"git.log"), "w")
-    open(io->mimic_git_status(io,head), joinpath(outputdir,"git.status"), "w")
 end
+head = LibGit2.head(repo)
+open(io->mimic_git_log_n1(io,head), joinpath(outputdir,"git.log"), "w")
+open(io->mimic_git_status(io,head), joinpath(outputdir,"git.status"), "w")
 
 backends = Dict{AbstractString, Function}(
     "svg" => name -> SVG(joinpath(outputdir,"$(name).svg")),

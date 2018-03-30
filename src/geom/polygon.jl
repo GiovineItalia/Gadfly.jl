@@ -1,4 +1,4 @@
-immutable PolygonGeometry <: Gadfly.GeometryElement
+struct PolygonGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     order::Int
     fill::Bool
@@ -13,7 +13,7 @@ const polygon = PolygonGeometry
 
 element_aesthetics(::PolygonGeometry) = [:x, :y, :color, :group]
 
-ellipse(;distribution::(@compat Type{<:ContinuousMultivariateDistribution})=MvNormal,
+ellipse(;distribution::(Type{<:ContinuousMultivariateDistribution})=MvNormal,
     levels::Vector=[0.95], nsegments::Int=51, fill::Bool=false) =
     PolygonGeometry(Gadfly.Stat.ellipse(distribution, levels, nsegments), preserve_order=true, fill=fill)
 

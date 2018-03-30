@@ -1,4 +1,4 @@
-immutable RectangularBinGeometry <: Gadfly.GeometryElement
+struct RectangularBinGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
 end

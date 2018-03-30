@@ -256,19 +256,19 @@ function cat_aes_var!(a::Dict, b::Dict)
     a
 end
 
-cat_aes_var!{T <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{T}) = append!(a, b)
-cat_aes_var!{T <: Base.Callable, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U}) =
+cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{T}) where {T <: Base.Callable} = append!(a, b)
+cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T <: Base.Callable, U <: Base.Callable} =
         a=[promote(a..., b...)...]
 
 # Let arrays of numbers clobber arrays of functions. This is slightly odd
 # behavior, comes up with with function statistics applied on a layer-wise
 # basis.
-cat_aes_var!{T <: Base.Callable, U}(a::AbstractArray{T}, b::AbstractArray{U}) = b
-cat_aes_var!{T, U <: Base.Callable}(a::AbstractArray{T}, b::AbstractArray{U}) = a
-cat_aes_var!{T}(a::AbstractArray{T}, b::AbstractArray{T}) = append!(a, b)
+cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T <: Base.Callable, U} = b
+cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U <: Base.Callable} = a
+cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{T}) where {T} = append!(a, b)
 cat_aes_var!(a, b) = a
 
-function cat_aes_var!{T, U}(a::AbstractArray{T}, b::AbstractArray{U})
+function cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U}
     V = promote_type(T, U)
     if isa(a, DataArray) || isa(b, DataArray)
         ab = DataArray(V, length(a) + length(b))
@@ -302,8 +302,8 @@ end
 #   A Array{Aesthetics} of size max(1, length(xgroup)) by
 #   max(1, length(ygroup))
 #
-function by_xy_group{T <: Union{Data, Aesthetics}}(aes::T, xgroup, ygroup,
-                                                   num_xgroups, num_ygroups)
+function by_xy_group(aes::T, xgroup, ygroup,
+                     num_xgroups, num_ygroups) where T <: Union{Data, Aesthetics}
     @assert xgroup === nothing || ygroup === nothing || length(xgroup) == length(ygroup)
 
     n = num_ygroups
@@ -320,10 +320,10 @@ function by_xy_group{T <: Union{Data, Aesthetics}}(aes::T, xgroup, ygroup,
 
     xgroup === nothing && ygroup === nothing && return aes_grid
 
-    make_pooled_array{T,R,N,RA}(::Type{IndirectArray{T,R,N,RA}}, arr::AbstractArray) =
+    make_pooled_array(::Type{IndirectArray{T,R,N,RA}}, arr::AbstractArray) where {T,R,N,RA} =
             IndirectArray(convert(Array{T}, arr))
-    make_pooled_array{T,R,N,RA}(::Type{IndirectArray{T,R,N,RA}},
-            arr::IndirectArray{T,R,N,RA}) = arr
+    make_pooled_array(::Type{IndirectArray{T,R,N,RA}},
+            arr::IndirectArray{T,R,N,RA}) where {T,R,N,RA} = arr
 
     for var in fieldnames(T)
         # Skipped aesthetics. Don't try to partition aesthetics for which it

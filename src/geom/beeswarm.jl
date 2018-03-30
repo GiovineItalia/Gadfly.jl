@@ -1,4 +1,4 @@
-immutable BeeswarmGeometry <: Gadfly.GeometryElement
+struct BeeswarmGeometry <: Gadfly.GeometryElement
     # :vertical or :horizontal
     orientation::Symbol
     padding::Measure

@@ -56,7 +56,7 @@ end
 
 
 # Transformations on continuous scales
-immutable ContinuousScaleTransform
+struct ContinuousScaleTransform
     f::Function     # transform function
     finv::Function  # f's inverse
 
@@ -91,7 +91,7 @@ const sqrt_transform = ContinuousScaleTransform(sqrt, x -> x^2, sqrt_formatter)
 
 # Continuous scale maps data on a continuous scale simple by calling
 # `convert(Float64, ...)`.
-immutable ContinuousScale <: Gadfly.ScaleElement
+struct ContinuousScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
     trans::ContinuousScaleTransform
     minvalue
@@ -324,12 +324,12 @@ function discretize(values, levels=nothing, order=nothing, preserve_order=true)
 end
 
 
-immutable DiscreteScaleTransform
+struct DiscreteScaleTransform
     f::Function
 end
 
 
-immutable DiscreteScale <: Gadfly.ScaleElement
+struct DiscreteScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
 
     # Labels are either a function that takes an array of values and returns
@@ -402,7 +402,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
 end
 
 
-immutable NoneColorScale <: Gadfly.ScaleElement
+struct NoneColorScale <: Gadfly.ScaleElement
 end
 
 const color_none = NoneColorScale
@@ -417,7 +417,7 @@ function apply_scale(scale::NoneColorScale,
 end
 
 
-immutable IdentityColorScale <: Gadfly.ScaleElement
+struct IdentityColorScale <: Gadfly.ScaleElement
 end
 
 const color_identity = IdentityColorScale
@@ -434,7 +434,7 @@ function apply_scale(scale::IdentityColorScale,
 end
 
 
-immutable DiscreteColorScale <: Gadfly.ScaleElement
+struct DiscreteColorScale <: Gadfly.ScaleElement
     f::Function # A function f(n) that produces a vector of n colors.
 
     # If non-nothing, give values for the scale. Order will be respected and
@@ -537,7 +537,7 @@ function apply_scale(scale::DiscreteColorScale,
 end
 
 
-immutable ContinuousColorScale <: Gadfly.ScaleElement
+struct ContinuousColorScale <: Gadfly.ScaleElement
     # A function of the form f(p) where 0 <= p <= 1, that returns a color.
     f::Function
     trans::ContinuousScaleTransform
@@ -668,7 +668,7 @@ end
 
 # Label scale is always discrete, hence we call it 'label' rather
 # 'label_discrete'.
-immutable LabelScale <: Gadfly.ScaleElement
+struct LabelScale <: Gadfly.ScaleElement
 end
 
 function apply_scale(scale::LabelScale,
@@ -685,7 +685,7 @@ const label = LabelScale
 
 
 # Scale applied to grouping aesthetics.
-immutable GroupingScale <: Gadfly.ScaleElement
+struct GroupingScale <: Gadfly.ScaleElement
     var::Symbol
 end
 
@@ -697,7 +697,7 @@ ygroup(; labels=nothing, levels=nothing, order=nothing) =
 
 
 # Catchall scale for when no transformation of the data is necessary
-immutable IdentityScale <: Gadfly.ScaleElement
+struct IdentityScale <: Gadfly.ScaleElement
     var::Symbol
 end
 

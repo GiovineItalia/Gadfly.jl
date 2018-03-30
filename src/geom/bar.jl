@@ -1,5 +1,5 @@
 # Bar geometry summarizes data as vertical bars.
-immutable BarGeometry <: Gadfly.GeometryElement
+struct BarGeometry <: Gadfly.GeometryElement
     position::Symbol  # :stack (default) or :dodge
     orientation::Symbol # :vertical (default) or :horizontal
     default_statistic::Gadfly.StatisticElement

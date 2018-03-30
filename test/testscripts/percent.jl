@@ -4,7 +4,7 @@ set_default_plot_size(6inch, 6inch)
 
 import Base: show, +, -, /, *, isless, one, zero, isfinite
 
-immutable Percent
+struct Percent
     value::Float64
 end
 

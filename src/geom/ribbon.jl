@@ -1,4 +1,4 @@
-immutable RibbonGeometry <: Gadfly.GeometryElement
+struct RibbonGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
 end

@@ -5,7 +5,7 @@ using DataFrames
 import IterTools
 import Base: ==
 
-immutable GroupedColumn
+struct GroupedColumn
     columns::Nullable{Vector}
 end
 
@@ -20,9 +20,9 @@ Base.show(io::IO, gc::GroupedColumn) = print(io, "Column")
 
 index() = GroupedColumn(Nullable{Vector}())
 
-index{T <: (Union{Int, Symbol})}(xs::T...) = GroupedColumn(Nullable(collect(T, xs)))
+index(xs::T...) where {T <: (Union{Int, Symbol})} = GroupedColumn(Nullable(collect(T, xs)))
 
-immutable GroupedColumnValue
+struct GroupedColumnValue
     columns::Nullable{Vector}
 end
 
@@ -30,7 +30,7 @@ Base.show(io::IO, gc::GroupedColumnValue) = print(io, "Column Value")
 
 value() = GroupedColumnValue(Nullable{Vector}())
 
-value{T <: (Union{Int, Symbol})}(xs::T...) = GroupedColumnValue(Nullable(collect(T, xs)))
+value(xs::T...) where {T <: (Union{Int, Symbol})} = GroupedColumnValue(Nullable(collect(T, xs)))
 
 end # module Col
 
@@ -40,13 +40,13 @@ module Row
 using Compat
 
 # represent a row index correspondig to a set of columns
-immutable GroupedColumnRowIndex
+struct GroupedColumnRowIndex
     columns::Nullable{Vector}
 end
 
 index() = GroupedColumnRowIndex(Nullable{Vector}())
 
-index{T <: (Union{Int, Symbol})}(xs::T...) = GroupedColumnRowIndex(Nullable(collect(T, xs)))
+index(xs::T...) where {T <: (Union{Int, Symbol})} = GroupedColumnRowIndex(Nullable(collect(T, xs)))
 
 end # module Row
 
@@ -80,7 +80,7 @@ end
 
 
 # Type to contain fields produced by melting data (and to dispatch on)
-immutable MeltedData
+struct MeltedData
     data
     melted_data
     row_indicators::Array

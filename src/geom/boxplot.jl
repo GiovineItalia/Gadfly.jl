@@ -1,4 +1,4 @@
-immutable BoxplotGeometry <: Gadfly.GeometryElement
+struct BoxplotGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     suppress_outliers::Bool
     tag::Symbol

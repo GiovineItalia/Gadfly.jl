@@ -1,4 +1,4 @@
-immutable LabelGeometry <: Gadfly.GeometryElement
+struct LabelGeometry <: Gadfly.GeometryElement
     # One of :dynamic, :left, :right, :above, :below, :centered
     position::Symbol
 
@@ -278,7 +278,7 @@ function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
         hpos, vpos, xoff, yoff = label_layouts[geom.position]
 
         return compose!(context(),
-            (context(), text([Compose.x_measure(x)for x in aes.x],
+            (context(), text([Compose.x_measure(x) for x in aes.x],
                  [Compose.y_measure(y) for y in aes.y],
                  aes.label,
                  [hpos], [vpos], [Rotation()], [(xoff,yoff)], tag=geom.tag),
