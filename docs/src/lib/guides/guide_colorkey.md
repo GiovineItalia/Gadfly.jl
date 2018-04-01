@@ -28,10 +28,10 @@ Gadfly.set_default_plot_size(16cm, 8cm)
 
 ```@example 1
 Dsleep = dataset("ggplot2", "msleep")[[:Vore,:BrainWt,:BodyWt,:SleepTotal]]
-completecases!(Dsleep)
+DataFrames.complete_cases!(Dsleep)
 Dsleep[:SleepTime] = Dsleep[:SleepTotal] .> 8
 plot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:SleepTime, 
-    Guide.colorkey(title="Sleep \n(hours/day)\n ", labels=[">8","≤8"]),
+    Guide.colorkey(title="Sleep", labels=[">8","≤8"]),
     Scale.x_log10, Scale.y_log10 )
 
 ```
