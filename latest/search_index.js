@@ -117,7 +117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Plotting",
     "title": "Plotting arrays",
     "category": "section",
-    "text": "If no plot elements are defined, point geometry is added by default. The point geometry takes as input the x and y aesthetics. So all that\'s needed to draw a scatterplot is to bind x and y.using Gadfly\nsrand(12345)# E.g.\np = # hide\nplot(x=rand(10), y=rand(10))(Image: )Multiple elements can use the same aesthetics to produce different output. Here the point and line geometries act on the same data and their results are layered.# E.g.\nplot(x=rand(10), y=rand(10), Geom.point, Geom.line)More complex plots can be produced by combining elements.# E.g.\nplot(x=1:10, y=2.^rand(10),\n     Scale.y_sqrt, Geom.point, Geom.smooth,\n     Guide.xlabel(\"Stimulus\"), Guide.ylabel(\"Response\"), Guide.title(\"Dog Training\"))To generate an image file from a plot, use the draw function. Gadfly supports a number of drawing Backends."
+    "text": "If no plot elements are defined, point geometry is added by default. The point geometry takes as input the x and y aesthetics. So all that\'s needed to draw a scatterplot is to bind x and y.using Gadfly\nsrand(12345)# E.g.\np = # hide\nplot(x=rand(10), y=rand(10))Multiple elements can use the same aesthetics to produce different output. Here the point and line geometries act on the same data and their results are layered.# E.g.\nplot(x=rand(10), y=rand(10), Geom.point, Geom.line)More complex plots can be produced by combining elements.# E.g.\nplot(x=1:10, y=2.^rand(10),\n     Scale.y_sqrt, Geom.point, Geom.smooth,\n     Guide.xlabel(\"Stimulus\"), Guide.ylabel(\"Response\"), Guide.title(\"Dog Training\"))To generate an image file from a plot, use the draw function. Gadfly supports a number of drawing Backends."
 },
 
 {
@@ -165,7 +165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Layers and Stacks",
     "title": "Layers",
     "category": "section",
-    "text": "Draw multiple layers onto the same plot withplot(layer(x=rand(10), y=rand(10), Geom.point),\n     layer(x=rand(10), y=rand(10), Geom.line))Or if your data is in a DataFrame:plot(my_data, layer(x=\"some_column1\", y=\"some_column2\", Geom.point),\n              layer(x=\"some_column3\", y=\"some_column4\", Geom.line))You can also pass different data frames to each layers:layer(another_dataframe, x=\"col1\", y=\"col2\", Geom.point)Ordering of layers can be controlled with the order keyword. A higher order number will cause a layer to be drawn on top of any layers with a lower number. If not specified, default order for a layer is 0.plot(layer(x=rand(10), y=rand(10), Geom.point, order=1),\n     layer(x=rand(10), y=rand(10), Geom.line, order=2))Guide attributes may be added to a multi-layer plots:plt=plot(layer(x=rand(10), y=rand(10), Geom.point),\n         layer(x=rand(10), y=rand(10), Geom.line),\n         Guide.XLabel(\"XLabel\"),\n         Guide.YLabel(\"YLabel\"),\n         Guide.Title(\"Title\"));"
+    "text": "Draw multiple layers onto the same plot withusing Gadfly\nusing Compose\nsrand(123)\nGadfly.set_default_plot_size(12cm, 8cm)plot(layer(x=rand(10), y=rand(10), Geom.point),\n     layer(x=rand(10), y=rand(10), Geom.line))Or if your data is in a DataFrame:plot(my_data, layer(x=\"some_column1\", y=\"some_column2\", Geom.point),\n              layer(x=\"some_column3\", y=\"some_column4\", Geom.line))You can also pass different data frames to each layer:layer(another_dataframe, x=\"col1\", y=\"col2\", Geom.point)Ordering of layers in the Z direction can be controlled with the order keyword. A higher order number will cause a layer to be drawn on top of any layers with a lower number. If not specified, default order for a layer is 0.# using stacks (see below)\nxs = rand(0:10, 100, 2)\np1 = plot(layer(x=xs[:, 1], color=[colorant\"orange\"], Geom.histogram),\n          layer(x=xs[:, 2], Geom.histogram), Guide.title(\"Default ordering\"))\np2 = plot(layer(x=xs[:, 1], color=[colorant\"orange\"], Geom.histogram, order=1),\n          layer(x=xs[:, 2], Geom.histogram, order=2),\n          Guide.title(\"Manual ordering\"))\nhstack(p1, p2)Guide attributes may be added to a multi-layer plots:plt=plot(layer(x=rand(10), y=rand(10), Geom.point),\n         layer(x=rand(10), y=rand(10), Geom.line),\n         Guide.xlabel(\"x label\"),\n         Guide.ylabel(\"y label\"),\n         Guide.title(\"Title\"))"
 },
 
 {
@@ -173,7 +173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Layers and Stacks",
     "title": "Stacks",
     "category": "section",
-    "text": "Plots can also be stacked horizontally with hstack or vertically with vstack, and arranged into a rectangular array with gridstack. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.  Use title to add a descriptive string at the top, and context() to leave a panel empty.p1 = plot(x=[1,2,3], y=[4,5,6])\np2 = plot(x=[1,2,3], y=[6,7,8])\nvstack(p1,p2)\n\np3 = plot(x=[5,7,8], y=[8,9,10])\np4 = plot(x=[5,7,8], y=[10,11,12])\n\n# these two are equivalent\nvstack(hstack(p1,p2),hstack(p3,p4))\ngridstack([p1 p2; p3 p4])\n\ntitle(hstack(p3,p4), \"My great data\")\n\n# empty panel\ngridstack(Union{Plot,Compose.Context}[p1 p2; p3 Compose.context()])"
+    "text": "Plots can also be stacked horizontally with hstack or vertically with vstack, and arranged into a rectangular array with gridstack. This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.  p1 = plot(x=[1,2,3], y=[4,5,6]);\np2 = plot(x=[1,2,3], y=[6,7,8]);\nhstack(p1,p2)Gadfly.set_default_plot_size(12cm, 10cm) # hide\np3 = plot(x=[5,7,8], y=[8,9,10]);\np4 = plot(x=[5,7,8], y=[10,11,12]);\n\n# these two are equivalent\nvstack(hstack(p1,p2),hstack(p3,p4));\ngridstack([p1 p2; p3 p4])You can use title to add a descriptive string to the top of a stackGadfly.set_default_plot_size(12cm, 8cm) # hide\ntitle(hstack(p3,p4), \"My great data\")You can also leave panels empty in a stack by passing a Compose.context() objectGadfly.set_default_plot_size(12cm, 10cm) # hide\n# empty panel\ngridstack(Union{Plot,Compose.Context}[p1 p2; p3 Compose.context()])"
 },
 
 {
@@ -1437,7 +1437,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.annotation",
     "title": "Examples",
     "category": "section",
-    "text": "using Compose\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(sin, 0, 2pi,\n     Guide.annotation(\n       compose(context(), circle([pi/2, 3*pi/2], [1.0, -1.0], [2mm]), fill(nothing),\n       stroke(\"orange\"))))"
+    "text": "using Compose\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(sin, 0, 2pi,\n     Guide.annotation(\n       compose(context(), Shape.circle([pi/2, 3*pi/2], [1.0, -1.0], [2mm]), fill(nothing),\n       stroke(\"orange\"))))"
 },
 
 {
@@ -1477,7 +1477,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guide.colorkey",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Compose\nusing Gadfly\nGadfly.set_default_plot_size(16cm, 8cm)Dsleep = dataset(\"ggplot2\", \"msleep\")[[:Vore,:BrainWt,:BodyWt,:SleepTotal]]\ncompletecases!(Dsleep)\nDsleep[:SleepTime] = Dsleep[:SleepTotal] .> 8\nplot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:SleepTime, \n    Guide.colorkey(title=\"Sleep \\n(hours/day)\\n \", labels=[\">8\",\"≤8\"]),\n    Scale.x_log10, Scale.y_log10 )\niris = dataset(\"datasets\",\"iris\")\npa = plot(iris, x=:SepalLength, y=:PetalLength, color=:Species, Geom.point,\n      Theme(key_position=:inside) )\npb = plot(iris, x=:SepalLength, y=:PetalLength, color=:Species, Geom.point, \n      Guide.colorkey(title=\"Iris\", pos=[0.05w,-0.28h]) )\nhstack(pa, pb)"
+    "text": "using RDatasets\nusing Compose\nusing Gadfly\nGadfly.set_default_plot_size(16cm, 8cm)Dsleep = dataset(\"ggplot2\", \"msleep\")[[:Vore,:BrainWt,:BodyWt,:SleepTotal]]\nDataFrames.complete_cases!(Dsleep)\nDsleep[:SleepTime] = Dsleep[:SleepTotal] .> 8\nplot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:SleepTime, \n    Guide.colorkey(title=\"Sleep\", labels=[\">8\",\"≤8\"]),\n    Scale.x_log10, Scale.y_log10 )\niris = dataset(\"datasets\",\"iris\")\npa = plot(iris, x=:SepalLength, y=:PetalLength, color=:Species, Geom.point,\n      Theme(key_position=:inside) )\npb = plot(iris, x=:SepalLength, y=:PetalLength, color=:Species, Geom.point, \n      Guide.colorkey(title=\"Iris\", pos=[0.05w,-0.28h]) )\nhstack(pa, pb)"
 },
 
 {
