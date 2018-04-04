@@ -34,8 +34,6 @@ p = # hide
 plot(x=rand(10), y=rand(10))
 ```
 
-![](plot-arrays-1.svg)
-
 Multiple elements can use the same aesthetics to produce different output. Here
 the point and line geometries act on the same data and their results are
 layered.
