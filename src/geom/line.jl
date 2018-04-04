@@ -58,7 +58,7 @@ function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = IndirectArray(RGBA{Float32}[theme.default_color])
+    default_aes.color = discretize_make_ia(RGBA{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
     ctx = context(order=geom.order)

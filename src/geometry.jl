@@ -14,7 +14,7 @@ import Compose.combine # Prevent DataFrame.combine from taking over.
 import Gadfly: render, layers, element_aesthetics, inherit, escape_id,
                default_statistic, default_scales, element_coordinate_type,
                ScaleElement, svg_color_class_from_label, isconcrete,
-               concretize
+               concretize, discretize_make_ia
 import IterTools: chain, distinct, takestrict
 import Compat.Iterators: cycle, product, repeated
 

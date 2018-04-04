@@ -392,3 +392,27 @@ function trim_zip(xs...)
         zip([length(x) == mn ? x : x[1:mn] for x in xs]...)
     end
 end
+
+# Convenience constructors of IndirectArrays
+discretize_make_ia(values::AbstractVector, levels) =
+    IndirectArray(Array{UInt8}(indexin(values, levels)), levels)
+discretize_make_ia(values::AbstractVector)         = discretize_make_ia(values, unique(values))
+discretize_make_ia(values::AbstractVector, ::Void) = discretize_make_ia(values)
+
+discretize_make_ia(values::IndirectArray)         = values
+discretize_make_ia(values::IndirectArray, ::Void) = values
+
+discretize_make_ia(values::CategoricalArray) =
+    discretize_make_ia(values, intersect(push!(levels(values), missing), unique(values)))
+discretize_make_ia(values::CategoricalArray, ::Void) = discretize_make_ia(values)
+function discretize_make_ia(values::CategoricalArray{T}, levels::Vector) where {T}
+    mapping = coalesce.(indexin(CategoricalArrays.index(values.pool), levels), 0)
+    unshift!(mapping, coalesce(findfirst(ismissing, levels), 0))
+    index = [mapping[x+1] for x in values.refs]
+    any(iszero, index) && throw(ArgumentError("values not in levels encountered"))
+    return IndirectArray(index, convert(Vector{T},levels))
+end
+function discretize_make_ia(values::CategoricalArray{T}, levels::CategoricalVector{T}) where T
+    _levels = map!(t -> ismissing(t) ? t : get(t), Vector{T}(length(levels)), levels)
+    discretize_make_ia(values, _levels)
+end

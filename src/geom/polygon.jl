@@ -38,7 +38,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
     Gadfly.assert_aesthetics_defined("Geom.polygon", aes, :x, :y)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = IndirectArray(RGBA{Float32}[theme.default_color])
+    default_aes.color = discretize_make_ia(RGBA{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
     ctx = context(order=geom.order)

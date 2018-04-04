@@ -16,7 +16,7 @@ Loess
 Showoff 0.0.3
 StatsBase
 Juno
-IndirectArrays 0.4.1
+IndirectArrays 0.4.2
 Missings
 # Gadfly doesn't use WeakRefString directly but because of a bug in Julia 0.6.2, Gadfly
 # will trigger a ambiguity error between WeakRefString methods. A temporary method was

@@ -10,7 +10,7 @@ using Showoff
 using IndirectArrays
 using CategoricalArrays
 
-import Gadfly: element_aesthetics, isconcrete, concrete_length
+import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia
 import Distributions: Distribution
 
 include("color_misc.jl")
@@ -254,53 +254,6 @@ function apply_scale_typed!(ds, field, scale::ContinuousScale)
     end
 end
 
-# Reorder the levels of a pooled data array
-function reorder_levels(da::IndirectArray, order::AbstractVector)
-    level_values = da.values
-    length(order) != length(level_values) &&
-            error("Discrete scale order is not of the same length as the data's levels.")
-    permute!(level_values, order)
-    return IndirectArray(da, level_values)
-end
-
-discretize_make_ia(values::Vector)         = IndirectArray(values)
-discretize_make_ia(values::Vector, ::Void) = IndirectArray(values)
-discretize_make_ia(values::Vector, levels) =
-    IndirectArray(map(t -> findfirst(levels, t), values), levels)
-
-discretize_make_ia(values::DataArray)         = IndirectArray(values)
-discretize_make_ia(values::DataArray, ::Void) = IndirectArray(values)
-discretize_make_ia(values::DataArray, levels) =
-    IndirectArray(convert(DataArray{eltype(levels)}, values), levels)
-
-discretize_make_ia(values::Range)         = IndirectArray(collect(values))
-discretize_make_ia(values::Range, ::Void) = IndirectArray(collect(values))
-discretize_make_ia(values::Range, levels) = IndirectArray(collect(values), levels)
-
-discretize_make_ia(values::IndirectArray)         = values
-discretize_make_ia(values::IndirectArray, ::Void) = values
-discretize_make_ia(values::IndirectArray, levels) = IndirectArray(values, levels)
-
-discretize_make_ia(values::CategoricalArray) =
-    discretize_make_ia(values, intersect(push!(levels(values), missing), unique(values)))
-discretize_make_ia(values::CategoricalArray, ::Void) = discretize_make_ia(values)
-function discretize_make_ia(values::CategoricalArray{T}, levels::Vector) where {T}
-    mapping = coalesce.(indexin(CategoricalArrays.index(values.pool), levels), 0)
-    unshift!(mapping, coalesce(findfirst(ismissing, levels), 0))
-    index = [mapping[x+1] for x in values.refs]
-    any(iszero, index) && throw(ArgumentError("values not in levels encountered"))
-    return IndirectArray(index, convert(Vector{T},levels))
-end
-function discretize_make_ia(values::CategoricalArray{T}, levels::CategoricalVector{T}) where T
-    _levels = map!(t -> ismissing(t) ? t : get(t), Vector{T}(length(levels)), levels)
-    discretize_make_ia(values, _levels)
-end
-
-# These methods convert WeakRefStringArrays to Vector{String} and shouldn't really be necessary
-# since it has been decided that WeakRefStrings shouldn't be used externally anymore
-discretize_make_ia(s::AbstractArray{<:AbstractString})         = discretize_make_ia(Vector{String}(s))
-discretize_make_ia(s::AbstractArray{<:AbstractString}, levels) = discretize_make_ia(Vector{String}(s), levels)
-
 function discretize(values, levels=nothing, order=nothing, preserve_order=true)
     if levels == nothing
         if preserve_order
@@ -317,7 +270,7 @@ function discretize(values, levels=nothing, order=nothing, preserve_order=true)
     end
 
     if order != nothing
-        return reorder_levels(da, order)
+        return discretize_make_ia(da, da.values[order])
     else
         return da
     end
@@ -374,7 +327,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
             getfield(data, var) === nothing && continue
 
             disc_data = discretize(getfield(data, var), scale.levels, scale.order)
-            setfield!(aes, var, IndirectArray([round(Int64,x) for x in disc_data.index]))
+            setfield!(aes, var, discretize_make_ia(Int64.(disc_data.index)))
 
             # The leveler for discrete scales is a closure over the discretized data.
             if scale.labels === nothing
@@ -428,7 +381,7 @@ function apply_scale(scale::IdentityColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
-        aes.color = IndirectArray(data.color)
+        aes.color = discretize_make_ia(data.color)
         aes.color_key_colors = Dict()
     end
 end
@@ -525,7 +478,7 @@ function apply_scale(scale::DiscreteColorScale,
 
         colorvals = colors[ds.index]
 
-        colored_ds = IndirectArray(colorvals, colors)
+        colored_ds = discretize_make_ia(colorvals, colors)
         aes.color = colored_ds
 
         aes.color_label = labeler

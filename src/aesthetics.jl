@@ -235,7 +235,6 @@ function concat(aess::Aesthetics...)
                              mv == nothing ? mu :
                                  max(mu, mv))
             else
-                cat_aes_var!(getfield(cataes, var), getfield(aes, var))
                 setfield!(cataes, var,
                           cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
             end
@@ -288,6 +287,12 @@ function cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U}
     return ab
 end
 
+function cat_aes_var!(xs::IndirectArray{T,1}, ys::IndirectArray{S,1}) where {T, S}
+    TS = promote_type(T, S)
+    return append!(IndirectArray(xs.index, Array{TS}(xs.values)),
+                   IndirectArray(ys.index, Array{TS}(ys.values)))
+end
+
 # Summarizing aesthetics
 
 # Produce a matrix of Aesthetic or Data objects partitioning the original
@@ -320,8 +325,10 @@ function by_xy_group(aes::T, xgroup, ygroup,
 
     xgroup === nothing && ygroup === nothing && return aes_grid
 
-    make_pooled_array(::Type{IndirectArray{T,R,N,RA}}, arr::AbstractArray) where {T,R,N,RA} =
-            IndirectArray(convert(Array{T}, arr))
+    function make_pooled_array(::Type{IndirectArray{T,N,A,V}}, arr::AbstractArray) where {T,N,A,V}
+        uarr = unique(arr)
+        return IndirectArray(A(indexin(arr, uarr)), V(uarr))
+    end
     make_pooled_array(::Type{IndirectArray{T,R,N,RA}},
             arr::IndirectArray{T,R,N,RA}) where {T,R,N,RA} = arr
 

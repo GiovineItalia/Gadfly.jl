@@ -17,7 +17,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
                                           element_aesthetics(geom)...)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = IndirectArray(RGB{Float32}[theme.default_color])
+    default_aes.color = discretize_make_ia(RGB{Float32}[theme.default_color])
     aes = inherit(aes, default_aes)
 
     aes_x, aes_ymin, aes_ymax = concretize(aes.x, aes.ymin, aes.ymax)
