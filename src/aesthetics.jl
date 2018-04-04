@@ -235,8 +235,6 @@ function concat(aess::Aesthetics...)
                              mv == nothing ? mu :
                                  max(mu, mv))
             else
-                cat_aes_var!(getfield(cataes, var), getfield(aes, var))
-                @show var, getfield(aes, var)
                 setfield!(cataes, var,
                           cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
             end
@@ -287,6 +285,12 @@ function cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U}
     end
 
     return ab
+end
+
+function cat_aes_var!(xs::IndirectArray{T,1}, ys::IndirectArray{S,1}) where {T, S}
+    TS = promote_type(T, S)
+    return append!(IndirectArray(xs.index, Array{TS}(xs.values)),
+                   IndirectArray(ys.index, Array{TS}(ys.values)))
 end
 
 # Summarizing aesthetics
