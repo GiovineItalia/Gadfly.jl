@@ -254,15 +254,6 @@ function apply_scale_typed!(ds, field, scale::ContinuousScale)
     end
 end
 
-# Reorder the levels of a pooled data array
-function reorder_levels(da::IndirectArray, order::AbstractVector)
-    level_values = da.values
-    length(order) != length(level_values) &&
-            error("Discrete scale order is not of the same length as the data's levels.")
-    permute!(level_values, order)
-    return IndirectArray(da, level_values)
-end
-
 discretize_make_ia(values::Vector)         = IndirectArray(values)
 discretize_make_ia(values::Vector, ::Void) = IndirectArray(values)
 discretize_make_ia(values::Vector, levels) =
@@ -317,7 +308,7 @@ function discretize(values, levels=nothing, order=nothing, preserve_order=true)
     end
 
     if order != nothing
-        return reorder_levels(da, order)
+        return IndirectArray(da, da.values[order])
     else
         return da
     end
