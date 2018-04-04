@@ -1072,7 +1072,7 @@ function apply_statistic(stat::BoxplotStatistic,
 
     if aes.color !== nothing
         aes.color = discretize_make_ia(RGB{Float32}[c for (x, c) in keys(groups)],
-            aes.color.levels)
+            aes.color.values)
     end
 
     nothing
