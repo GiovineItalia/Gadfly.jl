@@ -236,6 +236,7 @@ function concat(aess::Aesthetics...)
                                  max(mu, mv))
             else
                 cat_aes_var!(getfield(cataes, var), getfield(aes, var))
+                @show var, getfield(aes, var)
                 setfield!(cataes, var,
                           cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
             end
@@ -320,8 +321,10 @@ function by_xy_group(aes::T, xgroup, ygroup,
 
     xgroup === nothing && ygroup === nothing && return aes_grid
 
-    make_pooled_array(::Type{IndirectArray{T,R,N,RA}}, arr::AbstractArray) where {T,R,N,RA} =
-            IndirectArray(convert(Array{T}, arr))
+    function make_pooled_array(::Type{IndirectArray{T,N,A,V}}, arr::AbstractArray) where {T,N,A,V}
+        uarr = unique(arr)
+        return IndirectArray(A(indexin(arr, uarr)), V(uarr))
+    end
     make_pooled_array(::Type{IndirectArray{T,R,N,RA}},
             arr::IndirectArray{T,R,N,RA}) where {T,R,N,RA} = arr
 

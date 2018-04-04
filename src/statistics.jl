@@ -15,7 +15,7 @@ using CoupledFields # It is registered in METADATA.jl
 using IndirectArrays
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
-               default_scales, isconcrete, setfield!
+               default_scales, isconcrete, setfield!, discretize_make_ia
 import KernelDensity
 # import Distributions: Uniform, Distribution, qqbuild
 import IterTools: chain, distinct
@@ -401,7 +401,7 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
 
-        aes.color = IndirectArray(colors)
+        aes.color = discretize_make_ia(colors)
     end
 
     getfield(aes, viewminvar) === nothing && setfield!(aes, viewminvar, 0.0)
@@ -528,7 +528,7 @@ function apply_statistic(stat::DensityStatistic,
                 push!(colors, c)
             end
         end
-        aes.color = IndirectArray(colors)
+        aes.color = discretize_make_ia(colors)
     end
     aes.y_label = Gadfly.Scale.identity_formatter
 end
@@ -667,13 +667,13 @@ function apply_statistic(stat::Histogram2DStatistic,
 
     if x_categorial
         aes.xmin, aes.xmax = barminmax(aes.x, false)
-        aes.x = IndirectArray(aes.x)
+        aes.x = discretize_make_ia(aes.x)
         aes.pad_categorical_x = Nullable(false)
     end
 
     if y_categorial
         aes.ymin, aes.ymax = barminmax(aes.y, false)
-        aes.y = IndirectArray(aes.y)
+        aes.y = discretize_make_ia(aes.y)
         aes.pad_categorical_y = Nullable(false)
     end
 
@@ -986,8 +986,8 @@ function apply_statistic(stat::BoxplotStatistic,
         end
 
         if aes.color !== nothing
-            aes.color = IndirectArray([c for (x, c) in groups],
-                                      filter(!ismissing, aes.color.values))
+            aes.color = discretize_make_ia([c for (x, c) in groups],
+                filter(!ismissing, aes.color.values))
         end
 
         return
@@ -1067,12 +1067,12 @@ function apply_statistic(stat::BoxplotStatistic,
     end
 
     if isa(aes_x, IndirectArray)
-        aes.x = IndirectArray(aes.x, aes_x.values)
+        aes.x = discretize_make_ia(aes.x, aes_x.values)
     end
 
     if aes.color !== nothing
-        aes.color = IndirectArray(RGB{Float32}[c for (x, c) in keys(groups)],
-                                    aes.color.levels)
+        aes.color = discretize_make_ia(RGB{Float32}[c for (x, c) in keys(groups)],
+            aes.color.levels)
     end
 
     nothing
@@ -1156,7 +1156,7 @@ function apply_statistic(stat::SmoothStatistic,
     end
 
     if !(aes.color===nothing)
-        aes.color = IndirectArray(colors)
+        aes.color = discretize_make_ia(colors)
     end
 end
 
@@ -1343,7 +1343,7 @@ function apply_statistic(stat::FunctionStatistic,
             aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = func_color[i]
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
-        aes.group = IndirectArray(groups)
+        aes.group = discretize_make_ia(groups)
     elseif length(aes.y) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
         data.color = Array{AbstractString}(length(aes.y) * stat.num_samples)
@@ -1354,7 +1354,7 @@ function apply_statistic(stat::FunctionStatistic,
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
         end
         Scale.apply_scale(scales[:color], [aes], data)
-        aes.group = IndirectArray(groups)
+        aes.group = discretize_make_ia(groups)
     end
 
     data = Gadfly.Data()
@@ -1417,7 +1417,7 @@ function apply_statistic(stat::ContourStatistic,
 
     stat_levels = typeof(stat.levels) <: Function ? stat.levels(zs) : stat.levels
 
-    groups = IndirectArray(Int[])
+    groups = discretize_make_ia(Int[])
     group = 0
     for level in Contour.levels(Contour.contours(xs, ys, zs, stat_levels))
         for line in Contour.lines(level)
@@ -1661,7 +1661,7 @@ function apply_statistic(stat::BinMeanStatistic,
                 push!(colors, c)
             end
         end
-        aes.color = IndirectArray(colors)
+        aes.color = discretize_make_ia(colors)
     end
 end
 
@@ -1873,7 +1873,7 @@ function Gadfly.Stat.apply_statistic(stat::EllipseStatistic,
         end
     end
 
-    aes.group = IndirectArray(levels)
+    aes.group = discretize_make_ia(levels)
     colorflag && (aes.color = colors)
     aes.x = ellipse_x
     aes.y = ellipse_y
