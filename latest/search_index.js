@@ -373,7 +373,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.bar",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nset_default_plot_size(12cm, 8cm)plot(dataset(\"HistData\", \"ChestSizes\"), x=\"Chest\", y=\"Count\", Geom.bar)plot(by(dataset(\"datasets\",\"HairEyeColor\"),[:Eye,:Sex], d->sum(d[:Freq])),\n    color=\"Eye\", y=\"x1\", x=\"Sex\",\n    Geom.bar(position=:dodge), Guide.ylabel(\"Freq\"))using RDatasets\nusing DataFrames, Gadfly\nset_default_plot_size(14cm, 8cm)D = by(dataset(\"datasets\",\"HairEyeColor\"), [:Eye,:Sex], d->sum(d[:Freq]))\n rename!(D, :x1, :Frequency)\n# Is there a hazel color?\npalette = [\"blue\",\"brown\",\"green\",\"tan\"]\n\npa= plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),\n    Scale.color_discrete_manual(palette...)\n)\npb= plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),\n    Scale.color_discrete_manual(palette[4:-1:1]..., order=[4,3,2,1])\n)\nhstack(pa, pb)See Scale.color_discrete_manual for more information."
+    "text": "using RDatasets\nusing Gadfly\nset_default_plot_size(12cm, 8cm)plot(dataset(\"HistData\", \"ChestSizes\"), x=\"Chest\", y=\"Count\", Geom.bar)plot(by(dataset(\"datasets\",\"HairEyeColor\"),[:Eye,:Sex], d->sum(d[:Freq])),\n    color=\"Eye\", y=\"x1\", x=\"Sex\",\n    Geom.bar(position=:dodge), Guide.ylabel(\"Freq\"))using RDatasets\nusing DataFrames, Gadfly\nset_default_plot_size(14cm, 8cm)D = by(dataset(\"datasets\",\"HairEyeColor\"), [:Eye,:Sex], d->sum(d[:Freq]))\n rename!(D, :x1, :Frequency)\n# Is there a hazel color?\npalette=[\"brown\",\"blue\",\"tan\",\"green\"]\n\npa= plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),\n    Scale.color_discrete_manual(palette...)\n)\npb= plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),\n    Scale.color_discrete_manual(palette[4:-1:1]..., order=[4,3,2,1])\n)\nhstack(pa, pb)See Scale.color_discrete_manual for more information."
 },
 
 {
@@ -1133,7 +1133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.segment",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 14cm)seals = RDatasets.dataset(\"ggplot2\",\"seals\")\nseals[:Latb] = seals[:Lat] + seals[:DeltaLat]\nseals[:Longb] = seals[:Long] + seals[:DeltaLong]\nseals[:Angle] = atan2(seals[:DeltaLat], seals[:DeltaLong])\n\ncoord = Coord.cartesian(xmin=-175.0, xmax=-119, ymin=29, ymax=50)\n# Geom.vector also needs scales for both axes:\nxsc  = Scale.x_continuous(minvalue=-175.0, maxvalue=-119)\nysc  = Scale.y_continuous(minvalue=29, maxvalue=50)\ncolsc = Scale.color_continuous(minvalue=-3, maxvalue=3)\n\nlayer1 = layer(seals, x=:Long, y=:Lat, xend=:Longb, yend=:Latb, Geom.vector, color=:Angle)\n\nplot(layer1, xsc, ysc, colsc, coord)"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 14cm)seals = RDatasets.dataset(\"ggplot2\",\"seals\")\nseals[:Latb] = seals[:Lat] + seals[:DeltaLat]\nseals[:Longb] = seals[:Long] + seals[:DeltaLong]\nseals[:Angle] = atan2.(seals[:DeltaLat], seals[:DeltaLong])\n\ncoord = Coord.cartesian(xmin=-175.0, xmax=-119, ymin=29, ymax=50)\n# Geom.vector also needs scales for both axes:\nxsc  = Scale.x_continuous(minvalue=-175.0, maxvalue=-119)\nysc  = Scale.y_continuous(minvalue=29, maxvalue=50)\ncolsc = Scale.color_continuous(minvalue=-3, maxvalue=3)\n\nlayer1 = layer(seals, x=:Long, y=:Lat, xend=:Longb, yend=:Latb, Geom.vector, color=:Angle)\n\nplot(layer1, xsc, ysc, colsc, coord)"
 },
 
 {
