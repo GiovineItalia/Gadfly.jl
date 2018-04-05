@@ -62,7 +62,7 @@ set_default_plot_size(14cm, 8cm)
 D = by(dataset("datasets","HairEyeColor"), [:Eye,:Sex], d->sum(d[:Freq]))
  rename!(D, :x1, :Frequency)
 # Is there a hazel color?
-palette = ["blue","brown","green","tan"]
+palette=["brown","blue","tan","green"]
 
 pa= plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),
     Scale.color_discrete_manual(palette...)

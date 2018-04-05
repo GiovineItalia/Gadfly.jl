@@ -35,7 +35,7 @@ Gadfly.set_default_plot_size(14cm, 14cm)
 seals = RDatasets.dataset("ggplot2","seals")
 seals[:Latb] = seals[:Lat] + seals[:DeltaLat]
 seals[:Longb] = seals[:Long] + seals[:DeltaLong]
-seals[:Angle] = atan2(seals[:DeltaLat], seals[:DeltaLong])
+seals[:Angle] = atan2.(seals[:DeltaLat], seals[:DeltaLong])
 
 coord = Coord.cartesian(xmin=-175.0, xmax=-119, ymin=29, ymax=50)
 # Geom.vector also needs scales for both axes:
