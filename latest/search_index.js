@@ -789,7 +789,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.histogram",
     "title": "Aesthetics",
     "category": "section",
-    "text": "x: Sample to draw histogram from.\ncolor (optional): Group categoricially by color."
+    "text": "x: Sample to draw histogram from.\ncolor (optional): Group categorically by color."
 },
 
 {
