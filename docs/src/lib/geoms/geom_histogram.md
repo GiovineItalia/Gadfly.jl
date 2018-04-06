@@ -9,7 +9,7 @@ Draw histograms. An alias for [Geom.bar](@ref) with [Stat.histogram](@ref).
 ## Aesthetics
 
   * `x`: Sample to draw histogram from.
-  * `color` (optional): Group categoricially by color.
+  * `color` (optional): Group categorically by color.
 
 
 ## Arguments
