@@ -4,11 +4,12 @@ Author = "Daniel C. Jones"
 
 # Plotting
 
-Most interaction with Gadfly is through the `plot` function. Plots are described
-by binding data to **aesthetics**, and specifying a number of plot elements
-including [Scales](@ref), [Coordinates](@ref), [Guides](@ref), and [Geometries](@ref).
-Aesthetics are a set of special named variables that are mapped to plot
-geometry. How this mapping occurs is defined by the plot elements.
+Most interaction with Gadfly is through the `plot` function. Plots are
+described by binding data to **aesthetics**, and specifying a number of plot
+elements including [Scales](@ref lib_scale), [Coordinates](@ref lib_coord),
+[Guides](@ref lib_guide), and [Geometries](@ref lib_geom).  Aesthetics are a
+set of special named variables that are mapped to plot geometry. How this
+mapping occurs is defined by the plot elements.
 
 This "grammar of graphics" approach tries to avoid arcane incantations and
 special cases, instead approaching the problem as if one were drawing a wiring

@@ -90,7 +90,7 @@ or row of subplots is drawn, if both, a grid.
 
 # Arguments
 
-Unlike most geometries, [Geom.subplot_grid](@ref) is typically passed one or more
+Unlike most geometries, [`Geom.subplot_grid`](@ref) is typically passed one or more
 parameters. The constructor works for the most part like the `layer` function.
 Arbitrary plot elements may be passed, while aesthetic bindings are inherited
 from the parent plot.

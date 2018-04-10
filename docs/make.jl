@@ -23,6 +23,7 @@ makedocs(
             "Shapes" => "gallery/shapes.md",
         ],
         "Library" => Any[
+            "Gadfly" => "lib/gadfly.md",
             "Geometries" => "lib/geometries.md",
             "Guides" => "lib/guides.md",
             "Statistics" => "lib/statistics.md",

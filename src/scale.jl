@@ -155,7 +155,7 @@ Map numerical data to x positions in cartesian coordinates.
 !!! note
 
     `minvalue` and `maxvalue` here are soft bounds, Gadfly may choose to ignore
-    them when constructing an optimal plot. Use [Coord.cartesian](@ref) to enforce
+    them when constructing an optimal plot. Use [`Coord.cartesian`](@ref) to enforce
     a hard bound.
 
 - `labels`: Either a `Function` or `nothing`. When a
@@ -197,7 +197,7 @@ Map numerical data to y positions in cartesian coordinates.
 !!! note
 
     `minvalue` and `maxvalue` here are soft bounds, Gadfly may choose to ignore
-    them when constructing an optimal plot. Use [Coord.cartesian](@ref) to enforce
+    them when constructing an optimal plot. Use [`Coord.cartesian`](@ref) to enforce
     a hard bound.
 
 - `labels`: Either a `Function` or `nothing`. When a
@@ -389,12 +389,12 @@ element_aesthetics(scale::DiscreteScale) = scale.vars
 """
   Scale.x_discrete[(; labels, levels, order)]
 
-Map data categorical to Cartesian coordinates. Unlike [Scale.x_continuous](@ref), each
+Map data categorical to Cartesian coordinates. Unlike [`Scale.x_continuous`](@ref), each
 unique x value will be mapped to a equally spaced positions, regardless of
 value.
 
 By default continuous scales are applied to numerical data. If data consists of
-numbers specifying categories, explicitly adding [Scale.x_discrete](@ref) is the
+numbers specifying categories, explicitly adding [`Scale.x_discrete`](@ref) is the
 easiest way to get that data to plot appropriately.
 
 # Arguments
@@ -417,12 +417,12 @@ x_discrete(; labels=nothing, levels=nothing, order=nothing) =
 """
     Scale.y_discrete[(; labels, levels, order)]
 
-Map data categorical to Cartesian coordinates. Unlike [Scale.y_continuous](@ref), each
+Map data categorical to Cartesian coordinates. Unlike [`Scale.y_continuous`](@ref), each
 unique y value will be mapped to a equally spaced positions, regardless of
 value.
 
 By default continuous scales are applied to numerical data. If data consists of
-numbers specifying categories, explicitly adding [Scale.y_discrete](@ref) is the
+numbers specifying categories, explicitly adding [`Scale.y_discrete`](@ref) is the
 easiest way to get that data to plot appropriately.
 
 # Arguments
@@ -492,7 +492,7 @@ end
     Scale.color_none
 
 Suppress a default color scale. Some statistics impose a default color scale.
-When no color scale is desired, explicitly including [Scale.color_none](@ref) will
+When no color scale is desired, explicitly including [`Scale.color_none`](@ref) will
 suppress this default.
 
 """
@@ -559,7 +559,7 @@ end
     Scale.color_discrete_hue[(f; levels, order, preserve_order)]
 
 Create a discrete color scale to be used for the plot. `Scale.color_discrete` is an
-alias for [Scale.color_discrete_hue](@ref).
+alias for [`Scale.color_discrete_hue`](@ref).
 
 # Arguments
 - `f`: A function `f(n)` that produces a vector of `n` colors. Usually [`distinguishable_colors`](https://github.com/JuliaGraphics/Colors.jl#distinguishable_colors) can be used for this, with parameters tuned to your liking.
@@ -690,7 +690,7 @@ end
 
 Create a continuous color scale that the plot will use.
 
-This can also be set as the `continuous_color_scheme` in a [`Theme`](@ref)
+This can also be set as the `continuous_color_scheme` in a Theme (see [Themes](@ref)).
 
 # Arguments
 - `minvalue` (optional): the data value corresponding to the bottom of the color scale (will be based on the range of the data if not specified).
@@ -699,7 +699,7 @@ This can also be set as the `continuous_color_scheme` in a [`Theme`](@ref)
 
 # Variations
 
-`color_continuous_gradient` is an alias for [Scale.color_continuous](@ref).
+`color_continuous_gradient` is an alias for [`Scale.color_continuous`](@ref).
 
 A number of transformed continuous scales are provided.
 

@@ -46,10 +46,10 @@ The specification of each layer has
 
 All layers of a plot share the same
 
-- [Coordinates](@ref) for the geometry (e.g. cartesian, polar, etc.)
-- axis [Scales](@ref) (e.g. loglog, semilog, etc.)
-- plot-wise [Statistics](@ref) (optional) to be applied to all layers
-- [Guides](@ref)
+- [Coordinates](@ref lib_coord) for the geometry (e.g. cartesian, polar, etc.)
+- axis [Scales](@ref lib_scale) (e.g. loglog, semilog, etc.)
+- plot-wise [Statistics](@ref lib_stat) (optional) to be applied to all layers
+- [Guides](@ref lib_guide)
 
 A full plot specification must describe these shared elements as well as all the layer specifications.
 In the example above, we see that only the data source, statistics, geometry, and mapping are specified.
@@ -75,11 +75,11 @@ Once a full plot specification is filled out, the rendering process proceeds as 
 
 1. For each layer in the plot, we first map subsets of the data source to a `Data` object. The `Price` and `Cut` columns of the `diamond` dataset are mapped to the `:x` and `:color` fields of `Data`, respectively.
 
-2. Scales are applied to the data to obtain plottable aesthetics. [Scale.x_continuous](@ref) keeps the values of `df[:Price]` unchanged, while [Scale.color_discrete_hue](@ref) maps the unique elements of `df[:Cut]` (an array of strings) to actual color values.
+2. Scales are applied to the data to obtain plottable aesthetics. [`Scale.x_continuous`](@ref) keeps the values of `df[:Price]` unchanged, while [`Scale.color_discrete_hue`](@ref) maps the unique elements of `df[:Cut]` (an array of strings) to actual color values.
 
-3. The aesthetics are transformed by layer-wise and plot-wise statistics, in order. [Stat.histogram](@ref) replaces the `x` field of the aesthetics with bin positions, and sets the `y` field with the corresponding counts.
+3. The aesthetics are transformed by layer-wise and plot-wise statistics, in order. [`Stat.histogram`](@ref) replaces the `x` field of the aesthetics with bin positions, and sets the `y` field with the corresponding counts.
 
-4. Using the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. [Coord.cartesian](@ref) creates a Compose context that maps a vertical distance of `3000` counts to about two inches in the rendered plot.
+4. Using the position aesthetics from all layers, we create a Compose context with a coordinate system that fits the data to screen coordinates. [`Coord.cartesian`](@ref) creates a Compose context that maps a vertical distance of `3000` counts to about two inches in the rendered plot.
 
 5. Each layer renders its own geometry.
 

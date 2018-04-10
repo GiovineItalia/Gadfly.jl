@@ -2,7 +2,7 @@
 Author = "Daniel C. Jones"
 ```
 
-# Geometries
+# [Geometries](@id lib_geom)
 
 Geometries are responsible for actually doing the drawing. A geometry takes
 as input one or more aesthetics, and used data bound to these aesthetics to

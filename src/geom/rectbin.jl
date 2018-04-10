@@ -43,7 +43,7 @@ const rectbin = RectangularBinGeometry
 
 Bin data in rectangles and indicate density with color. As in heatmaps, etc.
 
-An alias for [Geom.rectbin](@ref) with [Stat.histogram2d](@ref).
+An alias for [`Geom.rectbin`](@ref) with [`Stat.histogram2d`](@ref).
 
 # Aesthetics
 - `x`: Observations to be binned and plotted on the x coordinate.

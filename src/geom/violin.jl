@@ -18,7 +18,7 @@ Aesthetics used directly:
 - `width`: Density at a given `y` value.
 - `color` (optional): Violin color.  A suitable discrete variable is needed here. See example below.
 
-With the default statistic [Stat.violin](@ref), only the following need be defined:
+With the default statistic [`Stat.violin`](@ref), only the following need be defined:
 
 - `x` (optional): Group categorically on the X-axis.
 - `y`: Sample from which to draw the density plot.

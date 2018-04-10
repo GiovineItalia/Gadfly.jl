@@ -101,9 +101,8 @@ const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 # Set prefereed canvas size when rendering a plot without an explicit call to
 # `draw`.
 """
-```
-set_default_plot_size(width::Compose.MeasureOrNumber, height::Compose.MeasureOrNumber)
-```
+    set_default_plot_size(width::Compose.MeasureOrNumber, height::Compose.MeasureOrNumber)
+
 Sets preferred canvas size when rendering a plot without an explicit call to draw
 """
 set_default_plot_size(width::Compose.MeasureOrNumber, height::Compose.MeasureOrNumber) =
@@ -111,9 +110,8 @@ set_default_plot_size(width::Compose.MeasureOrNumber, height::Compose.MeasureOrN
 
 
 """
-```
-set_default_plot_format(fmt::Symbol)
-```
+    set_default_plot_format(fmt::Symbol)
+
 Sets the default plot format
 """
 set_default_plot_format(fmt::Symbol) = Compose.set_default_graphic_format(fmt)
@@ -136,10 +134,9 @@ copy(l::Layer) = Layer(l)
 
 
 """
-```
-layer(data_source::@compat(Union{AbstractDataFrame, (@compat Void)}),
-               elements::ElementOrFunction...; mapping...)
-```
+    layer(data_source::@compat(Union{AbstractDataFrame, (@compat Void)}),
+          elements::ElementOrFunction...; mapping...)
+
 Creates layers based on elements
 
 ### Args
@@ -274,8 +271,8 @@ const ElementOrFunctionOrLayers = Union{ElementOrFunction, Vector{Layer}}
 
 """
 ```
-    function plot(data_source::@compat(Union{AbstractMatrix, AbstractDataFrame}),
-              elements::ElementOrFunctionOrLayers...; mapping...)
+    plot(data_source::@compat(Union{AbstractMatrix, AbstractDataFrame}),
+         elements::ElementOrFunctionOrLayers...; mapping...)
 ```
 
 Create a new plot.
@@ -323,10 +320,9 @@ end
 #   A Plot object.
 #
 """
-```
-function plot(data_source::@compat(Union{(@compat Void), AbstractMatrix, AbstractDataFrame}),
-              mapping::Dict, elements::ElementOrFunctionOrLayers...)
-```
+    plot(data_source::@compat(Union{(@compat Void), AbstractMatrix, AbstractDataFrame}),
+         mapping::Dict, elements::ElementOrFunctionOrLayers...)
+
 The old fashioned (pre named arguments) version of plot.
 
 This version takes an explicit mapping dictionary, mapping aesthetics symbols
@@ -859,9 +855,8 @@ end
 
 # A convenience version of Compose.draw that let's you skip the call to render.
 """
-```
-draw(backend::Compose.Backend, p::Plot)
-```
+    draw(backend::Compose.Backend, p::Plot)
+
 A convenience version of Compose.draw without having to call render
 
 ### Args
@@ -938,9 +933,9 @@ gridstack([p1 p1; p1 p1])
 gridstack(Union{Plot,Compose.Context}[p1 p2; p2 p1])
 ```
 """
-_gridstack(ps::Matrix) = gridstack(map(p->typeof(p)==Plot ? render(p) : p, ps))
 gridstack(ps::Matrix{Plot}) = _gridstack(ps)
 gridstack(ps::Matrix{Union{Plot,Context}}) = _gridstack(ps)
+_gridstack(ps::Matrix) = gridstack(map(p->typeof(p)==Plot ? render(p) : p, ps))
 
 # show functions for all supported compose backends.
 

@@ -21,6 +21,15 @@ import KernelDensity
 import IterTools: distinct
 import Compat.Iterators: cycle, product
 
+function aes2str(aes)
+  list = join([string('`',x,'`') for x in aes], ", ", ", and ")
+  if length(aes)>1
+    return string(list," aesthetics")
+  else
+    return string(list," aesthetic")
+  end
+end
+
 include("bincount.jl")
 
 
@@ -55,6 +64,9 @@ apply_statistic(stat::Identity,
                 coord::Gadfly.CoordinateElement,
                 aes::Gadfly.Aesthetics) = nothing
 
+"""
+    Stat.identity
+"""
 const identity = Identity
 
 
@@ -252,6 +264,14 @@ output_aesthetics(stat::HistogramStatistic) =
 default_scales(stat::HistogramStatistic) = stat.orientation == :vertical ?
         [Gadfly.Scale.y_continuous()] : [Gadfly.Scale.x_continuous()]
 
+"""
+    Stat.histogram[(; bincount=nothing, minbincount=3, maxbincount=150,
+                    position=:stack, orientation=:vertical, density=false)]
+
+Transform $(aes2str(input_aesthetics(histogram()))) into
+$(aes2str(output_aesthetics(histogram()))).  Exchange y for x when
+orientation=:horizontal.
+"""
 const histogram = HistogramStatistic
 
 function apply_statistic(stat::HistogramStatistic,
@@ -453,10 +473,15 @@ end
 Density2DStatistic(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15) =
       Density2DStatistic(n, bandwidth, levels)
 
-const density2d = Density2DStatistic
-
 input_aesthetics(stat::Density2DStatistic) = [:x, :y]
 output_aesthetics(stat::Density2DStatistic) = [:x, :y, :z]
+
+"""
+    Stat.density2d[(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15)]
+
+Transform $(aes2str(input_aesthetics(density2d()))) into $(aes2str(output_aesthetics(density2d()))).
+"""
+const density2d = Density2DStatistic
 
 default_scales(::Density2DStatistic) = [Gadfly.Scale.y_continuous()]
 
@@ -484,10 +509,15 @@ struct DensityStatistic <: Gadfly.StatisticElement
 end
 DensityStatistic(; n=256, bandwidth=-Inf) = DensityStatistic(n, bandwidth)
 
-const density = DensityStatistic
-
 input_aesthetics(stat::DensityStatistic) = [:x]
 output_aesthetics(stat::DensityStatistic) = [:x, :y]
+
+"""
+    Stat.density[(; n=256, bandwidth=-Inf)]
+
+Transform $(aes2str(input_aesthetics(density()))) into $(aes2str(output_aesthetics(density()))).
+"""
+const density = DensityStatistic
 
 default_scales(::DensityStatistic) = [Gadfly.Scale.y_continuous()]
 
@@ -567,6 +597,13 @@ output_aesthetics(stat::Histogram2DStatistic) = [:xmin, :ymax, :ymin, :ymax, :co
 default_scales(::Histogram2DStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
     [t.continuous_color_scale]
 
+"""
+    Stat.histogram2d[(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
+                        ybincount=nothing, yminbincount=3, ymaxbincount=150)]
+
+Transform $(aes2str(input_aesthetics(histogram2d()))) into
+$(aes2str(output_aesthetics(histogram2d()))).
+"""
 const histogram2d = Histogram2DStatistic
 
 function apply_statistic(stat::Histogram2DStatistic,
@@ -1005,6 +1042,11 @@ input_aesthetics(stat::BoxplotStatistic) = [:x, :y]
 output_aesthetics(stat::BoxplotStatistic) =
     [:x, :middle, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :outliers]
 
+"""
+    Stat.boxplot[(; method=:tukey)]
+
+Transform $(aes2str(input_aesthetics(boxplot()))) into $(aes2str(output_aesthetics(boxplot()))).
+"""
 const boxplot = BoxplotStatistic
 
 function apply_statistic(stat::BoxplotStatistic,
@@ -1122,10 +1164,16 @@ struct SmoothStatistic <: Gadfly.StatisticElement
 end
 SmoothStatistic(; method=:loess, smoothing=0.75) = SmoothStatistic(method, smoothing)
 
-const smooth = SmoothStatistic
-
 input_aesthetics(::SmoothStatistic) = [:x, :y]
 output_aesthetics(::SmoothStatistic) = [:x, :y]
+
+"""
+    Stat.smooth[(; method=:loess, smoothing=0.75)]
+
+Transform $(aes2str(input_aesthetics(smooth()))) into
+$(aes2str(output_aesthetics(smooth()))).
+"""
+const smooth = SmoothStatistic
 
 function apply_statistic(stat::SmoothStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1203,6 +1251,9 @@ struct HexBinStatistic <: Gadfly.StatisticElement
 end
 HexBinStatistic(; xbincount=50, ybincount=50) = HexBinStatistic(xbincount, ybincount)
 
+"""
+    Stat.hexbin[(; xbincount=50, ybincount=50)]
+"""
 const hexbin = HexBinStatistic
 
 function apply_statistic(stat::HexBinStatistic,
@@ -1589,6 +1640,11 @@ input_aesthetics(::ViolinStatistic) = [:x, :y, :width]
  Gadfly.default_scales(stat::ViolinStatistic) = [Gadfly.Scale.x_discrete(), Gadfly.Scale.y_continuous()]
 
 
+"""
+    Stat.violin[(n=300)]
+
+Transform $(aes2str(input_aesthetics(violin()))).
+"""
 const violin = ViolinStatistic
 
 function apply_statistic(stat::ViolinStatistic,

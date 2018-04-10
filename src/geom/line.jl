@@ -63,7 +63,7 @@ end
     Geom.path
 
 Draw lines between points in the order they appear in the data. This is an
-alias for [Geom.line](@ref) with `preserve_order=true`.
+alias for [`Geom.line`](@ref) with `preserve_order=true`.
 
 # Aesthetics
 - `x`: X-axis position.
@@ -75,8 +75,8 @@ path() = LineGeometry(preserve_order=true)
 """
     Geom.density[(; bandwidth)]
 
-Draw a kernel density estimate from data. An alias for [Geom.line](@ref) with
-[Stat.density](@ref).
+Draw a kernel density estimate from data. An alias for [`Geom.line`](@ref) with
+[`Stat.density`](@ref).
 
 # Aesthetics
 - `x`: Sample to draw density estimate from.
@@ -91,15 +91,15 @@ density(; bandwidth::Real=-Inf) =
 """
     Geom.density2d[(; bandwidth, levels)]
 
-Draw a kernel density estimate from data. An alias for [Geom.contour](@ref) with
-[Stat.density2d](@ref).
+Draw a kernel density estimate from data. An alias for [`Geom.contour`](@ref) with
+[`Stat.density2d`](@ref).
 
 # Aesthetics
 - `x`, `y`: Sample to draw density estimate from.
 
 # Arguments
-- `bandwidth`:  See [Geom.density](@ref).
-- `levels`:  See [Geom.contour](@ref).
+- `bandwidth`:  See [`Geom.density`](@ref).
+- `levels`:  See [`Geom.contour`](@ref).
 """
 density2d(; bandwidth::Tuple{Real,Real}=(-Inf,-Inf), levels=15) =
     LineGeometry(Gadfly.Stat.density2d(bandwidth=bandwidth, levels=levels); preserve_order=true)
@@ -107,7 +107,7 @@ density2d(; bandwidth::Tuple{Real,Real}=(-Inf,-Inf), levels=15) =
 """
     Geom.smooth[(; method, smoothing)]
 
-Plot a smooth function estimated from data. An alias for [Geom.line](@ref) with [Stat.smooth](@ref).
+Plot a smooth function estimated from data. An alias for [`Geom.line`](@ref) with [`Stat.smooth`](@ref).
 
 # Aesthetics
 - `x`: Predictor data.
@@ -127,8 +127,8 @@ smooth(; method::Symbol=:loess, smoothing::Float64=0.75) =
 """
     Geom.step[(; direction)]
 
-Connect points using a stepwise function. Equivalent to [Geom.line](@ref) with
-[Stat.step](@ref).
+Connect points using a stepwise function. Equivalent to [`Geom.line`](@ref) with
+[`Stat.step`](@ref).
 
 # Aesthetics
 - `x`: Point x-coordinate.

@@ -69,8 +69,9 @@ plot(x=rand(12), y=rand(12), color=repeat([1,2,3], outer=[4]),
 
 !!! note
 
-    To set a default color scale for plots, you can set it in the current
-    [Theme](@ref) using `push_theme`, using `style` to modify the current theme.
+    To set a default color scale for plots, you can set it in the current Theme
+    (see [Themes](@ref)) using `push_theme`, using `style` to modify the
+    current theme.
 
     ```
     Gadfly.push_theme(style(discrete_color_scale=Scale.color_discrete(gen_colors)))

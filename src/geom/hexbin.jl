@@ -20,8 +20,8 @@ Bin data into tiled hexagonal bins and color by count.
 - `xsize`
 - `ysize`
 
-By default [Stat.hexbin](@ref) is applied which bins `x` and `y` observations and
-colors hexagons according to count. To override this, pass [Stat.identity](@ref) to
+By default [`Stat.hexbin`](@ref) is applied which bins `x` and `y` observations and
+colors hexagons according to count. To override this, pass [`Stat.identity`](@ref) to
 `plot` and manually bind the `color` aesthetic.
 
 # Arguments

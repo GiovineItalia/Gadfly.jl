@@ -379,10 +379,8 @@ function group_color_isless(a::(Tuple{S, T}),
 end
 
 
-"""
-trim longer arrays to the size of the smallest one
-and zip the arrays.
-"""
+#trim longer arrays to the size of the smallest one
+#and zip the arrays.
 function trim_zip(xs...)
     mx = max(map(length, xs)...)
     mn = min(map(length, xs)...)

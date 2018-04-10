@@ -46,7 +46,7 @@ const bar = BarGeometry
 """
     Geom.histogram[(; position, orientation, bincount, minbincount, maxbincount, density)]
 
-Draw histograms. An alias for [Geom.bar](@ref) with [Stat.histogram](@ref).
+Draw histograms. An alias for [`Geom.bar`](@ref) with [`Stat.histogram`](@ref).
 
 # Aesthetics
 - `x`: Sample to draw histogram from.
