@@ -3,26 +3,22 @@
 module Shape
 
 using Measures
-using Compose: x_measure, y_measure, circle, rectangle, polygon, line
+using Compose: x_measure, y_measure, circle, rectangle, polygon, line, px
 
 function square(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
 
-    rect_xs = Vector{Measure}(n)
-    rect_ys = Vector{Measure}(n)
-    rect_ws = Vector{Measure}(n)
     s = 1/sqrt(2)
-    for i in 1:n
-        x = x_measure(xs[1 + i % length(xs)])
-        y = y_measure(ys[1 + i % length(ys)])
-        r = rs[1 + i % length(rs)]
+    polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
 
-        rect_xs[i] = x - s*r
-        rect_ys[i] = y + s*r
-        rect_ws[i] = 2*s*r
+    for i in 1:n
+        x = x_measure(xs[mod1(i, length(xs))])
+        y = y_measure(ys[mod1(i, length(ys))])
+        r = rs[mod1(i, length(rs))]
+        polys[i] = Tuple{Measure,Measure}[(x-s*r,y-s*r),(x-s*r,y+s*r),(x+s*r,y+s*r),(x+s*r,y-s*r)] 
     end
 
-    return rectangle(rect_xs, rect_ys, rect_ws, rect_ws)
+    return polygon(polys)
 end
 
 function diamond(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
@@ -87,17 +83,18 @@ end
 function utriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
   n = max(length(xs), length(ys), length(rs))
   polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
-  s = 0.8
+  
   for i in 1:n
     x = x_measure(xs[mod1(i, length(xs))])
     y = y_measure(ys[mod1(i, length(ys))])
     r = rs[mod1(i, length(rs))]
-    u = 0.8 * scalar * r
+    u = 0.87 * r
+    v = scalar * r    
     polys[i] = Tuple{Measure, Measure}[
-      (x - r, y + u),
-      (x + r, y + u),
-      (x, y - u),  # two of these so the centroid is such that it zooms well
-      (x, y - u)
+      (x - u, y + 0.5v),
+      (x + u, y + 0.5v),
+      (x, y - v),  # two of these so the centroid is such that it zooms well
+      (x, y - v)
     ]
   end
 
@@ -152,17 +149,17 @@ end
 function hexagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
 
-  polys = Vector{Vector{Tuple{Compose.Measure, Compose.Measure}}}(n)
+  polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
   for i in 1:n
-    x = Compose.x_measure(xs[mod1(i, length(xs))])
-    y = Compose.y_measure(ys[mod1(i, length(ys))])
+    x = x_measure(xs[mod1(i, length(xs))])
+    y = y_measure(ys[mod1(i, length(ys))])
     r = rs[mod1(i, length(rs))]
-    u = 0.6r
-
-    polys[i] = Tuple{Compose.Measure, Compose.Measure}[
-      (x-r, y-u), (x-r, y+u), # L edge
+    v = 0.5r
+    u = 0.87r    
+    polys[i] = Tuple{Measure, Measure}[
+      (x-u, y-v), (x-u, y+v), # L edge
       (x, y+r),               # B
-      (x+r, y+u), (x+r, y-u), # R edge
+      (x+u, y+v), (x+u, y-v), # R edge
       (x, y-r)                # T
     ]
   end
@@ -199,11 +196,10 @@ function hline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
         x = x_measure(xs[1 + i % length(xs)])
         y = y_measure(ys[1 + i % length(ys)])
         r = rs[1 + i % length(rs)]
-
-        line_ps[i] = Tuple{Measure, Measure}[(x-r,y),(x+r,y)]
+        line_ps[i] = Tuple{Measure, Measure}[(x-r,y-1.5px),(x+r,y-1.5px),(x+r,y+1.5px),(x-r,y+1.5px)]
     end
 
-    return line(line_ps)
+    return polygon(line_ps)
 end
 
 function vline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
@@ -214,11 +210,10 @@ function vline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
         x = x_measure(xs[1 + i % length(xs)])
         y = y_measure(ys[1 + i % length(ys)])
         r = rs[1 + i % length(rs)]
-
-        line_ps[i] = Tuple{Measure, Measure}[(x,y-r),(x,y+r)]
+        line_ps[i] = Tuple{Measure, Measure}[(x-1.5px,y-r),(x-1.5px,y+r),(x+1.5px,y+r),(x+1.5px,y-r)]
     end
 
-    return line(line_ps)
+    return polygon(line_ps)
 end
 
 end  # module Shape
