@@ -1,14 +1,10 @@
 # Various color scales.
 
-# Weighted mean of some number of colors within the same space.
-#
-# Args:
-#  cs: Colors.
-#  ws: Weights of the same length as cs.
-#
-# Returns:
-#   A weighted mean color of type T.
-#
+"""
+    function weighted_color_mean(cs::AbstractArray{Lab{T},1},
+                                 ws::AbstractArray{S,1}) where {S <: Number,T}
+Return the mean of Lab colors `cs` as weighted by `ws`.
+"""
 function weighted_color_mean(
         cs::AbstractArray{Lab{T},1}, ws::AbstractArray{S,1}) where {S <: Number,T}
     l = 0.0
@@ -26,18 +22,21 @@ end
 
 
 # Discrete scales
-# ---------------
 
-# Generate colors in the LCHab (LCHuv, resp.) colorspace by using a fixed
-# luminance and chroma, and varying the hue.
-#
-# Args:
-#   l: luminance
-#   c: chroma
-#   h0: start hue
-#   n: number of colors
-#
+"""
+    lab_rainbow(l, c, h0, n)
+
+Generate `n` colors in the LCHab colorspace by using a fixed
+luminance `l` and chroma `c`, and varying the hue, starting at `h0`.
+"""
 lab_rainbow(l, c, h0, n) = [LCHab(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
+
+"""
+    luv_rainbow(l, c, h0, n)
+
+Generate `n` colors in the LCHuv colorspace by using a fixed
+luminance `l` and chroma `c`, and varying the hue, starting at `h0`.
+"""
 luv_rainbow(l, c, h0, n) = [LCHuv(l, c, h0 + 360.0 * (i - 1) / n) for i in 1:n]
 
 # Helpful for Experimenting
@@ -50,11 +49,13 @@ end
 
 
 # Continuous scales
-# -----------------
 
 # Generate a gradient between n >= 2, colors.
 
 # Then functions return functions suitable for ContinuousColorScales.
+"""
+    function lab_gradient(cs::Color...)
+"""
 function lab_gradient(cs::Color...)
     length(cs) < 2 && error("Two or more colors are needed for gradients")
 
@@ -70,6 +71,9 @@ function lab_gradient(cs::Color...)
 end
 lab_gradient(cs...) = lab_gradient(Gadfly.parse_colorant(cs)...)
 
+"""
+    function lchabmix(c0_, c1_, r, power)
+"""
 function lchabmix(c0_, c1_, r, power)
     c0 = convert(LCHab, c0_)
     c1 = convert(LCHab, c1_)

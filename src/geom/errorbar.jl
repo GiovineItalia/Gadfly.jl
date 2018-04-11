@@ -32,12 +32,36 @@ The `x`, `ymin`, `ymax` and/or `y`, `xmin`, `xmax` aesthetics must be defined.
 With the later a vertical error bar is drawn, and the former, a horizontal bar.
 """
 const errorbar = ErrorBarGeometry
+
+"""
+    Geom.xerrorbar
+
+Draw vertical error bars.
+
+# Aesthetics
+- `y`: Y-position of the bar.
+- `xmin`: Left-most X-position
+- `xmax`: Right-most X-position.
+- `color` (optional): Bar color (categorial or continuous)
+"""
 const xerrorbar = XErrorBarGeometry
+
+"""
+    Geom.yerrorbar
+
+Draw horizontal error bars.
+
+# Aesthetics
+- `x`: X-position of the bar.
+- `ymin`: Lower Y-position.
+- `ymax`: Upper Y-position.
+- `color` (optional): Bar color (categorial or continuous)
+"""
 const yerrorbar = YErrorBarGeometry
 
 element_aesthetics(::ErrorBarGeometry) = [:x, :y, :xmin, :xmax, :ymin, :ymax]
-element_aesthetics(::YErrorBarGeometry) = [:x, :ymin, :ymax]
 element_aesthetics(::XErrorBarGeometry) = [:y, :xmin, :xmax]
+element_aesthetics(::YErrorBarGeometry) = [:x, :ymin, :ymax]
 
 # Generate a form for the errorbar geometry.
 #

@@ -55,6 +55,9 @@ end
 
 struct Nil <: Gadfly.StatisticElement end
 
+"""
+    Stat.Nil
+"""
 const nil = Nil
 
 struct Identity <: Gadfly.StatisticElement end
@@ -104,10 +107,16 @@ end
 
 struct RectbinStatistic <: Gadfly.StatisticElement end
 
-const rectbin = RectbinStatistic
-
 input_aesthetics(stat::RectbinStatistic) = [:x, :y]
 output_aesthetics(stat::RectbinStatistic) = [:xmin, :xmax, :ymin, :ymax]
+
+"""
+    Stat.rectbin
+
+Transform $(aes2str(input_aesthetics(rectbin()))) into
+$(aes2str(output_aesthetics(rectbin()))).
+"""
+const rectbin = RectbinStatistic
 
 function apply_statistic(stat::RectbinStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -148,6 +157,12 @@ output_aesthetics(stat::BarStatistic) =
 default_scales(stat::BarStatistic) = stat.orientation == :vertical ?
         [Gadfly.Scale.y_continuous()] : [Gadfly.Scale.x_continuous()]
 
+"""
+    Stat.bar[(; position=:stack, orientation=:vertical)]
+
+Transform $(aes2str(input_aesthetics(bar()))) into
+$(aes2str(output_aesthetics(bar()))).
+"""
 const bar = BarStatistic
 
 function apply_statistic(stat::BarStatistic,
@@ -1409,12 +1424,18 @@ struct FunctionStatistic <: Gadfly.StatisticElement
 end
 FunctionStatistic(; num_samples=250) = FunctionStatistic(num_samples)
 
+input_aesthetics(::FunctionStatistic) = [:y, :xmin, :xmax]
+output_aesthetics(::FunctionStatistic) = [:x, :y, :group]
+
+"""
+    Stat.func[(; num_samples=250)]
+
+Transform $(aes2str(input_aesthetics(func()))) into
+$(aes2str(output_aesthetics(func()))).
+"""
 const func = FunctionStatistic
 
 default_scales(::FunctionStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
-
-input_aesthetics(::FunctionStatistic) = [:y, :xmin, :xmax]
-output_aesthetics(::FunctionStatistic) = [:x, :y, :group]
 
 function apply_statistic(stat::FunctionStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1475,6 +1496,12 @@ ContourStatistic(; levels=15, samples=150) = ContourStatistic(levels, samples)
 input_aesthetics(::ContourStatistic) = [:z, :xmin, :xmax, :ymin, :ymax]
 output_aesthetics(::ContourStatistic) = [:x, :y, :color, :group]
 
+"""
+    Stat.contour[(; levels=15, samples=150)]
+
+Transform $(aes2str(input_aesthetics(contour()))) into
+$(aes2str(output_aesthetics(contour()))).
+"""
 const contour = ContourStatistic
 
 default_scales(::ContourStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
@@ -1868,7 +1895,20 @@ function default_scales(stat::EnumerateStatistic)
     end
 end
 
+"""
+    Stat.x_enumerate
+
+Transform $(aes2str(input_aesthetics(x_enumerate))) into
+$(aes2str(output_aesthetics(x_enumerate))).
+"""
 const x_enumerate = EnumerateStatistic(:x)
+
+"""
+    Stat.y_enumerate
+
+Transform $(aes2str(input_aesthetics(y_enumerate))) into
+$(aes2str(output_aesthetics(y_enumerate))).
+"""
 const y_enumerate = EnumerateStatistic(:y)
 
 function apply_statistic(stat::EnumerateStatistic,
@@ -1901,6 +1941,12 @@ default_scales(stat::VecFieldStatistic, t::Gadfly.Theme=Gadfly.current_theme()) 
         [Gadfly.Scale.z_func(), Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous(),
             t.continuous_color_scale ]
 
+"""
+    Stat.vectorfield[(; smoothness=1.0, scale=1.0, samples=20)]
+
+Transform $(aes2str(input_aesthetics(vectorfield()))) into
+$(aes2str(output_aesthetics(vectorfield()))).
+"""
 const vectorfield = VecFieldStatistic
 
 function apply_statistic(stat::VecFieldStatistic,
@@ -1967,6 +2013,12 @@ output_aesthetics(stat::HairStatistic) = [:x, :y, :xend, :yend]
 
 default_scales(stat::HairStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
 
+"""
+    Stat.hair[(;intercept=0.0, orientation=:vertical)]
+
+Transform $(aes2str(input_aesthetics(hair()))) into
+$(aes2str(output_aesthetics(hair()))).
+"""
 const hair = HairStatistic
 
 function apply_statistic(stat::HairStatistic,
@@ -1997,10 +2049,16 @@ function EllipseStatistic(;
     return EllipseStatistic(distribution, levels, nsegments)
 end
 
-Gadfly.input_aesthetics(stat::EllipseStatistic) = [:x, :y]
-Gadfly.output_aesthetics(stat::EllipseStatistic) = [:x, :y]
-Gadfly.default_scales(stat::EllipseStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
+input_aesthetics(stat::EllipseStatistic) = [:x, :y]
+output_aesthetics(stat::EllipseStatistic) = [:x, :y]
+default_scales(stat::EllipseStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
 
+"""
+    Stat.ellipse[(; distribution=MvNormal, levels=[0.95], nsegments=51)]
+
+Transform $(aes2str(input_aesthetics(ellipse()))) into
+$(aes2str(output_aesthetics(ellipse()))).
+"""
 const ellipse = EllipseStatistic
 
 function Gadfly.Stat.apply_statistic(stat::EllipseStatistic,

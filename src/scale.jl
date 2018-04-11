@@ -236,6 +236,10 @@ const y_asinh      = continuous_scale_partial(y_vars, asinh_transform)
 const x_sqrt       = continuous_scale_partial(x_vars, sqrt_transform)
 const y_sqrt       = continuous_scale_partial(y_vars, sqrt_transform)
 
+"""
+    size_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,
+                     format=nothing, minticks=2, maxticks=10, scalable=true)]
+"""
 const size_continuous = continuous_scale_partial([:size], identity_transform)
 
 element_aesthetics(scale::ContinuousScale) = scale.vars
@@ -511,6 +515,9 @@ end
 struct IdentityColorScale <: Gadfly.ScaleElement
 end
 
+"""
+    color_identity
+"""
 const color_identity = IdentityColorScale
 
 element_aesthetics(scale::IdentityColorScale) = [:color]
@@ -828,6 +835,9 @@ end
 
 element_aesthetics(::LabelScale) = [:label]
 
+"""
+   label
+"""
 const label = LabelScale
 
 
@@ -836,9 +846,15 @@ struct GroupingScale <: Gadfly.ScaleElement
     var::Symbol
 end
 
+"""
+    xgroup[(; labels=nothing, levels=nothing, order=nothing)]
+""" 
 xgroup(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:xgroup], labels=labels, levels=levels, order=order)
 
+"""
+    ygroup[(; labels=nothing, levels=nothing, order=nothing)]
+""" 
 ygroup(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:ygroup], labels=labels, levels=levels, order=order)
 
@@ -858,11 +874,35 @@ function apply_scale(scale::IdentityScale,
     end
 end
 
+### could these be defined as `const z_func = ` ?
+"""
+    z_func()
+"""
 z_func() = IdentityScale(:z)
+
+"""
+    y_func()
+"""
 y_func() = IdentityScale(:y)
+
+"""
+    x_distribution()
+"""
 x_distribution() = IdentityScale(:x)
+
+"""
+    y_distribution()
+"""
 y_distribution() = IdentityScale(:y)
+
+"""
+    shape_identity()
+"""
 shape_identity() = IdentityScale(:shape)
+
+"""
+    size_identity()
+"""
 size_identity() = IdentityScale(:size)
 
 end # module Scale

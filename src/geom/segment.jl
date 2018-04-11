@@ -32,6 +32,9 @@ Draw separate line segments/vectors/arrows.
 const segment = SegmentGeometry
 
 # Leave this as a function, pending extra arguments e.g. arrow attributes
+"""
+    Geom.vector[(; filled::Bool=false)]
+"""
 vector(; filled::Bool=false) = SegmentGeometry(arrow=true, filled=filled)
 
 """
