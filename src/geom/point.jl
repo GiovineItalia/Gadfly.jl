@@ -6,14 +6,25 @@ end
 PointGeometry(; tag=empty_tag) = PointGeometry(tag)
 
 """
-Draw various types of scatterplots.
+    Geom.point
 
-# Aesthetics
-- `x`: X-axis position.
-- `y`: Y-axis position.
-- `color` (optional): Point color.  Categorical data will choose maximally distinguishable colors from the LCHab color space.  Continuous data will map onto LCHab as well.  Colors can also be specified explicitly for each data point with a vector of colors of length(x).  A vector of length one specifies the color to use for all points.  Default is Theme.default_color.
-- `shape` (optional): Point shape.  Categorical data will cycle through Theme.point_shapes.  Shapes can also be specified explicitly for each data point with a vector of shapes of length(x).  A vector of length one specifies the shape to use for all points.  Default is Theme.point_shapes[1].
-- `size` (optional): Point size.  Categorical data and vectors of Ints will interpolate between Theme.point_size_{min,max}.  A continuous vector of AbstractFloats or Measures of length(x) specifies the size of each data point explicitly.  A vector of length one specifies the size to use for all points.  Default is Theme.point_size.
+Draw scatter plots of the `x` and `y` aesthetics.
+
+# Optional Aesthetics
+- `color`: Categorical data will choose maximally distinguishable colors from
+  the LCHab color space.  Continuous data will map onto LCHab as well.  Colors
+  can also be specified explicitly for each data point with a vector of colors of
+  length(x).  A vector of length one specifies the color to use for all points.
+  Default is `Theme.default_color`.
+- `shape`: Categorical data will cycle through `Theme.point_shapes`.  Shapes
+  can also be specified explicitly for each data point with a vector of shapes of
+  length(x).  A vector of length one specifies the shape to use for all points.
+  Default is `Theme.point_shapes[1]`.
+- `size`: Categorical data and vectors of `Ints` will interpolate between
+  `Theme.point_size_{min,max}`.  A continuous vector of `AbstractFloats` or
+  `Measures` of length(x) specifies the size of each data point explicitly.  A
+  vector of length one specifies the size to use for all points.  Default is
+  `Theme.point_size`.
 """
 const point = PointGeometry
 

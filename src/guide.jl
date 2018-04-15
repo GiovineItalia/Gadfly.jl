@@ -167,19 +167,14 @@ ColorKey(;title=nothing, labels=nothing, pos=nothing) = ColorKey(title, labels, 
 # ColorKey() = ColorKey(nothing)
 
 """
-    Guide.colorkey[(; title, labels, pos)]
+    Guide.colorkey[(; title=nothing, labels=nothing, pos=nothing)]
+    Guide.colorkey(title, labels, pos)
 
-`Guide.colorkey` enables control of some fields of the auto-generated colorkey. Currently, you can change the colorkey title (for any plot), the item labels (for plots with a discrete color scale), and put the colorkey inside any plot. The fields can be named e.g. `Guide.colorkey(title="Group", labels=["A","B"], pos=[0w,0h])`, or given in order e.g. `Guide.colorkey("Group", ["A","B"], [0w,0h])`.
-
-# Arguments
-- `title`: Legend title (for any plot)
-- `labels`: Legend item labels (for plots with a discrete color scale)
-- `pos`: [x,y] position of the colorkey inside any plot. Setting `Guide.colorkey(pos=)` will override the `Theme(key_position=)` setting. Setting `Theme(key_position=:inside)` without setting `pos` will place the key in the lower right quadrant of the plot (see example below)
-
-# Colorkey position
-`pos` can be given in relative or absolute units (do `using Compose` before plotting):  
-- _Relative units_: e.g. [0.7w, 0.2h] will place the key in the lower right quadrant, [0.05w, -0.25h] in the upper left (see example below).  
-- _Absolute units_: e.g. [0mm, 0mm] the key is left-centered, or use the plot scales like [x,y]. For the latter, the x-position will make sense, but the key will be offset below the y-position, because of the way the key is rendered.  
+Enable control of the auto-generated colorkey.  Set the colorkey `title` for
+any plot, and the item `labels` for plots with a discrete color scale.  `pos`
+overrides [Theme(key_position=)](@ref Parameters) and can be in either
+relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm,
+0mm]), or plot scale (e.g. [0,0]) coordinates.
 """
 const colorkey = ColorKey
 
@@ -506,14 +501,9 @@ ManualColorKey(title, labels, colors) =
         ManualColorKey(title, labels, Gadfly.parse_colorant(colors))
 
 """
-    Guide.manual_color_key[(; title, labels, colors)]
+    Guide.manual_color_key(title, labels, colors)
 
-Manually define a color key
-
-# Arguments
-- `title`: Legend title
-- `labels`: Item labels
-- `colors`: Item colors
+Manually define a color key with the legend `title` and item `labels` and `colors`.
 """
 const manual_color_key = ManualColorKey
 
@@ -572,17 +562,12 @@ end
 XTicks(; label=true, ticks=:auto, orientation=:auto) = XTicks(label, ticks, orientation)
 
 """
-    Guide.xticks[(; ticks, label, orientation)]
+    Guide.xticks[(; label=true, ticks=:auto, orientation=:auto)]
+    Guide.xticks(label, ticks, orientation)
 
-Formats the tick marks and labels for the x-axis
-
-# Arguments
-- `ticks`: Array of tick locations on the x-axis, `:auto` to automatically
-    select ticks, or `nothing` to supress x-axis ticks.
-- `label`: Determines if the ticks are labeled, either
-    `true` (default) or `false`
-- `orientation`: Label orientation
-    (`:horizontal, :vertical, :auto`). Defaults to `:auto`
+Formats the tick marks and labels for the x-axis.  `label` toggles the label
+visibility.  `ticks` can also be an array of locations, or `nothing`.
+`orientation` can also be `:horizontal` or `:vertical`.
 """
 const xticks = XTicks
 
@@ -748,17 +733,12 @@ end
 YTicks(; label=true, ticks=:auto, orientation=:horizontal) = YTicks(label, ticks, orientation)
 
 """
-    Guide.yticks[(; ticks, label, orientation)]
+    Guide.yticks[(; label=true, ticks=:auto, orientation=:horizontal)]
+    Guide.yticks(ticks, label, orientation)
 
-Formats the tick marks and labels for the y-axis
-
-# Arguments
-- `ticks`: Array of tick locations on the y-axis, `:auto` to automatically
-    select ticks, or `nothing` to supress y-axis ticks.
-- `label`: Determines if the ticks are labeled, either
-    `true` (default) or `false`
-- `orientation`: Label orientation
-    (`:horizontal, :vertical, :auto`). Defaults to `:auto`
+Formats the tick marks and labels for the y-axis.  `label` toggles the label
+visibility.  `ticks` can also be an array of locations, or `nothing`.
+`orientation` can also be `:auto` or `:vertical`.
 """
 const yticks = YTicks
 
@@ -935,15 +915,8 @@ XLabel(label; orientation=:auto) = XLabel(label, orientation)
 """
     Guide.xlabel(label, orientation=:auto)
 
-Sets the x-axis label for the plot.
-
-# Arguments
-- `label`: X-axis label
-- `orientation` (optional): `:horizontal`, `:vertical`, or `:auto` (default)
-
-`label` is not a keyword parameter, it must be supplied as the first
-argument of [Guide.xlabel](@ref).  Setting it to `nothing` will suppress
-the default label.
+Sets the x-axis label for the plot.  `label` is either a `String` or `nothing`.
+`orientation` can also be `:horizontal` or `:vertical`.
 """
 const xlabel = XLabel
 
@@ -1009,15 +982,8 @@ YLabel(label; orientation=:auto) = YLabel(label, orientation)
 """
     Guide.ylabel(label, orientation=:auto)
 
-Sets the y-axis label for the plot.
-
-# Arguments
-- `label`: Y-axis label
-- `orientation` (optional): `:horizontal`, `:vertical`, or `:auto` (default)
-
-`label` is not a keyword parameter, it must be supplied as the first
-argument of `Guide.ylabel`.  Setting it to `nothing` will suppress
-the default label.
+Sets the y-axis label for the plot.  `label` is either a `String` or `nothing`.
+`orientation` can also be `:horizontal` or `:vertical`.
 """
 const ylabel = YLabel
 
@@ -1076,9 +1042,6 @@ end
     Geom.title(title)
 
 Set the plot title.
-
-# Arguments
-- `title`:  Plot title
 """
 const title = Title
 
@@ -1111,10 +1074,7 @@ end
 """
     Guide.xrug
 
-Draw a rug plot along the x-axis of a plot.
-
-# Aesthetics
-- `x`: X positions of notches.
+Draw a short vertical lines along the x-axis of a plot at the positions in the `x` aesthetic.
 """
 const xrug = XRug
 
@@ -1140,10 +1100,7 @@ end
 """
     Guide.yrug
 
-Draw a rug plot along the y-axis of a plot.
-
-# Aesthetics
-- `y`: Y positions of notches.
+Draw short horizontal lines along the y-axis of a plot at the positions in the 'y' aesthetic.
 """
 const yrug = YRug
 
@@ -1283,14 +1240,10 @@ struct Annotation <: Gadfly.GuideElement
 end
 
 """
-    Guide.annotation(ctx)
+    Guide.annotation(ctx::Compose.Context)
 
-Overlay a plot with an arbitrary [Compose](http://composejl.org/) graphic. The
-context will inherit the plot's coordinate system, unless overridden with a
-custom unit box.
-
-# Arguments
-- `ctx`: A Compose Context.
+Overlay a plot with an arbitrary `Compose` graphic. The context will inherit
+the plot's coordinate system, unless overridden with a custom unit box.
 """
 const annotation = Annotation
 

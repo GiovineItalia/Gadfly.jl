@@ -18,26 +18,12 @@ element_aesthetics(::LabelGeometry) = [:x, :y, :label]
 default_statistic(::LabelGeometry) = Gadfly.Stat.identity()
 
 """
-    Geom.label[(; position, hide_overlaps)]
+    Geom.label[(; position=:dynamic, hide_overlaps=true)]
 
-Label positions on the plot frame.
-
-This geometry attemps to optimize label positioning so that labels do not
-overlap, and hides any that would overlap.
-
-# Aesthetics
-- `x`: X-axis position.
-- `y`: Y-axis position.
-- `label`: Text to render.
-
-# Arguments
-- `position`: One of `:dynamic`, `:left`, `:right`, `:above`, `:below`,
-    `:centered`. If `:dynamic` is used, label positions will be adjusted to
-    avoid overaps. Otherwise, labels will be statically positioned left, right,
-    above, below, or centered relative to the point.
-- `hide_overlaps`: If true, and dynamic positioning is used, labels that would
-    otherwise overlap another label or be drawn outside the plot panel are
-    hidden. (default: true)
+Place the text strings in the `label` aesthetic at the `x` and `y` coordinates
+on the plot frame.  Offset the text according to `position`, which can be
+`:left`, `:right`, `:above`, `:below`, `:centered`, or `:dynamic`.  The latter
+tries a variety of positions for each label to minimize the number that overlap.
 """
 const label = LabelGeometry
 
@@ -182,7 +168,7 @@ function deferred_label_context(geom::LabelGeometry,
         # Propose a change to label placement.
         else
             if !label_visibility[j]
-                new_total_penalty -= theme.label_hidden_penalty   ### why?
+                new_total_penalty -= theme.label_hidden_penalty
             end
 
             r = rand()
@@ -242,7 +228,7 @@ function deferred_label_context(geom::LabelGeometry,
         improvement = total_penalty - new_total_penalty
 
         T = 0.1 * (1.0 - (k / (1 + num_iterations)))
-        if improvement >= 0 || rand() < exp(improvement / T)  ### ???
+        if improvement >= 0 || rand() < exp(improvement / T)
             if propose_hide
                 label_visibility[j] = false
             else

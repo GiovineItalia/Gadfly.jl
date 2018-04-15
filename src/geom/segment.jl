@@ -11,69 +11,39 @@ SegmentGeometry(default_statistic=Gadfly.Stat.identity(); arrow=false, filled=fa
     SegmentGeometry(default_statistic, arrow, filled, tag) 
 
 """
-    Geom.segment[(; arrow)]
+    Geom.segment[(; arrow=false, filled=false)]
 
-Draw separate line segments/vectors/arrows.
-
-!!! note
-
-    If you want arrows, then you need to provide a `Scale` object for both axes. See example below.
-
-# Aesthetics
-- `x`: Start of line segment.
-- `y`: Start of line segment.
-- `xend`: End of line segment.
-- `yend`: End of line segment.
-- `color` (optional): Color of line segments.
-
-# Arguments
-- `arrow`: Default behavior for `Geom.segment` is to draw line segments without arrows. `Geom.vector` is `Geom.segment(arrow=true)`.
+Draw line segments from `x`, `y` to `xend`, `yend`.  Optionally specify their
+`color`.  If `arrow` is `true` a `Scale` object for both axes must be
+provided.  If `filled` is `true` the arrows are drawn with a filled polygon,
+otherwise with a stroked line.
 """
 const segment = SegmentGeometry
 
 # Leave this as a function, pending extra arguments e.g. arrow attributes
 """
-    Geom.vector[(; filled::Bool=false)]
+    Geom.vector[(; filled=false)]
+
+This geometry is equivalent to [`Geom.segment(arrow=true)`](@ref).
 """
 vector(; filled::Bool=false) = SegmentGeometry(arrow=true, filled=filled)
 
 """
-    Geom.hair[(; intercept, orientation)]
+    Geom.hair[(; intercept=0.0, orientation=:vertical)]
 
-Draws a line from the points to some `intercept` (base line). Looks like hairs standing on end, hence called a hair plot. Also known as a lollipop chart if the end points are plotted.
-
-# Aesthetics
-- `x`: Position of points.
-- `y`: Position of points.
-- `color` (optional): Color.
-
-# Arguments
-- `intercept`: Base of hairs. Defaults to zero. 
-- `orientation`: `:vertical` (default) or `:horizontal`
+Draw lines from `x`, `y` to y=`intercept` if `orientation` is `:vertical` or
+x=`intercept` if `:horizontal`.  Optionally specify their `color`.  This geometry
+is equivalent to [`Geom.segment`](@ref) with [`Stat.hair`](@ref).
 """
-hair(;intercept=0.0, orientation=:vertical) = 
+hair(; intercept=0.0, orientation=:vertical) =
     SegmentGeometry(Gadfly.Stat.hair(intercept, orientation))
 
 """
-    Geom.vectorfield[(; smoothness, scale samples)]
+    Geom.vectorfield[(; smoothness=1.0, scale=1.0, samples=20, filled=false)]
 
-Draw a vectorfield of a 2D function or a matrix. A vectorfield consists of gradient vectors calculated for particular points in a space.
-
-# Aesthetics
-- `z`: 2D function or a matrix that represent "heights" relative to
-    to the x-y plane.
-- `x` (optional): Vector of X-coordinates.  If `z` is a matrix, then
-    the length of `x` must be equal to the number of *rows* in `z`.
-- `y` (optional): Vector of Y-coordinates.  If `z` is a matrix, then
-    the length of `y` must be equal to the number of *columns* in `z`.
-
-# Arguments
-- `smoothness` (optional): Sets the smoothness of the vectorfield,
-    defaults to 1.0. Smaller values (→0) result in more local smoothing.
-    Larger values (→∞) will approach a plane of best fit.
-- `scale` (optional): Sets the size of vectors, defaults to 1.0. 
-- `samples` (optional): Sets the size of the grid at which to estimate vectors,
-    defaults to 20 (i.e. grid is 20 x 20). See the first example below.
+Draw a gradient vector field of the 2D function or a matrix in the `z`
+aesthetic.  This geometry is equivalent to [`Geom.segment`](@ref) with
+[`Stat.vectorfield`](@ref); see the latter for more information.
 """
 function vectorfield(;smoothness=1.0, scale=1.0, samples=20, filled::Bool=false)
     return SegmentGeometry(
@@ -97,8 +67,7 @@ function render(geom::SegmentGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         ϕ = pi/15
         xr = -vl*xyrange[1]*[cos(θ+ϕ), cos(θ-ϕ)]
         yr = -vl*xyrange[2]*[sin(θ+ϕ), sin(θ-ϕ)]
-        arr = [(xmax+xr[1],ymax+yr[1]), (xmax,ymax), (xmax+xr[2],ymax+yr[2]) ]
-        return arr
+        [ (xmax+xr[1],ymax+yr[1]), (xmax,ymax), (xmax+xr[2],ymax+yr[2]) ]
     end
 
     n = length(aes.x)

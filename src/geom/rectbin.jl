@@ -1,3 +1,4 @@
+### should refactor to RectangleGeometry with Identity as the default Stat.
 struct RectangularBinGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
@@ -10,56 +11,30 @@ function RectangularBinGeometry(
 end
 
 """
-    Geom.rect
-
-Draw colored rectangles.
-
-# Aesthetics
-- color
-- x_min
-- x_max
-- y_min
-- y_max
-"""
-rect() = RectangularBinGeometry(Gadfly.Stat.Identity())
-
-"""
     Geom.rectbin
 
-Draw colored rectangles.
-
-# Aesthetics
-- color
-- x
-- y
-
-Equal sizes squares are centered at `x` and `y` positions.
+Draw equal sizes rectangles centered at `x` and `y` positions.  Optionally
+specify their `color`.
 """
 const rectbin = RectangularBinGeometry
 
 """
-    Geom.histogram2d[(; xbincount, xminbincount, xmaxbincount,
-                        ybincount, yminbincount, ymaxbincount)]
+    Geom.rect
 
-Bin data in rectangles and indicate density with color. As in heatmaps, etc.
+Draw colored rectangles with the corners specified by the
+`xmin`, `xmax`, `ymin` and `ymax` aesthetics.  Optionally
+specify their `color`.
+"""
+rect() = RectangularBinGeometry(Gadfly.Stat.Identity())
 
-An alias for [`Geom.rectbin`](@ref) with [`Stat.histogram2d`](@ref).
+"""
+    Geom.histogram2d[(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
+                        ybincount=nothing, yminbincount=3, ymaxbincount=150)]
 
-# Aesthetics
-- `x`: Observations to be binned and plotted on the x coordinate.
-- `y`: Observations to binned and plotted on the y coordinate.
-
-# Arguments
-- `xbincount`: Fix the number of bins in the x coordinate.
-- `xminbincount`: Set the minimum x coordinate bincount when automatically
-    determining the number of bins.
-- `xmaxbincount`: Set the maximum x coordinate bincount when automatically
-    determining the number of bins.
-- `ybincount`: Fix the number of bins in the y coordinate.
-- `yminbincount`: Set the minimum y coordinate bincount when automatically
-    determining the number of bins.
-- `ymaxbincount`: Set the maximum y coordinate bincount when automatically
-    determining the number of bin.
+Draw a heatmap of the `x` and `y` aesthetics by binning into rectangles and
+indicating density with color.  This geometry is equivalent to
+[`Geom.rect`](@ref) with [`Stat.histogram2d`](@ref);  see the latter for more
+information.
 """
 function histogram2d(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
                        ybincount=nothing, yminbincount=3, ymaxbincount=150)

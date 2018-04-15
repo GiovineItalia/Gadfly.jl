@@ -11,6 +11,10 @@ the original value. For example, the Scale.x_log10 aesthetic maps the
 but keeps track of the original value so that data points are properly
 identified.
 
+```@index
+Modules = [Scale]
+```
+
 ```@autodocs
 Modules = [Scale]
 ```

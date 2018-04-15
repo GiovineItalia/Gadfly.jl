@@ -10,25 +10,14 @@ using Showoff
 using IndirectArrays
 using CategoricalArrays
 
-import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia
+import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia, aes2str
 import Distributions: Distribution
 
 include("color_misc.jl")
 
-# Return true if var is categorical.
 iscategorical(scales::Dict{Symbol, Gadfly.ScaleElement}, var::Symbol) =
         haskey(scales, var) && isa(scales[var], DiscreteScale)
 
-# Apply some scales to data in the given order.
-#
-# Args:
-#   scales: An iterable object of ScaleElements.
-#   aess: Aesthetics (of the same length as datas) to update with scaled data.
-#   datas: Zero or more data objects. (Yes, I know "datas" is not a real word.)
-#
-# Returns:
-#   nothing
-#
 function apply_scales(scales, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for scale in scales
         apply_scale(scale, aess, datas...)
@@ -39,15 +28,6 @@ function apply_scales(scales, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Dat
     end
 end
 
-# Apply some scales to data in the given order.
-#
-# Args:
-#   scales: An iterable object of ScaleElements.
-#   datas: Zero or more data objects.
-#
-# Returns:
-#   A vector of Aesthetics of the same length as datas containing scaled data.
-#
 function apply_scales(scales, datas::Gadfly.Data...)
     aess = Gadfly.Aesthetics[Gadfly.Aesthetics() for _ in datas]
     apply_scales(scales, aess, datas...)
@@ -76,9 +56,9 @@ log2_formatter(xs::AbstractArray, format=:plain) =
         [@sprintf("2<sup>%s</sup>", x) for x in showoff(xs, format)]
 const log2_transform = ContinuousScaleTransform(log2, x -> 2^x, log2_formatter)
 
-ln_formatter(xs::AbstractArray, format=:plain) =
+log_formatter(xs::AbstractArray, format=:plain) =
         [@sprintf("e<sup>%s</sup>", x) for x in showoff(xs, format)]
-const ln_transform = ContinuousScaleTransform(log, exp, ln_formatter)
+const log_transform = ContinuousScaleTransform(log, exp, log_formatter)
 
 asinh_formatter(xs::AbstractArray, format=:plain) =
         [@sprintf("sinh(%s)", x) for x in showoff(xs, format)]
@@ -132,109 +112,48 @@ const x_vars = [:x, :xmin, :xmax, :xintercept, :intercept, :xviewmin, :xviewmax,
 const y_vars = [:y, :ymin, :ymax, :yintercept, :slope, :middle, :upper_fence, :lower_fence,
                 :upper_hinge, :lower_hinge, :yviewmin, :yviewmax, :yend]
 
+element_aesthetics(scale::ContinuousScale) = scale.vars
+
 function continuous_scale_partial(vars::Vector{Symbol}, trans::ContinuousScaleTransform)
-    function(; minvalue=nothing, maxvalue=nothing, labels=nothing, format=nothing, minticks=2,
-                 maxticks=10, scalable=true)
+    function(; minvalue=nothing, maxvalue=nothing, labels=nothing, format=nothing,
+             minticks=2, maxticks=10, scalable=true)
         ContinuousScale(vars, trans, minvalue=minvalue, maxvalue=maxvalue,
                         labels=labels, format=format, minticks=minticks,
                         maxticks=maxticks, scalable=scalable)
     end
 end
 
-# Commonly used scales.
+xy_continuous_docstr(var, aess) = """
+    $(var)_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,
+                       format=nothing, minticks=2, maxticks=10, scalable=true)]
+
+Map $(aess) to $var positions in Cartesian coordinates, which are presumed to
+be numerical, using an identity transform.  `minvalue` and `maxvalue` set soft
+lower and upper bounds.  (Use [`Coord.cartesian`](@ref) to enforce a hard
+bound.)  `labels` is a function which maps a coordinate value to a string
+label.  `format` is one of `:plain`, `:scientific`, `:engineering`, or `:auto`.
+Set `scalable` to false to prevent zooming on this axis.  See also
+[`$(var)_log10`](@ref), [`$(var)_log2`](@ref), [`$(var)_log`](@ref),
+[`$(var)_asinh`](@ref), and [`$(var)_sqrt`](@ref) for alternatives to the
+identity transform.
 """
-    Scale.x_continous[(; minvalue, maxvalue, labels, format,
-                       minticks, maxticks, scalable)]
 
-Map numerical data to x positions in cartesian coordinates.
+# can be put on two lines with julia 0.7
+@doc xy_continuous_docstr("x", aes2str(element_aesthetics(x_continuous()))) const x_continuous = continuous_scale_partial(x_vars, identity_transform)
 
-# Arguments
-- `minvalue`: Set scale lower bound to be ≤ this value.
-- `maxvalue`: Set scale lower bound to be ≥ this value.
+@doc xy_continuous_docstr("y", aes2str(element_aesthetics(y_continuous()))) const y_continuous = continuous_scale_partial(y_vars, identity_transform)
 
-!!! note
+xy_fun_docstr(var,fun) = """
+    $(var)_$(fun)[(; minvalue=nothing, maxvalue=nothing, labels=nothing,
+                       format=nothing, minticks=2, maxticks=10, scalable=true)]
 
-    `minvalue` and `maxvalue` here are soft bounds, Gadfly may choose to ignore
-    them when constructing an optimal plot. Use [`Coord.cartesian`](@ref) to enforce
-    a hard bound.
-
-- `labels`: Either a `Function` or `nothing`. When a
-    function is given, values are formatted using this function. The function
-    should map a value in `x` to a string giving its label. If the scale
-    applies a transformation, transformed label values will be passed to this
-    function.
-- `format`: How numbers should be formatted. One of `:plain`, `:scientific`,
-    `:engineering`, or `:auto`. The default in `:auto` which prints very large or very small
-    numbers in scientific notation, and other numbers plainly.
-- `scalable`: When set to false, scale is fixed when zooming (default: true)
-
-# Variations
-A number of transformed continuous scales are provided.
-
-- `Scale.x_continuous` (scale without any transformation).
-- `Scale.x_log10`
-- `Scale.x_log2`
-- `Scale.x_log`
-- `Scale.x_asinh`
-- `Scale.x_sqrt`
-
-
-# Aesthetics Acted On
-`x`, `xmin`, `xmax`, `xintercept`
+Similar to [`Scale.$(var)_continuous`](@ref), except that the aesthetics are
+`$(fun)` transformed and the `labels` function inputs transformed values.
 """
-const x_continuous = continuous_scale_partial(x_vars, identity_transform)
 
-"""
-    Scale.y_continuous[(; minvalue, maxvalue, labels, format,
-                       minticks, maxticks, scalable)]
-
-Map numerical data to y positions in cartesian coordinates.
-
-# Arguments
-- `minvalue`: Set scale lower bound to be ≤ this value.
-- `maxvalue`: Set scale lower bound to be ≥ this value.
-
-!!! note
-
-    `minvalue` and `maxvalue` here are soft bounds, Gadfly may choose to ignore
-    them when constructing an optimal plot. Use [`Coord.cartesian`](@ref) to enforce
-    a hard bound.
-
-- `labels`: Either a `Function` or `nothing`. When a
-    function is given, values are formatted using this function. The function
-    should map a value in `x` to a string giving its label. If the scale
-    applies a transformation, transformed label values will be passed to this
-    function.
-- `format`: How numbers should be formatted. One of `:plain`, `:scientific`,
-    `:engineering`, or `:auto`. The default in `:auto` which prints very large or very small
-    numbers in scientific notation, and other numbers plainly.
-- `scalable`: When set to false, scale is fixed when zooming (default: true)
-
-# Variations
-A number of transformed continuous scales are provided.
-
-- `Scale.y_continuous` (scale without any transformation).
-- `Scale.y_log10`
-- `Scale.y_log2`
-- `Scale.y_log`
-- `Scale.y_asinh`
-- `Scale.y_sqrt`
-
-
-# Aesthetics
-`y`, `ymin`, `ymax`, `yintercept`
-"""
-const y_continuous = continuous_scale_partial(y_vars, identity_transform)
-const x_log10      = continuous_scale_partial(x_vars, log10_transform)
-const y_log10      = continuous_scale_partial(y_vars, log10_transform)
-const x_log2       = continuous_scale_partial(x_vars, log2_transform)
-const y_log2       = continuous_scale_partial(y_vars, log2_transform)
-const x_log        = continuous_scale_partial(x_vars, ln_transform)
-const y_log        = continuous_scale_partial(y_vars, ln_transform)
-const x_asinh      = continuous_scale_partial(x_vars, asinh_transform)
-const y_asinh      = continuous_scale_partial(y_vars, asinh_transform)
-const x_sqrt       = continuous_scale_partial(x_vars, sqrt_transform)
-const y_sqrt       = continuous_scale_partial(y_vars, sqrt_transform)
+for xy in [:x,:y], fun in [:log10, :log2, :log, :asinh, :sqrt]
+  @eval @doc $(xy_fun_docstr(xy,fun)) const $(Symbol(xy,'_',fun)) = continuous_scale_partial($(Symbol(xy,"_vars")), $(Symbol(fun,"_transform")))
+end
 
 """
     size_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,
@@ -242,18 +161,6 @@ const y_sqrt       = continuous_scale_partial(y_vars, sqrt_transform)
 """
 const size_continuous = continuous_scale_partial([:size], identity_transform)
 
-element_aesthetics(scale::ContinuousScale) = scale.vars
-
-# Apply a continuous scale.
-#
-# Args:
-#   scale: A continuous scale.
-#   datas: Zero or more data objects.
-#   aess: Aesthetics (of the same length as datas) to update with scaled data.
-#
-# Return:
-#   nothing
-#
 function apply_scale(scale::ContinuousScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
@@ -339,6 +246,7 @@ function apply_scale_typed!(ds, field, scale::ContinuousScale)
     end
 end
 
+
 function discretize(values, levels=nothing, order=nothing, preserve_order=true)
     if levels == nothing
         if preserve_order
@@ -361,26 +269,14 @@ function discretize(values, levels=nothing, order=nothing, preserve_order=true)
     end
 end
 
-
 struct DiscreteScaleTransform
     f::Function
 end
 
-
 struct DiscreteScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
-
-    # Labels are either a function that takes an array of values and returns
-    # an array of string labels, a vector of string labels of the same length
-    # as the number of unique values in the discrete data, or nothing to use
-    # the default labels.
     labels::Union{(Void), Function}
-
-    # If non-nothing, give values for the scale. Order will be respected and
-    # anything in the data that's not represented in values will be set to missing.
     levels::Union{(Void), AbstractVector}
-
-    # If non-nothing, a permutation of the pool of values.
     order::Union{(Void), AbstractVector}
 end
 DiscreteScale(vals; labels=nothing, levels=nothing, order=nothing) =
@@ -390,68 +286,47 @@ const discrete = DiscreteScale
 
 element_aesthetics(scale::DiscreteScale) = scale.vars
 
-"""
-  Scale.x_discrete[(; labels, levels, order)]
+xy_discrete_docstr(var, aess) = """
+    $(var)_discrete[(; labels=nothing, levels=nothing, order=nothing)]
 
-Map data categorical to Cartesian coordinates. Unlike [`Scale.x_continuous`](@ref), each
-unique x value will be mapped to a equally spaced positions, regardless of
-value.
+Map $(aess), which are presumed to be categorical, to Cartesian coordinates.
+Unlike [`Scale.x_continuous`](@ref), each unique $var value will be mapped to
+equally spaced positions, regardless of value.
 
 By default continuous scales are applied to numerical data. If data consists of
-numbers specifying categories, explicitly adding [`Scale.x_discrete`](@ref) is the
+numbers specifying categories, explicitly adding `Scale.$(var)_discrete` is the
 easiest way to get that data to plot appropriately.
 
-# Arguments
-- `labels`: Either a `Function` or `nothing`. When a
-    function is given, values are formatted using this function. The function
-    should map a value in `x` to a string giving its label.
-- `levels`: If non-nothing, give values for the scale. Order will be respected
-    and anything in the data that's not respresented in `levels` will be set to
-    `missing`.
-- `order`: If non-nothing, give a vector of integers giving a permutation of
-    the values pool of the data.
+`labels` is either a function which maps a coordinate value to a string label,
+or a vector of strings of the same length as the number of unique values in the
+aesthetic.  `levels` gives values for the scale.  Order will be respected and
+anything in the data that's not respresented in `levels` will be set to
+`missing`.  `order` is a vector of integers giving a permutation of the levels
+default order.
 
-# Aesthetics
-
-`x`, `xmin`, `xmax`, `xintercept`
+See also [`group_discrete`](@ref), [`shape_discrete`](@ref), and
+[`size_discrete`](@ref).
 """
-x_discrete(; labels=nothing, levels=nothing, order=nothing) =
+
+@doc xy_discrete_docstr("x", aes2str(element_aesthetics(x_discrete()))) x_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale(x_vars, labels=labels, levels=levels, order=order)
 
-"""
-    Scale.y_discrete[(; labels, levels, order)]
-
-Map data categorical to Cartesian coordinates. Unlike [`Scale.y_continuous`](@ref), each
-unique y value will be mapped to a equally spaced positions, regardless of
-value.
-
-By default continuous scales are applied to numerical data. If data consists of
-numbers specifying categories, explicitly adding [`Scale.y_discrete`](@ref) is the
-easiest way to get that data to plot appropriately.
-
-# Arguments
-- `labels`: Either a `Function` or `nothing`. When a
-    function is given, values are formatted using this function. The function
-    should map a value in `x` to a string giving its label.
-- `levels`: If non-nothing, give values for the scale. Order will be respected
-    and anything in the data that's not respresented in `levels` will be set to
-    `missing`.
-- `order`: If non-nothing, give a vector of integers giving a permutation of
-    the values pool of the data.
-
-# Aesthetics
-`y`, `ymin`, `ymax`, `yintercept`
-"""
-y_discrete(; labels=nothing, levels=nothing, order=nothing) =
+@doc xy_discrete_docstr("y", aes2str(element_aesthetics(y_discrete()))) y_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale(y_vars, labels=labels, levels=levels, order=order)
 
-group_discrete(; labels=nothing, levels=nothing, order=nothing) =
+type_discrete_docstr(aes) = """
+    $(aes)_discrete[(; labels=nothing, levels=nothing, order=nothing)]
+
+Similar to [`Scale.x_discrete`](@ref), except applied to the `$aes` aesthetic.
+"""
+
+@doc type_discrete_docstr("group") group_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:group], labels=labels, levels=levels, order=order)
 
-shape_discrete(; labels=nothing, levels=nothing, order=nothing) =
+@doc type_discrete_docstr("shape") shape_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:shape], labels=labels, levels=levels, order=order)
 
-size_discrete(; labels=nothing, levels=nothing, order=nothing) =
+@doc type_discrete_docstr("size") size_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:size], labels=labels, levels=levels, order=order)
 
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
@@ -493,12 +368,10 @@ struct NoneColorScale <: Gadfly.ScaleElement
 end
 
 """
-    Scale.color_none
+    color_none
 
-Suppress a default color scale. Some statistics impose a default color scale.
-When no color scale is desired, explicitly including [`Scale.color_none`](@ref) will
-suppress this default.
-
+Suppress the default color scale that some statistics impose by setting the
+`color` aesthetic to `nothing`.
 """
 const color_none = NoneColorScale
 
@@ -533,16 +406,9 @@ end
 
 
 struct DiscreteColorScale <: Gadfly.ScaleElement
-    f::Function # A function f(n) that produces a vector of n colors.
-
-    # If non-nothing, give values for the scale. Order will be respected and
-    # anything in the data that's not represented in values will be set to missing.
+    f::Function
     levels::Union{(Void), AbstractVector}
-
-    # If non-nothing, a permutation of the pool of values.
     order::Union{(Void), AbstractVector}
-
-    # If true, order levels as they appear in the data
     preserve_order::Bool
 end
 DiscreteColorScale(f; levels=nothing, order=nothing, preserve_order=true) =
@@ -550,62 +416,43 @@ DiscreteColorScale(f; levels=nothing, order=nothing, preserve_order=true) =
 
 element_aesthetics(scale::DiscreteColorScale) = [:color]
 
-function default_discrete_colors(n)
-    convert(Vector{Color},
-         distinguishable_colors(n, [LCHab(70, 60, 240)],
-             transform=c -> deuteranopic(c, 0.5),
-             lchoices=Float64[65, 70, 75, 80],
-             cchoices=Float64[0, 50, 60, 70],
-             hchoices=linspace(0, 330, 24),
-         )
-     )
-end
+default_discrete_colors(n) = convert(Vector{Color},
+        distinguishable_colors(n,
+                               [LCHab(70, 60, 240)],
+                               transform=c -> deuteranopic(c, 0.5),
+                               lchoices=Float64[65, 70, 75, 80],
+                               cchoices=Float64[0, 50, 60, 70],
+                               hchoices=linspace(0, 330, 24)))
 
-# Common discrete color scales
 """
-    Scale.color_discrete_hue[(f; levels, order, preserve_order)]
+    color_discrete_hue[(f; levels=nothing, order=nothing, preserve_order=true)]
 
-Create a discrete color scale to be used for the plot. `Scale.color_discrete` is an
-alias for [`Scale.color_discrete_hue`](@ref).
+Create a discrete color scale that maps the categorical levels in the `color`
+aesthetic to `Color`s.  `f` is a function that produces a vector of colors.
+`levels` gives values for the scale.  Order will be respected and anything in
+the data that's not represented in `levels` will be set to missing.  `order` is
+a vector of integers giving a permutation of the levels default order.  If
+`preserve_order` is `true` orders levels as they appear in the data.
 
-# Arguments
-- `f`: A function `f(n)` that produces a vector of `n` colors. Usually [`distinguishable_colors`](https://github.com/JuliaGraphics/Colors.jl#distinguishable_colors) can be used for this, with parameters tuned to your liking.
-- `levels`: Explicitly set levels used by the scale.
-- `order`: A vector of integers giving a permutation of the levels
-    default order.
-- `preserve_order`: If set to `true`, orders levels as they appear in the data
+Either input `Stat.color_discrete_hue` as an argument to `plot`, or set
+`discrete_color_scale` in a [Theme](@ref Themes).
 """
-function color_discrete_hue(f=default_discrete_colors;
-                            levels=nothing,
-                            order=nothing,
-                            preserve_order=true)
-    DiscreteColorScale(
-        f,
-        levels=levels,
-        order=order,
-        preserve_order=preserve_order)
-end
+color_discrete_hue(f=default_discrete_colors;
+                   levels=nothing, order=nothing, preserve_order=true) = 
+        DiscreteColorScale(f, levels=levels, order=order, preserve_order=preserve_order)
 
 @deprecate discrete_color_hue(; levels=nothing, order=nothing, preserve_order=true) color_discrete_hue(; levels=levels, order=order, preserve_order=preserve_order)
 
-const color_discrete = color_discrete_hue
+const color_discrete = color_discrete_hue   ### WHY HAVE THIS ALIAS?
 
 @deprecate discrete_color(; levels=nothing, order=nothing, preserve_order=true) color_discrete(; levels=levels, order=order, preserve_order=preserve_order)
 
+
 """
-    Scale.color_discrete_manual[(; colors, levels, order)]
+    color_discrete_manual(colors...; levels=nothing, order=nothing)
 
-Create a discrete color scale to be used for the plot.
-
-# Arguments
-- `colors...`: an iterable collection of things that can be converted to colors with `Colors.color` (e.g. "tomato", RGB(1.0,0.388,0.278), colorant"#FF6347")
-- `levels` (optional): Explicitly set levels used by the scale. Order is
-    respected.
-- `order` (optional): A vector of integers giving a permutation of the levels
-    default order.
-
-# Aesthetics Acted On
-`color`
+Similar to [`color_discrete_hue`](@ref) except that colors for each level are
+specified directly instead of being computed by a function.
 """
 color_discrete_manual(colors::AbstractString...; levels=nothing, order=nothing) =
         color_discrete_manual(Gadfly.parse_colorant(colors)...; levels=levels, order=order)
@@ -691,45 +538,36 @@ function continuous_color_scale_partial(trans::ContinuousScaleTransform)
     end
 end
 
-# Commonly used scales.
+element_aesthetics(::ContinuousColorScale) = [:color]
+
 """
-    Scale.color_continuous[(; minvalue, maxvalue, colormap)]
+    color_continuous[(; minvalue=nothing, maxvalue=nothing, colormap)]
 
-Create a continuous color scale that the plot will use.
+Create a continuous color scale by mapping
+$(aes2str(element_aesthetics(color_continuous()))) to a `Color`.  `minvalue`
+and `maxvalue` specify the data values corresponding to the bottom and top of
+the color scale.  `colormap` is a function defined on the interval from 0 to 1
+that returns a `Color`.
 
-This can also be set as the `continuous_color_scheme` in a Theme (see [Themes](@ref)).
+Either input `Stat.color_continuous` as an argument to `plot`, or
+set `continuous_color_scale` in a [Theme](@ref Themes).
 
-# Arguments
-- `minvalue` (optional): the data value corresponding to the bottom of the color scale (will be based on the range of the data if not specified).
-- `maxvalue` (optional): the data value corresponding to the top of the color scale (will be based on the range of the data if not specified).
-- `colormap`: A function defined on the interval from 0 to 1 that returns a `Color` (as from the `Colors` package).
-
-# Variations
-
-`color_continuous_gradient` is an alias for [`Scale.color_continuous`](@ref).
-
-A number of transformed continuous scales are provided.
-
-- `Scale.color_continuous` (scale without any transformation).
-- `Scale.color_log10`
-- `Scale.color_log2`
-- `Scale.color_log`
-- `Scale.color_asinh`
-- `Scale.color_sqrt`
-
-# Aesthetics Acted On
-`color`
+See also [`color_log10`](@ref), [`color_log2`](@ref), [`color_log`](@ref),
+[`color_asinh`](@ref), and [`color_sqrt`](@ref).
 """
 const color_continuous = continuous_color_scale_partial(identity_transform)
-const color_log10      = continuous_color_scale_partial(log10_transform)
-const color_log2       = continuous_color_scale_partial(log2_transform)
-const color_log        = continuous_color_scale_partial(ln_transform)
-const color_asinh      = continuous_color_scale_partial(asinh_transform)
-const color_sqrt       = continuous_color_scale_partial(sqrt_transform)
 
-const color_continuous_gradient = color_continuous
+color_fun(fun) = """
+    color_$(fun)[(; minvalue=nothing, maxvalue=nothing, colormap)]
 
-element_aesthetics(::ContinuousColorScale) = [:color]
+Similar to [`Scale.color_continuous`](@ref), except that `color` is $(fun) transformed.
+"""
+
+for fun in [:log10, :log2, :log, :asinh, :sqrt]
+  @eval @doc $(color_fun(fun)) const $(Symbol("color_",fun)) = continuous_color_scale_partial($(Symbol(fun,"_transform")))
+end
+
+const color_continuous_gradient = color_continuous  ### WHY HAVE THIS ALIAS?
 
 @deprecate continuous_color_gradient(;minvalue=nothing, maxvalue=nothing) color_continuous_gradient(;minvalue=minvalue, maxvalue=maxvalue)
 
@@ -841,6 +679,7 @@ element_aesthetics(::LabelScale) = [:label]
 const label = LabelScale
 
 
+### not used internally
 # Scale applied to grouping aesthetics.
 struct GroupingScale <: Gadfly.ScaleElement
     var::Symbol

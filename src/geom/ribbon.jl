@@ -8,13 +8,8 @@ RibbonGeometry(default_statistic=Gadfly.Stat.identity(); tag=empty_tag) =
 """
     Geom.ribbon
 
-Draw a ribbon bounded above and below by `ymin` and `ymax`, respectively.
-
-# Aesthetics
-- `x`: X-axis position
-- `ymin`: Y-axis lower bound.
-- `ymax`: Y-axis upper bound.
-- `color` (optional): Group categorically by color.
+Draw a ribbon at the positions in `x` bounded above and below by `ymax` and
+`ymin`, respectively.  Optionally draw multiple ribbons by grouping with `color`.
 """
 const ribbon = RibbonGeometry
 

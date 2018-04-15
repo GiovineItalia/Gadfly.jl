@@ -15,34 +15,15 @@ using CoupledFields # It is registered in METADATA.jl
 using IndirectArrays
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
-               default_scales, isconcrete, setfield!, discretize_make_ia
+               default_scales, isconcrete, setfield!, discretize_make_ia, aes2str
 import KernelDensity
 # import Distributions: Uniform, Distribution, qqbuild
 import IterTools: distinct
 import Compat.Iterators: cycle, product
 
-function aes2str(aes)
-  list = join([string('`',x,'`') for x in aes], ", ", ", and ")
-  if length(aes)>1
-    return string(list," aesthetics")
-  else
-    return string(list," aesthetic")
-  end
-end
-
 include("bincount.jl")
 
 
-# Apply a series of statistics.
-#
-# Args:
-#   stats: Statistics to apply in order.
-#   scales: Scales used by the plot.
-#   aes: A Aesthetics instance.
-#
-# Returns:
-#   Nothing, modifies aes.
-#
 function apply_statistics(stats::Vector{Gadfly.StatisticElement},
                           scales::Dict{Symbol, Gadfly.ScaleElement},
                           coord::Gadfly.CoordinateElement,
@@ -153,7 +134,6 @@ BarStatistic(; position=:stack, orientation=:vertical) = BarStatistic(position, 
 input_aesthetics(stat::BarStatistic) = stat.orientation == :vertical ? [:x] : [:y]
 output_aesthetics(stat::BarStatistic) =
     stat.orientation == :vertical ? [:xmin, :xmax] : [:ymin, :ymax]
-
 default_scales(stat::BarStatistic) = stat.orientation == :vertical ?
         [Gadfly.Scale.y_continuous()] : [Gadfly.Scale.x_continuous()]
 
@@ -161,7 +141,7 @@ default_scales(stat::BarStatistic) = stat.orientation == :vertical ?
     Stat.bar[(; position=:stack, orientation=:vertical)]
 
 Transform $(aes2str(input_aesthetics(bar()))) into
-$(aes2str(output_aesthetics(bar()))).
+$(aes2str(output_aesthetics(bar()))).  Used by [`Geom.bar`](@ref Gadfly.Geom.bar).
 """
 const bar = BarStatistic
 
@@ -272,10 +252,9 @@ function HistogramStatistic(; bincount=nothing,
     end
 end
 
-input_aesthetics(stat::HistogramStatistic) = stat.orientation == :vertical ? [:x] : [:y]
+input_aesthetics(stat::HistogramStatistic) = stat.orientation == :vertical ? [:x] : [:y]  ### and :color
 output_aesthetics(stat::HistogramStatistic) =
     stat.orientation == :vertical ? [:x, :y, :xmin, :xmax] : [:y, :x, :ymin, :ymax]
-
 default_scales(stat::HistogramStatistic) = stat.orientation == :vertical ?
         [Gadfly.Scale.y_continuous()] : [Gadfly.Scale.x_continuous()]
 
@@ -284,8 +263,12 @@ default_scales(stat::HistogramStatistic) = stat.orientation == :vertical ?
                     position=:stack, orientation=:vertical, density=false)]
 
 Transform $(aes2str(input_aesthetics(histogram()))) into
-$(aes2str(output_aesthetics(histogram()))).  Exchange y for x when
-orientation=:horizontal.
+$(aes2str(output_aesthetics(histogram()))), optionally grouping by `color`.
+Exchange y for x when `orientation` is `:horizontal`.  `bincount` specifies the
+number of bins to use.  If set to `nothing`, an optimization method is used to
+determine a reasonable value which uses `minbincount` and `maxbincount` to set
+the lower and upper limits.  If `density` is `true`, normalize the counts by
+their total.
 """
 const histogram = HistogramStatistic
 
@@ -490,15 +473,17 @@ Density2DStatistic(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15) =
 
 input_aesthetics(stat::Density2DStatistic) = [:x, :y]
 output_aesthetics(stat::Density2DStatistic) = [:x, :y, :z]
+default_scales(::Density2DStatistic) = [Gadfly.Scale.y_continuous()]
 
 """
     Stat.density2d[(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15)]
 
-Transform $(aes2str(input_aesthetics(density2d()))) into $(aes2str(output_aesthetics(density2d()))).
+Estimate the density of $(aes2str(input_aesthetics(density2d()))) at `n` points
+and put the results into $(aes2str(output_aesthetics(density2d()))).  Smoothing
+is controlled by `bandwidth`.  Calls [`Stat.contour`](@ref) to compute the
+`levels`.  Used by [`Geom.density2d`](@ref Gadfly.Geom.density2d).
 """
 const density2d = Density2DStatistic
-
-default_scales(::Density2DStatistic) = [Gadfly.Scale.y_continuous()]
 
 function apply_statistic(stat::Density2DStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -524,17 +509,17 @@ struct DensityStatistic <: Gadfly.StatisticElement
 end
 DensityStatistic(; n=256, bandwidth=-Inf) = DensityStatistic(n, bandwidth)
 
-input_aesthetics(stat::DensityStatistic) = [:x]
-output_aesthetics(stat::DensityStatistic) = [:x, :y]
+input_aesthetics(stat::DensityStatistic) = [:x, :color]
+output_aesthetics(stat::DensityStatistic) = [:x, :y, :color]
+default_scales(::DensityStatistic) = [Gadfly.Scale.y_continuous()]
 
 """
     Stat.density[(; n=256, bandwidth=-Inf)]
 
-Transform $(aes2str(input_aesthetics(density()))) into $(aes2str(output_aesthetics(density()))).
+Estimate the density of `x` at `n` points, and put the result in `x` and `y`.
+Smoothing is controlled by `bandwidth`.  Used by [`Geom.density`](@ref Gadfly.Geom.density).
 """
 const density = DensityStatistic
-
-default_scales(::DensityStatistic) = [Gadfly.Scale.y_continuous()]
 
 function apply_statistic(stat::DensityStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -579,7 +564,6 @@ function apply_statistic(stat::DensityStatistic,
 end
 
 
-
 struct Histogram2DStatistic <: Gadfly.StatisticElement
     xminbincount::Int
     xmaxbincount::Int
@@ -608,7 +592,6 @@ end
 
 input_aesthetics(stat::Histogram2DStatistic) = [:x, :y]
 output_aesthetics(stat::Histogram2DStatistic) = [:xmin, :ymax, :ymin, :ymax, :color]
-
 default_scales(::Histogram2DStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
     [t.continuous_color_scale]
 
@@ -616,8 +599,12 @@ default_scales(::Histogram2DStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
     Stat.histogram2d[(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
                         ybincount=nothing, yminbincount=3, ymaxbincount=150)]
 
-Transform $(aes2str(input_aesthetics(histogram2d()))) into
-$(aes2str(output_aesthetics(histogram2d()))).
+Bin the points in $(aes2str(input_aesthetics(histogram2d()))) into rectangles
+in $(aes2str(output_aesthetics(histogram2d()))).  `xbincount` and `ybincount`
+manually fix the number of bins.  If set to `nothing`, an optimization method
+is used to determine a reasonable value which uses `xminbincount`,
+`xmaxbincount`, `yminbincount` and `ymaxbincount` to set the lower and upper
+limits.
 """
 const histogram2d = Histogram2DStatistic
 
@@ -735,8 +722,7 @@ end
 
 # Find reasonable places to put tick marks and grid lines.
 struct TickStatistic <: Gadfly.StatisticElement
-    in_vars::Vector{Symbol}
-    out_var::AbstractString
+    axis::AbstractString
 
     granularity_weight::Float64
     simplicity_weight::Float64
@@ -749,77 +735,48 @@ end
 
 @deprecate xticks(ticks) xticks(ticks=ticks)
 
+### add hinges and fences to y-axis?
+input_aesthetics(stat::TickStatistic) = stat.axis=="x" ? [:x, :xmin, :xmax, :xintercept] :
+    [:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence]
+output_aesthetics(stat::TickStatistic) = stat.axis=="x" ? [:xtick, :xgrid] : [:ytick, :ygrid]
+
+xy_ticks(var,in_aess,out_aess) = """
+    Stat.$(var)ticks[(; ticks=:auto, granularity_weight=1/4, simplicity_weight=1/6,
+                coverage_weight=1/3, niceness_weight=1/4)]
+
+Compute an appealing set of $(var)-ticks that encompass the data by
+transforming $(in_aess) into $(out_aess).  `ticks` is a vector of desired
+values, or `:auto` to indicate they should be computed.  the importance of
+having a reasonable number of ticks is specified with `granularity_weight`; of
+including zero with `simplicity_weight`; of tightly fitting the span of the
+data with `coverage_weight`; and of having a nice numbering with
+`niceness_weight`.
 """
-    Stat.xticks(tics, granularity_weight=1/4, simplicity_weight=1/6,
-                coverage_weight=1/3, niceness_weight=1/4)
 
-Compute an appealing set of ticks that encompass the data.
-
-# Arguments
-- `ticks`: A fixed array of ticks, or `nothing` to indicate they should be
-    computed.
-- `granularity_weight`: Importance of having a reasonable number of ticks
-- `simplicity_weight`: Importance of including zero
-- `coverage_weight`: Importance of tightly fitting the span of the data
-- `niceness_weight`: Importance of having a nice numbering
-
-# Aesthetics
-All x-axis aesthetics are considered, and ticks are output to the `xtick` and
-`xgrid` aesthetics.
-"""
-xticks(; ticks=:auto,
+# can be put on two lines with julia 0.7
+@doc xy_ticks("x",aes2str(input_aesthetics(xticks())), aes2str(output_aesthetics(xticks()))) xticks(; ticks=:auto,
          granularity_weight=1/4,
          simplicity_weight=1/6,
          coverage_weight=1/3,
          niceness_weight=1/4) = 
-    TickStatistic([:x, :xmin, :xmax, :xintercept], "x",
+    TickStatistic("x",
               granularity_weight, simplicity_weight, coverage_weight, niceness_weight, ticks)
 
 @deprecate yticks(ticks) yticks(ticks=ticks)
 
-"""
-    Stat.yticks(tics, granularity_weight=1/4, simplicity_weight=1/6,
-                coverage_weight=1/3, niceness_weight=1/4)
-
-Compute an appealing set of ticks that encompass the data.
-
-# Arguments
-- `ticks`: A fixed array of ticks, or `nothing` to indicate they should be
-    computed.
-- `granularity_weight`: Importance of having a reasonable number of ticks.
-- `simplicity_weight`: Importance of including zero.
-- `coverage_weight`: Importance of tightly fitting the span of the data.
-- `niceness_weight`: Importance of having a nice numbering.
-
-# Aesthetics
-All y-axis aesthetics are considered, and ticks are output to the `ytick` and
-`ygrid` aesthetics.
-"""
-yticks(; ticks=:auto,
+@doc xy_ticks("y",aes2str(input_aesthetics(yticks())), aes2str(output_aesthetics(yticks()))) yticks(; ticks=:auto,
          granularity_weight=1/4,
          simplicity_weight=1/6,
          coverage_weight=1/3,
          niceness_weight=1/4) =
-    TickStatistic([:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge,
-        :lower_fence, :upper_fence], "y",
+    TickStatistic("y",
         granularity_weight, simplicity_weight, coverage_weight, niceness_weight, ticks)
 
-# Apply a tick statistic.
-
-# Args:
-#   stat: statistic.
-#   aes: aesthetics.
-
-# Returns:
-#   nothing
-
-# Modifies:
-#   aes
-#
 function apply_statistic(stat::TickStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
+    in_vars = input_aesthetics(stat)
     isa(stat.ticks, Symbol) && stat.ticks != :auto &&
             error("Invalid value $(stat.ticks) for ticks parameter.")
 
@@ -827,15 +784,15 @@ function apply_statistic(stat::TickStatistic,
             error("TickStatistic cannot be applied to subplot coordinates.")
 
     # don't clobber existing ticks
-    getfield(aes, Symbol(stat.out_var, "tick")) == nothing || return
+    getfield(aes, Symbol(stat.axis, "tick")) == nothing || return
 
-    in_group_var = Symbol(stat.out_var, "group")
+    in_group_var = Symbol(stat.axis, "group")
     minval, maxval = nothing, nothing
     in_vals = Any[]
-    categorical = (:x in stat.in_vars && Scale.iscategorical(scales, :x)) ||
-                  (:y in stat.in_vars && Scale.iscategorical(scales, :y))
+    categorical = (:x in in_vars && Scale.iscategorical(scales, :x)) ||
+                  (:y in in_vars && Scale.iscategorical(scales, :y))
 
-    for var in stat.in_vars
+    for var in in_vars
         categorical && !in(var,[:x,:y]) && continue
         vals = getfield(aes, var)
         if vals != nothing && eltype(vals) != Function
@@ -850,9 +807,9 @@ function apply_statistic(stat::TickStatistic,
             minval = convert(T, minval)
             maxval = convert(T, maxval)
 
-            if stat.out_var == "x"
+            if stat.axis == "x"
                 dsize = aes.xsize === nothing ? [nothing] : aes.xsize
-            elseif stat.out_var == "y"
+            elseif stat.axis == "y"
                 dsize = aes.ysize === nothing ? [nothing] : aes.ysize
             else
                 dsize = [nothing]
@@ -880,14 +837,14 @@ function apply_statistic(stat::TickStatistic,
     n = Gadfly.concrete_length(in_vals)
 
     # check the x/yviewmin/max pesudo-aesthetics
-    if stat.out_var == "x"
+    if stat.axis == "x"
         if aes.xviewmin != nothing
             minval = min(minval, aes.xviewmin)
         end
         if aes.xviewmax != nothing
             maxval = max(maxval, aes.xviewmax)
         end
-    elseif stat.out_var == "y"
+    elseif stat.axis == "y"
         if aes.yviewmin != nothing
             minval = min(minval, aes.yviewmin)
         end
@@ -899,7 +856,7 @@ function apply_statistic(stat::TickStatistic,
     # take into account a forced viewport in cartesian coordinates.
     strict_span = false
     if typeof(coord) == Coord.Cartesian
-        if stat.out_var == "x"
+        if stat.axis == "x"
             if coord.xmin !== nothing
                 minval = coord.xmin
                 strict_span = true
@@ -908,7 +865,7 @@ function apply_statistic(stat::TickStatistic,
                 maxval = coord.xmax
                 strict_span = true
             end
-        elseif stat.out_var == "y"
+        elseif stat.axis == "y"
             if coord.ymin !== nothing
                 minval = coord.ymin
                 strict_span = true
@@ -971,20 +928,20 @@ function apply_statistic(stat::TickStatistic,
 
     # We use the first label function we find for any of the aesthetics. I'm not
     # positive this is the right thing to do, or would would be.
-    labeler = getfield(aes, Symbol(stat.out_var, "_label"))
+    labeler = getfield(aes, Symbol(stat.axis, "_label"))
 
-    setfield!(aes, Symbol(stat.out_var, "tick"), ticks)
-    setfield!(aes, Symbol(stat.out_var, "grid"), grids)
-    setfield!(aes, Symbol(stat.out_var, "tick_label"), labeler)
-    setfield!(aes, Symbol(stat.out_var, "tickvisible"), tickvisible)
-    setfield!(aes, Symbol(stat.out_var, "tickscale"), tickscale)
+    setfield!(aes, Symbol(stat.axis, "tick"), ticks)
+    setfield!(aes, Symbol(stat.axis, "grid"), grids)
+    setfield!(aes, Symbol(stat.axis, "tick_label"), labeler)
+    setfield!(aes, Symbol(stat.axis, "tickvisible"), tickvisible)
+    setfield!(aes, Symbol(stat.axis, "tickscale"), tickscale)
 
-    viewmin_var = Symbol(stat.out_var, "viewmin")
+    viewmin_var = Symbol(stat.axis, "viewmin")
     if getfield(aes, viewmin_var) === nothing || getfield(aes, viewmin_var) > viewmin
         setfield!(aes, viewmin_var, viewmin)
     end
 
-    viewmax_var = Symbol(stat.out_var, "viewmax")
+    viewmax_var = Symbol(stat.axis, "viewmax")
     if getfield(aes, viewmax_var) === nothing || getfield(aes, viewmax_var) < viewmax
         setfield!(aes, viewmax_var, viewmax)
     end
@@ -1048,10 +1005,7 @@ end
 struct BoxplotStatistic <: Gadfly.StatisticElement
     method::Union{Symbol, Vector}
 end
-
-
 BoxplotStatistic(; method=:tukey) = BoxplotStatistic(method)
-
 
 input_aesthetics(stat::BoxplotStatistic) = [:x, :y]
 output_aesthetics(stat::BoxplotStatistic) =
@@ -1060,7 +1014,12 @@ output_aesthetics(stat::BoxplotStatistic) =
 """
     Stat.boxplot[(; method=:tukey)]
 
-Transform $(aes2str(input_aesthetics(boxplot()))) into $(aes2str(output_aesthetics(boxplot()))).
+Transform the $(aes2str(input_aesthetics(boxplot()))) into
+$(aes2str(output_aesthetics(boxplot()))).  If `method` is `:tukey` then Tukey's
+rule is used (i.e. fences are 1.5 times the inter-quartile range).  Otherwise,
+a vector of five numbers giving quantiles for lower fence, lower hinge, middle,
+upper hinge, and upper fence in that order.  Used by [`Geom.boxplot`](@ref
+Gadfly.Geom.boxplot).
 """
 const boxplot = BoxplotStatistic
 
@@ -1172,7 +1131,6 @@ function apply_statistic(stat::BoxplotStatistic,
 end
 
 
-
 struct SmoothStatistic <: Gadfly.StatisticElement
     method::Symbol
     smoothing::Float64
@@ -1186,7 +1144,11 @@ output_aesthetics(::SmoothStatistic) = [:x, :y]
     Stat.smooth[(; method=:loess, smoothing=0.75)]
 
 Transform $(aes2str(input_aesthetics(smooth()))) into
-$(aes2str(output_aesthetics(smooth()))).
+$(aes2str(output_aesthetics(smooth()))).  `method` can either be`:loess` or
+`:lm`.  `smoothing` controls the degree of smoothing.  For `:loess`, this is
+the span parameter giving the proportion of data used for each local fit where
+0.75 is the default. Smaller values use more data (less local context), larger
+values use less data (more local context).
 """
 const smooth = SmoothStatistic
 
@@ -1266,8 +1228,16 @@ struct HexBinStatistic <: Gadfly.StatisticElement
 end
 HexBinStatistic(; xbincount=50, ybincount=50) = HexBinStatistic(xbincount, ybincount)
 
+input_aesthetics(::HexBinStatistic) = [:x, :y]
+output_aesthetics(::HexBinStatistic) = [:x, :y, :xsize, :ysize]
+default_scales(::HexBinStatistic, t::Gadfly.Theme) = [t.continuous_color_scale]
+
 """
     Stat.hexbin[(; xbincount=50, ybincount=50)]
+
+Bin the points in $(aes2str(input_aesthetics(hexbin()))) into hexagons in
+$(aes2str(output_aesthetics(hexbin()))).  `xbincount` and `ybincount` manually
+fix the number of bins.
 """
 const hexbin = HexBinStatistic
 
@@ -1321,34 +1291,27 @@ function apply_statistic(stat::HexBinStatistic,
     Scale.apply_scale(color_scale, [aes], data)
 end
 
-default_scales(::HexBinStatistic, t::Gadfly.Theme) = [t.continuous_color_scale]
-
 
 struct StepStatistic <: Gadfly.StatisticElement
     direction::Symbol
 end
 StepStatistic(; direction=:hv) = StepStatistic(direction)
 
-"""
-    Stat.step[(; direction)]
-
-Perform stepwise interpolation between points. If `x` and `y` define a a series
-of points, a new point in inserted between each. Between `(x[i], y[i])` and
-`(x[i+1], y[i+1])`, either `(x[i+1], y[i])` or `(x[i], y[i+1])` is inserted,
-depending on the `direction` argument.
-
-# Aesthetics
-- `x`: Point x-coordinate.
-- `y`: Point y-coordinate.
-
-# Arguments
-- `direction`: Either `:hv` for horizontal then vertical, or `:vh` for
-    vertical then horizontal.
-"""
-const step = StepStatistic
-
 input_aesthetics(::StepStatistic) = [:x, :y]
 output_aesthetics(::StepStatistic) = [:x, :y]
+
+"""
+    Stat.step[(; direction=:hv)]
+
+
+Perform stepwise interpolation between the points in
+$(aes2str(input_aesthetics(step()))).  If `direction` is `:hv` a horizontal
+line extends to the right of each point and a vertical line below it;  if `:vh`
+then vertical above and horizontal to the left.  More concretely, between
+`(x[i], y[i])` and `(x[i+1], y[i+1])`, either `(x[i+1], y[i])` or `(x[i],
+y[i+1])` is inserted, for `:hv` and `:vh`, respectively.
+"""
+const step = StepStatistic
 
 function apply_statistic(stat::StepStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1426,16 +1389,15 @@ FunctionStatistic(; num_samples=250) = FunctionStatistic(num_samples)
 
 input_aesthetics(::FunctionStatistic) = [:y, :xmin, :xmax]
 output_aesthetics(::FunctionStatistic) = [:x, :y, :group]
+default_scales(::FunctionStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
 
 """
     Stat.func[(; num_samples=250)]
 
-Transform $(aes2str(input_aesthetics(func()))) into
-$(aes2str(output_aesthetics(func()))).
+Transform the functions or expressions in $(aes2str(input_aesthetics(func())))
+into points in $(aes2str(output_aesthetics(func()))).
 """
 const func = FunctionStatistic
-
-default_scales(::FunctionStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
 
 function apply_statistic(stat::FunctionStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1493,20 +1455,27 @@ struct ContourStatistic <: Gadfly.StatisticElement
 end
 ContourStatistic(; levels=15, samples=150) = ContourStatistic(levels, samples)
 
-input_aesthetics(::ContourStatistic) = [:z, :xmin, :xmax, :ymin, :ymax]
+input_aesthetics(::ContourStatistic) = [:z, :x, :y, :xmin, :xmax, :ymin, :ymax]
 output_aesthetics(::ContourStatistic) = [:x, :y, :color, :group]
+default_scales(::ContourStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
+        [Gadfly.Scale.z_func(), Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous(),
+            t.continuous_color_scale]
 
 """
     Stat.contour[(; levels=15, samples=150)]
 
-Transform $(aes2str(input_aesthetics(contour()))) into
-$(aes2str(output_aesthetics(contour()))).
+Transform the 2D function, matrix, DataFrame in the `z` aesthetic into a set of
+lines in `x` and `y` showing the iso-level contours.  A function requires that
+either the `x` and `y` or the `xmin`, `xmax`, `ymin` and `ymax` aesthetics also
+be defined.  The latter are interpolated using `samples`.  A matrix and
+DataFrame can optionally input `x` and `y` aesthetics to specify the
+coordinates of the rows and columns, respectively.  In each case `levels` sets
+the number of contours to draw:  either a vector of contour levels, an integer
+that specifies the number of contours to draw, or a function which inputs `z`
+and outputs either a vector or an integer.  Used by [`Geom.contour`](@ref
+Gadfly.Geom.contour).
 """
 const contour = ContourStatistic
-
-default_scales(::ContourStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
-        [Gadfly.Scale.z_func(), Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous(),
-            t.continuous_color_scale]
 
 function apply_statistic(stat::ContourStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1582,22 +1551,18 @@ struct QQStatistic <: Gadfly.StatisticElement end
 
 input_aesthetics(::QQStatistic) = [:x, :y]
 output_aesthetics(::QQStatistic) = [:x, :y]
+default_scales(::QQStatistic) =
+        [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous]
 
 """
     Stat.qq
 
-Generates quantile-quantile plots for `x` and `y`.  If each is a numeric vector,
-their sample quantiles will be compared.  If one is a `Distribution`, then its
-theoretical quantiles will be compared with the sample quantiles of the other.
-
-# Aesthetics
-- `x`: Data or `Distribution` to be plotted on the x-axis.
-- `y`: Data or `Distribution` to be plotted on the y-axis.
+Transform $(aes2str(input_aesthetics(qq()))) into cumulative distrubutions.
+If each is a numeric vector, their sample quantiles will be compared.  If one
+is a `Distribution`, then its theoretical quantiles will be compared with the
+sample quantiles of the other.
 """
 const qq = QQStatistic
-
-default_scales(::QQStatistic) =
-        [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous]
 
 function apply_statistic(stat::QQStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1658,15 +1623,15 @@ end
 
 
 struct ViolinStatistic <: Gadfly.StatisticElement
-    # Number of points sampled
-    n::Int
+    n::Int # Number of points sampled
 end
 ViolinStatistic() = ViolinStatistic(300)
 
-input_aesthetics(::ViolinStatistic) = [:x, :y, :width]
- Gadfly.default_scales(stat::ViolinStatistic) = [Gadfly.Scale.x_discrete(), Gadfly.Scale.y_continuous()]
+input_aesthetics(::ViolinStatistic) = [:x, :y, :color]
+output_aesthetics(::ViolinStatistic) = [:x, :y, :width, :color]
+default_scales(stat::ViolinStatistic) = [Gadfly.Scale.x_discrete(), Gadfly.Scale.y_continuous()]
 
-
+### very similar to Stat.density; Geom.violin could be refactored to us it instead
 """
     Stat.violin[(n=300)]
 
@@ -1706,7 +1671,7 @@ function apply_statistic(stat::ViolinStatistic,
         append!(colors, fill(grouped_color[x], length(f.x)))
     end
 
-    colorflag  && (aes.color = colors)
+    colorflag && (aes.color = colors)
 
     pad = 0.1
     maxwidth = maximum(aes.width)
@@ -1722,40 +1687,20 @@ struct JitterStatistic <: Gadfly.StatisticElement
 end
 JitterStatistic(vars; range=0.8, seed=0x0af5a1f7) = JitterStatistic(vars, range, seed)
 
-"""
-    Stat.x_jitter[(; range, seed)]
-
-Nudge values on the x-axis to avoid overplotting.
-
-# Asethetics
-- `x`: Data to nudge.
-
-# Arguments
-- `range`: Maximum jitter is this number times the resolution of the data,
-    where the "resolution" is the smallest non-zero difference between two
-    points.
-- `seed`: Seed for RNG used to randomly jitter values.
-"""
-x_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:x], range=range, seed=seed)
-
-"""
-    Stat.y_jitter[(; range, seed)]
-
-Nudge values on the y-axis to avoid overplotting.
-
-# Asethetics
-- `y`: Data to nudge.
-
-# Arguments
-- `range`: Maximum jitter is this number times the resolution of the data,
-    where the "resolution" is the smallest non-zero difference between two
-    points.
-- `seed`: Seed for RNG used to randomly jitter values.
-"""
-y_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:y], range=range, seed=seed)
-
 input_aesthetics(stat::JitterStatistic) = stat.vars
 output_aesthetics(stat::JitterStatistic) = stat.vars
+
+xy_jitter(var) = """
+    Stat.$(var)_jitter[(; range=0.8, seed=0x0af5a1f7)]
+
+Add a random number to the `$var` aesthetic, which is typically categorical, to
+reduce the likelihood that points overlap.  The maximum jitter is `range` times
+the smallest non-zero difference between two points.
+"""
+
+@doc xy_jitter("x")  x_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:x], range=range, seed=seed)
+
+@doc xy_jitter("y")  y_jitter(; range=0.8, seed=0x0af5a1f7) = JitterStatistic([:y], range=range, seed=seed)
 
 function minimum_span(vars::Vector{Symbol}, aes::Gadfly.Aesthetics)
     span = nothing
@@ -1780,7 +1725,6 @@ function minimum_span(vars::Vector{Symbol}, aes::Gadfly.Aesthetics)
     return span
 end
 
-
 function apply_statistic(stat::JitterStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
@@ -1804,22 +1748,17 @@ struct BinMeanStatistic <: Gadfly.StatisticElement
 end
 BinMeanStatistic(; n=20) = BinMeanStatistic(n)
 
-"""
-    Stat.binmean[(; n)]
-
-Plot the mean of `y` against the mean of `x` within `n` quantile bins of `x`.
-
-# Aesthetics
-- `x`: Data to be plotted on the x-axis.
-- `y`: Data to be plotted on the y-axis.
-
-# Arguments
-- `n`: Number of bins
-"""
-const binmean = BinMeanStatistic
-
 input_aesthetics(::BinMeanStatistic) = [:x, :y]
 output_aesthetics(::BinMeanStatistic) = [:x, :y]
+
+### doesn't appear to be used internally
+"""
+    Stat.binmean[(; n=20)]
+
+Transform the $(aes2str(input_aesthetics(binmean()))) into `n` bins each
+of which contains the mean within than bin.
+"""
+const binmean = BinMeanStatistic
 
 function apply_statistic(stat::BinMeanStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1895,20 +1834,10 @@ function default_scales(stat::EnumerateStatistic)
     end
 end
 
-"""
-    Stat.x_enumerate
-
-Transform $(aes2str(input_aesthetics(x_enumerate))) into
-$(aes2str(output_aesthetics(x_enumerate))).
-"""
+# only used internally
 const x_enumerate = EnumerateStatistic(:x)
 
-"""
-    Stat.y_enumerate
-
-Transform $(aes2str(input_aesthetics(y_enumerate))) into
-$(aes2str(output_aesthetics(y_enumerate))).
-"""
+# only used internally
 const y_enumerate = EnumerateStatistic(:y)
 
 function apply_statistic(stat::EnumerateStatistic,
@@ -1925,7 +1854,6 @@ function apply_statistic(stat::EnumerateStatistic,
     end
 end
 
-### Vector Field Statistic 
 
 struct VecFieldStatistic <: Gadfly.StatisticElement
     smoothness::Float64
@@ -1944,8 +1872,13 @@ default_scales(stat::VecFieldStatistic, t::Gadfly.Theme=Gadfly.current_theme()) 
 """
     Stat.vectorfield[(; smoothness=1.0, scale=1.0, samples=20)]
 
-Transform $(aes2str(input_aesthetics(vectorfield()))) into
-$(aes2str(output_aesthetics(vectorfield()))).
+Transform the 2D function or matrix in the `z` aesthetic into a set of lines
+from `x`, `y` to `xend`, `yend` showing the gradient vectors.  A function
+requires that either the `x` and `y` or the `xmin`, `xmax`, `ymin` and `ymax`
+aesthetics also be defined.  The latter are interpolated using `samples`.  A
+matrix can optionally input `x` and `y` aesthetics to specify the coordinates
+of the rows and columns, respectively.  In each case, `smoothness` can vary
+from 0 to Inf;  and `scale` sets the size of vectors.
 """
 const vectorfield = VecFieldStatistic
 
@@ -1996,10 +1929,8 @@ function apply_statistic(stat::VecFieldStatistic,
     aes.yend = vecf[:,4]
     color_scale = get(scales, :color, Gadfly.Scale.color_continuous_gradient())
     Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=Z))
-
 end
 
-### Hair Statistic
 
 struct HairStatistic <: Gadfly.StatisticElement
     intercept
@@ -2008,16 +1939,14 @@ end
 HairStatistic(;intercept=0.0, orientation=:vertical) = HairStatistic(intercept, orientation)
 
 input_aesthetics(stat::HairStatistic) = [:x, :y]
-
 output_aesthetics(stat::HairStatistic) = [:x, :y, :xend, :yend]
-
 default_scales(stat::HairStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
 
 """
-    Stat.hair[(;intercept=0.0, orientation=:vertical)]
+    Stat.hair[(; intercept=0.0, orientation=:vertical)]
 
-Transform $(aes2str(input_aesthetics(hair()))) into
-$(aes2str(output_aesthetics(hair()))).
+Transform points in $(aes2str(input_aesthetics(hair()))) into lines in
+$(aes2str(output_aesthetics(hair()))).  Used by [`Geom.hair`](@ref Gadfly.Geom.hair).
 """
 const hair = HairStatistic
 
@@ -2034,7 +1963,6 @@ function apply_statistic(stat::HairStatistic,
     end
 end
 
-### Ellipse Statistic
 
 struct EllipseStatistic <: Gadfly.StatisticElement
     distribution::Type{<:ContinuousMultivariateDistribution}
@@ -2056,8 +1984,11 @@ default_scales(stat::EllipseStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Sc
 """
     Stat.ellipse[(; distribution=MvNormal, levels=[0.95], nsegments=51)]
 
-Transform $(aes2str(input_aesthetics(ellipse()))) into
-$(aes2str(output_aesthetics(ellipse()))).
+Transform the points in $(aes2str(input_aesthetics(ellipse()))) into set of a
+lines in $(aes2str(output_aesthetics(ellipse()))).  `distribution` specifies a
+multivariate distribution to use; `levels` the quantiles for which confidence
+ellipses are calculated; and `nsegments` the number of segments with which to
+draw each ellipse.  Used by [`Geom.ellipse`](@ref Gadfly.Geom.ellipse).
 """
 const ellipse = EllipseStatistic
 

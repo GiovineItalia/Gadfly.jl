@@ -8,17 +8,6 @@ import Gadfly.Maybe
 
 export cartesian
 
-# Cartesian coordinates with position given by the x and y (and similar)
-# aesthetics.
-#
-# Args:
-#   xvars: Aesthetics to consider when choosing x bounds.
-#   yvars: Aesthetics to consider when choosing y bounds.
-#   xmin, xmax, ymin, ymax:
-#     Force a particular x or y bound, rather than trying to choose it
-#     from the data.
-#
-#
 struct Cartesian <: Gadfly.CoordinateElement
     xvars::Vector{Symbol}
     yvars::Vector{Symbol}
@@ -48,19 +37,19 @@ function Cartesian(
 end
 
 """
-    Coord.cartesian(; xmin, xmax, ymin, ymax, xflip, yflip, aspect_ratio, fixed)
+    Coord.cartesian(; xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,
+                    xflip=false, yflip=false,
+                    aspect_ratio=nothing, fixed=false,
+                    raster=false)
 
-# Arguments
-- `xmin`: Hard minimum value on the x-axis.
-- `xmax`: hard maximum value on the x-axis.
-- `ymin`: Hard minimum value on the y-axis.
-- `ymax`: Hard maximum value on the y-axis.
-- `xflip`: True if the x-axis should be flipped. (default: `false`)
-- `yflip`: True if the y-axis should be flipped. (default: `false`)
-- `aspect_ratio`: Aspect ratio, or `nothing` if no fixed aspect ratio. (default: nothing)
-- `fixed`: True if the ratio should follow the units of the plot. E.g. if the
-    y-axis is 5 units high and the x-axis in 10 units across, the plot will be
-    drawn at an aspect ratio of 2. Overrides `aspect_ratio` (default: false)
+`xmin`, `xmax`, `ymin`, and `ymax` specify hard minimum and maximum values on
+the x and y axes, and override the soft limits in [`Scale.x_continuous`](@ref)
+and [`Scale.y_continuous`](@ref).  if `xflip` or `yflip` are `true` the
+respective axis is flipped.  `aspect_ratio` fulfills its namesake if not
+`nothing`, unless overridden by a `fixed` value of `true`, in which case the
+aspect ratio follows the units of the plot (e.g. if the y-axis is 5 units high
+and the x-axis in 10 units across, the plot will be drawn at an aspect ratio of
+2).
 """
 const cartesian = Cartesian
 

@@ -8,20 +8,12 @@ BeeswarmGeometry(; orientation=:vertical, padding=0.1mm, tag=empty_tag) =
         BeeswarmGeometry(orientation, padding, tag)
 
 """
-    Geom.beeswarm[; (orientation,padding)]
+    Geom.beeswarm[; (orientation=:vertical, padding=0.1mm)]
 
-Plot points, shifting them on the x- or y-axis to avoid overlaps.
-
-# Aesthetics
-- `x`: X-axis position.
-- `y`: Y-axis position.
-- `color` (optional): Point color (categorial or continuous).
-
-# Arguments
-- `orientation`: `:horizontal` or `:vertical`.  Points will be shifted on the
-    y-axis to avoid overlap if orientation in horizontal, and on the x-axis, if
-    vertical.
-- `padding`: Minimum distance between two points.
+Plot the `x` and `y` aesthetics, the former being categorical and the latter
+continuous, by shifting the x position of each point to ensure that there is at
+least `padding` gap between neighbors.  If `orientation` is `:horizontal`,
+switch x for y.  Points can optionally be colored using the `color` aesthetic.
 """
 const beeswarm = BeeswarmGeometry
 
@@ -35,7 +27,6 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
     default_aes.color = discretize_make_ia(RGBA{Float32}[theme.default_color])
     default_aes.size = Measure[theme.point_size]
     aes = inherit(aes, default_aes)
-    padding = 1.0mm
 
     ctxp = ctxpromise() do draw_context
         if geom.orientation == :horizontal

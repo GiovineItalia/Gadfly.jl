@@ -17,40 +17,24 @@ function LineGeometry(default_statistic=Gadfly.Stat.identity();
 end
 
 """
-    Geom.line[(; preserve_order)]
+    Geom.line[(; preserve_order=false, order=2)]
 
-# Aesthetics
-- `x`: X-axis position.
-- `y`: Y-axis position.
-- `group` (optional): Group categorically.
-- `color` (optional): Group categorically and indicate by color.
+Draw a line connecting the `x` and `y` coordinates.  Optionally plot multiple
+lines according to the `group` or `color` aesthetics.  `order` controls whether
+the lines(s) are underneath or on top of other forms.
 
-# Arguments
-- `preserve_order`: Default behavior for `Geom.line` is to draw lines between
-  points in order along the x-axis. If this option is true, lines will be
-  drawn between points in the order they appear in the data. `Geom.path()` is
-  `Geom.line(preserve_order=true)`.
+Set `preserve_order` to `:true` to *not* sort the points according to their
+position along the x axis, or use the equivalent [`Geom.path`](@ref) alias.
 """
 const line = LineGeometry
 
+### why would one ever want to set preserve_order to false here
 """
-    Geom.contours[(; levels)]
+    Geom.contours[(; levels=15, samples=150, preserve_order=true)]
 
-Draw contours of a 2D function or a matrix.
-
-# Aesthetics
-- `z`: 2D function or a matrix that represent "heights" relative to
-    to the x-y plane.
-- `x` (optional): Vector of X-coordinates.  If `z` is a matrix, then
-    the length of `x` must be equal to the number of *rows* in `z`.
-- `y` (optional): Vector of Y-coordinates.  If `z` is a matrix, then
-    the length of `y` must be equal to the number of *columns* in `z`.
-
-# Arguments
-- `levels` (optional): Sets the number of contours to draw, defaults
-    to 15.  It takes either a vector of contour levels;  an integer
-    that specifies the number of contours to draw;  or a function which
-    inputs `z` and outputs either a vector or an integer.
+Draw contour lines of the 2D function, matrix, or DataFrame in the `z`
+aesthetic.  This geometry is equivalent to [`Geom.line`](@ref) with
+[`Stat.contour`](@ref); see the latter for more information.
 """
 function contour(; levels=15, samples=150, preserve_order=true)
     return LineGeometry(Gadfly.Stat.contour(levels=levels, samples=samples),
@@ -62,81 +46,50 @@ end
 """
     Geom.path
 
-Draw lines between points in the order they appear in the data. This is an
-alias for [`Geom.line`](@ref) with `preserve_order=true`.
-
-# Aesthetics
-- `x`: X-axis position.
-- `y`: Y-axis position.
-- `color` (optional): Group categorically by color.
+Draw lines between `x` and `y` points in the order they are listed.  This
+geometry is equivalent to [`Geom.line`](@ref) with `preserve_order=true`.
 """
 path() = LineGeometry(preserve_order=true)
 
 """
-    Geom.density[(; bandwidth)]
+    Geom.density[(; bandwidth=-Inf)]
 
-Draw a kernel density estimate from data. An alias for [`Geom.line`](@ref) with
-[`Stat.density`](@ref).
-
-# Aesthetics
-- `x`: Sample to draw density estimate from.
-
-# Arguments
-- `bandwidth`: How closely the density estimate should mirror the data.
-    Larger values will smooth the density estimate out.
+Draw a line showing the density estimate of the `x` aesthetic.
+This geometry is equivalent to [`Geom.line`](@ref) with
+[`Stat.density`](@ref); see the latter for more information.
 """
 density(; bandwidth::Real=-Inf) =
     LineGeometry(Gadfly.Stat.density(bandwidth=bandwidth))
 
 """
-    Geom.density2d[(; bandwidth, levels)]
+    Geom.density2d[(; bandwidth=(-Inf,-Inf), levels=15)]
 
-Draw a kernel density estimate from data. An alias for [`Geom.contour`](@ref) with
-[`Stat.density2d`](@ref).
-
-# Aesthetics
-- `x`, `y`: Sample to draw density estimate from.
-
-# Arguments
-- `bandwidth`:  See [`Geom.density`](@ref).
-- `levels`:  See [`Geom.contour`](@ref).
+Draw a set of contours showing the density estimate of the `x` and `y`
+aesthetics.  This geometry is equivalent to [`Geom.line`](@ref) with
+[`Stat.density2d`](@ref); see the latter for more information.
 """
 density2d(; bandwidth::Tuple{Real,Real}=(-Inf,-Inf), levels=15) =
     LineGeometry(Gadfly.Stat.density2d(bandwidth=bandwidth, levels=levels); preserve_order=true)
 
 """
-    Geom.smooth[(; method, smoothing)]
+    Geom.smooth[(; method:loess, smoothing=0.75)]
 
-Plot a smooth function estimated from data. An alias for [`Geom.line`](@ref) with [`Stat.smooth`](@ref).
-
-# Aesthetics
-- `x`: Predictor data.
-- `y`: Response data.
-- `color`: (optional) Group categorically by color.
-
-# Arguments
-- `method`: `:loess` and `:lm` are supported.
-- `smoothing`: Method specific parameter controlling the degree of smoothing.
-    For loess, this is the span parameter giving the proportion of data
-    used for each local fit where 0.75 is the default. Smaller values use more
-    data (less local context), larger values use less data (more local context).
+Plot a smooth function estimated from the line described by `x` and `y`
+aesthetics.  Optionally group by `color` and plot multiple independent smooth
+lines.  This geometry is equivalent to [`Geom.line`](@ref) with
+[`Stat.smooth`](@ref); see the latter for more information.
 """
 smooth(; method::Symbol=:loess, smoothing::Float64=0.75) =
-    LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing), order=5)
+    LineGeometry(Gadfly.Stat.smooth(method=method, smoothing=smoothing),
+    order=5)
 
 """
-    Geom.step[(; direction)]
+    Geom.step[(; direction=:hv)]
 
-Connect points using a stepwise function. Equivalent to [`Geom.line`](@ref) with
-[`Stat.step`](@ref).
-
-# Aesthetics
-- `x`: Point x-coordinate.
-- `y`: Point y-coordinate.
-
-# Arguments
-- `direction`: Either `:hv` for horizontal then vertical, or `:vh` for
-    vertical then horizontal.
+Connect points described by the `x` and `y` aesthetics using a stepwise
+function.  Optionally group by `color` or `group`.  This geometry is equivalent
+to [`Geom.line`](@ref) with [`Stat.step`](@ref); see the latter for more
+information.
 """
 step(; direction::Symbol=:hv) = LineGeometry(Gadfly.Stat.step(direction=direction))
 
@@ -144,16 +97,6 @@ default_statistic(geom::LineGeometry) = geom.default_statistic
 
 element_aesthetics(::LineGeometry) = [:x, :y, :color, :group]
 
-# Render line geometry.
-#
-# Args:
-#   geom: line geometry.
-#   theme: the plot's theme.
-#   aes: aesthetics.
-#
-# Returns:
-#   A compose Form.
-#
 function render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.line", aes, :x, :y)
     Gadfly.assert_aesthetics_equal_length("Geom.line", aes,

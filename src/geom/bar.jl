@@ -1,7 +1,7 @@
 # Bar geometry summarizes data as vertical bars.
 struct BarGeometry <: Gadfly.GeometryElement
-    position::Symbol  # :stack (default) or :dodge
-    orientation::Symbol # :vertical (default) or :horizontal
+    position::Symbol
+    orientation::Symbol
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
 end
@@ -9,79 +9,43 @@ BarGeometry(; position=:stack, orientation=:vertical, tag=empty_tag) =
         BarGeometry(position, orientation, Gadfly.Stat.bar(position=position,
             orientation = orientation), tag)
 
-"""
-
-    Geom.bar[(; position, orientation)]
-
-Draw bar plots. This geometry works on pre-summarized data such as counts. To
-draw histograms from a series of observations, add [`Stat.histogram`](@ref) to the plot,
-or use the convenient geometry [`Geom.histogram`](@ref).
-
-# Aesthetics
-- `y`: Height of each bar.
-- `color` (optional): Group categorically by color.
-
-Either
-
-- `x`: Position of each bar.
-
-Or
-
-- `xmin`: Starting x positions for each bar.
-- `xmax`: End x positions for each bar.
-
-If `x` is given, a bar will be drawn at each x value, specifying both `xmin` and
-`xmax` allows bars of variable width to be drawn.
-
-# Arguments
-- `position`: Either `:stack` or `:dodge`. If the `color` aesthetic is
-    bound this determines how bars of different colors should be arranged:
-    stacked on top of each other, or placed side by side.
-
-- `orientation`: Either `:vertical` (default) or `:horizontal`. If
-    `:horizontal`, then the required aesthetics are `y` or `ymin/ymax`.
-"""
-const bar = BarGeometry
-
-"""
-    Geom.histogram[(; position, orientation, bincount, minbincount, maxbincount, density)]
-
-Draw histograms. An alias for [`Geom.bar`](@ref) with [`Stat.histogram`](@ref).
-
-# Aesthetics
-- `x`: Sample to draw histogram from.
-- `color` (optional): Group categorically by color.
-
-# Arguments
-- `position`: Either `:stack` or `:dodge`. If the `color` aesthetic is
-    bound this determines how bars of different colors should be arranged:
-    stacked on top of each other, or placed side by side.
-- `orientation`: Either `:vertical` (default) or `:horizontal`. If
-    `:horizontal`, then the required aesthetic is `y` instead of `x`.
-- `bincount`: Number of bins to use. If unspecified, an optimization method
-    is used to determine a reasonable value.
-- `minbincount`: Set a lower limit when automatically choosing a bin count.
-- `maxbincount`: Set an upper limit when automatically choosing a bin count.
-- `density`: If true, use density rather that counts.
-"""
-histogram(; position=:stack, bincount=nothing,
-                   minbincount=3, maxbincount=150,
-                   orientation::Symbol=:vertical,
-                   density::Bool=false,
-                   tag::Symbol=empty_tag) =
-    BarGeometry(position, orientation,
-        Gadfly.Stat.histogram(bincount=bincount,
-                              minbincount=minbincount,
-                              maxbincount=maxbincount,
-                              position=position,
-                              orientation=orientation,
-                              density=density),
-        tag)
-
 element_aesthetics(geom::BarGeometry) = geom.orientation == :vertical ?
             [:xmin, :xmax, :y, :color] : [:ymin, :ymax, :x, :color]
 
 default_statistic(geom::BarGeometry) = geom.default_statistic
+
+"""
+    Geom.bar[(; position=:stack, orientation=:vertical)]
+
+Draw bars of height `y` centered at positions `x`, or from `xmin` to `xmax`.
+If orientation is `:horizontal` switch x for y.  Optionally categorically
+groups bars using the `color` aesthetic.  If `position` is `:stack` they will
+be placed on top of each other;  if it is `:dodge` they will be placed side by
+side.
+"""
+const bar = BarGeometry
+
+"""
+    Geom.histogram[(; position=:stack, bincount=nothing, minbincount=3, maxbincount=150,
+                    orientation=:vertical, density=false)]
+
+Draw histograms from a series of observations in `x` or `y` optionally grouping
+by `color`.  This geometry is equivalent to [`Geom.bar`](@ref) with
+[`Stat.histogram`](@ref); see the latter for more information.
+"""
+histogram(; position=:stack, bincount=nothing,
+            minbincount=3, maxbincount=150,
+            orientation::Symbol=:vertical,
+            density::Bool=false,
+            tag::Symbol=empty_tag) =
+    BarGeometry(position, orientation,
+                Gadfly.Stat.histogram(bincount=bincount,
+                                      minbincount=minbincount,
+                                      maxbincount=maxbincount,
+                                      position=position,
+                                      orientation=orientation,
+                                      density=density),
+                tag)
 
 # Render a single color bar chart
 function render_bar(geom::BarGeometry,

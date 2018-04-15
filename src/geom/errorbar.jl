@@ -17,45 +17,28 @@ YErrorBarGeometry(; tag=empty_tag) = YErrorBarGeometry(tag)
 """
     Geom.errorbar
 
-Draw vertical and/or horizontal error bars.
+Draw vertical error bars if the `x`, `ymin`, and `ymax` aesthetics
+are specified and/or horizontal error bars for `y`, `xmin`, and `xmax`.
+Optionally color them with `color`.
 
-# Aesthetics
-- `x`: X-position of the bar.
-- `ymin`: Lower Y-position.
-- `ymax`: Upper Y-position.
-- `y`: Y-position of the bar.
-- `xmin`: Left-most X-position
-- `ymax`: Right-most X-position.
-- `color` (optional): Bar color (categorial or continuous)
+See also [`Geom.xerrorbar`](@ref) and [`Geom.yerrorbar`](@ref).
 
-The `x`, `ymin`, `ymax` and/or `y`, `xmin`, `xmax` aesthetics must be defined.
-With the later a vertical error bar is drawn, and the former, a horizontal bar.
 """
 const errorbar = ErrorBarGeometry
 
 """
     Geom.xerrorbar
 
-Draw vertical error bars.
-
-# Aesthetics
-- `y`: Y-position of the bar.
-- `xmin`: Left-most X-position
-- `xmax`: Right-most X-position.
-- `color` (optional): Bar color (categorial or continuous)
+Draw horizontal error bars at `y` from `xmin` to `xmax`.  Optionally
+color them with `color`.
 """
 const xerrorbar = XErrorBarGeometry
 
 """
     Geom.yerrorbar
 
-Draw horizontal error bars.
-
-# Aesthetics
-- `x`: X-position of the bar.
-- `ymin`: Lower Y-position.
-- `ymax`: Upper Y-position.
-- `color` (optional): Bar color (categorial or continuous)
+Draw vertical error bars at `x` from `ymin` to `ymax`.  Optionally
+color them with `color`.
 """
 const yerrorbar = YErrorBarGeometry
 

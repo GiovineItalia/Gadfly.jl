@@ -24,12 +24,9 @@ HLineGeometry(; color=nothing, size=nothing, style=nothing, tag=empty_tag) =
         HLineGeometry(color, size, style, tag)
 
 """
-    Geom.hline[(; color,size,style)]
+    Geom.hline[(; color=nothing, size=nothing, style=nothing)]
 
-Draw horizontal lines across the plot canvas.
-
-## Aesthetics
-- `yintercept`: Y-axis intercept
+Draw horizontal lines across the plot canvas at each position in the `yintercept` aesthetic.
 """
 const hline = HLineGeometry
 
@@ -74,12 +71,9 @@ VLineGeometry(; color=nothing, size=nothing, style=nothing, tag=empty_tag) =
         VLineGeometry(color, size, style, tag)
 
 """
-    Geom.vline[(; color,size,style)]
+    Geom.vline[(; color=nothing, size=nothing, style=nothing)]
 
-Draw vertical lines across the plot canvas.
-
-## Aesthetics
-- `xintercept`: X-axis intercept
+Draw vertical lines across the plot canvas at each position in the `xintercept` aesthetic.
 """
 const vline = VLineGeometry
 
@@ -124,18 +118,15 @@ ABLineGeometry(; color=nothing, size=nothing, style=nothing, tag::Symbol=empty_t
         ABLineGeometry(color, size, style, tag)
 
 """
-    Geom.abline[(; color, size, style)]
+    Geom.abline[(; color=nothing, size=nothing, style=nothing)]
 
-For each corresponding pair of elements in `intercept` and `slope`, draw the
-lines `y = slope * x + intercept` across the plot canvas.
+For each corresponding pair of elements in the `intercept` and `slope` aesthetics,
+draw the lines `y = slope * x + intercept` across the plot canvas.
+If unspecified, `intercept` defaults to [0] and `slope` to [1].
 
-Currently does not support non-linear `Scale` transformations.
-
-## Aesthetics
-- `intercept`: Y-axis intercepts, defaults to [0]
-- `slope`: rise over run, defaults to [1]
+This geometry currently does not support non-linear `Scale` transformations.
 """
-abline = ABLineGeometry
+const abline = ABLineGeometry
 
 element_aesthetics(geom::ABLineGeometry) = [:intercept, :slope]
 

@@ -10,44 +10,30 @@ PolygonGeometry(default_statistic=Gadfly.Stat.identity(); order=0, fill=false, p
         PolygonGeometry(default_statistic, order, fill, preserve_order, tag)
 
 """
-    Geom.polygon[(; order, fill, preserve_order)]
+    Geom.polygon[(; order=0, fill=false, preserve_order=false)]
 
-Draw polygons.
-
-# Aesthetics
-- `x`: X-axis position.
-- `y`: Y-axis position.
-- `group` (optional): Group categorically.
-- `color` (optional): Group categorically and indicate by color.
-
-# Arguments
-- `order`: Z-order relative to other geometry.
-- `fill`: If true, fill the polygon and stroke according to
-    `Theme.discrete_highlight_color`. If false (default), only stroke.
-- `preserve_order`: If true, connect points in the order they are given. If
-    false (default) order the points around their centroid.
+Draw polygons with vertices specified by the `x` and `y` aesthetics.
+Optionally plot multiple polygons according to the `group` or `color`
+aesthetics.  `order` controls whether the polygon(s) are underneath or on top
+of other forms.  If `fill` is true, fill and stroke the polygons according to
+`Theme.discrete_highlight_color`, otherwise only stroke.  If `preserve_order`
+is true, connect points in the order they are given, otherwise order the points
+around their centroid.
 """
 const polygon = PolygonGeometry
 
 element_aesthetics(::PolygonGeometry) = [:x, :y, :color, :group]
 
 """
-    Geom.ellipse[(; distribution, levels, nsegments)]
+    Geom.ellipse[(; distribution=MvNormal, levels=[0.95], nsegments=51, fill=false)]
 
-Confidence ellipse for a scatter or group of points, using a parametric multivariate distribution e.g. multivariate normal. `Geom.ellipse` is an instance of [`Geom.polygon`](@ref)
-
-# Aesthetics
-- `x`: Position of points.
-- `y`: Position of points.
-- `color` (optional): Color.
-- `group` (optional): Group.
-
-# Arguments
-- `distribution`: A multivariate distribution. Default is `MvNormal`.
-- `levels`: The quantiles for which confidence ellipses are calculated. Default is [0.95].
-- `nsegments`: Number of segments to draw each ellipse. Default is 51.
+Draw a confidence ellipse, using a parametric multivariate distribution, for a
+scatter of points specified by the `x` and `y` aesthetics.  Optionally plot
+multiple ellipses according to the `group` or `color` aesthetics.  This
+geometry is equivalent to [`Geom.polygon`](@ref) with [`Stat.ellipse`](@ref);
+see the latter for more information.
 """
-ellipse(;distribution::(Type{<:ContinuousMultivariateDistribution})=MvNormal,
+ellipse(; distribution::Type{<:ContinuousMultivariateDistribution}=MvNormal,
     levels::Vector=[0.95], nsegments::Int=51, fill::Bool=false) =
     PolygonGeometry(Gadfly.Stat.ellipse(distribution, levels, nsegments), preserve_order=true, fill=fill)
 

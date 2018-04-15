@@ -5,23 +5,11 @@ end
 ViolinGeometry(; order=1, tag=empty_tag) = ViolinGeometry(order, tag)
 
 """
-    Geom.violin
+    Geom.violin[(; order=1)]
 
-Draw violin plots.
-
-# Aesthetics
-
-Aesthetics used directly:
-
-- `x`: Group categorically on the X-axis
-- `y`: Y-axis position.
-- `width`: Density at a given `y` value.
-- `color` (optional): Violin color.  A suitable discrete variable is needed here. See example below.
-
-With the default statistic [`Stat.violin`](@ref), only the following need be defined:
-
-- `x` (optional): Group categorically on the X-axis.
-- `y`: Sample from which to draw the density plot.
+Draw `y` versus `width`, optionally grouping categorically by `x` and coloring
+with `color`.  Alternatively, if `width` is not supplied, the data in `y` will
+be transformed to a density estimate using [`Stat.violin`](@ref)
 """
 const violin = ViolinGeometry
 

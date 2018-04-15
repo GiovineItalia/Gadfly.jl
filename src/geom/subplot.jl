@@ -77,13 +77,11 @@ layers(geom::SubplotGrid) = geom.layers
 
 Draw multiple subplots in a grid organized by one or two categorial vectors.
 
-# Aesthetics
-- `xgroup` (optional): Arrange subplots on the X-axis by categorial data.
-- `ygroup` (optional): Arrange subplots on the Y-axis by categorial data.
-- `free_y_axis` (optional): Whether the y-axis scales can differ across
-  the subplots. Defaults to `false`. If `true`, scales are set appropriately for individual subplots.
-- `free_x_axis` (optional): Whether the x-axis scales can differ across
-  the subplots. Defaults to `false`. If `true`, scales are set appropriately for individual subplots.
+# Optional Aesthetics
+- `xgroup`, `ygroup`: Arrange subplots on the X and Y axes, respectively, by categorial data.
+- `free_x_axis`, `free_y_axis`: Whether the X and Y axis scales, respectively,
+  can differ across the subplots. Defaults to `false`. If `true`, scales are
+  set appropriately for individual subplots.
 
 One or both of `xgroup` or `ygroup` must be bound. If only one, a single column
 or row of subplots is drawn, if both, a grid.
@@ -201,9 +199,9 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         stat = default_statistic(guide)
         if !isa(stat, Gadfly.Stat.identity)
             if isa(stat, Gadfly.Stat.TickStatistic)
-                if stat.out_var == "x"
+                if stat.axis == "x"
                     has_stat_xticks = true
-                elseif stat.out_var == "y"
+                elseif stat.axis == "y"
                     has_stat_yticks = true
                 end
             end
