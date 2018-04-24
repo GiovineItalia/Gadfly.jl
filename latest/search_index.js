@@ -797,7 +797,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.histogram",
     "title": "Arguments",
     "category": "section",
-    "text": "position: Either :stack or :dodge. If the color aesthetic is bound this determines how bars of different colors should be arranged: stacked on top of each other, or placed side by side.\norientation: Either :vertical (default) or :horizontal. If :horizontal, then the required aesthetic is y instead of x.\nbincount: Number of bins to use. If unspecified, an optimization method is used to determine a reasonable value.\nminbincount: Set a lower limit when automatically choosing a bin count.\nmaxbincount: Set an upper limit when automatically choosing a bin count.\ndensity: If true, use density rather that counts."
+    "text": "position: Either :stack or :dodge. If the color aesthetic is bound this determines how bars of different colors should be arranged: stacked on top of each other, or placed side by side.\norientation: Either :vertical (default) or :horizontal. If :horizontal, then the required aesthetic is y instead of x.\nbincount: Number of bins to use. If unspecified, an optimization method is used to determine a reasonable value.\nminbincount: Set a lower limit when automatically choosing a bin count.\nmaxbincount: Set an upper limit when automatically choosing a bin count.\ndensity: If true, use density rather than counts."
 },
 
 {
