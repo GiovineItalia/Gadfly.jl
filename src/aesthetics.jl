@@ -289,8 +289,8 @@ end
 
 function cat_aes_var!(xs::IndirectArray{T,1}, ys::IndirectArray{S,1}) where {T, S}
     TS = promote_type(T, S)
-    return append!(IndirectArray(xs.index, Array{TS}(xs.values)),
-                   IndirectArray(ys.index, Array{TS}(ys.values)))
+    return append!(IndirectArray(xs.index, convert(Array{TS},xs.values)),
+                   IndirectArray(ys.index, convert(Array{TS},ys.values)))
 end
 
 # Summarizing aesthetics
