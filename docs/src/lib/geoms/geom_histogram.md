@@ -23,7 +23,7 @@ Draw histograms. An alias for [Geom.bar](@ref) with [Stat.histogram](@ref).
     is used to determine a reasonable value.
   * `minbincount`: Set a lower limit when automatically choosing a bin count.
   * `maxbincount`: Set an upper limit when automatically choosing a bin count.
-  * `density`: If true, use density rather that counts.
+  * `density`: If true, use density rather than counts.
 
 ## Examples
 
