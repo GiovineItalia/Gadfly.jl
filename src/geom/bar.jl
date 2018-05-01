@@ -40,7 +40,7 @@ function render_bar(geom::BarGeometry,
         xz = convert(XT, zero(XT))
         ctx = compose!(context(),
             rectangle([min(xz, x) for x in aes.x],
-                      [ymin*cy + theme.bar_spacing/2 for ymin in aes.ymin],
+                      [ymin*cy - theme.bar_spacing/2 for ymin in aes.ymin],
                       abs.(aes.x),
                       [(ymax - ymin)*cy - theme.bar_spacing
                        for (ymin, ymax) in zip(aes.ymin, aes.ymax)], geom.tag),
