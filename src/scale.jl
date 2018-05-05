@@ -405,19 +405,9 @@ DiscreteColorScale(f; levels=nothing, order=nothing, preserve_order=true) =
 
 element_aesthetics(scale::DiscreteColorScale) = [:color]
 
-function default_discrete_colors(n)
-    convert(Vector{Color},
-         distinguishable_colors(n, [LCHab(70, 60, 240)],
-             transform=c -> deuteranopic(c, 0.5),
-             lchoices=Float64[65, 70, 75, 80],
-             cchoices=Float64[0, 50, 60, 70],
-             hchoices=linspace(0, 330, 24),
-         )
-     )
-end
 
 # Common discrete color scales
-function color_discrete_hue(f=default_discrete_colors;
+function color_discrete_hue(f=Gadfly.current_theme().discrete_colormap;
                             levels=nothing,
                             order=nothing,
                             preserve_order=true)
@@ -502,18 +492,8 @@ ContinuousColorScale(f, trans=identity_transform; minvalue=nothing, maxvalue=not
         ContinuousColorScale(f, trans, minvalue, maxvalue)
 
 function continuous_color_scale_partial(trans::ContinuousScaleTransform)
-    lch_diverge2 = function(l0=30, l1=100, c=40, h0=260, h1=10, hmid=20, power=1.5)
-        lspan = l1 - l0
-        hspan1 = hmid - h0
-        hspan0 = h1 - hmid
-        function(r)
-            r2 = 2r - 1
-            return LCHab(min(80, l1 - lspan * abs(r2)^power), max(10, c * abs(r2)),
-                         (1-r)*h0 + r * h1)
-        end
-    end
 
-    function(; minvalue=nothing, maxvalue=nothing, colormap=lch_diverge2())
+    function(; minvalue=nothing, maxvalue=nothing, colormap=Gadfly.current_theme().continuous_colormap)
         ContinuousColorScale(colormap, trans, minvalue=minvalue, maxvalue=maxvalue)
     end
 end

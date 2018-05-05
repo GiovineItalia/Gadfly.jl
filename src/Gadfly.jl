@@ -1202,10 +1202,8 @@ get_scale(::Val{t}, ::Val{var}, theme::Theme) where {t,var} = default_aes_scales
 get_scale(t::Symbol, var::Symbol, theme::Theme) = get_scale(Val{t}(), Val{var}(), theme)
 
 ### Override default getters for color scales
-get_scale(::Val{:categorical}, ::Val{:color}, theme::Theme=current_theme()) =
-        theme.discrete_color_scale
-get_scale(::Val{:numerical}, ::Val{:color}, theme::Theme=current_theme()) =
-        theme.continuous_color_scale
+get_scale(::Val{:categorical}, ::Val{:color}, theme::Theme=current_theme()) = Scale.color_discrete()
+get_scale(::Val{:numerical}, ::Val{:color}, theme::Theme=current_theme()) = Scale.color_continuous()
 
 
 function scale_exists(t::Symbol, var::Symbol)

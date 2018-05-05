@@ -18,17 +18,15 @@ alias for [Scale.color_discrete_hue](@ref).
 ## Examples
 
 ```@setup 1
-using Gadfly
-using Colors
+using Colors, Gadfly
 srand(1234)
 ```
 
-## Examples
+There are 2 ways to change the discrete color scale:
 
-You can set a discrete color scale of your choice in a plot.
+* For a single plot, provide a color mapping function, i.e `f` above, to `Scale.color_discrete`:
 
 ```@example 1
-
 function gen_colors(n)
   cs = distinguishable_colors(n,
       [colorant"#FE4365", colorant"#eca25c"], # seed colors
@@ -42,30 +40,23 @@ function gen_colors(n)
 end
 
 using RDatasets
-
 iris = dataset("datasets", "iris")
 
 plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
      Geom.point, Scale.color_discrete(gen_colors))
-
 ```
 
-You can force the use of a discrete scale on data that would otherwise receive a continuous scale:
+* For a set of plots, provide a color mapping function to `style(discrete_colormap=)`, and use `Gadfly.push_theme()`. See [Themes](@ref).
+
+```@example 1
+Gadfly.push_theme( style(discrete_colormap=gen_colors) )
+
+Gadfly.pop_theme() # hide
+```
+
+Also, you can force the use of a discrete scale on data that would otherwise receive a continuous scale:
 
 ```@example 1
 plot(x=rand(12), y=rand(12), color=repeat([1,2,3], outer=[4]),
      Scale.color_discrete())
 ```
-
-To set a default color scale for plots, you can set it in the current [Theme](@ref) using `push_theme`, using `style` to modify the current theme.
-
-```@example 1
-Gadfly.push_theme(
-    style(
-        discrete_color_scale=Scale.color_discrete(gen_colors)
-    )
-)
-
-Gadfly.pop_theme() # hide
-```
-

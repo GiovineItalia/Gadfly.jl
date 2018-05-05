@@ -565,7 +565,7 @@ input_aesthetics(stat::Histogram2DStatistic) = [:x, :y]
 output_aesthetics(stat::Histogram2DStatistic) = [:xmin, :ymax, :ymin, :ymax, :color]
 
 default_scales(::Histogram2DStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
-    [t.continuous_color_scale]
+    [Scale.color_continuous()]
 
 const histogram2d = Histogram2DStatistic
 
@@ -1219,7 +1219,7 @@ function apply_statistic(stat::HexBinStatistic,
     Scale.apply_scale(color_scale, [aes], data)
 end
 
-default_scales(::HexBinStatistic, t::Gadfly.Theme) = [t.continuous_color_scale]
+default_scales(::HexBinStatistic, t::Gadfly.Theme) = [Scale.color_continuous()]
 
 
 struct StepStatistic <: Gadfly.StatisticElement
@@ -1376,7 +1376,7 @@ const contour = ContourStatistic
 
 default_scales(::ContourStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
         [Gadfly.Scale.z_func(), Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous(),
-            t.continuous_color_scale]
+            Scale.color_continuous()]
 
 function apply_statistic(stat::ContourStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -1729,7 +1729,7 @@ input_aesthetics(stat::VecFieldStatistic) = [:z, :x, :y, :color]
 output_aesthetics(stat::VecFieldStatistic) = [:x, :y, :xend, :yend, :color]
 default_scales(stat::VecFieldStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
         [Gadfly.Scale.z_func(), Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous(),
-            t.continuous_color_scale ]
+            Scale.color_continuous() ]
 
 const vectorfield = VecFieldStatistic
 

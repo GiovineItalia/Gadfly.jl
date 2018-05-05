@@ -58,6 +58,30 @@ function get_stroke_vector(linestyle::Symbol)
   error("unsupported linestyle: ", linestyle)
 end
 
+
+function default_discrete_colors(n)
+    convert(Vector{Color},
+         distinguishable_colors(n, [LCHab(70, 60, 240)],
+             transform=c -> deuteranopic(c, 0.5),
+             lchoices=Float64[65, 70, 75, 80],
+             cchoices=Float64[0, 50, 60, 70],
+             hchoices=linspace(0, 330, 24),
+         )
+     )
+end
+
+lch_diverge2 = function(l0=30, l1=100, c=40, h0=260, h1=10, hmid=20, power=1.5)
+    lspan = l1 - l0
+#    hspan1 = hmid - h0;    hspan0 = h1 - hmid
+    function(r)
+        r2 = 2r - 1
+        return LCHab(min(80, l1 - lspan * abs(r2)^power), max(10, c * abs(r2)), (1-r)*h0 + r * h1)
+    end
+end
+
+default_continuous_colors = lch_diverge2()
+
+
 @varset Theme begin
     # If the color aesthetic is not mapped to anything, this is the color that
     # is used.
@@ -202,11 +226,11 @@ end
     # Number of columns in key
     key_max_columns,             Int,       4
 
-    # Discrete color scale
-    discrete_color_scale,        Scale.DiscreteColorScale, Scale.color_discrete()
+    # Discrete colormap
+    discrete_colormap,        Function, default_discrete_colors
 
-    # Continuous color scale
-    continuous_color_scale,      Scale.ContinuousColorScale, Scale.color_continuous()
+    # Continuous colormap
+    continuous_colormap,      Function, default_continuous_colors
 
 end
 
@@ -309,24 +333,12 @@ const dark_theme = let label_color=colorant"#a1a1a1",
     fgcol1=colorant"#FE4365",
     fgcol2=colorant"#eca25c",
     fgcol3=colorant"#3f9778",
-    fgcol4=colorant"#005D7F"
+    cpalette = [colorant"#005D7F", fgcol2, fgcol1]
 
     function border_color(fill_color)
         fill_color = convert(LCHab, fill_color)
         c = LCHab(fill_color.l, fill_color.c, fill_color.h)
         LCHab(60, 20, c.h)
-    end
-
-
-    function gen_dark_colors(n)
-      cs = distinguishable_colors(n, [fgcol1, fgcol2,fgcol3],
-          lchoices=Float64[58, 45, 72.5, 90],
-          transform=c -> deuteranopic(c, 0.1),
-          cchoices=Float64[20,40],
-          hchoices=[75,51,35,120,180,210,270,310]
-      )
-
-      convert(Vector{Color}, cs)
     end
 
     function lowlight_color(fill_color)
@@ -336,40 +348,53 @@ const dark_theme = let label_color=colorant"#a1a1a1",
         RGBA(c2.r, c2.g, c2.b, .53)
     end
 
-    function dark_theme_discrete_colors(;
-        levels=nothing,
-        order=nothing,
-        preserve_order=true)
-
-        Gadfly.Scale.DiscreteColorScale(
-            gen_dark_colors,
-            levels=levels,
-            order=order,
-            preserve_order=preserve_order
+    function dark_discrete_colors(n)
+        cs = distinguishable_colors(n, [fgcol1, fgcol2, fgcol3],
+            lchoices=Float64[58, 45, 72.5, 90],
+            transform=c -> deuteranopic(c, 0.1),
+            cchoices=Float64[20,40],
+            hchoices=[75,51,35,120,180,210,270,310]
         )
-    end
+        convert(Vector{Color}, cs)
+      end
 
-    function dark_theme_continuous_colors()
-        Scale.color_continuous(
-          colormap=Scale.lab_gradient(fgcol4, fgcol2, fgcol1)
-        )
-    end
-
-    Theme(
-          default_color=fgcol1,
-          stroke_color=default_stroke_color,
-          panel_fill=bgcolor,
-          major_label_color=label_color,
-          minor_label_color=label_color,
-          grid_color=grid_color,
-          key_title_color=label_color,
-          key_label_color=label_color,
-          lowlight_color=lowlight_color,
-          background_color=bgcolor,
-          discrete_highlight_color=border_color,
-          discrete_color_scale=dark_theme_discrete_colors(),
-          continuous_color_scale=dark_theme_continuous_colors(),
+      Theme(
+          default_color= fgcol1,
+          stroke_color= default_stroke_color,
+          panel_fill= bgcolor,
+          major_label_color= label_color,
+          minor_label_color= label_color,
+          grid_color= grid_color,
+          key_title_color= label_color,
+          key_label_color= label_color,
+          lowlight_color= lowlight_color,
+          background_color= bgcolor,
+          discrete_highlight_color= border_color,
+          discrete_colormap= dark_discrete_colors,
+          continuous_colormap= Scale.lab_gradient(cpalette...),
     )
 end
 
 get_theme(::Val{:dark}) = dark_theme
+
+
+### ggplot theme
+
+const ggplot_theme = let fgcol1=LCHuv(30, 70, 12),
+    fgcol2=LCHuv(100, 0, 108),
+    cpalette = [ LCHuv(30, 70, 266), fgcol2, fgcol1]
+
+    dpalette(n::Int) = LCHuv.(65, 100, 15:(360/n):374)
+
+    Theme(
+        panel_fill= "gray92", 
+        grid_color= "white", 
+        grid_line_style= :solid, 
+        discrete_colormap= dpalette,
+        continuous_colormap= Scale.lab_gradient(cpalette...)
+    )
+end
+
+get_theme(::Val{:ggplot}) = ggplot_theme
+
+

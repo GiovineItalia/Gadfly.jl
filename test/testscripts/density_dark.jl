@@ -5,7 +5,8 @@ set_default_plot_size(6inch, 3inch)
 global density_dark_tested
 
 p = Gadfly.with_theme(:dark) do
-    plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut", Geom.density)
+    p = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut", Geom.density)
+    render(p) 
 end
 
 # prevent these tests from running more than once

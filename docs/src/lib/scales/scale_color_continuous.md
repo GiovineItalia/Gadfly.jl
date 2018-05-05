@@ -6,7 +6,9 @@ Author = "David Chudzicki"
 
 Create a continuous color scale that the plot will use.
 
-This can also be set as the `continuous_color_scheme` in a [`Theme`](@ref)
+There are 2 ways to change the color palette in a continuous color scale:
+* for single plots, by using `Scale.color_continuous(colormap=)`, see Examples below
+* for a set of plots, by using `Gadfly.push_theme(style(continuous_colormap=))`, see [Themes](@ref)
 
 ## Arguments
 

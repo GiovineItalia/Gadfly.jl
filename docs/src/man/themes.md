@@ -88,14 +88,13 @@ These parameters can either be used with `Theme` or `style`
   * `bar_highlight`: Color used to stroke bars in bar plots. If a function is
     given, it's used to transform the fill color of the bars to obtain a stroke
     color. (Function, Color, or Nothing)
-  * `discrete_color_scale`: A `DiscreteColorScale` see [Scale.color_discrete_hue](@ref)
-  * `continuous_color_scale`: A `ContinuousColorScale` see [Scale.color_continuous](@ref)
+  * `discrete_colormap`: The function `f` in  [Scale.color_discrete_hue](@ref)
+  * `continuous_colormap`: The function `colormap` in [Scale.color_continuous](@ref)
 
 ## Examples
 
 ```@setup 1
-using RDatasets
-using Gadfly
+using RDatasets, Gadfly
 Gadfly.set_default_plot_size(12cm, 8cm)
 srand(12345)
 ```
@@ -170,11 +169,11 @@ Gadfly.with_theme(:orange) do
 end
 ```
 
-Gadfly comes built in with 2 named themes: `:default` and `:dark`. You can also set a theme to use by default by setting the `GADFLY_THEME` environment variable *before* loading Gadfly.
+Gadfly comes built in with 3 named themes: `:default`, `:dark` and `:ggplot`. You can also set a theme to use by default by setting the `GADFLY_THEME` environment variable *before* loading Gadfly.
 
 ## The Dark theme
 
-This is one of the two themes the ship with Gadfly the other being `:default`. Here are a few plots that use the dark theme.
+Here are a few plots that use the dark theme.
 
 ```@example 1
 Gadfly.push_theme(:dark)
@@ -229,4 +228,44 @@ plot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))
 
 ```@example 1
 Gadfly.pop_theme()
+nothing # hide 
 ```
+
+## The ggplot theme
+
+Here are examples of the ggplot theme. When using named themes, note how you can change the `order` of key colors (see [Scale.color_discrete_hue](@ref)), or use a transformed color axis (see [Scale.color_continuous](@ref)), in the usual way: 
+
+
+```@setup 2
+using RDatasets, Gadfly
+Gadfly.set_default_plot_size(17cm, 8cm)
+```
+
+```@example 2
+Gadfly.push_theme(:ggplot)
+nothing # hide
+```
+```@example 2
+pa = plot(dataset("datasets","iris"),
+    x=:PetalWidth, y=:SepalLength, color=:Species, Geom.point,
+    Scale.color_discrete(order=[3,2,1]),
+    Guide.colorkey(title="Iris", pos=[0.1, 9.3])
+)
+
+pb = plot(dataset("ggplot2","diamonds"), x=:Price, y=:Carat,
+    Geom.histogram2d(xbincount=25, ybincount=25),
+    Scale.color_log10,
+    Scale.x_continuous(format=:plain)
+)
+
+hstack(pa, pb)
+```
+
+```@example 2
+Gadfly.pop_theme()
+nothing # hide 
+```
+
+
+
+
