@@ -90,6 +90,11 @@ These parameters can either be used with `Theme` or `style`
     color. (Function, Color, or Nothing)
   * `discrete_color_scale`: A `DiscreteColorScale` see [Scale.color_discrete_hue](@ref)
   * `continuous_color_scale`: A `ContinuousColorScale` see [Scale.color_continuous](@ref)
+  * `label_out_of_bounds_penalty`: Used by `Geom.label(position=:dynamic)`
+  * `label_placement_iterations`: Used by `Geom.label(position=:dynamic)`
+  * `label_visibility_flip_pr`: Used by `Geom.label(position=:dynamic)`
+  * `label_hidden_penalty`: Used by `Geom.label(position=:dynamic)`
+  * `label_padding`: Used by `Geom.label(position=:dynamic)`
 
 ## Examples
 

@@ -199,6 +199,9 @@ end
     # Probability of proposing a visibility flip during label layout.
     label_visibility_flip_pr,    Float64,   0.2
 
+    # padding between marker and label
+    label_padding,    Measure,   1mm
+
     # Number of columns in key
     key_max_columns,             Int,       4
 
