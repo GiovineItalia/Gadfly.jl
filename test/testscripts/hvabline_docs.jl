@@ -8,7 +8,6 @@ vstack(
     plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth", Geom.point,
         yintercept=[2.5, 4.0], Geom.hline(color=["orange","red"], size=[2mm,3mm])),
     plot(dataset("ggplot2", "mpg"), x="Cty", y="Hwy", Geom.point,
-        label="Model", Geom.label,
         intercept=[0], slope=[1], Geom.abline(color="red", style=:dash),
         Guide.annotation(compose(context(), text(0.1w, 0.9h, "y=x", hright, vbottom),
             fill(colorant"red"), svgclass("marker")))) )
