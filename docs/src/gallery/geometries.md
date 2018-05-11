@@ -63,10 +63,10 @@ plot(dataset("lattice", "singer"), x="VoicePart", y="Height", Geom.boxplot)
 ## Geom.contour
 
 ```@example
-using Gadfly, RDatasets
+using Gadfly
 set_default_plot_size(14cm, 8cm)
 plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),
-     x=linspace(-8,8,150), y=linspace(-2,2,150), Geom.contour)
+     xmin=[-8], xmax=[8], ymin=[-2], ymax=[2], Geom.contour)
 ```
 
 ```@example

@@ -4,9 +4,12 @@
 
 ```@example
 using Gadfly, RDatasets
-set_default_plot_size(14cm, 8cm)
-plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
+set_default_plot_size(21cm, 8cm)
+p1 = plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
+     Geom.point)
+p2 = plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
      Stat.binmean, Geom.point)
+hstack(p1,p2)
 ```
 
 

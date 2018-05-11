@@ -4,12 +4,13 @@
 
 ```@example
 using Gadfly
-set_default_plot_size(14cm, 8cm)
-srand(1234)
+set_default_plot_size(21cm, 8cm)
 # The data are all between 0 and 1, but the color scale goes from -1 to 1.
 # For example, you might do this to force a consistent color scale between plots.
-plot(x=rand(12), y=rand(12), color=rand(12),
-     Scale.color_continuous(minvalue=-1, maxvalue=1))
+xdata, ydata, cdata = rand(12), rand(12), rand(12)
+p1 = plot(x=xdata, y=ydata, color=cdata);
+p2 = plot(x=xdata, y=ydata, color=cdata, Scale.color_continuous(minvalue=-1, maxvalue=1));
+hstack(p1,p2)
 ```
 
 ```@example
@@ -109,11 +110,12 @@ hstack(pa,pb)
 
 ```@example
 using Gadfly
-set_default_plot_size(14cm, 8cm)
-xs = 1:10.
-ys = 1:10.
+set_default_plot_size(21cm, 8cm)
+xs = ys = 1:10.
 zs = Float64[x^2*log(y) for x in xs, y in ys]
-plot(x=xs, y=ys, z=zs, Geom.contour, Scale.color_none)
+p1 = plot(x=xs, y=ys, z=zs, Geom.contour);
+p2 = plot(x=xs, y=ys, z=zs, Geom.contour, Scale.color_none);
+hstack(p1,p2)
 ```
 
 
