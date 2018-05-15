@@ -88,6 +88,7 @@ include("aesthetics.jl")
 include("mapping.jl")
 include("scale.jl")
 include("theme.jl")
+include("open_file.jl")
 
 
 # The layer and plot functions can also take functions that are evaluated with
@@ -1026,18 +1027,6 @@ function display(d::REPLDisplay, p::Union{Plot,Compose.Context})
         return
     end
     throw(MethodError)
-end
-
-function open_file(filename)
-    if is_apple()
-        run(`open $(filename)`)
-    elseif is_linux() || is_bsd()
-        run(`xdg-open $(filename)`)
-    elseif is_windows()
-        run(`$(ENV["COMSPEC"]) /c start $(filename)`)
-    else
-        warn("Showing plots is not supported on OS $(string(Compat.KERNEL))")
-    end
 end
 
 # Fallback display method. When there isn't a better option, we write to a

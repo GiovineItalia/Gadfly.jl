@@ -1,3 +1,5 @@
+include(joinpath(@__DIR__,"..","src","open_file.jl"))
+
 using ArgParse
 
 s = ArgParseSettings()
@@ -94,8 +96,8 @@ for file in intersect(cached_files,genned_files)
             run(ignorestatus(diffcmd))
         end
         if args["two"]
-            run(`open $(joinpath(cachedout,file))`)
-            run(`open $(joinpath(gennedout,file))`)
+            open_file("$(joinpath(cachedout,file))")
+            open_file("$(joinpath(gennedout,file))")
         end
         if args["bw"] && (endswith(file,".svg") || endswith(file,".png"))
             wait_for_user = false
@@ -112,7 +114,7 @@ for file in intersect(cached_files,genned_files)
                     fout = joinpath(diffedout,file*".png")
                     Images.save(fout, dimg)
                     wait_for_user = true
-                    run(`open $fout`)
+                    open_file("$fout")
                 else
                     println("files are different but PNGs are the same")
                 end
