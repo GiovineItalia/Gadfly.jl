@@ -34,6 +34,7 @@ makedocs(
         "Development" => Any[
             "Rendering Pipeline" => "dev/pipeline.md",
             "Regression Testing" => "dev/regression.md",
+            "Relationship with Compose.jl" => "dev/compose.md",
         ]
     ]
 )
