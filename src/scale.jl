@@ -436,6 +436,19 @@ a vector of integers giving a permutation of the levels default order.  If
 
 Either input `Stat.color_discrete_hue` as an argument to `plot`, or set
 `discrete_color_scale` in a [Theme](@ref Themes).
+
+# Examples
+
+```
+julia> x = Scale.color_discrete_hue()
+Gadfly.Scale.DiscreteColorScale(Gadfly.Scale.default_discrete_colors, nothing, nothing, true)
+
+julia> x.f(3)
+3-element Array{ColorTypes.Color,1}:
+ LCHab{Float32}(70.0,60.0,240.0)        
+ LCHab{Float32}(80.0,70.0,100.435)      
+ LCHab{Float32}(65.8994,62.2146,353.998)
+```
 """
 color_discrete_hue(f=default_discrete_colors;
                    levels=nothing, order=nothing, preserve_order=true) = 
