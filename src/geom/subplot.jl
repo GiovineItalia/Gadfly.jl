@@ -120,6 +120,11 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             end
         end
     end
+ # z
+    for (layer_data, layer_aes) in zip(subplot_layer_datas, subplot_layer_aess)
+        z = getfield(layer_data, :z)
+        (z != nothing) && setfield!(layer_aes, :z, z)
+    end
 
     # work out the grid size
     m = 1

@@ -692,8 +692,10 @@ function render_prepare(plot::Plot)
     end
 
     # IIa. Layer-wise statistics
-    for (stats, aes) in zip(layer_stats, layer_aess)
-        Stat.apply_statistics(stats, scales, coord, aes)
+    if !facet_plot
+        for (stats, aes) in zip(layer_stats, layer_aess)
+            Stat.apply_statistics(stats, scales, coord, aes)
+        end
     end
 
     # IIb. Plot-wise Statistics

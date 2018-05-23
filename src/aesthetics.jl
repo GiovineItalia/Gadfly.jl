@@ -11,7 +11,7 @@ const NumericalAesthetic =
 @varset Aesthetics begin
     x,            Union{NumericalOrCategoricalAesthetic, Distribution}
     y,            Union{NumericalOrCategoricalAesthetic, Distribution}
-    z,            Union{(Void), Function, Matrix}
+    z,            Union{(Void), Function, NumericalAesthetic}
     xend,         NumericalAesthetic
     yend,         NumericalAesthetic
 

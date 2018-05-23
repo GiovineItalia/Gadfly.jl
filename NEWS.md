@@ -2,7 +2,18 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 0.7.1
+
+  * `Geom.contour`: add support for `DataFrame`. 
+
+# Version 0.7.0
+
+  * Support DataFrames.jl v0.11+ (#1090, #1129, #1131)
+  * Change `Theme(grid_strokedash=)` to `Theme(grid_line_style=)` and include in docs (#1106)
+  * Add `Geom.ellipse` (#1103)  
+
 # Version 0.6.1 (WIP)
+
 
 # Version 0.6.0
 
