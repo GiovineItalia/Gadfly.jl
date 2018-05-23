@@ -1863,7 +1863,7 @@ end
 VecFieldStatistic(; smoothness=1.0, scale=1.0, samples=20) =
         VecFieldStatistic(smoothness, scale, samples)
 
-input_aesthetics(stat::VecFieldStatistic) = [:z, :x, :y, :color]
+input_aesthetics(stat::VecFieldStatistic) = [:z, :x, :y, :color, :xmin, :xmax, :ymin, :ymax]
 output_aesthetics(stat::VecFieldStatistic) = [:x, :y, :xend, :yend, :color]
 default_scales(stat::VecFieldStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
         [Gadfly.Scale.z_func(), Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous(),

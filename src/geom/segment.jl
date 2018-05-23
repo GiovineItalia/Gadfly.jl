@@ -3,9 +3,9 @@
 
 struct SegmentGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
-     arrow::Bool
-     filled::Bool
-     tag::Symbol 
+    arrow::Bool
+    filled::Bool
+    tag::Symbol 
 end 
 SegmentGeometry(default_statistic=Gadfly.Stat.identity(); arrow=false, filled=false, tag=empty_tag) = 
     SegmentGeometry(default_statistic, arrow, filled, tag) 
