@@ -1515,6 +1515,8 @@ end
 ViolinStatistic() = ViolinStatistic(300)
 
 input_aesthetics(::ViolinStatistic) = [:x, :y, :width]
+ Gadfly.default_scales(stat::ViolinStatistic) = [Gadfly.Scale.x_discrete(), Gadfly.Scale.y_continuous()]
+
 
 const violin = ViolinStatistic
 
