@@ -81,11 +81,11 @@ map(display, ps)
 For the rest of the demonstrations, we'll simply omit the trailing semi-colon
 for brevity.
 
-In this plot we've mapped the x aesthetic to the `SepalLength` column and
-the y aesthetic to the `SepalWidth`. The last argument,
-[Geom.point](@ref), is a geometry element which takes bound aesthetics and
-renders delightful figures. Adding other geometries produces layers, which
-may or may not result in a coherent plot.
+In this plot we've mapped the x aesthetic to the `SepalLength` column and the y
+aesthetic to the `SepalWidth`. The last argument, [`Geom.point`](@ref
+Gadfly.Geom.point), is a geometry element which takes bound aesthetics and
+renders delightful figures. Adding other geometries produces layers, which may
+or may not result in a coherent plot.
 
 ```@example 1
 plot(iris, x=:SepalLength, y=:SepalWidth,
@@ -141,13 +141,15 @@ plot(gasoline, x=:Year, y=:LGasPCar, color=:Country,
          Geom.point, Geom.line)
 ```
 
-We could have added [Scale.x_discrete](@ref) explicitly, but this is
-detected and the right default is chosen. This is the case with most of the
-elements in the grammar: we've omitted [Scale.x_continuous](@ref) and
-[Scale.y_continuous](@ref) in the previous plots, as well as
-[Coord.cartesian](@ref), and guide elements such as [Guide.xticks](@ref),
-[Guide.xlabel](@ref), and so on. As much as possible the system tries to fill in
-the gaps with reasonable defaults.
+We could have added [`Scale.x_discrete`](@ref Gadfly.Scale.x_discrete)
+explicitly, but this is detected and the right default is chosen. This is the
+case with most of the elements in the grammar: we've omitted
+[`Scale.x_continuous`](@ref Gadfly.Scale.x_continuous) and
+[`Scale.y_continuous`](@ref Gadfly.Scale.y_continuous) in the previous plots,
+as well as [`Coord.cartesian`](@ref), and guide elements such as
+[`Guide.xticks`](@ref Gadfly.Guide.xticks), [`Guide.xlabel`](@ref
+Gadfly.Guide.xlabel), and so on. As much as possible the system tries to fill
+in the gaps with reasonable defaults.
 
 ## Rendering
 

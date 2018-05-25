@@ -52,10 +52,12 @@ plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
 
 ```@example
 using Gadfly, Colors, RDatasets
-set_default_plot_size(14cm, 8cm)
+set_default_plot_size(21cm, 8cm)
 srand(1234)
-plot(x=rand(12), y=rand(12), color=repeat([1,2,3], outer=[4]),
-     Scale.color_discrete())
+xdata, ydata = rand(12), rand(12)
+p1 = plot(x=xdata, y=ydata, color=repeat([1,2,3], outer=[4]))
+p2 = plot(x=xdata, y=ydata, color=repeat([1,2,3], outer=[4]), Scale.color_discrete)
+hstack(p1,p2)
 ```
 
 
