@@ -86,6 +86,7 @@ p4 = plot(Dv, x=:x, y=:y, z=:z, color=:z,
 gridstack([p1 p2; p3 p4])
 ```
 
+
 ## Geom.density
 
 ```@example
@@ -115,9 +116,9 @@ plot(layer(x=xs, Geom.density, Theme(default_color="orange")),
 using Gadfly, Distributions
 set_default_plot_size(14cm, 8cm)
 plot(x=rand(Rayleigh(2),1000), y=rand(Rayleigh(2),1000),
-    Geom.density2d(levels = x->maximum(x)*0.5.^collect(1:2:8)), Geom.point,
-    Theme(key_position=:none),
-    Scale.color_continuous(colormap=x->colorant"red"))
+     Geom.density2d(levels = x->maximum(x)*0.5.^collect(1:2:8)), Geom.point,
+     Theme(key_position=:none),
+     Scale.color_continuous(colormap=x->colorant"red"))
 ```
 
 
@@ -130,13 +131,13 @@ D = dataset("datasets","faithful")
 D[:g] = D[:Eruptions].>3.0
 coord = Coord.cartesian(ymin=35, ymax=100)
 pa = plot(D, coord,
-    x=:Eruptions, y=:Waiting, group=:g,
-    Geom.point, Geom.ellipse)
+          x=:Eruptions, y=:Waiting, group=:g,
+          Geom.point, Geom.ellipse)
 pb = plot(D, coord,
-    x=:Eruptions, y=:Waiting, color=:g,
-    Geom.point, Geom.ellipse,
-    layer(Geom.ellipse(levels=[0.99]), style(line_style=:dot)),
-    style(key_position=:none), Guide.ylabel(nothing))
+          x=:Eruptions, y=:Waiting, color=:g,
+          Geom.point, Geom.ellipse,
+          layer(Geom.ellipse(levels=[0.99]), style(line_style=:dot)),
+          style(key_position=:none), Guide.ylabel(nothing))
 hstack(pa,pb)
 ```
 
@@ -170,6 +171,7 @@ pb = plot(x=s.*(x.^2), y=x, color=string.(s),
 hstack(pa, pb)
 ```
 
+
 ## Geom.hexbin
 
 ```@example
@@ -181,25 +183,18 @@ p2 = plot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))
 hstack(p1,p2)
 ```
 
+
 ## Geom.histogram
 
 ```@example
 using Gadfly, RDatasets
 set_default_plot_size(21cm, 16cm)
-
 p1 = plot(dataset("ggplot2", "diamonds"), x="Price", Geom.histogram)
-
-# Binding categorical data to color
 p2 = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut", Geom.histogram)
-
-# Choosing a smaller bin count
 p3 = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut",
-     Geom.histogram(bincount=30))
-
-# Density instead of counts
+          Geom.histogram(bincount=30))
 p4 = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut",
-     Geom.histogram(bincount=30, density=true))
-
+          Geom.histogram(bincount=30, density=true))
 gridstack([p1 p2; p3 p4])
 ```
 
@@ -209,15 +204,11 @@ gridstack([p1 p2; p3 p4])
 ```@example
 using Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
-
 p1 = plot(dataset("car", "Womenlf"), x="HIncome", y="Region", Geom.histogram2d)
 p2 = plot(dataset("car", "UN"), x="GDP", y="InfantMortality",
-     Scale.x_log10, Scale.y_log10, Geom.histogram2d)
-
-# Explicitly setting the number of bins
+          Scale.x_log10, Scale.y_log10, Geom.histogram2d)
 p3 = plot(dataset("car", "UN"), x="GDP", y="InfantMortality",
-     Scale.x_log10, Scale.y_log10, Geom.histogram2d(xbincount=30, ybincount=30))
-
+          Scale.x_log10, Scale.y_log10, Geom.histogram2d(xbincount=30, ybincount=30))
 hstack(p1,p2,p3)
 ```
 
@@ -227,17 +218,11 @@ hstack(p1,p2,p3)
 ```@example
 using Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
-
 p1 = plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
-          xintercept=[5.0, 7.0], Geom.point, Geom.vline(style=[:solid,[1mm,1mm]]));
-
-# Colors and widths of lines can be changed. This works separately from the
-# `color` and `size` aesthetics.  They may be either a scalar or a vector of
-# length(xintercept).
+          xintercept=[5.0, 7.0], Geom.point, Geom.vline(style=[:solid,[1mm,1mm]]))
 p2 = plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
           yintercept=[2.5, 4.0], Geom.point,
-          Geom.hline(color=["orange","red"], size=[2mm,3mm]));
-
+          Geom.hline(color=["orange","red"], size=[2mm,3mm]))
 hstack(p1,p2)
 ```
 
@@ -267,11 +252,9 @@ hstack(p1,p2)
 ```@example
 using Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
-
-p1 = plot(dataset("lattice", "melanoma"), x="Year", y="Incidence", Geom.line);
+p1 = plot(dataset("lattice", "melanoma"), x="Year", y="Incidence", Geom.line)
 p2 = plot(dataset("Zelig", "approval"), x="Month",  y="Approve", color="Year",
-          Geom.line);
-
+          Geom.line)
 hstack(p1,p2)
 ```
 
@@ -300,33 +283,23 @@ hstack(p1,p2)
 ```@example
 using Gadfly, RDatasets
 set_default_plot_size(21cm, 12cm)
-
 D = dataset("datasets", "iris")
 p1 = plot(D, x="SepalLength", y="SepalWidth", Geom.point);
-
-# Binding continuous data to the color aesthetic
 p2 = plot(D, x="SepalLength", y="SepalWidth", color="PetalLength", Geom.point);
-
-# Binding categorial data to the color aesthetic
 p3 = plot(D, x="SepalLength", y="SepalWidth", color="Species", Geom.point);
-
-# Binding categorical data to the shape aesthetic
 p4 = plot(D, x="SepalLength", y="SepalWidth", color="Species", shape="Species",
           Geom.point);
-
 gridstack([p1 p2; p3 p4])
 ```
 
 
 ```@example
-# Binding categorial data to x
 using Gadfly, RDatasets
 set_default_plot_size(14cm, 8cm)
 plot(dataset("lattice", "singer"), x="VoicePart", y="Height", Geom.point)
 ```
 
 ```@example
-# Different colored layers
 using Gadfly, Distributions
 set_default_plot_size(14cm, 8cm)
 rdata = rand(MvNormal([0,0.],[1 0;0 1.]),100)
@@ -334,6 +307,7 @@ bdata = rand(MvNormal([1,0.],[1 0;0 1.]),100)
 plot(layer(x=rdata[1,:], y=rdata[2,:], color=[colorant"red"], Geom.point),
      layer(x=bdata[1,:], y=bdata[2,:], color=[colorant"blue"], Geom.point))
 ```
+
 
 ## Geom.polygon
 
@@ -429,10 +403,9 @@ Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5, 2.5, 4.0], Species=repeat(sp, inner=[2
 # Try this one too:
 # Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5], Species=repeat(sp[1:2], inner=[2]) )
 plot(iris, xgroup=:Species, x=:SepalLength, y=:SepalWidth,
-    Geom.subplot_grid(
-        layer(Geom.point),
-        layer(Dhl, xgroup=:Species, yintercept=:yint,
-              Geom.hline(color="red", style=:dot))))
+    Geom.subplot_grid(layer(Geom.point),
+                      layer(Dhl, xgroup=:Species, yintercept=:yint,
+                            Geom.hline(color="red", style=:dot))))
 ```
 
 ```@example
@@ -442,11 +415,10 @@ iris = dataset("datasets", "iris")
 sp = unique(iris[:Species])
 Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5, 2.5, 4.0], Species=repeat(sp, inner=[2]) )
 plot(iris, xgroup=:Species,
-    Geom.subplot_grid(
-        layer(x=:SepalLength, y=:SepalWidth, Geom.point),
-        layer(Dhl, xgroup=:Species, yintercept=:yint,
-              Geom.hline(color="red", style=:dot))),
-    Guide.xlabel("Xlabel"), Guide.ylabel("Ylabel"))
+     Geom.subplot_grid(layer(x=:SepalLength, y=:SepalWidth, Geom.point),
+                       layer(Dhl, xgroup=:Species, yintercept=:yint,
+                             Geom.hline(color="red", style=:dot))),
+     Guide.xlabel("Xlabel"), Guide.ylabel("Ylabel"))
 ```
 
 ```@example
@@ -454,14 +426,9 @@ using Gadfly, RDatasets, DataFrames
 set_default_plot_size(14cm, 12cm)
 widedf = DataFrame(x = collect(1:10), var1 = collect(1:10), var2 = collect(1:10).^2)
 longdf = stack(widedf, [:var1, :var2])
-
-#Default behavior is for the axes' scales to be fixed across the subplots:
 p1 = plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point))
-
-#We can change this default behavior where appropriate:
 p2 = plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point,
           free_y_axis=true))
-
 hstack(p1,p2)
 ```
 
@@ -498,22 +465,22 @@ set_default_plot_size(21cm, 8cm)
 
 coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)
 p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)), 
-        xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], 
+          xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], 
 # or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     
-        Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),
-        Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),
-        Scale.y_continuous(minvalue=-2.0, maxvalue=2.0),
-        Guide.xlabel("x"), Guide.ylabel("y"), Guide.colorkey(title="z"))
+          Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),
+          Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),
+          Scale.y_continuous(minvalue=-2.0, maxvalue=2.0),
+          Guide.xlabel("x"), Guide.ylabel("y"), Guide.colorkey(title="z"))
 
 volcano = Matrix{Float64}(dataset("datasets", "volcano"))
 volc = volcano[1:4:end, 1:4:end] 
 coord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)
 p2 = plot(coord, z=volc, x=1.0:22, y=1.0:16,
-        Geom.vectorfield(scale=0.05), Geom.contour(levels=7),
-        Scale.x_continuous(minvalue=1.0, maxvalue=22.0),
-        Scale.y_continuous(minvalue=1.0, maxvalue=16.0),
-        Guide.xlabel("x"), Guide.ylabel("y"),
-        Theme(key_position=:none))
+          Geom.vectorfield(scale=0.05), Geom.contour(levels=7),
+          Scale.x_continuous(minvalue=1.0, maxvalue=22.0),
+          Scale.y_continuous(minvalue=1.0, maxvalue=16.0),
+          Guide.xlabel("x"), Guide.ylabel("y"),
+          Theme(key_position=:none))
 
 hstack(p1,p2)
 ```

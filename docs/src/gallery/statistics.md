@@ -6,9 +6,9 @@
 using Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
 p1 = plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
-     Geom.point)
+          Geom.point)
 p2 = plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth",
-     Stat.binmean, Geom.point)
+          Stat.binmean, Geom.point)
 hstack(p1,p2)
 ```
 
@@ -35,7 +35,7 @@ plot(x=rand(25), y=rand(25), Stat.step, Geom.line)
 ```
 
 
-## Stat.x_jitter
+## Stat.{x,y}_jitter
 
 ```@example
 using Gadfly, Distributions
@@ -45,31 +45,11 @@ plot(x=rand(1:4, 500), y=rand(500), Stat.x_jitter(range=0.5), Geom.point)
 ```
 
 
-## Stat.xticks
+## Stat.{x,y}ticks
 
 ```@example
 using Gadfly
 set_default_plot_size(14cm, 8cm)
 srand(1234)
 plot(x=rand(10), y=rand(10), Stat.xticks(ticks=[0.0, 0.1, 0.9, 1.0]), Geom.point)
-```
-
-
-## Stat.y_jitter
-
-```@example
-using Gadfly, Distributions
-set_default_plot_size(14cm, 8cm)
-srand(1234)
-plot(x=rand(500), y=rand(1:4, 500), Stat.y_jitter(range=0.5), Geom.point)
-```
-
-
-## Stat.yticks
-
-```@example
-using Gadfly
-set_default_plot_size(14cm, 8cm)
-srand(1234)
-plot(x=rand(10), y=rand(10), Stat.yticks(ticks=[0.0, 0.1, 0.9, 1.0]), Geom.point)
 ```
