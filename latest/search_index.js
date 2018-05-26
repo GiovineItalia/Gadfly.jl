@@ -461,7 +461,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.contour",
     "title": "Geom.contour",
     "category": "page",
-    "text": "Author = \"Darwin Darakananda\""
+    "text": "Author = \"Darwin Darakananda and Mattriks\""
 },
 
 {
@@ -469,7 +469,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.contour",
     "title": "Geom.contour",
     "category": "section",
-    "text": "Draw contours of a 2D function or a matrix."
+    "text": "Draw contours of a 2D function, matrix or DataFrame. Note that Geom.contour currently works for gridded points, not irregular points."
 },
 
 {
@@ -477,7 +477,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.contour",
     "title": "Aesthetics",
     "category": "section",
-    "text": "z: 2D function or a matrix that represent \"heights\" relative to to the x-y plane.\nx (optional): Vector of X-coordinates.  If z is a matrix, then the length of x must be equal to the number of rows in z.\ny (optional): Vector of Y-coordinates.  If z is a matrix, then the length of y must be equal to the number of columns in z."
+    "text": "z: 2D function or a matrix that represent \"heights\" relative to the x-y plane.    \nx (optional): Vector of X-coordinates.  If z is a matrix, then the length of x must be equal to the number of rows in z.\ny (optional): Vector of Y-coordinates.  If z is a matrix, then the length of y must be equal to the number of columns in z.Alternatively, you can supply a DataFrame containing x, y, z values (the names in the dataframe don\'t need to be x, y, z). See the last example below. Note that Geom.subplot_grid plus Geom.contour works with a DataFrame."
 },
 
 {
@@ -493,7 +493,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geom.contour",
     "title": "Examples",
     "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),\n     x=linspace(-8,8,150), y=linspace(-2,2,150), Geom.contour)volcano = Matrix{Float64}(dataset(\"datasets\", \"volcano\"))\nplot(z=volcano, Geom.contour)plot(z=volcano, Geom.contour(levels=[110.0, 150.0, 180.0, 190.0]))plot(z=volcano, x=collect(0.0:10:860.0), y=collect(0.0:10:600.0),\n     Geom.contour(levels=2))"
+    "text": "using RDatasets\nusing Gadfly\nGadfly.set_default_plot_size(14cm, 8cm)plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),\n     x=linspace(-8,8,150), y=linspace(-2,2,150), Geom.contour)volcano = Matrix{Float64}(dataset(\"datasets\", \"volcano\"))\nplot(z=volcano, Geom.contour)plot(z=volcano, Geom.contour(levels=[110.0, 150.0, 180.0, 190.0]))plot(z=volcano, x=collect(0.0:10:860.0), y=collect(0.0:10:600.0),\n     Geom.contour(levels=2))Mvolc = volcano[1:4:end, 1:4:end]\nDvolc = vcat([DataFrame(x=[1:size(Mvolc,1);], y=j, z=Mvolc[:,j]) for j in 1:size(Mvolc,2)]...)\n\ncoord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)\nplot(Dvolc, x=:x, y=:y, z=:z, color=:z, coord,\n    Geom.point, Geom.contour(levels=10), style(line_width=0.5mm, point_size=0.2mm) )"
 },
 
 {
