@@ -1407,8 +1407,16 @@ function apply_statistic(stat::ContourStatistic,
         end
         size(zs) != (length(xs), length(ys)) &&
                 error("Stat.contour requires dimension of z to be length(x) by length(y)")
+    elseif typeof(aes.z) <: Vector
+        z = Vector{Float64}(aes.z)
+        a = [xs ys z]
+        as = sortrows(a, by=x->(x[2],x[1]))
+        xs = unique(as[:,1])
+        ys = unique(as[:,2])
+        zs = Array{Float64}(length(xs), length(ys))
+        zs[:,:] = as[:,3]
     else
-        error("Stat.contour requires either a matrix or a function")
+        error("Stat.contour requires either a matrix, function or dataframe")
     end
 
     levels = Float64[]
