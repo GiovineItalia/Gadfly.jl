@@ -10,7 +10,7 @@ using Base.Test, Gadfly, Compat
 repo = LibGit2.GitRepo(dirname(@__DIR__))
 branch = LibGit2.headname(repo)
 outputdir = joinpath(@__DIR__, mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
-        "cachedoutput" : "gennedoutput")
+        "master-output" : "devel-output")
 
 options = LibGit2.StatusOptions(flags=LibGit2.Consts.STATUS_OPT_INCLUDE_IGNORED |
                                       LibGit2.Consts.STATUS_OPT_RECURSE_IGNORED_DIRS)
