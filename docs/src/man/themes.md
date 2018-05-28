@@ -65,6 +65,8 @@ These parameters can either be used with `Theme` or `style`
   * `key_label_font_size`: Font size used for key entry labels. (Measure)
   * `key_label_color`: Color used for key entry labels. (Color)
   * `key_max_columns`: Maximum number of columns for key entry labels. (Int)
+  * `key_swatch_shape`: General purpose, will eventually replace `colorkey_swatch_shape` (Function as in `point_shapes`)
+  * `key_swatch_color`: General purpose, currently works for `Guide.shapekey` (Color)
   * `bar_spacing`: Spacing between bars in [`Geom.bar`](@ref). (Measure)
   * `boxplot_spacing`: Spacing between boxplots in [`Geom.boxplot`](@ref). (Measure)
   * `errorbar_cap_length`: Length of caps on error bars. (Measure)
