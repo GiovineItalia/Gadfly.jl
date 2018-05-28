@@ -17,8 +17,12 @@ using IndirectArrays
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, setfield!, discretize_make_ia, aes2str
 import KernelDensity
+<<<<<<< HEAD
 # import Distributions: Uniform, Distribution, qqbuild
 import IterTools: distinct
+=======
+import IterTools: chain, distinct
+>>>>>>> [WIP] prelim version of the density geometry revamp
 import Compat.Iterators: cycle, product
 
 include("bincount.jl")
@@ -502,13 +506,57 @@ end
 
 
 struct DensityStatistic <: Gadfly.StatisticElement
-    # Number of points sampled
+    """
+    Number of points sampled for estimate. Powers of two yields better
+    performance.
+    """
     n::Int
-    # Bandwidth used for the kernel density estimation
-    bw::Real
-end
-DensityStatistic(; n=256, bandwidth=-Inf) = DensityStatistic(n, bandwidth)
 
+    """
+    Bandwidth used for the kernel density estimation. This corresponds to the
+    standard deviation of the `kernel`.
+    """
+    bw::Real
+
+    """
+    Multiplicative adjustment of the computed optimal bandwidth. This is a
+    relative adjustment, see `bw` to enforce a specific numerical bandwidth.
+    """
+    adjust::Float64
+
+    """
+    Kernel used for density estimation, see `KernelDensity.jl` for more details.
+    Default is the Normal Distribution.
+    """
+    kernel
+
+    """
+    If set to `true` (default), trim the tails of the estimate to fit the range
+    of the data.
+    """
+    trim::Bool
+
+    """
+    Method for scaling across multiple estimates. If `:area` (default), all
+    density estimates will have the same area under the curve (prior to trimming
+    ). If `:count`, the areas are scaled proportionally to the total number of
+    observations for each density estimate. If `:peak`, then all densities will
+    have the same maximum peak height.
+    """
+    scale::Symbol
+end
+
+function DensityStatistic(; n=256,
+                            bandwidth=-Inf,
+                            adjust=1.0,
+                            kernel=Normal,
+                            trim=true,
+                            scale=:area,
+                            )
+    DensityStatistic(n, bandwidth, adjust, kernel, trim, scale)
+end
+
+<<<<<<< HEAD
 input_aesthetics(stat::DensityStatistic) = [:x, :color]
 output_aesthetics(stat::DensityStatistic) = [:x, :y, :color]
 default_scales(::DensityStatistic) = [Gadfly.Scale.y_continuous()]
@@ -520,47 +568,117 @@ Estimate the density of `x` at `n` points, and put the result in `x` and `y`.
 Smoothing is controlled by `bandwidth`.  Used by [`Geom.density`](@ref Gadfly.Geom.density).
 """
 const density = DensityStatistic
+=======
+
+input_aesthetics(stat::DensityStatistic) = [:x, :y, :color]
+output_aesthetics(stat::DensityStatistic) = [:x, :y, :color]
+
+"""
+Given a scale and aesthetic, figures out which variable will be fed into the KDE,
+which aesthetics will be overridden with what and provides a nested dictionary
+mapping category to dictionaries of color mapped to a boolean array. The array
+corresponds to whether a certain datapoint belongs to a given (category, color)
+group. The length of the boolean array is equal to `length(aes.x)`, etc.
+"""
+function determine_density_grouping(scales::Dict{Symbol, Gadfly.ScaleElement},
+                                    aes::Gadfly.Aesthetics)
+
+    # TODO: This general approach should work for any statistic that has a
+    # categorical component and color. So this should be generalized to bar and
+    # boxplot
+    defined = intersect(Set([:x, :y]), Gadfly.defined_aesthetics(aes))
+    (length(defined) == 0) && error("DensityStatistic requires either the x or y aesthetics to be defined")
+    densityvar = :x # variable on which the KDE will be run
+
+    # violin and density have different `element_aesthetics` functions and
+    # therefore both x and y will only be defined if `Geom.violin()` is used
+    if length(defined) == 1 && :y in defined
+        densityvar = :y
+    end
+
+    # what aes variable to store the category info, points, and densities
+    outputs = (nothing, :x, :y)
+
+    unqcat = [1]
+    # densities grouped by the categorical variable and color
+    catgroup = Dict(1 => fill(true, length(getfield(aes, densityvar))))
+
+    if :x in defined && :y in defined # is violin?
+        # We first need to establish whether this is a horizontal or vertical violin
+        xcat, ycat = Scale.iscategorical(scales, :x), Scale.iscategorical(scales, :y)
+        catvar = :x
+        if xcat && ycat
+            error("Either the x or y aesthetics must be Real for kernel density estimation")
+        elseif xcat
+            densityvar = :y
+        elseif ycat
+            catvar = :y
+            densityvar = :x
+        else # neither x or y is categorical so we'll assume x is meant to be categorical, see #968
+            new_scale = Scale.x_discrete(order=sortperm(unique(aes.x)))
+            Scale.apply_scale(new_scale, [aes], Gadfly.Data(x=aes.x))
+            scales[:x] = new_scale
+            densityvar = :y
+            warn(
+            """
+            Both x and y aesthetics are continuous, violin plots require a
+            categorical variable. Transforming x to be categorical.
+            """)
+        end
+
+        outputs = (catvar, densityvar, :width)
+
+    end
+
+    densityvar, outputs, Gadfly.groupby(aes, [catvar, :color], densityvar)
+end
+>>>>>>> [WIP] prelim version of the density geometry revamp
 
 function apply_statistic(stat::DensityStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    Gadfly.assert_aesthetics_defined("DensityStatistic", aes, :x)
 
-    if aes.color === nothing
-        isa(aes.x[1], Real) || error("Kernel density estimation only works on Real types.")
 
-        x_f64 = collect(Float64, aes.x)
+    densityvar, outputs, grouped_data = determine_density_grouping(scales, aes)
 
-        window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(x_f64) : stat.bw
-        f = KernelDensity.kde(x_f64, bandwidth=window, npoints=stat.n)
-        aes.x = collect(Float64, f.x)
-        aes.y = f.density
-    else
-        groups = Dict()
-        for (x, c) in zip(aes.x, cycle(aes.color))
-            if !haskey(groups, c)
-                groups[c] = Float64[x]
-            else
-                push!(groups[c], x)
-            end
+    densityinput = getfield(aes, densityvar)
+
+    aes.x = Array{Float64}(0)
+    aes.y = Array{Float64}(0)
+    aes.width = Array{Float64}(0)
+    colors = eltype(aes.color)[]
+
+    for ((cat, color), belongs) in grouped_data
+        input = densityinput[belongs]
+        window = stat.n > 1 ? KernelDensity.default_bandwidth(input)*stat.adjust : 0.1
+        if stat.trim
+            f = KernelDensity.kde(input, kernel=stat.kernel,
+                                         boundary=extrema(input),
+                                         bandwidth=window,
+                                         npoints=stat.n)
+        else
+            f = KernelDensity.kde(input, kernel=stat.kernel, bandwidth=window, npoints=stat.n)
         end
+        # only store category information if this is a violin plot and we need it
+        (outputs[1] != nothing) && append!(getfield(aes, outputs[1]), fill(cat, length(f.density)))
+        append!(getfield(aes, outputs[2]), f.x)
 
-        colors = Array{RGB{Float32}}(0)
-        aes.x = Array{Float64}(0)
-        aes.y = Array{Float64}(0)
-        for (c, xs) in groups
-            window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(xs) : stat.bw
-            f = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
-            append!(aes.x, f.x)
-            append!(aes.y, f.density)
-            for _ in 1:length(f.x)
-                push!(colors, c)
-            end
+        if stat.scale == :area
+            append!(getfield(aes, outputs[3]), f.density)
+        elseif stat.scale == :count
+            append!(getfield(aes, outputs[3]), f.density.*sum(input))
+        else
+            append!(getfield(aes, outputs[3]), f.density ./ maximum(f.density))
         end
-        aes.color = discretize_make_ia(colors)
+        append!(colors, fill(color, length(f.density)))
     end
-    aes.y_label = Gadfly.Scale.identity_formatter
+    (aes.color != nothing) && (aes.color = colors)
+
+    pad = 0.1
+    maxwidth = maximum(aes.width)
+    broadcast!(*, aes.width, aes.width, 1 - pad)
+    broadcast!(/, aes.width, aes.width, maxwidth)
 end
 
 
@@ -1621,6 +1739,7 @@ function apply_statistic(stat::QQStatistic,
     end
 end
 
+<<<<<<< HEAD
 
 struct ViolinStatistic <: Gadfly.StatisticElement
     n::Int # Number of points sampled
@@ -1680,6 +1799,8 @@ function apply_statistic(stat::ViolinStatistic,
 end
 
 
+=======
+>>>>>>> [WIP] prelim version of the density geometry revamp
 struct JitterStatistic <: Gadfly.StatisticElement
     vars::Vector{Symbol}
     range::Float64

@@ -1,8 +1,29 @@
-struct ViolinGeometry <: Gadfly.GeometryElement
+struct DensityGeometry <: Gadfly.GeometryElement
+    stat::Gadfly.StatisticElement
     order::Int
     tag::Symbol
 end
-ViolinGeometry(; order=1, tag=empty_tag) = ViolinGeometry(order, tag)
+
+function DensityGeometry(; order=1, tag=empty_tag, kwargs...)
+    DensityGeometry(Gadfly.Stat.DensityStatistic(; kwargs...), order, tag)
+end
+
+DensityGeometry(stat; order=1, tag=empty_tag) = DensityGeometry(stat, order, tag)
+
+const density = DensityGeometry
+
+element_aesthetics(::DensityGeometry) = Symbol[]
+default_statistic(geom::DensityGeometry) = Gadfly.Stat.DensityStatistic(geom.stat)
+
+struct ViolinGeometry <: Gadfly.GeometryElement
+    stat::Gadfly.StatisticElement
+    split::Bool
+    order::Int
+    tag::Symbol
+end
+function ViolinGeometry(; order=1, tag=empty_tag, split=false, kwargs...)
+    ViolinGeometry(Gadfly.Stat.DensityStatistic(; kwargs...), split, order, tag)
+end
 
 """
     Geom.violin[(; order=1)]
@@ -15,29 +36,42 @@ const violin = ViolinGeometry
 
 element_aesthetics(::ViolinGeometry) = [:x, :y, :color]
 
-default_statistic(::ViolinGeometry) = Gadfly.Stat.violin()
+default_statistic(geom::ViolinGeometry) = Gadfly.Stat.DensityStatistic(geom.stat)
 
 function render(geom::ViolinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    # TODO: What should we do with the color aesthetic?
 
     Gadfly.assert_aesthetics_defined("Geom.violin", aes, :y, :width)
     Gadfly.assert_aesthetics_equal_length("Geom.violin", aes, :y, :width)
 
-    default_aes = Gadfly.Aesthetics()
-    default_aes.color = fill(theme.default_color, length(aes.y))
-    aes = Gadfly.inherit(aes, default_aes)
-    
-    # Group y, width and color by x
-    ux = unique(aes.x)
-    grouped_color = Dict(x => first(aes.color[aes.x.==x]) for x in ux)
-    grouped_y = Dict(x => aes.y[aes.x.==x] for x in ux)
-    grouped_width = Dict(x => aes.width[aes.x.==x] for x in ux)
+    grouped_data = Gadfly.groupby(aes, [:x, :color], :y)
+    violins = Array{NTuple{2, Float64}}[]
 
-    kgy = keys(grouped_y)
-    violins = [vcat([(x - w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])],
-                reverse!([(x + w/2, y) for (y, w) in zip(grouped_y[x], grouped_width[x])]))
-                for x in kgy]
-    colors = [grouped_color[x] for x in kgy]
+    colors = []
+    (aes.color == nothing) && (aes.color = fill(theme.default_color, length(aes.x)))
+    color_opts = unique(aes.color)
+    if geom.split && length(color_opts) > 2
+        error("Split violins require 2 colors, not more")
+    end
+
+    for (keys, belongs) in grouped_data
+        x, color = keys
+        ys = aes.y[belongs]
+        ws = aes.width[belongs]
+
+        if geom.split
+            pos = findfirst(color_opts, color)
+            if pos == 1
+                push!(violins, [(x - w/2, y) for (y, w) in zip(ys, ws)])
+            else
+                push!(violins, reverse!([(x + w/2, y) for (y, w) in zip(ys, ws)]))
+            end
+            push!(colors, color)
+        else
+            push!(violins, vcat([(x - w/2, y) for (y, w) in zip(ys, ws)],
+                                reverse!([(x + w/2, y) for (y, w) in zip(ys, ws)])))
+            push!(colors, color != nothing ? color : theme.default_color)
+        end
+    end
 
     ctx = context(order=geom.order)
     compose!(ctx, Compose.polygon(violins, geom.tag), fill(colors))

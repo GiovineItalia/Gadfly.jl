@@ -52,16 +52,6 @@ geometry is equivalent to [`Geom.line`](@ref) with `preserve_order=true`.
 path() = LineGeometry(preserve_order=true)
 
 """
-    Geom.density[(; bandwidth=-Inf)]
-
-Draw a line showing the density estimate of the `x` aesthetic.
-This geometry is equivalent to [`Geom.line`](@ref) with
-[`Stat.density`](@ref); see the latter for more information.
-"""
-density(; bandwidth::Real=-Inf) =
-    LineGeometry(Gadfly.Stat.density(bandwidth=bandwidth))
-
-"""
     Geom.density2d[(; bandwidth=(-Inf,-Inf), levels=15)]
 
 Draw a set of contours showing the density estimate of the `x` and `y`
