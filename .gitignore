@@ -1,7 +1,7 @@
 #ignore files output from runtests.jl
-test/gennedoutput.html
-test/cachedoutput.html
-test/gennedoutput
-test/cachedoutput
-test/diffedoutput
+test/devel-output.html
+test/master-output.html
+test/devel-output
+test/master-output
+test/diffed-output
 doc/html

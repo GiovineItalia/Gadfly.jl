@@ -47,31 +47,31 @@ for i in 1:length(status)
     index_to_workdir = unsafe_load(entry.index_to_workdir)
     if index_to_workdir.status == Int(LibGit2.Consts.DELTA_IGNORED)
         filepath = unsafe_string(index_to_workdir.new_file.path)
-        startswith(filepath,joinpath("test/diffedoutput")) || continue
+        startswith(filepath,joinpath("test/diffed-output")) || continue
         rm(filepath)
     end
 end
 
 # Compare with cached output
-cachedout = joinpath((@__DIR__), "cachedoutput")
-gennedout = joinpath((@__DIR__), "gennedoutput")
-diffedout = joinpath((@__DIR__), "diffedoutput")
+masterout = joinpath((@__DIR__), "master-output")
+develout  = joinpath((@__DIR__), "devel-output")
+diffedout = joinpath((@__DIR__), "diffed-output")
 ndifferentfiles = 0
 const creator_producer = r"(Creator|Producer)"
 filter_mkdir_git(x) = !mapreduce(y->x==y,|,[".mkdir","git.log","git.status"])
 filter_regex(x) = ismatch(Regex(args["filter"]), x)
-cached_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(cachedout))
-genned_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(gennedout))
-cached_notin_genned = setdiff(cached_files, genned_files)
+master_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(masterout))
+devel_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(develout))
+cached_notin_genned = setdiff(master_files, devel_files)
 isempty(cached_notin_genned) ||
-      warn("files in cachedoutput/ but not in gennedoutput/: ", join(cached_notin_genned,", "))
-genned_notin_cached = setdiff(genned_files, cached_files)
+      warn("files in master-output/ but not in devel-output/: ", join(cached_notin_genned,", "))
+genned_notin_cached = setdiff(devel_files, master_files)
 isempty(genned_notin_cached) ||
-      warn("files in gennedoutput/ but not in cachedoutput/: ", join(genned_notin_cached,", "))
-for file in intersect(cached_files,genned_files)
+      warn("files in devel-output/ but not in master-output/: ", join(genned_notin_cached,", "))
+for file in intersect(master_files,devel_files)
     print("Comparing ", file, " ... ")
-    cached = open(readlines, joinpath(cachedout, file))
-    genned = open(readlines, joinpath(gennedout, file))
+    cached = open(readlines, joinpath(masterout, file))
+    genned = open(readlines, joinpath(develout, file))
     same = length(cached) == length(genned)
     if same
         lsame = Bool[cached[i] == genned[i] for i = 1:length(cached)]
@@ -92,21 +92,21 @@ for file in intersect(cached_files,genned_files)
         ndifferentfiles +=1
         println("different :(")
         if args["diff"]
-            diffcmd = `diff $(joinpath(cachedout, file)) $(joinpath(gennedout, file))`
+            diffcmd = `diff $(joinpath(masterout, file)) $(joinpath(develout, file))`
             run(ignorestatus(diffcmd))
         end
         if args["two"]
-            open_file("$(joinpath(cachedout,file))")
-            open_file("$(joinpath(gennedout,file))")
+            open_file("$(joinpath(masterout,file))")
+            open_file("$(joinpath(develout,file))")
         end
         if args["bw"] && (endswith(file,".svg") || endswith(file,".png"))
             wait_for_user = false
             if endswith(file,".svg")
-                gimg = svg2img(joinpath(gennedout,file));
-                cimg = svg2img(joinpath(cachedout,file));
+                gimg = svg2img(joinpath(develout,file));
+                cimg = svg2img(joinpath(masterout,file));
             elseif endswith(file,".png")
-                gimg = load(joinpath(gennedout,file));
-                cimg = load(joinpath(cachedout,file));
+                gimg = load(joinpath(develout,file));
+                cimg = load(joinpath(masterout,file));
             end
             if size(gimg)==size(cimg)
                 dimg = convert(Matrix{Gray}, gimg.==cimg)
