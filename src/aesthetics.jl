@@ -434,7 +434,7 @@ groupby(aes, [:x, :color], :y)
 
 # output
 
-Dict((2, nothing)=>Bool[false, false, false, true, true, true],(1, nothing)=>Bool[true, true, true, false, false, false])
+DataStructures.OrderedDict((2, nothing)=>Bool[false, false, false, true, true, true],(1, nothing)=>Bool[true, true, true, false, false, false])
 ```
 
 ```jldoctest
@@ -447,7 +447,7 @@ groupby(aes, [:x, :color], :y)
 
 # output
 
-Dict((:a, RGB{N0f8}(1.0,0.0,0.0))=>Bool[true, true, false, false],(:b, RGB{N0f8}(0.0,0.0,1.0))=>Bool[false, false, true, true])
+DataStructures.OrderedDict((:a, RGB{N0f8}(1.0,0.0,0.0))=>Bool[true, true, false, false],(:b, RGB{N0f8}(0.0,0.0,1.0))=>Bool[false, false, true, true])
 ```
 
 """
@@ -461,8 +461,7 @@ function groupby(aes::Gadfly.Aesthetics, by::Vector{Symbol}, togroupvar::Symbol)
         @assert length(getfield(aes, togroupvar)) == length(getfield(aes, by[i])) "$togroupvar and $(by[i]) aesthetics must have same length"
     end
 
-    T = Tuple{types...}
-    grouped = DataStructures.OrderedDict{T, Vector{Bool}}()
+    grouped = DataStructures.OrderedDict{Tuple{types...}, Vector{Bool}}()
 
     # gather options for each `by` aesthetic
     opt = [if isconcrete[i] unique(getfield(aes, by[i])) else [nothing] end for i in 1:length(by)]
