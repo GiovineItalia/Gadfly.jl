@@ -1,6 +1,6 @@
 # Coordinates
 
-## Coord.cartesian
+## [`Coord.cartesian`](@ref)
 
 ```@example
 using Gadfly

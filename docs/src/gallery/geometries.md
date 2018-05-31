@@ -1,6 +1,6 @@
 # Geometries
 
-## Geom.abline
+## [`Geom.abline`](@ref)
 
 ```@example
 using Gadfly, RDatasets, Compose
@@ -12,7 +12,7 @@ plot(dataset("ggplot2", "mpg"),
 ```
 
 
-## Geom.bar
+## [`Geom.bar`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -39,10 +39,10 @@ p2b = plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),
 hstack(p1, p2a, p2b)
 ```
 
-See [Scale.color_discrete_manual](@ref) for more information.
+See [`Scale.color_discrete_manual`](@ref) for more information.
 
 
-## Geom.beeswarm
+## [`Geom.beeswarm`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -51,7 +51,7 @@ plot(dataset("lattice", "singer"), x="VoicePart", y="Height", Geom.beeswarm)
 ```
 
 
-## Geom.boxplot
+## [`Geom.boxplot`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -60,7 +60,7 @@ plot(dataset("lattice", "singer"), x="VoicePart", y="Height", Geom.boxplot)
 ```
 
 
-## Geom.contour
+## [`Geom.contour`](@ref)
 
 ```@example
 using Gadfly
@@ -87,7 +87,7 @@ gridstack([p1 p2; p3 p4])
 ```
 
 
-## Geom.density
+## [`Geom.density`](@ref)
 
 ```@example
 using Gadfly, RDatasets, Distributions
@@ -110,7 +110,7 @@ plot(layer(x=xs, Geom.density, Theme(default_color="orange")),
 ```
 
 
-## Geom.density2d
+## [`Geom.density2d`](@ref)
 
 ```@example
 using Gadfly, Distributions
@@ -122,7 +122,7 @@ plot(x=rand(Rayleigh(2),1000), y=rand(Rayleigh(2),1000),
 ```
 
 
-## Geom.ellipse
+## [`Geom.ellipse`](@ref)
 
 ```@example
 using RDatasets, Gadfly
@@ -142,7 +142,7 @@ hstack(pa,pb)
 ```
 
 
-## Geom.errorbar
+## [`Geom.errorbar`](@ref)
 
 ```@example
 using Gadfly, RDatasets, Distributions
@@ -158,7 +158,7 @@ plot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs,
 ```
 
 
-## Geom.hair
+## [`Geom.hair`](@ref)
 
 ```@example
 using Gadfly
@@ -172,7 +172,7 @@ hstack(pa, pb)
 ```
 
 
-## Geom.hexbin
+## [`Geom.hexbin`](@ref)
 
 ```@example
 using Gadfly, Distributions
@@ -184,7 +184,7 @@ hstack(p1,p2)
 ```
 
 
-## Geom.histogram
+## [`Geom.histogram`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -199,7 +199,7 @@ gridstack([p1 p2; p3 p4])
 ```
 
 
-## Geom.histogram2d
+## [`Geom.histogram2d`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -213,7 +213,7 @@ hstack(p1,p2,p3)
 ```
 
 
-## Geom.hline, Geom.vline
+## [`Geom.hline`](@ref), [`Geom.vline`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -227,7 +227,7 @@ hstack(p1,p2)
 ```
 
 
-## Geom.label
+## [`Geom.label`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -247,7 +247,7 @@ hstack(p1,p2)
 ```
 
 
-## Geom.line
+## [`Geom.line`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -259,7 +259,7 @@ hstack(p1,p2)
 ```
 
 
-## Geom.path
+## [`Geom.path`](@ref)
 
 ```@example
 using Gadfly
@@ -278,7 +278,7 @@ hstack(p1,p2)
 ```
 
 
-## Geom.point
+## [`Geom.point`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -309,7 +309,7 @@ plot(layer(x=rdata[1,:], y=rdata[2,:], color=[colorant"red"], Geom.point),
 ```
 
 
-## Geom.polygon
+## [`Geom.polygon`](@ref)
 
 ```@example
 using Gadfly
@@ -322,7 +322,7 @@ plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],
 ```
 
 
-## Geom.rect, Geom.rectbin
+## [`Geom.rect`](@ref), [`Geom.rectbin`](@ref)
 
 ```@example
 using Gadfly, Colors, DataFrames, RDatasets
@@ -341,7 +341,7 @@ plot(dataset("Zelig", "macro"), x="Year", y="Country", color="GDP", Geom.rectbin
 ```
 
 
-## Geom.ribbon
+## [`Geom.ribbon`](@ref)
 
 ```@example
 using Gadfly, DataFrames
@@ -354,7 +354,7 @@ plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)
 ```
 
 
-## Geom.smooth
+## [`Geom.smooth`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -367,7 +367,7 @@ hstack(p1,p2)
 ```
 
 
-## Geom.step
+## [`Geom.step`](@ref)
 
 ```@example
 using Gadfly
@@ -377,7 +377,7 @@ plot(x=rand(25), y=rand(25), Geom.step)
 ```
 
 
-## Geom.subplot_grid
+## [`Geom.subplot_grid`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -433,7 +433,7 @@ hstack(p1,p2)
 ```
 
 
-## Geom.vector
+## [`Geom.vector`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -457,7 +457,7 @@ plot(layer1, xsc, ysc, colsc, coord)
 ```
 
 
-## Geom.vectorfield
+## [`Geom.vectorfield`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -486,7 +486,7 @@ hstack(p1,p2)
 ```
 
 
-## Geom.violin
+## [`Geom.violin`](@ref)
 
 ```@example
 using Gadfly, RDatasets

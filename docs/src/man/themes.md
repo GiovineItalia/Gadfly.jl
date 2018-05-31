@@ -65,8 +65,8 @@ These parameters can either be used with `Theme` or `style`
   * `key_label_font_size`: Font size used for key entry labels. (Measure)
   * `key_label_color`: Color used for key entry labels. (Color)
   * `key_max_columns`: Maximum number of columns for key entry labels. (Int)
-  * `bar_spacing`: Spacing between bars in [Geom.bar](@ref). (Measure)
-  * `boxplot_spacing`: Spacing between boxplots in [Geom.boxplot](@ref). (Measure)
+  * `bar_spacing`: Spacing between bars in [`Geom.bar`](@ref). (Measure)
+  * `boxplot_spacing`: Spacing between boxplots in [`Geom.boxplot`](@ref). (Measure)
   * `errorbar_cap_length`: Length of caps on error bars. (Measure)
   * `highlight_width`: Width of lines drawn around plot geometry like points,
     and boxplot rectangles. (Measure)
@@ -76,7 +76,7 @@ These parameters can either be used with `Theme` or `style`
   * `lowlight_color`: Color used to draw background geometry, such as
     `Geom.ribbon`. This is a function that alters the fill color of the geometry.
     (Function)
-  * `lowlight_opacity`: Opacity of background geometry such as [Geom.ribbon](@ref).
+  * `lowlight_opacity`: Opacity of background geometry such as [`Geom.ribbon`](@ref).
     (Float64)
   * `middle_color`: Color altering function used to draw the midline in
     boxplots. (Function)
@@ -88,8 +88,8 @@ These parameters can either be used with `Theme` or `style`
   * `bar_highlight`: Color used to stroke bars in bar plots. If a function is
     given, it's used to transform the fill color of the bars to obtain a stroke
     color. (Function, Color, or Nothing)
-  * `discrete_color_scale`: A `DiscreteColorScale` see [Scale.color_discrete_hue](@ref)
-  * `continuous_color_scale`: A `ContinuousColorScale` see [Scale.color_continuous](@ref)
+  * `discrete_color_scale`: A `DiscreteColorScale` see [`Scale.color_discrete_hue`](@ref)
+  * `continuous_color_scale`: A `ContinuousColorScale` see [`Scale.color_continuous`](@ref)
   * `label_out_of_bounds_penalty`: Used by `Geom.label(position=:dynamic)`
   * `label_placement_iterations`: Used by `Geom.label(position=:dynamic)`
   * `label_visibility_flip_pr`: Used by `Geom.label(position=:dynamic)`

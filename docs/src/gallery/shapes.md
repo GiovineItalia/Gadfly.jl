@@ -1,6 +1,6 @@
 # Shapes
 
-## Shape.square
+## [`Shape.square`](@ref)
 
 ```@example
 using Gadfly, RDatasets

@@ -1,6 +1,6 @@
 # Scales
 
-## Scale.color_continuous
+## [`Scale.color_continuous`](@ref)
 
 ```@example
 using Gadfly
@@ -27,7 +27,7 @@ hstack(p1,p2,p3)
 ```
 
 
-## Scale.color_discrete_hue
+## [`Scale.color_discrete_hue`](@ref)
 
 ```@example
 using Gadfly, Colors, RDatasets
@@ -61,7 +61,7 @@ hstack(p1,p2)
 ```
 
 
-## Scale.color_discrete_manual
+## [`Scale.color_discrete_manual`](@ref)
 
 ```@example
 using Gadfly
@@ -85,7 +85,7 @@ hstack(pa,pb)
 ```
 
 
-## Scale.color_none
+## [`Scale.color_none`](@ref)
 
 ```@example
 using Gadfly
@@ -98,7 +98,7 @@ hstack(p1,p2)
 ```
 
 
-## Scale.{x,y}_continuous
+## [`Scale.x_continuous`](@ref), [`Scale.y_continuous`](@ref)
 
 ```@example
 using Gadfly
@@ -118,7 +118,7 @@ plot(x=rand(10), y=rand(10), Scale.x_log)
 ```
 
 
-## Scale.{x,y}_discrete
+## [`Scale.x_discrete`](@ref), [`Scale.y_discrete`](@ref)
 
 ```@example
 using Gadfly, DataFrames

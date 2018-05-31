@@ -1,6 +1,6 @@
 # Guides
 
-## Guide.annotation
+## [`Guide.annotation`](@ref)
 
 ```@example
 using Gadfly, Compose
@@ -11,7 +11,7 @@ plot(sin, 0, 2pi, Guide.annotation(compose(context(),
 ```
 
 
-## Guide.colorkey
+## [`Guide.colorkey`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -36,7 +36,7 @@ hstack(pa, pb)
 ```
 
 
-## Guide.manual_color_key
+## [`Guide.manual_color_key`](@ref)
 
 ```@example
 using Gadfly, DataFrames
@@ -50,7 +50,7 @@ plot(pointLayer, lineLayer,
 ```
 
 
-## Guide.title
+## [`Guide.title`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -60,7 +60,7 @@ plot(dataset("ggplot2", "diamonds"), x="Price", Geom.histogram,
 ```
 
 
-## Guide.{x,y}label
+## [`Guide.xlabel`](@ref), [`Guide.ylabel`](@ref)
 
 ```@example
 using Gadfly
@@ -72,7 +72,7 @@ hstack(p1,p2,p3)
 ```
 
 
-## Guide.{x,y}rug
+## [`Guide.xrug`](@ref), [`Guide.yrug`](@ref)
 
 ```@example
 using Gadfly
@@ -81,7 +81,7 @@ plot(x=rand(20), y=rand(20), Guide.xrug)
 ```
 
 
-## Guide.{x,y}ticks
+## [`Guide.xticks`](@ref), [`Guide.yticks`](@ref)
 
 ```@example
 using Gadfly

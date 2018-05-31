@@ -1,6 +1,6 @@
 # Statistics
 
-## Stat.binmean
+## [`Stat.binmean`](@ref)
 
 ```@example
 using Gadfly, RDatasets
@@ -13,7 +13,7 @@ hstack(p1,p2)
 ```
 
 
-## Stat.qq
+## [`Stat.qq`](@ref)
 
 ```@example
 using Gadfly, Distributions
@@ -25,7 +25,7 @@ hstack(p1,p2)
 ```
 
 
-## Stat.step
+## [`Stat.step`](@ref)
 
 ```@example
 using Gadfly
@@ -35,7 +35,7 @@ plot(x=rand(25), y=rand(25), Stat.step, Geom.line)
 ```
 
 
-## Stat.{x,y}_jitter
+## [`Stat.x_jitter`](@ref), [`Stat.y_jitter`](@ref)
 
 ```@example
 using Gadfly, Distributions
@@ -45,7 +45,7 @@ plot(x=rand(1:4, 500), y=rand(500), Stat.x_jitter(range=0.5), Geom.point)
 ```
 
 
-## Stat.{x,y}ticks
+## [`Stat.xticks`](@ref), [`Stat.yticks`](@ref)
 
 ```@example
 using Gadfly
