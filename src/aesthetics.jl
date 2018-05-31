@@ -1,5 +1,3 @@
-using IterTools
-
 const NumericalOrCategoricalAesthetic =
     Union{(Void), Vector, DataArray, IndirectArray}
 
@@ -464,7 +462,7 @@ function groupby(aes::Gadfly.Aesthetics, by::Vector{Symbol}, togroupvar::Symbol)
     end
 
     T = Tuple{types...}
-    grouped = Dict{T, Vector{Bool}}()
+    grouped = DataStructures.OrderedDict{T, Vector{Bool}}()
 
     # gather options for each `by` aesthetic
     opt = [if isconcrete[i] unique(getfield(aes, by[i])) else [nothing] end for i in 1:length(by)]
@@ -472,7 +470,7 @@ function groupby(aes::Gadfly.Aesthetics, by::Vector{Symbol}, togroupvar::Symbol)
     # The approach is to identify positions were multiple by aesthetics overlap
     # and thus grouping the data positions. We first assume that all positions
     # belong to a combination of aesthetics and then whittle it down
-    for combo in product(opt...)
+    for combo in IterTools.product(opt...)
         belongs = fill(true, length(getfield(aes, togroupvar)))
         for i in 1:length(combo)
             (combo[i] == nothing) && continue
