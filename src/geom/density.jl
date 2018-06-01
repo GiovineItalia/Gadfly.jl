@@ -15,6 +15,32 @@ const density = DensityGeometry
 element_aesthetics(::DensityGeometry) = Symbol[]
 default_statistic(geom::DensityGeometry) = Gadfly.Stat.DensityStatistic(geom.stat)
 
+function render(geom::DensityGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("Geom.density", aes, :x, :y)
+    Gadfly.assert_aesthetics_equal_length("Geom.density", aes, :x, :y)
+
+    grouped_data = Gadfly.groupby(aes, [:color], :y)
+    densities = Array{NTuple{2, Float64}}[]
+    colors = []
+
+    for (keys, belongs) in grouped_data
+        xs = aes.x[belongs]
+        ys = aes.y[belongs]
+
+        push!(densities, [(x, y) for (x, y) in zip(xs, ys)])
+        push!(colors, keys[1])
+    end
+
+    ctx = context(order=geom.order)
+    if geom.stat.position == :dodge
+        compose!(ctx, Compose.polygon(densities, geom.tag), stroke(colors), fill(nothing))
+    else
+        compose!(ctx, Compose.polygon(densities, geom.tag), fill(colors))
+    end
+
+    compose!(ctx, svgclass("geometry"))
+end
+
 struct ViolinGeometry <: Gadfly.GeometryElement
     stat::Gadfly.StatisticElement
     split::Bool
@@ -22,6 +48,9 @@ struct ViolinGeometry <: Gadfly.GeometryElement
     tag::Symbol
 end
 function ViolinGeometry(; order=1, tag=empty_tag, split=false, kwargs...)
+    if findfirst(x->x[1] == :trim, kwargs) == 0
+        push!(kwargs, (:trim, true))
+    end
     ViolinGeometry(Gadfly.Stat.DensityStatistic(; kwargs...), split, order, tag)
 end
 
