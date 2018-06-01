@@ -78,9 +78,9 @@ function concrete_length(xs::DataArray{T}) where T
     n
 end
 
-function concrete_length(xs::IterTools.Chain)
+function concrete_length(xs::Iterators.Flatten)
     n = 0
-    for obj in xs.xss
+    for obj in xs.it
         n += concrete_length(obj)
     end
     n
@@ -200,8 +200,8 @@ function concrete_minmax(xs::DataArray{TA}, xmin::T, xmax::T) where {T, TA}
 end
 
 
-function concrete_minmax(xs::IterTools.Chain, xmin::T, xmax::T) where T<:Real
-    for obj in xs.xss
+function concrete_minmax(xs::Iterators.Flatten, xmin::T, xmax::T) where T<:Real
+    for obj in xs.it
         xmin, xmax = concrete_minmax(obj, xmin, xmax)
     end
     xmin, xmax

@@ -532,9 +532,9 @@ function render_prepare(plot::Plot)
         map(s->(s, _theme(l, plot)), collect(stats))
     end
 
-    for element in chain([(s, plot.theme) for s in plot.statistics],
+    for element in Iterators.flatten(([(s, plot.theme) for s in plot.statistics],
                          [(l.geom, _theme(plot, l)) for l in plot.layers],
-                         layer_stats_with_theme...)
+                         layer_stats_with_theme...))
 
         for scale in default_scales(element...)
             # Use the statistics default scale only when it covers some
