@@ -643,7 +643,7 @@ function apply_statistic(stat::DensityStatistic,
 
     # if the densities are stacked then we'll need to clamp them so that they
     # share the same evaluation points (e.g. x values)
-    (stat.position != :dodge) && (boundary = extrema(getfield(aes, densityvar)))
+    (stat.position != :dodge) && (boundary = extrema(getfield(aes, output_dims[2])))
 
     for (idx, (keys, belongs)) in enumerate(grouped_data)
         input = getfield(aes, output_dims[2])[belongs]
