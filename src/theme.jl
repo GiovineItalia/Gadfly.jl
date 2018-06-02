@@ -210,89 +210,90 @@ end
 
     # Continuous color scale
     continuous_color_scale,      Scale.ContinuousColorScale, Scale.color_continuous()
-
 end
 
 
+### should we export {current,with,pop,push)_theme?
 const theme_stack = Theme[Theme()]
 
 """
-Get Theme on top of the theme stack
+    current_theme()
+
+Get the `Theme` on top of the theme stack.
 """
 current_theme() = theme_stack[end]
 
-
 """
-Set some attributes in the current `Theme`.
-See `Theme` for available field.
+    style(; kwargs...) -> Theme
+
+Return a new `Theme` that is a copy of the current theme as modifed by the
+attributes in `kwargs`.  See [Themes](@ref) for available fields.
+
+# Examples
+
+```
+style(background_color="gray")
+```
 """
 style(; kwargs...) = Theme(current_theme(); kwargs...)
 
-
 """
-Set the current theme. Pushes the theme to a stack. You can pop it using `pop_theme`.
+    push_theme(t::Theme)
 
-You can use this in conjunction with `style` to
-set a subset of Theme attributes.
-
-    push_theme(style(background_color=colorant"#888888")))
-
-See also `with_theme`
+Set the current theme by placing `t` onto the top of the theme stack.
+See also [`pop_theme`](@ref) and [`with_theme`](@ref).
 """
 function push_theme(t::Theme)
     push!(theme_stack, t)
     nothing
 end
 
-
 """
-Go back to using the previous theme
+    pop_theme() -> Theme
 
-See also `push_theme` and `with_theme`
+Return to using the previous theme by removing the top item on the theme stack.
+See also [`pop_theme`](@ref) and [`with_theme`](@ref).
 """
 function pop_theme()
     length(theme_stack) == 1 && error("There default theme cannot be removed")
     pop!(theme_stack)
 end
 
-
 """
-Push a theme by its name. Available options are `:default` and `:dark`.
-
-A new theme can be added by adding a method to `get_theme`
-
-    get_theme(::Val{:mytheme}) = Theme(...)
-
-    push_theme(:mytheme) # will set the above theme
+    push_theme(t::Symbol)
+  
+Push a `Theme` by its name.  Available options are `:default` and `:dark`.
+See also [`get_theme`](@ref).
 """
 push_theme(t::Symbol) = push_theme(get_theme(Val{t}()))
 
-
-
 """
-Register a theme by name.
+    get_theme()
 
-    get_theme(::Val{:mytheme}) = Theme(...)
+Register a theme by name by adding methods to `get_theme`.
 
-    push_theme(:mytheme) # will set the above theme
+# Examples
 
-See also: push_theme, with_theme
+```
+get_theme(::Val{:mytheme}) = Theme(...)
+push_theme(:mytheme)
+```
 """
 get_theme(::Val{name}) where {name} = error("No theme $name found")
 
-
-
 """
-Call a function after setting a new theme.
+    with_theme(f, theme)
 
-Theme can be a `Theme` object or a symbol.
+Call function `f` with `theme` as the current `Theme`.
+`theme` can be a `Theme` object or a symbol.
 
-You can use this in conjunction with `style` to
-set a subset of Theme attributes.
+# Examples
 
-    with_theme(style(background_color=colorant"#888888"))) do
-        plot(x=rand(10), y=rand(10))
-    end
+```
+with_theme(style(background_color=colorant"#888888"))) do
+    plot(x=rand(10), y=rand(10))
+end
+```
 """
 function with_theme(f, theme)
     push_theme(theme)
@@ -301,6 +302,11 @@ function with_theme(f, theme)
     p
 end
 
+"""
+    get_theme(::Val{:default})
+
+A dark foreground on a light background.
+"""
 get_theme(::Val{:default}) = Theme()
 
 
@@ -375,4 +381,9 @@ const dark_theme = let label_color=colorant"#a1a1a1",
     )
 end
 
+"""
+    get_theme(::Val{:dark})
+
+A light foreground on a dark background.
+"""
 get_theme(::Val{:dark}) = dark_theme

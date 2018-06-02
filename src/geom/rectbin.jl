@@ -1,3 +1,4 @@
+### should refactor to RectangleGeometry with Identity as the default Stat.
 struct RectangularBinGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
@@ -9,10 +10,32 @@ function RectangularBinGeometry(
     RectangularBinGeometry(default_statistic, tag)
 end
 
-rect() = RectangularBinGeometry(Gadfly.Stat.Identity())
+"""
+    Geom.rectbin
 
+Draw equal sizes rectangles centered at `x` and `y` positions.  Optionally
+specify their `color`.
+"""
 const rectbin = RectangularBinGeometry
 
+"""
+    Geom.rect
+
+Draw colored rectangles with the corners specified by the
+`xmin`, `xmax`, `ymin` and `ymax` aesthetics.  Optionally
+specify their `color`.
+"""
+rect() = RectangularBinGeometry(Gadfly.Stat.Identity())
+
+"""
+    Geom.histogram2d[(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
+                        ybincount=nothing, yminbincount=3, ymaxbincount=150)]
+
+Draw a heatmap of the `x` and `y` aesthetics by binning into rectangles and
+indicating density with color.  This geometry is equivalent to
+[`Geom.rect`](@ref) with [`Stat.histogram2d`](@ref);  see the latter for more
+information.
+"""
 function histogram2d(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
                        ybincount=nothing, yminbincount=3, ymaxbincount=150)
     RectangularBinGeometry(

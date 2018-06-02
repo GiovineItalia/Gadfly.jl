@@ -4,17 +4,26 @@ struct BoxplotGeometry <: Gadfly.GeometryElement
     tag::Symbol
 end
 
-
 BoxplotGeometry(; method=:tukey, suppress_outliers=false, tag=empty_tag) =
     BoxplotGeometry(Gadfly.Stat.boxplot(method=method), suppress_outliers, tag)
 
+"""
+    Geom.boxplot[(; method=:tukey, suppress_outliers=false)]
 
+Draw box plots of the `middle`, `lower_hinge`, `upper_hinge`, `lower_fence`,
+`upper_fence`, and `outliers` aesthetics.  The categorical `x` aesthetic is
+optional.  If `suppress_outliers` is true, don't draw points indicating
+outliers.
+
+Alternatively, if the `y` aesthetic is specified instead, the middle, hinges,
+fences, and outliers aesthetics will be computed using [`Stat.boxplot`](@ref).
+"""
 const boxplot = BoxplotGeometry
 
 element_aesthetics(::BoxplotGeometry) = [:x, :y, :color,
                                          :middle,
                                          :upper_fence, :lower_fence,
-                                         :upper_hinge, :lower_hinge]
+                                         :upper_hinge, :lower_hinge]  ### and :outliers
 
 default_statistic(geom::BoxplotGeometry) = geom.default_statistic
 

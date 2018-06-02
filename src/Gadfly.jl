@@ -69,6 +69,14 @@ default_scales(x::Any, t) = default_scales(x)
 default_statistic(::Any) = Stat.identity()
 element_coordinate_type(::Any) = Coord.cartesian
 
+function aes2str(aes)
+  list = join([string('`',x,'`') for x in aes], ", ", " and ")
+  if length(aes)>1
+    return string("the ",list," aesthetics")
+  else
+    return string("the ",list," aesthetic")
+  end
+end
 
 abstract type Element end
 abstract type ScaleElement       <: Element end
@@ -91,6 +99,7 @@ include("theme.jl")
 include("open_file.jl")
 
 
+### rename to ElementOrFunctionOrTheme ?
 # The layer and plot functions can also take functions that are evaluated with
 # no arguments and are expected to produce an element.
 const ElementOrFunction{T <: Element} = Union{Element, Base.Callable, Theme}
@@ -101,20 +110,21 @@ const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 # Set prefereed canvas size when rendering a plot without an explicit call to
 # `draw`.
 """
-```
-set_default_plot_size(width::Compose.MeasureOrNumber, height::Compose.MeasureOrNumber)
-```
-Sets preferred canvas size when rendering a plot without an explicit call to draw
+    set_default_plot_size(width::Compose.MeasureOrNumber,
+                          height::Compose.MeasureOrNumber)
+
+Sets preferred canvas size when rendering a plot without an explicit call to draw.  Units
+can be `inch`, `cm`, `mm`, `pt`, or `px`.
 """
 set_default_plot_size(width::Compose.MeasureOrNumber, height::Compose.MeasureOrNumber) =
         Compose.set_default_graphic_size(width, height)
 
 
+### NOT SURE THIS DOES ANYTHING.
 """
-```
-set_default_plot_format(fmt::Symbol)
-```
-Sets the default plot format
+    set_default_plot_format(fmt::Symbol)
+
+Sets the default plot format.
 """
 set_default_plot_format(fmt::Symbol) = Compose.set_default_graphic_format(fmt)
 
@@ -122,35 +132,36 @@ set_default_plot_format(fmt::Symbol) = Compose.set_default_graphic_format(fmt)
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 mutable struct Layer <: Element
-    data_source::Union{(Void), MeltedData, AbstractArray, AbstractDataFrame}
+    data_source::Union{Void, MeltedData, AbstractArray, AbstractDataFrame}
     mapping::Dict
     statistics::Vector{StatisticElement}
     geom::GeometryElement
-    theme::Union{(Void), Theme}
+    theme::Union{Void, Theme}
     order::Int
 end
 Layer() = Layer(nothing, Dict(), StatisticElement[], Geom.nil(), nothing, 0)
 Layer(l::Layer) = Layer(l.data_source, l.mapping, l.statistics, l.geom, l.theme, l.order)
 copy(l::Layer) = Layer(l)
 
-
-
 """
-```
-layer(data_source::@compat(Union{AbstractDataFrame, (@compat Void)}),
-               elements::ElementOrFunction...; mapping...)
-```
-Creates layers based on elements
+    layer(data_source::Union{AbstractDataFrame, Void}),
+          elements::ElementOrFunction...; mapping...) -> [Layers]
 
-### Args
-* data_source: The data source as a dataframe
-* elements: The elements
-* mapping: mapping
+Create a layer element based on the data in `data_source`, to later input into
+`plot`.  `elements` can be [Statistics](@ref lib_stat), [Geometries](@ref
+lib_geom), and/or [Themes](@ref) (but not Scales, Coordinates, or Guides).
+`mapping` are aesthetics.
 
-### Returns
-An array of layers
+# Examples
+
+```
+ls=[]
+append!(ls, layer(y=[1,2,3], Geom.line))
+append!(ls, layer(y=[3,2,1], Geom.point))
+plot(ls..., Guide.title("layer example"))
+```
 """
-function layer(data_source::Union{AbstractDataFrame, (Void)},
+function layer(data_source::Union{AbstractDataFrame, Void},
                elements::ElementOrFunction...; mapping...)
     mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
@@ -166,18 +177,18 @@ function layer(data_source::Union{AbstractDataFrame, (Void)},
     lyrs
 end
 
-
+"""
+    layer(elements::ElementOrFunction...; mapping...) =
+          layer(nothing, elements...; mapping...) -> [Layers]
+"""
 layer(elements::ElementOrFunction...; mapping...) =
         layer(nothing, elements...; mapping...)
-
 
 add_plot_element!(lyrs::Vector{Layer}, arg::T) where {T<:Element} =
         error("Layers can't be used with elements of type $(typeof(arg))")
 
-
 add_plot_element!(lyrs::Vector{Layer}, arg::ScaleElement) =
         error("Scales cannot be passed to layers, they must be specified at the plot level.")
-
 
 function add_plot_element!(lyrs::Vector{Layer}, arg::GeometryElement)
     if lyrs[end].geom !== Geom.nil()
@@ -186,9 +197,7 @@ function add_plot_element!(lyrs::Vector{Layer}, arg::GeometryElement)
     lyrs[end].geom = arg
 end
 
-
 add_plot_element!(lyrs::Vector{Layer}, arg::Base.Callable) = add_plot_element!(lyrs, arg())
-
 
 function add_plot_element!(lyrs::Vector{Layer}, arg::StatisticElement)
     for lyr in lyrs
@@ -196,18 +205,17 @@ function add_plot_element!(lyrs::Vector{Layer}, arg::StatisticElement)
     end
 end
 
-
 add_plot_element!(lyrs::Vector{Layer}, arg::Theme) = [lyr.theme = arg for lyr in lyrs]
 
 
 # A full plot specification.
 mutable struct Plot
     layers::Vector{Layer}
-    data_source::Union{(Void), MeltedData, AbstractArray, AbstractDataFrame}
+    data_source::Union{Void, MeltedData, AbstractArray, AbstractDataFrame}
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
-    coord::Union{(Void), CoordinateElement}
+    coord::Union{Void, CoordinateElement}
     guides::Vector{GuideElement}
     theme::Theme
     mapping::Dict
@@ -215,9 +223,7 @@ end
 Plot() = Plot(Layer[], nothing, Data(), ScaleElement[], StatisticElement[],
       nothing, GuideElement[], current_theme(), Dict())
 
-
 layers(p::Plot) = p.layers
-
 
 function add_plot_element!(p::Plot, arg::GeometryElement)
     if !isempty(p.layers) && isa(p.layers[end].geom, Geom.Nil)
@@ -228,7 +234,6 @@ function add_plot_element!(p::Plot, arg::GeometryElement)
         push!(p.layers, layer)
     end
 end
-
 
 function add_plot_element!(p::Plot, arg::StatisticElement)
     if isempty(p.layers)
@@ -248,24 +253,6 @@ add_plot_element!(p::Plot, f::Type{T}) where {T <: Element} = add_plot_element!(
 add_plot_element!(p::Plot, theme::Theme) = p.theme = theme
 
 
-# Create a new plot.
-#
-# Grammar of graphics style plotting consists of specifying a dataset, one or
-# more plot elements (scales, coordinates, geometries, etc), and binding of
-# aesthetics to columns or expressions of the dataset.
-#
-# For example, a simple scatter plot would look something like:
-#
-#     plot(my_data, Geom.point, x="time", y="price")
-#
-# Where "time" and "price" are the names of columns in my_data.
-#
-# Args:
-#   data_source: Data to be bound to aesthetics.
-#   mapping: Aesthetics symbols (e.g. :x, :y, :color) mapped to
-#            names of columns in the data frame or other expressions.
-#   elements: Geometries, statistics, etc.
-
 # because a call to layer() expands to a vector of layers (one for each Geom
 # supplied), we need to allow Vector{Layer} to count as an Element for the
 # purposes of plot().
@@ -273,27 +260,24 @@ const ElementOrFunctionOrLayers = Union{ElementOrFunction, Vector{Layer}}
 
 
 """
+    plot(data_source::Union{AbstractMatrix, AbstractDataFrame},
+         elements::ElementOrFunctionOrLayers...; mapping...) -> Plot
+
+Create a new plot by specifying a `data_source`, one or more plot `elements`
+([Scales](@ref lib_scale), [Statistics](@ref lib_stat), [Coordinates](@ref
+lib_coord), [Geometries](@ref lib_geom), [Guides](@ref lib_guide),
+[Themes](@ref), and/or [Layers](@ref)), and a `mapping` of aesthetics to
+columns or expressions of the data.
+
+# Examples
+
 ```
-    function plot(data_source::@compat(Union{AbstractMatrix, AbstractDataFrame}),
-              elements::ElementOrFunctionOrLayers...; mapping...)
+my_data = DataFrame(time=1917:2018, price=1.02.^(0:101))
+plot(my_data, Geom.line, x=:time, y=:price)
+
+# or equivalently:
+plot(Geom.line, x=collect(1917:2018), y=1.02.^(0:101))
 ```
-
-Create a new plot.
-
-Grammar of graphics style plotting consists of specifying a dataset, one or
-more plot elements (scales, coordinates, geometries, etc), and binding of
-aesthetics to columns or expressions of the dataset.
-
-For example, a simple scatter plot would look something like:
-
-plot(my_data, Geom.point, x="time", y="price")
-
-Where "time" and "price" are the names of columns in my_data.
-
-### Args:
-* data_source: Data to be bound to aesthetics.
-* elements: Geometries, statistics, etc.
-* mapping: Aesthetics symbols (e.g. :x, :y, :color) mapped to names of columns in the data frame or other expressions.
 """
 function plot(data_source::Union{AbstractArray, AbstractDataFrame},
               elements::ElementOrFunctionOrLayers...; mapping...)
@@ -301,47 +285,23 @@ function plot(data_source::Union{AbstractArray, AbstractDataFrame},
     return plot(data_source, mappingdict, elements...)
 end
 
-
+"""
+    plot(elements::ElementOrFunctionOrLayers...; mapping...) -> Plot
+"""
 function plot(elements::ElementOrFunctionOrLayers...; mapping...)
     mappingdict = Dict{Symbol, Any}(mapping)
     plot(nothing, mappingdict, elements...)
 end
 
-
-# The old fashioned (pre named arguments) version of plot.
-#
-# This version takes an explicit mapping dictionary, mapping aesthetics symbols
-# to expressions or columns in the data frame.
-#
-# Args:
-#   data_source: Data to be bound to aesthetics.
-#   mapping: Dictionary of aesthetics symbols (e.g. :x, :y, :color) to
-#            names of columns in the data frame or other expressions.
-#   elements: Geometries, statistics, etc.
-#
-# Returns:
-#   A Plot object.
-#
 """
-```
-function plot(data_source::@compat(Union{(@compat Void), AbstractMatrix, AbstractDataFrame}),
-              mapping::Dict, elements::ElementOrFunctionOrLayers...)
-```
-The old fashioned (pre named arguments) version of plot.
+    plot(data_source::Union{Void, AbstractMatrix, AbstractDataFrame},
+         mapping::Dict, elements::ElementOrFunctionOrLayers...) -> Plot
 
-This version takes an explicit mapping dictionary, mapping aesthetics symbols
-to expressions or columns in the data frame.
-
-### Args:
-* data_source: Data to be bound to aesthetics.
-* mapping: Dictionary of aesthetics symbols (e.g. :x, :y, :color) to
-            names of columns in the data frame or other expressions.
-*   elements: Geometries, statistics, etc.
-
-### Returns:
-A Plot object.
+The old fashioned (pre-named arguments) version of plot.  This version takes an
+explicit mapping dictionary, mapping aesthetics symbols to expressions or
+columns in the data frame.
 """
-function plot(data_source::Union{(Void), AbstractArray, AbstractDataFrame},
+function plot(data_source::Union{Void, AbstractArray, AbstractDataFrame},
               mapping::Dict, elements::ElementOrFunctionOrLayers...)
     mapping = cleanmapping(mapping)
     p = Plot()
@@ -742,16 +702,9 @@ function render_prepare(plot::Plot)
 end
 
 """
-```
-render(plot::Plot)
-```
-Render a plot based on the Plot object
+    render(plot::Plot) -> Context
 
-### Args
-*   plot: Plot to be rendered.
-
-### Returns
-A Compose context containing the rendered plot.
+Render `plot` to a `Compose` context.
 """
 function render(plot::Plot)
     (plot, coord, plot_aes,
@@ -859,21 +812,17 @@ end
 
 # A convenience version of Compose.draw that let's you skip the call to render.
 """
-```
-draw(backend::Compose.Backend, p::Plot)
-```
-A convenience version of Compose.draw without having to call render
+    draw(backend::Compose.Backend, p::Plot)
 
-### Args
-* backend: The Compose.Backend object
-* p: The Plot object
+A convenience version of `Compose.draw` without having to call render.
 """
 draw(backend::Compose.Backend, p::Plot) = draw(backend, render(p))
 
 """
     title(ctx::Context, str::String, props::Property...) -> Context
 
-Add a title string to a group of plots, typically created with `vstack`, `hstack`, or `gridstack`.
+Add a title string to a group of plots, typically created with [`vstack`](@ref),
+[`hstack`](@ref), or [`gridstack`](@ref).
 
 # Examples
 
@@ -892,7 +841,9 @@ title(ctx::Context, str::String, props::Compose.Property...) = vstack(
     vstack(ps::Union{Plot,Context}...)
     vstack(ps::Vector)
 
-Arrange plots into a vertical column.  Use `context()` as a placeholder for an empty panel.  Heterogeneous vectors must be typed.  See also `hstack`, `gridstack`, `subplot_grid`.
+Arrange plots into a vertical column.  Use `context()` as a placeholder for an
+empty panel.  Heterogeneous vectors must be typed.  See also [`hstack`](@ref),
+[`gridstack`](@ref), and [`Geom.subplot_grid`](@ref).
 
 # Examples
 
@@ -901,6 +852,7 @@ p1 = plot(x=[1,2], y=[3,4], Geom.line);
 p2 = Compose.context();
 vstack(p1, p2)
 vstack(Union{Plot,Compose.Context}[p1, p2])
+```
 """
 vstack(ps::Union{Plot,Context}...) = vstack([typeof(p)==Plot ? render(p) : p for p in ps]...)
 vstack(ps::Vector{Plot}) = vstack(ps...)
@@ -910,7 +862,9 @@ vstack(ps::Vector{Union{Plot,Context}}) = vstack(ps...)
     hstack(ps::Union{Plot,Context}...)
     hstack(ps::Vector)
 
-Arrange plots into a horizontal row.  Use `context()` as a placeholder for an empty panel.  Heterogeneous vectors must be typed.  See also `vstack`, `gridstack`, `subplot_grid`.
+Arrange plots into a horizontal row.  Use `context()` as a placeholder for an
+empty panel.  Heterogeneous vectors must be typed.  See also [`vstack`](@ref),
+[`gridstack`](@ref), and [`Geom.subplot_grid`](@ref).
 
 # Examples
 
@@ -919,6 +873,7 @@ p1 = plot(x=[1,2], y=[3,4], Geom.line);
 p2 = Compose.context();
 hstack(p1, p2)
 hstack(Union{Plot,Compose.Context}[p1, p2])
+```
 """
 hstack(ps::Union{Plot,Context}...) = hstack([typeof(p)==Plot ? render(p) : p for p in ps]...)
 hstack(ps::Vector{Plot}) = hstack(ps...)
@@ -927,7 +882,9 @@ hstack(ps::Vector{Union{Plot,Context}}) = hstack(ps...)
 """
     gridstack(ps::Matrix{Union{Plot,Context}})
 
-Arrange plots into a rectangular array.  Use `context()` as a placeholder for an empty panel.  Heterogeneous matrices must be typed.  See also `hstack`, `vstack`.
+Arrange plots into a rectangular array.  Use `context()` as a placeholder for
+an empty panel.  Heterogeneous matrices must be typed.  See also [`hstack`](@ref)
+and [`vstack`](@ref).
 
 # Examples
 
@@ -938,9 +895,9 @@ gridstack([p1 p1; p1 p1])
 gridstack(Union{Plot,Compose.Context}[p1 p2; p2 p1])
 ```
 """
-_gridstack(ps::Matrix) = gridstack(map(p->typeof(p)==Plot ? render(p) : p, ps))
 gridstack(ps::Matrix{Plot}) = _gridstack(ps)
 gridstack(ps::Matrix{Union{Plot,Context}}) = _gridstack(ps)
+_gridstack(ps::Matrix) = gridstack(map(p->typeof(p)==Plot ? render(p) : p, ps))
 
 # show functions for all supported compose backends.
 
@@ -953,7 +910,6 @@ function show(io::IO, m::MIME"text/html", p::Plot)
     show(io, m, svg)
 end
 
-
 function show(io::IO, m::MIME"image/svg+xml", p::Plot)
     buf = IOBuffer()
     svg = SVG(buf, Compose.default_graphic_width,
@@ -961,7 +917,6 @@ function show(io::IO, m::MIME"image/svg+xml", p::Plot)
     draw(svg, p)
     show(io, m, svg)
 end
-
 
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
@@ -1007,7 +962,6 @@ import Base.REPL: REPLDisplay
     display(p::Plot)
 
 Render `p` to a multimedia display, typically an internet browser.
-
 This function is handy when rendering by `plot` has been suppressed
 with either trailing semi-colon or by calling it within a function.
 """

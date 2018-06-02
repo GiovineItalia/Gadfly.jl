@@ -23,13 +23,26 @@ If you use **Gadfly** in a publication please consider citing it: [![DOI][citati
 - Interactivity like panning, zooming, toggling powered by [Snap.svg](http://snapsvg.io/)
 - Supports a large number of common plot types
 
-## Installation
+## Installation & Quickstart
 
 **Gadfly** is registered on `METADATA.jl` and so can be installed using `Pkg.add`.
 
 ```julia
 Pkg.add("Gadfly")
 ```
+
+To create a plot it's as simple as:
+
+```julia
+using Gadfly
+plot(y=[1,2,3])
+```
+
+## Gallery
+
+<div align="center"> <img
+src="https://cdn.rawgit.com/GiovineItalia/Gadfly.jl/master/docs/src/assets/gallery.png"
+alt="Gadfly Gallery" width="1024"></img> </div>
 
 ## Documentation
 

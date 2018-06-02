@@ -4,16 +4,40 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 0.7.1
 
-  * `Geom.contour`: add support for `DataFrame`. 
+  * `Geom.contour`: add support for `DataFrame` (#1150)
 
 # Version 0.7.0
 
   * Support DataFrames.jl v0.11+ (#1090, #1129, #1131)
   * Change `Theme(grid_strokedash=)` to `Theme(grid_line_style=)` and include in docs (#1106)
   * Add `Geom.ellipse` (#1103)  
+  * Improved SVG interactivity (#1037)
 
-# Version 0.6.1 (WIP)
+# Version 0.6.5
 
+  * ColorKeys inside plot panel (#1087)
+  * Add `Geom.hair` (#1076)
+  * Shape module (#1050)
+  * Boxplot improvements
+
+# Version 0.6.4
+
+  * Regression testing tools (#1020)
+  
+# Version 0.6.3
+
+  * Wide format data (#1013)
+
+# Version 0.6.2
+
+  * Add `Geom.rect` (#993)
+  * Add `Geom.vectorfield` (#992)
+  * Unified size, color, shape aesthetics for Geom.point (#991)
+  * {h,v}line point shapes
+
+# Version 0.6.1
+
+  * Add `Stat.smooth` (#983)
 
 # Version 0.6.0
 
@@ -70,12 +94,12 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 0.3.11
 
-  * Options to statically position `Geom.label` labels. (Issue #542)
+  * Options to statically position `Geom.label` labels. (#542)
 
-  * Layers within `Geom.subplot_grid` now work correctly. (Issue #528)
+  * Layers within `Geom.subplot_grid` now work correctly. (#528)
 
   * Add a `background_color` option in `Theme` to change the plot's background
-    color. (Issue #534)
+    color. (#534)
 
   * Rename color scales for increased consistency: `Scale.continuous_color` →
     `Scale.color_continuous` and `Scale.discrete_color` → `Scale.color_discrete`.

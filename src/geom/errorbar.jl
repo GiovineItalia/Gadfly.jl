@@ -14,13 +14,37 @@ struct YErrorBarGeometry <: Gadfly.GeometryElement
 end
 YErrorBarGeometry(; tag=empty_tag) = YErrorBarGeometry(tag)
 
+"""
+    Geom.errorbar
+
+Draw vertical error bars if the `x`, `ymin`, and `ymax` aesthetics
+are specified and/or horizontal error bars for `y`, `xmin`, and `xmax`.
+Optionally color them with `color`.
+
+See also [`Geom.xerrorbar`](@ref) and [`Geom.yerrorbar`](@ref).
+
+"""
 const errorbar = ErrorBarGeometry
+
+"""
+    Geom.xerrorbar
+
+Draw horizontal error bars at `y` from `xmin` to `xmax`.  Optionally
+color them with `color`.
+"""
 const xerrorbar = XErrorBarGeometry
+
+"""
+    Geom.yerrorbar
+
+Draw vertical error bars at `x` from `ymin` to `ymax`.  Optionally
+color them with `color`.
+"""
 const yerrorbar = YErrorBarGeometry
 
 element_aesthetics(::ErrorBarGeometry) = [:x, :y, :xmin, :xmax, :ymin, :ymax]
-element_aesthetics(::YErrorBarGeometry) = [:x, :ymin, :ymax]
 element_aesthetics(::XErrorBarGeometry) = [:y, :xmin, :xmax]
+element_aesthetics(::YErrorBarGeometry) = [:x, :ymin, :ymax]
 
 # Generate a form for the errorbar geometry.
 #

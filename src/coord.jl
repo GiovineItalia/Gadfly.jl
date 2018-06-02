@@ -8,17 +8,6 @@ import Gadfly.Maybe
 
 export cartesian
 
-# Cartesian coordinates with position given by the x and y (and similar)
-# aesthetics.
-#
-# Args:
-#   xvars: Aesthetics to consider when choosing x bounds.
-#   yvars: Aesthetics to consider when choosing y bounds.
-#   xmin, xmax, ymin, ymax:
-#     Force a particular x or y bound, rather than trying to choose it
-#     from the data.
-#
-#
 struct Cartesian <: Gadfly.CoordinateElement
     xvars::Vector{Symbol}
     yvars::Vector{Symbol}
@@ -47,6 +36,21 @@ function Cartesian(
     Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster)
 end
 
+"""
+    Coord.cartesian(; xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,
+                    xflip=false, yflip=false,
+                    aspect_ratio=nothing, fixed=false,
+                    raster=false)
+
+`xmin`, `xmax`, `ymin`, and `ymax` specify hard minimum and maximum values on
+the x and y axes, and override the soft limits in [`Scale.x_continuous`](@ref)
+and [`Scale.y_continuous`](@ref).  if `xflip` or `yflip` are `true` the
+respective axis is flipped.  `aspect_ratio` fulfills its namesake if not
+`nothing`, unless overridden by a `fixed` value of `true`, in which case the
+aspect ratio follows the units of the plot (e.g. if the y-axis is 5 units high
+and the x-axis in 10 units across, the plot will be drawn at an aspect ratio of
+2).
+"""
 const cartesian = Cartesian
 
 

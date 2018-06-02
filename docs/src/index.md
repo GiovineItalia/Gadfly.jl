@@ -41,8 +41,7 @@ basic plotting and the various manual pages for more advanced usages.
 
 ## Credits
 
-Gadfly is predominantly the work of Daniel C. Jones who initiated the
-project and built out most of the infrastructure. The current package
-maintainers are Shashi Gowda and Tamas Nagy. Important contributions
-have also been made by Godisemo, Tim Holy, Darwin Darakananda, Simon
-Leblanc, Iain Dunning, Keno Fischer, Mattriks, and others.
+Gadfly is predominantly the work of Daniel C. Jones who initiated the project
+and built out most of the infrastructure.  It is now maintained by a community
+of volunteers.  Please consider [citing
+it](https://doi.org/10.5281/zenodo.437192) if you use it in your work.

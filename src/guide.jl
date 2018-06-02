@@ -166,6 +166,16 @@ ColorKey(;title=nothing, labels=nothing, pos=nothing) = ColorKey(title, labels, 
 
 # ColorKey() = ColorKey(nothing)
 
+"""
+    Guide.colorkey[(; title=nothing, labels=nothing, pos=nothing)]
+    Guide.colorkey(title, labels, pos)
+
+Enable control of the auto-generated colorkey.  Set the colorkey `title` for
+any plot, and the item `labels` for plots with a discrete color scale.  `pos`
+overrides [Theme(key_position=)](@ref Parameters) and can be in either
+relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm,
+0mm]), or plot scale (e.g. [0,0]) coordinates.
+"""
 const colorkey = ColorKey
 
 # A helper for render(::ColorKey) for rendering guides for discrete color
@@ -490,6 +500,11 @@ ManualColorKey(title, labels, colors::Vector{C}) where {C<:Color} =
 ManualColorKey(title, labels, colors) =
         ManualColorKey(title, labels, Gadfly.parse_colorant(colors))
 
+"""
+    Guide.manual_color_key(title, labels, colors)
+
+Manually define a color key with the legend `title` and item `labels` and `colors`.
+"""
 const manual_color_key = ManualColorKey
 
 function render(guide::ManualColorKey, theme::Gadfly.Theme,
@@ -546,6 +561,14 @@ end
 
 XTicks(; label=true, ticks=:auto, orientation=:auto) = XTicks(label, ticks, orientation)
 
+"""
+    Guide.xticks[(; label=true, ticks=:auto, orientation=:auto)]
+    Guide.xticks(label, ticks, orientation)
+
+Formats the tick marks and labels for the x-axis.  `label` toggles the label
+visibility.  `ticks` can also be an array of locations, or `nothing`.
+`orientation` can also be `:horizontal` or `:vertical`.
+"""
 const xticks = XTicks
 
 default_statistic(guide::XTicks) =
@@ -709,6 +732,14 @@ end
 
 YTicks(; label=true, ticks=:auto, orientation=:horizontal) = YTicks(label, ticks, orientation)
 
+"""
+    Guide.yticks[(; label=true, ticks=:auto, orientation=:horizontal)]
+    Guide.yticks(ticks, label, orientation)
+
+Formats the tick marks and labels for the y-axis.  `label` toggles the label
+visibility.  `ticks` can also be an array of locations, or `nothing`.
+`orientation` can also be `:auto` or `:vertical`.
+"""
 const yticks = YTicks
 
 function default_statistic(guide::YTicks)
@@ -881,6 +912,12 @@ struct XLabel <: Gadfly.GuideElement
 end
 XLabel(label; orientation=:auto) = XLabel(label, orientation)
 
+"""
+    Guide.xlabel(label, orientation=:auto)
+
+Sets the x-axis label for the plot.  `label` is either a `String` or `nothing`.
+`orientation` can also be `:horizontal` or `:vertical`.
+"""
 const xlabel = XLabel
 
 function render(guide::XLabel, theme::Gadfly.Theme,
@@ -942,6 +979,12 @@ struct YLabel <: Gadfly.GuideElement
 end
 YLabel(label; orientation=:auto) = YLabel(label, orientation)
 
+"""
+    Guide.ylabel(label, orientation=:auto)
+
+Sets the y-axis label for the plot.  `label` is either a `String` or `nothing`.
+`orientation` can also be `:horizontal` or `:vertical`.
+"""
 const ylabel = YLabel
 
 
@@ -995,6 +1038,11 @@ struct Title <: Gadfly.GuideElement
     label::Union{(Void), AbstractString}
 end
 
+"""
+    Geom.title(title)
+
+Set the plot title.
+"""
 const title = Title
 
 function render(guide::Title, theme::Gadfly.Theme,
@@ -1023,6 +1071,11 @@ end
 struct XRug <: Gadfly.GuideElement
 end
 
+"""
+    Guide.xrug
+
+Draw a short vertical lines along the x-axis of a plot at the positions in the `x` aesthetic.
+"""
 const xrug = XRug
 
 function render(guide::XRug, theme::Gadfly.Theme,
@@ -1044,6 +1097,11 @@ end
 struct YRug <: Gadfly.GuideElement
 end
 
+"""
+    Guide.yrug
+
+Draw short horizontal lines along the y-axis of a plot at the positions in the 'y' aesthetic.
+"""
 const yrug = YRug
 
 function render(guide::YRug, theme::Gadfly.Theme,
@@ -1181,6 +1239,12 @@ struct Annotation <: Gadfly.GuideElement
     ctx::Context
 end
 
+"""
+    Guide.annotation(ctx::Compose.Context)
+
+Overlay a plot with an arbitrary `Compose` graphic. The context will inherit
+the plot's coordinate system, unless overridden with a custom unit box.
+"""
 const annotation = Annotation
 
 function render(guide::Annotation, theme::Gadfly.Theme,

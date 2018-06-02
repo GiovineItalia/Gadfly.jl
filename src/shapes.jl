@@ -5,6 +5,14 @@ module Shape
 using Measures
 using Compose: x_measure, y_measure, circle, rectangle, polygon, line, px
 
+shape_docstr(kinds) = "Draw $kinds at the coordinates specified in `xs` and
+`ys` of size `rs`"
+
+"""
+    square(xs, ys, rs)
+
+$(shape_docstr("squares"))
+"""
 function square(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
 
@@ -21,6 +29,11 @@ function square(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     return polygon(polys)
 end
 
+"""
+    diamond(xs, ys, rs)
+
+$(shape_docstr("diamonds"))
+"""
 function diamond(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
 
@@ -35,6 +48,11 @@ function diamond(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     return polygon(polys)
 end
 
+"""
+    cross(xs, ys, rs)
+
+$(shape_docstr("crosses"))
+"""
 function cross(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
   polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
@@ -60,6 +78,11 @@ function cross(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   return polygon(polys)
 end
 
+"""
+    xcross(xs, ys, rs)
+
+$(shape_docstr("rotated crosses"))
+"""
 function xcross(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
   polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
@@ -80,6 +103,11 @@ function xcross(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   return polygon(polys)
 end
 
+"""
+    utriangle(xs, ys, rs, scalar=1)
+
+$(shape_docstr("upward-pointing triangles"))
+"""
 function utriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
   n = max(length(xs), length(ys), length(rs))
   polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
@@ -101,8 +129,18 @@ function utriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scal
   return polygon(polys)
 end
 
+"""
+    dtriangle(xs, ys, rs)
+
+$(shape_docstr("downward-pointing triangles"))
+"""
 dtriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray) = utriangle(xs, ys, rs, -1)
 
+"""
+    star1(xs, ys, rs, scalar=1)
+
+$(shape_docstr("five-pointed stars"))
+"""
 function star1(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
   n = max(length(xs), length(ys), length(rs))
   polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
@@ -127,6 +165,11 @@ function star1(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar =
   return polygon(polys)
 end
 
+"""
+    star2(xs, ys, rs, scalar=1)
+
+$(shape_docstr("four-pointed stars"))
+"""
 function star2(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
   n = max(length(xs), length(ys), length(rs))
   polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
@@ -146,6 +189,11 @@ function star2(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar =
   return polygon(polys)
 end
 
+"""
+    hexagon(xs, ys, rs)
+
+$(shape_docstr("hexagons"))
+"""
 function hexagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
 
@@ -167,6 +215,11 @@ function hexagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   return polygon(polys)
 end
 
+"""
+    octagon(xs, ys, rs)
+
+$(shape_docstr("octagons"))
+"""
 function octagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
 
@@ -188,6 +241,11 @@ function octagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   return polygon(polys)
 end
 
+"""
+    hline(xs, ys, rs)
+
+$(shape_docstr("horizontal lines"))
+"""
 function hline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
 
@@ -202,6 +260,11 @@ function hline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     return polygon(line_ps)
 end
 
+"""
+    vline(xs, ys, rs)
+
+$(shape_docstr("vertical lines"))
+"""
 function vline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
 

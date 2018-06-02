@@ -15,7 +15,7 @@ Draw multiple layers onto the same plot with
 using Gadfly
 using Compose
 srand(123)
-Gadfly.set_default_plot_size(12cm, 8cm)
+set_default_plot_size(12cm, 8cm)
 ```
 
 ```@example 1
@@ -63,10 +63,10 @@ plt=plot(layer(x=rand(10), y=rand(10), Geom.point),
 
 ## Stacks
 
-Plots can also be stacked horizontally with `hstack` or vertically with `vstack`,
-and arranged into a rectangular array with `gridstack`.
-This allows more customization in regards to tick marks, axis labeling, and other
-plot details than is available with [Geom.subplot_grid](@ref).  
+Plots can also be stacked horizontally with [`hstack`](@ref) or vertically with
+[`vstack`](@ref), and arranged into a rectangular array with `gridstack`.  This
+allows more customization in regards to tick marks, axis labeling, and other
+plot details than is available with [`Geom.subplot_grid`](@ref).
 
 ```@example 1
 p1 = plot(x=[1,2,3], y=[4,5,6]);
@@ -75,7 +75,7 @@ hstack(p1,p2)
 ```
 
 ```@example 1
-Gadfly.set_default_plot_size(12cm, 10cm) # hide
+set_default_plot_size(12cm, 10cm) # hide
 p3 = plot(x=[5,7,8], y=[8,9,10]);
 p4 = plot(x=[5,7,8], y=[10,11,12]);
 
@@ -87,7 +87,7 @@ gridstack([p1 p2; p3 p4])
 You can use `title` to add a descriptive string to the top of a stack
 
 ```@example 1
-Gadfly.set_default_plot_size(12cm, 8cm) # hide
+set_default_plot_size(12cm, 8cm) # hide
 title(hstack(p3,p4), "My great data")
 ```
 
@@ -95,7 +95,7 @@ You can also leave panels empty in a stack by passing a `Compose.context()`
 object
 
 ```@example 1
-Gadfly.set_default_plot_size(12cm, 10cm) # hide
+set_default_plot_size(12cm, 10cm) # hide
 # empty panel
 gridstack(Union{Plot,Compose.Context}[p1 p2; p3 Compose.context()])
 ```

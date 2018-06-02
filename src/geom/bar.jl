@@ -1,7 +1,7 @@
 # Bar geometry summarizes data as vertical bars.
 struct BarGeometry <: Gadfly.GeometryElement
-    position::Symbol  # :stack (default) or :dodge
-    orientation::Symbol # :vertical (default) or :horizontal
+    position::Symbol
+    orientation::Symbol
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
 end
@@ -9,26 +9,43 @@ BarGeometry(; position=:stack, orientation=:vertical, tag=empty_tag) =
         BarGeometry(position, orientation, Gadfly.Stat.bar(position=position,
             orientation = orientation), tag)
 
-const bar = BarGeometry
-
-histogram(; position=:stack, bincount=nothing,
-                   minbincount=3, maxbincount=150,
-                   orientation::Symbol=:vertical,
-                   density::Bool=false,
-                   tag::Symbol=empty_tag) =
-    BarGeometry(position, orientation,
-        Gadfly.Stat.histogram(bincount=bincount,
-                              minbincount=minbincount,
-                              maxbincount=maxbincount,
-                              position=position,
-                              orientation=orientation,
-                              density=density),
-        tag)
-
 element_aesthetics(geom::BarGeometry) = geom.orientation == :vertical ?
             [:xmin, :xmax, :y, :color] : [:ymin, :ymax, :x, :color]
 
 default_statistic(geom::BarGeometry) = geom.default_statistic
+
+"""
+    Geom.bar[(; position=:stack, orientation=:vertical)]
+
+Draw bars of height `y` centered at positions `x`, or from `xmin` to `xmax`.
+If orientation is `:horizontal` switch x for y.  Optionally categorically
+groups bars using the `color` aesthetic.  If `position` is `:stack` they will
+be placed on top of each other;  if it is `:dodge` they will be placed side by
+side.
+"""
+const bar = BarGeometry
+
+"""
+    Geom.histogram[(; position=:stack, bincount=nothing, minbincount=3, maxbincount=150,
+                    orientation=:vertical, density=false)]
+
+Draw histograms from a series of observations in `x` or `y` optionally grouping
+by `color`.  This geometry is equivalent to [`Geom.bar`](@ref) with
+[`Stat.histogram`](@ref); see the latter for more information.
+"""
+histogram(; position=:stack, bincount=nothing,
+            minbincount=3, maxbincount=150,
+            orientation::Symbol=:vertical,
+            density::Bool=false,
+            tag::Symbol=empty_tag) =
+    BarGeometry(position, orientation,
+                Gadfly.Stat.histogram(bincount=bincount,
+                                      minbincount=minbincount,
+                                      maxbincount=maxbincount,
+                                      position=position,
+                                      orientation=orientation,
+                                      density=density),
+                tag)
 
 # Render a single color bar chart
 function render_bar(geom::BarGeometry,

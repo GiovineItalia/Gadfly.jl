@@ -3,21 +3,48 @@
 
 struct SegmentGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
-     arrow::Bool
-     filled::Bool
-     tag::Symbol 
+    arrow::Bool
+    filled::Bool
+    tag::Symbol 
 end 
 SegmentGeometry(default_statistic=Gadfly.Stat.identity(); arrow=false, filled=false, tag=empty_tag) = 
     SegmentGeometry(default_statistic, arrow, filled, tag) 
 
+"""
+    Geom.segment[(; arrow=false, filled=false)]
+
+Draw line segments from `x`, `y` to `xend`, `yend`.  Optionally specify their
+`color`.  If `arrow` is `true` a `Scale` object for both axes must be
+provided.  If `filled` is `true` the arrows are drawn with a filled polygon,
+otherwise with a stroked line.
+"""
 const segment = SegmentGeometry
 
 # Leave this as a function, pending extra arguments e.g. arrow attributes
+"""
+    Geom.vector[(; filled=false)]
+
+This geometry is equivalent to [`Geom.segment(arrow=true)`](@ref).
+"""
 vector(; filled::Bool=false) = SegmentGeometry(arrow=true, filled=filled)
 
-hair(;intercept=0.0, orientation=:vertical) = 
+"""
+    Geom.hair[(; intercept=0.0, orientation=:vertical)]
+
+Draw lines from `x`, `y` to y=`intercept` if `orientation` is `:vertical` or
+x=`intercept` if `:horizontal`.  Optionally specify their `color`.  This geometry
+is equivalent to [`Geom.segment`](@ref) with [`Stat.hair`](@ref).
+"""
+hair(; intercept=0.0, orientation=:vertical) =
     SegmentGeometry(Gadfly.Stat.hair(intercept, orientation))
 
+"""
+    Geom.vectorfield[(; smoothness=1.0, scale=1.0, samples=20, filled=false)]
+
+Draw a gradient vector field of the 2D function or a matrix in the `z`
+aesthetic.  This geometry is equivalent to [`Geom.segment`](@ref) with
+[`Stat.vectorfield`](@ref); see the latter for more information.
+"""
 function vectorfield(;smoothness=1.0, scale=1.0, samples=20, filled::Bool=false)
     return SegmentGeometry(
         Gadfly.Stat.vectorfield(smoothness, scale, samples), 
@@ -40,8 +67,7 @@ function render(geom::SegmentGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         ϕ = pi/15
         xr = -vl*xyrange[1]*[cos(θ+ϕ), cos(θ-ϕ)]
         yr = -vl*xyrange[2]*[sin(θ+ϕ), sin(θ-ϕ)]
-        arr = [(xmax+xr[1],ymax+yr[1]), (xmax,ymax), (xmax+xr[2],ymax+yr[2]) ]
-        return arr
+        [ (xmax+xr[1],ymax+yr[1]), (xmax,ymax), (xmax+xr[2],ymax+yr[2]) ]
     end
 
     n = length(aes.x)

@@ -7,6 +7,14 @@ end
 BeeswarmGeometry(; orientation=:vertical, padding=0.1mm, tag=empty_tag) =
         BeeswarmGeometry(orientation, padding, tag)
 
+"""
+    Geom.beeswarm[; (orientation=:vertical, padding=0.1mm)]
+
+Plot the `x` and `y` aesthetics, the former being categorical and the latter
+continuous, by shifting the x position of each point to ensure that there is at
+least `padding` gap between neighbors.  If `orientation` is `:horizontal`,
+switch x for y.  Points can optionally be colored using the `color` aesthetic.
+"""
 const beeswarm = BeeswarmGeometry
 
 element_aesthetics(geom::BeeswarmGeometry) = [:x, :y, :color]
@@ -19,7 +27,6 @@ function render(geom::BeeswarmGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
     default_aes.color = discretize_make_ia(RGBA{Float32}[theme.default_color])
     default_aes.size = Measure[theme.point_size]
     aes = inherit(aes, default_aes)
-    padding = 1.0mm
 
     ctxp = ctxpromise() do draw_context
         if geom.orientation == :horizontal

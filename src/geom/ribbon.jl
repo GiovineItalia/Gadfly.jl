@@ -5,6 +5,12 @@ end
 RibbonGeometry(default_statistic=Gadfly.Stat.identity(); tag=empty_tag) =
         RibbonGeometry(default_statistic, tag)
 
+"""
+    Geom.ribbon
+
+Draw a ribbon at the positions in `x` bounded above and below by `ymax` and
+`ymin`, respectively.  Optionally draw multiple ribbons by grouping with `color`.
+"""
 const ribbon = RibbonGeometry
 
 default_statistic(geom::RibbonGeometry) = geom.default_statistic

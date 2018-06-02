@@ -72,6 +72,27 @@ end
 
 layers(geom::SubplotGrid) = geom.layers
 
+"""
+    Geom.subplot_grid[(elements...)]
+
+Draw multiple subplots in a grid organized by one or two categorial vectors.
+
+# Optional Aesthetics
+- `xgroup`, `ygroup`: Arrange subplots on the X and Y axes, respectively, by categorial data.
+- `free_x_axis`, `free_y_axis`: Whether the X and Y axis scales, respectively,
+  can differ across the subplots. Defaults to `false`. If `true`, scales are
+  set appropriately for individual subplots.
+
+One or both of `xgroup` or `ygroup` must be bound. If only one, a single column
+or row of subplots is drawn, if both, a grid.
+
+# Arguments
+
+Unlike most geometries, [`Geom.subplot_grid`](@ref) is typically passed one or more
+parameters. The constructor works for the most part like the `layer` function.
+Arbitrary plot elements may be passed, while aesthetic bindings are inherited
+from the parent plot.
+"""
 const subplot_grid = SubplotGrid
 
 function element_aesthetics(geom::SubplotGrid)
@@ -178,9 +199,9 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         stat = default_statistic(guide)
         if !isa(stat, Gadfly.Stat.identity)
             if isa(stat, Gadfly.Stat.TickStatistic)
-                if stat.out_var == "x"
+                if stat.axis == "x"
                     has_stat_xticks = true
-                elseif stat.out_var == "y"
+                elseif stat.axis == "y"
                     has_stat_yticks = true
                 end
             end

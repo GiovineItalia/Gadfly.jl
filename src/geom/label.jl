@@ -1,3 +1,5 @@
+###  only single scale in SVG[^JS]
+
 struct LabelGeometry <: Gadfly.GeometryElement
     # One of :dynamic, :left, :right, :above, :below, :centered
     position::Symbol
@@ -15,6 +17,14 @@ element_aesthetics(::LabelGeometry) = [:x, :y, :label]
 
 default_statistic(::LabelGeometry) = Gadfly.Stat.identity()
 
+"""
+    Geom.label[(; position=:dynamic, hide_overlaps=true)]
+
+Place the text strings in the `label` aesthetic at the `x` and `y` coordinates
+on the plot frame.  Offset the text according to `position`, which can be
+`:left`, `:right`, `:above`, `:below`, `:centered`, or `:dynamic`.  The latter
+tries a variety of positions for each label to minimize the number that overlap.
+"""
 const label = LabelGeometry
 
 # A deferred context function for labeling points in a plot. Optimizing label

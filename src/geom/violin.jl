@@ -4,6 +4,13 @@ struct ViolinGeometry <: Gadfly.GeometryElement
 end
 ViolinGeometry(; order=1, tag=empty_tag) = ViolinGeometry(order, tag)
 
+"""
+    Geom.violin[(; order=1)]
+
+Draw `y` versus `width`, optionally grouping categorically by `x` and coloring
+with `color`.  Alternatively, if `width` is not supplied, the data in `y` will
+be transformed to a density estimate using [`Stat.violin`](@ref)
+"""
 const violin = ViolinGeometry
 
 element_aesthetics(::ViolinGeometry) = [:x, :y, :color]

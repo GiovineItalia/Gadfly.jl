@@ -1,18 +1,10 @@
 # Particularly useful or beautiful grammar of graphics invocations.
 
-# A convenience plot function for quickly plotting functions or expressions.
-#
-# Args:
-#   fs: An array in which each object is either a single argument function or an
-#       expression computing some value on x.
-#   a: Lower bound on x.
-#   b: Upper bound on x.
-#   elements: One ore more grammar elements.
-#
-# Returns:
-#   A plot objects.
-#
-function plot(fs::Vector{T}, a::Number, b::Number, elements::ElementOrFunction...; mapping...) where T <: Base.Callable
+"""
+    plot(fs::Vector{T}, lower::Number, upper::Number, elements::ElementOrFunction...;
+         mapping...) where T <: Base.Callable
+"""
+function plot(fs::Vector{T}, lower::Number, upper::Number, elements::ElementOrFunction...; mapping...) where T <: Base.Callable
     if isempty(elements)
         elements = ElementOrFunction[]
     elseif isa(elements, Tuple)
@@ -29,11 +21,11 @@ function plot(fs::Vector{T}, a::Number, b::Number, elements::ElementOrFunction..
         push!(elements, Guide.ylabel("f(x)"))
     end
 
-    if b < a
+    if upper < lower
         push!(elements, Coord.cartesian(xflip=true))
     end
 
-    mappingdict = Dict{Symbol, Any}(:y => fs, :xmin => [a], :xmax => [b])
+    mappingdict = Dict{Symbol, Any}(:y => fs, :xmin => [lower], :xmax => [upper])
     for (k, v) in mapping
         mappingdict[k] = v
     end
@@ -42,12 +34,25 @@ function plot(fs::Vector{T}, a::Number, b::Number, elements::ElementOrFunction..
 end
 
 
-# Plot a single function.
-plot(f::Function, a::Number, b::Number, elements::ElementOrFunction...; mapping...) =
-        plot(Function[f], a, b, elements...; mapping...)
+"""
+    plot(f::Function, lower::Number, upper::Number, elements::ElementOrFunction...;
+         mapping...)
+
+Plot the function or expression `f`, which takes a single
+argument or operates on a single variable, respectively, between the `lower`
+and `upper` bounds.  See [`Stat.func`](@ref) and [`Geom.line`](@ref).
+"""
+plot(f::Function, lower::Number, upper::Number, elements::ElementOrFunction...; mapping...) =
+        plot(Function[f], lower, upper, elements...; mapping...)
 
 
-# Plot a single function using a contour plot
+"""
+    plot(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,
+         elements::ElementOrFunction...; mapping...)
+
+Plot the contours of the 2D function or expression in `f`.
+See [`Stat.func`](@ref) and [`Geom.contour`](@ref).
+"""
 function plot(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,
               elements::ElementOrFunction...; mapping...)
     default_elements = ElementOrFunction[]
@@ -72,6 +77,33 @@ function plot(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Numbe
 end
 
 
+"""
+    layer(fs::Vector{T}, lower::Number, upper::Number,
+          elements::ElementOrFunction...) where T <: Base.Callable -> [Layers]
+
+Create a layer from a list of functions or expressions in `fs`.
+"""
+layer(fs::Vector{T}, lower::Number, upper::Number, elements::ElementOrFunction...) where T <: Base.Callable =
+    layer(y=fs, xmin=[lower], xmax=[upper], Stat.func, Geom.line, elements...)
+
+"""
+    layer(f::Function, lower::Number, upper::Number,
+          elements::ElementOrFunction...) -> [Layers]
+
+Create a layer from the function or expression `f`, which takes a single
+argument or operates on a single variable, respectively, between the `lower`
+and `upper` bounds.  See [`Stat.func`](@ref) and [`Geom.line`](@ref).
+"""
+layer(f::Function, lower::Number, upper::Number, elements::ElementOrFunction...) =
+        layer(Function[f], lower, upper, elements...)
+
+"""
+    layer(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,
+          elements::ElementOrFunction...; mapping...) -> [Layers]
+
+Create a layer of the contours of the 2D function or expression in `f`.
+See [`Stat.func`](@ref) and [`Geom.contour`](@ref).
+"""
 function layer(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,
                elements::ElementOrFunction...; mapping...)
     if isempty(elements)
@@ -80,9 +112,9 @@ function layer(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Numb
         elements = ElementOrFunction[elements...]
     end
 
-
-    mappingdict = Dict{Symbol, Any}(:z    => f, :xmin => [xmin], :xmax => [xmax],
-                                            :ymin => [ymin], :ymax => [ymax])
+    mappingdict = Dict{Symbol, Any}(:z => f,
+                                    :xmin => [xmin], :xmax => [xmax],
+                                    :ymin => [ymin], :ymax => [ymax])
     for (k, v) in mapping
         mappingdict[k] = v
     end
@@ -91,67 +123,14 @@ function layer(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Numb
 end
 
 
-
-# Create a layer from a list of functions or expressions.
-layer(fs::Array, a::Number, b::Number, elements::ElementOrFunction...) =
-        layer(y=fs, xmin=[a], xmax=[b], Stat.func, Geom.line, elements...)
-
-
-
-# Create a layer from a single function.
-layer(f::Function, a::Number, b::Number, elements::ElementOrFunction...) =
-        layer(Function[f], a, b, elements...)
-
-
-# Simple heatmap plots of matrices.
-#
-# It is a wrapper around the `plot()` function using the `rectbin` geometry.
-# It also applies a sane set of defaults to make sure that the plots look nice
-# by default. Specifically
-#   - the aspect ratio of the coordinate system is fixed Coord.cartesian(fixed=true),
-#     so that the rectangles become squares
-#   - the axes run from 0.5 to N+0.5, because the first row/column is drawn to
-#     (0.5, 1.5) and the last one to (N-0.5, N+0.5).
-#   - the y-direction is flipped, so that the [1,1] of a matrix is in the top
-#     left corner, as is customary
-#   - NaNs are not drawn. `spy` leaves "holes" instead into the heatmap.
-#
-# Args:
-#   M: A matrix.
-#
-# Returns:
-#   A plot object.
-#
-# Known bugs:
-#   - If the matrix is only NaNs, then it throws an `ArgumentError`, because
-#     an empty collection gets passed to the `plot` function / `rectbin` geometry.
-#
+### why `spy` and not `plot`?
 """
-```
-spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...)
-```
-Simple heatmap plots of matrices.
+    spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...) -> Plot
 
-It is a wrapper around the `plot()` function using the `rectbin` geometry.
-It also applies a sane set of defaults to make sure that the plots look nice
-by default. Specifically
-- the aspect ratio of the coordinate system is fixed Coord.cartesian(fixed=true),
-so that the rectangles become squares
-- the axes run from 0.5 to N+0.5, because the first row/column is drawn to
-(0.5, 1.5) and the last one to (N-0.5, N+0.5).
-- the y-direction is flipped, so that the [1,1] of a matrix is in the top
-left corner, as is customary
-- NaNs are not drawn. `spy` leaves "holes" instead into the heatmap.
-
-### Args:
-* M: A matrix.
-
-### Returns:
-A plot object.
-
-#### Known bugs:
-   - If the matrix is only NaNs, then it throws an `ArgumentError`, because
-     an empty collection gets passed to the `plot` function / `rectbin` geometry.
+Plots a heatmap of `M`, with M[1,1] in the upper left.  `NaN` values are
+left blank, and an error is thrown if all elements of `M` are `NaN`.  See
+[`Geom.rectbin`](@ref) and [`Coord.cartesian(fixed=true)...)`](@ref
+Gadfly.Coord.cartesian).
 """
 
 function spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...)
