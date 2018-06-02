@@ -18,7 +18,7 @@ import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, setfield!, discretize_make_ia
 import KernelDensity
 # import Distributions: Uniform, Distribution, qqbuild
-import IterTools: chain, distinct
+import IterTools: distinct
 import Compat.Iterators: cycle, product
 
 include("bincount.jl")
@@ -779,7 +779,7 @@ function apply_statistic(stat::TickStatistic,
 
     isempty(in_vals) && return
 
-    in_vals = chain(in_vals...)
+    in_vals = Iterators.flatten(in_vals)
 
     # consider forced tick marks
     if stat.ticks != :auto

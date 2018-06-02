@@ -113,8 +113,8 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
 
     # Outliers
     if !geom.suppress_outliers && aes.outliers != nothing && !isempty(aes.outliers)
-        xys = collect(chain([zip(cycle([x]), ys, cycle([c]))
-                             for (x, ys, c) in zip(xs, aes.outliers, cs)]...))
+        xys = collect(Iterators.flatten(zip(cycle([x]), ys, cycle([c]))
+                             for (x, ys, c) in zip(xs, aes.outliers, cs)))
         compose!(ctx, (context(),
             (context(), Shape.circle([x for (x, y, c) in xys],
                     [y for (x, y, c) in xys],
