@@ -1751,7 +1751,6 @@ BinMeanStatistic(; n=20) = BinMeanStatistic(n)
 input_aesthetics(::BinMeanStatistic) = [:x, :y]
 output_aesthetics(::BinMeanStatistic) = [:x, :y]
 
-### doesn't appear to be used internally
 """
     Stat.binmean[(; n=20)]
 

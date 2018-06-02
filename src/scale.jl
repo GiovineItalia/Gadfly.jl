@@ -692,12 +692,6 @@ element_aesthetics(::LabelScale) = [:label]
 const label = LabelScale
 
 
-### not used internally
-# Scale applied to grouping aesthetics.
-struct GroupingScale <: Gadfly.ScaleElement
-    var::Symbol
-end
-
 """
     xgroup[(; labels=nothing, levels=nothing, order=nothing)]
 """ 

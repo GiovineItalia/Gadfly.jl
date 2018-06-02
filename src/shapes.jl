@@ -136,7 +136,6 @@ $(shape_docstr("downward-pointing triangles"))
 """
 dtriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray) = utriangle(xs, ys, rs, -1)
 
-### get rid of unused `scalar`, here and elsewhere
 """
     star1(xs, ys, rs, scalar=1)
 
