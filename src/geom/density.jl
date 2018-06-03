@@ -4,8 +4,19 @@ struct DensityGeometry <: Gadfly.GeometryElement
     tag::Symbol
 end
 
-function DensityGeometry(; order=1, tag=empty_tag, kwargs...)
-    DensityGeometry(Gadfly.Stat.DensityStatistic(; kwargs...), order, tag)
+function DensityGeometry(; n=256,
+                           bandwidth=-Inf,
+                           adjust=1.0,
+                           kernel=Normal,
+                           trim=false,
+                           scale=:area,
+                           position=:dodge,
+                           orientation=:horizontal,
+                           order=1,
+                           tag=empty_tag)
+    stat = Gadfly.Stat.DensityStatistic(n, bandwidth, adjust, kernel, trim,
+                                        scale, position, orientation, false)
+    DensityGeometry(stat, order, tag)
 end
 
 DensityGeometry(stat; order=1, tag=empty_tag) = DensityGeometry(stat, order, tag)
@@ -47,11 +58,20 @@ struct ViolinGeometry <: Gadfly.GeometryElement
     order::Int
     tag::Symbol
 end
-function ViolinGeometry(; order=1, tag=empty_tag, split=false, kwargs...)
-    if findfirst(x->x[1] == :trim, kwargs) == 0
-        push!(kwargs, (:trim, true))
-    end
-    ViolinGeometry(Gadfly.Stat.DensityStatistic(; kwargs...), split, order, tag)
+
+function ViolinGeometry(; n=256,
+                          bandwidth=-Inf,
+                          adjust=1.0,
+                          kernel=Normal,
+                          trim=true,
+                          scale=:area,
+                          orientation=:vertical,
+                          split=false,
+                          order=1,
+                          tag=empty_tag)
+    stat = Gadfly.Stat.DensityStatistic(n, bandwidth, adjust, kernel, trim,
+                                        scale, :dodge, orientation, true)
+    ViolinGeometry(stat, split, order, tag)
 end
 
 """

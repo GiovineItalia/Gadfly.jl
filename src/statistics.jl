@@ -17,12 +17,8 @@ using IndirectArrays
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, setfield!, discretize_make_ia, aes2str
 import KernelDensity
-<<<<<<< HEAD
 # import Distributions: Uniform, Distribution, qqbuild
 import IterTools: distinct
-=======
-import IterTools: chain, distinct
->>>>>>> [WIP] prelim version of the density geometry revamp
 import Compat.Iterators: cycle, product
 
 include("bincount.jl")
@@ -504,7 +500,10 @@ function apply_statistic(stat::Density2DStatistic,
     apply_statistic(ContourStatistic(levels=stat.levels), scales, coord, aes)
 end
 
-
+"""
+    A general statistic for density plots (e.g. KDE plots and violin plots).
+See [`Geom.density`](@ref) or [`Geom.violin`](@ref) for more details.
+"""
 struct DensityStatistic <: Gadfly.StatisticElement
     """
     Number of points sampled for estimate. Powers of two yields better
@@ -513,8 +512,8 @@ struct DensityStatistic <: Gadfly.StatisticElement
     n::Int
 
     """
-    Bandwidth used for the kernel density estimation. This corresponds to the
-    standard deviation of the `kernel`.
+    Smoothing bandwidth used for the kernel density estimation. This
+    corresponds to the standard deviation of the `kernel`.
     """
     bw::Real
 
@@ -531,8 +530,11 @@ struct DensityStatistic <: Gadfly.StatisticElement
     kernel
 
     """
-    If set to `true`, trim the tails of the estimate to fit the range of the
-    data. (default is `false`)
+    This parameter only applies in the context of multiple densities. If set to
+    `false` (the default), the densities are computed over the full range of
+    data. If `true`, then each density's range will be computed only over the
+    range of data belonging to that group. This option is incompatible with
+    stacked densities since the ranges might not line up any more.
     """
     trim::Bool
 
@@ -545,39 +547,26 @@ struct DensityStatistic <: Gadfly.StatisticElement
     """
     scale::Symbol
 
+    """
+    Control handling of multiple overlapping densities. The `:dodge` option
+    (default) just overlays each density such that they are in front of each
+    other. The `:stack` option places the densities a top of each other. The
+    `:fill` option is similar to `:stack`, but the stacks are all normalized to
+    a constant height of 1.0. This last option is useful for generating
+    conditional density estimates.
+    """
     position::Symbol
 
+    """
+    Whether the plot is `:horizontal` or `:vertical`
+    """
     orientation::Symbol
 
+    """
+    Internal flag that is `true` if this density statistic is a violin plot
+    """
     isviolin::Bool
 end
-
-function DensityStatistic(; n=256,
-                            bandwidth=-Inf,
-                            adjust=1.0,
-                            kernel=Normal,
-                            trim=false,
-                            scale=:area,
-                            position=:dodge,
-                            orientation=:horizontal,
-                            isviolin=false
-                            )
-    DensityStatistic(n, bandwidth, adjust, kernel, trim, scale, position, orientation, isviolin)
-end
-
-<<<<<<< HEAD
-input_aesthetics(stat::DensityStatistic) = [:x, :color]
-output_aesthetics(stat::DensityStatistic) = [:x, :y, :color]
-default_scales(::DensityStatistic) = [Gadfly.Scale.y_continuous()]
-
-"""
-    Stat.density[(; n=256, bandwidth=-Inf)]
-
-Estimate the density of `x` at `n` points, and put the result in `x` and `y`.
-Smoothing is controlled by `bandwidth`.  Used by [`Geom.density`](@ref Gadfly.Geom.density).
-"""
-const density = DensityStatistic
-=======
 
 function input_aesthetics(stat::DensityStatistic)
     if stat.isviolin
