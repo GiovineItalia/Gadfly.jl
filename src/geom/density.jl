@@ -39,10 +39,11 @@ function render(geom::DensityGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         ys = aes.y[belongs]
 
         push!(densities, [(x, y) for (x, y) in zip(xs, ys)])
-        push!(colors, keys[1])
+        push!(colors, keys[1] != nothing ? keys[1] : theme.default_color)
     end
 
     ctx = context(order=geom.order)
+    # TODO: This should be user controllable
     if geom.stat.position == :dodge
         compose!(ctx, Compose.polygon(densities, geom.tag), stroke(colors), fill(nothing))
     else

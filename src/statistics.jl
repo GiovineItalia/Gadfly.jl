@@ -580,18 +580,24 @@ end
 
 output_aesthetics(stat::DensityStatistic) = [:x, :y, :color]
 
-function default_scales(stat::DensityStatistic)
+function _find_output_dims(stat::DensityStatistic)
+    output_dims = Union{Symbol, Nothing}[:x, :y]
+    (stat.orientation == :vertical) && reverse!(output_dims)
+
+    groupon = [:color]
     if stat.isviolin
-        if stat.orientation == :vertical
-            [Gadfly.Scale.x_discrete(), Gadfly.Scale.y_continuous()]
-        else
-            [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_discrete()]
-        end
+        reverse!(output_dims)
+        # For violin plots we need an additional dimension for the density data
+        # so we add an additional dimension on the end
+        push!(output_dims, :width)
+        insert!(groupon, 1, output_dims[1])
     else
-        [Gadfly.Scale.x_continuous(), Gadfly.Scale.x_continuous()]
+        # For simple density plots there are no categories so we'll insert a
+        # placeholder value into the first dimension
+        insert!(output_dims, 1, nothing)
     end
+    output_dims, groupon
 end
->>>>>>> [WIP] prelim version of the density geometry revamp
 
 function apply_statistic(stat::DensityStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
@@ -603,27 +609,38 @@ function apply_statistic(stat::DensityStatistic,
     # trickiness is tracking which dimension refers to what.
     # Three output dimensions: (1) grouping (2) evaluation points (i.e where
     # we're evaluating the KDE) (3) density values
-    output_dims = Union{Symbol, Nothing}[:x, :y]
-    (stat.orientation == :vertical) && (output_dims = reverse(output_dims))
+    output_dims, groupon = _find_output_dims(stat)
 
-    Gadfly.assert_aesthetics_defined("DensityStatistic", aes, output_dims[1])
-    groupon = [:color]
     if stat.isviolin
-        # For violin plots we need an additional dimension for the density data
-        # so we add an additional dimension on the end
-        push!(output_dims, :width)
-        insert!(groupon, 1, output_dims[1])
-    else
-        # For simple density plots there are no categories so we'll insert a
-        # placeholder value into the first dimension
-        insert!(output_dims, 1, nothing)
+        xcat, ycat = Scale.iscategorical(scales, :x), Scale.iscategorical(scales, :y)
+        if xcat && ycat
+            error("Either the x or y aesthetics must be Real for kernel density estimation")
+        elseif xcat && stat.orientation == :horizontal
+            error("Horizontal violins require a continuous x axis for kernel density estimation")
+        elseif ycat && stat.orientation == :vertical
+            error("Vertical violins require a continuous y axis for kernel density estimation")
+        elseif !xcat && !ycat # neither x or y is categorical so we'll assume x is meant to be categorical, see #968
+            new_scale = Scale.x_discrete(order=sortperm(unique(aes.x)))
+            Scale.apply_scale(new_scale, [aes], Gadfly.Data(x=aes.x))
+            scales[:x] = new_scale
+            warn(
+            """
+            Both x and y aesthetics are continuous, violin plots require a
+            categorical variable. Transforming x to be categorical.
+            """)
+        end
+        if getfield(aes, output_dims[1]) == nothing
+            setfield!(aes, output_dims[1], fill(1.0, length(getfield(aes, output_dims[2]))))
+        end
+    elseif getfield(aes, output_dims[2]) == nothing
+        error("The $(output_dims[2]) aesthetic is required for $(stat.orientation) density plots")
     end
 
     grouped_data = Gadfly.groupby(aes, groupon, output_dims[2])
 
-    n_pts = stat.trim ? stat.n + 2 : stat.n
+
+    n_pts = stat.position == :fill ? stat.n : stat.n + 2
     n_groups = length(grouped_data)
-    boundary = (-Inf, Inf)
 
     groups = Array{Float64}(n_groups)
     eval_points = fill(0.0, n_groups, n_pts)
@@ -632,21 +649,18 @@ function apply_statistic(stat::DensityStatistic,
 
     # if the densities are stacked then we'll need to clamp them so that they
     # share the same evaluation points (e.g. x values)
-    (stat.position != :dodge) && (boundary = extrema(getfield(aes, output_dims[2])))
+    boundary = extrema(getfield(aes, output_dims[2]))
 
     for (idx, (keys, belongs)) in enumerate(grouped_data)
         input = getfield(aes, output_dims[2])[belongs]
-        window = stat.n > 1 ? KernelDensity.default_bandwidth(input)*stat.adjust : 0.1
+        window = stat.n > 1 ? KernelDensity.default_bandwidth(input)*stat.adjust : stat.bw
         (stat.trim) && (boundary = extrema(input))
-        if boundary != (-Inf, Inf)
-            f = KernelDensity.kde(input, kernel=stat.kernel,
-                                         boundary=boundary,
-                                         bandwidth=window,
-                                         npoints=stat.n)
-        else
-            f = KernelDensity.kde(input, kernel=stat.kernel, bandwidth=window, npoints=stat.n)
-        end
-
+        kde_est = KernelDensity.kde(input, kernel=stat.kernel,
+                                     boundary=boundary,
+                                     npoints=stat.n,
+                                     bandwidth=window)
+        evalpts = kde_est.x
+        density = kde_est.density
         # only store category information if this is a violin plot and we need it
         if stat.isviolin
             groups[idx] = keys[1]
@@ -656,17 +670,15 @@ function apply_statistic(stat::DensityStatistic,
         else
             error("Density plots do not support grouping by more than two dimensions.")
         end
-
         # scale density output depending on `scale` flag
-        scaled_density = stat.trim ? vcat(0.0, f.density, 0.0) : f.density
+        scaled_density = stat.position == :fill ? density : vcat(0.0, density, 0.0)
         if stat.scale == :count
-            scaled_density = f.density.*sum(input)
+            scaled_density .*= sum(input)
         elseif stat.scale == :peak
-            scaled_density = f.density ./ maximum(f.density)
+            scaled_density ./= maximum(density)
         end
 
-        minval, maxval = extrema(input)
-        eval_points[idx, :] = stat.trim ? vcat(minval, f.x, maxval) : f.x
+        eval_points[idx, :] = stat.position == :fill ? evalpts : vcat(boundary[1], evalpts, boundary[2])
         densities[idx, :] = scaled_density
     end
 
@@ -898,7 +910,7 @@ data with `coverage_weight`; and of having a nice numbering with
          granularity_weight=1/4,
          simplicity_weight=1/6,
          coverage_weight=1/3,
-         niceness_weight=1/4) = 
+         niceness_weight=1/4) =
     TickStatistic("x",
               granularity_weight, simplicity_weight, coverage_weight, niceness_weight, ticks)
 
@@ -1761,68 +1773,6 @@ function apply_statistic(stat::QQStatistic,
     end
 end
 
-<<<<<<< HEAD
-
-struct ViolinStatistic <: Gadfly.StatisticElement
-    n::Int # Number of points sampled
-end
-ViolinStatistic() = ViolinStatistic(300)
-
-input_aesthetics(::ViolinStatistic) = [:x, :y, :color]
-output_aesthetics(::ViolinStatistic) = [:x, :y, :width, :color]
-default_scales(stat::ViolinStatistic) = [Gadfly.Scale.x_discrete(), Gadfly.Scale.y_continuous()]
-
-### very similar to Stat.density; Geom.violin could be refactored to us it instead
-"""
-    Stat.violin[(n=300)]
-
-Transform $(aes2str(input_aesthetics(violin()))).
-"""
-const violin = ViolinStatistic
-
-function apply_statistic(stat::ViolinStatistic,
-                         scales::Dict{Symbol, Gadfly.ScaleElement},
-                         coord::Gadfly.CoordinateElement,
-                         aes::Gadfly.Aesthetics)
-
-    isa(aes.y[1], Real) || error("Kernel density estimation only works on Real types.")
-
-    grouped_y = Dict(1=>aes.y)
-    grouped_color = Dict{Int, Gadfly.ColorOrNothing}(1=>nothing)
-    ux = unique(aes.x)
-    uxflag = length(ux) < length(aes.x)
-    colorflag = aes.color != nothing
-
-    uxflag && (grouped_y = Dict(x=>aes.y[aes.x.==x] for x in ux))
-
-    grouped_color = (colorflag ? Dict(x=>first(aes.color[aes.x.==x]) for x in ux) : 
-        uxflag && Dict(x=>nothing for x in ux) )
-
-    aes.x     = Array{Float64}(0)
-    aes.y     = Array{Float64}(0)
-    aes.width = Array{Float64}(0)
-    colors = eltype(aes.color)[]
-
-    for (x, ys) in grouped_y
-        window = stat.n > 1 ? KernelDensity.default_bandwidth(ys) : 0.1
-        f = KernelDensity.kde(ys, bandwidth=window, npoints=stat.n)
-        append!(aes.x, fill(x, length(f.x)))
-        append!(aes.y, f.x)
-        append!(aes.width, f.density)
-        append!(colors, fill(grouped_color[x], length(f.x)))
-    end
-
-    colorflag && (aes.color = colors)
-
-    pad = 0.1
-    maxwidth = maximum(aes.width)
-    broadcast!(*, aes.width, aes.width, 1 - pad)
-    broadcast!(/, aes.width, aes.width, maxwidth)
-end
-
-
-=======
->>>>>>> [WIP] prelim version of the density geometry revamp
 struct JitterStatistic <: Gadfly.StatisticElement
     vars::Vector{Symbol}
     range::Float64
