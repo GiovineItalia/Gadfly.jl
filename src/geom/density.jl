@@ -55,7 +55,6 @@ end
 
 struct ViolinGeometry <: Gadfly.GeometryElement
     stat::Gadfly.StatisticElement
-    split::Bool
     order::Int
     tag::Symbol
 end
@@ -67,12 +66,11 @@ function ViolinGeometry(; n=256,
                           trim=true,
                           scale=:area,
                           orientation=:vertical,
-                          split=false,
                           order=1,
                           tag=empty_tag)
     stat = Gadfly.Stat.DensityStatistic(n, bandwidth, adjust, kernel, trim,
                                         scale, :dodge, orientation, true)
-    ViolinGeometry(stat, split, order, tag)
+    ViolinGeometry(stat, order, tag)
 end
 
 """
@@ -80,11 +78,11 @@ end
 
 Draw `y` versus `width`, optionally grouping categorically by `x` and coloring
 with `color`.  Alternatively, if `width` is not supplied, the data in `y` will
-be transformed to a density estimate using [`Stat.violin`](@ref)
+be transformed to a density estimate using [`Stat.density`](@ref)
 """
 const violin = ViolinGeometry
 
-element_aesthetics(::ViolinGeometry) = [:x, :y, :color]
+element_aesthetics(::ViolinGeometry) = []
 
 default_statistic(geom::ViolinGeometry) = Gadfly.Stat.DensityStatistic(geom.stat)
 
@@ -93,22 +91,29 @@ function render(geom::ViolinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     Gadfly.assert_aesthetics_defined("Geom.violin", aes, :y, :width)
     Gadfly.assert_aesthetics_equal_length("Geom.violin", aes, :y, :width)
 
-    grouped_data = Gadfly.groupby(aes, [:x, :color], :y)
+    output_dims, groupon = Gadfly.Stat._find_output_dims(geom.stat)
+    grouped_data = Gadfly.groupby(aes, groupon, output_dims[2])
     violins = Array{NTuple{2, Float64}}[]
 
-    colors = []
     (aes.color == nothing) && (aes.color = fill(theme.default_color, length(aes.x)))
+    colors = eltype(aes.color)[]
     color_opts = unique(aes.color)
-    if geom.split && length(color_opts) > 2
-        error("Split violins require 2 colors, not more")
+    split = false
+    # TODO: Add support for dodging violins (i.e. having more than two colors
+    # per major category). Also splitting should not happen automatically, but
+    # as a optional keyword to Geom.violin
+    if length(keys(grouped_data)) > 2*length(unique(getfield(aes, output_dims[1])))
+        error("Violin plots do not currently support having more than 2 colors per $(output_dims[1]) category")
+    elseif length(color_opts) == 2
+        split = true
     end
 
     for (keys, belongs) in grouped_data
         x, color = keys
-        ys = aes.y[belongs]
+        ys = getfield(aes, output_dims[2])[belongs]
         ws = aes.width[belongs]
 
-        if geom.split
+        if split
             pos = findfirst(color_opts, color)
             if pos == 1
                 push!(violins, [(x - w/2, y) for (y, w) in zip(ys, ws)])
@@ -120,6 +125,14 @@ function render(geom::ViolinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
             push!(violins, vcat([(x - w/2, y) for (y, w) in zip(ys, ws)],
                                 reverse!([(x + w/2, y) for (y, w) in zip(ys, ws)])))
             push!(colors, color != nothing ? color : theme.default_color)
+        end
+    end
+
+    if geom.stat.orientation == :horizontal
+        for violin in violins
+            for i in 1:length(violin)
+                violin[i] = reverse(violin[i])
+            end
         end
     end
 
