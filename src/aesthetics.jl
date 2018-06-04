@@ -415,7 +415,9 @@ function inherit!(a::Aesthetics, b::Aesthetics;
 end
 
 """
-    Given aesthetics to group with, `by`, and an aesthetic to group `togroupvar`
+    groupby(aes, by, togroupvar)
+
+Given aesthetics to group with, `by`, and an aesthetic to group `togroupvar`
 this function constructs a dictionary that maps each given combination of the
 `by` aesthetics to the positions which they apply to. Thus the output is a
 dictionary of tuples of each unique combination of `by` mapped to a boolean
@@ -426,28 +428,34 @@ have the same length). If the provided aesthetics are missing, a placeholder
 ## Examples
 
 ```jldoctest
+using Gadfly
 aes = Gadfly.Aesthetics()
 aes.x = repeat([1, 2], inner=3)
 aes.y = collect(1:6)
 
-groupby(aes, [:x, :color], :y)
+Gadfly.groupby(aes, [:x, :color], :y)
 
 # output
 
-DataStructures.OrderedDict((2, nothing)=>Bool[false, false, false, true, true, true],(1, nothing)=>Bool[true, true, true, false, false, false])
+DataStructures.OrderedDict{Tuple{Int64,Void},Array{Bool,1}} with 2 entries:
+  (1, nothing) => Bool[true, true, true, false, false, false]
+  (2, nothing) => Bool[false, false, false, true, true, true]
 ```
 
 ```jldoctest
+using Gadfly
 aes = Gadfly.Aesthetics()
 aes.x = repeat([:a, :b], inner=2)
 aes.y = collect(1:4)
 aes.color = repeat([colorant"red", colorant"blue"], inner=2)
 
-groupby(aes, [:x, :color], :y)
+Gadfly.groupby(aes, [:x, :color], :y)
 
 # output
 
-DataStructures.OrderedDict((:a, RGB{N0f8}(1.0,0.0,0.0))=>Bool[true, true, false, false],(:b, RGB{N0f8}(0.0,0.0,1.0))=>Bool[false, false, true, true])
+DataStructures.OrderedDict{Tuple{Symbol,ColorTypes.RGB{FixedPointNumbers.Normed{UInt8,8}}},Array{Bool,1}} with 2 entries:
+  (:a, RGB{N0f8}(1.0,0.0,0.0)) => Bool[true, true, false, false]
+  (:b, RGB{N0f8}(0.0,0.0,1.0)) => Bool[false, false, true, true]
 ```
 
 """

@@ -502,7 +502,8 @@ end
 
 """
     A general statistic for density plots (e.g. KDE plots and violin plots).
-See [`Geom.density`](@ref) or [`Geom.violin`](@ref) for more details.
+See [`Geom.density`](@ref Gadfly.Geom.density) or [`Geom.violin`](@ref
+Gadfly.Geom.violin) for more details.
 """
 struct DensityStatistic <: Gadfly.StatisticElement
     """

@@ -74,11 +74,36 @@ function ViolinGeometry(; n=256,
 end
 
 """
-    Geom.violin[(; order=1)]
+    Geom.violin[(; bandwidth, adjust, kernel, trim, order)]
 
-Draw `y` versus `width`, optionally grouping categorically by `x` and coloring
-with `color`.  Alternatively, if `width` is not supplied, the data in `y` will
-be transformed to a density estimate using [`Stat.density`](@ref)
+Draws a violin plot which is a combination of [`Geom.density`](@ref) and
+[`Geom.boxplot`](@ref). This plot type is useful for comparing differences in
+the distribution of quantitative data between categories, especially when the
+data is non-normally distributed. As with [`Geom.density`](@ref) plots, there
+are a couple caveats:
+
+1) Plot components do not necessarily correspond to the raw datapoints, but
+   instead to the kernel density estimation of the underlying distribution
+2) Density estimation improves as a function of the number of data points and
+   can be misleadingly smooth when the number of datapoints is small.
+
+In the case of standard vertical violins, `Geom.violin` draws the density
+estimate of `y` optionally grouped categorically by `x` and colored
+with `color`.  Alternatively, `width` can be supplied directly and will be
+used instead. See [`Stat.DensityStatistic`](@ref Gadfly.Stat.DensityStatistic)
+for details on optional parameters that can control the `bandwidth`, `kernel`,
+etc used.
+
+```@example
+using RDatasets, Gadfly
+
+df = dataset("ggplot2", "diamonds")
+
+p = plot(df, x=:Cut, y=:Carat, color=:Cut, Geom.violin())
+draw(SVG("diamonds_violin1.svg", 10cm, 8cm), p) # hide
+nothing # hide
+```
+![](diamonds_violin1.svg)
 """
 const violin = ViolinGeometry
 
