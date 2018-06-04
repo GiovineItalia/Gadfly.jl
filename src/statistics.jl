@@ -653,7 +653,7 @@ function apply_statistic(stat::DensityStatistic,
 
     for (idx, (keys, belongs)) in enumerate(grouped_data)
         input = getfield(aes, output_dims[2])[belongs]
-        window = stat.n > 1 ? KernelDensity.default_bandwidth(input)*stat.adjust : stat.bw
+        window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(input)*stat.adjust : stat.bw
         (stat.trim) && (boundary = extrema(input))
         kde_est = KernelDensity.kde(input, kernel=stat.kernel,
                                      boundary=boundary,
