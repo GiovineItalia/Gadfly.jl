@@ -21,6 +21,35 @@ end
 
 DensityGeometry(stat; order=1, tag=empty_tag) = DensityGeometry(stat, order, tag)
 
+"""
+   Geom.density(; bandwidth, adjust, kernel, trim, scale, position, orientation, order)
+
+Draws a kernel density estimate. This is a cousin of [`Geom.histogram`](@ref)
+that is especially useful when the datapoints originate from a underlying smooth
+distribution. Unlike histograms, density estimates do not suffer from edge
+effects from incorrect bin choices. Some caveats do apply:
+
+1) Plot components do not necessarily correspond to the raw datapoints, but
+   instead to the kernel density estimation of the underlying distribution
+2) Density estimation improves as a function of the number of data points and
+   can be misleadingly smooth when the number of datapoints is small.
+3) Results can be sensitive to the choise of `kernel` and `bandwidth`
+
+For horizontal histograms (default), `Geom.density` draws the kernel density
+estimate of `x` optionally grouped by `color`. If the `orientation=:vertical`
+flag is passed to the function, then densities will be computed along `y`. The
+estimates are normalized by default to have areas equal to 1, but this can
+changed by passing `scale=:count` to scale by the raw number of datapoints or
+`scale=:peak` to scale by the max height of the estimate. Additionally, multiple
+densities can be stacked using the `position=:stack` flag or the conditional
+density estimate can be drawn using `position=:fill`. See
+[`Stat.DensityStatistic`](@ref Gadfly.Stat.DensityStatistic) for details on
+optional parameters that can control the `bandwidth`, `kernel`, etc used.
+
+External links
+
+* [Kernel Density Estimation on Wikipedia](https://en.wikipedia.org/wiki/Kernel_density_estimation)
+"""
 const density = DensityGeometry
 
 element_aesthetics(::DensityGeometry) = Symbol[]
@@ -79,18 +108,11 @@ end
 Draws a violin plot which is a combination of [`Geom.density`](@ref) and
 [`Geom.boxplot`](@ref). This plot type is useful for comparing differences in
 the distribution of quantitative data between categories, especially when the
-data is non-normally distributed. As with [`Geom.density`](@ref) plots, there
-are a couple caveats:
-
-1) Plot components do not necessarily correspond to the raw datapoints, but
-   instead to the kernel density estimation of the underlying distribution
-2) Density estimation improves as a function of the number of data points and
-   can be misleadingly smooth when the number of datapoints is small.
+data is non-normally distributed. See [`Geom.density`](@ref) for some caveats.
 
 In the case of standard vertical violins, `Geom.violin` draws the density
 estimate of `y` optionally grouped categorically by `x` and colored
-with `color`.  Alternatively, `width` can be supplied directly and will be
-used instead. See [`Stat.DensityStatistic`](@ref Gadfly.Stat.DensityStatistic)
+with `color`.  See [`Stat.DensityStatistic`](@ref Gadfly.Stat.DensityStatistic)
 for details on optional parameters that can control the `bandwidth`, `kernel`,
 etc used.
 
