@@ -48,14 +48,10 @@ function deferred_label_context(geom::LabelGeometry,
     units = drawctx.units
     parent_box = drawctx.box
 
-    canvas_width, canvas_height = parent_box.a[1], parent_box.a[2]
-
     point_positions = Array{AbsoluteVec2}(0)
     for (x, y) in zip(aes.x, aes.y)
         x = Compose.resolve_position(parent_box, units, parent_transform, Compose.x_measure(x))
         y = Compose.resolve_position(parent_box, units, parent_transform, Compose.y_measure(y))
-        x -= parent_box.x0[1]
-        y -= parent_box.x0[2]
         push!(point_positions, (x, y))
     end
 
@@ -127,7 +123,7 @@ function deferred_label_context(geom::LabelGeometry,
     "Returns `true` if `a` is fully contained in plot window."
     plot_contains(a::Absolute2DBox) =
             0mm < a.x0[1] && a.x0[1] + a.a[1] < parent_box.a[1] &&
-            0mm < a.x0[2] - a.a[2] && a.x0[2] < parent_box.a[2]
+            0mm < a.x0[2] && a.x0[2] + a.a[2] < parent_box.a[2]
 
     # This variable holds the value of the objective function we wish to
     # minimize. A label overlap is a penalty of 1. Other penaties (out of bounds
@@ -240,8 +236,8 @@ function deferred_label_context(geom::LabelGeometry,
     end
 
     return compose!(context(),
-        (context(), text([point_positions[i][1] + parent_box.x0[1] for i in 1:num_labels],
-             [point_positions[i][2] + parent_box.x0[2] for i in 1:num_labels],
+        (context(), text([point_positions[i][1] for i in 1:num_labels],
+             [point_positions[i][2] for i in 1:num_labels],
              aes.label,
              [hcenter], [vcenter], [Rotation()],
              [(label_point_boxes[i].x0[1] - point_positions[i][1] + label_point_extents[i][1]/2,
