@@ -48,6 +48,14 @@ function deferred_label_context(geom::LabelGeometry,
     units = drawctx.units
     parent_box = drawctx.box
 
+    num_labels = length(aes.label)
+
+    if aes.size == nothing
+        padding = fill(theme.point_size, num_labels) .+ theme.label_padding
+    else
+        padding = aes.size .+ theme.label_padding
+    end
+
     point_positions = Array{AbsoluteVec2}(0)
     for (x, y) in zip(aes.x, aes.y)
         x = Compose.resolve_position(parent_box, units, parent_transform, Compose.x_measure(x))
@@ -60,17 +68,12 @@ function deferred_label_context(geom::LabelGeometry,
     # the first n values in label_point_{boxes,extents} correspond to the labels
     label_point_boxes = Absolute2DBox[]
     label_point_extents = AbsoluteVec2[]
-    for (point_position, (text_width, text_height)) in zip(point_positions, label_extents)
-        push!(label_point_boxes, Absolute2DBox(point_position, (text_width, text_height)))
+    for (point_position, pad, (text_width, text_height)) in
+            zip(point_positions, padding, label_extents)
+        push!(label_point_boxes, Absolute2DBox(
+                (point_position[1]-text_width/8, point_position[2]+pad),
+                (text_width, text_height)))
         push!(label_point_extents, AbsoluteVec2((text_width, text_height)))
-    end
-
-    num_labels = length(aes.label)
-
-    if aes.size == nothing
-        padding = fill(theme.point_size, num_labels) .+ theme.label_padding
-    else
-        padding = aes.size .+ theme.label_padding
     end
 
     # the second n values in label_point_{boxes,extents} correspond to the points
