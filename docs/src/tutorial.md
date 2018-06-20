@@ -9,7 +9,7 @@ graphics system for Julia. This tutorial will outline general usage
 patterns and will give you a feel for the overall system.
 
 To begin, we need some data. Gadfly works best when the data is supplied
-in a [DataFrame](https://juliastats.github.io/DataFrames.jl/stable/). In
+in a [DataFrame](https://juliadata.github.io/DataFrames.jl/stable/). In
 this tutorial, we'll pick and choose some examples from the
 [RDatasets](https://github.com/johnmyleswhite/RDatasets.jl) package.
 
