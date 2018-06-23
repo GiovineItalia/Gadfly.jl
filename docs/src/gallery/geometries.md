@@ -92,8 +92,9 @@ gridstack([p1 p2; p3 p4])
 ```@example
 using Gadfly, RDatasets, Distributions
 set_default_plot_size(21cm, 8cm)
-p1 = plot(dataset("ggplot2", "diamonds"), x="Price", Geom.density)
-p2 = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut", Geom.density)
+data = dataset("ggplot2", "diamonds")
+p1 = plot(data, x="Price", Geom.density)
+p2 = plot(data, x="Price", color="Cut", Geom.density)
 hstack(p1,p2)
 ```
 
@@ -102,11 +103,25 @@ using Gadfly, RDatasets, Distributions
 set_default_plot_size(14cm, 8cm)
 dist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])
 xs = rand(dist, 10^5)
-plot(layer(x=xs, Geom.density, Theme(default_color="orange")), 
+plot(layer(x=xs, Geom.density, Theme(default_color="orange")),
      layer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color="green")),
      layer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color="purple")),
      Guide.manual_color_key("bandwidth", ["auto", "bw=0.0003", "bw=0.25"],
                             ["orange", "green", "purple"]))
+```
+
+```@example
+using Gadfly, RDatasets
+set_default_plot_size(21cm, 8cm)
+data = dataset("ggplot2", "diamonds")
+p1 = plot(data, x=:Carat, color=:Cut, Geom.density(position=:stack), Guide.title("Loses marginal densities"))
+p2 = plot(data, x=:Carat, color=:Cut, Geom.density(position=:stack, scale=:count), Guide.title("Preserve marginal densities"))
+hstack(p1, p2)
+```
+
+```@example
+using Gadfly, RDatasets
+plot(dataset("ggplot2", "diamonds"), x=:Carat, color=:Cut, Geom.density(position=:fill), Guide.title("Conditional density estimate"), Coord.cartesian(ymax=1.0, xmax=5))
 ```
 
 
@@ -464,8 +479,8 @@ using Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
 
 coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)
-p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)), 
-          xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], 
+p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)),
+          xmin=[-2], xmax=[2], ymin=[-2], ymax=[2],
 # or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     
           Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),
           Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),
@@ -473,7 +488,7 @@ p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)),
           Guide.xlabel("x"), Guide.ylabel("y"), Guide.colorkey(title="z"))
 
 volcano = Matrix{Float64}(dataset("datasets", "volcano"))
-volc = volcano[1:4:end, 1:4:end] 
+volc = volcano[1:4:end, 1:4:end]
 coord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)
 p2 = plot(coord, z=volc, x=1.0:22, y=1.0:16,
           Geom.vectorfield(scale=0.05), Geom.contour(levels=7),
@@ -494,4 +509,18 @@ set_default_plot_size(14cm, 8cm)
 Dsing = dataset("lattice","singer")
 Dsing[:Voice] = [x[1:5] for x in Dsing[:VoicePart]]
 plot(Dsing, x=:VoicePart, y=:Height, color=:Voice, Geom.violin)
+```
+
+```@example
+using Gadfly, RDatasets
+set_default_plot_size(14cm, 8cm)
+tips = dataset("reshape2", "tips")
+plot(tips, x=:Day, y=:TotalBill, color=:Sex, Geom.violin(scale=:count), Scale.x_discrete(order=[3,4,2,1]))
+```
+
+```@example
+using Gadfly, RDatasets
+set_default_plot_size(12cm, 16cm)
+melanoma = dataset("mlmRev", "Mmmec")
+plot(melanoma, y=:Nation, x=:Deaths, color=:Nation, Geom.violin(orientation=:horizontal, scale=:count))
 ```

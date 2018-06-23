@@ -5,6 +5,8 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 # Version 0.7.1
 
   * `Geom.contour`: add support for `DataFrame` (#1150)
+  * `Geom.density`: add ability to use custom kernels and adds support for scaling, stacking, vertical orientation ([#1157](https://github.com/GiovineItalia/Gadfly.jl/pull/1157))
+  * `Geom.violin`: add ability to adjust scaling and bandwidth and support for horizontal and split violins ([#1157](https://github.com/GiovineItalia/Gadfly.jl/pull/1157))
 
 # Version 0.7.0
 
@@ -23,7 +25,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 # Version 0.6.4
 
   * Regression testing tools (#1020)
-  
+
 # Version 0.6.3
 
   * Wide format data (#1013)
@@ -214,5 +216,3 @@ Each release typically has a number of minor bug fixes beyond what is listed her
     keys are wrapped automatically.
 
   * Default Theme changes.
-
-

@@ -413,3 +413,79 @@ function inherit!(a::Aesthetics, b::Aesthetics;
     end
     nothing
 end
+
+"""
+    groupby(aes, by, togroupvar)
+
+Given aesthetics to group with, `by`, and an aesthetic to group `togroupvar`
+this function constructs a dictionary that maps each given combination of the
+`by` aesthetics to the positions which they apply to. Thus the output is a
+dictionary of tuples of each unique combination of `by` mapped to a boolean
+array of length `n` where `n` is the length of the aesthetics (they have to all
+have the same length). If the provided aesthetics are missing, a placeholder
+`nothing` is return instead of the unique value.
+
+## Examples
+
+```jldoctest
+using Gadfly
+aes = Gadfly.Aesthetics()
+aes.x = repeat([1, 2], inner=3)
+aes.y = collect(1:6)
+
+Gadfly.groupby(aes, [:x, :color], :y)
+
+# output
+
+DataStructures.OrderedDict{Tuple{Int64,Void},Array{Bool,1}} with 2 entries:
+  (1, nothing) => Bool[true, true, true, false, false, false]
+  (2, nothing) => Bool[false, false, false, true, true, true]
+```
+
+```jldoctest
+using Gadfly
+aes = Gadfly.Aesthetics()
+aes.x = repeat([:a, :b], inner=2)
+aes.y = collect(1:4)
+aes.color = repeat([colorant"red", colorant"blue"], inner=2)
+
+Gadfly.groupby(aes, [:x, :color], :y)
+
+# output
+
+DataStructures.OrderedDict{Tuple{Symbol,ColorTypes.RGB{FixedPointNumbers.Normed{UInt8,8}}},Array{Bool,1}} with 2 entries:
+  (:a, RGB{N0f8}(1.0,0.0,0.0)) => Bool[true, true, false, false]
+  (:b, RGB{N0f8}(0.0,0.0,1.0)) => Bool[false, false, true, true]
+```
+
+"""
+function groupby(aes::Gadfly.Aesthetics, by::Vector{Symbol}, togroupvar::Symbol)
+    types = fill(Nothing, length(by))
+    isconcrete = fill(false, length(by))
+    for i in 1:length(by)
+        isconcrete[i] = getfield(aes, by[i]) != nothing
+        (!isconcrete[i]) && continue
+        types[i] = eltype(getfield(aes, by[i]))
+        @assert length(getfield(aes, togroupvar)) == length(getfield(aes, by[i])) "$togroupvar and $(by[i]) aesthetics must have same length"
+    end
+
+    grouped = DataStructures.OrderedDict{Tuple{types...}, Vector{Bool}}()
+
+    # gather options for each `by` aesthetic
+    opt = [if isconcrete[i] unique(getfield(aes, by[i])) else [nothing] end for i in 1:length(by)]
+
+    # The approach is to identify positions were multiple by aesthetics overlap
+    # and thus grouping the data positions. We first assume that all positions
+    # belong to a combination of aesthetics and then whittle it down
+    for combo in IterTools.product(opt...)
+        belongs = fill(true, length(getfield(aes, togroupvar)))
+        for i in 1:length(combo)
+            (combo[i] == nothing) && continue
+            belongs .&= getfield(aes, by[i]) .== combo[i]
+        end
+        # for multiple by variables we need to check whether there is any overlap
+        # between this specific combo before adding it to the dict
+        (any(belongs)) && (grouped[combo] = belongs)
+    end
+    grouped
+end
