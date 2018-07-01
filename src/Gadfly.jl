@@ -637,19 +637,34 @@ function render_prepare(plot::Plot)
     layer_aess = Scale.apply_scales(IterTools.distinct(values(scales)),
                                     datas..., subplot_datas...)
 
-    # set default labels
-    for (i, layer) in enumerate(plot.layers)
-        if layer_aess[i].color_key_title == nothing &&
-           haskey(layer.mapping, :color) &&
-           !isa(layer.mapping[:color], AbstractArray)
-           layer_aess[i].color_key_title = string(layer.mapping[:color])
-       end
+    # set defaults for key titles
+    keyvars = [:color, :shape]
+    for (i, layer) in enumerate(plot.layers) 
+        for kv in keyvars    
+            fflag = (getfield(layer_aess[i], Symbol(kv,"_key_title")) == nothing) && haskey(layer.mapping, kv) && !isa(layer.mapping[kv], AbstractArray)    
+            fflag && setfield!(layer_aess[i], Symbol(kv,"_key_title"), string(layer.mapping[kv]))
+        end
     end
 
-    if layer_aess[1].color_key_title == nothing &&
-       haskey(plot.mapping, :color) && !isa(plot.mapping[:color], AbstractArray)
-        layer_aess[1].color_key_title = string(plot.mapping[:color])
+    for kv in keyvars    
+        fflag = (getfield(layer_aess[1], Symbol(kv,"_key_title")) == nothing) && haskey(plot.mapping, kv) && !isa(plot.mapping[kv], AbstractArray) 
+        fflag && setfield!(layer_aess[1], Symbol(kv,"_key_title"), string(plot.mapping[kv]))
     end
+
+    # Auto-update color scale if shape==color
+    catdatas = vcat(datas, subplot_datas)
+    shapev = getfield.(catdatas, :shape)
+    di = (shapev.!=nothing) .& (shapev.== getfield.(catdatas, :color))
+
+    supress_colorkey = false
+    for (aes, data) in zip(layer_aess[di], catdatas[di])
+        aes.shape_key_title==nothing && (aes.shape_key_title=aes.color_key_title="Shape") 
+        colorf = scales[:color].f
+        scales[:color] =  Scale.color_discrete(colorf, levels=scales[:shape].levels, order=scales[:shape].order)
+        Scale.apply_scale(scales[:color], [aes], Gadfly.Data(color=getfield(data,:color))  )     
+        supress_colorkey=true
+    end
+
 
     # IIa. Layer-wise statistics
     if !facet_plot
@@ -664,20 +679,25 @@ function render_prepare(plot::Plot)
     Stat.apply_statistics(statistics, scales, coord, plot_aes)
 
     # Add some default guides determined by defined aesthetics
-    supress_colorkey = false
+    keytypes = [Guide.ColorKey, Guide.ShapeKey]
+    supress_keys = false
     for layer in plot.layers
-        if isa(layer.geom, Geom.SubplotGeometry) &&
-                haskey(layer.geom.guides, Guide.ColorKey)
-            supress_colorkey = true
+        if isa(layer.geom, Geom.SubplotGeometry) && any(haskey.(layer.geom.guides, keytypes))
+            supress_keys = true
             break
         end
     end
 
-    if !supress_colorkey &&
-       !all([aes.color === nothing for aes in [plot_aes, layer_aess...]]) &&
-       !in(Guide.ColorKey, explicit_guide_types) &&
-       !in(Guide.ManualColorKey, explicit_guide_types)
-        push!(guides, Guide.colorkey())
+    if supress_colorkey
+        deleteat!(keytypes, 1)
+        deleteat!(keyvars, 1)
+    end
+
+    if !supress_keys
+        for (KT, kv) in zip(keytypes, keyvars)
+            fflag = !all([getfield(aes, kv)==nothing for aes in [plot_aes, layer_aess...]])
+            fflag && !in(KT, explicit_guide_types) &&  push!(guides, KT())
+        end
     end
 
     # build arrays of scaled aesthetics for layers within subplots

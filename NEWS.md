@@ -3,8 +3,8 @@ This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
 # Version 0.7.1
-
-  * `Geom.contour`: add support for `DataFrame` (#1150)
+  * Add `Guide.shapekey` (#1156)
+  * `Geom.contour`: add support for `DataFrame` (#1150) 
 
 # Version 0.7.0
 

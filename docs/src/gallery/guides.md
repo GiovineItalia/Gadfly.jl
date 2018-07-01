@@ -50,6 +50,23 @@ plot(pointLayer, lineLayer,
 ```
 
 
+## [`Guide.shapekey`](@ref)
+
+```@example
+using Compose, Gadfly, RDatasets
+set_default_plot_size(16cm, 8cm)
+Dsleep = dataset("ggplot2", "msleep")
+Dsleep = dropmissing!(Dsleep[[:Vore, :Name,:BrainWt,:BodyWt, :SleepTotal]])
+Dsleep[:SleepTime] = Dsleep[:SleepTotal] .> 8
+plot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:Vore, shape=:SleepTime,
+    Guide.colorkey(pos=[0.05w, -0.25h]),
+    Guide.shapekey(title="Sleep (hrs)", labels=[">8","≤8"], pos=[0.18w,-0.315h]),
+    Scale.x_log10, Scale.y_log10,
+    Theme(point_size=2mm, key_swatch_color="slategrey", 
+            point_shapes=[Shape.utriangle, Shape.dtriangle]) )
+```
+
+
 ## [`Guide.title`](@ref)
 
 ```@example

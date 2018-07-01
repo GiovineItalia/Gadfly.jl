@@ -60,6 +60,7 @@ const NumericalAesthetic =
     color_key_continuous, Maybe(Bool)
     color_function,       Maybe(Function)
     titles,               Maybe(Dict{Symbol, AbstractString})
+    shape_key_title,    Maybe(AbstractString)
 
     # mark some ticks as initially invisible
     xtickvisible,         Maybe(Vector{Bool})
@@ -83,6 +84,7 @@ const NumericalAesthetic =
     color_label,  Function, showoff
     xgroup_label, Function, showoff
     ygroup_label, Function, showoff
+    shape_label, Function, showoff
 
     # pseudo-aesthetics
     pad_categorical_x, Nullable{Bool}, Nullable{Bool}()

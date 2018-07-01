@@ -175,6 +175,12 @@ end
     # Shape used in color keys for color swatches. Either :square or :circle.
     colorkey_swatch_shape, Symbol,          :square
 
+    # Shape used in keys for swatches.
+    key_swatch_shape,       Function,        Shape.square
+
+    # Default color used in keys for swatches.
+    key_swatch_color,       ColorOrNothing,        nothing
+
     # One of :left, :right, :top, :bottom, :inside, :none determining where color keys
     # and the like should be placed.
     key_position,          Symbol,          :right

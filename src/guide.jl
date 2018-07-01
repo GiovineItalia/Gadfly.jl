@@ -366,7 +366,7 @@ function render_continuous_color_key(colors::Dict,
 end
 
 
-function render_colorkey_title(title::AbstractString, theme::Gadfly.Theme)
+function render_key_title(title::AbstractString, theme::Gadfly.Theme)
     title_width, title_height = max_text_extents(theme.key_title_font,
                                                  theme.key_title_font_size,
                                                  title)
@@ -443,7 +443,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         pretty_labels[color] = join(labels[color], ", ")
     end
 
-    title_context, title_width = render_colorkey_title(guide_title, theme)
+    title_context, title_width = render_key_title(guide_title, theme)
 
     theme.colorkey_swatch_shape != :circle && theme.colorkey_swatch_shape != :square &&
             error("$(theme.colorkey_swatch_shape) is not a valid color key swatch shape")
@@ -523,7 +523,7 @@ function render(guide::ManualColorKey, theme::Gadfly.Theme,
         guide_title = "Color"
     end
 
-    title_context, title_width = render_colorkey_title(guide_title, theme)
+    title_context, title_width = render_key_title(guide_title, theme)
 
     labels = OrderedDict{Color, AbstractString}()
     for (c, l) in zip(guide.colors, guide.labels)
@@ -1252,6 +1252,9 @@ function render(guide::Annotation, theme::Gadfly.Theme,
     ctx = compose(context(), svgclass("geometry"), guide.ctx)
     return [PositionedGuide([ctx], 0, over_guide_position)]
 end
+
+
+include("guide/keys.jl")
 
 
 end # module Guide
