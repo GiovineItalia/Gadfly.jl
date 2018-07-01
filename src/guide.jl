@@ -181,7 +181,7 @@ const colorkey = ColorKey
 # A helper for render(::ColorKey) for rendering guides for discrete color
 # scales.
 function render_discrete_color_key(colors::Vector{C},
-                         labels::OrderedDict{Color, AbstractString},
+                         labels::OrderedDict{C, AbstractString},
                          aes_color_label,
                          title_ctx::Context,
                          title_width::Measure,
@@ -492,11 +492,17 @@ end
 
 struct ManualColorKey{C<:Color} <: Gadfly.GuideElement
     title::Union{AbstractString, (Void)}
-    labels::Vector{AbstractString}
-    colors::Vector{C}
+    labels::OrderedDict{C, AbstractString}
 end
-ManualColorKey(title, labels, colors::Vector{C}) where {C<:Color} =
-        ManualColorKey{C}(title, labels, colors)
+function ManualColorKey(title, labels, colors::Vector{C}) where {C<:Color}
+    labeldict = OrderedDict{C, AbstractString}()
+    # ensure uniqueness of colors, fixes #1170
+    for (c, l) in zip(colors, labels)
+        haskey(labeldict, c) && error("Colors should not appear more than once")
+        labeldict[c] = l
+    end
+    ManualColorKey(title, labeldict)
+end
 ManualColorKey(title, labels, colors) =
         ManualColorKey(title, labels, Gadfly.parse_colorant(colors))
 
@@ -525,12 +531,7 @@ function render(guide::ManualColorKey, theme::Gadfly.Theme,
 
     title_context, title_width = render_key_title(guide_title, theme)
 
-    labels = OrderedDict{Color, AbstractString}()
-    for (c, l) in zip(guide.colors, guide.labels)
-        labels[c] = l
-    end
-
-    ctxs = render_discrete_color_key(guide.colors, labels, nothing, title_context, title_width, theme)
+    ctxs = render_discrete_color_key(collect(keys(guide.labels)), guide.labels, nothing, title_context, title_width, theme)
 
     position = right_guide_position
     if theme.key_position == :left
