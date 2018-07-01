@@ -263,7 +263,7 @@ const ElementOrFunctionOrLayers = Union{ElementOrFunction, Vector{Layer}}
     plot(data_source::Union{AbstractMatrix, AbstractDataFrame},
          elements::ElementOrFunctionOrLayers...; mapping...) -> Plot
 
-Create a new plot by specifying a `data_source`, one or more plot `elements`
+Create a new plot by specifying a `data_source`, zero or more `elements`
 ([Scales](@ref lib_scale), [Statistics](@ref lib_stat), [Coordinates](@ref
 lib_coord), [Geometries](@ref lib_geom), [Guides](@ref lib_guide),
 [Themes](@ref), and/or [Layers](@ref)), and a `mapping` of aesthetics to
@@ -272,11 +272,12 @@ columns or expressions of the data.
 # Examples
 
 ```
-my_data = DataFrame(time=1917:2018, price=1.02.^(0:101))
-plot(my_data, Geom.line, x=:time, y=:price)
+my_frame = DataFrame(time=1917:2018, price=1.02.^(0:101))
+plot(my_frame, x=:time, y=:price, Geom.line)
 
-# or equivalently:
-plot(Geom.line, x=collect(1917:2018), y=1.02.^(0:101))
+my_matrix = [1917:2018 1.02.^(0:101)]
+plot(my_matrix, x=Col.value(1), y=Col.value(2), Geom.line,
+     Guide.xlabel("time"), Guide.ylabel("price"))
 ```
 """
 function plot(data_source::Union{AbstractArray, AbstractDataFrame},
@@ -287,6 +288,18 @@ end
 
 """
     plot(elements::ElementOrFunctionOrLayers...; mapping...) -> Plot
+
+Create a new plot of the vectors in 'mapping'.  Optional `elements`
+([Scales](@ref lib_scale), [Statistics](@ref lib_stat), [Coordinates](@ref
+lib_coord), [Geometries](@ref lib_geom), [Guides](@ref lib_guide),
+[Themes](@ref), and/or [Layers](@ref)) control the layout, labelling, and
+transformation of the data.
+
+# Examples
+
+```
+plot(x=collect(1917:2018), y=1.02.^(0:101), Geom.line)
+```
 """
 function plot(elements::ElementOrFunctionOrLayers...; mapping...)
     mappingdict = Dict{Symbol, Any}(mapping)
