@@ -209,8 +209,8 @@ fig1 = hstack(fig1a, fig1b)
 ```
 
 Ultimately this will make more complex visualizations easier to build. For
-example, facets, plots within plots, and so on. See [Layers and
-Stacks](@ref) for more details.
+example, facets, plots within plots, and so on. See [Compositing](@ref) for
+more details.
 
 ## Interactivity
 
