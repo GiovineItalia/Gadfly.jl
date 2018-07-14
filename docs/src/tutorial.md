@@ -197,7 +197,7 @@ mixing of absolute and relative units and complex coordinate transforms.  The
 primary backend is a native [SVG](https://www.w3.org/Graphics/SVG/) generator
 (almost native: it uses [pango](https://www.pango.org/) to precompute text
 extents), though there is also a [Cairo](https://cairographics.org/) backend.
-See [Backends](@ref) for more details.
+See [Available backends](@ref) for more details.
 
 Building graphics declaratively let's you do some fun things. Like stick two
 plots together:
