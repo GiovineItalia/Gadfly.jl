@@ -109,7 +109,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
                              for c in keys(xs)], geom.tag))
         cs = collect(keys(xs))
         if geom.fill
-            compose!(ctx, fill(cs),
+            compose!(ctx, fill([theme.lowlight_color(c) for c in cs]),
                      stroke(map(theme.discrete_highlight_color, cs)))
         else
             compose!(ctx, fill(nothing), stroke(cs))

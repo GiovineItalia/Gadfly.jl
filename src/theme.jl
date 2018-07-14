@@ -173,11 +173,9 @@ $(FIELDS)
     "Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)"
     continuous_highlight_color,     Function,        default_continuous_highlight_color
 
-    "Color used to draw background geometry, such as `Geom.ribbon`. This is a function that alters the fill color of the geometry.  (Function)"
+    "Color used to draw background geometry, such as `Geom.ribbon` and `Geom.polygon`. This is a function that alters the fill color of the geometry.  (Function)"
     lowlight_color,        Function,        default_lowlight_color
 
-    "Opacity of background geometry such as [`Geom.ribbon`](@ref).  (Float64)"
-    lowlight_opacity,      Float64,         0.6
 
     "Color altering function used to draw the midline in boxplots. (Function)"
     middle_color,          Function,        default_middle_color
@@ -406,3 +404,99 @@ end
 A light foreground on a dark background.
 """
 get_theme(::Val{:dark}) = dark_theme
+
+
+
+# Outer constructor for Theme argument depwarns
+
+function Theme(;
+    default_color=LCHab(70, 60, 240),
+    point_size=0.9mm,
+    point_size_min=0.45mm,
+    point_size_max=1.8mm,
+    point_shapes=[Shape.circle, Shape.square, Shape.diamond, Shape.cross, Shape.xcross, Shape.utriangle, Shape.dtriangle, Shape.star1, Shape.star2, Shape.hexagon, Shape.octagon, Shape.hline, Shape.vline],
+    line_width=0.3mm,
+    line_style=:solid,
+    panel_fill=nothing,
+    panel_stroke=nothing,
+    panel_opacity=1.0,
+    background_color=nothing,
+    plot_padding=[5mm],
+    grid_color=colorant"#D0D0E0",
+    grid_line_style=[0.5mm, 0.5mm],
+    grid_color_focused=colorant"#A0A0A0",
+    grid_line_width=0.2mm,
+    minor_label_font=label_font_desc,
+    minor_label_font_size=8pt,
+    minor_label_color=colorant"#6c606b",
+    major_label_font=title_font_desc,
+    major_label_font_size=11pt,
+    major_label_color=colorant"#564a55",
+    point_label_font=label_font_desc,
+    point_label_font_size=8pt,
+    point_label_color=colorant"#4c404b",
+    key_title_font=title_font_desc,
+    key_title_font_size=11pt,
+    key_title_color=colorant"#362a35",
+    key_label_font=title_font_desc,
+    key_label_font_size=8pt,
+    key_label_color=colorant"#4c404b",
+    key_color_gradations=40,
+    bar_spacing=-0.05mm,
+    boxplot_spacing=1mm,
+    errorbar_cap_length=3mm,
+    stroke_color=default_stroke_color,
+    highlight_width=0.3mm,
+    discrete_highlight_color=default_discrete_highlight_color,
+    continuous_highlight_color=default_continuous_highlight_color,
+    lowlight_color=default_lowlight_color,
+    lowlight_opacity=NaN,
+    middle_color=default_middle_color,
+    middle_width=0.6mm,
+    guide_title_position=:left,
+    colorkey_swatch_shape=:square,
+    key_swatch_shape=Shape.square,
+    key_swatch_color=nothing,  
+    key_position=:right,
+    bar_highlight=nothing,
+    rug_size=2.0mm,
+    label_placement_iterations=1000,
+    label_out_of_bounds_penalty=10.0,
+    label_hidden_penalty=0.5,
+    label_visibility_flip_pr=0.2,
+    label_padding=1mm,
+    key_max_columns=4,
+    discrete_color_scale=Scale.color_discrete(),
+    continuous_color_scale=Scale.color_continuous()
+)
+    
+    isfinite(lowlight_opacity) && Base.depwarn("The keyword argument `lowlight_opacity` has been deprecated, and never worked anyway!", :Theme)
+    
+return Theme(default_color==nothing ? nothing : parse_colorant(default_color), 
+    point_size, point_size_min, point_size_max, point_shapes, line_width, line_style, 
+    panel_fill==nothing ? nothing : parse_colorant(panel_fill), 
+    panel_stroke==nothing ? nothing : parse_colorant(panel_stroke), 
+    panel_opacity,
+    background_color==nothing ? nothing : parse_colorant(background_color), 
+    plot_padding, 
+    grid_color==nothing ? nothing : parse_colorant(grid_color), 
+    grid_line_style, 
+    grid_color_focused==nothing ? nothing : parse_colorant(grid_color_focused), 
+    grid_line_width, minor_label_font, minor_label_font_size, 
+    minor_label_color==nothing ? nothing : parse_colorant(minor_label_color), 
+    major_label_font, major_label_font_size, 
+    major_label_color==nothing ? nothing : parse_colorant(major_label_color),
+    point_label_font, point_label_font_size, 
+    point_label_color==nothing ? nothing : parse_colorant(point_label_color), 
+    key_title_font, key_title_font_size, 
+    key_title_color==nothing ? nothing : parse_colorant(key_title_color),
+     key_label_font, key_label_font_size, 
+    key_label_color==nothing ? nothing : parse_colorant(key_label_color), 
+    key_color_gradations, bar_spacing, boxplot_spacing, errorbar_cap_length, stroke_color, highlight_width, discrete_highlight_color, continuous_highlight_color, 
+    lowlight_color, middle_color, middle_width, guide_title_position, colorkey_swatch_shape, key_swatch_shape, 
+    key_swatch_color==nothing ? nothing : parse_colorant(key_swatch_color), 
+    key_position, bar_highlight, 
+    rug_size, label_placement_iterations, label_out_of_bounds_penalty, label_hidden_penalty, label_visibility_flip_pr, label_padding, key_max_columns,
+    discrete_color_scale, continuous_color_scale)
+end
+
