@@ -18,6 +18,13 @@ macro varset(name::Symbol, table)
             continue
         end
 
+        if isa(row, Expr) && isa(row.args[1], Expr)
+            docstr = row.args[2]
+            row = row.args[3]
+        else
+            docstr = ""
+        end
+
         if isa(row, Symbol)
             var = row
             typ = :Any
@@ -28,10 +35,11 @@ macro varset(name::Symbol, table)
             typ = row.args[2]
             default = length(row.args) > 2 ? row.args[3] : :nothing
         else
-            error("Bad varset syntax")
+            error("Bad varset syntax ", row)
         end
 
         push!(names, var)
+        isempty(docstr) || push!(vars, :($(docstr)))
         push!(vars, :($(var)::$(typ)))
         push!(parameters, Expr(:kw, var, default))
         push!(inherit_parameters, Expr(:kw, var, :(b.$var)))
@@ -47,7 +55,7 @@ macro varset(name::Symbol, table)
 
     ex =
     quote
-        mutable struct $(name)
+        Base.@__doc__ mutable struct $(name)
             $(vars...)
         end
 
