@@ -13,7 +13,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Gadfly.jl",
     "category": "section",
-    "text": "Gadfly is a system for plotting and visualization written in Julia. It is based largely on Hadley Wickhams\'s ggplot2 for R and Leland Wilkinson\'s book The Grammar of Graphics. It was Daniel C. Jones\' brainchild and is now maintained by the community."
+    "text": "Gadfly is a system for plotting and visualization written in Julia. It is based largely on Hadley Wickhams\'s ggplot2 for R and Leland Wilkinson\'s book The Grammar of Graphics. It was Daniel C. Jones\' brainchild and is now maintained by the community. Please consider citing it if you use it in your work."
 },
 
 {
@@ -21,23 +21,15 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Package features",
     "category": "section",
-    "text": "Renders publication quality graphics to SVG, PNG, Postscript, and PDF\nIntuitive and consistent plotting interface\nWorks with IJulia out of the box\nTight integration with DataFrames.jl\nInteractivity like panning, zooming, toggling powered by Snap.svg\nSupports a large number of common plot types"
+    "text": "Renders publication quality graphics to SVG, PNG, Postscript, and PDF\nIntuitive and consistent plotting interface\nWorks with Jupyter notebooks via IJulia out of the box\nTight integration with DataFrames.jl\nInteractivity like panning, zooming, toggling powered by Snap.svg\nSupports a large number of common plot types"
 },
 
 {
-    "location": "index.html#Quickstart-1",
+    "location": "index.html#Installation-1",
     "page": "Home",
-    "title": "Quickstart",
+    "title": "Installation",
     "category": "section",
-    "text": "The latest release of Gadfly can be installed from the Julia REPL prompt withjulia> Pkg.add(\"Gadfly\")This installs the package and any missing dependencies. Gadfly can be loaded withjulia> using GadflyNow that you have it loaded, check out the Tutorial for a tour of basic plotting and the various manual pages for more advanced usages."
-},
-
-{
-    "location": "index.html#Credits-1",
-    "page": "Home",
-    "title": "Credits",
-    "category": "section",
-    "text": "Gadfly is predominantly the work of Daniel C. Jones who initiated the project and built out most of the infrastructure.  It is now maintained by a community of volunteers.  Please consider citing it if you use it in your work."
+    "text": "The latest release of Gadfly can be installed from the Julia REPL prompt withjulia> Pkg.add(\"Gadfly\")This installs the package and any missing dependencies.  From there, the simplest of plots can be rendered to your default internet browser withjulia> using Gadfly\njulia> plot(y=[1,2,3])Now that you have it installed, check out the Tutorial for a tour of basic plotting and the various manual pages for more advanced usages."
 },
 
 {
@@ -53,7 +45,23 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Tutorial",
     "category": "section",
-    "text": "Gadfly is an implementation of a \"grammar of graphics\" style statistical graphics system for Julia. This tutorial will outline general usage patterns and will give you a feel for the overall system.To begin, we need some data. Gadfly works best when the data is supplied in a DataFrame. In this tutorial, we\'ll pick and choose some examples from the RDatasets package.Let us use Fisher\'s iris dataset as a starting point.using Gadfly\nusing RDatasets\n\niris = dataset(\"datasets\", \"iris\")\nnothing # hideThe plot function in Gadfly is of the form:plot(data::DataFrame, mapping::Dict, elements::Element...)The first argument is the data to be plotted, the second is a dictionary mapping \"aesthetics\" to columns in the data frame, and this is followed by some number of elements, which are the nouns and verbs, so to speak, that form the grammar.Let\'s get to it.p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point);\nnothing # hideThis produces a Plot object. It can be saved to a file by drawing to one or more backends using draw.img = SVG(\"iris_plot.svg\", 6inch, 4inch)\ndraw(img, p)Now we have the following charming little SVG image.p # hideIf you are working at the REPL, a quicker way to see the image is to omit the semi-colon trailing plot.  This automatically renders the image to your default multimedia display, typically an internet browser.  No need to capture the output argument in this case.plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)Alternatively one can manually call display on a Plot object.  This workflow is necessary when display would not otherwise be called automatically.function get_to_it(d)\n  ppoint = plot(d, x=:SepalLength, y=:SepalWidth, Geom.point)\n  pline = plot(d, x=:SepalLength, y=:SepalWidth, Geom.line)\n  ppoint, pline\nend\nps = get_to_it(iris)\nmap(display, ps)For the rest of the demonstrations, we\'ll simply omit the trailing semi-colon for brevity.In this plot we\'ve mapped the x aesthetic to the SepalLength column and the y aesthetic to the SepalWidth. The last argument, Geom.point, is a geometry element which takes bound aesthetics and renders delightful figures. Adding other geometries produces layers, which may or may not result in a coherent plot.plot(iris, x=:SepalLength, y=:SepalWidth,\n         Geom.point, Geom.line)This is the grammar of graphics equivalent of \"colorless green ideas sleep furiously\". It is valid grammar, but not particularly meaningful."
+    "text": "Gadfly is an implementation of a \"grammar of graphics\" style statistical graphics system for Julia. This tutorial will outline general usage patterns and will give you a feel for the overall system.To begin, we need some data. Gadfly can work with data supplied as either a DataFrame or as plain AbstractArrays. In this tutorial, we\'ll pick and choose some examples from the RDatasets package.Let us use Fisher\'s iris dataset as a starting point.using Gadfly, RDatasets\niris = dataset(\"datasets\", \"iris\")\nset_default_plot_size(14cm, 8cm) # hide\nnothing # hideRow SepalLength SepalWidth PetalLength PetalWidth Species\n1 5.1 3.5 1.4 0.2 setosa\n2 4.9 3.0 1.4 0.2 setosa\n3 4.7 3.2 1.3 0.2 setosa\n4 4.6 3.1 1.5 0.2 setosa\n5 5.0 3.6 1.4 0.2 setosa\n6 5.4 3.9 1.7 0.4 setosa\n... ... ... ... ... ..."
+},
+
+{
+    "location": "tutorial.html#DataFrames-1",
+    "page": "Tutorial",
+    "title": "DataFrames",
+    "category": "section",
+    "text": "When used with a DataFrame, the plot function in Gadfly is of the form:plot(data::AbstractDataFrame, elements::Element...; mapping...)The first argument is the data to be plotted and the keyword arguments at the end map \"aesthetics\" to columns in the data frame.  All input arguments between data and mapping are some number of \"elements\", which are the nouns and verbs, so to speak, that form the grammar.Let\'s get to it.p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point);\nnothing # hideFirst note that we\'ve taken advantage of the flexibility of Julia\'s handling of function signatures and put the keyword arguments in the midst of the positional arguments.  This is purely for ease of reading.The example above produces a Plot object. It can be saved to a file by drawing to one or more backends using draw.img = SVG(\"iris_plot.svg\", 14cm, 8cm)\ndraw(img, p)\nnothing # hideNow we have the following charming little SVG image.p # hideIf you are working at the REPL, a quicker way to see the image is to omit the semi-colon trailing plot.  This automatically renders the image to your default multimedia display, typically an internet browser.  No need to capture the output argument in this case.plot(iris, x=:SepalLength, y=:SepalWidth)Note that Geom.point will be automatically supplied if no other geometries are given.Alternatively one can manually call display on a Plot object.  This workflow is necessary when display would not otherwise be called automatically.function get_to_it(d)\n  ppoint = plot(d, x=:SepalLength, y=:SepalWidth, Geom.point)\n  pline = plot(d, x=:SepalLength, y=:SepalWidth, Geom.line)\n  ppoint, pline\nend\nps = get_to_it(iris)\nmap(display, ps)For the rest of the demonstrations, we\'ll simply omit the trailing semi-colon for brevity.In this plot we\'ve mapped the x aesthetic to the SepalLength column and the y aesthetic to the SepalWidth. The last argument, Geom.point, is a geometry element which takes bound aesthetics and renders delightful figures. Adding other geometries produces layers, which may or may not result in a coherent plot.plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point, Geom.line)This is the grammar of graphics equivalent of \"colorless green ideas sleep furiously\". It is valid grammar, but not particularly meaningful."
+},
+
+{
+    "location": "tutorial.html#Arrays-1",
+    "page": "Tutorial",
+    "title": "Arrays",
+    "category": "section",
+    "text": "If by chance your data are stored in Arrays instead of a DataFrame, fear not, identical plots can be created using an alternate plot signature:plot(elements::Element...; aesthetics...)Here, the keyword arguments directly supply the data to be plotted, instead of using them to indicate which columns of a DataFrame to use.SepalLength = iris[:SepalLength]\nSepalWidth = iris[:SepalWidth]\nplot(x=SepalLength, y=SepalWidth, Geom.point,\n     Guide.xlabel(\"SepalLength\"), Guide.ylabel(\"SepalWidth\"))\nnothing # hideNote that with the Array interface, extra elements must be included to specify the axis labels, whereas with a DataFrame they default to the column names."
 },
 
 {
@@ -61,7 +69,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Color",
     "category": "section",
-    "text": "Let\'s do add something meaningful by mapping the color aesthetic.plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,\n         Geom.point)Ah, a scientific discovery: Setosa has short but wide sepals!Color scales in Gadfly by default are produced from perceptually uniform colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and converts arbitrarily between these. Of course, CSS/X11 named colors work too: \"old lace\", anyone?"
+    "text": "Let\'s do add something meaningful by mapping the color aesthetic.plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species, Geom.point);\n\n# or equivalently for Arrays:\nSepalLength = iris[:SepalLength] # hide\nSepalWidth = iris[:SepalWidth] # hide\nColor = iris[:Species]\nplot(x=SepalLength, y=SepalWidth, color=Color, Geom.point,\n     Guide.xlabel(\"SepalLength\"), Guide.ylabel(\"SepalWidth\"),\n     Guide.colorkey(title=\"Species\"))Ah, a scientific discovery: Setosa has short but wide sepals!Color scales in Gadfly by default are produced from perceptually uniform colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and converts arbitrarily between these. Of course, CSS/X11 named colors work too: \"old lace\", anyone?"
 },
 
 {
@@ -69,7 +77,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Scale transforms",
     "category": "section",
-    "text": "Scale transforms also work as expected. Let\'s look at some data where this is useful.mammals = dataset(\"MASS\", \"mammals\")\nplot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)This is no good, the large animals are ruining things for us. Putting both axis on a log-scale clears things up.plot(mammals, x=:Body, y=:Brain, label=:Mammal,\n         Geom.point, Geom.label, Scale.x_log10, Scale.y_log10)"
+    "text": "Scale transforms also work as expected. Let\'s look at some data where this is useful.mammals = dataset(\"MASS\", \"mammals\")\nplot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)This is no good, the large animals are ruining things for us. Putting both axes on a log-scale clears things up.plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label,\n     Scale.x_log10, Scale.y_log10)"
 },
 
 {
@@ -77,7 +85,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Discrete scales",
     "category": "section",
-    "text": "Since all continuous analysis is just degenerate discrete analysis, let\'s take a crack at the latter using some fuel efficiency data.gasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of the elements in the grammar: we\'ve omitted Scale.x_continuous and Scale.y_continuous in the previous plots, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel, and so on. As much as possible the system tries to fill in the gaps with reasonable defaults."
+    "text": "Since all continuous analysis is just degenerate discrete analysis, let\'s take a crack at the latter using some fuel efficiency data.gasoline = dataset(\"Ecdat\", \"Gasoline\")\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of the elements in the grammar: we\'ve omitted Scale.x_continuous and Scale.y_continuous in the previous plots, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel, and so on. As much as possible the system tries to fill in the gaps with reasonable defaults."
 },
 
 {
@@ -85,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Rendering",
     "category": "section",
-    "text": "Gadfly uses a custom graphics library called Compose, which is an attempt at a more elegant, purely functional take on the R grid package. It allows mixing of absolute and relative units and complex coordinate transforms. The primary backend is a native SVG generator (almost native: it uses pango to precompute text extents), though there is also a Cairo backend. See Backends for more details.Building graphics declaratively let\'s you do some fun things. Like stick two plots together:fig1a = plot(iris, x=\"SepalLength\", y=\"SepalWidth\", Geom.point)\nfig1b = plot(iris, x=\"SepalWidth\", Geom.bar)\nfig1 = hstack(fig1a, fig1b)Ultimately this will make more complex visualizations easier to build. For example, facets, plots within plots, and so on. See Layers and Stacks for more details."
+    "text": "Gadfly uses a custom graphics library called Compose, which is an attempt at a more elegant, purely functional take on the R grid package. It allows mixing of absolute and relative units and complex coordinate transforms.  The primary backend is a native SVG generator (almost native: it uses pango to precompute text extents), though there is also a Cairo backend.  See Backends for more details.Building graphics declaratively let\'s you do some fun things. Like stick two plots together:fig1a = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)\nfig1b = plot(iris, x=:SepalWidth, Geom.bar)\nfig1 = hstack(fig1a, fig1b)Ultimately this will make more complex visualizations easier to build. For example, facets, plots within plots, and so on. See Compositing for more details."
 },
 
 {
@@ -93,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Interactivity",
     "category": "section",
-    "text": "One advantage of generating our own SVG is that the files are much more compact than those produced by Cairo, by virtue of having a higher level API. Another advantage is that we can annotate our SVG output and embed Javascript code to provide some level of dynamism.Though not a replacement for full-fledged custom interactive visualizations of the sort produced by d3, this sort of mild interactivity can improve a lot of standard plots. The fuel efficiency plot is made more clear by toggling off some of the countries, for example.  To do so, simply click or shift-click in the colored squares in the table of keys to the right.One can also zoom in and out by pressing the shift key while either scrolling the mouse wheel or clicking and dragging a box.  Should your mouse not work, try the plus, minus, I, and O, keys.  Panning is similarly easy: click and drag without depressing the shift key, or use the arrow keys.  For Vim enthusiasts, the H, J, K, and L keys pan as expected.  To reset the plot to it\'s initial state, double click it or hit R.Lastly, press C to toggle on and off a numerical display of the cursor coordinates."
+    "text": "One advantage of generating our own SVG is that the files are much more compact than those produced by Cairo, by virtue of having a higher level API. Another advantage is that we can annotate our SVG output and embed Javascript code to provide some level of dynamism.Though not a replacement for full-fledged custom interactive visualizations of the sort produced by D3, this sort of mild interactivity can improve a lot of standard plots. The fuel efficiency plot is made more clear by toggling off some of the countries, for example.  To do so, first render the plot using the SVGJS backend, which was not used to generate this webpage but is the default at the REPL, then simply click or shift-click in the colored squares in the table of keys to the right.One can also zoom in and out by pressing the shift key while either scrolling the mouse wheel or clicking and dragging a box.  Should your mouse not work, try the plus, minus, I, and O, keys.  Panning is similarly easy: click and drag without depressing the shift key, or use the arrow keys.  For Vim enthusiasts, the H, J, K, and L keys pan as expected.  To reset the plot to it\'s initial state, double click it or hit R.  Lastly, press C to toggle on and off a numerical display of the cursor coordinates."
 },
 
 {
@@ -109,23 +117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Plotting",
     "title": "Plotting",
     "category": "section",
-    "text": "Most interaction with Gadfly is through the plot function. Plots are described by binding data to aesthetics, and specifying a number of plot elements including Scales, Coordinates, Guides, and Geometries.  Aesthetics are a set of special named variables that are mapped to plot geometry. How this mapping occurs is defined by the plot elements.This \"grammar of graphics\" approach tries to avoid arcane incantations and special cases, instead approaching the problem as if one were drawing a wiring diagram: data is connected to aesthetics, which act as input leads, and elements, each self-contained with well-defined inputs and outputs, are connected and combined to produce the desired result."
-},
-
-{
-    "location": "man/plotting.html#Plotting-arrays-1",
-    "page": "Plotting",
-    "title": "Plotting arrays",
-    "category": "section",
-    "text": "If no plot elements are defined, point geometry is added by default. The point geometry takes as input the x and y aesthetics. So all that\'s needed to draw a scatterplot is to bind x and y.using Gadfly\nsrand(12345)# E.g.\np = # hide\nplot(x=rand(10), y=rand(10))Multiple elements can use the same aesthetics to produce different output. Here the point and line geometries act on the same data and their results are layered.# E.g.\nplot(x=rand(10), y=rand(10), Geom.point, Geom.line)More complex plots can be produced by combining elements.# E.g.\nplot(x=1:10, y=2.^rand(10),\n     Scale.y_sqrt, Geom.point, Geom.smooth,\n     Guide.xlabel(\"Stimulus\"), Guide.ylabel(\"Response\"), Guide.title(\"Dog Training\"))To generate an image file from a plot, use the draw function. Gadfly supports a number of drawing Backends."
-},
-
-{
-    "location": "man/plotting.html#Plotting-data-frames-1",
-    "page": "Plotting",
-    "title": "Plotting data frames",
-    "category": "section",
-    "text": "The DataFrames package provides a powerful means of representing and manipulating tabular data. They can be used directly in Gadfly to make more complex plots simpler and easier to generate.In this form of plot, a data frame is passed to as the first argument, and columns of the data frame are bound to aesthetics by name or index.# Signature for the plot applied to a data frames.\nplot(data::AbstractDataFrame, elements::Element...; mapping...)The RDatasets package collects example data sets from R packages. We\'ll use that here to generate some example plots on realistic data sets. An example data set is loaded into a data frame using the dataset function.using RDatasets# E.g.\nplot(dataset(\"datasets\", \"iris\"), x=\"SepalLength\", y=\"SepalWidth\", Geom.point)# E.g.\nplot(dataset(\"car\", \"SLID\"), x=\"Wages\", color=\"Language\", Geom.histogram)Along with less typing, using data frames to generate plots allows the axis and guide labels to be set automatically."
+    "text": "Most interaction with Gadfly is through the plot function. Plots are described by binding data to aesthetics, and specifying a number of elements including Scales, Coordinates, Guides, and Geometries.  Aesthetics are a set of special named variables that are mapped to a geometry. How this mapping occurs is defined by the elements.This \"grammar of graphics\" approach tries to avoid arcane incantations and special cases, instead approaching the problem as if one were drawing a wiring diagram: data is connected to aesthetics, which act as input leads, and elements, each self-contained with well-defined inputs and outputs, are connected and combined to produce the desired result."
 },
 
 {
@@ -133,47 +125,55 @@ var documenterSearchIndex = {"docs": [
     "page": "Plotting",
     "title": "Functions and Expressions",
     "category": "section",
-    "text": "Along with the standard plot function, Gadfly has some special forms to make plotting functions and expressions more convenient.plot(f::Function, a, b, elements::Element...)\n\nplot(fs::Array, a, b, elements::Element...)Some special forms of plot exist for quickly generating 2d plots of functions.# E.g.\nplot([sin, cos], 0, 25)"
+    "text": "Along with the standard plot methods operating on DataFrames and Arrays described in the Tutorial, Gadfly has some special signatures to make plotting functions and expressions more convenient.plot(f::Function, lower, upper, elements...; mapping...)\nplot(fs::Vector{T}, lower, upper, elements...; mapping...) where T <: Base.Callable\nplot(f::Function, xmin, xmax, ymin, ymax, elements...; mapping...)\nspy(M::AbstractMatrix, elements...; mapping...) -> PlotFor example:using Gadfly\nset_default_plot_size(21cm, 8cm)\nsrand(12345)p1 = plot([sin,cos], 0, 2pi)\np2 = plot((x,y)->sin(x)+cos(y), 0, 2pi, 0, 2pi)\np3 = spy(ones(33)*sin.(0:(pi/16):2pi)\' + cos.(0:(pi/16):2pi)*ones(33)\')\nhstack(p1,p2,p3)"
 },
 
 {
-    "location": "man/plotting.html#Plotting-wide-formatted-data-1",
+    "location": "man/plotting.html#Wide-formatted-data-1",
     "page": "Plotting",
-    "title": "Plotting wide-formatted data",
+    "title": "Wide-formatted data",
     "category": "section",
-    "text": "Gadfly is designed to plot data is so-called \"long form\", in which data that is of the same type, or measuring the same quantity, are stored in a single column, and any factors or groups are specified by additional columns. This is how data is typically stored in a database.Sometimes data tables are organized by grouping values of the same type into multiple columns, with a column name used to distinguish the grouping. We refer to this as \"wide form\" data.To illustrate the difference consider some historical London birth rate data.births = RDatasets.dataset(\"HistData\", \"Arbuthnot\")[[:Year, :Males, :Females]]Row Year Males Females\n1 1629 5218 4683\n2 1630 4858 4457\n3 1631 4422 4102\n4 1632 4994 4590\n5 1633 5158 4839\n6 1634 5035 4820This table is wide form because \"Males\" and \"Females\" are two columns both measuring number of births. Wide form data can always be transformed to long form, e.g. with the stack function in DataFrames, but this can be inconvenient, especially if the data is not already in a DataFrame.stack(births, [:Males, :Females])Row variable value Year\n1 Males 5218 1629\n2 Males 4858 1630\n3 Males 4422 1631\n... ... ... ...\n162 Females 7623 1708\n163 Females 7380 1709\n164 Females 7288 1710The resulting table is long form with number of births in one columns, here with the default name given by stack: \"value\". Data in this form can be plotted very conveniently with Gadfly.births = RDatasets.dataset(\"HistData\", \"Arbuthnot\")[[:Year, :Males, :Females]] # hide\nplot(stack(births, [:Males, :Females]), x=:Year, y=:value, color=:variable,\n     Geom.line)In some cases, explicitly transforming the data can be burdensome. Gadfly lets you avoid this be referring to columns or groups of columns in a implicit long-form version of the data.plot(births, x=:Year, y=Col.value(:Males, :Females),\n     color=Col.index(:Males, :Females), Geom.line)Here Col.value produces the concatenated values from a set of columns, and Col.index refers to a vector labeling each value in that concatenation by the column it came from. Also useful is Row.index, which will give the row index of items in a concatenation.This syntax also lets us more conveniently plot data that is not in a DataFrame, such as matrices or arrays of arrays. Here we plot each column of a matrix as a separate line.X = randn(40, 20) * diagm(1:20)\nplot(X, x=Row.index, y=Col.value, color=Col.index, Geom.line)When given no arguments Row.index, Col.index, and Col.value assume all columns are being concatenated, but we could have equivalently used Col.index(1:20...), etc.Plotting arrays of vectors works in much the same way as matrices, but constituent vectors maybe be of varying lengths.X = [randn(rand(10:20)) for _ in 1:10]\nplot(X, x=Row.index, y=Col.value, color=Col.index, Geom.line)"
+    "text": "Gadfly is designed to plot data in so-called \"long form\", in which data that is of the same type, or measuring the same quantity, are stored in a single column, and any factors or groups are specified by additional columns. This is how data is typically stored in a database.Sometimes data tables are organized by grouping values of the same type into multiple columns, with a column name used to distinguish the grouping. We refer to this as \"wide form\" data.To illustrate the difference consider some historical London birth rate data.births = RDatasets.dataset(\"HistData\", \"Arbuthnot\")[[:Year, :Males, :Females]]Row Year Males Females\n1 1629 5218 4683\n2 1630 4858 4457\n3 1631 4422 4102\n4 1632 4994 4590\n5 1633 5158 4839\n6 1634 5035 4820\n... ... ... ...This table is wide form because \"Males\" and \"Females\" are two columns both measuring number of births. Wide form data can always be transformed to long form (e.g. with the stack function in DataFrames) but this can be inconvenient, especially if the data is not already in a DataFrame.stack(births, [:Males, :Females])Row variable value Year\n1 Males 5218 1629\n2 Males 4858 1630\n3 Males 4422 1631\n... ... ... ...\n162 Females 7623 1708\n163 Females 7380 1709\n164 Females 7288 1710The resulting table is long form with number of births in one column, here with the default name given by stack: \"value\". Data in this form can be plotted very conveniently with Gadfly.using Gadfly, RDatasets\nset_default_plot_size(14cm, 8cm)births = RDatasets.dataset(\"HistData\", \"Arbuthnot\")[[:Year, :Males, :Females]] # hide\nplot(stack(births, [:Males, :Females]), x=:Year, y=:value, color=:variable,\n     Geom.line)In some cases, explicitly transforming the data can be burdensome. Gadfly lets you avoid this by referring to columns or groups of columns in an implicit long-form version of the data.plot(births, x=:Year, y=Col.value(:Males, :Females),\n     color=Col.index(:Males, :Females), Geom.line)\nnothing # hideHere Col.value produces the concatenated values from a set of columns, and Col.index refers to a vector labeling each value in that concatenation by the column it came from. Also useful is Row.index, which will give the row index of items in a concatenation.This syntax also lets us more conveniently plot data that is not in a DataFrame, such as matrices or arrays of arrays. Below we recreate the plot above for a third time after first converting the DataFrame to an Array.births_array = convert(Array{Int}, births)\nplot(births_array, x=Col.value(1), y=Col.value(2:3...),\n     color=Col.index(2:3...), Geom.line, Scale.color_discrete,\n     Guide.colorkey(labels=[\"Males\",\"Females\"]), Guide.xlabel(\"Year\"))\nnothing # hideWhen given no arguments Row.index, Col.index, and Col.value assume all columns are being concatenated.Plotting arrays of vectors works in much the same way as matrices, but constituent vectors may be of varying lengths."
 },
 
 {
-    "location": "man/layers.html#",
-    "page": "Layers and Stacks",
-    "title": "Layers and Stacks",
+    "location": "man/compositing.html#",
+    "page": "Compositing",
+    "title": "Compositing",
     "category": "page",
     "text": "Author = \"Daniel C. Jones\""
 },
 
 {
-    "location": "man/layers.html#Layers-and-Stacks-1",
-    "page": "Layers and Stacks",
-    "title": "Layers and Stacks",
+    "location": "man/compositing.html#Compositing-1",
+    "page": "Compositing",
+    "title": "Compositing",
     "category": "section",
-    "text": "Gadfly also supports more advanced plot composition techniques like layering and stacking."
+    "text": "Gadfly supports advanced plot composition techniques like faceting, stacking, and layering."
 },
 
 {
-    "location": "man/layers.html#Layers-1",
-    "page": "Layers and Stacks",
-    "title": "Layers",
+    "location": "man/compositing.html#Facets-1",
+    "page": "Compositing",
+    "title": "Facets",
     "category": "section",
-    "text": "Draw multiple layers onto the same plot withusing Gadfly\nusing Compose\nsrand(123)\nset_default_plot_size(12cm, 8cm)plot(layer(x=rand(10), y=rand(10), Geom.point),\n     layer(x=rand(10), y=rand(10), Geom.line))Or if your data is in a DataFrame:plot(my_data, layer(x=\"some_column1\", y=\"some_column2\", Geom.point),\n              layer(x=\"some_column3\", y=\"some_column4\", Geom.line))You can also pass different data frames to each layer:layer(another_dataframe, x=\"col1\", y=\"col2\", Geom.point)Ordering of layers in the Z direction can be controlled with the order keyword. A higher order number will cause a layer to be drawn on top of any layers with a lower number. If not specified, default order for a layer is 0.# using stacks (see below)\nxs = rand(0:10, 100, 2)\np1 = plot(layer(x=xs[:, 1], color=[colorant\"orange\"], Geom.histogram),\n          layer(x=xs[:, 2], Geom.histogram), Guide.title(\"Default ordering\"))\np2 = plot(layer(x=xs[:, 1], color=[colorant\"orange\"], Geom.histogram, order=1),\n          layer(x=xs[:, 2], Geom.histogram, order=2),\n          Guide.title(\"Manual ordering\"))\nhstack(p1, p2)Guide attributes may be added to a multi-layer plots:plt=plot(layer(x=rand(10), y=rand(10), Geom.point),\n         layer(x=rand(10), y=rand(10), Geom.line),\n         Guide.xlabel(\"x label\"),\n         Guide.ylabel(\"y label\"),\n         Guide.title(\"Title\"))"
+    "text": "It is easy to make multiple plots that all share a common dataset and axis.using Gadfly, RDatasets\nset_default_plot_size(14cm, 8cm) # hide\niris = dataset(\"datasets\", \"iris\")\nplot(iris, xgroup=\"Species\", x=\"SepalLength\", y=\"SepalWidth\",\n     Geom.subplot_grid(Geom.point))Geom.subplot_grid can similarly arrange plots vertically, or even in a 2D grid if there are two shared axes."
 },
 
 {
-    "location": "man/layers.html#Stacks-1",
-    "page": "Layers and Stacks",
+    "location": "man/compositing.html#Stacks-1",
+    "page": "Compositing",
     "title": "Stacks",
     "category": "section",
-    "text": "Plots can also be stacked horizontally with hstack or vertically with vstack, and arranged into a rectangular array with gridstack.  This allows more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.p1 = plot(x=[1,2,3], y=[4,5,6]);\np2 = plot(x=[1,2,3], y=[6,7,8]);\nhstack(p1,p2)set_default_plot_size(12cm, 10cm) # hide\np3 = plot(x=[5,7,8], y=[8,9,10]);\np4 = plot(x=[5,7,8], y=[10,11,12]);\n\n# these two are equivalent\nvstack(hstack(p1,p2),hstack(p3,p4));\ngridstack([p1 p2; p3 p4])You can use title to add a descriptive string to the top of a stackset_default_plot_size(12cm, 8cm) # hide\ntitle(hstack(p3,p4), \"My great data\")You can also leave panels empty in a stack by passing a Compose.context() objectset_default_plot_size(12cm, 10cm) # hide\n# empty panel\ngridstack(Union{Plot,Compose.Context}[p1 p2; p3 Compose.context()])"
+    "text": "To composite plots derived from different datasets, or the same data but different axes, a declarative interface is used.  The Tutorial showed how such disparate plots can be horizontally arranged with hstack. Here we illustrate how to vertically stack them with vstack or arrange them in a grid with gridstack.  These commands allow more customization in regards to tick marks, axis labeling, and other plot details than is available with Geom.subplot_grid.using Gadfly, RDatasets, Compose\niris = dataset(\"datasets\", \"iris\")set_default_plot_size(14cm, 16cm) # hide\nfig1a = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)\nfig1b = plot(iris, x=:SepalLength, Geom.density,\n             Guide.ylabel(\"density\"), Coord.cartesian(xmin=4, xmax=8))\nvstack(fig1a,fig1b)hstack and vstack can be composed to create arbitrary arrangements of panels.vstack(hstack(p1,p2),hstack(p3,p4,p5))If all rows or columns have the same number of panels, it\'s easiest to use gridstack.gridstack([p1 p2; p3 p4])For each of these commands, you can leave a panel empty by passing in a Compose.context() object.using Compose\nset_default_plot_size(21cm, 16cm) # hide\nfig1c = plot(iris, x=:SepalWidth, Geom.density,\n             Guide.ylabel(\"density\"), Coord.cartesian(xmin=2, xmax=4.5))\ngridstack(Union{Plot,Compose.Context}[fig1a fig1c; fig1b Compose.context()])Note that in this case the array must be explicitly typed.Lastly, title can be used to add a descriptive string to the top of a stack.title(hstack(p1,p2), \"My creative title\")"
+},
+
+{
+    "location": "man/compositing.html#Layers-1",
+    "page": "Compositing",
+    "title": "Layers",
+    "category": "section",
+    "text": "Draw multiple layers onto the same plot by inputing Layer objects to plot.using Gadfly, RDatasets, Distributions, StatsBase\nset_default_plot_size(14cm, 8cm)\niris = dataset(\"datasets\", \"iris\")xdata = sort(iris[:SepalWidth])\nydata = cumsum(xdata)\nline = layer(x=xdata, y=ydata, Geom.line, Theme(default_color=\"red\"))\nbars = layer(iris, x=:SepalWidth, Geom.bar)\nplot(line, bars)Note that here we used both the DataFrame and AbstractArrays interface to layer, as well a Theme object.  See Themes for more information on the latter.You can also share the same DataFrame across different layers:plot(iris,\n     layer(x=:SepalLength, y=:SepalWidth),\n     layer(x=:PetalLength, y=:PetalWidth, Theme(default_color=\"red\")))In this case, Gadfly labels the axes with the column names of first layer listed. If this is not what is desired, Guides may be explicitly added.plot(iris,\n     layer(x=:SepalLength, y=:SepalWidth),\n     layer(x=:PetalLength, y=:PetalWidth, Theme(default_color=\"red\")),\n     Guide.xlabel(\"length\"), Guide.ylabel(\"width\"), Guide.title(\"Iris data\"),\n     Guide.manual_color_key(\"\",[\"Sepal\",\"Petal\"],\n                            [Gadfly.current_theme().default_color,\"red\"]))Note that while layer can input Geometries, Statistics, and Themes, it can not input Scales, Coordinates, or Guides.The sequence in which layers are drawn, whether they overlap or not, can be controlled with the order keyword.  Layers with lower order numbers are rendered first.  If not specified, the default order for a layer is 0.  Layers which have the same order number are drawn in the reverse order in which they appear in plot\'s input arguments.bars = layer(iris, x=:SepalWidth, Geom.bar)\nline = layer(iris, x=xdata, y=ydata, Geom.line, Theme(default_color=\"red\"),\n             order=1)\nplot(bars, line)"
 },
 
 {
@@ -189,15 +189,31 @@ var documenterSearchIndex = {"docs": [
     "page": "Backends",
     "title": "Backends",
     "category": "section",
-    "text": "Gadfly supports writing to the SVG and SVGJS backends out of the box. However, the PNG, PDF, and PS backends require Julia\'s bindings to Cairo. It can be installed withPkg.add(\"Cairo\")Additionally, complex layouts involving text are more accurate when Pango and Fontconfig are installed."
+    "text": "Gadfly supports creating SVG images out of the box through the native Julian renderer in Compose.jl.  The PNG, PDF, PS, and PGF formats, however, require Julia\'s bindings to cairo and fontconfig, which can be installed withPkg.add(\"Cairo\")\nPkg.add(\"Fontconfig\")"
 },
 
 {
-    "location": "man/backends.html#Changing-the-backend-1",
+    "location": "man/backends.html#Rendering-to-a-file-1",
     "page": "Backends",
-    "title": "Changing the backend",
+    "title": "Rendering to a file",
     "category": "section",
-    "text": "Drawing to different backends is easy# define a plot\nmyplot = plot(..)\n\n# draw on every available backend\ndraw(SVG(\"myplot.svg\", 4inch, 3inch), myplot)\ndraw(SVGJS(\"myplot.svg\", 4inch, 3inch), myplot)\ndraw(PNG(\"myplot.png\", 4inch, 3inch), myplot)\ndraw(PDF(\"myplot.pdf\", 4inch, 3inch), myplot)\ndraw(PS(\"myplot.ps\", 4inch, 3inch), myplot)\ndraw(PGF(\"myplot.tex\", 4inch, 3inch), myplot)note: Note\nThe SVGJS backend writes SVG with embedded javascript. There are a couple subtleties with using the output from this backend.Drawing to the backend works like any otherdraw(SVGJS(\"mammals.js.svg\", 6inch, 6inch), p)If included with an <img> tag, it will display as a static SVG image<img src=\"mammals.js.svg\"/>For the interactive javascript features to be enabled, the output either needs to be included inline in the HTML page, or included with an object tag<object data=\"mammals.js.svg\" type=\"image/svg+xml\"></object>A div element must be placed, and the draw function defined in mammals.js must be passed the id of this element, so it knows where in the document to place the plot."
+    "text": "In addition to the draw interface presented in the Tutorial:p = plot(...)\ndraw(SVG(\"foo.svg\", 6inch, 4inch), p)one can more succintly use Julia\'s function chaining syntax:p |> SVG(\"foo.svg\", 6inch, 4inch)If you plan on drawing many figures of the same size, consider setting it as the default:set_default_plot_size(6inch, 4inch)\np1 |> SVG(\"foo1.svg\")\np2 |> SVG(\"foo2.svg\")\np3 |> SVG(\"foo3.svg\")"
+},
+
+{
+    "location": "man/backends.html#Choosing-a-backend-1",
+    "page": "Backends",
+    "title": "Choosing a backend",
+    "category": "section",
+    "text": "Drawing to different backends is easy.  Simply swap SVG for one of SVGJS, PNG, PDF, PS, or PGF:# e.g.\np |> PDF(\"foo.pdf\")"
+},
+
+{
+    "location": "man/backends.html#Interactive-SVGs-1",
+    "page": "Backends",
+    "title": "Interactive SVGs",
+    "category": "section",
+    "text": "The SVGJS backend writes SVG with embedded javascript. There are a couple subtleties with using the output from this backend.Drawing to the backend works like any otherdraw(SVGJS(\"foo.svg\", 6inch, 6inch), p)If included with an <img> tag, the output will display as a static SVG image though.<img src=\"foo.svg\"/>For the interactive javascript features to be enabled, it either needs to be included inline in the HTML page, or included with an object tag.<object data=\"foo.svg\" type=\"image/svg+xml\"></object>For the latter, a div element must be placed, and the draw function must be passed the id of this element, so it knows where in the document to place the plot."
 },
 
 {
@@ -205,7 +221,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Backends",
     "title": "IJulia",
     "category": "section",
-    "text": "The IJulia project adds Julia support to Jupyter. This includes a browser based notebook that can inline graphics and plots. Gadfly works out of the box with IJulia, with or without drawing explicity to a backend.Without a explicit call to draw (i.e. just calling plot), the D3 backend is used with a default plot size. The default plot size can be changed with set_default_plot_size.# E.g.\nset_default_plot_size(12cm, 8cm)"
+    "text": "The IJulia project adds Julia support to Jupyter. This includes a browser based notebook that can inline graphics and plots. Gadfly works out of the box with IJulia, with or without drawing explicity to a backend.Without an explicit call to draw (i.e. just calling plot without a trailing semicolon), the SVGJS backend is used with the default plot size, which can be changed as described above."
 },
 
 {
@@ -221,7 +237,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Themes",
     "category": "section",
-    "text": "Many parameters controlling the appearance of plots can be overridden by passing a Theme object to the plot function. Or setting the Theme as the current theme using push_theme (see also pop_theme and with_theme below).The constructor for Theme takes zero or more named arguments each of which overrides the default value of the field."
+    "text": "Many parameters controlling the appearance of plots can be overridden by passing a Theme object to the plot function, or setting the Theme as the current theme using push_theme or with_theme.The constructor for Theme takes zero or more keyword arguments each of which overrides the default value of the corresponding field.  See Theme for a full list of keywords.using Gadfly, RDatasets\nset_default_plot_size(14cm, 8cm)  # hide\nmammals = dataset(\"MASS\", \"mammals\")\nplot(mammals, x=:Body, y=:Brain, label=:Mammal,\n     Geom.point, Geom.label, Scale.x_log10, Scale.y_log10,\n     Theme(discrete_highlight_color=x->\"red\", default_color=\"white\"))"
 },
 
 {
@@ -229,7 +245,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "The Theme stack",
     "category": "section",
-    "text": "Gadfly maintains a stack of themes and applies theme values from the topmost theme in the stack. This can be useful when you want to set a theme for multiple plots and then switch back to a previous theme.push_theme(t::Theme) and pop_theme() will push and pop from this stack respectively. You can use with_theme(f, t::Theme) to set a theme as the current theme and call f()."
+    "text": "Gadfly maintains a stack of themes and applies theme values from the topmost theme in the stack. This can be useful when you want to set a theme for multiple plots and then switch back to a previous theme.push_theme(t::Theme) and pop_theme() will push and pop from this stack respectively. You can also use with_theme(f, t::Theme) to temporarily set a theme as the current theme and call function f, which can be defined elsewhere, anonymously, or as a do-block.For example, here is how to choose a different font:latex_fonts = Theme(major_label_font=\"CMU Serif\", major_label_font_size=16pt,\n                    minor_label_font=\"CMU Serif\", minor_label_font_size=14pt,\n                    key_title_font=\"CMU Serif\", key_title_font_size=12pt,\n                    key_label_font=\"CMU Serif\", key_label_font_size=10pt)\nGadfly.push_theme(latex_fonts)\ngasoline = dataset(\"Ecdat\", \"Gasoline\")\np = plot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)\n# can plot more plots here...\nGadfly.pop_theme()\np # hideThe same effect can be achieved using with_theme:Gadfly.with_theme(latex_fonts) do\n    gasoline = dataset(\"Ecdat\", \"Gasoline\")\n    plot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)\nend"
 },
 
 {
@@ -237,23 +253,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "style",
     "category": "section",
-    "text": "You can use style to override the fields on top of the current theme at the top of the stack. style(...) returns a Theme. So it can be used with push_theme and with_theme."
-},
-
-{
-    "location": "man/themes.html#Parameters-1",
-    "page": "Themes",
-    "title": "Parameters",
-    "category": "section",
-    "text": "These parameters can either be used with Theme or styledefault_color: When the color aesthetic is not bound, geometry uses this color for drawing. (Color)\npoint_size: Size of points in the point, boxplot, and beeswarm geometries.  (Measure)\npoint_size_min: Minimum size of points in the point geometry.  (Measure)\npoint_size_max: Maximum size of points in the point geometry.  (Measure)\npoint_shapes: Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)\nline_width: Width of lines in the line geometry. (Measure)\nline_style: Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)\npanel_fill: Background color used in the main plot panel. ( Color or Nothing)\npanel_opacity: Opacity of the plot background panel. (Float in [0.0, 1.0])\npanel_stroke: Border color of the main plot panel. (Color or Nothing)\nbackground_color: Background color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding: Padding around the plot. The order of padding is: plot_padding=[left, right, top, bottom]. If a vector of length one is provided e.g.  [5mm] then that value is applied to all sides. Absolute or relative units can be used. (Vector{<:Measure})\ngrid_color: Color of grid lines. (Color or Nothing)\ngrid_color_focused: In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width: Width of grid lines. (Measure)\ngrid_line_style: Style of grid lines. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)   \nminor_label_font: Font used for minor labels such as tick labels and entries in keys. (String)\nminor_label_font_size: Font size used for minor labels. (Measure)\nminor_label_color: Color used for minor labels. (Color)\nmajor_label_font: Font used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size: Font size used for major labels. (Measure)\nmajor_label_color: Color used for major labels. (Color)\npoint_label_font: Font used for labels in Geom.label. (String)\npoint_label_font_size: Font size used for labels. (Measure)\npoint_label_color: Color used for labels. (Color)\nkey_position: Where key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, :inside or :none. Setting to :none disables the key. Setting to :inside places the key in the lower right quadrant of the plot. (Symbol)\nkey_title_font: Font used for titles of keys. (String)\nkey_title_font_size: Font size used for key titles. (Measure)\nkey_title_color: Color used for key titles. (Color)\nkey_label_font: Font used for key entry labels. (String)\nkey_label_font_size: Font size used for key entry labels. (Measure)\nkey_label_color: Color used for key entry labels. (Color)\nkey_max_columns: Maximum number of columns for key entry labels. (Int)\nkey_swatch_shape: General purpose, will eventually replace colorkey_swatch_shape (Function as in point_shapes)\nkey_swatch_color: General purpose, currently works for Guide.shapekey (Color)\nbar_spacing: Spacing between bars in Geom.bar. (Measure)\nboxplot_spacing: Spacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length: Length of caps on error bars. (Measure)\nhighlight_width: Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color and continuous_highlight_color: Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color: Color used to draw background geometry, such as Geom.ribbon. This is a function that alters the fill color of the geometry. (Function)\nlowlight_opacity: Opacity of background geometry such as Geom.ribbon. (Float64)\nmiddle_color: Color altering function used to draw the midline in boxplots. (Function)\nmiddle_width: Width of the middle line in boxplots. (Measure)\nguide_title_position: One of :left, :center, :right indicating the  placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape: The shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nbar_highlight: Color used to stroke bars in bar plots. If a function is given, it\'s used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\ndiscrete_color_scale: A DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scale: A ContinuousColorScale see Scale.color_continuous\nlabel_out_of_bounds_penalty: Used by Geom.label(position=:dynamic)\nlabel_placement_iterations: Used by Geom.label(position=:dynamic)\nlabel_visibility_flip_pr: Used by Geom.label(position=:dynamic)\nlabel_hidden_penalty: Used by Geom.label(position=:dynamic)\nlabel_padding: Used by Geom.label(position=:dynamic)"
-},
-
-{
-    "location": "man/themes.html#Examples-1",
-    "page": "Themes",
-    "title": "Examples",
-    "category": "section",
-    "text": "using RDatasets\nusing Gadfly\nset_default_plot_size(12cm, 8cm)\nsrand(12345)\ndark_panel = Theme(\n    panel_fill=\"black\",\n    default_color=\"orange\"\n)\n\nplot(x=rand(10), y=rand(10), dark_panel)\nSetting the font to Computer Modern to create a LaTeX-like look, and choosing a font size:Gadfly.push_theme(dark_panel)\n\np = plot(x=rand(10), y=rand(10),\n     style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n           major_label_font_size=16pt,minor_label_font_size=14pt))\n\n# can plot more plots here...\n\nGadfly.pop_theme()\n\np # hideSame effect can be had with with_themeGadfly.with_theme(dark_panel) do\n\n  plot(x=rand(10), y=rand(10),\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt))\nend\nnothing # hideor\nGadfly.push_theme(dark_panel)\n\nGadfly.with_theme(\n       style(major_label_font=\"CMU Serif\",minor_label_font=\"CMU Serif\",\n             major_label_font_size=16pt,minor_label_font_size=14pt)) do\n\n  plot(x=rand(10), y=rand(10))\n\nend\n\nGadfly.pop_theme()\nnothing # hide"
+    "text": "You can use style to override the fields of the current theme. Much like Theme\'s constructor, style inputs keyword arguments, returns a Theme, and can be used with push_theme, with_theme, and plot.Gadfly.push_theme(style(line_width=1mm))\np1 = plot([sin,cos], 0, 2pi)\np2 = plot([sin,cos], 0, 2pi, style(line_width=2mm, line_style=:dash))\nfig = hstack(p1,p2)\nGadfly.pop_theme()\nfig # hide"
 },
 
 {
@@ -261,15 +261,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Themes",
     "title": "Named themes",
     "category": "section",
-    "text": "To register a theme by name, you can extend Gadfly.get_theme(::Val{:theme_name}) to return a Theme object.Gadfly.get_theme(::Val{:orange}) =\n    Theme(default_color=\"orange\")\n\nGadfly.with_theme(:orange) do\n  plot(x=[1:10;], y=rand(10), Geom.bar)\nendGadfly comes built in with 2 named themes: :default and :dark. You can also set a theme to use by default by setting the GADFLY_THEME environment variable before loading Gadfly."
-},
-
-{
-    "location": "man/themes.html#The-Dark-theme-1",
-    "page": "Themes",
-    "title": "The Dark theme",
-    "category": "section",
-    "text": "This is one of the two themes the ship with Gadfly the other being :default. Here are a few plots that use the dark theme.Gadfly.push_theme(:dark)\nnothing # hideplot(dataset(\"datasets\", \"iris\"),\n    x=\"SepalLength\", y=\"SepalWidth\", color=\"Species\", Geom.point)using RDatasets\n\ngasoline = dataset(\"Ecdat\", \"Gasoline\")\n\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country,\n         Geom.point, Geom.line)using DataFrames\n\nxs = 0:0.1:20\n\ndf_cos = DataFrame(\n    x=xs,\n    y=cos.(xs),\n    ymin=cos.(xs) .- 0.5,\n    ymax=cos.(xs) .+ 0.5,\n    f=\"cos\"\n)\n\ndf_sin = DataFrame(\n    x=xs,\n    y=sin.(xs),\n    ymin=sin.(xs) .- 0.5,\n    ymax=sin.(xs) .+ 0.5,\n    f=\"sin\"\n)\n\ndf = vcat(df_cos, df_sin)\np = plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)using Distributions\n\nX = rand(MultivariateNormal([0.0, 0.0], [1.0 0.5; 0.5 1.0]), 10000);\nplot(x=X[1,:], y=X[2,:], Geom.hexbin(xbincount=100, ybincount=100))Gadfly.pop_theme()"
+    "text": "To register a theme by name, you can extend Gadfly.get_theme(::Val{:theme_name}) to return a Theme object.Gadfly.get_theme(::Val{:orange}) = Theme(default_color=\"orange\")\n\nGadfly.with_theme(:orange) do\n    plot(dataset(\"datasets\", \"iris\"), x=:SepalWidth, Geom.bar)\nendGadfly comes built in with two named themes: :default and :dark.Gadfly.with_theme(:dark) do\n    plot(dataset(\"datasets\", \"iris\"), x=:SepalLength, y=:SepalWidth, color=:Species)\nendYou can also set a theme to use by default by setting the GADFLY_THEME environment variable before loading Gadfly."
 },
 
 {
@@ -761,6 +753,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/gadfly.html#Gadfly.Theme",
+    "page": "Gadfly",
+    "title": "Gadfly.Theme",
+    "category": "type",
+    "text": "default_color\nIf the color aesthetic is not mapped to anything, this is the color that is used.  (Color)\npoint_size\nSize of points in the point, boxplot, and beeswarm geometries.  (Measure)\npoint_size_min\nMinimum size of points in the point geometry.  (Measure)\npoint_size_max\nMaximum size of points in the point geometry.  (Measure)\npoint_shapes\nShapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)\nline_width\nWidth of lines in the line geometry. (Measure)\nline_style\nStyle of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)\npanel_fill\nBackground color used in the main plot panel. (Color or Nothing)\npanel_stroke\nBorder color of the main plot panel. (Color or Nothing)\npanel_opacity\nOpacity of the plot background panel. (Float in [0.0, 1.0])\nbackground_color\nBackground color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding\nPadding around the plot. The order of padding is: plot_padding=[left, right, top, bottom]. If a vector of length one is provided e.g.  [5mm] then that value is applied to all sides. Absolute or relative units can be used. (Vector{<:Measure})\ngrid_color\nColor of grid lines. (Color or Nothing)\ngrid_line_style\nStyle of grid lines. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)\ngrid_color_focused\nIn the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width\nWidth of grid lines. (Measure)\nminor_label_font\nFont used for minor labels such as tick labels and entries in keys. (String)\nminor_label_font_size\nFont size used for minor labels. (Measure)\nminor_label_color\nColor used for minor labels. (Color)\nmajor_label_font\nFont used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size\nFont size used for major labels. (Measure)\nmajor_label_color\nColor used for major labels. (Color)\npoint_label_font\nFont used for labels in Geom.label. (String)\npoint_label_font_size\nFont size used for labels. (Measure)\npoint_label_color\nColor used for labels. (Color)\nkey_title_font\nFont used for titles of keys. (String)\nkey_title_font_size\nFont size used for key titles. (Measure)\nkey_title_color\nColor used for key titles. (Color)\nkey_label_font\nFont used for key entry labels. (String)\nkey_label_font_size\nFont size used for key entry labels. (Measure)\nkey_label_color\nColor used for key entry labels. (Color)\nkey_color_gradations\nHow many gradations to show in a continuous color key. (Int)\nbar_spacing\nSpacing between bars in Geom.bar. (Measure)\nboxplot_spacing\nSpacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length\nLength of caps on error bars. (Measure)\nstroke_color\nhighlight_width\nWidth of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color\nColor used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\ncontinuous_highlight_color\nColor used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color\nColor used to draw background geometry, such as Geom.ribbon. This is a function that alters the fill color of the geometry.  (Function)\nlowlight_opacity\nOpacity of background geometry such as Geom.ribbon.  (Float64)\nmiddle_color\nColor altering function used to draw the midline in boxplots. (Function)\nmiddle_width\nWidth of the middle line in boxplots. (Measure)\nguide_title_position\nOne of :left, :center, :right indicating the placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape\nThe shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nkey_swatch_shape\nShape used in keys for swatches (Function as in point_shapes)\nkey_swatch_color\nDefault color used in keys for swatches.  Currently works for Guide.shapekey (Color)\nkey_position\nWhere key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, :inside or :none. Setting to :none disables the key. Setting to :inside places the key in the lower right quadrant of the plot. (Symbol)\nbar_highlight\nColor used to stroke bars in bar plots. If a function is given, it\'s used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\nrug_size\nlabel_placement_iterations\nNumber of annealing iterations.  Used by Geom.label(position=:dynamic)\nlabel_out_of_bounds_penalty\nPenalty for a label not being contained within the plot frame.  Used by Geom.label(position=:dynamic)\nlabel_hidden_penalty\nPenalty for making a label hidden to avoid overlaps.  Used by Geom.label(position=:dynamic)\nlabel_visibility_flip_pr\nProbability of proposing a visibility flip during label layout.  Used by Geom.label(position=:dynamic)\nlabel_padding\nPadding between marker and label.  Used by Geom.label(position=:dynamic)\nkey_max_columns\nMaximum number of columns for key entry labels. (Int)\ndiscrete_color_scale\nA DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scale\nA ContinuousColorScale see Scale.color_continuous\n\n\n\n"
+},
+
+{
     "location": "lib/gadfly.html#Compose.draw-Tuple{Compose.Backend,Gadfly.Plot}",
     "page": "Gadfly",
     "title": "Compose.draw",
@@ -861,7 +861,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.plot",
     "category": "method",
-    "text": "plot(data_source::Union{AbstractMatrix, AbstractDataFrame},\n     elements::ElementOrFunctionOrLayers...; mapping...) -> Plot\n\nCreate a new plot by specifying a data_source, one or more plot elements (Scales, Statistics, Coordinates, Geometries, Guides, Themes, and/or Layers), and a mapping of aesthetics to columns or expressions of the data.\n\nExamples\n\nmy_data = DataFrame(time=1917:2018, price=1.02.^(0:101))\nplot(my_data, Geom.line, x=:time, y=:price)\n\n# or equivalently:\nplot(Geom.line, x=collect(1917:2018), y=1.02.^(0:101))\n\n\n\n"
+    "text": "plot(data_source::Union{AbstractMatrix, AbstractDataFrame},\n     elements::ElementOrFunctionOrLayers...; mapping...) -> Plot\n\nCreate a new plot by specifying a data_source, zero or more elements (Scales, Statistics, Coordinates, Geometries, Guides, Themes, and/or Layers), and a mapping of aesthetics to columns or expressions of the data.\n\nExamples\n\nmy_frame = DataFrame(time=1917:2018, price=1.02.^(0:101))\nplot(my_frame, x=:time, y=:price, Geom.line)\n\nmy_matrix = [1917:2018 1.02.^(0:101)]\nplot(my_matrix, x=Col.value(1), y=Col.value(2), Geom.line,\n     Guide.xlabel(\"time\"), Guide.ylabel(\"price\"))\n\n\n\n"
 },
 
 {
@@ -869,7 +869,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.plot",
     "category": "method",
-    "text": "plot(elements::ElementOrFunctionOrLayers...; mapping...) -> Plot\n\n\n\n"
+    "text": "plot(elements::ElementOrFunctionOrLayers...; aesthetics...) -> Plot\n\nCreate a new plot of the vectors in \'aesthetics\'.  Optional elements (Scales, Statistics, Coordinates, Geometries, Guides, Themes, and/or Layers) control the layout, labelling, and transformation of the data.\n\nExamples\n\nplot(x=collect(1917:2018), y=1.02.^(0:101), Geom.line)\n\n\n\n"
 },
 
 {
