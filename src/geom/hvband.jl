@@ -30,20 +30,21 @@ function render(geom::HBandGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     color = geom.color === nothing ? theme.default_color : geom.color
 
-    x0 = fill(0w, length(aes.ymin))
-    x1 = fill(1w, length(aes.ymin))
+    n = max(length(aes.xmin)) #Note: already passed check for equal lengths.
 
-    ywidths = [(y1 - y0) * cy - theme.bar_spacing
+    x0 = fill(0w, n)
+    x1 = fill(1w, n)
+
+    ywidths = [(y1 - y0) * cy
                for (y0, y1) in zip(aes.ymin, aes.ymax)]
 
-    root = compose(context(), svgclass("geometry"))
-
-    compose!(root, (context(),
+    return compose!(
+        context(),
         rectangle(x0, aes.ymin, x1, ywidths, geom.tag),
         fill(color),
-        stroke(nothing)))
-
-    return root
+        stroke(nothing),
+        svgclass("geometry"),
+        svgattribute("shape-rendering", "crispEdges"))
 end
 
 
@@ -77,18 +78,19 @@ function render(geom::VBandGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     color = geom.color === nothing ? theme.default_color : geom.color
 
-    y0 = fill(0h, length(aes.xmin))
-    y1 = fill(1h, length(aes.xmin))
+    n = max(length(aes.xmin)) #Note: already passed check for equal lengths.
 
-    xwidths = [(x1 - x0) * cx - theme.bar_spacing
+    y0 = fill(0h, n)
+    y1 = fill(1h, n)
+
+    xwidths = [(x1 - x0) * cx
                for (x0, x1) in zip(aes.xmin, aes.xmax)]
 
-    root = compose(context(), svgclass("geometry"))
-
-    compose!(root, (context(),
+    return compose!(
+        context(),
         rectangle(aes.xmin, y0, xwidths, y1, geom.tag),
         fill(color),
-        stroke(nothing)))
-
-    return root
+        stroke(nothing),
+        svgclass("geometry"),
+        svgattribute("shape-rendering", "crispEdges"))
 end
