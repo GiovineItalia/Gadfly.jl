@@ -8,31 +8,44 @@ Gadfly is an implementation of a "grammar of graphics" style statistical
 graphics system for Julia. This tutorial will outline general usage
 patterns and will give you a feel for the overall system.
 
-To begin, we need some data. Gadfly works best when the data is supplied
-in a [DataFrame](https://juliadata.github.io/DataFrames.jl/stable/). In
+To begin, we need some data. Gadfly can work with data supplied
+as either a [DataFrame](https://juliadata.github.io/DataFrames.jl/stable/) or
+as plain AbstractArrays. In
 this tutorial, we'll pick and choose some examples from the
 [RDatasets](https://github.com/johnmyleswhite/RDatasets.jl) package.
 
 Let us use Fisher's iris dataset as a starting point.
 
 ```@example 1
-using Gadfly
-using RDatasets
-
+using Gadfly, RDatasets
 iris = dataset("datasets", "iris")
+set_default_plot_size(14cm, 8cm) # hide
 nothing # hide
 ```
 
-The `plot` function in Gadfly is of the form:
+| Row | SepalLength | SepalWidth | PetalLength | PetalWidth | Species   |
+|-----|-------------|------------|-------------|------------|-----------|
+| 1   | 5.1         | 3.5        | 1.4         | 0.2        | setosa    |
+| 2   | 4.9         | 3.0        | 1.4         | 0.2        | setosa    |
+| 3   | 4.7         | 3.2        | 1.3         | 0.2        | setosa    |
+| 4   | 4.6         | 3.1        | 1.5         | 0.2        | setosa    |
+| 5   | 5.0         | 3.6        | 1.4         | 0.2        | setosa    |
+| 6   | 5.4         | 3.9        | 1.7         | 0.4        | setosa    |
+| ... | ...         | ...        | ...         | ...        | ...       |
+
+
+## DataFrames
+
+When used with a DataFrame, the `plot` function in Gadfly is of the form:
 
 ```julia
-plot(data::DataFrame, mapping::Dict, elements::Element...)
+plot(data::AbstractDataFrame, elements::Element...; mapping...)
 ```
 
-The first argument is the data to be plotted, the second is a dictionary
-mapping "aesthetics" to columns in the data frame, and this is followed by some
-number of elements, which are the nouns and verbs, so to speak, that form the
-grammar.
+The first argument is the data to be plotted and the keyword arguments at the
+end map "aesthetics" to columns in the data frame.  All input arguments between
+`data` and `mapping` are some number of "elements", which are the nouns and
+verbs, so to speak, that form the grammar.
 
 Let's get to it.
 
@@ -41,12 +54,17 @@ p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point);
 nothing # hide
 ```
 
-This produces a `Plot` object. It can be saved to a file by drawing to one or
-more backends using `draw`.
+First note that we've taken advantage of the flexibility of Julia's
+handling of function signatures and put the keyword arguments in the midst of
+the positional arguments.  This is purely for ease of reading.
 
-```julia
-img = SVG("iris_plot.svg", 6inch, 4inch)
+The example above produces a `Plot` object. It can be saved to a file by
+drawing to one or more backends using `draw`.
+
+```@example 1
+img = SVG("iris_plot.svg", 14cm, 8cm)
 draw(img, p)
+nothing # hide
 ```
 
 Now we have the following charming little SVG image.
@@ -60,15 +78,18 @@ the semi-colon trailing `plot`.  This automatically renders the image to
 your default multimedia display, typically an internet browser.  No need
 to capture the output argument in this case.
 
+```julia
+plot(iris, x=:SepalLength, y=:SepalWidth)
 ```
-plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)
-```
+
+Note that `Geom.point` will be automatically supplied if no other geometries
+are given.
 
 Alternatively one can manually call `display` on a `Plot` object.  This
 workflow is necessary when `display` would not otherwise be called
 automatically.
 
-```
+```julia
 function get_to_it(d)
   ppoint = plot(d, x=:SepalLength, y=:SepalWidth, Geom.point)
   pline = plot(d, x=:SepalLength, y=:SepalWidth, Geom.line)
@@ -88,20 +109,50 @@ renders delightful figures. Adding other geometries produces layers, which may
 or may not result in a coherent plot.
 
 ```@example 1
-plot(iris, x=:SepalLength, y=:SepalWidth,
-         Geom.point, Geom.line)
+plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point, Geom.line)
 ```
 
 This is the grammar of graphics equivalent of "colorless green ideas sleep
 furiously". It is valid grammar, but not particularly meaningful.
+
+
+## Arrays
+
+If by chance your data are stored in Arrays instead of a DataFrame, fear not,
+identical plots can be created using an alternate `plot` signature:
+
+```julia
+plot(elements::Element...; aesthetics...)
+```
+
+Here, the keyword arguments directly supply the data to be plotted,
+instead of using them to indicate which columns of a DataFrame to use.
+
+```@example 1
+SepalLength = iris[:SepalLength]
+SepalWidth = iris[:SepalWidth]
+plot(x=SepalLength, y=SepalWidth, Geom.point,
+     Guide.xlabel("SepalLength"), Guide.ylabel("SepalWidth"))
+nothing # hide
+```
+
+Note that with the Array interface, extra elements must be included to specify the
+axis labels, whereas with a DataFrame they default to the column names.
 
 ## Color
 
 Let's do add something meaningful by mapping the color aesthetic.
 
 ```@example 1
-plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
-         Geom.point)
+plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species, Geom.point);
+
+# or equivalently for Arrays:
+SepalLength = iris[:SepalLength] # hide
+SepalWidth = iris[:SepalWidth] # hide
+Color = iris[:Species]
+plot(x=SepalLength, y=SepalWidth, color=Color, Geom.point,
+     Guide.xlabel("SepalLength"), Guide.ylabel("SepalWidth"),
+     Guide.colorkey(title="Species"))
 ```
 
 Ah, a scientific discovery: Setosa has short but wide sepals!
@@ -122,11 +173,11 @@ plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)
 ```
 
 This is no good, the large animals are ruining things for us. Putting both
-axis on a log-scale clears things up.
+axes on a log-scale clears things up.
 
 ```@example 1
-plot(mammals, x=:Body, y=:Brain, label=:Mammal,
-         Geom.point, Geom.label, Scale.x_log10, Scale.y_log10)
+plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label,
+     Scale.x_log10, Scale.y_log10)
 ```
 
 ## Discrete scales
@@ -136,9 +187,7 @@ crack at the latter using some fuel efficiency data.
 
 ```@example 1
 gasoline = dataset("Ecdat", "Gasoline")
-
-plot(gasoline, x=:Year, y=:LGasPCar, color=:Country,
-         Geom.point, Geom.line)
+plot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)
 ```
 
 We could have added [`Scale.x_discrete`](@ref Gadfly.Scale.x_discrete)
@@ -154,25 +203,27 @@ in the gaps with reasonable defaults.
 ## Rendering
 
 Gadfly uses a custom graphics library called
-[Compose](https://github.com/GiovineItalia/Compose.jl), which is an attempt at a
-more elegant, purely functional take on the R `grid` package. It allows
-mixing of absolute and relative units and complex coordinate transforms.
-The primary backend is a native SVG generator (almost native: it uses
-pango to precompute text extents), though there is also a Cairo backend.
-See [Backends](@ref) for more details.
+[Compose](https://github.com/GiovineItalia/Compose.jl), which is an attempt at
+a more elegant, purely functional take on the R
+[grid](https://www.rdocumentation.org/packages/grid) package. It allows mixing
+of absolute and relative units and complex coordinate transforms.  The primary
+backend is a native [SVG](https://www.w3.org/Graphics/SVG/) generator (almost
+native: it uses [pango](https://www.pango.org/) to precompute text extents),
+though there is also a [Cairo](https://cairographics.org/) backend.  See
+[Backends](@ref) for more details.
 
 Building graphics declaratively let's you do some fun things. Like stick two
 plots together:
 
 ```@example 1
-fig1a = plot(iris, x="SepalLength", y="SepalWidth", Geom.point)
-fig1b = plot(iris, x="SepalWidth", Geom.bar)
+fig1a = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)
+fig1b = plot(iris, x=:SepalWidth, Geom.bar)
 fig1 = hstack(fig1a, fig1b)
 ```
 
 Ultimately this will make more complex visualizations easier to build. For
-example, facets, plots within plots, and so on. See [Layers and
-Stacks](@ref) for more details.
+example, facets, plots within plots, and so on. See [Compositing](@ref) for
+more details.
 
 ## Interactivity
 
@@ -182,9 +233,11 @@ Another advantage is that we can annotate our SVG output and embed Javascript
 code to provide some level of dynamism.
 
 Though not a replacement for full-fledged custom interactive visualizations of
-the sort produced by d3, this sort of mild interactivity can improve a lot of
-standard plots. The fuel efficiency plot is made more clear by toggling off some
-of the countries, for example.  To do so, simply click or shift-click in the
+the sort produced by [D3](https://d3js.org/), this sort of mild interactivity
+can improve a lot of standard plots. The fuel efficiency plot is made more
+clear by toggling off some of the countries, for example.  To do so, first
+render the plot using the SVGJS backend, which was *not* used to generate this
+webpage but is the default at the REPL, then simply click or shift-click in the
 colored squares in the table of keys to the right.
 
 One can also zoom in and out by pressing the shift key while either scrolling
@@ -192,6 +245,5 @@ the mouse wheel or clicking and dragging a box.  Should your mouse not work,
 try the plus, minus, I, and O, keys.  Panning is similarly easy: click and drag
 without depressing the shift key, or use the arrow keys.  For Vim enthusiasts,
 the H, J, K, and L keys pan as expected.  To reset the plot to it's initial
-state, double click it or hit R.
-
-Lastly, press C to toggle on and off a numerical display of the cursor coordinates.
+state, double click it or hit R.  Lastly, press C to toggle on and off a
+numerical display of the cursor coordinates.

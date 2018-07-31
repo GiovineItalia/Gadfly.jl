@@ -10,7 +10,7 @@ makedocs(
         "Tutorial" => "tutorial.md",
         "Manual" => Any[
             "Plotting" => "man/plotting.md",
-            "Layers and Stacks" => "man/layers.md",
+            "Compositing" => "man/compositing.md",
             "Backends" => "man/backends.md",
             "Themes" => "man/themes.md",
         ],

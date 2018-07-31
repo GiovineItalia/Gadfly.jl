@@ -172,7 +172,7 @@ ColorKey(;title=nothing, labels=nothing, pos=nothing) = ColorKey(title, labels, 
 
 Enable control of the auto-generated colorkey.  Set the colorkey `title` for
 any plot, and the item `labels` for plots with a discrete color scale.  `pos`
-overrides [Theme(key_position=)](@ref Parameters) and can be in either
+overrides [Theme(key_position=)](@ref Gadfly) and can be in either
 relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm,
 0mm]), or plot scale (e.g. [0,0]) coordinates.
 """

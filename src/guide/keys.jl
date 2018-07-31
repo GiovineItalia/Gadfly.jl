@@ -16,7 +16,7 @@ ShapeKey(;title="Shape", labels=[""], pos=Float64[]) = ShapeKey(title, labels, p
     Guide.shapekey(title, labels, pos)
 
 Enable control of the auto-generated shapekey.  Set the key `title` and the item `labels`.
-`pos` overrides [Theme(key_position=)](@ref Parameters) and can be in either
+`pos` overrides [Theme(key_position=)](@ref Gadfly) and can be in either
 relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm,
 0mm]), or plot scale (e.g. [0,0]) coordinates.
 """
