@@ -9,6 +9,15 @@ end
 
 HBandGeometry(; color = nothing, tag = empty_tag) = HBandGeometry(color, tag)
 
+"""
+    Geom.hband[(; color=nothing)]
+
+Draw horizontal bands across the plot canvas with a vertical span specified by `ymin` and `ymax` aesthetics.
+
+# Optional Aesthetics
+- `color`:
+  Default is `Theme.default_color`.
+"""
 const hband = HBandGeometry
 
 element_aesthetics(::HBandGeometry) = [:ymin, :ymax]
@@ -47,6 +56,15 @@ end
 
 VBandGeometry(; color = nothing, tag = empty_tag) = VBandGeometry(color, tag)
 
+"""
+    Geom.vband[(; color=nothing)]
+
+Draw vertical bands across the plot canvas with a horizontal span specified by `xmin` and `xmax` aesthetics.
+
+# Optional Aesthetics
+- `color`:
+  Default is `Theme.default_color`.
+"""
 const vband = VBandGeometry
 
 element_aesthetics(::VBandGeometry) = [:xmin, :xmax]
