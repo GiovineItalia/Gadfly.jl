@@ -13,6 +13,7 @@ using Hexagons
 using Loess
 using CoupledFields # It is registered in METADATA.jl
 using IndirectArrays
+using Measures
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, setfield!, discretize_make_ia, aes2str
@@ -795,7 +796,7 @@ function apply_statistic(stat::TickStatistic,
     for var in in_vars
         categorical && !in(var,[:x,:y]) && continue
         vals = getfield(aes, var)
-        if vals != nothing && eltype(vals) != Function
+        if vals != nothing && eltype(vals) != Function && !(eltype(vals) <: Measure)
             if minval == nothing
                 minval = first(vals)
             end
