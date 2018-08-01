@@ -2037,4 +2037,49 @@ function Gadfly.Stat.apply_statistic(stat::EllipseStatistic,
     aes.y = ellipse_y
 end
 
+
+struct BandStatistic <: Gadfly.StatisticElement
+    orientation::Symbol # :horizontal or :vertical like BarStatistic or HairStatistic
+end
+
+function BandStatistic(;orientation=:vertical)
+    return BandStatistic(orientation)
+end
+
+input_aesthetics(stat::BandStatistic) = [:xmin, :xmax, :ymin, :ymax]
+output_aesthetics(stat::BandStatistic) = [:xmin, :xmax, :ymin, :ymax]
+default_scales(stat::BandStatistic) = [Scale.x_continuous(), Scale.y_continuous()]
+
+"""
+    Stat.band[(; orientation=:vertical)]
+
+Transform points in $(aes2str(input_aesthetics(band()))) into rectangles in
+$(aes2str(output_aesthetics(band()))).  Used by [`Geom.band`](@ref Gadfly.Geom.band).
+"""
+const band = BandStatistic
+
+function apply_statistic(stat::BandStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+
+    if stat.orientation == :horizontal
+
+        n = max(length(aes.ymin)) #Note: already passed check for equal lengths.
+
+        aes.xmin = fill(0w, n)
+        aes.xmax = fill(1w, n)
+
+    elseif stat.orientation == :vertical
+
+        n = max(length(aes.xmin)) #Note: already passed check for equal lengths.
+
+        aes.ymin = fill(0h, n)
+        aes.ymax = fill(1h, n)
+
+    else
+        error("Orientation must be :horizontal or :vertical")
+    end
+end
+
 end # module Stat
