@@ -11,6 +11,35 @@ plot(dataset("ggplot2", "mpg"),
      Guide.annotation(compose(context(), text(6,4, "y=x", hleft, vtop), fill("red"))))
 ```
 
+## [`Geom.band`](@ref), [`Geom.hband`](@ref), [`Geom.vband`](@ref)
+
+
+```@example
+using Colors, Gadfly, RDatasets
+
+Dp = dataset("ggplot2","presidential")[3:end,:]
+De = dataset("ggplot2","economics")
+De[:Unemploy] /= 10^3
+
+plot(De, x=:Date, y=:Unemploy, Geom.line,
+    layer(Dp, xmin=:Start, xmax=:End, Geom.vband, color=:Party),
+    Scale.color_discrete_manual("deepskyblue", "lightcoral"),
+    Coord.cartesian(xmin=Date("1965-01-01"), ymax=12),
+    Guide.xlabel("Time"), Guide.ylabel("Unemployment (x10³)"), Guide.colorkey(title=""),
+    Theme(default_color="black", key_position=:top))
+```
+
+```@example
+using Gadfly, RDatasets
+
+p1 = plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth", Geom.point,
+          layer(xmin=[5.0, 7.0], xmax=[6.5, 8.0] , Geom.vband, Theme(default_color="green")));
+
+p2 = plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth", Geom.point,
+          layer(ymin=[2.5, 3.6], ymax=[3.0, 4.0], Geom.hband, Theme(default_color="red")));
+
+hstack(p1, p2)
+```
 
 ## [`Geom.bar`](@ref)
 
@@ -102,7 +131,7 @@ using Gadfly, RDatasets, Distributions
 set_default_plot_size(14cm, 8cm)
 dist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])
 xs = rand(dist, 10^5)
-plot(layer(x=xs, Geom.density, Theme(default_color="orange")), 
+plot(layer(x=xs, Geom.density, Theme(default_color="orange")),
      layer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color="green")),
      layer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color="purple")),
      Guide.manual_color_key("bandwidth", ["auto", "bw=0.0003", "bw=0.25"],
@@ -171,17 +200,6 @@ pb = plot(x=s.*(x.^2), y=x, color=string.(s),
 hstack(pa, pb)
 ```
 
-## [`Geom.hband`](@ref), [`Geom.vband`](@ref)
-
-```@example
-using Gadfly, RDatasets
-set_default_plot_size(21cm, 8cm)
-p1 = plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth", Geom.point,
-          layer(xmin=[5.0, 7.0], xmax=[6.5, 8.0] , Geom.vband(color="green")))
-p2 = plot(dataset("datasets", "iris"), x="SepalLength", y="SepalWidth", Geom.point,
-          layer(ymin=[2.5, 3.5], ymax=[3.0, 4.0], Geom.hband(color="red")))
-hstack(p1,p2)
-```
 
 ## [`Geom.hexbin`](@ref)
 
@@ -475,8 +493,8 @@ using Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
 
 coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)
-p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)), 
-          xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], 
+p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)),
+          xmin=[-2], xmax=[2], ymin=[-2], ymax=[2],
 # or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     
           Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),
           Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),
@@ -484,7 +502,7 @@ p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)),
           Guide.xlabel("x"), Guide.ylabel("y"), Guide.colorkey(title="z"))
 
 volcano = Matrix{Float64}(dataset("datasets", "volcano"))
-volc = volcano[1:4:end, 1:4:end] 
+volc = volcano[1:4:end, 1:4:end]
 coord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)
 p2 = plot(coord, z=volc, x=1.0:22, y=1.0:16,
           Geom.vectorfield(scale=0.05), Geom.contour(levels=7),
