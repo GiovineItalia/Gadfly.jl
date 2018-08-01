@@ -18,14 +18,14 @@ specify their `color`.
 """
 const rectbin = RectangularBinGeometry
 
-"""
-    Geom.rect
-
-Draw colored rectangles with the corners specified by the
-`xmin`, `xmax`, `ymin` and `ymax` aesthetics.  Optionally
-specify their `color`.
-"""
-rect() = RectangularBinGeometry(Gadfly.Stat.Identity())
+# """
+#     Geom.rect
+#
+# Draw colored rectangles with the corners specified by the
+# `xmin`, `xmax`, `ymin` and `ymax` aesthetics.  Optionally
+# specify their `color`.
+# """
+# rect() = RectangularBinGeometry(Gadfly.Stat.Identity())
 
 """
     Geom.histogram2d[(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
