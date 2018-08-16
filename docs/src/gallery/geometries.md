@@ -344,13 +344,23 @@ plot(dataset("Zelig", "macro"), x="Year", y="Country", color="GDP", Geom.rectbin
 ## [`Geom.ribbon`](@ref)
 
 ```@example
-using Gadfly, DataFrames
-set_default_plot_size(14cm, 8cm)
-xs = 0:0.1:20
-df_cos = DataFrame(x=xs, y=cos(xs), ymin=cos(xs).-0.5, ymax=cos(xs).+0.5, f="cos")
-df_sin = DataFrame(x=xs, y=sin(xs), ymin=sin(xs).-0.5, ymax=sin(xs).+0.5, f="sin")
-df = vcat(df_cos, df_sin)
-plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)
+using Gadfly, Colors, DataFrames, Distributions
+set_default_plot_size(21cm, 8cm)
+X = [cos.(0:0.1:20) sin.(0:0.1:20)]
+x = -4:0.1:4
+Da = [DataFrame(x=0:0.1:20, y=X[:,j], ymin=X[:,j].-0.5, ymax=X[:,j].+0.5, f="$f")  for (j,f) in enumerate(["cos","sin"])]
+Db = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u="μ=$μ") for μ in [-1,1] ]
+
+# In the line below, 0.4 is the color opacity
+p1 = plot(vcat(Da...), x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon,
+    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4))
+)
+p2 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax, color = :u, 
+    Geom.line, Geom.ribbon, Guide.ylabel("Density"),
+    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)), 
+    Guide.colorkey(title="", pos=[2.5,0.6]), Guide.title("Parametric PDF")
+)
+hstack(p1,p2)
 ```
 
 
