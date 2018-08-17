@@ -47,15 +47,20 @@ default_middle_color(fill_color::TransparentColor) = RGBA{Float32}(
 get_stroke_vector(::Void) = []
 get_stroke_vector(vec::AbstractVector) = vec
 function get_stroke_vector(linestyle::Symbol)
-  dash = 4 * Compose.mm
-  dot = 2 * Compose.mm
-  gap = 1 * Compose.mm
-  linestyle == :solid && return []
-  linestyle == :dash && return [dash, gap]
-  linestyle == :dot && return [dot, gap]
-  linestyle == :dashdot && return [dash, gap, dot, gap]
-  linestyle == :dashdotdot && return [dash, gap, dot, gap, dot, gap]
-  error("unsupported linestyle: ", linestyle)
+    ldash = 6 * Compose.mm
+    dash = 4 * Compose.mm
+    dot = 2 * Compose.mm
+    gap = 1 * Compose.mm
+    linestyle == :solid && return []
+    linestyle == :dash && return [dash, gap]
+    linestyle == :dot && return [dot, gap]
+    linestyle == :dashdot && return [dash, gap, dot, gap]
+    linestyle == :dashdotdot && return [dash, gap, dot, gap, dot, gap]
+    linestyle == :ldash && return [ldash, gap]
+    linestyle == :ldashdash && return [ldash, gap, dash, gap]
+    linestyle == :ldashdot && return [ldash, gap, dot, gap]
+    linestyle == :ldashdashdot && return [ldash, gap, dash, gap, dot, gap]
+    error("unsupported linestyle: ", linestyle)
 end
 
 using DocStringExtensions
@@ -82,10 +87,9 @@ $(FIELDS)
     "Width of lines in the line geometry. (Measure)",
     line_width,            Measure,         0.3mm
 
-    # a Compose.StrokeDash object which takes a vector of sold/missing/solid/missing/... 
-    # lengths which are applied cyclically
-    "Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)",
-    line_style,            Union{Symbol,Vector},   :solid
+    "Style of lines in the line geometry. The default palette is `[:solid, :dash, :dot, :dashdot, :dashdotdot, :ldash, :ldashdash, :ldashdot, :ldashdashdot]` which is a Vector{Symbol}, or customize using Vector{Vector{<:Measure}}"
+    line_style,            (Vector{<:Union{Symbol, Vector{<:Measure}}}),   [:solid, :dash, :dot, :dashdot, :dashdotdot, 
+                                                    :ldash, :ldashdash, :ldashdot, :ldashdashdot  ]
 
     "Background color used in the main plot panel. (Color or Nothing)",
     panel_fill,            ColorOrNothing,  nothing

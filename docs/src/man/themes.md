@@ -65,7 +65,7 @@ and can be used with `push_theme`, `with_theme`, and `plot`.
 ```@example 1
 Gadfly.push_theme(style(line_width=1mm))
 p1 = plot([sin,cos], 0, 2pi)
-p2 = plot([sin,cos], 0, 2pi, style(line_width=2mm, line_style=:dash))
+p2 = plot([sin,cos], 0, 2pi, style(line_width=2mm, line_style=[:dash]))
 fig = hstack(p1,p2)
 Gadfly.pop_theme()
 fig # hide

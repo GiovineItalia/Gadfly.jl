@@ -38,7 +38,7 @@ function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    style = geom.style === nothing ? theme.line_style : geom.style
+    style = geom.style === nothing ? theme.line_style[1] : geom.style
 
     color = check_arguments(color, length(aes.yintercept))
     size = check_arguments(size, length(aes.yintercept))
@@ -85,7 +85,7 @@ function render(geom::VLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    style = geom.style === nothing ? theme.line_style : geom.style
+    style = geom.style === nothing ? theme.line_style[1] : geom.style
 
     color = check_arguments(color, length(aes.xintercept))
     size = check_arguments(size, length(aes.xintercept))
@@ -143,7 +143,7 @@ function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    style = geom.style === nothing ? theme.line_style : geom.style
+    style = geom.style === nothing ? theme.line_style[1] : geom.style
 
     color = check_arguments(color, length(aes.intercept))
     size = check_arguments(size, length(aes.intercept))

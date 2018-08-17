@@ -304,8 +304,8 @@ anything in the data that's not respresented in `levels` will be set to
 `missing`.  `order` is a vector of integers giving a permutation of the levels
 default order.
 
-See also [`group_discrete`](@ref), [`shape_discrete`](@ref), and
-[`size_discrete`](@ref).
+See also [`group_discrete`](@ref), [`shape_discrete`](@ref), 
+[`size_discrete`](@ref), and [`linestyle_discrete`](@ref).
 """
 
 @doc xy_discrete_docstr("x", aes2str(element_aesthetics(x_discrete()))) x_discrete(; labels=nothing, levels=nothing, order=nothing) =
@@ -328,6 +328,10 @@ Similar to [`Scale.x_discrete`](@ref), except applied to the `$aes` aesthetic.
 
 @doc type_discrete_docstr("size") size_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:size], labels=labels, levels=levels, order=order)
+
+@doc type_discrete_docstr("linestyle") linestyle_discrete(; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale([:linestyle], labels=labels, levels=levels, order=order)
+
 
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
