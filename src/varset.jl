@@ -1,5 +1,8 @@
 # Generate large types where each field has a default value to which it's
-# initialized.
+# initialized.  the format of `table` is a symbol or tuple for each field, where
+# the former is just the variable name and the latter is of the form: ([doc str],
+# varable name, varable type, default value, [depwarn str]).  square brackets
+# indicate optional elements.
 
 macro varset(name::Symbol, table)
     @assert table.head == :block
@@ -7,6 +10,7 @@ macro varset(name::Symbol, table)
 
     names = Any[]
     vars = Any[]
+    depwarns = Any[]
     parsed_vars = Any[]
     parameters = Any[]
     parameters_expr = Expr(:parameters)
@@ -14,32 +18,30 @@ macro varset(name::Symbol, table)
     inherit_parameters_expr = Expr(:parameters)
 
     for row in table
-        if isa(row, Expr) && row.head == :line
-            continue
-        end
+        isa(row, Expr) && row.head == :line && continue
 
-        if isa(row, Expr) && isa(row.args[1], Expr)
-            docstr = row.args[2]
-            row = row.args[3]
-        else
-            docstr = ""
-        end
-
+        hasdocstr = false
         if isa(row, Symbol)
             var = row
             typ = :Any
             default = :nothing
-        elseif row.head == :tuple
-            @assert 2 <= length(row.args) <= 3
-            var = row.args[1]
-            typ = row.args[2]
-            default = length(row.args) > 2 ? row.args[3] : :nothing
+            depwarnstr = ""
+        elseif row.head == :tuple && 2 <= length(row.args) <= 5
+            if isa(row.args[1], String)
+                docstr = row.args[1]
+                hasdocstr = true
+            end
+            var = row.args[hasdocstr+1]
+            typ = row.args[hasdocstr+2]
+            default = length(row.args)-hasdocstr > 2 ? row.args[hasdocstr+3] : :nothing
+            depwarnstr = length(row.args)-hasdocstr > 3 ? row.args[hasdocstr+4] : ""
         else
             error("Bad varset syntax ", row)
         end
 
         push!(names, var)
-        isempty(docstr) || push!(vars, :($(docstr)))
+        hasdocstr && push!(vars, :($docstr))
+        isempty(depwarnstr) || push!(depwarns, :($var != $default && Base.depwarn($depwarnstr, :Theme)))
         push!(vars, :($(var)::$(typ)))
         push!(parameters, Expr(:kw, var, default))
         push!(inherit_parameters, Expr(:kw, var, :(b.$var)))
@@ -59,7 +61,10 @@ macro varset(name::Symbol, table)
             $(vars...)
         end
 
-        $(name)($(parameters_expr)) = $(name)($(parsed_vars...))
+        function $(name)($(parameters_expr))
+            $(depwarns...)
+            return $(name)($(parsed_vars...))
+        end
         $(name)($(inherit_parameters_expr), b::$name) = $(name)($(names...))
         copy(a::$(name)) = $(name)(a)
     end

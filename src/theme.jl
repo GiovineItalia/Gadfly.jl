@@ -64,100 +64,100 @@ using DocStringExtensions
 $(FIELDS)
 """
 @varset Theme begin
-    "If the color aesthetic is not mapped to anything, this is the color that is used.  (Color)"
+    "If the color aesthetic is not mapped to anything, this is the color that is used.  (Color)",
     default_color,         ColorOrNothing,  LCHab(70, 60, 240)
 
-    "Size of points in the point, boxplot, and beeswarm geometries.  (Measure)"
+    "Size of points in the point, boxplot, and beeswarm geometries.  (Measure)",
     point_size,            Measure,         0.9mm
-    "Minimum size of points in the point geometry.  (Measure)"
+    "Minimum size of points in the point geometry.  (Measure)",
     point_size_min,        Measure,         0.45mm
-    "Maximum size of points in the point geometry.  (Measure)"
+    "Maximum size of points in the point geometry.  (Measure)",
     point_size_max,        Measure,         1.8mm
 
-    "Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)"
+    "Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)",
     point_shapes,          Vector{Function},  [Shape.circle, Shape.square, Shape.diamond, Shape.cross, Shape.xcross,
                                                Shape.utriangle, Shape.dtriangle, Shape.star1, Shape.star2,
                                                Shape.hexagon, Shape.octagon, Shape.hline, Shape.vline]
 
-    "Width of lines in the line geometry. (Measure)"
+    "Width of lines in the line geometry. (Measure)",
     line_width,            Measure,         0.3mm
 
     # a Compose.StrokeDash object which takes a vector of sold/missing/solid/missing/... 
     # lengths which are applied cyclically
-    "Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)"
+    "Style of lines in the line geometry. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)",
     line_style,            Union{Symbol,Vector},   :solid
 
-    "Background color used in the main plot panel. (Color or Nothing)"
+    "Background color used in the main plot panel. (Color or Nothing)",
     panel_fill,            ColorOrNothing,  nothing
 
-    "Border color of the main plot panel. (Color or Nothing)"
+    "Border color of the main plot panel. (Color or Nothing)",
     panel_stroke,          ColorOrNothing,  nothing
 
-    "Opacity of the plot background panel. (Float in [0.0, 1.0])"
+    "Opacity of the plot background panel. (Float in [0.0, 1.0])",
     panel_opacity,         Float64,         1.0
 
-    "Background color for the entire plot. If nothing, no background. (Color or Nothing)"
+    "Background color for the entire plot. If nothing, no background. (Color or Nothing)",
     background_color,      ColorOrNothing,  nothing
 
-    "Padding around the plot. The order of padding is: `plot_padding=[left, right, top, bottom]`. If a vector of length one is provided e.g.  `[5mm]` then that value is applied to all sides. Absolute or relative units can be used. (Vector{<:Measure})"
+    "Padding around the plot. The order of padding is: `plot_padding=[left, right, top, bottom]`. If a vector of length one is provided e.g.  `[5mm]` then that value is applied to all sides. Absolute or relative units can be used. (Vector{<:Measure})",
     plot_padding,          (Vector{<:Measure}),         [5mm]
 
-    "Color of grid lines. (Color or Nothing)"
+    "Color of grid lines. (Color or Nothing)",
     grid_color,            ColorOrNothing,  colorant"#D0D0E0"
-    "Style of grid lines. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)"
+    "Style of grid lines. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)",
     grid_line_style,       Union{Symbol,Vector},   [0.5mm, 0.5mm]
 
-    "In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)"
+    "In the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)",
     grid_color_focused,    ColorOrNothing,  colorant"#A0A0A0"
 
-    "Width of grid lines. (Measure)"
+    "Width of grid lines. (Measure)",
     grid_line_width,       Measure,         0.2mm
 
-    "Font used for minor labels such as tick labels and entries in keys. (String)"
+    "Font used for minor labels such as tick labels and entries in keys. (String)",
     minor_label_font,      AbstractString,          label_font_desc
-    "Font size used for minor labels. (Measure)"
+    "Font size used for minor labels. (Measure)",
     minor_label_font_size, Measure,         8pt
-    "Color used for minor labels. (Color)"
+    "Color used for minor labels. (Color)",
     minor_label_color,     ColorOrNothing,  colorant"#6c606b"
 
-    "Font used for major labels such as guide titles and axis labels. (String)"
+    "Font used for major labels such as guide titles and axis labels. (String)",
     major_label_font,      AbstractString,          title_font_desc
-    "Font size used for major labels. (Measure)"
+    "Font size used for major labels. (Measure)",
     major_label_font_size, Measure,         11pt
-    "Color used for major labels. (Color)"
+    "Color used for major labels. (Color)",
     major_label_color,     ColorOrNothing,  colorant"#564a55"
 
-    "Font used for labels in Geom.label. (String)"
+    "Font used for labels in Geom.label. (String)",
     point_label_font,      AbstractString,          label_font_desc
-    "Font size used for labels. (Measure)"
+    "Font size used for labels. (Measure)",
     point_label_font_size, Measure,         8pt
-    "Color used for labels. (Color)"
+    "Color used for labels. (Color)",
     point_label_color,     ColorOrNothing,  colorant"#4c404b"
 
-    "Font used for titles of keys. (String)"
+    "Font used for titles of keys. (String)",
     key_title_font,      AbstractString,          title_font_desc
-    "Font size used for key titles. (Measure)"
+    "Font size used for key titles. (Measure)",
     key_title_font_size, Measure,         11pt
-    "Color used for key titles. (Color)"
+    "Color used for key titles. (Color)",
     key_title_color,     ColorOrNothing,  colorant"#362a35"
 
-    "Font used for key entry labels. (String)"
+    "Font used for key entry labels. (String)",
     key_label_font,      AbstractString,          title_font_desc
-    "Font size used for key entry labels. (Measure)"
+    "Font size used for key entry labels. (Measure)",
     key_label_font_size, Measure,         8pt
-    "Color used for key entry labels. (Color)"
+    "Color used for key entry labels. (Color)",
     key_label_color,     ColorOrNothing,  colorant"#4c404b"
 
-    "How many gradations to show in a continuous color key. (Int)"
+    "How many gradations to show in a continuous color key. (Int)",
     key_color_gradations, Int,            40
 
-    "Spacing between bars in [`Geom.bar`](@ref). (Measure)"
+    "Spacing between bars in [`Geom.bar`](@ref). (Measure)",
     bar_spacing,           Measure,         -0.05mm
 
-    "Spacing between boxplots in [`Geom.boxplot`](@ref). (Measure)"
+    "Spacing between boxplots in [`Geom.boxplot`](@ref). (Measure)",
     boxplot_spacing,       Measure,         1mm
 
-    "Length of caps on error bars. (Measure)"
+    "Length of caps on error bars. (Measure)",
     errorbar_cap_length,   Measure,         3mm
 
     # SEEMS TO BE ONLY USED BY GEOM.ERRORBAR ???
@@ -165,67 +165,70 @@ $(FIELDS)
     # differentiate histogram bars from error bars.
     stroke_color,          Function,       default_stroke_color
 
-    "Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)"
+    "Width of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)",
     highlight_width,       Measure,         0.3mm
 
-    "Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)"
+    "Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)",
     discrete_highlight_color,       Function,        default_discrete_highlight_color
-    "Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)"
+    "Color used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)",
     continuous_highlight_color,     Function,        default_continuous_highlight_color
 
-    "Color used to draw background geometry, such as `Geom.ribbon` and `Geom.polygon`. This is a function that alters the fill color of the geometry.  (Function)"
+    "Color used to draw background geometry, such as `Geom.ribbon` and `Geom.polygon`. This is a function that alters the fill color of the geometry.  (Function)",
     lowlight_color,        Function,        default_lowlight_color
 
+    "Opacity of background geometry such as [`Geom.ribbon`](@ref).  (Float64)",
+    lowlight_opacity,      Float64,         0.6,
+    "The keyword argument `lowlight_opacity` has been deprecated, and never worked anyway!"
 
-    "Color altering function used to draw the midline in boxplots. (Function)"
+    "Color altering function used to draw the midline in boxplots. (Function)",
     middle_color,          Function,        default_middle_color
 
-    "Width of the middle line in boxplots. (Measure)"
+    "Width of the middle line in boxplots. (Measure)",
     middle_width,          Measure,         0.6mm
 
-    "One of `:left`, `:center`, `:right` indicating the placement of the title of color key guides. (Symbol)"
+    "One of `:left`, `:center`, `:right` indicating the placement of the title of color key guides. (Symbol)",
     guide_title_position,  Symbol,          :left
 
-    "The shape used in color swatches in the color key guide. Either `:circle` or `:square`  (Symbol)"
+    "The shape used in color swatches in the color key guide. Either `:circle` or `:square`  (Symbol)",
     colorkey_swatch_shape, Symbol,          :square
 
     # will eventually replace `colorkey_swatch_shape` 
-    "Shape used in keys for swatches (Function as in `point_shapes`)"
+    "Shape used in keys for swatches (Function as in `point_shapes`)",
     key_swatch_shape,       Function,        Shape.square
 
-    "Default color used in keys for swatches.  Currently works for `Guide.shapekey` (Color)"
+    "Default color used in keys for swatches.  Currently works for `Guide.shapekey` (Color)",
     key_swatch_color,       ColorOrNothing,        nothing
 
-    "Where key should be placed relative to the plot panel. One of `:left`, `:right`, `:top`, `:bottom`, `:inside` or `:none`. Setting to `:none` disables the key. Setting to `:inside` places the key in the lower right quadrant of the plot. (Symbol)"
+    "Where key should be placed relative to the plot panel. One of `:left`, `:right`, `:top`, `:bottom`, `:inside` or `:none`. Setting to `:none` disables the key. Setting to `:inside` places the key in the lower right quadrant of the plot. (Symbol)",
     key_position,          Symbol,          :right
 
-    "Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)"
+    "Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)",
     bar_highlight,         Union{(Void), Function, Color},   nothing
 
     rug_size,             Measure,          2.0mm
 
-    "Number of annealing iterations.  Used by `Geom.label(position=:dynamic)`"
+    "Number of annealing iterations.  Used by `Geom.label(position=:dynamic)`",
     label_placement_iterations,  Int,       1000
 
-    "Penalty for a label not being contained within the plot frame.  Used by `Geom.label(position=:dynamic)`"
+    "Penalty for a label not being contained within the plot frame.  Used by `Geom.label(position=:dynamic)`",
     label_out_of_bounds_penalty, Float64,   10.0
 
-    "Penalty for making a label hidden to avoid overlaps.  Used by `Geom.label(position=:dynamic)`"
+    "Penalty for making a label hidden to avoid overlaps.  Used by `Geom.label(position=:dynamic)`",
     label_hidden_penalty,        Float64,   0.5
 
-    "Probability of proposing a visibility flip during label layout.  Used by `Geom.label(position=:dynamic)`"
+    "Probability of proposing a visibility flip during label layout.  Used by `Geom.label(position=:dynamic)`",
     label_visibility_flip_pr,    Float64,   0.2
 
-    "Padding between marker and label.  Used by `Geom.label(position=:dynamic)`"
+    "Padding between marker and label.  Used by `Geom.label(position=:dynamic)`",
     label_padding,    Measure,   1mm
 
-    "Maximum number of columns for key entry labels. (Int)"
+    "Maximum number of columns for key entry labels. (Int)",
     key_max_columns,             Int,       4
 
-    "A `DiscreteColorScale` see [`Scale.color_discrete_hue`](@ref)"
+    "A `DiscreteColorScale` see [`Scale.color_discrete_hue`](@ref)",
     discrete_color_scale,        Scale.DiscreteColorScale, Scale.color_discrete()
 
-    "A `ContinuousColorScale` see [`Scale.color_continuous`](@ref)"
+    "A `ContinuousColorScale` see [`Scale.color_continuous`](@ref)",
     continuous_color_scale,      Scale.ContinuousColorScale, Scale.color_continuous()
 end
 
@@ -404,99 +407,3 @@ end
 A light foreground on a dark background.
 """
 get_theme(::Val{:dark}) = dark_theme
-
-
-
-# Outer constructor for Theme argument depwarns
-
-function Theme(;
-    default_color=LCHab(70, 60, 240),
-    point_size=0.9mm,
-    point_size_min=0.45mm,
-    point_size_max=1.8mm,
-    point_shapes=[Shape.circle, Shape.square, Shape.diamond, Shape.cross, Shape.xcross, Shape.utriangle, Shape.dtriangle, Shape.star1, Shape.star2, Shape.hexagon, Shape.octagon, Shape.hline, Shape.vline],
-    line_width=0.3mm,
-    line_style=:solid,
-    panel_fill=nothing,
-    panel_stroke=nothing,
-    panel_opacity=1.0,
-    background_color=nothing,
-    plot_padding=[5mm],
-    grid_color=colorant"#D0D0E0",
-    grid_line_style=[0.5mm, 0.5mm],
-    grid_color_focused=colorant"#A0A0A0",
-    grid_line_width=0.2mm,
-    minor_label_font=label_font_desc,
-    minor_label_font_size=8pt,
-    minor_label_color=colorant"#6c606b",
-    major_label_font=title_font_desc,
-    major_label_font_size=11pt,
-    major_label_color=colorant"#564a55",
-    point_label_font=label_font_desc,
-    point_label_font_size=8pt,
-    point_label_color=colorant"#4c404b",
-    key_title_font=title_font_desc,
-    key_title_font_size=11pt,
-    key_title_color=colorant"#362a35",
-    key_label_font=title_font_desc,
-    key_label_font_size=8pt,
-    key_label_color=colorant"#4c404b",
-    key_color_gradations=40,
-    bar_spacing=-0.05mm,
-    boxplot_spacing=1mm,
-    errorbar_cap_length=3mm,
-    stroke_color=default_stroke_color,
-    highlight_width=0.3mm,
-    discrete_highlight_color=default_discrete_highlight_color,
-    continuous_highlight_color=default_continuous_highlight_color,
-    lowlight_color=default_lowlight_color,
-    lowlight_opacity=NaN,
-    middle_color=default_middle_color,
-    middle_width=0.6mm,
-    guide_title_position=:left,
-    colorkey_swatch_shape=:square,
-    key_swatch_shape=Shape.square,
-    key_swatch_color=nothing,  
-    key_position=:right,
-    bar_highlight=nothing,
-    rug_size=2.0mm,
-    label_placement_iterations=1000,
-    label_out_of_bounds_penalty=10.0,
-    label_hidden_penalty=0.5,
-    label_visibility_flip_pr=0.2,
-    label_padding=1mm,
-    key_max_columns=4,
-    discrete_color_scale=Scale.color_discrete(),
-    continuous_color_scale=Scale.color_continuous()
-)
-    
-    isfinite(lowlight_opacity) && Base.depwarn("The keyword argument `lowlight_opacity` has been deprecated, and never worked anyway!", :Theme)
-    
-return Theme(default_color==nothing ? nothing : parse_colorant(default_color), 
-    point_size, point_size_min, point_size_max, point_shapes, line_width, line_style, 
-    panel_fill==nothing ? nothing : parse_colorant(panel_fill), 
-    panel_stroke==nothing ? nothing : parse_colorant(panel_stroke), 
-    panel_opacity,
-    background_color==nothing ? nothing : parse_colorant(background_color), 
-    plot_padding, 
-    grid_color==nothing ? nothing : parse_colorant(grid_color), 
-    grid_line_style, 
-    grid_color_focused==nothing ? nothing : parse_colorant(grid_color_focused), 
-    grid_line_width, minor_label_font, minor_label_font_size, 
-    minor_label_color==nothing ? nothing : parse_colorant(minor_label_color), 
-    major_label_font, major_label_font_size, 
-    major_label_color==nothing ? nothing : parse_colorant(major_label_color),
-    point_label_font, point_label_font_size, 
-    point_label_color==nothing ? nothing : parse_colorant(point_label_color), 
-    key_title_font, key_title_font_size, 
-    key_title_color==nothing ? nothing : parse_colorant(key_title_color),
-     key_label_font, key_label_font_size, 
-    key_label_color==nothing ? nothing : parse_colorant(key_label_color), 
-    key_color_gradations, bar_spacing, boxplot_spacing, errorbar_cap_length, stroke_color, highlight_width, discrete_highlight_color, continuous_highlight_color, 
-    lowlight_color, middle_color, middle_width, guide_title_position, colorkey_swatch_shape, key_swatch_shape, 
-    key_swatch_color==nothing ? nothing : parse_colorant(key_swatch_color), 
-    key_position, bar_highlight, 
-    rug_size, label_placement_iterations, label_out_of_bounds_penalty, label_hidden_penalty, label_visibility_flip_pr, label_padding, key_max_columns,
-    discrete_color_scale, continuous_color_scale)
-end
-
