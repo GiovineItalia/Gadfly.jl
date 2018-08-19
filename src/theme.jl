@@ -87,9 +87,8 @@ $(FIELDS)
     "Width of lines in the line geometry. (Measure)",
     line_width,            Measure,         0.3mm
 
-    "Style of lines in the line geometry. The default palette is `[:solid, :dash, :dot, :dashdot, :dashdotdot, :ldash, :ldashdash, :ldashdot, :ldashdashdot]` which is a Vector{Symbol}, or customize using Vector{Vector{<:Measure}}"
-    line_style,            (Vector{<:Union{Symbol, Vector{<:Measure}}}),   [:solid, :dash, :dot, :dashdot, :dashdotdot, 
-                                                    :ldash, :ldashdash, :ldashdot, :ldashdashdot  ]
+    "Style of lines in the line geometry. The default palette is `[:solid, :dash, :dot, :dashdot, :dashdotdot, :ldash, :ldashdash, :ldashdot, :ldashdashdot]` which is a Vector{Symbol}, or customize using Vector{Vector{<:Measure}}",
+    line_style,            (Vector{<:Union{Symbol, Vector{<:Measure}}}),   [:solid, :dash, :dot, :dashdot, :dashdotdot, :ldash, :ldashdash, :ldashdot, :ldashdashdot]
 
     "Background color used in the main plot panel. (Color or Nothing)",
     panel_fill,            ColorOrNothing,  nothing
