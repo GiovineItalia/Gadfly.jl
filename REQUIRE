@@ -1,4 +1,4 @@
-julia 0.6
+julia 0.6.3
 Colors 0.3.4
 Compat 0.18.0
 Compose 0.5.2
@@ -19,8 +19,3 @@ StatsBase
 Juno
 IndirectArrays 0.4.2
 Missings
-# Gadfly doesn't use WeakRefString directly but because of a bug in Julia 0.6.2, Gadfly
-# will trigger a ambiguity error between WeakRefString methods. A temporary method was
-# added in version WeakRefStrings 0.4.3 to work around this. When Gadfly requires at least
-# Julia 0.6.3, this dependency can therefore be dropped.
-WeakRefStrings 0.4.3
