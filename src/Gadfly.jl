@@ -1152,7 +1152,8 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :shape       => Scale.shape_discrete(),
         :size        => Scale.size_continuous(),
         :group       => Scale.group_discrete(),
-        :label       => Scale.label()
+        :label       => Scale.label(),
+        :linestyle   => Scale.linestyle_discrete()
     ),
 
     :categorical => Dict{Symbol, Any}(
@@ -1171,7 +1172,8 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :shape      => Scale.shape_discrete(),
         :size       => Scale.size_discrete(),
         :group      => Scale.group_discrete(),
-        :label      => Scale.label()
+        :label      => Scale.label(),
+        :linestyle  => Scale.linestyle_discrete()
     )
 )
 

@@ -76,7 +76,7 @@ function render(geom::SegmentGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
 
     aes = inherit(aes, default_aes) 
 
-    line_style = Gadfly.get_stroke_vector(theme.line_style)
+    line_style = Gadfly.get_stroke_vector(theme.line_style[1])
 
     # Geom.vector requires information about scales
 

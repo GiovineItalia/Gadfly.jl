@@ -97,6 +97,27 @@ p2 = plot(x=xs, y=ys, z=zs, Geom.contour, Scale.color_none);
 hstack(p1,p2)
 ```
 
+## [`Scale.linestyle_discrete`](@ref)
+
+```@example
+using DataFrames, Gadfly, RDatasets
+using StatsBase: winsor
+set_default_plot_size(18cm, 8cm)
+
+labs = [ "exp", "sqrt", "log", "winsor", "linear"]
+funcs = [ x->60*(1-exp.(-0.2*x)), x->sqrt.(x)*10, x->log.(x)*10, x->winsor(x, prop=0.15), x->x*0.6 ]
+x = [1.0:30;]
+D = vcat([DataFrame(x=x, y=f(x), linev=l) for (f,l) in zip(funcs, labs)]...)
+D[134:136,:y] = NaN
+
+p1 = plot(D, x=:x, y=:y, linestyle=:linev, Geom.line )
+p2 = plot(dataset("datasets", "CO2"), x=:Conc, y=:Uptake, 
+    group=:Plant, linestyle=:Treatment, color=:Type, Geom.line,
+    Scale.linestyle_discrete(order=[2,1]),
+    Theme(key_position=:top, key_title_font_size=-8mm) )
+hstack(p1,p2)
+```
+
 
 ## [`Scale.x_continuous`](@ref), [`Scale.y_continuous`](@ref)
 

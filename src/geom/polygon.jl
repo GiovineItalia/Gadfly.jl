@@ -64,7 +64,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
     ctx = context(order=geom.order)
     T = (eltype(aes.x), eltype(aes.y))
 
-    line_style = Gadfly.get_stroke_vector(theme.line_style)
+    line_style = Gadfly.get_stroke_vector(theme.line_style[1])
 
     if aes.group != nothing
         XT, YT = eltype(aes.x), eltype(aes.y)

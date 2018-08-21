@@ -18,6 +18,7 @@ const NumericalAesthetic =
     size,         Union{CategoricalAesthetic,Vector,Void}
     shape,        Union{CategoricalAesthetic,Vector,Void}
     color,        Union{CategoricalAesthetic,Vector,Void}
+    linestyle,    Union{CategoricalAesthetic,Vector,Void}
 
     label,        CategoricalAesthetic
     group,        CategoricalAesthetic

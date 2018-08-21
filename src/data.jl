@@ -32,6 +32,7 @@
     yviewmax
     size
     shape
+    linestyle
     xsize
     ysize
     color
