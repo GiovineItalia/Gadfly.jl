@@ -1,8 +1,7 @@
-# Generate large types where each field has a default value to which it's
-# initialized.  the format of `table` is a symbol or tuple for each field, where
-# the former is just the variable name and the latter is of the form: ([doc str],
-# varable name, varable type, default value, [depwarn str]).  square brackets
-# indicate optional elements.
+# Generate large types where each field has an optional default value
+# to which it's initialized.  the format of each row in `table` is
+# "[doc str], variable name, [variable type, [default value, [depwarn
+# str]]]", where square brackets indicate optional elements.
 
 macro varset(name::Symbol, table)
     @assert table.head == :block
@@ -41,7 +40,7 @@ macro varset(name::Symbol, table)
 
         push!(names, var)
         hasdocstr && push!(vars, :($docstr))
-        isempty(depwarnstr) || push!(depwarns, :($var != $default && Base.depwarn($depwarnstr, :Theme)))
+        isempty(depwarnstr) || push!(depwarns, :($var != $default && Base.depwarn($depwarnstr, Symbol($name))))
         push!(vars, :($(var)::$(typ)))
         push!(parameters, Expr(:kw, var, default))
         push!(inherit_parameters, Expr(:kw, var, :(b.$var)))
