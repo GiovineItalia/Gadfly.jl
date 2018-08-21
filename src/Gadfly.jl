@@ -958,6 +958,7 @@ try
         draw(PNG(io, Compose.default_graphic_width,
                  Compose.default_graphic_height), p)
     end
+catch
 end
 
 try
@@ -967,6 +968,7 @@ try
         draw(PS(io, Compose.default_graphic_width,
              Compose.default_graphic_height), p);
     end
+catch
 end
 
 function show(io::IO, ::MIME"text/plain", p::Plot)
