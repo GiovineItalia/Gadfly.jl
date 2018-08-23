@@ -1485,7 +1485,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.boxplot",
     "category": "type",
-    "text": "Stat.boxplot[(; method=:tukey)]\n\nTransform the the x and y aesthetics into the x, middle, lower_hinge, upper_hinge, lower_fence, upper_fence and outliers aesthetics.  If method is :tukey then Tukey\'s rule is used (i.e. fences are 1.5 times the inter-quartile range).  Otherwise, a vector of five numbers giving quantiles for lower fence, lower hinge, middle, upper hinge, and upper fence in that order.  Used by Geom.boxplot.\n\n\n\n"
+    "text": "Stat.boxplot[(; method=:tukey)]\n\nTransform the the x and y aesthetics into the x, middle, lower_hinge, upper_hinge, lower_fence, upper_fence and outliers aesthetics.  If method is :tukey then Tukey\'s rule is used (i.e. fences are 1.5 times the inter-quartile range).  Otherwise, method should be a vector of five numbers giving quantiles for lower fence, lower hinge, middle, upper hinge, and upper fence in that order.  Used by Geom.boxplot.\n\n\n\n"
 },
 
 {
