@@ -1017,9 +1017,9 @@ output_aesthetics(stat::BoxplotStatistic) =
 Transform the $(aes2str(input_aesthetics(boxplot()))) into
 $(aes2str(output_aesthetics(boxplot()))).  If `method` is `:tukey` then Tukey's
 rule is used (i.e. fences are 1.5 times the inter-quartile range).  Otherwise,
-a vector of five numbers giving quantiles for lower fence, lower hinge, middle,
-upper hinge, and upper fence in that order.  Used by [`Geom.boxplot`](@ref
-Gadfly.Geom.boxplot).
+`method` should be a vector of five numbers giving quantiles for lower fence,
+lower hinge, middle, upper hinge, and upper fence in that order.  Used by
+[`Geom.boxplot`](@ref Gadfly.Geom.boxplot).
 """
 const boxplot = BoxplotStatistic
 
@@ -1027,23 +1027,6 @@ function apply_statistic(stat::BoxplotStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    if aes.y === nothing
-        Gadfly.assert_aesthetics_defined("BoxplotStatistic", aes,
-            :x, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence)
-
-        aes_color = aes.color === nothing ? [nothing] : aes.color
-        groups = Any[]
-        for (x, c) in zip(aes.x, cycle(aes_color))
-            push!(groups, (x, c))
-        end
-
-        if aes.color !== nothing
-            aes.color = discretize_make_ia([c for (x, c) in groups],
-                filter(!ismissing, aes.color.values))
-        end
-
-        return
-    end
 
     if aes.x === nothing
         aes_x = [1]
@@ -1053,14 +1036,33 @@ function apply_statistic(stat::BoxplotStatistic,
     end
     aes_color = aes.color === nothing ? [nothing] : aes.color
 
-    T = isempty(aes.y) ? eltype(aes.y) : typeof(aes.y[1] / 1)
-    groups = DefaultOrderedDict(() -> T[])
+    if aes.y == nothing
+        groups = Any[]
+        for (x, c) in zip(aes.x, cycle(aes_color))
+            push!(groups, (x, c))
+        end
 
-    for (x, y, c) in zip(cycle(aes_x), aes.y, cycle(aes_color))
-        push!(groups[(x, c)], y)
-    end
+        yviewmin, yviewmax = minimum(aes.lower_fence), maximum(aes.upper_fence)
+        if aes.outliers !== nothing
+            yviewmin = minimum(yviewmin, aes.outliers)
+            yviewmax = maximum(yviewmax, aes.outliers)
+        end
 
-    if aes.y != nothing
+        if aes.yviewmin === nothing || aes.yviewmin > yviewmin
+            aes.yviewmin = yviewmin
+        end
+
+        if aes.yviewmax === nothing || aes.yviewmax < yviewmax
+            aes.yviewmax = yviewmax
+        end
+    else
+        T = isempty(aes.y) ? eltype(aes.y) : typeof(aes.y[1] / 1)
+        groups = DefaultOrderedDict(() -> T[])
+
+        for (x, y, c) in zip(cycle(aes_x), aes.y, cycle(aes_color))
+            push!(groups[(x, c)], y)
+        end
+
         m = length(groups)
         aes.x = Array{eltype(aes.x)}(m)
         aes.middle = Array{T}(m)
