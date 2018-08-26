@@ -2,7 +2,7 @@ using Gadfly, Distributions
 
 set_default_plot_size(6inch, 16inch)
 
-srand(1234)
+Random.seed!(1234)
 
 x = rand(Normal(), 100)
 y = rand(Normal(10), 100)

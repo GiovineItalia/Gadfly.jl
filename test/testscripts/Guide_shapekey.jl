@@ -2,7 +2,7 @@ using Compose, DataFrames, Gadfly
 
 set_default_plot_size(9inch, 3.3inch)
 
-srand(123)
+Random.seed!(123)
 theme1 = Theme(point_size=3mm)
 coord1 = Coord.cartesian(xmin=0.0, xmax=6.0)
 D = DataFrame(x=1:5, y=rand(5), V1=["A","A","B","B","D"], V2 = string.([1,2,2,3,3])  )

@@ -78,7 +78,7 @@ struct ContinuousScale <: Gadfly.ScaleElement
     maxvalue
     minticks
     maxticks
-    labels::Union{(Void), Function}
+    labels::Union{(Nothing), Function}
     format
     scalable
 
@@ -275,9 +275,9 @@ end
 
 struct DiscreteScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
-    labels::Union{(Void), Function}
-    levels::Union{(Void), AbstractVector}
-    order::Union{(Void), AbstractVector}
+    labels::Union{(Nothing), Function}
+    levels::Union{(Nothing), AbstractVector}
+    order::Union{(Nothing), AbstractVector}
 end
 DiscreteScale(vals; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale(vals, labels, levels, order)
@@ -411,8 +411,8 @@ end
 
 struct DiscreteColorScale <: Gadfly.ScaleElement
     f::Function
-    levels::Union{(Void), AbstractVector}
-    order::Union{(Void), AbstractVector}
+    levels::Union{(Nothing), AbstractVector}
+    order::Union{(Nothing), AbstractVector}
     preserve_order::Bool
 end
 DiscreteColorScale(f; levels=nothing, order=nothing, preserve_order=true) =
@@ -426,7 +426,7 @@ default_discrete_colors(n) = convert(Vector{Color},
                                transform=c -> deuteranopic(c, 0.5),
                                lchoices=Float64[65, 70, 75, 80],
                                cchoices=Float64[0, 50, 60, 70],
-                               hchoices=linspace(0, 330, 24)))
+                               hchoices=range(0, stop=330, length=24)))
 
 """
     color_discrete_hue[(f; levels=nothing, order=nothing, preserve_order=true)]

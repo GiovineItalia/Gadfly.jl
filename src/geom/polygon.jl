@@ -46,7 +46,7 @@ function polygon_points(xs, ys, preserve_order)
         return T[(x, y) for (x, y) in zip(xs, ys)]
     else
         centroid_x, centroid_y = mean(xs), mean(ys)
-        θ = atan2(xs - centroid_x, ys - centroid_y)
+        θ = atan(xs - centroid_x, ys - centroid_y)
         perm = sortperm(θ)
         return T[(x, y) for (x, y) in zip(xs[perm], ys[perm])]
     end

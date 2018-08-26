@@ -5,7 +5,7 @@ if haskey(ENV, "GADFLY_THEME")
     pop!(ENV, "GADFLY_THEME")
 end
 
-using Base.Test, Gadfly, Compat
+using Test, Gadfly, Compat
 
 repo = LibGit2.GitRepo(dirname(@__DIR__))
 branch = LibGit2.headname(repo)
@@ -75,11 +75,11 @@ testfiles = isempty(ARGS) ?
 @testset "Gadfly" begin
     for filename in testfiles, (backend_name, backend) in backends
         info(filename,'.',backend_name)
-        srand(1)
+        Random.seed!(1)
         p = evalfile(joinpath(testdir, "$(filename).jl"))
         @test typeof(p) in [Plot,Compose.Context]
         r = draw(backend(filename), p)
-        @test typeof(r) in [Bool,Void]
+        @test typeof(r) in [Bool,Nothing]
     end
 end
 

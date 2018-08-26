@@ -59,7 +59,7 @@ diffedout = joinpath((@__DIR__), "diffed-output")
 ndifferentfiles = 0
 const creator_producer = r"(Creator|Producer)"
 filter_mkdir_git(x) = !mapreduce(y->x==y,|,[".mkdir","git.log","git.status"])
-filter_regex(x) = ismatch(Regex(args["filter"]), x)
+filter_regex(x) = occursin(Regex(args["filter"]), x)
 master_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(masterout))
 devel_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(develout))
 cached_notin_genned = setdiff(master_files, devel_files)
@@ -76,7 +76,7 @@ for file in intersect(master_files,devel_files)
     if same
         lsame = Bool[cached[i] == genned[i] for i = 1:length(cached)]
         if !all(lsame)
-            for idx in find(lsame.==false)
+            for idx in findall(lsame.==false)
                 # Don't worry about lines that are due to
                 # Creator/Producer (e.g., Cairo versions)
                 if !isempty(search(cached[idx], creator_producer))

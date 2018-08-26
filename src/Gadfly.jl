@@ -1,5 +1,3 @@
-__precompile__()
-
 module Gadfly
 
 using Colors
@@ -59,7 +57,7 @@ function __init__()
 end
 
 
-const ColorOrNothing = Union{Colorant, (Void)}
+const ColorOrNothing = Union{Colorant, (Nothing)}
 
 element_aesthetics(::Any) = []
 input_aesthetics(::Any) = []
@@ -132,11 +130,11 @@ set_default_plot_format(fmt::Symbol) = Compose.set_default_graphic_format(fmt)
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 mutable struct Layer <: Element
-    data_source::Union{Void, MeltedData, AbstractArray, AbstractDataFrame}
+    data_source::Union{Nothing, MeltedData, AbstractArray, AbstractDataFrame}
     mapping::Dict
     statistics::Vector{StatisticElement}
     geom::GeometryElement
-    theme::Union{Void, Theme}
+    theme::Union{Nothing, Theme}
     order::Int
 end
 Layer() = Layer(nothing, Dict(), StatisticElement[], Geom.nil(), nothing, 0)
@@ -161,7 +159,7 @@ append!(ls, layer(y=[3,2,1], Geom.point))
 plot(ls..., Guide.title("layer example"))
 ```
 """
-function layer(data_source::Union{AbstractDataFrame, Void},
+function layer(data_source::Union{AbstractDataFrame, Nothing},
                elements::ElementOrFunction...; mapping...)
     mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
@@ -211,11 +209,11 @@ add_plot_element!(lyrs::Vector{Layer}, arg::Theme) = [lyr.theme = arg for lyr in
 # A full plot specification.
 mutable struct Plot
     layers::Vector{Layer}
-    data_source::Union{Void, MeltedData, AbstractArray, AbstractDataFrame}
+    data_source::Union{Nothing, MeltedData, AbstractArray, AbstractDataFrame}
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
-    coord::Union{Void, CoordinateElement}
+    coord::Union{Nothing, CoordinateElement}
     guides::Vector{GuideElement}
     theme::Theme
     mapping::Dict
@@ -314,7 +312,7 @@ The old fashioned (pre-named arguments) version of plot.  This version takes an
 explicit mapping dictionary, mapping aesthetics symbols to expressions or
 columns in the data frame.
 """
-function plot(data_source::Union{Void, AbstractArray, AbstractDataFrame},
+function plot(data_source::Union{Nothing, AbstractArray, AbstractDataFrame},
               mapping::Dict, elements::ElementOrFunctionOrLayers...)
     mapping = cleanmapping(mapping)
     p = Plot()
@@ -456,9 +454,9 @@ function render_prepare(plot::Plot)
         if mapreduce(x->in(x,layer_needed_aes),|,[:x,:xmax,:xmin]) &&
                 mapreduce(y->in(y,layer_needed_aes),|,[:y,:ymax,:ymin])
             if !mapreduce(x->in(x,layer_defined_aes),|,[:x,:xmax,:xmin])
-                unshift!(layer_stats[i], Stat.x_enumerate)
+                pushfirst!(layer_stats[i], Stat.x_enumerate)
             elseif !mapreduce(y->in(y,layer_defined_aes),|,[:y,:ymax,:ymin])
-                unshift!(layer_stats[i], Stat.y_enumerate)
+                pushfirst!(layer_stats[i], Stat.y_enumerate)
             end
         end
     end
@@ -1059,10 +1057,10 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Union{Plot,Compose.Contex
           </head>
             <body style="margin:0">
             <script charset="utf-8">
-                $(readstring(Compose.snapsvgjs))
+                $(read(Compose.snapsvgjs, String))
             </script>
             <script charset="utf-8">
-                $(readstring(gadflyjs))
+                $(read(gadflyjs, String))
             </script>
 
             $(plotsvg)

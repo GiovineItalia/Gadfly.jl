@@ -42,8 +42,8 @@ render(geom::Nil, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
 # Subplot geometries require some more arguments to render. A simpler render
 # function is defined and passed through to here for non-subplot geometries.
 render(geom::Gadfly.GeometryElement, theme::Gadfly.Theme, aes::Gadfly.Aesthetics,
-                subplot_layer_aess::Union{(Void), Vector{Gadfly.Aesthetics}},
-                subplot_layer_datas::Union{(Void), Vector{Gadfly.Data}},
+                subplot_layer_aess::Union{(Nothing), Vector{Gadfly.Aesthetics}},
+                subplot_layer_datas::Union{(Nothing), Vector{Gadfly.Data}},
                 scales::Dict{Symbol, ScaleElement}) =
         render(geom, theme, aes)
 

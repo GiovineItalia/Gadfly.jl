@@ -2,7 +2,7 @@ using DataFrames, Gadfly
 
 set_default_plot_size(2*3.3inch, 2*3.3inch)
 
-srand(123)
+Random.seed!(123)
 D = convert(DataFrame, 99*rand(4, 4)+0.5)
 
 xsc  = Scale.x_continuous(minvalue=0.0, maxvalue=100)

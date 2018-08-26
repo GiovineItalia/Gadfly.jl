@@ -1,11 +1,11 @@
 const NumericalOrCategoricalAesthetic =
-    Union{(Void), Vector, DataArray, IndirectArray}
+    Union{(Nothing), Vector, DataArray, IndirectArray}
 
 const CategoricalAesthetic =
-    Union{(Void), IndirectArray}
+    Union{(Nothing), IndirectArray}
 
 const NumericalAesthetic =
-    Union{(Void), Matrix, Vector, DataArray}
+    Union{(Nothing), Matrix, Vector, DataArray}
 
 
 @varset Aesthetics begin
@@ -247,10 +247,10 @@ function concat(aess::Aesthetics...)
 end
 
 
-cat_aes_var!(a::(Void), b::(Void)) = a
-cat_aes_var!(a::(Void), b::Union{Function,AbstractString}) = b
-cat_aes_var!(a::(Void), b) = copy(b)
-cat_aes_var!(a, b::(Void)) = a
+cat_aes_var!(a::(Nothing), b::(Nothing)) = a
+cat_aes_var!(a::(Nothing), b::Union{Function,AbstractString}) = b
+cat_aes_var!(a::(Nothing), b) = copy(b)
+cat_aes_var!(a, b::(Nothing)) = a
 cat_aes_var!(a::Function, b::Function) = a === string || a == showoff ? b : a
 
 function cat_aes_var!(a::Dict, b::Dict)

@@ -289,9 +289,9 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     subplot_padding = 2mm
 
     # This assumes non of the layers themselves are subplot geometries
-    layer_subplot_aess = Vector{Gadfly.Aesthetics}[Array{Gadfly.Aesthetics}(0)
+    layer_subplot_aess = Vector{Gadfly.Aesthetics}[Array{Gadfly.Aesthetics}(undef, 0)
                                                    for _ in 1:length(geom.layers)]
-    layer_subplot_datas = Vector{Gadfly.Data}[Array{Gadfly.Data}(0)
+    layer_subplot_datas = Vector{Gadfly.Data}[Array{Gadfly.Data}(undef, 0)
                                                    for _ in 1:length(geom.layers)]
 
     for i in 1:n, j in 1:m

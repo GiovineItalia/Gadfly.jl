@@ -546,9 +546,9 @@ function apply_statistic(stat::DensityStatistic,
             end
         end
 
-        colors = Array{RGB{Float32}}(0)
-        aes.x = Array{Float64}(0)
-        aes.y = Array{Float64}(0)
+        colors = Array{RGB{Float32}}(undef, 0)
+        aes.x = Array{Float64}(undef, 0)
+        aes.y = Array{Float64}(undef, 0)
         for (c, xs) in groups
             window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(xs) : stat.bw
             f = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
@@ -1348,10 +1348,10 @@ function apply_statistic(stat::StepStatistic,
         aes.group != nothing && permute!(aes.group, p)
     end
 
-    x_step = Array{eltype(aes.x)}(0)
-    y_step = Array{eltype(aes.y)}(0)
-    color_step = aes.color == nothing ? nothing : Array{eltype(aes.color)}(0)
-    group_step = aes.group == nothing ? nothing : Array{eltype(aes.group)}(0)
+    x_step = Array{eltype(aes.x)}(undef, 0)
+    y_step = Array{eltype(aes.y)}(undef, 0)
+    color_step = aes.color == nothing ? nothing : Array{eltype(aes.color)}(undef, 0)
+    group_step = aes.group == nothing ? nothing : Array{eltype(aes.group)}(undef, 0)
 
     i = 1
     i_offset = 1
@@ -1415,7 +1415,7 @@ function apply_statistic(stat::FunctionStatistic,
 
     i = 1
     for (f, xmin, xmax) in zip(aes.y, cycle(aes.xmin), cycle(aes.xmax))
-        for x in linspace(xmin, xmax, stat.num_samples)
+        for x in range(xmin, stop=xmax, length=stat.num_samples)
             aes.x[i] = x
             ys[i] = f(x)
             i += 1
@@ -1488,11 +1488,11 @@ function apply_statistic(stat::ContourStatistic,
 
     if typeof(aes.z) <: Function
         if xs == nothing && aes.xmin != nothing && aes.xmax != nothing
-            xs = linspace(aes.xmin[1], aes.xmax[1], stat.samples)
+            xs = range(aes.xmin[1], stop=aes.xmax[1], length=stat.samples)
         end
 
         if ys == nothing && aes.ymin != nothing && aes.ymax != nothing
-            ys = linspace(aes.ymin[1], aes.ymax[1], stat.samples)
+            ys = range(aes.ymin[1], stop=aes.ymax[1], length=stat.samples)
         end
 
         zs = Float64[aes.z(x, y) for x in xs, y in ys]
@@ -1511,7 +1511,7 @@ function apply_statistic(stat::ContourStatistic,
     elseif typeof(aes.z) <: Vector
         z = Vector{Float64}(aes.z)
         a = [xs ys z]
-        as = sortrows(a, by=x->(x[2],x[1]))
+        as = sortslices(a, dims=1, by=x->(x[2],x[1]))
         xs = unique(as[:,1])
         ys = unique(as[:,2])
         zs = Array{Float64}(length(xs), length(ys))
@@ -1659,9 +1659,9 @@ function apply_statistic(stat::ViolinStatistic,
     grouped_color = (colorflag ? Dict(x=>first(aes.color[aes.x.==x]) for x in ux) : 
         uxflag && Dict(x=>nothing for x in ux) )
 
-    aes.x     = Array{Float64}(0)
-    aes.y     = Array{Float64}(0)
-    aes.width = Array{Float64}(0)
+    aes.x     = Array{Float64}(undef, 0)
+    aes.y     = Array{Float64}(undef, 0)
+    aes.width = Array{Float64}(undef, 0)
     colors = eltype(aes.color)[]
 
     for (x, ys) in grouped_y
@@ -1787,9 +1787,9 @@ function apply_statistic(stat::BinMeanStatistic,
                 push!(groups[c][2], y)
             end
         end
-        colors = Array{RGB{Float32}}(0)
-        aes.x = Array{Tx}(0)
-        aes.y = Array{Ty}(0)
+        colors = Array{RGB{Float32}}(undef, 0)
+        aes.x = Array{Tx}(undef, 0)
+        aes.y = Array{Ty}(undef, 0)
         for (c, v) in groups
             (fx, fy) = mean_by_group(v[1], v[2], breaks)
             append!(aes.x, fx)
@@ -1892,10 +1892,10 @@ function apply_statistic(stat::VecFieldStatistic,
 
     if isa(aes.z, Function)
         if xs == nothing && aes.xmin != nothing && aes.xmax != nothing
-            xs = linspace(aes.xmin[1], aes.xmax[1], stat.samples)
+            xs = range(aes.xmin[1], stop=aes.xmax[1], length=stat.samples)
         end
         if ys == nothing && aes.ymin != nothing && aes.ymax != nothing
-            ys = linspace(aes.ymin[1], aes.ymax[1], stat.samples)
+            ys = range(aes.ymin[1], stop=aes.ymax[1], length=stat.samples)
         end
 
         zs = Float64[aes.z(x, y) for x in xs, y in ys]

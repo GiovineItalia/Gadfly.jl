@@ -18,7 +18,7 @@ struct Cartesian <: Gadfly.CoordinateElement
     xflip::Bool
     yflip::Bool
     fixed::Bool
-    aspect_ratio::Union{(Void), Float64}
+    aspect_ratio::Union{(Nothing), Float64}
     raster::Bool
 
     Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster) =

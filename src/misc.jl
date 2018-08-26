@@ -247,7 +247,7 @@ function has(xs::AbstractArray{T,N}, y::T) where {T,N}
     return false
 end
 
-Maybe(T) = Union{T, (Void)}
+Maybe(T) = Union{T, (Nothing)}
 
 
 lerp(x::Float64, a, b) = a + (b - a) * max(min(x, 1.0), 0.0)
@@ -330,7 +330,7 @@ end
 
 svg_color_class_from_label(label::AbstractString) = @sprintf("color_%s", escape_id(label))
 
-using Base.Dates
+using Dates
 
 # Arbitrarily order colors
 color_isless(a::Color, b::Color) =
@@ -395,17 +395,17 @@ end
 discretize_make_ia(values::AbstractVector, levels) =
     IndirectArray(Array{UInt8}(indexin(values, levels)), levels)
 discretize_make_ia(values::AbstractVector)         = discretize_make_ia(values, unique(values))
-discretize_make_ia(values::AbstractVector, ::Void) = discretize_make_ia(values)
+discretize_make_ia(values::AbstractVector, ::Nothing) = discretize_make_ia(values)
 
 discretize_make_ia(values::IndirectArray)         = values
-discretize_make_ia(values::IndirectArray, ::Void) = values
+discretize_make_ia(values::IndirectArray, ::Nothing) = values
 
 discretize_make_ia(values::CategoricalArray) =
     discretize_make_ia(values, intersect(push!(levels(values), missing), unique(values)))
-discretize_make_ia(values::CategoricalArray, ::Void) = discretize_make_ia(values)
+discretize_make_ia(values::CategoricalArray, ::Nothing) = discretize_make_ia(values)
 function discretize_make_ia(values::CategoricalArray{T}, levels::Vector) where {T}
     mapping = coalesce.(indexin(CategoricalArrays.index(values.pool), levels), 0)
-    unshift!(mapping, coalesce(findfirst(ismissing, levels), 0))
+    pushfirst!(mapping, coalesce(findfirst(ismissing, levels), 0))
     index = [mapping[x+1] for x in values.refs]
     any(iszero, index) && throw(ArgumentError("values not in levels encountered"))
     return IndirectArray(index, convert(Vector{T},levels))

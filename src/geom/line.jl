@@ -119,7 +119,7 @@ function Gadfly.Geom.render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly
     
     # Find the aesthetic with the most levels:
     aesv = [aes_g, aes_color, aes_linestyle]
-    i1 = indmax([length(unique(a)) for a in aesv])
+    i1 = argmax([length(unique(a)) for a in aesv])
     aes_maxlvls = aesv[i1]
   
     # Concrete values?:

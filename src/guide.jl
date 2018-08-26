@@ -156,9 +156,9 @@ end
 
 
 struct ColorKey <: Gadfly.GuideElement
-    title::Union{AbstractString, (Void)}
-    labels::Union{Vector{String}, (Void)}
-    pos::Union{Vector, (Void)}
+    title::Union{AbstractString, (Nothing)}
+    labels::Union{Vector{String}, (Nothing)}
+    pos::Union{Vector, (Nothing)}
 end
 ColorKey(;title=nothing, labels=nothing, pos=nothing) = ColorKey(title, labels, pos)
 
@@ -402,7 +402,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     (theme.key_position == :inside && gpos === nothing) &&  (gpos = [0.7w, 0.25h])
 
     used_colors = Set{Color}()
-    colors = Array{Color}(0) # to preserve ordering
+    colors = Array{Color}(undef, 0) # to preserve ordering
     labels = OrderedDict{Color, Set{AbstractString}}()
 
     continuous_guide = false
@@ -491,7 +491,7 @@ end
 
 
 struct ManualColorKey{C<:Color} <: Gadfly.GuideElement
-    title::Union{AbstractString, (Void)}
+    title::Union{AbstractString, (Nothing)}
     labels::OrderedDict{C, AbstractString}
 end
 function ManualColorKey(title, labels, colors::Vector{C}) where {C<:Color}
@@ -550,7 +550,7 @@ end
 
 struct XTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::Union{(Void), Symbol, AbstractArray}
+    ticks::Union{(Nothing), Symbol, AbstractArray}
     orientation::Symbol
 
     function XTicks(label, ticks, orientation)
@@ -721,7 +721,7 @@ end
 
 struct YTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::Union{(Void), Symbol, AbstractArray}
+    ticks::Union{(Nothing), Symbol, AbstractArray}
     orientation::Symbol
 
     function YTicks(label, ticks, orientation)
@@ -908,7 +908,7 @@ end
 
 # X-axis label Guide
 struct XLabel <: Gadfly.GuideElement
-    label::Union{(Void), AbstractString}
+    label::Union{(Nothing), AbstractString}
     orientation::Symbol
 end
 XLabel(label; orientation=:auto) = XLabel(label, orientation)
@@ -975,7 +975,7 @@ end
 
 # Y-axis label Guide
 struct YLabel <: Gadfly.GuideElement
-    label::Union{(Void), AbstractString}
+    label::Union{(Nothing), AbstractString}
     orientation::Symbol
 end
 YLabel(label; orientation=:auto) = YLabel(label, orientation)
@@ -1036,7 +1036,7 @@ end
 
 # Title Guide
 struct Title <: Gadfly.GuideElement
-    label::Union{(Void), AbstractString}
+    label::Union{(Nothing), AbstractString}
 end
 
 """
