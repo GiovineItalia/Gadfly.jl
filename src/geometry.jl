@@ -3,7 +3,6 @@ module Geom
 using Colors
 using Compat
 using Compose
-using DataArrays
 using DataStructures
 using Distributions
 using Gadfly

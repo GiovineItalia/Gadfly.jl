@@ -1,4 +1,4 @@
-using Gadfly, DataArrays, RDatasets, Distributions, Test
+using Gadfly, RDatasets, Distributions, Test
 
 set_default_plot_size(6inch, 3inch)
 

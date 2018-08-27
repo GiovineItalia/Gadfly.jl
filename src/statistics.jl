@@ -6,7 +6,6 @@ import Contour
 using Colors
 using Compat
 using Compose
-using DataArrays
 using DataStructures
 using Distributions
 using Hexagons
@@ -964,7 +963,7 @@ function apply_statistic_typed(minval::T, maxval::T, vals, size, dsize) where T
     minval, maxval
 end
 
-function apply_statistic_typed(minval::T, maxval::T, vals::DataArray{T}, size, dsize) where T
+function apply_statistic_typed(minval::T, maxval::T, vals::Array{Union{Missing,T}}, size, dsize) where T
     lensize  = length(size)
     lendsize = length(dsize)
     for i = 1:length(vals)
@@ -1426,7 +1425,7 @@ function apply_statistic(stat::FunctionStatistic,
     if aes.color != nothing
         func_color = aes.color
         aes.color = Array{eltype(aes.color)}(length(aes.y) * stat.num_samples)
-        groups = DataArray(Int, length(aes.y) * stat.num_samples)
+        groups = Array{Union{Missing,Int}}(length(aes.y) * stat.num_samples)
         for i in 1:length(aes.y)
             aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = func_color[i]
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
@@ -1435,7 +1434,7 @@ function apply_statistic(stat::FunctionStatistic,
     elseif length(aes.y) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
         data.color = Array{AbstractString}(length(aes.y) * stat.num_samples)
-        groups = DataArray(Int, length(aes.y) * stat.num_samples)
+        groups = Array{Union{Missing,Int}}(length(aes.y) * stat.num_samples)
         for i in 1:length(aes.y)
             fname = "f<sub>$(i)</sub>"
             data.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = fname

@@ -3,7 +3,6 @@ module Gadfly
 using Colors
 using Compat
 using Compose
-using DataArrays
 using DataFrames
 using DataStructures
 using JSON

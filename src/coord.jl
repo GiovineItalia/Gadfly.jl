@@ -3,7 +3,6 @@ module Coord
 using Gadfly
 using Compat
 using Compose
-using DataArrays
 import Gadfly.Maybe
 
 export cartesian

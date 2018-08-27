@@ -1,4 +1,4 @@
-using Gadfly, DataArrays, DataFrames, RDatasets, Dates
+using Gadfly, DataFrames, RDatasets, Dates
 
 set_default_plot_size(6inch, 3inch)
 

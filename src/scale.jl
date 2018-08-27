@@ -3,7 +3,6 @@ module Scale
 using Colors
 using Compat
 using Compose
-using DataArrays
 using DataStructures
 using Gadfly
 using Showoff
@@ -198,7 +197,7 @@ function apply_scale(scale::ContinuousScale,
                 T = Measure
             end
 
-            ds = any(ismissing, vals) ? DataArray(T, length(vals)) : Array{T}(length(vals))
+            ds = any(ismissing, vals) ? Array{Union{Missing,T}}(length(vals)) : Array{T}(length(vals))
             apply_scale_typed!(ds, vals, scale)
 
             if var == :xviewmin || var == :xviewmax ||

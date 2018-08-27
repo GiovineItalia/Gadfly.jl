@@ -1,11 +1,11 @@
 const NumericalOrCategoricalAesthetic =
-    Union{(Nothing), Vector, DataArray, IndirectArray}
+    Union{Nothing, Vector, Array, IndirectArray}
 
 const CategoricalAesthetic =
-    Union{(Nothing), IndirectArray}
+    Union{Nothing, IndirectArray}
 
 const NumericalAesthetic =
-    Union{(Nothing), Matrix, Vector, DataArray}
+    Union{Nothing, Matrix, Vector, Array}
 
 
 @varset Aesthetics begin
@@ -272,8 +272,8 @@ cat_aes_var!(a, b) = a
 
 function cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U}
     V = promote_type(T, U)
-    if isa(a, DataArray) || isa(b, DataArray)
-        ab = DataArray(V, length(a) + length(b))
+    if isa(a, Array{Union{Missing,T}}) || isa(b, Array{Union{Missing,U}})
+        ab = Array{Union{Missing,V}}(length(a) + length(b))
     else
         ab = Array{V}(length(a) + length(b))
     end
@@ -370,7 +370,7 @@ function by_xy_group(aes::T, xgroup, ygroup,
                     if !applicable(convert, typeof(vals), staging[i, j])
                         T2 = eltype(vals)
                         if T2 <: Color T2 = Color end
-                        da = DataArray(T2, length(staging[i, j]))
+                        da = Array{Union{Missing,T2}}(length(staging[i, j]))
                         copy!(da, staging[i, j])
                         setfield!(aes_grid[i, j], var, da)
                     else

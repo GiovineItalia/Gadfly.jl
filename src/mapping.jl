@@ -135,7 +135,7 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
             end
         end
 
-        push!(V, eltyp == Vector ? Array{eltyp}(vm) : DataArray(eltyp, vm))
+        push!(V, eltyp == Vector ? Array{eltyp}(vm) : Array{Union{Missing,eltyp}}(vm))
         name = gensym()
         push!(vnames, name)
         colmap[colgroup] = j

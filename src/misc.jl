@@ -68,7 +68,7 @@ function concrete_length(xs)
     n
 end
 
-function concrete_length(xs::DataArray{T}) where T
+function concrete_length(xs::Array{Union{Missing,T}}) where T
     n = 0
     for i = 1:length(xs)
         if !xs.na[i] && isconcrete(xs.data[i]::T)
@@ -150,7 +150,7 @@ function concrete_minmax(xs, xmin::T, xmax::T) where T<:Real
 end
 
 
-function concrete_minmax(xs::DataArray{TA}, xmin::T, xmax::T) where {T<:Real, TA}
+function concrete_minmax(xs::Array{Union{Missing,TA}}, xmin::T, xmax::T) where {T<:Real, TA}
     for i = 1:length(xs)
         if !xs.na[i]
             x = xs.data[i]::TA
@@ -183,7 +183,7 @@ function concrete_minmax(xs, xmin::T, xmax::T) where T
 end
 
 
-function concrete_minmax(xs::DataArray{TA}, xmin::T, xmax::T) where {T, TA}
+function concrete_minmax(xs::Array{Union{Missing,TA}}, xmin::T, xmax::T) where {T, TA}
     for i = 1:length(xs)
         if !xs.na[i]
             x = xs.data[i]::TA
