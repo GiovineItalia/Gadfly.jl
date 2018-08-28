@@ -392,8 +392,7 @@ function trim_zip(xs...)
 end
 
 # Convenience constructors of IndirectArrays
-discretize_make_ia(values::AbstractVector, levels) =
-    IndirectArray(Array{UInt8}(indexin(values, levels)), levels)
+discretize_make_ia(values::AbstractVector, levels) = IndirectArray(indexin(values, levels), levels)
 discretize_make_ia(values::AbstractVector)         = discretize_make_ia(values, unique(values))
 discretize_make_ia(values::AbstractVector, ::Void) = discretize_make_ia(values)
 
