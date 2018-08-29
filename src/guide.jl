@@ -204,7 +204,7 @@ function render_discrete_color_key(colors::Vector{C},
 
     # return a context with a lyout of numcols columns
     function make_layout(numcols)
-        colrows = Array{Int}(numcols)
+        colrows = Array{Int}(undef, numcols)
         m = n
         for i in 1:numcols
             colrows[i] = min(m, ceil(Integer, (n / numcols)))
@@ -212,7 +212,7 @@ function render_discrete_color_key(colors::Vector{C},
         end
 
         xpad = 1mm
-        colwidths = Array{Measure}(numcols)
+        colwidths = Array{Measure}(undef, numcols)
         m = 0
         for (i, nrows) in enumerate(colrows)
             if m == n
@@ -1164,8 +1164,8 @@ function layout_guides(plot_context::Context,
     aspect_ratio = nothing
     if isa(coord, Gadfly.Coord.cartesian)
         if coord.fixed
-            aspect_ratio = isnull(plot_context.units) ? 1.0 :
-                     abs(get(plot_context.units).width / get(plot_context.units).height)
+            aspect_ratio = plot_context.units===nothing ? 1.0 :
+                     abs(plot_context.units.width / plot_context.units.height)
         elseif coord.aspect_ratio != nothing
             aspect_ratio = coord.aspect_ratio
         end
@@ -1176,8 +1176,8 @@ function layout_guides(plot_context::Context,
     i = 1
     for (ctxs, order) in guides[top_guide_position]
         for ctx in ctxs
-            if isnull(ctx.units) && !isnull(plot_units)
-                ctx.units = UnitBox(get(plot_units), toppad=0mm, bottompad=0mm)
+            if ctx.units===nothing && plot_units!==nothing
+                ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
             end
         end
 
@@ -1187,8 +1187,8 @@ function layout_guides(plot_context::Context,
     i += 1
     for (ctxs, order) in guides[bottom_guide_position]
         for ctx in ctxs
-            if isnull(ctx.units) && !isnull(plot_units)
-                ctx.units = UnitBox(get(plot_units), toppad=0mm, bottompad=0mm)
+            if ctx.units===nothing && plot_units!==nothing
+                ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
             end
         end
 
@@ -1199,8 +1199,8 @@ function layout_guides(plot_context::Context,
     j = 1
     for (ctxs, order) in guides[left_guide_position]
         for ctx in ctxs
-            if isnull(ctx.units) && !isnull(plot_units)
-                ctx.units = UnitBox(get(plot_units), leftpad=0mm, rightpad=0mm)
+            if ctx.units===nothing && plot_units!==nothing
+                ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
             end
         end
 
@@ -1210,8 +1210,8 @@ function layout_guides(plot_context::Context,
     j += 1
     for (ctxs, order) in guides[right_guide_position]
         for ctx in ctxs
-            if isnull(ctx.units) && !isnull(plot_units)
-                ctx.units = UnitBox(get(plot_units), leftpad=0mm, rightpad=0mm)
+            if ctx.units===nothing && plot_units!==nothing
+                ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
             end
         end
 

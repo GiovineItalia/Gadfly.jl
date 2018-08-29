@@ -8,6 +8,7 @@ using Gadfly
 using Showoff
 using IndirectArrays
 using CategoricalArrays
+using Printf
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia, aes2str
 import Distributions: Distribution
@@ -197,7 +198,8 @@ function apply_scale(scale::ContinuousScale,
                 T = Measure
             end
 
-            ds = any(ismissing, vals) ? Array{Union{Missing,T}}(length(vals)) : Array{T}(length(vals))
+            ds = any(ismissing, vals) ? Array{Union{Missing,T}}(undef,length(vals)) :
+                    Array{T}(undef,length(vals))
             apply_scale_typed!(ds, vals, scale)
 
             if var == :xviewmin || var == :xviewmax ||
@@ -215,7 +217,7 @@ function apply_scale(scale::ContinuousScale,
                 label_var = Symbol(var, "_label")
             end
 
-            if in(label_var, Set(fieldnames(aes)))
+            if in(label_var, Set(fieldnames(typeof(aes))))
                 setfield!(aes, label_var, make_labeler(scale))
             end
         end
@@ -361,7 +363,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
                 labeler = explicit_labeler
             end
 
-            in(label_var, Set(fieldnames(aes))) && setfield!(aes, label_var, labeler)
+            in(label_var, Set(fieldnames(typeof(aes)))) && setfield!(aes, label_var, labeler)
         end
     end
 end
@@ -635,7 +637,7 @@ function apply_scale(scale::ContinuousColorScale,
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
 
-        aes.color = Array{RGB{Float32}}(length(data.color))
+        aes.color = Array{RGB{Float32}}(undef, length(data.color))
         apply_scale_typed!(aes.color, data.color, scale, cmin, cspan)
 
         color_key_colors = Dict{Color, Float64}()

@@ -9,10 +9,12 @@ using JSON
 using Showoff
 using IndirectArrays
 using CategoricalArrays
+using Printf
+using Base64
 
 import IterTools
 import IterTools: distinct, drop, chain
-import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant
+import Compose: draw, hstack, vstack, gridstack, parse_colorant
 import Base: +, -, /, *,
              copy, push!, start, next, done, show, getindex, cat,
              show, isfinite, display
@@ -378,7 +380,7 @@ function render_prepare(plot::Plot)
 
     # Process layers, filling inheriting mappings or data from the Plot where
     # they are missing.
-    datas = Array{Data}(length(plot.layers))
+    datas = Array{Data}(undef, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
         if layer.data_source === nothing && isempty(layer.mapping)
             layer.data_source = plot.data_source
@@ -434,7 +436,7 @@ function render_prepare(plot::Plot)
     end
 
     # Add default statistics for geometries.
-    layer_stats = Array{Vector{StatisticElement}}(length(plot.layers))
+    layer_stats = Array{Vector{StatisticElement}}(undef, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
         layer_stats[i] = isempty(layer.statistics) ? ( isa(layer.geom, Geom.SubplotGeometry) ?
                 default_statistic(layer.geom) : [default_statistic(layer.geom)] ) : layer.statistics
@@ -550,7 +552,7 @@ function render_prepare(plot::Plot)
         (haskey(plot.mapping, var) || haskey(scales, var)) && continue
 
         t = :categorical
-        for data in chain(datas, subplot_datas)
+        for data in Iterators.flatten((datas, subplot_datas))
             val = getfield(data, var)
             if val != nothing && val != :categorical
                 t = classify_data(val)
@@ -692,7 +694,7 @@ function render_prepare(plot::Plot)
     keytypes = [Guide.ColorKey, Guide.ShapeKey]
     supress_keys = false
     for layer in plot.layers
-        if isa(layer.geom, Geom.SubplotGeometry) && any(haskey.(layer.geom.guides, keytypes))
+        if isa(layer.geom, Geom.SubplotGeometry) && any(haskey.((layer.geom.guides,), keytypes))
             supress_keys = true
             break
         end
@@ -711,8 +713,8 @@ function render_prepare(plot::Plot)
     end
 
     # build arrays of scaled aesthetics for layers within subplots
-    layer_subplot_aess = Array{Vector{Aesthetics}}(length(plot.layers))
-    layer_subplot_datas = Array{Vector{Data}}(length(plot.layers))
+    layer_subplot_aess = Array{Vector{Aesthetics}}(undef, length(plot.layers))
+    layer_subplot_datas = Array{Vector{Data}}(undef, length(plot.layers))
     j = 1
     for (i, layer) in enumerate(plot.layers)
         layer_subplot_aess[i] = Aesthetics[]
@@ -988,7 +990,7 @@ function default_mime()
     end
 end
 
-import Base.REPL: REPLDisplay
+import REPL: REPLDisplay
 
 """
     display(p::Plot)
@@ -998,19 +1000,19 @@ This function is handy when rendering by `plot` has been suppressed
 with either trailing semi-colon or by calling it within a function.
 """
 function display(d::REPLDisplay, p::Union{Plot,Compose.Context})
-    if mimewritable("text/html", p)
+    if showable("text/html", p)
         display(d,"text/html", p)
         return
-    elseif mimewritable("image/png", p)
+    elseif showable("image/png", p)
         display(d,"image/png", p)
         return
-    elseif mimewritable("application/pdf", p)
+    elseif showable("application/pdf", p)
         display(d,"application/pdf", p)
         return
-    elseif mimewritable("image/svg+xml", p)
+    elseif showable("image/svg+xml", p)
         display(d,"image/svg+xml", p)
         return
-    elseif mimewritable("application/postscript", p)
+    elseif showable("application/postscript", p)
         display(d,"application/postscript", p)
         return
     end

@@ -142,9 +142,9 @@ function Gadfly.Geom.render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly
     ug = unique(groups)
 
     n = length(ug)
-    lines = Vector{Vector{Tuple{XT,YT}}}(n)
-    line_colors = Vector{CT}(n)
-    line_styles = Vector{LST}(n)
+    lines = Vector{Vector{Tuple{XT,YT}}}(undef, n)
+    line_colors = Vector{CT}(undef, n)
+    line_styles = Vector{LST}(undef, n)
     linestyle_palette_length = length(theme.line_style)
     for (k,g) in enumerate(ug)
         i = groups.==[g]

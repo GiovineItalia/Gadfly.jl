@@ -71,7 +71,7 @@ end
 function concrete_length(xs::Array{Union{Missing,T}}) where T
     n = 0
     for i = 1:length(xs)
-        if !xs.na[i] && isconcrete(xs.data[i]::T)
+        if !ismissing(xs[i]) && isconcrete(xs[i])
             n += 1
         end
     end
@@ -87,7 +87,7 @@ function concrete_length(xs::Iterators.Flatten)
 end
 
 function concrete_minimum(xs)
-    if done(xs, start(xs))
+    if isempty(xs)
         error("argument must not be empty")
     end
 
@@ -109,7 +109,7 @@ end
 
 
 function concrete_maximum(xs)
-    if done(xs, start(xs))
+    if isempty(xs)
         error("argument must not be empty")
     end
 
@@ -152,8 +152,8 @@ end
 
 function concrete_minmax(xs::Array{Union{Missing,TA}}, xmin::T, xmax::T) where {T<:Real, TA}
     for i = 1:length(xs)
-        if !xs.na[i]
-            x = xs.data[i]::TA
+        if !ismissing(xs[i])
+            x = xs[i]
             xT = convert(T, x)
             if isnan(xmin) || xT < xmin
                 xmin = xT
@@ -185,8 +185,8 @@ end
 
 function concrete_minmax(xs::Array{Union{Missing,TA}}, xmin::T, xmax::T) where {T, TA}
     for i = 1:length(xs)
-        if !xs.na[i]
-            x = xs.data[i]::TA
+        if !ismissing(xs[i])
+            x = xs[i]
             xT = convert(T, x)
             if xT < xmin
                 xmin = xT
@@ -266,8 +266,8 @@ end
 
 # Remove any markup or whitespace from a string.
 function escape_id(s::AbstractString)
-    s = replace(s, r"<[^>]*>", "")
-    s = replace(s, r"\s", "_")
+    s = replace(s, r"<[^>]*>" => "")
+    s = replace(s, r"\s" => "_")
     s
 end
 
@@ -404,7 +404,7 @@ discretize_make_ia(values::CategoricalArray) =
     discretize_make_ia(values, intersect(push!(levels(values), missing), unique(values)))
 discretize_make_ia(values::CategoricalArray, ::Nothing) = discretize_make_ia(values)
 function discretize_make_ia(values::CategoricalArray{T}, levels::Vector) where {T}
-    mapping = coalesce.(indexin(CategoricalArrays.index(values.pool), levels), 0)
+    mapping = Union{Nothing,Int}[coalesce.(indexin(CategoricalArrays.index(values.pool), levels), 0)...]
     pushfirst!(mapping, coalesce(findfirst(ismissing, levels), 0))
     index = [mapping[x+1] for x in values.refs]
     any(iszero, index) && throw(ArgumentError("values not in levels encountered"))

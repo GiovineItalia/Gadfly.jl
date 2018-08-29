@@ -2,35 +2,34 @@ module Col
 
 using Compat
 using DataFrames
-import IterTools
 import Base: ==
 
 struct GroupedColumn
-    columns::Nullable{Vector}
+    columns::Union{Nothing,Vector}
 end
 
 Base.hash(colgroup::GroupedColumn, h::UInt64) = hash(colgroup.columns, h)
 
 function ==(a::GroupedColumn, b::GroupedColumn)
-    return (isnull(a.columns) && isnull(b.columns)) ||
-        (!isnull(a.columns) && !isnull(b.columns) && get(a.columns) == get(b.columns))
+    return (a.columns===nothing && b.columns===nothing) ||
+        (a.columns!==nothing && b.columns!==nothing && a.columns == b.columns)
 end
 
 Base.show(io::IO, gc::GroupedColumn) = print(io, "Column")
 
-index() = GroupedColumn(Nullable{Vector}())
+index() = GroupedColumn(nothing)
 
-index(xs::T...) where {T <: (Union{Int, Symbol})} = GroupedColumn(Nullable(collect(T, xs)))
+index(xs::T...) where {T <: (Union{Int, Symbol})} = GroupedColumn(collect(Union{Nothing,T}, xs))
 
 struct GroupedColumnValue
-    columns::Nullable{Vector}
+    columns::Union{Nothing,Vector}
 end
 
 Base.show(io::IO, gc::GroupedColumnValue) = print(io, "Column Value")
 
-value() = GroupedColumnValue(Nullable{Vector}())
+value() = GroupedColumnValue(nothing)
 
-value(xs::T...) where {T <: (Union{Int, Symbol})} = GroupedColumnValue(Nullable(collect(T, xs)))
+value(xs::T...) where {T <: (Union{Int, Symbol})} = GroupedColumnValue(collect(Union{Nothing,T}, xs))
 
 end # module Col
 
@@ -41,12 +40,12 @@ using Compat
 
 # represent a row index correspondig to a set of columns
 struct GroupedColumnRowIndex
-    columns::Nullable{Vector}
+    columns::Union{Nothing,Vector}
 end
 
-index() = GroupedColumnRowIndex(Nullable{Vector}())
+index() = GroupedColumnRowIndex(nothing)
 
-index(xs::T...) where {T <: (Union{Int, Symbol})} = GroupedColumnRowIndex(Nullable(collect(T, xs)))
+index(xs::T...) where {T <: (Union{Int, Symbol})} = GroupedColumnRowIndex(collect(Union{Nothing,T}, xs))
 
 end # module Row
 
@@ -99,17 +98,17 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
     vm = um
     grouped_columns = Set{Symbol}()
     for colgroup in colgroups
-        if isnull(colgroup.columns) # null => group all columns
+        if colgroup.columns===nothing # null => group all columns
             vm *= un
             grouped_columns = copy(allcolumns)
         else
-            for j in get(colgroup.columns)
+            for j in colgroup.columns
                 if !isa(j, Symbol)
                     error("DataFrame columns can only be grouped by (Symbol) names")
                 end
                 push!(grouped_columns, j)
             end
-            vm *= length(get(colgroup.columns))
+            vm *= length(colgroup.columns)
         end
     end
 
@@ -122,7 +121,7 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
 
     # allocate vectors for grouped columns
     for (j, colgroup) in enumerate(colgroups)
-        cols = isnull(colgroup.columns) ? allcolumns : get(colgroup.columns)
+        cols = colgroup.columns===nothing ? allcolumns : colgroup.columns
 
         # figure the grouped common column type
         firstcol = U[first(cols)]
@@ -135,7 +134,7 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
             end
         end
 
-        push!(V, eltyp == Vector ? Array{eltyp}(vm) : Array{Union{Missing,eltyp}}(vm))
+        push!(V, eltyp == Vector ? Array{eltyp}(undef, vm) : Array{Union{Nothing,eltyp}}(undef, vm))
         name = gensym()
         push!(vnames, name)
         colmap[colgroup] = j
@@ -149,15 +148,15 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
     end
 
     # Indicator columns for each colgroup
-    col_indicators = Array{Symbol}(vm, length(colgroups))
-    row_indicators = Array{Int}(vm, length(colgroups))
+    col_indicators = Array{Symbol}(undef, vm, length(colgroups))
+    row_indicators = Array{Int}(undef, vm, length(colgroups))
 
-    colidxs = [isnull(colgroup.columns) ? collect(allcolumns) : get(colgroup.columns)
+    colidxs = [colgroup.columns===nothing ? collect(allcolumns) : colgroup.columns
                for colgroup in colgroups]
 
     vi = 1
     for ui in 1:um
-        for colidx in IterTools.product(colidxs...)
+        for colidx in Iterators.product(colidxs...)
             # copy grouped columns
             for (vj, uj) in enumerate(colidx)
                 V[vj][vi] = U[ui, uj]
@@ -182,10 +181,10 @@ end
 function meltdata(U::AbstractVector, colgroups_::Vector{Col.GroupedColumn})
     colgroups = Set(colgroups_)
 
-    if length(colgroups) != 1 || !isnull(first(colgroups).columns)
+    if length(colgroups) != 1 || first(colgroups).columns!==nothing
         # if every column is of the same length, treat it as a matrix
         if length(Set([length(u for u in U)])) == 1
-            return meltdata(cat(2, U...), colgroups_)
+            return meltdata(cat(U..., dims=2), colgroups_)
         end
 
         # otherwise it doesn't make much sense
@@ -195,9 +194,9 @@ function meltdata(U::AbstractVector, colgroups_::Vector{Col.GroupedColumn})
     colmap = Dict{Any, Int}()
     colmap[colgroup] = 1
 
-    V = cat(1, U...)
-    col_indicators = Array{Int}(length(V))
-    row_indicators = Array{Int}(length(V))
+    V = cat(U..., dims=1)
+    col_indicators = Array{Int}(undef, length(V))
+    row_indicators = Array{Int}(undef, length(V))
     k = 1
     for i in 1:length(U)
         for j in 1:length(U[i])
@@ -217,22 +216,22 @@ function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
     colgroups = Set(colgroups_)
 
     # Figure out the size of the new melted matrix
-    allcolumns = IntSet()
+    allcolumns = BitSet()
     for i in 1:un
         push!(allcolumns, i)
     end
 
     vm = um
-    grouped_columns = IntSet()
+    grouped_columns = BitSet()
     for colgroup in colgroups
-        if isnull(colgroup.columns)
+        if colgroup.columns===nothing
             vm *= un
             grouped_columns = copy(allcolumns)
         else
-            for j in get(colgroup.columns)
+            for j in colgroup.columns
                 push!(grouped_columns, j)
             end
-            vm *= length(get(colgroup.columns))
+            vm *= length(colgroup.columns)
         end
     end
 
@@ -241,14 +240,14 @@ function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
     V = similar(U, (vm, vn))
 
     # Indicator columns for each colgroup
-    col_indicators = Array{Int}((vm, length(colgroups)))
-    row_indicators = Array{Int}((vm, length(colgroups)))
+    col_indicators = Array{Int}(undef, vm, length(colgroups))
+    row_indicators = Array{Int}(undef, vm, length(colgroups))
 
-    colidxs = [isnull(colgroup.columns) ? collect(allcolumns) : get(colgroup.columns)
+    colidxs = [colgroup.columns===nothing ? collect(allcolumns) : colgroup.columns
                for colgroup in colgroups]
 
     vi = 1
-    for ui in 1:um, colidx in IterTools.product(colidxs...)
+    for ui in 1:um, colidx in Iterators.product(colidxs...)
         # copy grouped columns
         for (vj, uj) in enumerate(colidx)
             V[vi, vj] = U[ui, uj]

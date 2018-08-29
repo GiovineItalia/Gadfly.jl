@@ -11,14 +11,14 @@ const NumericalAesthetic =
 @varset Aesthetics begin
     x,            Union{NumericalOrCategoricalAesthetic, Distribution}
     y,            Union{NumericalOrCategoricalAesthetic, Distribution}
-    z,            Union{(Void), Function, NumericalAesthetic}
+    z,            Union{Nothing, Function, NumericalAesthetic}
     xend,         NumericalAesthetic
     yend,         NumericalAesthetic
 
-    size,         Union{CategoricalAesthetic,Vector,Void}
-    shape,        Union{CategoricalAesthetic,Vector,Void}
-    color,        Union{CategoricalAesthetic,Vector,Void}
-    linestyle,    Union{CategoricalAesthetic,Vector,Void}
+    size,         Union{CategoricalAesthetic,Vector,Nothing}
+    shape,        Union{CategoricalAesthetic,Vector,Nothing}
+    color,        Union{CategoricalAesthetic,Vector,Nothing}
+    linestyle,    Union{CategoricalAesthetic,Vector,Nothing}
 
     label,        CategoricalAesthetic
     group,        CategoricalAesthetic
@@ -56,7 +56,7 @@ const NumericalAesthetic =
     ytick,        NumericalAesthetic
     xgrid,        NumericalAesthetic
     ygrid,        NumericalAesthetic
-    color_key_colors,     Maybe(Associative)
+    color_key_colors,     Maybe(AbstractDict)
     color_key_title,      Maybe(AbstractString)
     color_key_continuous, Maybe(Bool)
     color_function,       Maybe(Function)
@@ -88,8 +88,8 @@ const NumericalAesthetic =
     shape_label, Function, showoff
 
     # pseudo-aesthetics
-    pad_categorical_x, Nullable{Bool}, Nullable{Bool}()
-    pad_categorical_y, Nullable{Bool}, Nullable{Bool}()
+    pad_categorical_x, Union{Missing,Bool}, missing
+    pad_categorical_y, Union{Missing,Bool}, missing
 end
 
 
@@ -273,9 +273,9 @@ cat_aes_var!(a, b) = a
 function cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U}
     V = promote_type(T, U)
     if isa(a, Array{Union{Missing,T}}) || isa(b, Array{Union{Missing,U}})
-        ab = Array{Union{Missing,V}}(length(a) + length(b))
+        ab = Array{Union{Missing,V}}(undef, length(a) + length(b))
     else
-        ab = Array{V}(length(a) + length(b))
+        ab = Array{V}(undef, length(a) + length(b))
     end
     i = 1
     for x in a
@@ -320,8 +320,8 @@ function by_xy_group(aes::T, xgroup, ygroup,
     xrefs = xgroup === nothing ? [1] : xgroup
     yrefs = ygroup === nothing ? [1] : ygroup
 
-    aes_grid = Array{T}(n, m)
-    staging = Array{AbstractArray}(n, m)
+    aes_grid = Array{T}(undef, n, m)
+    staging = Array{AbstractArray}(undef, n, m)
     for i in 1:n, j in 1:m
         aes_grid[i, j] = T()
     end
@@ -370,7 +370,7 @@ function by_xy_group(aes::T, xgroup, ygroup,
                     if !applicable(convert, typeof(vals), staging[i, j])
                         T2 = eltype(vals)
                         if T2 <: Color T2 = Color end
-                        da = Array{Union{Missing,T2}}(length(staging[i, j]))
+                        da = Array{Union{Missing,T2}}(undef, length(staging[i, j]))
                         copy!(da, staging[i, j])
                         setfield!(aes_grid[i, j], var, da)
                     else
@@ -404,7 +404,7 @@ function inherit!(a::Aesthetics, b::Aesthetics;
         bval = getfield(b, field)
         if field in clobber_set
             setfield!(a, field, bval)
-        elseif aval === nothing || aval === string || aval == showoff
+        elseif aval === missing || aval === nothing || aval === string || aval == showoff
             setfield!(a, field, bval)
         elseif field == :xviewmin || field == :yviewmin
             bval != nothing && (aval == nothing || aval > bval) && setfield!(a, field, bval)

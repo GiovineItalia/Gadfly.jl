@@ -1,4 +1,4 @@
-using Gadfly, Distributions
+using Gadfly, Distributions, Random
 
 set_default_plot_size(6inch, 16inch)
 

@@ -1,4 +1,4 @@
-using Distributions, Gadfly
+using Distributions, Gadfly, Random
 set_default_plot_size(6.6inch, 3.3inch)
 
 Random.seed!(123)

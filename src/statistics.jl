@@ -1,17 +1,20 @@
 module Stat
 
 import Gadfly
-import StatsBase
 import Contour
 using Colors
 using Compat
 using Compose
 using DataStructures
+using Dates
 using Distributions
 using Hexagons
 using Loess
 using CoupledFields # It is registered in METADATA.jl
 using IndirectArrays
+using Statistics
+using LinearAlgebra
+using Random
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, setfield!, discretize_make_ia, aes2str
@@ -73,8 +76,8 @@ function barminmax(vals, iscontinuous::Bool)
         barspan = minspan
     end
     position_type = promote_type(typeof(barspan/2.0), eltype(vals))
-    minvals = Array{position_type}(length(vals))
-    maxvals = Array{position_type}(length(vals))
+    minvals = Array{position_type}(undef, length(vals))
+    maxvals = Array{position_type}(undef, length(vals))
 
     for (i, x) in enumerate(vals)
         minvals[i] = x - barspan/2.0
@@ -116,10 +119,10 @@ function apply_statistic(stat::RectbinStatistic,
     aes.ymax = ymaxvals
 
     if !isxcontinuous
-        aes.pad_categorical_x = Nullable(false)
+        aes.pad_categorical_x = false
     end
     if !isycontinuous
-        aes.pad_categorical_y = Nullable(false)
+        aes.pad_categorical_y = false
     end
 end
 
@@ -222,9 +225,9 @@ function apply_statistic(stat::BarStatistic,
 
     if !iscontinuous
         if stat.orientation == :horizontal
-            aes.pad_categorical_y = Nullable(false)
+            aes.pad_categorical_y = false
         else
-            aes.pad_categorical_x = Nullable(false)
+            aes.pad_categorical_x = false
         end
     end
 end
@@ -341,10 +344,10 @@ function apply_statistic(stat::HistogramStatistic,
 
     if aes.color === nothing
         T = typeof(x_min + 1*binwidth)
-        setfield!(aes, othervar, Array{Float64}(d))
-        setfield!(aes, minvar, Array{T}(d))
-        setfield!(aes, maxvar, Array{T}(d))
-        setfield!(aes, var, Array{T}(d))
+        setfield!(aes, othervar, Array{Float64}(undef, d))
+        setfield!(aes, minvar, Array{T}(undef, d))
+        setfield!(aes, maxvar, Array{T}(undef, d))
+        setfield!(aes, var, Array{T}(undef, d))
         for j in 1:d
             getfield(aes, minvar)[j] = x_min + (j - 1) * binwidth
             getfield(aes, maxvar)[j] = x_min + j * binwidth
@@ -363,12 +366,12 @@ function apply_statistic(stat::HistogramStatistic,
             end
         end
         T = typeof(x_min + 1*binwidth)
-        setfield!(aes, minvar, Array{T}(d * length(groups)))
-        setfield!(aes, maxvar, Array{T}(d * length(groups)))
-        setfield!(aes, var, Array{T}(d * length(groups)))
+        setfield!(aes, minvar, Array{T}(undef, d * length(groups)))
+        setfield!(aes, maxvar, Array{T}(undef, d * length(groups)))
+        setfield!(aes, var, Array{T}(undef, d * length(groups)))
 
-        setfield!(aes, othervar, Array{Float64}(d * length(groups)))
-        colors = Array{RGB{Float32}}(d * length(groups))
+        setfield!(aes, othervar, Array{Float64}(undef, d * length(groups)))
+        colors = Array{RGB{Float32}}(undef, d * length(groups))
 
         x_span = x_max - x_min
         stack_height = zeros(Int, d)
@@ -651,17 +654,17 @@ function apply_statistic(stat::Histogram2DStatistic,
     end
 
     if x_categorial
-        aes.x = Array{Int64}(n)
+        aes.x = Array{Int64}(undef, n)
     else
-        aes.xmin = Array{Float64}(n)
-        aes.xmax = Array{Float64}(n)
+        aes.xmin = Array{Float64}(undef, n)
+        aes.xmax = Array{Float64}(undef, n)
     end
 
     if y_categorial
-        aes.y = Array{Int64}(n)
+        aes.y = Array{Int64}(undef, n)
     else
-        aes.ymin = Array{Float64}(n)
-        aes.ymax = Array{Float64}(n)
+        aes.ymin = Array{Float64}(undef, n)
+        aes.ymax = Array{Float64}(undef, n)
     end
 
     k = 1
@@ -694,7 +697,7 @@ function apply_statistic(stat::Histogram2DStatistic,
     aes.color_key_title = "Count"
 
     data = Gadfly.Data()
-    data.color = Array{Int}(n)
+    data.color = Array{Int}(undef, n)
     k = 1
     for cnt in transpose(bincounts)
         if cnt > 0
@@ -706,13 +709,13 @@ function apply_statistic(stat::Histogram2DStatistic,
     if x_categorial
         aes.xmin, aes.xmax = barminmax(aes.x, false)
         aes.x = discretize_make_ia(aes.x)
-        aes.pad_categorical_x = Nullable(false)
+        aes.pad_categorical_x = false
     end
 
     if y_categorial
         aes.ymin, aes.ymax = barminmax(aes.y, false)
         aes.y = discretize_make_ia(aes.y)
-        aes.pad_categorical_y = Nullable(false)
+        aes.pad_categorical_y = false
     end
 
     Scale.apply_scale(color_scale, [aes], data)
@@ -908,8 +911,8 @@ function apply_statistic(stat::TickStatistic,
         multiticks = Gadfly.multilevel_ticks(viewmin - (viewmax - viewmin),
                                              viewmax + (viewmax - viewmin))
         tickcount = length(ticks) + sum([length(ts) for ts in values(multiticks)])
-        tickvisible = Array{Bool}(tickcount)
-        tickscale = Array{Float64}(tickcount)
+        tickvisible = Array{Bool}(undef, tickcount)
+        tickscale = Array{Float64}(undef, tickcount)
         i = 1
         for t in ticks
             tickscale[i] = 1.0
@@ -967,9 +970,9 @@ function apply_statistic_typed(minval::T, maxval::T, vals::Array{Union{Missing,T
     lensize  = length(size)
     lendsize = length(dsize)
     for i = 1:length(vals)
-        vals.na[i] && continue
+        ismissing(vals[i]) && continue
 
-        val::T = vals.data[i]
+        val = vals[i]
         s = size[mod1(i, lensize)]
         ds = dsize[mod1(i, lendsize)]
 
@@ -1063,12 +1066,12 @@ function apply_statistic(stat::BoxplotStatistic,
         end
 
         m = length(groups)
-        aes.x = Array{eltype(aes.x)}(m)
-        aes.middle = Array{T}(m)
-        aes.lower_hinge = Array{T}(m)
-        aes.upper_hinge = Array{T}(m)
-        aes.lower_fence = Array{T}(m)
-        aes.upper_fence = Array{T}(m)
+        aes.x = Array{eltype(aes.x)}(undef, m)
+        aes.middle = Array{T}(undef, m)
+        aes.lower_hinge = Array{T}(undef, m)
+        aes.upper_hinge = Array{T}(undef, m)
+        aes.lower_fence = Array{T}(undef, m)
+        aes.upper_fence = Array{T}(undef, m)
         aes.outliers = Vector{T}[]
 
         for (i, ((x, c), ys)) in enumerate(groups)
@@ -1207,7 +1210,7 @@ function apply_statistic(stat::SmoothStatistic,
         if stat.method == :loess
             smoothys = Loess.predict(loess(xs, ys, span=stat.smoothing), xsp)
         elseif stat.method == :lm
-            lmcoeff = linreg(xs,ys)
+            lmcoeff = hcat(fill!(similar(xs), 1), xs) \ ys
             smoothys = lmcoeff[2].*xsp .+ lmcoeff[1]
         end
 
@@ -1267,10 +1270,10 @@ function apply_statistic(stat::HexBinStatistic,
     end
 
     N = length(counts)
-    aes.x = Array{Float64}(N)
-    aes.y = Array{Float64}(N)
+    aes.x = Array{Float64}(undef, N)
+    aes.y = Array{Float64}(undef, N)
     data = Gadfly.Data()
-    data.color = Array{Int}(N)
+    data.color = Array{Int}(undef, N)
     k = 1
     for (idx, cnt) in counts
         x, y = center(HexagonOffsetOddR(idx[1], idx[2]), xsize, ysize,
@@ -1409,8 +1412,8 @@ function apply_statistic(stat::FunctionStatistic,
     Gadfly.assert_aesthetics_defined("FunctionStatistic", aes, :xmax)
     Gadfly.assert_aesthetics_equal_length("FunctionStatistic", aes, :xmin, :xmax)
 
-    aes.x = Array{Float64}(length(aes.y) * stat.num_samples)
-    ys = Array{Float64}(length(aes.y) * stat.num_samples)
+    aes.x = Array{Float64}(undef, length(aes.y) * stat.num_samples)
+    ys = Array{Float64}(undef, length(aes.y) * stat.num_samples)
 
     i = 1
     for (f, xmin, xmax) in zip(aes.y, cycle(aes.xmin), cycle(aes.xmax))
@@ -1424,21 +1427,21 @@ function apply_statistic(stat::FunctionStatistic,
     # color was bound explicitly
     if aes.color != nothing
         func_color = aes.color
-        aes.color = Array{eltype(aes.color)}(length(aes.y) * stat.num_samples)
-        groups = Array{Union{Missing,Int}}(length(aes.y) * stat.num_samples)
+        aes.color = Array{eltype(aes.color)}(undef, length(aes.y) * stat.num_samples)
+        groups = Array{Union{Missing,Int}}(undef, length(aes.y) * stat.num_samples)
         for i in 1:length(aes.y)
-            aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = func_color[i]
-            groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
+            aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] .= func_color[i]
+            groups[1+(i-1)*stat.num_samples:i*stat.num_samples] .= i
         end
         aes.group = discretize_make_ia(groups)
     elseif length(aes.y) > 1 && haskey(scales, :color)
         data = Gadfly.Data()
-        data.color = Array{AbstractString}(length(aes.y) * stat.num_samples)
-        groups = Array{Union{Missing,Int}}(length(aes.y) * stat.num_samples)
+        data.color = Array{AbstractString}(undef, length(aes.y) * stat.num_samples)
+        groups = Array{Union{Missing,Int}}(undef, length(aes.y) * stat.num_samples)
         for i in 1:length(aes.y)
             fname = "f<sub>$(i)</sub>"
-            data.color[1+(i-1)*stat.num_samples:i*stat.num_samples] = fname
-            groups[1+(i-1)*stat.num_samples:i*stat.num_samples] = i
+            data.color[1+(i-1)*stat.num_samples:i*stat.num_samples] .= fname
+            groups[1+(i-1)*stat.num_samples:i*stat.num_samples] .= i
         end
         Scale.apply_scale(scales[:color], [aes], data)
         aes.group = discretize_make_ia(groups)
@@ -1513,7 +1516,7 @@ function apply_statistic(stat::ContourStatistic,
         as = sortslices(a, dims=1, by=x->(x[2],x[1]))
         xs = unique(as[:,1])
         ys = unique(as[:,2])
-        zs = Array{Float64}(length(xs), length(ys))
+        zs = Array{Float64}(undef, length(xs), length(ys))
         zs[:,:] = as[:,3]
     else
         error("Stat.contour requires either a matrix, function or dataframe")
@@ -1736,8 +1739,8 @@ function apply_statistic(stat::JitterStatistic,
     rng = MersenneTwister(stat.seed)
     for var in stat.vars
         data = getfield(aes, var)
-        outdata = Array{Float64}(size(data))
-        broadcast!(+, outdata, data, stat.range * (rand(rng, length(data)) - 0.5) .* span)
+        outdata = Array{Float64}(undef, size(data))
+        broadcast!(+, outdata, data, stat.range * (rand(rng, length(data)) .- 0.5) .* span)
         setfield!(aes, var, outdata)
     end
 end
@@ -2020,7 +2023,7 @@ function Gadfly.Stat.apply_statistic(stat::EllipseStatistic,
     for (g, data) in grouped_xy
         dfd = size(data,1)-1
         dhat = fit(stat.distribution, data')
-        Σ½ = chol(cov(dhat))
+        Σ½ = cholesky(cov(dhat)).U
         rv = sqrt.(dfn*[quantile(FDist(dfn,dfd), p) for p in stat.levels])
         ellxy =  [cos.(θ) sin.(θ)] * Σ½
         μ = mean(dhat)

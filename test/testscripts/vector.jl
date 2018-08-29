@@ -1,9 +1,9 @@
-using DataFrames, Gadfly
+using DataFrames, Gadfly, Random
 
 set_default_plot_size(2*3.3inch, 2*3.3inch)
 
 Random.seed!(123)
-D = convert(DataFrame, 99*rand(4, 4)+0.5)
+D = convert(DataFrame, 99 * rand(4,4) .+ 0.5)
 
 xsc  = Scale.x_continuous(minvalue=0.0, maxvalue=100)
 ysc  = Scale.y_continuous(minvalue=0.0, maxvalue=100)
@@ -19,7 +19,7 @@ p3 = plot(z=(x,y)->x*exp(-(x^2+y^2)),
         Guide.xlabel("x"), Guide.ylabel("y"), Guide.colorkey(title="z"));
 
 Z = fill(1.0, 5, 5)
-Z[2:4, 2:4] = 2.0
+Z[2:4, 2:4] .= 2.0
 Z[3,3] = 3.0
 
 p4 = plot(z=Z,

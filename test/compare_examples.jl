@@ -1,6 +1,6 @@
 include(joinpath(@__DIR__,"..","src","open_file.jl"))
 
-using ArgParse
+using ArgParse, LibGit2
 
 s = ArgParseSettings()
 @add_arg_table s begin
@@ -44,6 +44,7 @@ options = LibGit2.StatusOptions(flags=LibGit2.Consts.STATUS_OPT_INCLUDE_IGNORED 
 status = LibGit2.GitStatus(repo, status_opts=options)
 for i in 1:length(status)
     entry = status[i]
+    entry.index_to_workdir == C_NULL && continue
     index_to_workdir = unsafe_load(entry.index_to_workdir)
     if index_to_workdir.status == Int(LibGit2.Consts.DELTA_IGNORED)
         filepath = unsafe_string(index_to_workdir.new_file.path)
@@ -64,10 +65,10 @@ master_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(mastero
 devel_files = filter(x->filter_mkdir_git(x) && filter_regex(x), readdir(develout))
 cached_notin_genned = setdiff(master_files, devel_files)
 isempty(cached_notin_genned) ||
-      warn("files in master-output/ but not in devel-output/: ", join(cached_notin_genned,", "))
+      @warn string("files in master-output/ but not in devel-output/: ", join(cached_notin_genned,", "))
 genned_notin_cached = setdiff(devel_files, master_files)
 isempty(genned_notin_cached) ||
-      warn("files in devel-output/ but not in master-output/: ", join(genned_notin_cached,", "))
+      @warn string("files in devel-output/ but not in master-output/: ", join(genned_notin_cached,", "))
 for file in intersect(master_files,devel_files)
     print("Comparing ", file, " ... ")
     cached = open(readlines, joinpath(masterout, file))
@@ -79,7 +80,7 @@ for file in intersect(master_files,devel_files)
             for idx in findall(lsame.==false)
                 # Don't worry about lines that are due to
                 # Creator/Producer (e.g., Cairo versions)
-                if !isempty(search(cached[idx], creator_producer))
+                if findfirst(creator_producer, cached[idx]) !== nothing
                     lsame[idx] = true
                 end
             end
@@ -89,6 +90,7 @@ for file in intersect(master_files,devel_files)
     if same
         println("same!")
     else
+        global ndifferentfiles
         ndifferentfiles +=1
         println("different :(")
         if args["diff"]
@@ -129,5 +131,11 @@ for file in intersect(master_files,devel_files)
     end
 end
 
-infoorwarn = ndifferentfiles==0 ? info : warn
-infoorwarn("# different images = ",ndifferentfiles)
+result = string("# different images = ",ndifferentfiles)
+if ndifferentfiles==0
+  @info result
+else
+  @warn result
+end
+
+repo = options = status = 0;  GC.gc()   # see https://github.com/JuliaLang/julia/issues/28306

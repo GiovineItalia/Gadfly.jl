@@ -1,4 +1,5 @@
 julia 0.7
+CategoricalArrays  # might be able to remove
 Colors 0.3.4
 Compat 0.18.0
 Compose 0.5.2
@@ -13,6 +14,7 @@ IterTools
 JSON
 KernelDensity
 Loess
+Measures
 Showoff 0.0.3
 StatsBase
 Juno

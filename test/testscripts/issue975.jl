@@ -1,4 +1,4 @@
-using DataFrames, Gadfly
+using DataFrames, Gadfly, Dates
 
 set_default_plot_size(6inch, 3inch)
 

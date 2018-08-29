@@ -1,4 +1,4 @@
-using Compose, DataFrames, Gadfly
+using Compose, DataFrames, Gadfly, Random
 
 set_default_plot_size(9inch, 3.3inch)
 
