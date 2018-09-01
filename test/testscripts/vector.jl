@@ -1,9 +1,11 @@
-using DataFrames, Gadfly, Random
+using DataFrames, Gadfly
 
 set_default_plot_size(2*3.3inch, 2*3.3inch)
 
-Random.seed!(123)
-D = convert(DataFrame, 99 * rand(4,4) .+ 0.5)
+D = DataFrame(x1=[76.5763, 93.611, 67.2219, 39.6499],
+              x2=[31.5112, 66.0929, 58.5162, 5.66118],
+              x3=[27.0953, 11.2782, 16.7029, 47.3287],
+              x4=[86.1758, 61.6317, 28.7841, 46.4209])
 
 xsc  = Scale.x_continuous(minvalue=0.0, maxvalue=100)
 ysc  = Scale.y_continuous(minvalue=0.0, maxvalue=100)
