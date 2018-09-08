@@ -8,7 +8,7 @@ s = ArgParseSettings()
         help = "print to STDOUT the output of `diff`"
         action = :store_true
     "--two"
-        help = "open and display both files"
+        help = "display both files"
         action = :store_true
     "--bw"
         help = "generate, save and display a B&W difference image for PNG and SVG files.  requires Rsvg, Cairo, and Images"
@@ -51,6 +51,11 @@ for i in 1:length(status)
         startswith(filepath,joinpath("test/diffed-output")) || continue
         rm(filepath)
     end
+end
+
+function display_two(master,devel)
+    open_file(master)
+    open_file(devel)
 end
 
 # Compare with cached output
@@ -97,10 +102,7 @@ for file in intersect(master_files,devel_files)
             diffcmd = `diff $(joinpath(masterout, file)) $(joinpath(develout, file))`
             run(ignorestatus(diffcmd))
         end
-        if args["two"]
-            open_file("$(joinpath(masterout,file))")
-            open_file("$(joinpath(develout,file))")
-        end
+        args["two"] && display_two(joinpath(masterout,file), joinpath(develout,file))
         if args["bw"] && (endswith(file,".svg") || endswith(file,".png"))
             wait_for_user = false
             if endswith(file,".svg")
@@ -125,9 +127,14 @@ for file in intersect(master_files,devel_files)
                 println("PNGs are different sizes :(")
             end
         end
-        args["diff"] || args["two"] || (args["bw"] && wait_for_user) || continue
-        println("Press ENTER to continue, CTRL-C to quit")
-        readline()
+        args["diff"] || args["two"] || (args["bw"] &&
+                (endswith(file,".svg") || endswith(file,".png")) && wait_for_user) || continue
+        println("Enter 'two' to display both files, nothing to continue, or press CTRL-C to quit")
+        while true
+          resp = readline()
+          resp=="" && break
+          resp=="two" && display_two(joinpath(masterout,file), joinpath(develout,file))
+        end
     end
 end
 
