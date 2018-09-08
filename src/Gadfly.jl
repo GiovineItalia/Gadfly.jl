@@ -16,7 +16,7 @@ import IterTools
 import IterTools: distinct, drop, chain
 import Compose: draw, hstack, vstack, gridstack, parse_colorant
 import Base: +, -, /, *,
-             copy, push!, start, next, done, show, getindex, cat,
+             copy, push!, show, getindex, cat,
              show, isfinite, display
 import Distributions: Distribution
 

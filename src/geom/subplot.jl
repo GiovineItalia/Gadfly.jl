@@ -224,7 +224,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             Gadfly.inherit!(col_aes, geom_aes)
             Stat.apply_statistic(Stat.xticks(), scales, coord, col_aes)
 
-            aes_grid[:, j] .= col_aes
+            aes_grid[:, j] .= [col_aes]
         end
     end
 

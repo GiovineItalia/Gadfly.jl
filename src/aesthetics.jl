@@ -97,7 +97,8 @@ function show(io::IO, data::Aesthetics)
     maxlen = 0
     print(io, "Aesthetics(")
     for name in fieldnames(Aesthetics)
-        if getfield(data, name) != nothing
+        val = getfield(data, name)
+        if !ismissing(val) && val != nothing
             print(io, "\n  ", string(name), "=")
             show(io, getfield(data, name))
         end
