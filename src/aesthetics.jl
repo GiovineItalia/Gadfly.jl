@@ -1,11 +1,11 @@
 const NumericalOrCategoricalAesthetic =
-    Union{Nothing, Vector, Array, IndirectArray}
+    Union{Nothing, Vector, IndirectArray}
 
 const CategoricalAesthetic =
     Union{Nothing, IndirectArray}
 
 const NumericalAesthetic =
-    Union{Nothing, Matrix, Vector, Array}
+    Union{Nothing, Matrix, Vector}
 
 
 @varset Aesthetics begin
@@ -273,11 +273,7 @@ cat_aes_var!(a, b) = a
 
 function cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U}
     V = promote_type(T, U)
-    if isa(a, Array{Union{Missing,T}}) || isa(b, Array{Union{Missing,U}})
-        ab = Array{Union{Missing,V}}(undef, length(a) + length(b))
-    else
-        ab = Array{V}(undef, length(a) + length(b))
-    end
+    ab = Array{V}(undef, length(a) + length(b))
     i = 1
     for x in a
         ab[i] = x

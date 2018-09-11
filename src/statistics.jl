@@ -956,27 +956,12 @@ function apply_statistic_typed(minval::T, maxval::T, vals, size, dsize) where T
     lensize  = length(size)
     lendsize = length(dsize)
     for (i, val) in enumerate(vals)
-        (!Gadfly.isconcrete(val) || !isfinite(val)) && continue
+        (ismissing(val) || !Gadfly.isconcrete(val) || !isfinite(val)) && continue
 
         s = size[mod1(i, lensize)]
         ds = dsize[mod1(i, lendsize)]
 
         minval, maxval = minvalmaxval(minval, maxval, convert(T, val), s, ds)
-    end
-    minval, maxval
-end
-
-function apply_statistic_typed(minval::T, maxval::T, vals::Array{Union{Missing,T}}, size, dsize) where T
-    lensize  = length(size)
-    lendsize = length(dsize)
-    for i = 1:length(vals)
-        ismissing(vals[i]) && continue
-
-        val = vals[i]
-        s = size[mod1(i, lensize)]
-        ds = dsize[mod1(i, lendsize)]
-
-        minval, maxval = minvalmaxval(minval, maxval, val, s, ds)
     end
     minval, maxval
 end
@@ -1428,7 +1413,7 @@ function apply_statistic(stat::FunctionStatistic,
     if aes.color != nothing
         func_color = aes.color
         aes.color = Array{eltype(aes.color)}(undef, length(aes.y) * stat.num_samples)
-        groups = Array{Union{Missing,Int}}(undef, length(aes.y) * stat.num_samples)
+        groups = Array{Int}(undef, length(aes.y) * stat.num_samples)
         for i in 1:length(aes.y)
             aes.color[1+(i-1)*stat.num_samples:i*stat.num_samples] .= func_color[i]
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] .= i

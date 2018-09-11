@@ -10,10 +10,7 @@ end
 
 Base.hash(colgroup::GroupedColumn, h::UInt64) = hash(colgroup.columns, h)
 
-function ==(a::GroupedColumn, b::GroupedColumn)
-    return (a.columns===nothing && b.columns===nothing) ||
-        (a.columns!==nothing && b.columns!==nothing && a.columns == b.columns)
-end
+==(a::GroupedColumn, b::GroupedColumn) = a.columns==b.columns
 
 Base.show(io::IO, gc::GroupedColumn) = print(io, "Column")
 

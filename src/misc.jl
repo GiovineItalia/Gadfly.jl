@@ -61,17 +61,7 @@ end
 function concrete_length(xs)
     n = 0
     for x in xs
-        if isconcrete(x)
-            n += 1
-        end
-    end
-    n
-end
-
-function concrete_length(xs::Array{Union{Missing,T}}) where T
-    n = 0
-    for i = 1:length(xs)
-        if !ismissing(xs[i]) && isconcrete(xs[i])
+        if !ismissing(x) && isconcrete(x)
             n += 1
         end
     end
@@ -136,24 +126,7 @@ function concrete_minmax(xs, xmin::T, xmax::T) where T<:Real
     end
 
     for x in xs
-        if isconcrete(x)
-            xT = convert(T, x)
-            if isnan(xmin) || xT < xmin
-                xmin = xT
-            end
-            if isnan(xmax) || xT > xmax
-                xmax = xT
-            end
-        end
-    end
-    xmin, xmax
-end
-
-
-function concrete_minmax(xs::Array{Union{Missing,TA}}, xmin::T, xmax::T) where {T<:Real, TA}
-    for i = 1:length(xs)
-        if !ismissing(xs[i])
-            x = xs[i]
+        if !ismissing(x) && isconcrete(x)
             xT = convert(T, x)
             if isnan(xmin) || xT < xmin
                 xmin = xT
@@ -169,24 +142,7 @@ end
 
 function concrete_minmax(xs, xmin::T, xmax::T) where T
     for x in xs
-        if isconcrete(x)
-            xT = convert(T, x)
-            if xT < xmin
-                xmin = xT
-            end
-            if xT > xmax
-                xmax = xT
-            end
-        end
-    end
-    xmin, xmax
-end
-
-
-function concrete_minmax(xs::Array{Union{Missing,TA}}, xmin::T, xmax::T) where {T, TA}
-    for i = 1:length(xs)
-        if !ismissing(xs[i])
-            x = xs[i]
+        if !ismissing(x) && isconcrete(x)
             xT = convert(T, x)
             if xT < xmin
                 xmin = xT
@@ -404,8 +360,8 @@ discretize_make_ia(values::CategoricalArray) =
     discretize_make_ia(values, intersect(push!(levels(values), missing), unique(values)))
 discretize_make_ia(values::CategoricalArray, ::Nothing) = discretize_make_ia(values)
 function discretize_make_ia(values::CategoricalArray{T}, levels::Vector) where {T}
-    mapping = Union{Nothing,Int}[coalesce.(indexin(CategoricalArrays.index(values.pool), levels), 0)...]
-    pushfirst!(mapping, coalesce(findfirst(ismissing, levels), 0))
+    mapping = something.(indexin(CategoricalArrays.index(values.pool), levels), 0)
+    pushfirst!(mapping, something(findfirst(ismissing, levels), 0))
     index = [mapping[x+1] for x in values.refs]
     any(iszero, index) && throw(ArgumentError("values not in levels encountered"))
     return IndirectArray(index, convert(Vector{T},levels))
