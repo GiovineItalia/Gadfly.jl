@@ -53,8 +53,9 @@ function __init__()
             show(err)
         end
     else
-        push_theme(Juno.isactive() ? :dark : :default)
+        push_theme(:default)
     end
+    pushdisplay(GadflyDisplay())
 end
 
 
@@ -950,6 +951,14 @@ function show(io::IO, m::MIME"image/svg+xml", p::Plot)
     show(io, m, svg)
 end
 
+function show(io::IO, m::MIME"application/juno+plotpane", p::Plot)
+    buf = IOBuffer()
+    svg = SVGJS(buf, Compose.default_graphic_width,
+                Compose.default_graphic_height, false)
+    draw(svg, p)
+    show(io, "text/html", svg)
+end
+
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
     global show
@@ -990,7 +999,7 @@ function default_mime()
     end
 end
 
-import REPL: REPLDisplay
+struct GadflyDisplay <: AbstractDisplay end
 
 """
     display(p::Plot)
@@ -999,7 +1008,7 @@ Render `p` to a multimedia display, typically an internet browser.
 This function is handy when rendering by `plot` has been suppressed
 with either trailing semi-colon or by calling it within a function.
 """
-function display(d::REPLDisplay, p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, p::Union{Plot,Compose.Context})
     if showable("text/html", p)
         display(d,"text/html", p)
         return
@@ -1021,7 +1030,7 @@ end
 
 # Fallback display method. When there isn't a better option, we write to a
 # temporary file and try to open it.
-function display(d::REPLDisplay, ::MIME"image/png", p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, ::MIME"image/png", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".png")
     output = open(filename, "w")
     draw(PNG(output, Compose.default_graphic_width,
@@ -1030,7 +1039,7 @@ function display(d::REPLDisplay, ::MIME"image/png", p::Union{Plot,Compose.Contex
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"image/svg+xml", p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, ::MIME"image/svg+xml", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".svg")
     output = open(filename, "w")
     draw(SVG(output, Compose.default_graphic_width,
@@ -1039,7 +1048,7 @@ function display(d::REPLDisplay, ::MIME"image/svg+xml", p::Union{Plot,Compose.Co
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"text/html", p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, ::MIME"text/html", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".html")
     output = open(filename, "w")
 
@@ -1072,7 +1081,7 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Union{Plot,Compose.Contex
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"application/postscript", p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, ::MIME"application/postscript", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".ps")
     output = open(filename, "w")
     draw(PS(output, Compose.default_graphic_width,
@@ -1081,29 +1090,13 @@ function display(d::REPLDisplay, ::MIME"application/postscript", p::Union{Plot,C
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"application/pdf", p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, ::MIME"application/pdf", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".pdf")
     output = open(filename, "w")
     draw(PDF(output, Compose.default_graphic_width,
              Compose.default_graphic_height), p)
     close(output)
     open_file(filename)
-end
-
-# Display in Juno
-
-import Juno: Juno, @render, media, Media
-
-media(Plot, Media.Plot)
-
-@render Juno.PlotPane p::Plot begin
-    x, y = Juno.plotsize()
-    set_default_plot_size(x*Gadfly.px, y*Gadfly.px)
-    HTML(stringmime("text/html", p))
-end
-
-@render Juno.Editor p::Gadfly.Plot begin
-    Juno.icon("graph")
 end
 
 include("coord.jl")
