@@ -1,6 +1,6 @@
-# Test mapping arrays directly to aesthetics without a data fram.
+# Test mapping arrays directly to aesthetics without a data frame.
 
-using Gadfly, DataArrays, DataFrames
+using Gadfly
 
 set_default_plot_size(6inch, 3inch)
 

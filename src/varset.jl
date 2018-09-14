@@ -17,7 +17,7 @@ macro varset(name::Symbol, table)
     inherit_parameters_expr = Expr(:parameters)
 
     for row in table
-        isa(row, Expr) && row.head == :line && continue
+        isa(row, LineNumberNode) && continue
 
         hasdocstr = false
         if isa(row, Symbol)

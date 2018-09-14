@@ -3,7 +3,6 @@ module Coord
 using Gadfly
 using Compat
 using Compose
-using DataArrays
 import Gadfly.Maybe
 
 export cartesian
@@ -18,7 +17,7 @@ struct Cartesian <: Gadfly.CoordinateElement
     xflip::Bool
     yflip::Bool
     fixed::Bool
-    aspect_ratio::Union{(Void), Float64}
+    aspect_ratio::Union{(Nothing), Float64}
     raster::Bool
 
     Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster) =
@@ -133,21 +132,21 @@ end
 #
 function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
                           scales::Dict{Symbol, Gadfly.ScaleElement})
-    pad_categorical_x = Nullable{Bool}()
-    pad_categorical_y = Nullable{Bool}()
+    pad_categorical_x = missing
+    pad_categorical_y = missing
     for aes in aess
-        if !isnull(aes.pad_categorical_x)
-            if isnull(pad_categorical_x)
+        if aes.pad_categorical_x !== missing
+            if pad_categorical_x === missing
                 pad_categorical_x = aes.pad_categorical_x
             else
-                pad_categorical_x = Nullable(get(pad_categorical_x) || get(aes.pad_categorical_x))
+                pad_categorical_x = pad_categorical_x || aes.pad_categorical_x
             end
         end
-        if !isnull(aes.pad_categorical_y)
-            if isnull(pad_categorical_y)
+        if aes.pad_categorical_y !== missing
+            if pad_categorical_y === missing
                 pad_categorical_y = aes.pad_categorical_y
             else
-                pad_categorical_y = Nullable(get(pad_categorical_y) || get(aes.pad_categorical_y))
+                pad_categorical_y = pad_categorical_y || aes.pad_categorical_y
             end
         end
     end
@@ -238,12 +237,12 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     xpadding = Scale.iscategorical(scales, :x) ? 0mm : 2mm
     ypadding = Scale.iscategorical(scales, :y) ? 0mm : 2mm
 
-    if Scale.iscategorical(scales, :x) && (isnull(pad_categorical_x) || get(pad_categorical_x))
+    if Scale.iscategorical(scales, :x) && (pad_categorical_x===missing || pad_categorical_x)
         xmin -= 0.5
         xmax += 0.5
     end
 
-    if Scale.iscategorical(scales, :y) && (isnull(pad_categorical_y) || get(pad_categorical_y))
+    if Scale.iscategorical(scales, :y) && (pad_categorical_y===missing || pad_categorical_y)
         ymin -= 0.5
         ymax += 0.5
     end

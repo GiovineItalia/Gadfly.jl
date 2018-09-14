@@ -1,23 +1,22 @@
-__precompile__()
-
 module Gadfly
 
 using Colors
 using Compat
 using Compose
-using DataArrays
 using DataFrames
 using DataStructures
 using JSON
 using Showoff
 using IndirectArrays
 using CategoricalArrays
+using Printf
+using Base64
 
 import IterTools
 import IterTools: distinct, drop, chain
-import Compose: draw, hstack, vstack, gridstack, isinstalled, parse_colorant
+import Compose: draw, hstack, vstack, gridstack, parse_colorant
 import Base: +, -, /, *,
-             copy, push!, start, next, done, show, getindex, cat,
+             copy, push!, show, getindex, cat,
              show, isfinite, display
 import Distributions: Distribution
 
@@ -54,12 +53,13 @@ function __init__()
             show(err)
         end
     else
-        push_theme(Juno.isactive() ? :dark : :default)
+        push_theme(:default)
     end
+    pushdisplay(GadflyDisplay())
 end
 
 
-const ColorOrNothing = Union{Colorant, (Void)}
+const ColorOrNothing = Union{Colorant, (Nothing)}
 
 element_aesthetics(::Any) = []
 input_aesthetics(::Any) = []
@@ -132,11 +132,11 @@ set_default_plot_format(fmt::Symbol) = Compose.set_default_graphic_format(fmt)
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 mutable struct Layer <: Element
-    data_source::Union{Void, MeltedData, AbstractArray, AbstractDataFrame}
+    data_source::Union{Nothing, MeltedData, AbstractArray, AbstractDataFrame}
     mapping::Dict
     statistics::Vector{StatisticElement}
     geom::GeometryElement
-    theme::Union{Void, Theme}
+    theme::Union{Nothing, Theme}
     order::Int
 end
 Layer() = Layer(nothing, Dict(), StatisticElement[], Geom.nil(), nothing, 0)
@@ -161,7 +161,7 @@ append!(ls, layer(y=[3,2,1], Geom.point))
 plot(ls..., Guide.title("layer example"))
 ```
 """
-function layer(data_source::Union{AbstractDataFrame, Void},
+function layer(data_source::Union{AbstractDataFrame, Nothing},
                elements::ElementOrFunction...; mapping...)
     mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
@@ -211,11 +211,11 @@ add_plot_element!(lyrs::Vector{Layer}, arg::Theme) = [lyr.theme = arg for lyr in
 # A full plot specification.
 mutable struct Plot
     layers::Vector{Layer}
-    data_source::Union{Void, MeltedData, AbstractArray, AbstractDataFrame}
+    data_source::Union{Nothing, MeltedData, AbstractArray, AbstractDataFrame}
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
-    coord::Union{Void, CoordinateElement}
+    coord::Union{Nothing, CoordinateElement}
     guides::Vector{GuideElement}
     theme::Theme
     mapping::Dict
@@ -314,7 +314,7 @@ The old fashioned (pre-named arguments) version of plot.  This version takes an
 explicit mapping dictionary, mapping aesthetics symbols to expressions or
 columns in the data frame.
 """
-function plot(data_source::Union{Void, AbstractArray, AbstractDataFrame},
+function plot(data_source::Union{Nothing, AbstractArray, AbstractDataFrame},
               mapping::Dict, elements::ElementOrFunctionOrLayers...)
     mapping = cleanmapping(mapping)
     p = Plot()
@@ -381,7 +381,7 @@ function render_prepare(plot::Plot)
 
     # Process layers, filling inheriting mappings or data from the Plot where
     # they are missing.
-    datas = Array{Data}(length(plot.layers))
+    datas = Array{Data}(undef, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
         if layer.data_source === nothing && isempty(layer.mapping)
             layer.data_source = plot.data_source
@@ -437,7 +437,7 @@ function render_prepare(plot::Plot)
     end
 
     # Add default statistics for geometries.
-    layer_stats = Array{Vector{StatisticElement}}(length(plot.layers))
+    layer_stats = Array{Vector{StatisticElement}}(undef, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
         layer_stats[i] = isempty(layer.statistics) ? ( isa(layer.geom, Geom.SubplotGeometry) ?
                 default_statistic(layer.geom) : [default_statistic(layer.geom)] ) : layer.statistics
@@ -456,9 +456,9 @@ function render_prepare(plot::Plot)
         if mapreduce(x->in(x,layer_needed_aes),|,[:x,:xmax,:xmin]) &&
                 mapreduce(y->in(y,layer_needed_aes),|,[:y,:ymax,:ymin])
             if !mapreduce(x->in(x,layer_defined_aes),|,[:x,:xmax,:xmin])
-                unshift!(layer_stats[i], Stat.x_enumerate)
+                pushfirst!(layer_stats[i], Stat.x_enumerate)
             elseif !mapreduce(y->in(y,layer_defined_aes),|,[:y,:ymax,:ymin])
-                unshift!(layer_stats[i], Stat.y_enumerate)
+                pushfirst!(layer_stats[i], Stat.y_enumerate)
             end
         end
     end
@@ -553,7 +553,7 @@ function render_prepare(plot::Plot)
         (haskey(plot.mapping, var) || haskey(scales, var)) && continue
 
         t = :categorical
-        for data in chain(datas, subplot_datas)
+        for data in Iterators.flatten((datas, subplot_datas))
             val = getfield(data, var)
             if val != nothing && val != :categorical
                 t = classify_data(val)
@@ -695,7 +695,7 @@ function render_prepare(plot::Plot)
     keytypes = [Guide.ColorKey, Guide.ShapeKey]
     supress_keys = false
     for layer in plot.layers
-        if isa(layer.geom, Geom.SubplotGeometry) && any(haskey.(layer.geom.guides, keytypes))
+        if isa(layer.geom, Geom.SubplotGeometry) && any(haskey.((layer.geom.guides,), keytypes))
             supress_keys = true
             break
         end
@@ -714,8 +714,8 @@ function render_prepare(plot::Plot)
     end
 
     # build arrays of scaled aesthetics for layers within subplots
-    layer_subplot_aess = Array{Vector{Aesthetics}}(length(plot.layers))
-    layer_subplot_datas = Array{Vector{Data}}(length(plot.layers))
+    layer_subplot_aess = Array{Vector{Aesthetics}}(undef, length(plot.layers))
+    layer_subplot_datas = Array{Vector{Data}}(undef, length(plot.layers))
     j = 1
     for (i, layer) in enumerate(plot.layers)
         layer_subplot_aess[i] = Aesthetics[]
@@ -951,6 +951,14 @@ function show(io::IO, m::MIME"image/svg+xml", p::Plot)
     show(io, m, svg)
 end
 
+function show(io::IO, m::MIME"application/juno+plotpane", p::Plot)
+    buf = IOBuffer()
+    svg = SVGJS(buf, Compose.default_graphic_width,
+                Compose.default_graphic_height, false)
+    draw(svg, p)
+    show(io, "text/html", svg)
+end
+
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
     global show
@@ -991,7 +999,7 @@ function default_mime()
     end
 end
 
-import Base.REPL: REPLDisplay
+struct GadflyDisplay <: AbstractDisplay end
 
 """
     display(p::Plot)
@@ -1000,20 +1008,20 @@ Render `p` to a multimedia display, typically an internet browser.
 This function is handy when rendering by `plot` has been suppressed
 with either trailing semi-colon or by calling it within a function.
 """
-function display(d::REPLDisplay, p::Union{Plot,Compose.Context})
-    if mimewritable("text/html", p)
+function display(d::GadflyDisplay, p::Union{Plot,Compose.Context})
+    if showable("text/html", p)
         display(d,"text/html", p)
         return
-    elseif mimewritable("image/png", p)
+    elseif showable("image/png", p)
         display(d,"image/png", p)
         return
-    elseif mimewritable("application/pdf", p)
+    elseif showable("application/pdf", p)
         display(d,"application/pdf", p)
         return
-    elseif mimewritable("image/svg+xml", p)
+    elseif showable("image/svg+xml", p)
         display(d,"image/svg+xml", p)
         return
-    elseif mimewritable("application/postscript", p)
+    elseif showable("application/postscript", p)
         display(d,"application/postscript", p)
         return
     end
@@ -1022,7 +1030,7 @@ end
 
 # Fallback display method. When there isn't a better option, we write to a
 # temporary file and try to open it.
-function display(d::REPLDisplay, ::MIME"image/png", p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, ::MIME"image/png", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".png")
     output = open(filename, "w")
     draw(PNG(output, Compose.default_graphic_width,
@@ -1031,7 +1039,7 @@ function display(d::REPLDisplay, ::MIME"image/png", p::Union{Plot,Compose.Contex
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"image/svg+xml", p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, ::MIME"image/svg+xml", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".svg")
     output = open(filename, "w")
     draw(SVG(output, Compose.default_graphic_width,
@@ -1040,7 +1048,7 @@ function display(d::REPLDisplay, ::MIME"image/svg+xml", p::Union{Plot,Compose.Co
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"text/html", p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, ::MIME"text/html", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".html")
     output = open(filename, "w")
 
@@ -1059,10 +1067,10 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Union{Plot,Compose.Contex
           </head>
             <body style="margin:0">
             <script charset="utf-8">
-                $(readstring(Compose.snapsvgjs))
+                $(read(Compose.snapsvgjs, String))
             </script>
             <script charset="utf-8">
-                $(readstring(gadflyjs))
+                $(read(gadflyjs, String))
             </script>
 
             $(plotsvg)
@@ -1073,7 +1081,7 @@ function display(d::REPLDisplay, ::MIME"text/html", p::Union{Plot,Compose.Contex
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"application/postscript", p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, ::MIME"application/postscript", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".ps")
     output = open(filename, "w")
     draw(PS(output, Compose.default_graphic_width,
@@ -1082,29 +1090,13 @@ function display(d::REPLDisplay, ::MIME"application/postscript", p::Union{Plot,C
     open_file(filename)
 end
 
-function display(d::REPLDisplay, ::MIME"application/pdf", p::Union{Plot,Compose.Context})
+function display(d::GadflyDisplay, ::MIME"application/pdf", p::Union{Plot,Compose.Context})
     filename = string(tempname(), ".pdf")
     output = open(filename, "w")
     draw(PDF(output, Compose.default_graphic_width,
              Compose.default_graphic_height), p)
     close(output)
     open_file(filename)
-end
-
-# Display in Juno
-
-import Juno: Juno, @render, media, Media
-
-media(Plot, Media.Plot)
-
-@render Juno.PlotPane p::Plot begin
-    x, y = Juno.plotsize()
-    set_default_plot_size(x*Gadfly.px, y*Gadfly.px)
-    HTML(stringmime("text/html", p))
-end
-
-@render Juno.Editor p::Gadfly.Plot begin
-    Juno.icon("graph")
 end
 
 include("coord.jl")

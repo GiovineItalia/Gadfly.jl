@@ -14,8 +14,8 @@ x = [2400:1:2500;]
 
 WiFiPlots = [2.0 * gaussian(ix, iy, 40.0) for ix=x, iy=WiFiFreqs]
 
-BLEValues = [ ((findfirst(BLEFreqs, ix) > 0) ? 0.127 : 0/0) for ix=x]
-BLEChannels = [findfirst(BLEFreqs, ix) for ix=x]
+BLEValues = [ (findfirst(isequal(ix), BLEFreqs) !== nothing ? 0.127 : 0/0) for ix=x]
+BLEChannels = [something(findfirst(isequal(ix), BLEFreqs),0) for ix=x]
 BLEChannelStrs = [(ix < 10) ? "0$ix" : "$ix" for ix=BLEChannels]
 df = DataFrame(frequency=x, value=BLEValues, channel=BLEChannels)
 

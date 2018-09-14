@@ -44,7 +44,7 @@ end
 default_middle_color(fill_color::TransparentColor) = RGBA{Float32}(
         default_middle_color(color(fill_color)), fill_color.alpha)
  
-get_stroke_vector(::Void) = []
+get_stroke_vector(::Nothing) = []
 get_stroke_vector(vec::AbstractVector) = vec
 function get_stroke_vector(linestyle::Symbol)
     ldash = 6 * Compose.mm
@@ -206,7 +206,7 @@ $(FIELDS)
     key_position,          Symbol,          :right
 
     "Color used to stroke bars in bar plots. If a function is given, it's used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)",
-    bar_highlight,         Union{(Void), Function, Color},   nothing
+    bar_highlight,         Union{Nothing, Function, Color},   nothing
 
     rug_size,             Measure,          2.0mm
 

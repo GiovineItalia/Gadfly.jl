@@ -5,9 +5,9 @@ if haskey(ENV, "GADFLY_THEME")
     pop!(ENV, "GADFLY_THEME")
 end
 
-using Base.Test, Gadfly, Compat
+using Test, Gadfly, Compat, LibGit2, Dates, Random, Compose, Cairo
 
-repo = LibGit2.GitRepo(dirname(@__DIR__))
+repo = GitRepo(dirname(@__DIR__))
 branch = LibGit2.headname(repo)
 outputdir = joinpath(@__DIR__, mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
         "master-output" : "devel-output")
@@ -30,9 +30,10 @@ function mimic_git_log_n1(io::IO, head)
     commit = LibGit2.GitCommit(repo, hash)
     author = LibGit2.author(commit)
     println(io, "Author: ",author.name," <",author.email,">")
-    datetime = Dates.unix2datetime(author.time + 60*author.time_offset)
+    datetime = unix2datetime(author.time + 60*author.time_offset)
     println(io, "Date:   ",Dates.format(datetime, "e u d HH:MM:SS YYYY"))
     println(io, "    ",LibGit2.message(commit))
+    hash = commit = author = 0;  GC.gc()   # see https://github.com/JuliaLang/julia/issues/28306
 end
 function mimic_git_status(io::IO, head)
     println(io, "On branch ",LibGit2.shortname(head))
@@ -53,6 +54,7 @@ function mimic_git_status(io::IO, head)
             println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
         end
     end
+    status = 0;  GC.gc()   # see https://github.com/JuliaLang/julia/issues/28306
 end
 head = LibGit2.head(repo)
 open(io->mimic_git_log_n1(io,head), joinpath(outputdir,"git.log"), "w")
@@ -74,12 +76,12 @@ testfiles = isempty(ARGS) ?
 
 @testset "Gadfly" begin
     for filename in testfiles, (backend_name, backend) in backends
-        info(filename,'.',backend_name)
-        srand(1)
+        @info string(filename,'.',backend_name)
+        Random.seed!(1)
         p = evalfile(joinpath(testdir, "$(filename).jl"))
         @test typeof(p) in [Plot,Compose.Context]
         r = draw(backend(filename), p)
-        @test typeof(r) in [Bool,Void]
+        @test typeof(r) in [Bool,Nothing]
     end
 end
 
@@ -116,3 +118,5 @@ close(output)
 if prev_theme !== nothing
     ENV["GADFLY_THEME"] = prev_theme
 end
+
+repo = branch = options = status = head = 0;  GC.gc()   # see https://github.com/JuliaLang/julia/issues/28306

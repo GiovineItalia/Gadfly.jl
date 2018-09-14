@@ -1,24 +1,24 @@
 const NumericalOrCategoricalAesthetic =
-    Union{(Void), Vector, DataArray, IndirectArray}
+    Union{Nothing, Vector, IndirectArray}
 
 const CategoricalAesthetic =
-    Union{(Void), IndirectArray}
+    Union{Nothing, IndirectArray}
 
 const NumericalAesthetic =
-    Union{(Void), Matrix, Vector, DataArray}
+    Union{Nothing, Matrix, Vector}
 
 
 @varset Aesthetics begin
     x,            Union{NumericalOrCategoricalAesthetic, Distribution}
     y,            Union{NumericalOrCategoricalAesthetic, Distribution}
-    z,            Union{(Void), Function, NumericalAesthetic}
+    z,            Union{Nothing, Function, NumericalAesthetic}
     xend,         NumericalAesthetic
     yend,         NumericalAesthetic
 
-    size,         Union{CategoricalAesthetic,Vector,Void}
-    shape,        Union{CategoricalAesthetic,Vector,Void}
-    color,        Union{CategoricalAesthetic,Vector,Void}
-    linestyle,    Union{CategoricalAesthetic,Vector,Void}
+    size,         Union{CategoricalAesthetic,Vector,Nothing}
+    shape,        Union{CategoricalAesthetic,Vector,Nothing}
+    color,        Union{CategoricalAesthetic,Vector,Nothing}
+    linestyle,    Union{CategoricalAesthetic,Vector,Nothing}
 
     label,        CategoricalAesthetic
     group,        CategoricalAesthetic
@@ -56,7 +56,7 @@ const NumericalAesthetic =
     ytick,        NumericalAesthetic
     xgrid,        NumericalAesthetic
     ygrid,        NumericalAesthetic
-    color_key_colors,     Maybe(Associative)
+    color_key_colors,     Maybe(AbstractDict)
     color_key_title,      Maybe(AbstractString)
     color_key_continuous, Maybe(Bool)
     color_function,       Maybe(Function)
@@ -88,8 +88,8 @@ const NumericalAesthetic =
     shape_label, Function, showoff
 
     # pseudo-aesthetics
-    pad_categorical_x, Nullable{Bool}, Nullable{Bool}()
-    pad_categorical_y, Nullable{Bool}, Nullable{Bool}()
+    pad_categorical_x, Union{Missing,Bool}, missing
+    pad_categorical_y, Union{Missing,Bool}, missing
 end
 
 
@@ -97,7 +97,8 @@ function show(io::IO, data::Aesthetics)
     maxlen = 0
     print(io, "Aesthetics(")
     for name in fieldnames(Aesthetics)
-        if getfield(data, name) != nothing
+        val = getfield(data, name)
+        if !ismissing(val) && val != nothing
             print(io, "\n  ", string(name), "=")
             show(io, getfield(data, name))
         end
@@ -247,10 +248,10 @@ function concat(aess::Aesthetics...)
 end
 
 
-cat_aes_var!(a::(Void), b::(Void)) = a
-cat_aes_var!(a::(Void), b::Union{Function,AbstractString}) = b
-cat_aes_var!(a::(Void), b) = copy(b)
-cat_aes_var!(a, b::(Void)) = a
+cat_aes_var!(a::(Nothing), b::(Nothing)) = a
+cat_aes_var!(a::(Nothing), b::Union{Function,AbstractString}) = b
+cat_aes_var!(a::(Nothing), b) = copy(b)
+cat_aes_var!(a, b::(Nothing)) = a
 cat_aes_var!(a::Function, b::Function) = a === string || a == showoff ? b : a
 
 function cat_aes_var!(a::Dict, b::Dict)
@@ -272,11 +273,7 @@ cat_aes_var!(a, b) = a
 
 function cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U}
     V = promote_type(T, U)
-    if isa(a, DataArray) || isa(b, DataArray)
-        ab = DataArray(V, length(a) + length(b))
-    else
-        ab = Array{V}(length(a) + length(b))
-    end
+    ab = Array{V}(undef, length(a) + length(b))
     i = 1
     for x in a
         ab[i] = x
@@ -320,8 +317,8 @@ function by_xy_group(aes::T, xgroup, ygroup,
     xrefs = xgroup === nothing ? [1] : xgroup
     yrefs = ygroup === nothing ? [1] : ygroup
 
-    aes_grid = Array{T}(n, m)
-    staging = Array{AbstractArray}(n, m)
+    aes_grid = Array{T}(undef, n, m)
+    staging = Array{AbstractArray}(undef, n, m)
     for i in 1:n, j in 1:m
         aes_grid[i, j] = T()
     end
@@ -370,7 +367,7 @@ function by_xy_group(aes::T, xgroup, ygroup,
                     if !applicable(convert, typeof(vals), staging[i, j])
                         T2 = eltype(vals)
                         if T2 <: Color T2 = Color end
-                        da = DataArray(T2, length(staging[i, j]))
+                        da = Array{Union{Missing,T2}}(undef, length(staging[i, j]))
                         copy!(da, staging[i, j])
                         setfield!(aes_grid[i, j], var, da)
                     else
@@ -404,7 +401,7 @@ function inherit!(a::Aesthetics, b::Aesthetics;
         bval = getfield(b, field)
         if field in clobber_set
             setfield!(a, field, bval)
-        elseif aval === nothing || aval === string || aval == showoff
+        elseif aval === missing || aval === nothing || aval === string || aval == showoff
             setfield!(a, field, bval)
         elseif field == :xviewmin || field == :yviewmin
             bval != nothing && (aval == nothing || aval > bval) && setfield!(a, field, bval)

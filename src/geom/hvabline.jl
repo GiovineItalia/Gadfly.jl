@@ -12,9 +12,9 @@ check_arguments(arg, len) = fill(arg, len)
 
 
 struct HLineGeometry <: Gadfly.GeometryElement
-    color::Union{Vector, Color, (Void)}
-    size::Union{Vector, Measure, (Void)}
-    style::Union{Vector, Symbol, (Void)}
+    color::Union{Vector, Color, (Nothing)}
+    size::Union{Vector, Measure, (Nothing)}
+    style::Union{Vector, Symbol, (Nothing)}
     tag::Symbol
 
     HLineGeometry(color, size, style, tag) =
@@ -59,9 +59,9 @@ end
 
 
 struct VLineGeometry <: Gadfly.GeometryElement
-    color::Union{Vector, Color, (Void)}
-    size::Union{Vector, Measure, (Void)}
-    style::Union{Vector, Symbol, (Void)}
+    color::Union{Vector, Color, (Nothing)}
+    size::Union{Vector, Measure, (Nothing)}
+    style::Union{Vector, Symbol, (Nothing)}
     tag::Symbol
 
     VLineGeometry(color, size, style, tag) =
@@ -106,9 +106,9 @@ end
 
 
 struct ABLineGeometry <: Gadfly.GeometryElement
-    color::Union{Vector, Color, (Void)}
-    size::Union{Vector, Measure, (Void)}
-    style::Union{Vector, Symbol, (Void)}
+    color::Union{Vector, Color, (Nothing)}
+    size::Union{Vector, Measure, (Nothing)}
+    style::Union{Vector, Symbol, (Nothing)}
     tag::Symbol
 
     ABLineGeometry(color, size, style, tag) =

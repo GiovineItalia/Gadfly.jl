@@ -3,7 +3,7 @@ using Gadfly, RDatasets, Compat
 set_default_plot_size(15cm, 15cm)
 
 d = dataset("mlmRev", "Chem97")
-idx = find((d[:Score] .> 4) .& (d[:Age] .> 0))
+idx = findall((d[:Score] .> 4) .& (d[:Age] .> 0))
 plot(d[idx[1:4:end], :],
      x=:GCSEScore,
      ygroup=:Gender,

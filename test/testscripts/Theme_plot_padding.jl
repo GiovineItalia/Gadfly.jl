@@ -14,4 +14,7 @@ pa = plot(D, x=:x, y=:y, gp, xscale, style(plot_padding=[10mm,10mm,5mm,5mm]))
 pb = plot(D, x=:x, y=:y, gp, xscale, style(plot_padding=[0.05w,0.05w,0.2h,0.2h]))
 # 1mm padding on all sides, note x-axis right label gets cut deliberately
 pc = plot(D, x=:x, y=:y, gp, xscale, style(plot_padding=[1mm]))
-hstack(pa,pb,pc)
+p = hstack(pa,pb,pc)
+
+Gadfly.pop_theme()
+return p
