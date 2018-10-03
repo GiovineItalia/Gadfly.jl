@@ -34,9 +34,9 @@ spy(M::AbstractMatrix, elements...; mapping...) -> Plot
 For example:
 
 ```@setup 1
-using Gadfly
+using Gadfly, Random
 set_default_plot_size(21cm, 8cm)
-srand(12345)
+Random.seed!(12345)
 ```
 
 ```@example 1

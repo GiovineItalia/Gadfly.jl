@@ -108,8 +108,8 @@ function make_labeler(scale::ContinuousScale)
     end
 end
 
-const x_vars = [:x, :xmin, :xmax, :xintercept, :intercept, :xviewmin, :xviewmax, :xend]
-const y_vars = [:y, :ymin, :ymax, :yintercept, :slope, :middle, :upper_fence, :lower_fence,
+const x_vars = [:x, :xmin, :xmax, :xintercept, :xviewmin, :xviewmax, :xend]
+const y_vars = [:y, :ymin, :ymax, :yintercept, :intercept, :middle, :upper_fence, :lower_fence,
                 :upper_hinge, :lower_hinge, :yviewmin, :yviewmax, :yend]
 
 element_aesthetics(scale::ContinuousScale) = scale.vars
@@ -160,6 +160,13 @@ end
                      format=nothing, minticks=2, maxticks=10, scalable=true)]
 """
 const size_continuous = continuous_scale_partial([:size], identity_transform)
+
+"""
+    slope_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,
+                     format=nothing, minticks=2, maxticks=10, scalable=true)]
+"""
+const slope_continuous = continuous_scale_partial([:slope], identity_transform)
+
 
 function apply_scale(scale::ContinuousScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
