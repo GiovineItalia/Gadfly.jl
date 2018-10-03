@@ -3,12 +3,21 @@
 ## [`Geom.abline`](@ref)
 
 ```@example
-using Gadfly, RDatasets, Compose
-set_default_plot_size(14cm, 8cm)
-plot(dataset("ggplot2", "mpg"),
+using Gadfly, RDatasets, Compose, Random
+Random.seed!(123)
+set_default_plot_size(21cm, 8cm)
+
+p1 = plot(dataset("ggplot2", "mpg"),
      x="Cty", y="Hwy", label="Model", Geom.point, Geom.label,
      intercept=[0], slope=[1], Geom.abline(color="red", style=:dash),
      Guide.annotation(compose(context(), text(6,4, "y=x", hleft, vtop), fill("red"))))
+
+x = [20*rand(20); exp(-3)]
+D = DataFrame(x=x, y= exp.(-0.5*asinh.(x).+5) .+ 2*randn(length(x))) 
+abline = Geom.abline(color="red", style=:dash)
+p2 = plot(D, x=:x, y=:y,  Geom.point,  Scale.x_asinh, Scale.y_log,
+     intercept=[148], slope=[-0.5], abline)
+hstack(p1, p2)
 ```
 
 

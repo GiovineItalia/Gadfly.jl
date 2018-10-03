@@ -121,10 +121,10 @@ ABLineGeometry(; color=nothing, size=nothing, style=nothing, tag::Symbol=empty_t
     Geom.abline[(; color=nothing, size=nothing, style=nothing)]
 
 For each corresponding pair of elements in the `intercept` and `slope` aesthetics,
-draw the lines `y = slope * x + intercept` across the plot canvas.
+draw the lines `T(y) = slope * T(x) + intercept` across the plot canvas, where `T(⋅)` defaults to the identity function.
 If unspecified, `intercept` defaults to [0] and `slope` to [1].
 
-This geometry currently does not support non-linear `Scale` transformations.
+This geometry also works with nonlinear `Scale` transformations of the `y` and/or `x` variable, with one caveat: for log transformations of the `x` variable, the `intercept` is the `y`-value at `x=1` rather than at `x=0`. 
 """
 const abline = ABLineGeometry
 
