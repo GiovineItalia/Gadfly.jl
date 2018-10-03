@@ -15,8 +15,8 @@ hstack(p1,p2)
 ```@example
 using Gadfly, Colors
 set_default_plot_size(21cm, 8cm)
-x = repeat(collect(1:10)-0.5, inner=[10])
-y = repeat(collect(1:10)-0.5, outer=[10])
+x = repeat(collect(1:10).-0.5, inner=[10])
+y = repeat(collect(1:10).-0.5, outer=[10])
 p1 = plot(x=x, y=y, color=x+y, Geom.rectbin,
           Scale.color_continuous(colormap=p->RGB(0,p,0)))
 p2 = plot(x=x, y=y, color=x+y, Geom.rectbin,
@@ -30,9 +30,9 @@ hstack(p1,p2,p3)
 ## [`Scale.color_discrete_hue`](@ref)
 
 ```@example
-using Gadfly, Colors, RDatasets
+using Gadfly, Colors, RDatasets, Random
 set_default_plot_size(14cm, 8cm)
-srand(1234)
+Random.seed!(1234)
 
 function gen_colors(n)
     cs = distinguishable_colors(n,
@@ -51,9 +51,9 @@ plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
 ```
 
 ```@example
-using Gadfly, Colors, RDatasets
+using Gadfly, Colors, RDatasets, Random
 set_default_plot_size(21cm, 8cm)
-srand(1234)
+Random.seed!(1234)
 xdata, ydata = rand(12), rand(12)
 p1 = plot(x=xdata, y=ydata, color=repeat([1,2,3], outer=[4]))
 p2 = plot(x=xdata, y=ydata, color=repeat([1,2,3], outer=[4]), Scale.color_discrete)
@@ -64,8 +64,8 @@ hstack(p1,p2)
 ## [`Scale.color_discrete_manual`](@ref)
 
 ```@example
-using Gadfly
-srand(12345)
+using Gadfly, Random
+Random.seed!(12345)
 set_default_plot_size(14cm, 8cm)
 plot(x=rand(12), y=rand(12), color=repeat(["a","b","c"], outer=[4]),
      Scale.color_discrete_manual("red","purple","green"))
@@ -105,7 +105,7 @@ using StatsBase: winsor
 set_default_plot_size(18cm, 8cm)
 
 labs = [ "exp", "sqrt", "log", "winsor", "linear"]
-funcs = [ x->60*(1-exp.(-0.2*x)), x->sqrt.(x)*10, x->log.(x)*10, x->winsor(x, prop=0.15), x->x*0.6 ]
+funcs = [ x->60*(1.0.-exp.(-0.2*x)), x->sqrt.(x)*10, x->log.(x)*10, x->winsor(x, prop=0.15), x->x*0.6 ]
 x = [1.0:30;]
 D = vcat([DataFrame(x=x, y=f(x), linev=l) for (f,l) in zip(funcs, labs)]...)
 D[134:136,:y] = NaN
@@ -122,9 +122,9 @@ hstack(p1,p2)
 ## [`Scale.x_continuous`](@ref), [`Scale.y_continuous`](@ref)
 
 ```@example
-using Gadfly
+using Gadfly, Random, Printf
 set_default_plot_size(21cm, 8cm)
-srand(1234)
+Random.seed!(1234)
 p1 = plot(x=rand(10), y=rand(10), Scale.x_continuous(minvalue=-10, maxvalue=10))
 p2 = plot(x=rand(10), y=rand(10), Scale.x_continuous(format=:scientific))
 p3 = plot(x=rand(10), y=rand(10), Scale.x_continuous(labels=x -> @sprintf("%0.4f", x)))
@@ -132,9 +132,9 @@ hstack(p1,p2,p3)
 ```
 
 ```@example
-using Gadfly
+using Gadfly, Random
 set_default_plot_size(14cm, 8cm)
-srand(1234)
+Random.seed!(1234)
 plot(x=rand(10), y=rand(10), Scale.x_log)
 ```
 
@@ -142,9 +142,9 @@ plot(x=rand(10), y=rand(10), Scale.x_log)
 ## [`Scale.x_discrete`](@ref), [`Scale.y_discrete`](@ref)
 
 ```@example
-using Gadfly, DataFrames
+using Gadfly, DataFrames, Random
 set_default_plot_size(14cm, 8cm)
-srand(1234)
+Random.seed!(1234)
 # Treat numerical x data as categories
 p1 = plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)
 # To perserve the order of the columns in the plot when plotting a DataFrame

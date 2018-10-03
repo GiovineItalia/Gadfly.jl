@@ -154,9 +154,9 @@ hstack(pa,pb)
 ## [`Geom.errorbar`](@ref)
 
 ```@example
-using Gadfly, RDatasets, Distributions
+using Gadfly, RDatasets, Distributions, Random
 set_default_plot_size(14cm, 8cm)
-srand(1234)
+Random.seed!(1234)
 sds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]
 n = 10
 ys = [mean(rand(Normal(0, sd), n)) for sd in sds]
@@ -271,11 +271,11 @@ hstack(p1,p2)
 ## [`Geom.path`](@ref)
 
 ```@example
-using Gadfly
+using Gadfly, Random
 set_default_plot_size(21cm, 8cm)
 
 n = 500
-srand(1234)
+Random.seed!(1234)
 xjumps = rand(n)-.5
 yjumps = rand(n)-.5
 p1 = plot(x=cumsum(xjumps),y=cumsum(yjumps),Geom.path)
@@ -389,9 +389,9 @@ hstack(p1,p2)
 ## [`Geom.step`](@ref)
 
 ```@example
-using Gadfly
+using Gadfly, Random
 set_default_plot_size(14cm, 8cm)
-srand(1234)
+Random.seed!(1234)
 plot(x=rand(25), y=rand(25), Geom.step)
 ```
 
