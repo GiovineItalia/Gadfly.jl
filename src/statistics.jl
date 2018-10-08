@@ -1453,7 +1453,7 @@ default_scales(::ContourStatistic, t::Gadfly.Theme=Gadfly.current_theme()) =
 """
     Stat.contour[(; levels=15, samples=150)]
 
-Transform the 2D function, matrix, DataFrame in the `z` aesthetic into a set of
+Transform the 2D function, matrix, or DataFrame in the `z` aesthetic into a set of
 lines in `x` and `y` showing the iso-level contours.  A function requires that
 either the `x` and `y` or the `xmin`, `xmax`, `ymin` and `ymax` aesthetics also
 be defined.  The latter are interpolated using `samples`.  A matrix and

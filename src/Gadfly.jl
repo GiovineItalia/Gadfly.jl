@@ -3,7 +3,6 @@ module Gadfly
 using Colors
 using Compat
 using Compose
-using DataFrames
 using DataStructures
 using JSON
 using Showoff
@@ -11,6 +10,7 @@ using IndirectArrays
 using CategoricalArrays
 using Printf
 using Base64
+using Requires
 
 import IterTools
 import IterTools: distinct, drop, chain
@@ -56,6 +56,8 @@ function __init__()
         push_theme(:default)
     end
     pushdisplay(GadflyDisplay())
+
+    @require DataFrames="a93c6f00-e57d-5684-b7b6-d8193f3e46c0" link_dataframes()
 end
 
 
@@ -132,7 +134,7 @@ set_default_plot_format(fmt::Symbol) = Compose.set_default_graphic_format(fmt)
 # A plot has zero or more layers. Layers have a particular geometry and their
 # own data, which is inherited from the plot if not given.
 mutable struct Layer <: Element
-    data_source::Union{Nothing, MeltedData, AbstractArray, AbstractDataFrame}
+    data_source
     mapping::Dict
     statistics::Vector{StatisticElement}
     geom::GeometryElement
@@ -161,7 +163,7 @@ append!(ls, layer(y=[3,2,1], Geom.point))
 plot(ls..., Guide.title("layer example"))
 ```
 """
-function layer(data_source::Union{AbstractDataFrame, Nothing},
+function layer(data_source,
                elements::ElementOrFunction...; mapping...)
     mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
@@ -211,7 +213,7 @@ add_plot_element!(lyrs::Vector{Layer}, arg::Theme) = [lyr.theme = arg for lyr in
 # A full plot specification.
 mutable struct Plot
     layers::Vector{Layer}
-    data_source::Union{Nothing, MeltedData, AbstractArray, AbstractDataFrame}
+    data_source
     data::Data
     scales::Vector{ScaleElement}
     statistics::Vector{StatisticElement}
@@ -280,7 +282,7 @@ plot(my_matrix, x=Col.value(1), y=Col.value(2), Geom.line,
      Guide.xlabel("time"), Guide.ylabel("price"))
 ```
 """
-function plot(data_source::Union{AbstractArray, AbstractDataFrame},
+function plot(data_source,
               elements::ElementOrFunctionOrLayers...; mapping...)
     mappingdict = Dict{Symbol, Any}(mapping)
     return plot(data_source, mappingdict, elements...)
@@ -314,7 +316,7 @@ The old fashioned (pre-named arguments) version of plot.  This version takes an
 explicit mapping dictionary, mapping aesthetics symbols to expressions or
 columns in the data frame.
 """
-function plot(data_source::Union{Nothing, AbstractArray, AbstractDataFrame},
+function plot(data_source,
               mapping::Dict, elements::ElementOrFunctionOrLayers...)
     mapping = cleanmapping(mapping)
     p = Plot()

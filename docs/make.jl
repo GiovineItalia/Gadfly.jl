@@ -1,4 +1,4 @@
-using Documenter, Gadfly
+using Documenter, Gadfly, Compose
 
 makedocs(
     modules = [Gadfly],
