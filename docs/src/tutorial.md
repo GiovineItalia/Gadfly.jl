@@ -209,8 +209,8 @@ a more elegant, purely functional take on the R
 of absolute and relative units and complex coordinate transforms.  The primary
 backend is a native [SVG](https://www.w3.org/Graphics/SVG/) generator (almost
 native: it uses [pango](https://www.pango.org/) to precompute text extents),
-though there is also a [Cairo](https://cairographics.org/) backend.  See
-[Backends](@ref) for more details.
+though there is also a [Cairo](https://cairographics.org/) backend for PDF and
+PNG.  See [Backends](@ref) for more details.
 
 Building graphics declaratively let's you do some fun things. Like stick two
 plots together:
@@ -227,18 +227,17 @@ more details.
 
 ## Interactivity
 
-One advantage of generating our own SVG is that the files are much more
-compact than those produced by Cairo, by virtue of having a higher level API.
-Another advantage is that we can annotate our SVG output and embed Javascript
-code to provide some level of dynamism.
+One advantage of generating our own SVG is that we can annotate our SVG output
+and embed Javascript code to provide some level of dynamism.  Though not a
+replacement for full-fledged custom interactive visualizations of the sort
+produced by [D3](https://d3js.org/), this sort of mild interactivity can
+improve a lot of standard plots.
 
-Though not a replacement for full-fledged custom interactive visualizations of
-the sort produced by [D3](https://d3js.org/), this sort of mild interactivity
-can improve a lot of standard plots. The fuel efficiency plot is made more
-clear by toggling off some of the countries, for example.  To do so, first
-render the plot using the SVGJS backend, which was *not* used to generate this
-webpage but is the default at the REPL, then simply click or shift-click in the
-colored squares in the table of keys to the right.
+The fuel efficiency plot is made more clear by toggling off some of the
+countries, for example.  To do so, first render the plot using the SVGJS
+backend, which was *not* used to generate this webpage but is the default at
+the REPL, then simply click or shift-click in the colored squares in the table
+of keys to the right.
 
 One can also zoom in and out by pressing the shift key while either scrolling
 the mouse wheel or clicking and dragging a box.  Should your mouse not work,
