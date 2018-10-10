@@ -49,7 +49,7 @@ function __init__()
         try
             push_theme(Symbol(strip(theme)))
         catch err
-            warn("Error loading Gadfly theme $theme (set by GADFLY_THEME env variable)")
+            @warn "Error loading Gadfly theme $theme (set by GADFLY_THEME env variable)"
             show(err)
         end
     else
@@ -479,8 +479,8 @@ function render_prepare(plot::Plot)
 
     defined_unused_aesthetics = setdiff(mapped_aesthetics, used_aesthetics)
     isempty(defined_unused_aesthetics) ||
-            warn("The following aesthetics are mapped, but not used by any geometry:\n",
-                join([string(a) for a in defined_unused_aesthetics], ", "))
+            @warn "The following aesthetics are mapped, but not used by any geometry:\n" * 
+                join(defined_unused_aesthetics, ", ")
 
     scaled_aesthetics = Set{Symbol}()
     for scale in plot.scales
@@ -652,15 +652,15 @@ function render_prepare(plot::Plot)
 
     # set defaults for key titles
     keyvars = [:color, :shape]
-    for (i, layer) in enumerate(plot.layers) 
-        for kv in keyvars    
-            fflag = (getfield(layer_aess[i], Symbol(kv,"_key_title")) == nothing) && haskey(layer.mapping, kv) && !isa(layer.mapping[kv], AbstractArray)    
+    for (i, layer) in enumerate(plot.layers)
+        for kv in keyvars
+            fflag = (getfield(layer_aess[i], Symbol(kv,"_key_title")) == nothing) && haskey(layer.mapping, kv) && !isa(layer.mapping[kv], AbstractArray)
             fflag && setfield!(layer_aess[i], Symbol(kv,"_key_title"), string(layer.mapping[kv]))
         end
     end
 
-    for kv in keyvars    
-        fflag = (getfield(layer_aess[1], Symbol(kv,"_key_title")) == nothing) && haskey(plot.mapping, kv) && !isa(plot.mapping[kv], AbstractArray) 
+    for kv in keyvars
+        fflag = (getfield(layer_aess[1], Symbol(kv,"_key_title")) == nothing) && haskey(plot.mapping, kv) && !isa(plot.mapping[kv], AbstractArray)
         fflag && setfield!(layer_aess[1], Symbol(kv,"_key_title"), string(plot.mapping[kv]))
     end
 
@@ -671,10 +671,10 @@ function render_prepare(plot::Plot)
 
     supress_colorkey = false
     for (aes, data) in zip(layer_aess[di], catdatas[di])
-        aes.shape_key_title==nothing && (aes.shape_key_title=aes.color_key_title="Shape") 
+        aes.shape_key_title==nothing && (aes.shape_key_title=aes.color_key_title="Shape")
         colorf = scales[:color].f
         scales[:color] =  Scale.color_discrete(colorf, levels=scales[:shape].levels, order=scales[:shape].order)
-        Scale.apply_scale(scales[:color], [aes], Gadfly.Data(color=getfield(data,:color))  )     
+        Scale.apply_scale(scales[:color], [aes], Gadfly.Data(color=getfield(data,:color))  )
         supress_colorkey=true
     end
 
