@@ -97,7 +97,7 @@ $(FIELDS)
     panel_stroke,          ColorOrNothing,  nothing
 
     "Opacity of the plot background panel. (Float in [0.0, 1.0])",
-    panel_opacity,         Float64,         1.0
+    panel_opacity,         Float64,         0.0
 
     "Background color for the entire plot. If nothing, no background. (Color or Nothing)",
     background_color,      ColorOrNothing,  nothing
