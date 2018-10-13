@@ -6,7 +6,6 @@ function open_file(filename)
     elseif Sys.iswindows()
         run(`$(ENV["COMSPEC"]) /c start $(filename)`)
     else
-        warn("Showing plots is not supported on OS $(string(Compat.KERNEL))")
+        @warn "Showing plots is not supported on OS $(string(Sys.KERNEL))"
     end
 end
-

@@ -60,7 +60,7 @@ function cleanmapping(mapping::Dict)
         if haskey(aesthetic_aliases, key)
             key = aesthetic_aliases[key]
         elseif !in(key, fieldnames(Aesthetics))
-            warn("$(string(key)) is not a recognized aesthetic. Ignoring.")
+            @warn "$(string(key)) is not a recognized aesthetic. Ignoring."
             continue
         end
 
