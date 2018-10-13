@@ -276,12 +276,12 @@ set_default_plot_size(21cm, 8cm)
 
 n = 500
 Random.seed!(1234)
-xjumps = rand(n)-.5
-yjumps = rand(n)-.5
+xjumps = rand(n).-.5
+yjumps = rand(n).-.5
 p1 = plot(x=cumsum(xjumps),y=cumsum(yjumps),Geom.path)
 
 t = 0:0.2:8pi
-p2 = plot(x=t.*cos(t), y=t.*sin(t), Geom.path)
+p2 = plot(x=t.*cos.(t), y=t.*sin.(t), Geom.path)
 
 hstack(p1,p2)
 ```
@@ -461,7 +461,7 @@ set_default_plot_size(14cm, 14cm)
 seals = RDatasets.dataset("ggplot2","seals")
 seals[:Latb] = seals[:Lat] + seals[:DeltaLat]
 seals[:Longb] = seals[:Long] + seals[:DeltaLong]
-seals[:Angle] = atan2.(seals[:DeltaLat], seals[:DeltaLong])
+seals[:Angle] = atan.(seals[:DeltaLat], seals[:DeltaLong])
 
 coord = Coord.cartesian(xmin=-175.0, xmax=-119, ymin=29, ymax=50)
 # Geom.vector also needs scales for both axes:

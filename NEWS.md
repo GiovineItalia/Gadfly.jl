@@ -2,8 +2,10 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
-# Version 0.8.1
+# Version 0.9.0
+ * conditionally depend on DataFrames (#1204)
  * `Geom.abline`: add support for nonlinear `Scale` transformations (#1201)
+ * drop support for Julia 0.6 (#1189)
 
 # Version 0.8.0
   * Add `linestyle` aesthetic (#1181)
