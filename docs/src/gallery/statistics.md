@@ -19,7 +19,7 @@ using Colors, DataFrames, Gadfly, Distributions
 set_default_plot_size(21cm, 8cm)
 x = -4:0.1:4
 Da = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u="μ=$μ") for μ in [-1,1]]
-Db = [DataFrame(x=randn(200)+μ, u="μ=$μ") for μ in [-1,1]] 
+Db = [DataFrame(x=randn(200).+μ, u="μ=$μ") for μ in [-1,1]] 
 
 p1 = plot(vcat(Da...), x=:x, y=:ymax, ymin=:ymin, ymax=:ymax, color=:u, 
     Geom.line, Geom.ribbon, Guide.ylabel("Density"),
