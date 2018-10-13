@@ -75,9 +75,9 @@ end
 
 
 # Type to contain fields produced by melting data (and to dispatch on)
-struct MeltedData
+struct MeltedData{T}
     data
-    melted_data
+    melted_data::T
     row_indicators::Array
     col_indicators::Array
     colmap::Dict
