@@ -75,13 +75,15 @@ testfiles = isempty(ARGS) ?
         ARGS
 
 @testset "Gadfly" begin
-    for filename in testfiles, (backend_name, backend) in backends
-        @info string(filename,'.',backend_name)
+    for filename in testfiles
         Random.seed!(1)
         p = evalfile(joinpath(testdir, "$(filename).jl"))
         @test typeof(p) in [Plot,Compose.Context]
-        r = draw(backend(filename), p)
-        @test typeof(r) in [Bool,Nothing]
+        for (backend_name, backend) in backends
+            @info string(filename,'.',backend_name)
+            r = draw(backend(filename), p)
+            @test typeof(r) in [Bool,Nothing]
+        end
     end
 end
 
