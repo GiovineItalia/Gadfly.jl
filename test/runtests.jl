@@ -7,58 +7,62 @@ end
 
 using Test, Gadfly, Compat, LibGit2, Dates, Random, Compose, Cairo
 
-repo = GitRepo(dirname(@__DIR__))
-branch = LibGit2.headname(repo)
-outputdir = joinpath(@__DIR__, mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
-        "master-output" : "devel-output")
+if ispath(joinpath(@__DIR__,"..",".git"))
+  repo = GitRepo(dirname(@__DIR__))
+  branch = LibGit2.headname(repo)
+  outputdir = joinpath(@__DIR__, mapreduce(x->startswith(branch,x), |, ["master","(detac"]) ?
+          "master-output" : "devel-output")
 
-options = LibGit2.StatusOptions(flags=LibGit2.Consts.STATUS_OPT_INCLUDE_IGNORED |
-                                      LibGit2.Consts.STATUS_OPT_RECURSE_IGNORED_DIRS)
-status = LibGit2.GitStatus(repo, status_opts=options)
-for i in 1:length(status)
-    entry = status[i]
-    index_to_workdir = unsafe_load(entry.index_to_workdir)
-    if index_to_workdir.status == Int(LibGit2.Consts.DELTA_IGNORED)
-        filepath = unsafe_string(index_to_workdir.new_file.path)
-        startswith(filepath,joinpath("test",outputdir)) || continue
-        rm(joinpath(dirname(@__DIR__),filepath))
-    end
+  options = LibGit2.StatusOptions(flags=LibGit2.Consts.STATUS_OPT_INCLUDE_IGNORED |
+                                        LibGit2.Consts.STATUS_OPT_RECURSE_IGNORED_DIRS)
+  status = LibGit2.GitStatus(repo, status_opts=options)
+  for i in 1:length(status)
+      entry = status[i]
+      index_to_workdir = unsafe_load(entry.index_to_workdir)
+      if index_to_workdir.status == Int(LibGit2.Consts.DELTA_IGNORED)
+          filepath = unsafe_string(index_to_workdir.new_file.path)
+          startswith(filepath,joinpath("test",outputdir)) || continue
+          rm(joinpath(dirname(@__DIR__),filepath))
+      end
+  end
+  function mimic_git_log_n1(io::IO, head)
+      hash = LibGit2.GitHash(head)
+      println(io, "commit ",string(hash))
+      commit = LibGit2.GitCommit(repo, hash)
+      author = LibGit2.author(commit)
+      println(io, "Author: ",author.name," <",author.email,">")
+      datetime = unix2datetime(author.time + 60*author.time_offset)
+      println(io, "Date:   ",Dates.format(datetime, "e u d HH:MM:SS YYYY"))
+      println(io, "    ",LibGit2.message(commit))
+      hash = commit = author = 0;  GC.gc()   # see https://github.com/JuliaLang/julia/issues/28306
+  end
+  function mimic_git_status(io::IO, head)
+      println(io, "On branch ",LibGit2.shortname(head))
+      status = LibGit2.GitStatus(repo)
+      println(io, "Changes not staged for commit:")
+      for i in 1:length(status)
+          entry = status[i]
+          index_to_workdir = unsafe_load(entry.index_to_workdir)
+          if index_to_workdir.status == Int(LibGit2.Consts.DELTA_MODIFIED)
+              println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
+          end
+      end
+      println(io, "Untracked files:")
+      for i in 1:length(status)
+          entry = status[i]
+          index_to_workdir = unsafe_load(entry.index_to_workdir)
+          if index_to_workdir.status == Int(LibGit2.Consts.DELTA_UNTRACKED)
+              println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
+          end
+      end
+      status = 0;  GC.gc()   # see https://github.com/JuliaLang/julia/issues/28306
+  end
+  head = LibGit2.head(repo)
+  open(io->mimic_git_log_n1(io,head), joinpath(outputdir,"git.log"), "w")
+  open(io->mimic_git_status(io,head), joinpath(outputdir,"git.status"), "w")
+else
+  outputdir = "master-output"
 end
-function mimic_git_log_n1(io::IO, head)
-    hash = LibGit2.GitHash(head)
-    println(io, "commit ",string(hash))
-    commit = LibGit2.GitCommit(repo, hash)
-    author = LibGit2.author(commit)
-    println(io, "Author: ",author.name," <",author.email,">")
-    datetime = unix2datetime(author.time + 60*author.time_offset)
-    println(io, "Date:   ",Dates.format(datetime, "e u d HH:MM:SS YYYY"))
-    println(io, "    ",LibGit2.message(commit))
-    hash = commit = author = 0;  GC.gc()   # see https://github.com/JuliaLang/julia/issues/28306
-end
-function mimic_git_status(io::IO, head)
-    println(io, "On branch ",LibGit2.shortname(head))
-    status = LibGit2.GitStatus(repo)
-    println(io, "Changes not staged for commit:")
-    for i in 1:length(status)
-        entry = status[i]
-        index_to_workdir = unsafe_load(entry.index_to_workdir)
-        if index_to_workdir.status == Int(LibGit2.Consts.DELTA_MODIFIED)
-            println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
-        end
-    end
-    println(io, "Untracked files:")
-    for i in 1:length(status)
-        entry = status[i]
-        index_to_workdir = unsafe_load(entry.index_to_workdir)
-        if index_to_workdir.status == Int(LibGit2.Consts.DELTA_UNTRACKED)
-            println(io, "    ", unsafe_string(index_to_workdir.new_file.path))
-        end
-    end
-    status = 0;  GC.gc()   # see https://github.com/JuliaLang/julia/issues/28306
-end
-head = LibGit2.head(repo)
-open(io->mimic_git_log_n1(io,head), joinpath(outputdir,"git.log"), "w")
-open(io->mimic_git_status(io,head), joinpath(outputdir,"git.status"), "w")
 
 backends = Dict{AbstractString, Function}(
     "svg" => name -> SVG(joinpath(outputdir,"$(name).svg")),
@@ -121,4 +125,6 @@ if prev_theme !== nothing
     ENV["GADFLY_THEME"] = prev_theme
 end
 
-repo = branch = options = status = head = 0;  GC.gc()   # see https://github.com/JuliaLang/julia/issues/28306
+if ispath(joinpath(@__DIR__,"..",".git"))
+  repo = branch = options = status = head = 0;  GC.gc()   # see https://github.com/JuliaLang/julia/issues/28306
+end
