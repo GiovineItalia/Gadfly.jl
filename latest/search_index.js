@@ -93,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Rendering",
     "category": "section",
-    "text": "Gadfly uses a custom graphics library called Compose, which is an attempt at a more elegant, purely functional take on the R grid package. It allows mixing of absolute and relative units and complex coordinate transforms.  The primary backend is a native SVG generator (almost native: it uses pango to precompute text extents), though there is also a Cairo backend.  See Backends for more details.Building graphics declaratively let\'s you do some fun things. Like stick two plots together:fig1a = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)\nfig1b = plot(iris, x=:SepalWidth, Geom.bar)\nfig1 = hstack(fig1a, fig1b)Ultimately this will make more complex visualizations easier to build. For example, facets, plots within plots, and so on. See Compositing for more details."
+    "text": "Gadfly uses a custom graphics library called Compose, which is an attempt at a more elegant, purely functional take on the R grid package. It allows mixing of absolute and relative units and complex coordinate transforms.  The primary backend is a native SVG generator (almost native: it uses pango to precompute text extents), though there is also a Cairo backend for PDF and PNG.  See Backends for more details.Building graphics declaratively let\'s you do some fun things. Like stick two plots together:fig1a = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)\nfig1b = plot(iris, x=:SepalWidth, Geom.bar)\nfig1 = hstack(fig1a, fig1b)Ultimately this will make more complex visualizations easier to build. For example, facets, plots within plots, and so on. See Compositing for more details."
 },
 
 {
@@ -101,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Interactivity",
     "category": "section",
-    "text": "One advantage of generating our own SVG is that the files are much more compact than those produced by Cairo, by virtue of having a higher level API. Another advantage is that we can annotate our SVG output and embed Javascript code to provide some level of dynamism.Though not a replacement for full-fledged custom interactive visualizations of the sort produced by D3, this sort of mild interactivity can improve a lot of standard plots. The fuel efficiency plot is made more clear by toggling off some of the countries, for example.  To do so, first render the plot using the SVGJS backend, which was not used to generate this webpage but is the default at the REPL, then simply click or shift-click in the colored squares in the table of keys to the right.One can also zoom in and out by pressing the shift key while either scrolling the mouse wheel or clicking and dragging a box.  Should your mouse not work, try the plus, minus, I, and O, keys.  Panning is similarly easy: click and drag without depressing the shift key, or use the arrow keys.  For Vim enthusiasts, the H, J, K, and L keys pan as expected.  To reset the plot to it\'s initial state, double click it or hit R.  Lastly, press C to toggle on and off a numerical display of the cursor coordinates."
+    "text": "One advantage of generating our own SVG is that we can annotate our SVG output and embed Javascript code to provide some level of dynamism.  Though not a replacement for full-fledged custom interactive visualizations of the sort produced by D3, this sort of mild interactivity can improve a lot of standard plots.The fuel efficiency plot is made more clear by toggling off some of the countries, for example.  To do so, first render the plot using the SVGJS backend, which was not used to generate this webpage but is the default at the REPL, then simply click or shift-click in the colored squares in the table of keys to the right.One can also zoom in and out by pressing the shift key while either scrolling the mouse wheel or clicking and dragging a box.  Should your mouse not work, try the plus, minus, I, and O, keys.  Panning is similarly easy: click and drag without depressing the shift key, or use the arrow keys.  For Vim enthusiasts, the H, J, K, and L keys pan as expected.  To reset the plot to it\'s initial state, double click it or hit R.  Lastly, press C to toggle on and off a numerical display of the cursor coordinates."
 },
 
 {
@@ -125,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Plotting",
     "title": "Functions and Expressions",
     "category": "section",
-    "text": "Along with the standard plot methods operating on DataFrames and Arrays described in the Tutorial, Gadfly has some special signatures to make plotting functions and expressions more convenient.plot(f::Function, lower, upper, elements...; mapping...)\nplot(fs::Vector{T}, lower, upper, elements...; mapping...) where T <: Base.Callable\nplot(f::Function, xmin, xmax, ymin, ymax, elements...; mapping...)\nspy(M::AbstractMatrix, elements...; mapping...) -> PlotFor example:using Gadfly\nset_default_plot_size(21cm, 8cm)\nsrand(12345)p1 = plot([sin,cos], 0, 2pi)\np2 = plot((x,y)->sin(x)+cos(y), 0, 2pi, 0, 2pi)\np3 = spy(ones(33)*sin.(0:(pi/16):2pi)\' + cos.(0:(pi/16):2pi)*ones(33)\')\nhstack(p1,p2,p3)"
+    "text": "Along with the standard plot methods operating on DataFrames and Arrays described in the Tutorial, Gadfly has some special signatures to make plotting functions and expressions more convenient.plot(f::Function, lower, upper, elements...; mapping...)\nplot(fs::Vector{T}, lower, upper, elements...; mapping...) where T <: Base.Callable\nplot(f::Function, xmin, xmax, ymin, ymax, elements...; mapping...)\nspy(M::AbstractMatrix, elements...; mapping...) -> PlotFor example:using Gadfly, Random\nset_default_plot_size(21cm, 8cm)\nRandom.seed!(12345)p1 = plot([sin,cos], 0, 2pi)\np2 = plot((x,y)->sin(x)+cos(y), 0, 2pi, 0, 2pi)\np3 = spy(ones(33)*sin.(0:(pi/16):2pi)\' + cos.(0:(pi/16):2pi)*ones(33)\')\nhstack(p1,p2,p3)"
 },
 
 {
@@ -285,7 +285,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Geom.abline",
     "category": "section",
-    "text": "using Gadfly, RDatasets, Compose\nset_default_plot_size(14cm, 8cm)\nplot(dataset(\"ggplot2\", \"mpg\"),\n     x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n     intercept=[0], slope=[1], Geom.abline(color=\"red\", style=:dash),\n     Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(\"red\"))))"
+    "text": "using Gadfly, RDatasets, Compose, Random\nRandom.seed!(123)\nset_default_plot_size(21cm, 8cm)\n\np1 = plot(dataset(\"ggplot2\", \"mpg\"),\n     x=\"Cty\", y=\"Hwy\", label=\"Model\", Geom.point, Geom.label,\n     intercept=[0], slope=[1], Geom.abline(color=\"red\", style=:dash),\n     Guide.annotation(compose(context(), text(6,4, \"y=x\", hleft, vtop), fill(\"red\"))))\n\nx = [20*rand(20); exp(-3)]\nD = DataFrame(x=x, y= exp.(-0.5*asinh.(x).+5) .+ 2*randn(length(x))) \nabline = Geom.abline(color=\"red\", style=:dash)\np2 = plot(D, x=:x, y=:y,  Geom.point,  Scale.x_asinh, Scale.y_log,\n     intercept=[148], slope=[-0.5], abline)\nhstack(p1, p2)"
 },
 
 {
@@ -349,7 +349,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Geom.errorbar",
     "category": "section",
-    "text": "using Gadfly, RDatasets, Distributions\nset_default_plot_size(14cm, 8cm)\nsrand(1234)\nsds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]\nn = 10\nys = [mean(rand(Normal(0, sd), n)) for sd in sds]\nymins = ys .- (1.96 * sds / sqrt(n))\nymaxs = ys .+ (1.96 * sds / sqrt(n))\nplot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs,\n     Geom.point, Geom.errorbar)"
+    "text": "using Gadfly, RDatasets, Distributions, Random\nset_default_plot_size(14cm, 8cm)\nRandom.seed!(1234)\nsds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]\nn = 10\nys = [mean(rand(Normal(0, sd), n)) for sd in sds]\nymins = ys .- (1.96 * sds / sqrt(n))\nymaxs = ys .+ (1.96 * sds / sqrt(n))\nplot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs,\n     Geom.point, Geom.errorbar)"
 },
 
 {
@@ -413,7 +413,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Geom.path",
     "category": "section",
-    "text": "using Gadfly\nset_default_plot_size(21cm, 8cm)\n\nn = 500\nsrand(1234)\nxjumps = rand(n)-.5\nyjumps = rand(n)-.5\np1 = plot(x=cumsum(xjumps),y=cumsum(yjumps),Geom.path)\n\nt = 0:0.2:8pi\np2 = plot(x=t.*cos(t), y=t.*sin(t), Geom.path)\n\nhstack(p1,p2)"
+    "text": "using Gadfly, Random\nset_default_plot_size(21cm, 8cm)\n\nn = 500\nRandom.seed!(1234)\nxjumps = rand(n).-.5\nyjumps = rand(n).-.5\np1 = plot(x=cumsum(xjumps),y=cumsum(yjumps),Geom.path)\n\nt = 0:0.2:8pi\np2 = plot(x=t.*cos.(t), y=t.*sin.(t), Geom.path)\n\nhstack(p1,p2)"
 },
 
 {
@@ -461,7 +461,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Geom.step",
     "category": "section",
-    "text": "using Gadfly\nset_default_plot_size(14cm, 8cm)\nsrand(1234)\nplot(x=rand(25), y=rand(25), Geom.step)"
+    "text": "using Gadfly, Random\nset_default_plot_size(14cm, 8cm)\nRandom.seed!(1234)\nplot(x=rand(25), y=rand(25), Geom.step)"
 },
 
 {
@@ -477,7 +477,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Geom.vector",
     "category": "section",
-    "text": "using Gadfly, RDatasets\nset_default_plot_size(14cm, 14cm)\n\nseals = RDatasets.dataset(\"ggplot2\",\"seals\")\nseals[:Latb] = seals[:Lat] + seals[:DeltaLat]\nseals[:Longb] = seals[:Long] + seals[:DeltaLong]\nseals[:Angle] = atan2.(seals[:DeltaLat], seals[:DeltaLong])\n\ncoord = Coord.cartesian(xmin=-175.0, xmax=-119, ymin=29, ymax=50)\n# Geom.vector also needs scales for both axes:\nxsc  = Scale.x_continuous(minvalue=-175.0, maxvalue=-119)\nysc  = Scale.y_continuous(minvalue=29, maxvalue=50)\ncolsc = Scale.color_continuous(minvalue=-3, maxvalue=3)\n\nlayer1 = layer(seals, x=:Long, y=:Lat, xend=:Longb, yend=:Latb, color=:Angle,\n               Geom.vector)\n\nplot(layer1, xsc, ysc, colsc, coord)"
+    "text": "using Gadfly, RDatasets\nset_default_plot_size(14cm, 14cm)\n\nseals = RDatasets.dataset(\"ggplot2\",\"seals\")\nseals[:Latb] = seals[:Lat] + seals[:DeltaLat]\nseals[:Longb] = seals[:Long] + seals[:DeltaLong]\nseals[:Angle] = atan.(seals[:DeltaLat], seals[:DeltaLong])\n\ncoord = Coord.cartesian(xmin=-175.0, xmax=-119, ymin=29, ymax=50)\n# Geom.vector also needs scales for both axes:\nxsc  = Scale.x_continuous(minvalue=-175.0, maxvalue=-119)\nysc  = Scale.y_continuous(minvalue=29, maxvalue=50)\ncolsc = Scale.color_continuous(minvalue=-3, maxvalue=3)\n\nlayer1 = layer(seals, x=:Long, y=:Lat, xend=:Longb, yend=:Latb, color=:Angle,\n               Geom.vector)\n\nplot(layer1, xsc, ysc, colsc, coord)"
 },
 
 {
@@ -605,7 +605,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Stat.density",
     "category": "section",
-    "text": "using Colors, DataFrames, Gadfly, Distributions\nset_default_plot_size(21cm, 8cm)\nx = -4:0.1:4\nDa = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u=\"μ=$μ\") for μ in [-1,1]]\nDb = [DataFrame(x=randn(200)+μ, u=\"μ=$μ\") for μ in [-1,1]] \n\np1 = plot(vcat(Da...), x=:x, y=:ymax, ymin=:ymin, ymax=:ymax, color=:u, \n    Geom.line, Geom.ribbon, Guide.ylabel(\"Density\"),\n    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)), \n    Guide.colorkey(title=\"\", pos=[2.5,0.6]), Guide.title(\"Parametric PDF\")\n)\np2 = plot(vcat(Db...), x=:x, color=:u, \n    Stat.density(bandwidth=0.5), Geom.polygon(fill=true, preserve_order=true),\n    Coord.cartesian(xmin=-4, xmax=4),\n    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)),\n    Guide.colorkey(title=\"\", pos=[2.5,0.6]), Guide.title(\"Kernel PDF\")\n)\nhstack(p1,p2)"
+    "text": "using Colors, DataFrames, Gadfly, Distributions\nset_default_plot_size(21cm, 8cm)\nx = -4:0.1:4\nDa = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u=\"μ=$μ\") for μ in [-1,1]]\nDb = [DataFrame(x=randn(200).+μ, u=\"μ=$μ\") for μ in [-1,1]] \n\np1 = plot(vcat(Da...), x=:x, y=:ymax, ymin=:ymin, ymax=:ymax, color=:u, \n    Geom.line, Geom.ribbon, Guide.ylabel(\"Density\"),\n    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)), \n    Guide.colorkey(title=\"\", pos=[2.5,0.6]), Guide.title(\"Parametric PDF\")\n)\np2 = plot(vcat(Db...), x=:x, color=:u, \n    Stat.density(bandwidth=0.5), Geom.polygon(fill=true, preserve_order=true),\n    Coord.cartesian(xmin=-4, xmax=4),\n    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)),\n    Guide.colorkey(title=\"\", pos=[2.5,0.6]), Guide.title(\"Kernel PDF\")\n)\nhstack(p1,p2)"
 },
 
 {
@@ -613,7 +613,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Stat.qq",
     "category": "section",
-    "text": "using Gadfly, Distributions\nset_default_plot_size(21cm, 8cm)\nsrand(1234)\np1 = plot(x=rand(Normal(), 100), y=rand(Normal(), 100), Stat.qq, Geom.point)\np2 = plot(x=rand(Normal(), 100), y=Normal(), Stat.qq, Geom.point)\nhstack(p1,p2)"
+    "text": "using Gadfly, Distributions, Random\nset_default_plot_size(21cm, 8cm)\nRandom.seed!(1234)\np1 = plot(x=rand(Normal(), 100), y=rand(Normal(), 100), Stat.qq, Geom.point)\np2 = plot(x=rand(Normal(), 100), y=Normal(), Stat.qq, Geom.point)\nhstack(p1,p2)"
 },
 
 {
@@ -621,7 +621,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Stat.step",
     "category": "section",
-    "text": "using Gadfly\nset_default_plot_size(14cm, 8cm)\nsrand(1234)\nplot(x=rand(25), y=rand(25), Stat.step, Geom.line)"
+    "text": "using Gadfly, Random\nset_default_plot_size(14cm, 8cm)\nRandom.seed!(1234)\nplot(x=rand(25), y=rand(25), Stat.step, Geom.line)"
 },
 
 {
@@ -629,7 +629,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Stat.x_jitter, Stat.y_jitter",
     "category": "section",
-    "text": "using Gadfly, Distributions\nset_default_plot_size(14cm, 8cm)\nsrand(1234)\nplot(x=rand(1:4, 500), y=rand(500), Stat.x_jitter(range=0.5), Geom.point)"
+    "text": "using Gadfly, Distributions, Random\nset_default_plot_size(14cm, 8cm)\nRandom.seed!(1234)\nplot(x=rand(1:4, 500), y=rand(500), Stat.x_jitter(range=0.5), Geom.point)"
 },
 
 {
@@ -637,7 +637,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Stat.xticks, Stat.yticks",
     "category": "section",
-    "text": "using Gadfly\nset_default_plot_size(14cm, 8cm)\nsrand(1234)\nplot(x=rand(10), y=rand(10), Stat.xticks(ticks=[0.0, 0.1, 0.9, 1.0]), Geom.point)"
+    "text": "using Gadfly, Random\nset_default_plot_size(14cm, 8cm)\nRandom.seed!(1234)\nplot(x=rand(10), y=rand(10), Stat.xticks(ticks=[0.0, 0.1, 0.9, 1.0]), Geom.point)"
 },
 
 {
@@ -685,7 +685,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Scale.color_continuous",
     "category": "section",
-    "text": "using Gadfly\nset_default_plot_size(21cm, 8cm)\nxdata, ydata, cdata = rand(12), rand(12), rand(12)\np1 = plot(x=xdata, y=ydata, color=cdata)\np2 = plot(x=xdata, y=ydata, color=cdata,\n          Scale.color_continuous(minvalue=-1, maxvalue=1))\nhstack(p1,p2)using Gadfly, Colors\nset_default_plot_size(21cm, 8cm)\nx = repeat(collect(1:10)-0.5, inner=[10])\ny = repeat(collect(1:10)-0.5, outer=[10])\np1 = plot(x=x, y=y, color=x+y, Geom.rectbin,\n          Scale.color_continuous(colormap=p->RGB(0,p,0)))\np2 = plot(x=x, y=y, color=x+y, Geom.rectbin,\n          Scale.color_continuous(colormap=Scale.lab_gradient(\"green\", \"white\", \"red\")))\np3 = plot(x=x, y=y, color=x+y, Geom.rectbin,\n          Scale.color_continuous(colormap=p->RGB(0,p,0), minvalue=-20))\nhstack(p1,p2,p3)"
+    "text": "using Gadfly\nset_default_plot_size(21cm, 8cm)\nxdata, ydata, cdata = rand(12), rand(12), rand(12)\np1 = plot(x=xdata, y=ydata, color=cdata)\np2 = plot(x=xdata, y=ydata, color=cdata,\n          Scale.color_continuous(minvalue=-1, maxvalue=1))\nhstack(p1,p2)using Gadfly, Colors\nset_default_plot_size(21cm, 8cm)\nx = repeat(collect(1:10).-0.5, inner=[10])\ny = repeat(collect(1:10).-0.5, outer=[10])\np1 = plot(x=x, y=y, color=x+y, Geom.rectbin,\n          Scale.color_continuous(colormap=p->RGB(0,p,0)))\np2 = plot(x=x, y=y, color=x+y, Geom.rectbin,\n          Scale.color_continuous(colormap=Scale.lab_gradient(\"green\", \"white\", \"red\")))\np3 = plot(x=x, y=y, color=x+y, Geom.rectbin,\n          Scale.color_continuous(colormap=p->RGB(0,p,0), minvalue=-20))\nhstack(p1,p2,p3)"
 },
 
 {
@@ -693,7 +693,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Scale.color_discrete_hue",
     "category": "section",
-    "text": "using Gadfly, Colors, RDatasets\nset_default_plot_size(14cm, 8cm)\nsrand(1234)\n\nfunction gen_colors(n)\n    cs = distinguishable_colors(n,\n                                [colorant\"#FE4365\", colorant\"#eca25c\"],\n                                lchoices = Float64[58, 45, 72.5, 90],\n                                transform = c -> deuteranopic(c, 0.1),\n                                cchoices = Float64[20,40],\n                                hchoices = [75,51,35,120,180,210,270,310])\n\n    convert(Vector{Color}, cs)\nend\n\niris = dataset(\"datasets\", \"iris\")\nplot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,\n     Geom.point, Scale.color_discrete(gen_colors))using Gadfly, Colors, RDatasets\nset_default_plot_size(21cm, 8cm)\nsrand(1234)\nxdata, ydata = rand(12), rand(12)\np1 = plot(x=xdata, y=ydata, color=repeat([1,2,3], outer=[4]))\np2 = plot(x=xdata, y=ydata, color=repeat([1,2,3], outer=[4]), Scale.color_discrete)\nhstack(p1,p2)"
+    "text": "using Gadfly, Colors, RDatasets, Random\nset_default_plot_size(14cm, 8cm)\nRandom.seed!(1234)\n\nfunction gen_colors(n)\n    cs = distinguishable_colors(n,\n                                [colorant\"#FE4365\", colorant\"#eca25c\"],\n                                lchoices = Float64[58, 45, 72.5, 90],\n                                transform = c -> deuteranopic(c, 0.1),\n                                cchoices = Float64[20,40],\n                                hchoices = [75,51,35,120,180,210,270,310])\n\n    convert(Vector{Color}, cs)\nend\n\niris = dataset(\"datasets\", \"iris\")\nplot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,\n     Geom.point, Scale.color_discrete(gen_colors))using Gadfly, Colors, RDatasets, Random\nset_default_plot_size(21cm, 8cm)\nRandom.seed!(1234)\nxdata, ydata = rand(12), rand(12)\np1 = plot(x=xdata, y=ydata, color=repeat([1,2,3], outer=[4]))\np2 = plot(x=xdata, y=ydata, color=repeat([1,2,3], outer=[4]), Scale.color_discrete)\nhstack(p1,p2)"
 },
 
 {
@@ -701,7 +701,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Scale.color_discrete_manual",
     "category": "section",
-    "text": "using Gadfly\nsrand(12345)\nset_default_plot_size(14cm, 8cm)\nplot(x=rand(12), y=rand(12), color=repeat([\"a\",\"b\",\"c\"], outer=[4]),\n     Scale.color_discrete_manual(\"red\",\"purple\",\"green\"))using Gadfly, RDatasets, DataFrames\nset_default_plot_size(14cm, 8cm)\nD = by(dataset(\"datasets\",\"HairEyeColor\"), [:Eye,:Sex], d->sum(d[:Freq]))\nrename!(D, :x1, :Frequency)\npalette = [\"brown\",\"blue\",\"tan\",\"green\"] # Is there a hazel color?\npa = plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),\n          Scale.color_discrete_manual(palette...))\npb = plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),\n          Scale.color_discrete_manual(palette[4:-1:1]..., order=[4,3,2,1]))\nhstack(pa,pb)"
+    "text": "using Gadfly, Random\nRandom.seed!(12345)\nset_default_plot_size(14cm, 8cm)\nplot(x=rand(12), y=rand(12), color=repeat([\"a\",\"b\",\"c\"], outer=[4]),\n     Scale.color_discrete_manual(\"red\",\"purple\",\"green\"))using Gadfly, RDatasets, DataFrames\nset_default_plot_size(14cm, 8cm)\nD = by(dataset(\"datasets\",\"HairEyeColor\"), [:Eye,:Sex], d->sum(d[:Freq]))\nrename!(D, :x1, :Frequency)\npalette = [\"brown\",\"blue\",\"tan\",\"green\"] # Is there a hazel color?\npa = plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),\n          Scale.color_discrete_manual(palette...))\npb = plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),\n          Scale.color_discrete_manual(palette[4:-1:1]..., order=[4,3,2,1]))\nhstack(pa,pb)"
 },
 
 {
@@ -717,7 +717,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Scale.linestyle_discrete",
     "category": "section",
-    "text": "using DataFrames, Gadfly, RDatasets\nusing StatsBase: winsor\nset_default_plot_size(18cm, 8cm)\n\nlabs = [ \"exp\", \"sqrt\", \"log\", \"winsor\", \"linear\"]\nfuncs = [ x->60*(1-exp.(-0.2*x)), x->sqrt.(x)*10, x->log.(x)*10, x->winsor(x, prop=0.15), x->x*0.6 ]\nx = [1.0:30;]\nD = vcat([DataFrame(x=x, y=f(x), linev=l) for (f,l) in zip(funcs, labs)]...)\nD[134:136,:y] = NaN\n\np1 = plot(D, x=:x, y=:y, linestyle=:linev, Geom.line )\np2 = plot(dataset(\"datasets\", \"CO2\"), x=:Conc, y=:Uptake, \n    group=:Plant, linestyle=:Treatment, color=:Type, Geom.line,\n    Scale.linestyle_discrete(order=[2,1]),\n    Theme(key_position=:top, key_title_font_size=-8mm) )\nhstack(p1,p2)"
+    "text": "using DataFrames, Gadfly, RDatasets\nusing StatsBase: winsor\nset_default_plot_size(18cm, 8cm)\n\nlabs = [ \"exp\", \"sqrt\", \"log\", \"winsor\", \"linear\"]\nfuncs = [ x->60*(1.0.-exp.(-0.2*x)), x->sqrt.(x)*10, x->log.(x)*10, x->winsor(x, prop=0.15), x->x*0.6 ]\nx = [1.0:30;]\nD = vcat([DataFrame(x=x, y=f(x), linev=l) for (f,l) in zip(funcs, labs)]...)\nD[134:136,:y] = NaN\n\np1 = plot(D, x=:x, y=:y, linestyle=:linev, Geom.line )\np2 = plot(dataset(\"datasets\", \"CO2\"), x=:Conc, y=:Uptake, \n    group=:Plant, linestyle=:Treatment, color=:Type, Geom.line,\n    Scale.linestyle_discrete(order=[2,1]),\n    Theme(key_position=:top, key_title_font_size=-8mm) )\nhstack(p1,p2)"
 },
 
 {
@@ -725,7 +725,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Scale.x_continuous, Scale.y_continuous",
     "category": "section",
-    "text": "using Gadfly\nset_default_plot_size(21cm, 8cm)\nsrand(1234)\np1 = plot(x=rand(10), y=rand(10), Scale.x_continuous(minvalue=-10, maxvalue=10))\np2 = plot(x=rand(10), y=rand(10), Scale.x_continuous(format=:scientific))\np3 = plot(x=rand(10), y=rand(10), Scale.x_continuous(labels=x -> @sprintf(\"%0.4f\", x)))\nhstack(p1,p2,p3)using Gadfly\nset_default_plot_size(14cm, 8cm)\nsrand(1234)\nplot(x=rand(10), y=rand(10), Scale.x_log)"
+    "text": "using Gadfly, Random, Printf\nset_default_plot_size(21cm, 8cm)\nRandom.seed!(1234)\np1 = plot(x=rand(10), y=rand(10), Scale.x_continuous(minvalue=-10, maxvalue=10))\np2 = plot(x=rand(10), y=rand(10), Scale.x_continuous(format=:scientific))\np3 = plot(x=rand(10), y=rand(10), Scale.x_continuous(labels=x -> @sprintf(\"%0.4f\", x)))\nhstack(p1,p2,p3)using Gadfly, Random\nset_default_plot_size(14cm, 8cm)\nRandom.seed!(1234)\nplot(x=rand(10), y=rand(10), Scale.x_log)"
 },
 
 {
@@ -733,7 +733,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Scale.x_discrete, Scale.y_discrete",
     "category": "section",
-    "text": "using Gadfly, DataFrames\nset_default_plot_size(14cm, 8cm)\nsrand(1234)\n# Treat numerical x data as categories\np1 = plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)\n# To perserve the order of the columns in the plot when plotting a DataFrame\ndf = DataFrame(v1 = randn(10), v2 = randn(10), v3 = randn(10))\np2 = plot(df, x=Col.index, y=Col.value, Scale.x_discrete(levels=names(df)))\nhstack(p1,p2)"
+    "text": "using Gadfly, DataFrames, Random\nset_default_plot_size(14cm, 8cm)\nRandom.seed!(1234)\n# Treat numerical x data as categories\np1 = plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)\n# To perserve the order of the columns in the plot when plotting a DataFrame\ndf = DataFrame(v1 = randn(10), v2 = randn(10), v3 = randn(10))\np2 = plot(df, x=Col.index, y=Col.value, Scale.x_discrete(levels=names(df)))\nhstack(p1,p2)"
 },
 
 {
@@ -773,135 +773,135 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.Theme",
     "category": "type",
-    "text": "default_color\nIf the color aesthetic is not mapped to anything, this is the color that is used.  (Color)\npoint_size\nSize of points in the point, boxplot, and beeswarm geometries.  (Measure)\npoint_size_min\nMinimum size of points in the point geometry.  (Measure)\npoint_size_max\nMaximum size of points in the point geometry.  (Measure)\npoint_shapes\nShapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)\nline_width\nWidth of lines in the line geometry. (Measure)\nline_style\nStyle of lines in the line geometry. The default palette is [:solid, :dash, :dot, :dashdot, :dashdotdot, :ldash, :ldashdash, :ldashdot, :ldashdashdot] which is a Vector{Symbol}, or customize using Vector{Vector{<:Measure}}\npanel_fill\nBackground color used in the main plot panel. (Color or Nothing)\npanel_stroke\nBorder color of the main plot panel. (Color or Nothing)\npanel_opacity\nOpacity of the plot background panel. (Float in [0.0, 1.0])\nbackground_color\nBackground color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding\nPadding around the plot. The order of padding is: plot_padding=[left, right, top, bottom]. If a vector of length one is provided e.g.  [5mm] then that value is applied to all sides. Absolute or relative units can be used. (Vector{<:Measure})\ngrid_color\nColor of grid lines. (Color or Nothing)\ngrid_line_style\nStyle of grid lines. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)\ngrid_color_focused\nIn the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width\nWidth of grid lines. (Measure)\nminor_label_font\nFont used for minor labels such as tick labels and entries in keys. (String)\nminor_label_font_size\nFont size used for minor labels. (Measure)\nminor_label_color\nColor used for minor labels. (Color)\nmajor_label_font\nFont used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size\nFont size used for major labels. (Measure)\nmajor_label_color\nColor used for major labels. (Color)\npoint_label_font\nFont used for labels in Geom.label. (String)\npoint_label_font_size\nFont size used for labels. (Measure)\npoint_label_color\nColor used for labels. (Color)\nkey_title_font\nFont used for titles of keys. (String)\nkey_title_font_size\nFont size used for key titles. (Measure)\nkey_title_color\nColor used for key titles. (Color)\nkey_label_font\nFont used for key entry labels. (String)\nkey_label_font_size\nFont size used for key entry labels. (Measure)\nkey_label_color\nColor used for key entry labels. (Color)\nkey_color_gradations\nHow many gradations to show in a continuous color key. (Int)\nbar_spacing\nSpacing between bars in Geom.bar. (Measure)\nboxplot_spacing\nSpacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length\nLength of caps on error bars. (Measure)\nstroke_color\nhighlight_width\nWidth of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color\nColor used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\ncontinuous_highlight_color\nColor used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color\nColor used to draw background geometry, such as Geom.ribbon and Geom.polygon. This is a function that alters the fill color of the geometry.  (Function)\nlowlight_opacity\nOpacity of background geometry such as Geom.ribbon.  (Float64)\nmiddle_color\nColor altering function used to draw the midline in boxplots. (Function)\nmiddle_width\nWidth of the middle line in boxplots. (Measure)\nguide_title_position\nOne of :left, :center, :right indicating the placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape\nThe shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nkey_swatch_shape\nShape used in keys for swatches (Function as in point_shapes)\nkey_swatch_color\nDefault color used in keys for swatches.  Currently works for Guide.shapekey (Color)\nkey_position\nWhere key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, :inside or :none. Setting to :none disables the key. Setting to :inside places the key in the lower right quadrant of the plot. (Symbol)\nbar_highlight\nColor used to stroke bars in bar plots. If a function is given, it\'s used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\nrug_size\nlabel_placement_iterations\nNumber of annealing iterations.  Used by Geom.label(position=:dynamic)\nlabel_out_of_bounds_penalty\nPenalty for a label not being contained within the plot frame.  Used by Geom.label(position=:dynamic)\nlabel_hidden_penalty\nPenalty for making a label hidden to avoid overlaps.  Used by Geom.label(position=:dynamic)\nlabel_visibility_flip_pr\nProbability of proposing a visibility flip during label layout.  Used by Geom.label(position=:dynamic)\nlabel_padding\nPadding between marker and label.  Used by Geom.label(position=:dynamic)\nkey_max_columns\nMaximum number of columns for key entry labels. (Int)\ndiscrete_color_scale\nA DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scale\nA ContinuousColorScale see Scale.color_continuous\n\n\n\n"
+    "text": "default_color\nIf the color aesthetic is not mapped to anything, this is the color that is used.  (Color)\npoint_size\nSize of points in the point, boxplot, and beeswarm geometries.  (Measure)\npoint_size_min\nMinimum size of points in the point geometry.  (Measure)\npoint_size_max\nMaximum size of points in the point geometry.  (Measure)\npoint_shapes\nShapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)\nline_width\nWidth of lines in the line geometry. (Measure)\nline_style\nStyle of lines in the line geometry. The default palette is [:solid, :dash, :dot, :dashdot, :dashdotdot, :ldash, :ldashdash, :ldashdot, :ldashdashdot] which is a Vector{Symbol}, or customize using Vector{Vector{<:Measure}}\npanel_fill\nBackground color used in the main plot panel. (Color or Nothing)\npanel_stroke\nBorder color of the main plot panel. (Color or Nothing)\npanel_opacity\nOpacity of the plot background panel. (Float in [0.0, 1.0])\nbackground_color\nBackground color for the entire plot. If nothing, no background. (Color or Nothing)\nplot_padding\nPadding around the plot. The order of padding is: plot_padding=[left, right, top, bottom]. If a vector of length one is provided e.g.  [5mm] then that value is applied to all sides. Absolute or relative units can be used. (Vector{<:Measure})\ngrid_color\nColor of grid lines. (Color or Nothing)\ngrid_line_style\nStyle of grid lines. (Symbol in :solid, :dash, :dot, :dashdot, :dashdotdot, or Vector of Measures)\ngrid_color_focused\nIn the D3 backend, mousing over the plot makes the grid lines emphasised by transitioning to this color. (Color or Nothing)\ngrid_line_width\nWidth of grid lines. (Measure)\nminor_label_font\nFont used for minor labels such as tick labels and entries in keys. (String)\nminor_label_font_size\nFont size used for minor labels. (Measure)\nminor_label_color\nColor used for minor labels. (Color)\nmajor_label_font\nFont used for major labels such as guide titles and axis labels. (String)\nmajor_label_font_size\nFont size used for major labels. (Measure)\nmajor_label_color\nColor used for major labels. (Color)\npoint_label_font\nFont used for labels in Geom.label. (String)\npoint_label_font_size\nFont size used for labels. (Measure)\npoint_label_color\nColor used for labels. (Color)\nkey_title_font\nFont used for titles of keys. (String)\nkey_title_font_size\nFont size used for key titles. (Measure)\nkey_title_color\nColor used for key titles. (Color)\nkey_label_font\nFont used for key entry labels. (String)\nkey_label_font_size\nFont size used for key entry labels. (Measure)\nkey_label_color\nColor used for key entry labels. (Color)\nkey_color_gradations\nHow many gradations to show in a continuous color key. (Int)\nbar_spacing\nSpacing between bars in Geom.bar. (Measure)\nboxplot_spacing\nSpacing between boxplots in Geom.boxplot. (Measure)\nerrorbar_cap_length\nLength of caps on error bars. (Measure)\nstroke_color\nhighlight_width\nWidth of lines drawn around plot geometry like points, and boxplot rectangles. (Measure)\ndiscrete_highlight_color\nColor used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\ncontinuous_highlight_color\nColor used to outline plot geometry. This is a function that alters (e.g. darkens) the fill color of the geometry. (Function)\nlowlight_color\nColor used to draw background geometry, such as Geom.ribbon and Geom.polygon. This is a function that alters the fill color of the geometry.  (Function)\nlowlight_opacity\nOpacity of background geometry such as Geom.ribbon.  (Float64)\nmiddle_color\nColor altering function used to draw the midline in boxplots. (Function)\nmiddle_width\nWidth of the middle line in boxplots. (Measure)\nguide_title_position\nOne of :left, :center, :right indicating the placement of the title of color key guides. (Symbol)\ncolorkey_swatch_shape\nThe shape used in color swatches in the color key guide. Either :circle or :square  (Symbol)\nkey_swatch_shape\nShape used in keys for swatches (Function as in point_shapes)\nkey_swatch_color\nDefault color used in keys for swatches.  Currently works for Guide.shapekey (Color)\nkey_position\nWhere key should be placed relative to the plot panel. One of :left, :right, :top, :bottom, :inside or :none. Setting to :none disables the key. Setting to :inside places the key in the lower right quadrant of the plot. (Symbol)\nbar_highlight\nColor used to stroke bars in bar plots. If a function is given, it\'s used to transform the fill color of the bars to obtain a stroke color. (Function, Color, or Nothing)\nrug_size\nlabel_placement_iterations\nNumber of annealing iterations.  Used by Geom.label(position=:dynamic)\nlabel_out_of_bounds_penalty\nPenalty for a label not being contained within the plot frame.  Used by Geom.label(position=:dynamic)\nlabel_hidden_penalty\nPenalty for making a label hidden to avoid overlaps.  Used by Geom.label(position=:dynamic)\nlabel_visibility_flip_pr\nProbability of proposing a visibility flip during label layout.  Used by Geom.label(position=:dynamic)\nlabel_padding\nPadding between marker and label.  Used by Geom.label(position=:dynamic)\nkey_max_columns\nMaximum number of columns for key entry labels. (Int)\ndiscrete_color_scale\nA DiscreteColorScale see Scale.color_discrete_hue\ncontinuous_color_scale\nA ContinuousColorScale see Scale.color_continuous\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Compose.draw-Tuple{Compose.Backend,Gadfly.Plot}",
+    "location": "lib/gadfly.html#Compose.draw-Tuple{Compose.Backend,Plot}",
     "page": "Gadfly",
     "title": "Compose.draw",
     "category": "method",
-    "text": "draw(backend::Compose.Backend, p::Plot)\n\nA convenience version of Compose.draw without having to call render.\n\n\n\n"
+    "text": "draw(backend::Compose.Backend, p::Plot)\n\nA convenience version of Compose.draw without having to call render.\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Compose.gridstack-Tuple{Array{Gadfly.Plot,2}}",
+    "location": "lib/gadfly.html#Compose.gridstack-Tuple{Array{Plot,2}}",
     "page": "Gadfly",
     "title": "Compose.gridstack",
     "category": "method",
-    "text": "gridstack(ps::Matrix{Union{Plot,Context}})\n\nArrange plots into a rectangular array.  Use context() as a placeholder for an empty panel.  Heterogeneous matrices must be typed.  See also hstack and vstack.\n\nExamples\n\np1 = plot(x=[1,2], y=[3,4], Geom.line);\np2 = Compose.context();\ngridstack([p1 p1; p1 p1])\ngridstack(Union{Plot,Compose.Context}[p1 p2; p2 p1])\n\n\n\n"
+    "text": "gridstack(ps::Matrix{Union{Plot,Context}})\n\nArrange plots into a rectangular array.  Use context() as a placeholder for an empty panel.  Heterogeneous matrices must be typed.  See also hstack and vstack.\n\nExamples\n\np1 = plot(x=[1,2], y=[3,4], Geom.line);\np2 = Compose.context();\ngridstack([p1 p1; p1 p1])\ngridstack(Union{Plot,Compose.Context}[p1 p2; p2 p1])\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Compose.hstack-Tuple{Vararg{Union{Compose.Context, Gadfly.Plot},N} where N}",
+    "location": "lib/gadfly.html#Compose.hstack-Tuple{Vararg{Union{Context, Plot},N} where N}",
     "page": "Gadfly",
     "title": "Compose.hstack",
     "category": "method",
-    "text": "hstack(ps::Union{Plot,Context}...)\nhstack(ps::Vector)\n\nArrange plots into a horizontal row.  Use context() as a placeholder for an empty panel.  Heterogeneous vectors must be typed.  See also vstack, gridstack, and Geom.subplot_grid.\n\nExamples\n\np1 = plot(x=[1,2], y=[3,4], Geom.line);\np2 = Compose.context();\nhstack(p1, p2)\nhstack(Union{Plot,Compose.Context}[p1, p2])\n\n\n\n"
+    "text": "hstack(ps::Union{Plot,Context}...)\nhstack(ps::Vector)\n\nArrange plots into a horizontal row.  Use context() as a placeholder for an empty panel.  Heterogeneous vectors must be typed.  See also vstack, gridstack, and Geom.subplot_grid.\n\nExamples\n\np1 = plot(x=[1,2], y=[3,4], Geom.line);\np2 = Compose.context();\nhstack(p1, p2)\nhstack(Union{Plot,Compose.Context}[p1, p2])\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Compose.vstack-Tuple{Vararg{Union{Compose.Context, Gadfly.Plot},N} where N}",
+    "location": "lib/gadfly.html#Compose.vstack-Tuple{Vararg{Union{Context, Plot},N} where N}",
     "page": "Gadfly",
     "title": "Compose.vstack",
     "category": "method",
-    "text": "vstack(ps::Union{Plot,Context}...)\nvstack(ps::Vector)\n\nArrange plots into a vertical column.  Use context() as a placeholder for an empty panel.  Heterogeneous vectors must be typed.  See also hstack, gridstack, and Geom.subplot_grid.\n\nExamples\n\np1 = plot(x=[1,2], y=[3,4], Geom.line);\np2 = Compose.context();\nvstack(p1, p2)\nvstack(Union{Plot,Compose.Context}[p1, p2])\n\n\n\n"
+    "text": "vstack(ps::Union{Plot,Context}...)\nvstack(ps::Vector)\n\nArrange plots into a vertical column.  Use context() as a placeholder for an empty panel.  Heterogeneous vectors must be typed.  See also hstack, gridstack, and Geom.subplot_grid.\n\nExamples\n\np1 = plot(x=[1,2], y=[3,4], Geom.line);\np2 = Compose.context();\nvstack(p1, p2)\nvstack(Union{Plot,Compose.Context}[p1, p2])\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.layer-Tuple{Function,Number,Number,Number,Number,Vararg{Union{Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}",
+    "location": "lib/gadfly.html#Gadfly.layer-Tuple{Any,Vararg{Union{Function, Element, Theme, Type},N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.layer",
     "category": "method",
-    "text": "layer(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,\n      elements::ElementOrFunction...; mapping...) -> [Layers]\n\nCreate a layer of the contours of the 2D function or expression in f. See Stat.func and Geom.contour.\n\n\n\n"
+    "text": "layer(data_source::Union{AbstractDataFrame, Void}),\n      elements::ElementOrFunction...; mapping...) -> [Layers]\n\nCreate a layer element based on the data in data_source, to later input into plot.  elements can be Statistics, Geometries, and/or Themes (but not Scales, Coordinates, or Guides). mapping are aesthetics.\n\nExamples\n\nls=[]\nappend!(ls, layer(y=[1,2,3], Geom.line))\nappend!(ls, layer(y=[3,2,1], Geom.point))\nplot(ls..., Guide.title(\"layer example\"))\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.layer-Tuple{Function,Number,Number,Vararg{Union{Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}",
+    "location": "lib/gadfly.html#Gadfly.layer-Tuple{Function,Number,Number,Number,Number,Vararg{Union{Function, Element, Theme, Type},N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.layer",
     "category": "method",
-    "text": "layer(f::Function, lower::Number, upper::Number,\n      elements::ElementOrFunction...) -> [Layers]\n\nCreate a layer from the function or expression f, which takes a single argument or operates on a single variable, respectively, between the lower and upper bounds.  See Stat.func and Geom.line.\n\n\n\n"
+    "text": "layer(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,\n      elements::ElementOrFunction...; mapping...) -> [Layers]\n\nCreate a layer of the contours of the 2D function or expression in f. See Stat.func and Geom.contour.\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.layer-Tuple{Union{DataFrames.AbstractDataFrame, Void},Vararg{Union{Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}",
+    "location": "lib/gadfly.html#Gadfly.layer-Tuple{Function,Number,Number,Vararg{Union{Function, Element, Theme, Type},N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.layer",
     "category": "method",
-    "text": "layer(data_source::Union{AbstractDataFrame, Void}),\n      elements::ElementOrFunction...; mapping...) -> [Layers]\n\nCreate a layer element based on the data in data_source, to later input into plot.  elements can be Statistics, Geometries, and/or Themes (but not Scales, Coordinates, or Guides). mapping are aesthetics.\n\nExamples\n\nls=[]\nappend!(ls, layer(y=[1,2,3], Geom.line))\nappend!(ls, layer(y=[3,2,1], Geom.point))\nplot(ls..., Guide.title(\"layer example\"))\n\n\n\n"
+    "text": "layer(f::Function, lower::Number, upper::Number,\n      elements::ElementOrFunction...) -> [Layers]\n\nCreate a layer from the function or expression f, which takes a single argument or operates on a single variable, respectively, between the lower and upper bounds.  See Stat.func and Geom.line.\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.layer-Tuple{Vararg{Union{Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}",
+    "location": "lib/gadfly.html#Gadfly.layer-Tuple{Vararg{Union{Function, Element, Theme, Type},N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.layer",
     "category": "method",
-    "text": "layer(elements::ElementOrFunction...; mapping...) =\n      layer(nothing, elements...; mapping...) -> [Layers]\n\n\n\n"
+    "text": "layer(elements::ElementOrFunction...; mapping...) =\n      layer(nothing, elements...; mapping...) -> [Layers]\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.layer-Union{Tuple{Array{T,1},Number,Number,Vararg{Union{Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}, Tuple{T}} where T<:Union{Function, Type}",
+    "location": "lib/gadfly.html#Gadfly.layer-Union{Tuple{T}, Tuple{Array{T,1},Number,Number,Vararg{Union{Function, Element, Theme, Type},N} where N}} where T<:Union{Function, Type}",
     "page": "Gadfly",
     "title": "Gadfly.layer",
     "category": "method",
-    "text": "layer(fs::Vector{T}, lower::Number, upper::Number,\n      elements::ElementOrFunction...) where T <: Base.Callable -> [Layers]\n\nCreate a layer from a list of functions or expressions in fs.\n\n\n\n"
+    "text": "layer(fs::Vector{T}, lower::Number, upper::Number,\n      elements::ElementOrFunction...) where T <: Base.Callable -> [Layers]\n\nCreate a layer from a list of functions or expressions in fs.\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.plot-Tuple{Function,Number,Number,Number,Number,Vararg{Union{Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}",
+    "location": "lib/gadfly.html#Gadfly.plot-Tuple{Any,Dict,Vararg{Union{Array{Layer,1}, Function, Element, Theme, Type},N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.plot",
     "category": "method",
-    "text": "plot(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,\n     elements::ElementOrFunction...; mapping...)\n\nPlot the contours of the 2D function or expression in f. See Stat.func and Geom.contour.\n\n\n\n"
+    "text": "plot(data_source::Union{Void, AbstractMatrix, AbstractDataFrame},\n     mapping::Dict, elements::ElementOrFunctionOrLayers...) -> Plot\n\nThe old fashioned (pre-named arguments) version of plot.  This version takes an explicit mapping dictionary, mapping aesthetics symbols to expressions or columns in the data frame.\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.plot-Tuple{Function,Number,Number,Vararg{Union{Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}",
+    "location": "lib/gadfly.html#Gadfly.plot-Tuple{Any,Vararg{Union{Array{Layer,1}, Function, Element, Theme, Type},N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.plot",
     "category": "method",
-    "text": "plot(f::Function, lower::Number, upper::Number, elements::ElementOrFunction...;\n     mapping...)\n\nPlot the function or expression f, which takes a single argument or operates on a single variable, respectively, between the lower and upper bounds.  See Stat.func and Geom.line.\n\n\n\n"
+    "text": "plot(data_source::Union{AbstractMatrix, AbstractDataFrame},\n     elements::ElementOrFunctionOrLayers...; mapping...) -> Plot\n\nCreate a new plot by specifying a data_source, zero or more elements (Scales, Statistics, Coordinates, Geometries, Guides, Themes, and/or Layers), and a mapping of aesthetics to columns or expressions of the data.\n\nExamples\n\nmy_frame = DataFrame(time=1917:2018, price=1.02.^(0:101))\nplot(my_frame, x=:time, y=:price, Geom.line)\n\nmy_matrix = [1917:2018 1.02.^(0:101)]\nplot(my_matrix, x=Col.value(1), y=Col.value(2), Geom.line,\n     Guide.xlabel(\"time\"), Guide.ylabel(\"price\"))\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.plot-Tuple{Union{AbstractArray, DataFrames.AbstractDataFrame, Void},Dict,Vararg{Union{Array{Gadfly.Layer,1}, Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}",
+    "location": "lib/gadfly.html#Gadfly.plot-Tuple{Function,Number,Number,Number,Number,Vararg{Union{Function, Element, Theme, Type},N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.plot",
     "category": "method",
-    "text": "plot(data_source::Union{Void, AbstractMatrix, AbstractDataFrame},\n     mapping::Dict, elements::ElementOrFunctionOrLayers...) -> Plot\n\nThe old fashioned (pre-named arguments) version of plot.  This version takes an explicit mapping dictionary, mapping aesthetics symbols to expressions or columns in the data frame.\n\n\n\n"
+    "text": "plot(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,\n     elements::ElementOrFunction...; mapping...)\n\nPlot the contours of the 2D function or expression in f. See Stat.func and Geom.contour.\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.plot-Tuple{Union{AbstractArray, DataFrames.AbstractDataFrame},Vararg{Union{Array{Gadfly.Layer,1}, Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}",
+    "location": "lib/gadfly.html#Gadfly.plot-Tuple{Function,Number,Number,Vararg{Union{Function, Element, Theme, Type},N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.plot",
     "category": "method",
-    "text": "plot(data_source::Union{AbstractMatrix, AbstractDataFrame},\n     elements::ElementOrFunctionOrLayers...; mapping...) -> Plot\n\nCreate a new plot by specifying a data_source, zero or more elements (Scales, Statistics, Coordinates, Geometries, Guides, Themes, and/or Layers), and a mapping of aesthetics to columns or expressions of the data.\n\nExamples\n\nmy_frame = DataFrame(time=1917:2018, price=1.02.^(0:101))\nplot(my_frame, x=:time, y=:price, Geom.line)\n\nmy_matrix = [1917:2018 1.02.^(0:101)]\nplot(my_matrix, x=Col.value(1), y=Col.value(2), Geom.line,\n     Guide.xlabel(\"time\"), Guide.ylabel(\"price\"))\n\n\n\n"
+    "text": "plot(f::Function, lower::Number, upper::Number, elements::ElementOrFunction...;\n     mapping...)\n\nPlot the function or expression f, which takes a single argument or operates on a single variable, respectively, between the lower and upper bounds.  See Stat.func and Geom.line.\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.plot-Tuple{Vararg{Union{Array{Gadfly.Layer,1}, Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}",
+    "location": "lib/gadfly.html#Gadfly.plot-Tuple{Vararg{Union{Array{Layer,1}, Function, Element, Theme, Type},N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.plot",
     "category": "method",
-    "text": "plot(elements::ElementOrFunctionOrLayers...; aesthetics...) -> Plot\n\nCreate a new plot of the vectors in \'aesthetics\'.  Optional elements (Scales, Statistics, Coordinates, Geometries, Guides, Themes, and/or Layers) control the layout, labelling, and transformation of the data.\n\nExamples\n\nplot(x=collect(1917:2018), y=1.02.^(0:101), Geom.line)\n\n\n\n"
+    "text": "plot(elements::ElementOrFunctionOrLayers...; aesthetics...) -> Plot\n\nCreate a new plot of the vectors in \'aesthetics\'.  Optional elements (Scales, Statistics, Coordinates, Geometries, Guides, Themes, and/or Layers) control the layout, labelling, and transformation of the data.\n\nExamples\n\nplot(x=collect(1917:2018), y=1.02.^(0:101), Geom.line)\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.plot-Union{Tuple{Array{T,1},Number,Number,Vararg{Union{Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}, Tuple{T}} where T<:Union{Function, Type}",
+    "location": "lib/gadfly.html#Gadfly.plot-Union{Tuple{T}, Tuple{Array{T,1},Number,Number,Vararg{Union{Function, Element, Theme, Type},N} where N}} where T<:Union{Function, Type}",
     "page": "Gadfly",
     "title": "Gadfly.plot",
     "category": "method",
-    "text": "plot(fs::Vector{T}, lower::Number, upper::Number, elements::ElementOrFunction...;\n     mapping...) where T <: Base.Callable\n\n\n\n"
+    "text": "plot(fs::Vector{T}, lower::Number, upper::Number, elements::ElementOrFunction...;\n     mapping...) where T <: Base.Callable\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.render-Tuple{Gadfly.Plot}",
+    "location": "lib/gadfly.html#Gadfly.render-Tuple{Plot}",
     "page": "Gadfly",
     "title": "Gadfly.render",
     "category": "method",
-    "text": "render(plot::Plot) -> Context\n\nRender plot to a Compose context.\n\n\n\n"
+    "text": "render(plot::Plot) -> Context\n\nRender plot to a Compose context.\n\n\n\n\n\n"
 },
 
 {
@@ -909,23 +909,23 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.set_default_plot_format",
     "category": "method",
-    "text": "set_default_plot_format(fmt::Symbol)\n\nSets the default plot format.\n\n\n\n"
+    "text": "set_default_plot_format(fmt::Symbol)\n\nSets the default plot format.\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.set_default_plot_size-Tuple{Union{Measures.Measure, Number},Union{Measures.Measure, Number}}",
+    "location": "lib/gadfly.html#Gadfly.set_default_plot_size-Tuple{Union{Number, Measure},Union{Number, Measure}}",
     "page": "Gadfly",
     "title": "Gadfly.set_default_plot_size",
     "category": "method",
-    "text": "set_default_plot_size(width::Compose.MeasureOrNumber,\n                      height::Compose.MeasureOrNumber)\n\nSets preferred canvas size when rendering a plot without an explicit call to draw.  Units can be inch, cm, mm, pt, or px.\n\n\n\n"
+    "text": "set_default_plot_size(width::Compose.MeasureOrNumber,\n                      height::Compose.MeasureOrNumber)\n\nSets preferred canvas size when rendering a plot without an explicit call to draw.  Units can be inch, cm, mm, pt, or px.\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.spy-Tuple{AbstractArray{T,2} where T,Vararg{Union{Function, Gadfly.Element, Gadfly.Theme, Type},N} where N}",
+    "location": "lib/gadfly.html#Gadfly.spy-Tuple{AbstractArray{T,2} where T,Vararg{Union{Function, Element, Theme, Type},N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.spy",
     "category": "method",
-    "text": "spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...) -> Plot\n\nPlots a heatmap of M, with M[1,1] in the upper left.  NaN values are left blank, and an error is thrown if all elements of M are NaN.  See Geom.rectbin and Coord.cartesian(fixed=true)...).\n\n\n\n"
+    "text": "spy(M::AbstractMatrix, elements::ElementOrFunction...; mapping...) -> Plot\n\nPlots a heatmap of M, with M[1,1] in the upper left.  NaN values are left blank, and an error is thrown if all elements of M are NaN.  See Geom.rectbin and Coord.cartesian(fixed=true)...).\n\n\n\n\n\n"
 },
 
 {
@@ -933,23 +933,23 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.style",
     "category": "method",
-    "text": "style(; kwargs...) -> Theme\n\nReturn a new Theme that is a copy of the current theme as modifed by the attributes in kwargs.  See Themes for available fields.\n\nExamples\n\nstyle(background_color=\"gray\")\n\n\n\n"
+    "text": "style(; kwargs...) -> Theme\n\nReturn a new Theme that is a copy of the current theme as modifed by the attributes in kwargs.  See Themes for available fields.\n\nExamples\n\nstyle(background_color=\"gray\")\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.title-Tuple{Compose.Context,String,Vararg{Compose.Property,N} where N}",
+    "location": "lib/gadfly.html#Gadfly.title-Tuple{Context,String,Vararg{Compose.Property,N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.title",
     "category": "method",
-    "text": "title(ctx::Context, str::String, props::Property...) -> Context\n\nAdd a title string to a group of plots, typically created with vstack, hstack, or gridstack.\n\nExamples\n\np1 = plot(x=[1,2], y=[3,4], Geom.line);\np2 = plot(x=[1,2], y=[4,3], Geom.line);\ntitle(hstack(p1,p2), \"my latest data\", Compose.fontsize(18pt), fill(colorant\"red\"))\n\n\n\n"
+    "text": "title(ctx::Context, str::String, props::Property...) -> Context\n\nAdd a title string to a group of plots, typically created with vstack, hstack, or gridstack.\n\nExamples\n\np1 = plot(x=[1,2], y=[3,4], Geom.line);\np2 = plot(x=[1,2], y=[4,3], Geom.line);\ntitle(hstack(p1,p2), \"my latest data\", Compose.fontsize(18pt), fill(colorant\"red\"))\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Base.Multimedia.display-Tuple{Base.REPL.REPLDisplay,Union{Compose.Context, Gadfly.Plot}}",
+    "location": "lib/gadfly.html#Base.Multimedia.display-Tuple{Gadfly.GadflyDisplay,Union{Context, Plot}}",
     "page": "Gadfly",
     "title": "Base.Multimedia.display",
     "category": "method",
-    "text": "display(p::Plot)\n\nRender p to a multimedia display, typically an internet browser. This function is handy when rendering by plot has been suppressed with either trailing semi-colon or by calling it within a function.\n\n\n\n"
+    "text": "display(p::Plot)\n\nRender p to a multimedia display, typically an internet browser. This function is handy when rendering by plot has been suppressed with either trailing semi-colon or by calling it within a function.\n\n\n\n\n\n"
 },
 
 {
@@ -957,7 +957,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.current_theme",
     "category": "method",
-    "text": "current_theme()\n\nGet the Theme on top of the theme stack.\n\n\n\n"
+    "text": "current_theme()\n\nGet the Theme on top of the theme stack.\n\n\n\n\n\n"
 },
 
 {
@@ -965,7 +965,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.get_theme",
     "category": "method",
-    "text": "get_theme(::Val{:dark})\n\nA light foreground on a dark background.\n\n\n\n"
+    "text": "get_theme(::Val{:dark})\n\nA light foreground on a dark background.\n\n\n\n\n\n"
 },
 
 {
@@ -973,7 +973,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.get_theme",
     "category": "method",
-    "text": "get_theme(::Val{:default})\n\nA dark foreground on a light background.\n\n\n\n"
+    "text": "get_theme(::Val{:default})\n\nA dark foreground on a light background.\n\n\n\n\n\n"
 },
 
 {
@@ -981,7 +981,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.get_theme",
     "category": "method",
-    "text": "get_theme()\n\nRegister a theme by name by adding methods to get_theme.\n\nExamples\n\nget_theme(::Val{:mytheme}) = Theme(...)\npush_theme(:mytheme)\n\n\n\n"
+    "text": "get_theme()\n\nRegister a theme by name by adding methods to get_theme.\n\nExamples\n\nget_theme(::Val{:mytheme}) = Theme(...)\npush_theme(:mytheme)\n\n\n\n\n\n"
 },
 
 {
@@ -989,7 +989,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.lab_gradient",
     "category": "method",
-    "text": "function lab_gradient(cs::Color...)\n\n\n\n"
+    "text": "function lab_gradient(cs::Color...)\n\n\n\n\n\n"
 },
 
 {
@@ -997,7 +997,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.lab_rainbow",
     "category": "method",
-    "text": "lab_rainbow(l, c, h0, n)\n\nGenerate n colors in the LCHab colorspace by using a fixed luminance l and chroma c, and varying the hue, starting at h0.\n\n\n\n"
+    "text": "lab_rainbow(l, c, h0, n)\n\nGenerate n colors in the LCHab colorspace by using a fixed luminance l and chroma c, and varying the hue, starting at h0.\n\n\n\n\n\n"
 },
 
 {
@@ -1005,7 +1005,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.lchabmix",
     "category": "method",
-    "text": "function lchabmix(c0_, c1_, r, power)\n\n\n\n"
+    "text": "function lchabmix(c0_, c1_, r, power)\n\n\n\n\n\n"
 },
 
 {
@@ -1013,7 +1013,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.luv_rainbow",
     "category": "method",
-    "text": "luv_rainbow(l, c, h0, n)\n\nGenerate n colors in the LCHuv colorspace by using a fixed luminance l and chroma c, and varying the hue, starting at h0.\n\n\n\n"
+    "text": "luv_rainbow(l, c, h0, n)\n\nGenerate n colors in the LCHuv colorspace by using a fixed luminance l and chroma c, and varying the hue, starting at h0.\n\n\n\n\n\n"
 },
 
 {
@@ -1021,15 +1021,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.pop_theme",
     "category": "method",
-    "text": "pop_theme() -> Theme\n\nReturn to using the previous theme by removing the top item on the theme stack. See also pop_theme and with_theme.\n\n\n\n"
-},
-
-{
-    "location": "lib/gadfly.html#Gadfly.push_theme-Tuple{Gadfly.Theme}",
-    "page": "Gadfly",
-    "title": "Gadfly.push_theme",
-    "category": "method",
-    "text": "push_theme(t::Theme)\n\nSet the current theme by placing t onto the top of the theme stack. See also pop_theme and with_theme.\n\n\n\n"
+    "text": "pop_theme() -> Theme\n\nReturn to using the previous theme by removing the top item on the theme stack. See also pop_theme and with_theme.\n\n\n\n\n\n"
 },
 
 {
@@ -1037,15 +1029,23 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.push_theme",
     "category": "method",
-    "text": "push_theme(t::Symbol)\n\nPush a Theme by its name.  Available options are :default and :dark. See also get_theme.\n\n\n\n"
+    "text": "push_theme(t::Symbol)\n\nPush a Theme by its name.  Available options are :default and :dark. See also get_theme.\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/gadfly.html#Gadfly.weighted_color_mean-Union{Tuple{AbstractArray{ColorTypes.Lab{T},1},AbstractArray{S,1}}, Tuple{S}, Tuple{T}} where T where S<:Number",
+    "location": "lib/gadfly.html#Gadfly.push_theme-Tuple{Theme}",
+    "page": "Gadfly",
+    "title": "Gadfly.push_theme",
+    "category": "method",
+    "text": "push_theme(t::Theme)\n\nSet the current theme by placing t onto the top of the theme stack. See also pop_theme and with_theme.\n\n\n\n\n\n"
+},
+
+{
+    "location": "lib/gadfly.html#Gadfly.weighted_color_mean-Union{Tuple{T}, Tuple{S}, Tuple{AbstractArray{Lab{T},1},AbstractArray{S,1}}} where T where S<:Number",
     "page": "Gadfly",
     "title": "Gadfly.weighted_color_mean",
     "category": "method",
-    "text": "function weighted_color_mean(cs::AbstractArray{Lab{T},1},\n                             ws::AbstractArray{S,1}) where {S <: Number,T}\n\nReturn the mean of Lab colors cs as weighted by ws.\n\n\n\n"
+    "text": "function weighted_color_mean(cs::AbstractArray{Lab{T},1},\n                             ws::AbstractArray{S,1}) where {S <: Number,T}\n\nReturn the mean of Lab colors cs as weighted by ws.\n\n\n\n\n\n"
 },
 
 {
@@ -1053,7 +1053,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Gadfly",
     "title": "Gadfly.with_theme",
     "category": "method",
-    "text": "with_theme(f, theme)\n\nCall function f with theme as the current Theme. theme can be a Theme object or a symbol.\n\nExamples\n\nwith_theme(style(background_color=colorant\"#888888\"))) do\n    plot(x=rand(10), y=rand(10))\nend\n\n\n\n"
+    "text": "with_theme(f, theme)\n\nCall function f with theme as the current Theme. theme can be a Theme object or a symbol.\n\nExamples\n\nwith_theme(style(background_color=colorant\"#888888\"))) do\n    plot(x=rand(10), y=rand(10))\nend\n\n\n\n\n\n"
 },
 
 {
@@ -1077,7 +1077,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.abline",
     "category": "type",
-    "text": "Geom.abline[(; color=nothing, size=nothing, style=nothing)]\n\nFor each corresponding pair of elements in the intercept and slope aesthetics, draw the lines y = slope * x + intercept across the plot canvas. If unspecified, intercept defaults to [0] and slope to [1].\n\nThis geometry currently does not support non-linear Scale transformations.\n\n\n\n"
+    "text": "Geom.abline[(; color=nothing, size=nothing, style=nothing)]\n\nFor each corresponding pair of elements in the intercept and slope aesthetics, draw the lines T(y) = slope * T(x) + intercept across the plot canvas, where T(⋅) defaults to the identity function. If unspecified, intercept defaults to [0] and slope to [1].\n\nThis geometry also works with nonlinear Scale transformations of the y and/or x variable, with one caveat: for log transformations of the x variable, the intercept is the y-value at x=1 rather than at x=0. \n\n\n\n\n\n"
 },
 
 {
@@ -1085,7 +1085,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.bar",
     "category": "type",
-    "text": "Geom.bar[(; position=:stack, orientation=:vertical)]\n\nDraw bars of height y centered at positions x, or from xmin to xmax. If orientation is :horizontal switch x for y.  Optionally categorically groups bars using the color aesthetic.  If position is :stack they will be placed on top of each other;  if it is :dodge they will be placed side by side.\n\n\n\n"
+    "text": "Geom.bar[(; position=:stack, orientation=:vertical)]\n\nDraw bars of height y centered at positions x, or from xmin to xmax. If orientation is :horizontal switch x for y.  Optionally categorically groups bars using the color aesthetic.  If position is :stack they will be placed on top of each other;  if it is :dodge they will be placed side by side.\n\n\n\n\n\n"
 },
 
 {
@@ -1093,7 +1093,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.beeswarm",
     "category": "type",
-    "text": "Geom.beeswarm[; (orientation=:vertical, padding=0.1mm)]\n\nPlot the x and y aesthetics, the former being categorical and the latter continuous, by shifting the x position of each point to ensure that there is at least padding gap between neighbors.  If orientation is :horizontal, switch x for y.  Points can optionally be colored using the color aesthetic.\n\n\n\n"
+    "text": "Geom.beeswarm[; (orientation=:vertical, padding=0.1mm)]\n\nPlot the x and y aesthetics, the former being categorical and the latter continuous, by shifting the x position of each point to ensure that there is at least padding gap between neighbors.  If orientation is :horizontal, switch x for y.  Points can optionally be colored using the color aesthetic.\n\n\n\n\n\n"
 },
 
 {
@@ -1101,7 +1101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.boxplot",
     "category": "type",
-    "text": "Geom.boxplot[(; method=:tukey, suppress_outliers=false)]\n\nDraw box plots of the middle, lower_hinge, upper_hinge, lower_fence, upper_fence, and outliers aesthetics.  The categorical x aesthetic is optional.  If suppress_outliers is true, don\'t draw points indicating outliers.\n\nAlternatively, if the y aesthetic is specified instead, the middle, hinges, fences, and outliers aesthetics will be computed using Stat.boxplot.\n\n\n\n"
+    "text": "Geom.boxplot[(; method=:tukey, suppress_outliers=false)]\n\nDraw box plots of the middle, lower_hinge, upper_hinge, lower_fence, upper_fence, and outliers aesthetics.  The categorical x aesthetic is optional.  If suppress_outliers is true, don\'t draw points indicating outliers.\n\nAlternatively, if the y aesthetic is specified instead, the middle, hinges, fences, and outliers aesthetics will be computed using Stat.boxplot.\n\n\n\n\n\n"
 },
 
 {
@@ -1109,7 +1109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.errorbar",
     "category": "type",
-    "text": "Geom.errorbar\n\nDraw vertical error bars if the x, ymin, and ymax aesthetics are specified and/or horizontal error bars for y, xmin, and xmax. Optionally color them with color.\n\nSee also Geom.xerrorbar and Geom.yerrorbar.\n\n\n\n"
+    "text": "Geom.errorbar\n\nDraw vertical error bars if the x, ymin, and ymax aesthetics are specified and/or horizontal error bars for y, xmin, and xmax. Optionally color them with color.\n\nSee also Geom.xerrorbar and Geom.yerrorbar.\n\n\n\n\n\n"
 },
 
 {
@@ -1117,7 +1117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.hexbin",
     "category": "type",
-    "text": "Geom.hexbin[(; xbincount=200, ybincount=200)]\n\nBin the x and y aesthetics into tiled hexagons and color by count. xbincount and ybincount specify the number of bins.  This behavior relies on the default use of Stat.hexbin.\n\nAlternatively, draw hexagons of size xsize and ysize at positions x and y by passing Stat.identity to plot and manually binding the color aesthetic.\n\n\n\n"
+    "text": "Geom.hexbin[(; xbincount=200, ybincount=200)]\n\nBin the x and y aesthetics into tiled hexagons and color by count. xbincount and ybincount specify the number of bins.  This behavior relies on the default use of Stat.hexbin.\n\nAlternatively, draw hexagons of size xsize and ysize at positions x and y by passing Stat.identity to plot and manually binding the color aesthetic.\n\n\n\n\n\n"
 },
 
 {
@@ -1125,7 +1125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.hline",
     "category": "type",
-    "text": "Geom.hline[(; color=nothing, size=nothing, style=nothing)]\n\nDraw horizontal lines across the plot canvas at each position in the yintercept aesthetic.\n\n\n\n"
+    "text": "Geom.hline[(; color=nothing, size=nothing, style=nothing)]\n\nDraw horizontal lines across the plot canvas at each position in the yintercept aesthetic.\n\n\n\n\n\n"
 },
 
 {
@@ -1133,7 +1133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.label",
     "category": "type",
-    "text": "Geom.label[(; position=:dynamic, hide_overlaps=true)]\n\nPlace the text strings in the label aesthetic at the x and y coordinates on the plot frame.  Offset the text according to position, which can be :left, :right, :above, :below, :centered, or :dynamic.  The latter tries a variety of positions for each label to minimize the number that overlap.\n\n\n\n"
+    "text": "Geom.label[(; position=:dynamic, hide_overlaps=true)]\n\nPlace the text strings in the label aesthetic at the x and y coordinates on the plot frame.  Offset the text according to position, which can be :left, :right, :above, :below, :centered, or :dynamic.  The latter tries a variety of positions for each label to minimize the number that overlap.\n\n\n\n\n\n"
 },
 
 {
@@ -1141,7 +1141,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.line",
     "category": "type",
-    "text": "Geom.line[(; preserve_order=false, order=2)]\n\nDraw a line connecting the x and y coordinates.  Optionally plot multiple lines according to the group or color aesthetics.  order controls whether the lines(s) are underneath or on top of other forms.\n\nSet preserve_order to :true to not sort the points according to their position along the x axis, or use the equivalent Geom.path alias.\n\n\n\n"
+    "text": "Geom.line[(; preserve_order=false, order=2)]\n\nDraw a line connecting the x and y coordinates.  Optionally plot multiple lines according to the group or color aesthetics.  order controls whether the lines(s) are underneath or on top of other forms.\n\nSet preserve_order to :true to not sort the points according to their position along the x axis, or use the equivalent Geom.path alias.\n\n\n\n\n\n"
 },
 
 {
@@ -1149,7 +1149,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.point",
     "category": "type",
-    "text": "Geom.point\n\nDraw scatter plots of the x and y aesthetics.\n\nOptional Aesthetics\n\ncolor: Categorical data will choose maximally distinguishable colors from the LCHab color space.  Continuous data will map onto LCHab as well.  Colors can also be specified explicitly for each data point with a vector of colors of length(x).  A vector of length one specifies the color to use for all points. Default is Theme.default_color.\nshape: Categorical data will cycle through Theme.point_shapes.  Shapes can also be specified explicitly for each data point with a vector of shapes of length(x).  A vector of length one specifies the shape to use for all points. Default is Theme.point_shapes[1].\nsize: Categorical data and vectors of Ints will interpolate between Theme.point_size_{min,max}.  A continuous vector of AbstractFloats or Measures of length(x) specifies the size of each data point explicitly.  A vector of length one specifies the size to use for all points.  Default is Theme.point_size.\n\n\n\n"
+    "text": "Geom.point\n\nDraw scatter plots of the x and y aesthetics.\n\nOptional Aesthetics\n\ncolor: Categorical data will choose maximally distinguishable colors from the LCHab color space.  Continuous data will map onto LCHab as well.  Colors can also be specified explicitly for each data point with a vector of colors of length(x).  A vector of length one specifies the color to use for all points. Default is Theme.default_color.\nshape: Categorical data will cycle through Theme.point_shapes.  Shapes can also be specified explicitly for each data point with a vector of shapes of length(x).  A vector of length one specifies the shape to use for all points. Default is Theme.point_shapes[1].\nsize: Categorical data and vectors of Ints will interpolate between Theme.point_size_{min,max}.  A continuous vector of AbstractFloats or Measures of length(x) specifies the size of each data point explicitly.  A vector of length one specifies the size to use for all points.  Default is Theme.point_size.\n\n\n\n\n\n"
 },
 
 {
@@ -1157,7 +1157,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.polygon",
     "category": "type",
-    "text": "Geom.polygon[(; order=0, fill=false, preserve_order=false)]\n\nDraw polygons with vertices specified by the x and y aesthetics. Optionally plot multiple polygons according to the group or color aesthetics.  order controls whether the polygon(s) are underneath or on top of other forms.  If fill is true, fill and stroke the polygons according to Theme.discrete_highlight_color, otherwise only stroke.  If preserve_order is true, connect points in the order they are given, otherwise order the points around their centroid.\n\n\n\n"
+    "text": "Geom.polygon[(; order=0, fill=false, preserve_order=false)]\n\nDraw polygons with vertices specified by the x and y aesthetics. Optionally plot multiple polygons according to the group or color aesthetics.  order controls whether the polygon(s) are underneath or on top of other forms.  If fill is true, fill and stroke the polygons according to Theme.discrete_highlight_color, otherwise only stroke.  If preserve_order is true, connect points in the order they are given, otherwise order the points around their centroid.\n\n\n\n\n\n"
 },
 
 {
@@ -1165,7 +1165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.rectbin",
     "category": "type",
-    "text": "Geom.rectbin\n\nDraw equal sizes rectangles centered at x and y positions.  Optionally specify their color.\n\n\n\n"
+    "text": "Geom.rectbin\n\nDraw equal sizes rectangles centered at x and y positions.  Optionally specify their color.\n\n\n\n\n\n"
 },
 
 {
@@ -1173,7 +1173,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.ribbon",
     "category": "type",
-    "text": "Geom.ribbon\n\nDraw a ribbon at the positions in x bounded above and below by ymax and ymin, respectively.  Optionally draw multiple ribbons by grouping with color.\n\n\n\n"
+    "text": "Geom.ribbon\n\nDraw a ribbon at the positions in x bounded above and below by ymax and ymin, respectively.  Optionally draw multiple ribbons by grouping with color.\n\n\n\n\n\n"
 },
 
 {
@@ -1181,7 +1181,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.segment",
     "category": "type",
-    "text": "Geom.segment[(; arrow=false, filled=false)]\n\nDraw line segments from x, y to xend, yend.  Optionally specify their color.  If arrow is true a Scale object for both axes must be provided.  If filled is true the arrows are drawn with a filled polygon, otherwise with a stroked line.\n\n\n\n"
+    "text": "Geom.segment[(; arrow=false, filled=false)]\n\nDraw line segments from x, y to xend, yend.  Optionally specify their color.  If arrow is true a Scale object for both axes must be provided.  If filled is true the arrows are drawn with a filled polygon, otherwise with a stroked line.\n\n\n\n\n\n"
 },
 
 {
@@ -1189,7 +1189,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.subplot_grid",
     "category": "type",
-    "text": "Geom.subplot_grid[(elements...)]\n\nDraw multiple subplots in a grid organized by one or two categorial vectors.\n\nOptional Aesthetics\n\nxgroup, ygroup: Arrange subplots on the X and Y axes, respectively, by categorial data.\nfree_x_axis, free_y_axis: Whether the X and Y axis scales, respectively, can differ across the subplots. Defaults to false. If true, scales are set appropriately for individual subplots.\n\nOne or both of xgroup or ygroup must be bound. If only one, a single column or row of subplots is drawn, if both, a grid.\n\nArguments\n\nUnlike most geometries, Geom.subplot_grid is typically passed one or more parameters. The constructor works for the most part like the layer function. Arbitrary plot elements may be passed, while aesthetic bindings are inherited from the parent plot.\n\n\n\n"
+    "text": "Geom.subplot_grid[(elements...)]\n\nDraw multiple subplots in a grid organized by one or two categorial vectors.\n\nOptional Aesthetics\n\nxgroup, ygroup: Arrange subplots on the X and Y axes, respectively, by categorial data.\nfree_x_axis, free_y_axis: Whether the X and Y axis scales, respectively, can differ across the subplots. Defaults to false. If true, scales are set appropriately for individual subplots.\n\nOne or both of xgroup or ygroup must be bound. If only one, a single column or row of subplots is drawn, if both, a grid.\n\nArguments\n\nUnlike most geometries, Geom.subplot_grid is typically passed one or more parameters. The constructor works for the most part like the layer function. Arbitrary plot elements may be passed, while aesthetic bindings are inherited from the parent plot.\n\n\n\n\n\n"
 },
 
 {
@@ -1197,7 +1197,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.violin",
     "category": "type",
-    "text": "Geom.violin[(; order=1)]\n\nDraw y versus width, optionally grouping categorically by x and coloring with color.  Alternatively, if width is not supplied, the data in y will be transformed to a density estimate using Stat.violin\n\n\n\n"
+    "text": "Geom.violin[(; order=1)]\n\nDraw y versus width, optionally grouping categorically by x and coloring with color.  Alternatively, if width is not supplied, the data in y will be transformed to a density estimate using Stat.violin\n\n\n\n\n\n"
 },
 
 {
@@ -1205,7 +1205,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.vline",
     "category": "type",
-    "text": "Geom.vline[(; color=nothing, size=nothing, style=nothing)]\n\nDraw vertical lines across the plot canvas at each position in the xintercept aesthetic.\n\n\n\n"
+    "text": "Geom.vline[(; color=nothing, size=nothing, style=nothing)]\n\nDraw vertical lines across the plot canvas at each position in the xintercept aesthetic.\n\n\n\n\n\n"
 },
 
 {
@@ -1213,7 +1213,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.xerrorbar",
     "category": "type",
-    "text": "Geom.xerrorbar\n\nDraw horizontal error bars at y from xmin to xmax.  Optionally color them with color.\n\n\n\n"
+    "text": "Geom.xerrorbar\n\nDraw horizontal error bars at y from xmin to xmax.  Optionally color them with color.\n\n\n\n\n\n"
 },
 
 {
@@ -1221,7 +1221,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.yerrorbar",
     "category": "type",
-    "text": "Geom.yerrorbar\n\nDraw vertical error bars at x from ymin to ymax.  Optionally color them with color.\n\n\n\n"
+    "text": "Geom.yerrorbar\n\nDraw vertical error bars at x from ymin to ymax.  Optionally color them with color.\n\n\n\n\n\n"
 },
 
 {
@@ -1229,7 +1229,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.contour",
     "category": "method",
-    "text": "Geom.contours[(; levels=15, samples=150, preserve_order=true)]\n\nDraw contour lines of the 2D function, matrix, or DataFrame in the z aesthetic.  This geometry is equivalent to Geom.line with Stat.contour; see the latter for more information.\n\n\n\n"
+    "text": "Geom.contours[(; levels=15, samples=150, preserve_order=true)]\n\nDraw contour lines of the 2D function, matrix, or DataFrame in the z aesthetic.  This geometry is equivalent to Geom.line with Stat.contour; see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
@@ -1237,7 +1237,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.density",
     "category": "method",
-    "text": "Geom.density[(; bandwidth=-Inf)]\n\nDraw a line showing the density estimate of the x aesthetic. This geometry is equivalent to Geom.line with Stat.density; see the latter for more information.\n\n\n\n"
+    "text": "Geom.density[(; bandwidth=-Inf)]\n\nDraw a line showing the density estimate of the x aesthetic. This geometry is equivalent to Geom.line with Stat.density; see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
@@ -1245,7 +1245,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.density2d",
     "category": "method",
-    "text": "Geom.density2d[(; bandwidth=(-Inf,-Inf), levels=15)]\n\nDraw a set of contours showing the density estimate of the x and y aesthetics.  This geometry is equivalent to Geom.line with Stat.density2d; see the latter for more information.\n\n\n\n"
+    "text": "Geom.density2d[(; bandwidth=(-Inf,-Inf), levels=15)]\n\nDraw a set of contours showing the density estimate of the x and y aesthetics.  This geometry is equivalent to Geom.line with Stat.density2d; see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
@@ -1253,7 +1253,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.ellipse",
     "category": "method",
-    "text": "Geom.ellipse[(; distribution=MvNormal, levels=[0.95], nsegments=51, fill=false)]\n\nDraw a confidence ellipse, using a parametric multivariate distribution, for a scatter of points specified by the x and y aesthetics.  Optionally plot multiple ellipses according to the group or color aesthetics.  This geometry is equivalent to Geom.polygon with Stat.ellipse; see the latter for more information.\n\n\n\n"
+    "text": "Geom.ellipse[(; distribution=MvNormal, levels=[0.95], nsegments=51, fill=false)]\n\nDraw a confidence ellipse, using a parametric multivariate distribution, for a scatter of points specified by the x and y aesthetics.  Optionally plot multiple ellipses according to the group or color aesthetics.  This geometry is equivalent to Geom.polygon with Stat.ellipse; see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
@@ -1261,7 +1261,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.hair",
     "category": "method",
-    "text": "Geom.hair[(; intercept=0.0, orientation=:vertical)]\n\nDraw lines from x, y to y=intercept if orientation is :vertical or x=intercept if :horizontal.  Optionally specify their color.  This geometry is equivalent to Geom.segment with Stat.hair.\n\n\n\n"
+    "text": "Geom.hair[(; intercept=0.0, orientation=:vertical)]\n\nDraw lines from x, y to y=intercept if orientation is :vertical or x=intercept if :horizontal.  Optionally specify their color.  This geometry is equivalent to Geom.segment with Stat.hair.\n\n\n\n\n\n"
 },
 
 {
@@ -1269,7 +1269,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.histogram",
     "category": "method",
-    "text": "Geom.histogram[(; position=:stack, bincount=nothing, minbincount=3, maxbincount=150,\n                orientation=:vertical, density=false)]\n\nDraw histograms from a series of observations in x or y optionally grouping by color.  This geometry is equivalent to Geom.bar with Stat.histogram; see the latter for more information.\n\n\n\n"
+    "text": "Geom.histogram[(; position=:stack, bincount=nothing, minbincount=3, maxbincount=150,\n                orientation=:vertical, density=false)]\n\nDraw histograms from a series of observations in x or y optionally grouping by color.  This geometry is equivalent to Geom.bar with Stat.histogram; see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
@@ -1277,7 +1277,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.histogram2d",
     "category": "method",
-    "text": "Geom.histogram2d[(; xbincount=nothing, xminbincount=3, xmaxbincount=150,\n                    ybincount=nothing, yminbincount=3, ymaxbincount=150)]\n\nDraw a heatmap of the x and y aesthetics by binning into rectangles and indicating density with color.  This geometry is equivalent to Geom.rect with Stat.histogram2d;  see the latter for more information.\n\n\n\n"
+    "text": "Geom.histogram2d[(; xbincount=nothing, xminbincount=3, xmaxbincount=150,\n                    ybincount=nothing, yminbincount=3, ymaxbincount=150)]\n\nDraw a heatmap of the x and y aesthetics by binning into rectangles and indicating density with color.  This geometry is equivalent to Geom.rect with Stat.histogram2d;  see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
@@ -1285,7 +1285,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.path",
     "category": "method",
-    "text": "Geom.path\n\nDraw lines between x and y points in the order they are listed.  This geometry is equivalent to Geom.line with preserve_order=true.\n\n\n\n"
+    "text": "Geom.path\n\nDraw lines between x and y points in the order they are listed.  This geometry is equivalent to Geom.line with preserve_order=true.\n\n\n\n\n\n"
 },
 
 {
@@ -1293,7 +1293,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.rect",
     "category": "method",
-    "text": "Geom.rect\n\nDraw colored rectangles with the corners specified by the xmin, xmax, ymin and ymax aesthetics.  Optionally specify their color.\n\n\n\n"
+    "text": "Geom.rect\n\nDraw colored rectangles with the corners specified by the xmin, xmax, ymin and ymax aesthetics.  Optionally specify their color.\n\n\n\n\n\n"
 },
 
 {
@@ -1301,7 +1301,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.smooth",
     "category": "method",
-    "text": "Geom.smooth[(; method:loess, smoothing=0.75)]\n\nPlot a smooth function estimated from the line described by x and y aesthetics.  Optionally group by color and plot multiple independent smooth lines.  This geometry is equivalent to Geom.line with Stat.smooth; see the latter for more information.\n\n\n\n"
+    "text": "Geom.smooth[(; method:loess, smoothing=0.75)]\n\nPlot a smooth function estimated from the line described by x and y aesthetics.  Optionally group by color and plot multiple independent smooth lines.  This geometry is equivalent to Geom.line with Stat.smooth; see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
@@ -1309,7 +1309,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.step",
     "category": "method",
-    "text": "Geom.step[(; direction=:hv)]\n\nConnect points described by the x and y aesthetics using a stepwise function.  Optionally group by color or group.  This geometry is equivalent to Geom.line with Stat.step; see the latter for more information.\n\n\n\n"
+    "text": "Geom.step[(; direction=:hv)]\n\nConnect points described by the x and y aesthetics using a stepwise function.  Optionally group by color or group.  This geometry is equivalent to Geom.line with Stat.step; see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
@@ -1317,7 +1317,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.vector",
     "category": "method",
-    "text": "Geom.vector[(; filled=false)]\n\nThis geometry is equivalent to Geom.segment(arrow=true).\n\n\n\n"
+    "text": "Geom.vector[(; filled=false)]\n\nThis geometry is equivalent to Geom.segment(arrow=true).\n\n\n\n\n\n"
 },
 
 {
@@ -1325,7 +1325,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.vectorfield",
     "category": "method",
-    "text": "Geom.vectorfield[(; smoothness=1.0, scale=1.0, samples=20, filled=false)]\n\nDraw a gradient vector field of the 2D function or a matrix in the z aesthetic.  This geometry is equivalent to Geom.segment with Stat.vectorfield; see the latter for more information.\n\n\n\n"
+    "text": "Geom.vectorfield[(; smoothness=1.0, scale=1.0, samples=20, filled=false)]\n\nDraw a gradient vector field of the 2D function or a matrix in the z aesthetic.  This geometry is equivalent to Geom.segment with Stat.vectorfield; see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
@@ -1349,7 +1349,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.annotation",
     "category": "type",
-    "text": "Guide.annotation(ctx::Compose.Context)\n\nOverlay a plot with an arbitrary Compose graphic. The context will inherit the plot\'s coordinate system, unless overridden with a custom unit box.\n\n\n\n"
+    "text": "Guide.annotation(ctx::Compose.Context)\n\nOverlay a plot with an arbitrary Compose graphic. The context will inherit the plot\'s coordinate system, unless overridden with a custom unit box.\n\n\n\n\n\n"
 },
 
 {
@@ -1357,7 +1357,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.colorkey",
     "category": "type",
-    "text": "Guide.colorkey[(; title=nothing, labels=nothing, pos=nothing)]\nGuide.colorkey(title, labels, pos)\n\nEnable control of the auto-generated colorkey.  Set the colorkey title for any plot, and the item labels for plots with a discrete color scale.  pos overrides Theme(key_position=) and can be in either relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm, 0mm]), or plot scale (e.g. [0,0]) coordinates.\n\n\n\n"
+    "text": "Guide.colorkey[(; title=nothing, labels=nothing, pos=nothing)]\nGuide.colorkey(title, labels, pos)\n\nEnable control of the auto-generated colorkey.  Set the colorkey title for any plot, and the item labels for plots with a discrete color scale.  pos overrides Theme(key_position=) and can be in either relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm, 0mm]), or plot scale (e.g. [0,0]) coordinates.\n\n\n\n\n\n"
 },
 
 {
@@ -1365,7 +1365,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.manual_color_key",
     "category": "type",
-    "text": "Guide.manual_color_key(title, labels, colors)\n\nManually define a color key with the legend title and item labels and colors.\n\n\n\n"
+    "text": "Guide.manual_color_key(title, labels, colors)\n\nManually define a color key with the legend title and item labels and colors.\n\n\n\n\n\n"
 },
 
 {
@@ -1373,7 +1373,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.shapekey",
     "category": "type",
-    "text": "Guide.shapekey[(; title=\"Shape\", labels=[\"\"], pos=Float64[])]\nGuide.shapekey(title, labels, pos)\n\nEnable control of the auto-generated shapekey.  Set the key title and the item labels. pos overrides Theme(key_position=) and can be in either relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm, 0mm]), or plot scale (e.g. [0,0]) coordinates.\n\n\n\n"
+    "text": "Guide.shapekey[(; title=\"Shape\", labels=[\"\"], pos=Float64[])]\nGuide.shapekey(title, labels, pos)\n\nEnable control of the auto-generated shapekey.  Set the key title and the item labels. pos overrides Theme(key_position=) and can be in either relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm, 0mm]), or plot scale (e.g. [0,0]) coordinates.\n\n\n\n\n\n"
 },
 
 {
@@ -1381,7 +1381,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.title",
     "category": "type",
-    "text": "Geom.title(title)\n\nSet the plot title.\n\n\n\n"
+    "text": "Geom.title(title)\n\nSet the plot title.\n\n\n\n\n\n"
 },
 
 {
@@ -1389,7 +1389,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.xlabel",
     "category": "type",
-    "text": "Guide.xlabel(label, orientation=:auto)\n\nSets the x-axis label for the plot.  label is either a String or nothing. orientation can also be :horizontal or :vertical.\n\n\n\n"
+    "text": "Guide.xlabel(label, orientation=:auto)\n\nSets the x-axis label for the plot.  label is either a String or nothing. orientation can also be :horizontal or :vertical.\n\n\n\n\n\n"
 },
 
 {
@@ -1397,7 +1397,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.xrug",
     "category": "type",
-    "text": "Guide.xrug\n\nDraw a short vertical lines along the x-axis of a plot at the positions in the x aesthetic.\n\n\n\n"
+    "text": "Guide.xrug\n\nDraw a short vertical lines along the x-axis of a plot at the positions in the x aesthetic.\n\n\n\n\n\n"
 },
 
 {
@@ -1405,7 +1405,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.xticks",
     "category": "type",
-    "text": "Guide.xticks[(; label=true, ticks=:auto, orientation=:auto)]\nGuide.xticks(label, ticks, orientation)\n\nFormats the tick marks and labels for the x-axis.  label toggles the label visibility.  ticks can also be an array of locations, or nothing. orientation can also be :horizontal or :vertical.\n\n\n\n"
+    "text": "Guide.xticks[(; label=true, ticks=:auto, orientation=:auto)]\nGuide.xticks(label, ticks, orientation)\n\nFormats the tick marks and labels for the x-axis.  label toggles the label visibility.  ticks can also be an array of locations, or nothing. orientation can also be :horizontal or :vertical.\n\n\n\n\n\n"
 },
 
 {
@@ -1413,7 +1413,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.ylabel",
     "category": "type",
-    "text": "Guide.ylabel(label, orientation=:auto)\n\nSets the y-axis label for the plot.  label is either a String or nothing. orientation can also be :horizontal or :vertical.\n\n\n\n"
+    "text": "Guide.ylabel(label, orientation=:auto)\n\nSets the y-axis label for the plot.  label is either a String or nothing. orientation can also be :horizontal or :vertical.\n\n\n\n\n\n"
 },
 
 {
@@ -1421,7 +1421,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.yrug",
     "category": "type",
-    "text": "Guide.yrug\n\nDraw short horizontal lines along the y-axis of a plot at the positions in the \'y\' aesthetic.\n\n\n\n"
+    "text": "Guide.yrug\n\nDraw short horizontal lines along the y-axis of a plot at the positions in the \'y\' aesthetic.\n\n\n\n\n\n"
 },
 
 {
@@ -1429,7 +1429,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Guides",
     "title": "Gadfly.Guide.yticks",
     "category": "type",
-    "text": "Guide.yticks[(; label=true, ticks=:auto, orientation=:horizontal)]\nGuide.yticks(ticks, label, orientation)\n\nFormats the tick marks and labels for the y-axis.  label toggles the label visibility.  ticks can also be an array of locations, or nothing. orientation can also be :auto or :vertical.\n\n\n\n"
+    "text": "Guide.yticks[(; label=true, ticks=:auto, orientation=:horizontal)]\nGuide.yticks(ticks, label, orientation)\n\nFormats the tick marks and labels for the y-axis.  label toggles the label visibility.  ticks can also be an array of locations, or nothing. orientation can also be :auto or :vertical.\n\n\n\n\n\n"
 },
 
 {
@@ -1453,7 +1453,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.xticks",
     "category": "method",
-    "text": "Stat.xticks[(; ticks=:auto, granularity_weight=1/4, simplicity_weight=1/6,\n            coverage_weight=1/3, niceness_weight=1/4)]\n\nCompute an appealing set of x-ticks that encompass the data by transforming the x, xmin, xmax and xintercept aesthetics into the xtick and xgrid aesthetics.  ticks is a vector of desired values, or :auto to indicate they should be computed.  the importance of having a reasonable number of ticks is specified with granularity_weight; of including zero with simplicity_weight; of tightly fitting the span of the data with coverage_weight; and of having a nice numbering with niceness_weight.\n\n\n\n"
+    "text": "Stat.xticks[(; ticks=:auto, granularity_weight=1/4, simplicity_weight=1/6,\n            coverage_weight=1/3, niceness_weight=1/4)]\n\nCompute an appealing set of x-ticks that encompass the data by transforming the x, xmin, xmax and xintercept aesthetics into the xtick and xgrid aesthetics.  ticks is a vector of desired values, or :auto to indicate they should be computed.  the importance of having a reasonable number of ticks is specified with granularity_weight; of including zero with simplicity_weight; of tightly fitting the span of the data with coverage_weight; and of having a nice numbering with niceness_weight.\n\n\n\n\n\n"
 },
 
 {
@@ -1461,7 +1461,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.yticks",
     "category": "method",
-    "text": "Stat.yticks[(; ticks=:auto, granularity_weight=1/4, simplicity_weight=1/6,\n            coverage_weight=1/3, niceness_weight=1/4)]\n\nCompute an appealing set of y-ticks that encompass the data by transforming the y, ymin, ymax, yintercept, middle, lower_hinge, upper_hinge, lower_fence and upper_fence aesthetics into the ytick and ygrid aesthetics.  ticks is a vector of desired values, or :auto to indicate they should be computed.  the importance of having a reasonable number of ticks is specified with granularity_weight; of including zero with simplicity_weight; of tightly fitting the span of the data with coverage_weight; and of having a nice numbering with niceness_weight.\n\n\n\n"
+    "text": "Stat.yticks[(; ticks=:auto, granularity_weight=1/4, simplicity_weight=1/6,\n            coverage_weight=1/3, niceness_weight=1/4)]\n\nCompute an appealing set of y-ticks that encompass the data by transforming the y, ymin, ymax, yintercept, middle, lower_hinge, upper_hinge, lower_fence and upper_fence aesthetics into the ytick and ygrid aesthetics.  ticks is a vector of desired values, or :auto to indicate they should be computed.  the importance of having a reasonable number of ticks is specified with granularity_weight; of including zero with simplicity_weight; of tightly fitting the span of the data with coverage_weight; and of having a nice numbering with niceness_weight.\n\n\n\n\n\n"
 },
 
 {
@@ -1469,7 +1469,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.bar",
     "category": "type",
-    "text": "Stat.bar[(; position=:stack, orientation=:vertical)]\n\nTransform the x aesthetic into the xmin and xmax aesthetics.  Used by Geom.bar.\n\n\n\n"
+    "text": "Stat.bar[(; position=:stack, orientation=:vertical)]\n\nTransform the x aesthetic into the xmin and xmax aesthetics.  Used by Geom.bar.\n\n\n\n\n\n"
 },
 
 {
@@ -1477,7 +1477,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.binmean",
     "category": "type",
-    "text": "Stat.binmean[(; n=20)]\n\nTransform the the x and y aesthetics into n bins each of which contains the mean within than bin.\n\n\n\n"
+    "text": "Stat.binmean[(; n=20)]\n\nTransform the the x and y aesthetics into n bins each of which contains the mean within than bin.\n\n\n\n\n\n"
 },
 
 {
@@ -1485,7 +1485,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.boxplot",
     "category": "type",
-    "text": "Stat.boxplot[(; method=:tukey)]\n\nTransform the the x and y aesthetics into the x, middle, lower_hinge, upper_hinge, lower_fence, upper_fence and outliers aesthetics.  If method is :tukey then Tukey\'s rule is used (i.e. fences are 1.5 times the inter-quartile range).  Otherwise, method should be a vector of five numbers giving quantiles for lower fence, lower hinge, middle, upper hinge, and upper fence in that order.  Used by Geom.boxplot.\n\n\n\n"
+    "text": "Stat.boxplot[(; method=:tukey)]\n\nTransform the the x and y aesthetics into the x, middle, lower_hinge, upper_hinge, lower_fence, upper_fence and outliers aesthetics.  If method is :tukey then Tukey\'s rule is used (i.e. fences are 1.5 times the inter-quartile range).  Otherwise, method should be a vector of five numbers giving quantiles for lower fence, lower hinge, middle, upper hinge, and upper fence in that order.  Used by Geom.boxplot.\n\n\n\n\n\n"
 },
 
 {
@@ -1493,7 +1493,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.contour",
     "category": "type",
-    "text": "Stat.contour[(; levels=15, samples=150)]\n\nTransform the 2D function, matrix, DataFrame in the z aesthetic into a set of lines in x and y showing the iso-level contours.  A function requires that either the x and y or the xmin, xmax, ymin and ymax aesthetics also be defined.  The latter are interpolated using samples.  A matrix and DataFrame can optionally input x and y aesthetics to specify the coordinates of the rows and columns, respectively.  In each case levels sets the number of contours to draw:  either a vector of contour levels, an integer that specifies the number of contours to draw, or a function which inputs z and outputs either a vector or an integer.  Used by Geom.contour.\n\n\n\n"
+    "text": "Stat.contour[(; levels=15, samples=150)]\n\nTransform the 2D function, matrix, or DataFrame in the z aesthetic into a set of lines in x and y showing the iso-level contours.  A function requires that either the x and y or the xmin, xmax, ymin and ymax aesthetics also be defined.  The latter are interpolated using samples.  A matrix and DataFrame can optionally input x and y aesthetics to specify the coordinates of the rows and columns, respectively.  In each case levels sets the number of contours to draw:  either a vector of contour levels, an integer that specifies the number of contours to draw, or a function which inputs z and outputs either a vector or an integer.  Used by Geom.contour.\n\n\n\n\n\n"
 },
 
 {
@@ -1501,7 +1501,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.density",
     "category": "type",
-    "text": "Stat.density[(; n=256, bandwidth=-Inf)]\n\nEstimate the density of x at n points, and put the result in x and y. Smoothing is controlled by bandwidth.  Used by Geom.density.\n\n\n\n"
+    "text": "Stat.density[(; n=256, bandwidth=-Inf)]\n\nEstimate the density of x at n points, and put the result in x and y. Smoothing is controlled by bandwidth.  Used by Geom.density.\n\n\n\n\n\n"
 },
 
 {
@@ -1509,7 +1509,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.density2d",
     "category": "type",
-    "text": "Stat.density2d[(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15)]\n\nEstimate the density of the x and y aesthetics at n points and put the results into the x, y and z aesthetics.  Smoothing is controlled by bandwidth.  Calls Stat.contour to compute the levels.  Used by Geom.density2d.\n\n\n\n"
+    "text": "Stat.density2d[(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15)]\n\nEstimate the density of the x and y aesthetics at n points and put the results into the x, y and z aesthetics.  Smoothing is controlled by bandwidth.  Calls Stat.contour to compute the levels.  Used by Geom.density2d.\n\n\n\n\n\n"
 },
 
 {
@@ -1517,7 +1517,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.ellipse",
     "category": "type",
-    "text": "Stat.ellipse[(; distribution=MvNormal, levels=[0.95], nsegments=51)]\n\nTransform the points in the x and y aesthetics into set of a lines in the x and y aesthetics.  distribution specifies a multivariate distribution to use; levels the quantiles for which confidence ellipses are calculated; and nsegments the number of segments with which to draw each ellipse.  Used by Geom.ellipse.\n\n\n\n"
+    "text": "Stat.ellipse[(; distribution=MvNormal, levels=[0.95], nsegments=51)]\n\nTransform the points in the x and y aesthetics into set of a lines in the x and y aesthetics.  distribution specifies a multivariate distribution to use; levels the quantiles for which confidence ellipses are calculated; and nsegments the number of segments with which to draw each ellipse.  Used by Geom.ellipse.\n\n\n\n\n\n"
 },
 
 {
@@ -1525,7 +1525,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.func",
     "category": "type",
-    "text": "Stat.func[(; num_samples=250)]\n\nTransform the functions or expressions in the y, xmin and xmax aesthetics into points in the x, y and group aesthetics.\n\n\n\n"
+    "text": "Stat.func[(; num_samples=250)]\n\nTransform the functions or expressions in the y, xmin and xmax aesthetics into points in the x, y and group aesthetics.\n\n\n\n\n\n"
 },
 
 {
@@ -1533,7 +1533,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.hair",
     "category": "type",
-    "text": "Stat.hair[(; intercept=0.0, orientation=:vertical)]\n\nTransform points in the x and y aesthetics into lines in the x, y, xend and yend aesthetics.  Used by Geom.hair.\n\n\n\n"
+    "text": "Stat.hair[(; intercept=0.0, orientation=:vertical)]\n\nTransform points in the x and y aesthetics into lines in the x, y, xend and yend aesthetics.  Used by Geom.hair.\n\n\n\n\n\n"
 },
 
 {
@@ -1541,7 +1541,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.hexbin",
     "category": "type",
-    "text": "Stat.hexbin[(; xbincount=50, ybincount=50)]\n\nBin the points in the x and y aesthetics into hexagons in the x, y, xsize and ysize aesthetics.  xbincount and ybincount manually fix the number of bins.\n\n\n\n"
+    "text": "Stat.hexbin[(; xbincount=50, ybincount=50)]\n\nBin the points in the x and y aesthetics into hexagons in the x, y, xsize and ysize aesthetics.  xbincount and ybincount manually fix the number of bins.\n\n\n\n\n\n"
 },
 
 {
@@ -1549,7 +1549,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.histogram",
     "category": "type",
-    "text": "Stat.histogram[(; bincount=nothing, minbincount=3, maxbincount=150,\n                position=:stack, orientation=:vertical, density=false)]\n\nTransform the x aesthetic into the x, y, xmin and xmax aesthetics, optionally grouping by color. Exchange y for x when orientation is :horizontal.  bincount specifies the number of bins to use.  If set to nothing, an optimization method is used to determine a reasonable value which uses minbincount and maxbincount to set the lower and upper limits.  If density is true, normalize the counts by their total.\n\n\n\n"
+    "text": "Stat.histogram[(; bincount=nothing, minbincount=3, maxbincount=150,\n                position=:stack, orientation=:vertical, density=false)]\n\nTransform the x aesthetic into the x, y, xmin and xmax aesthetics, optionally grouping by color. Exchange y for x when orientation is :horizontal.  bincount specifies the number of bins to use.  If set to nothing, an optimization method is used to determine a reasonable value which uses minbincount and maxbincount to set the lower and upper limits.  If density is true, normalize the counts by their total.\n\n\n\n\n\n"
 },
 
 {
@@ -1557,7 +1557,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.histogram2d",
     "category": "type",
-    "text": "Stat.histogram2d[(; xbincount=nothing, xminbincount=3, xmaxbincount=150,\n                    ybincount=nothing, yminbincount=3, ymaxbincount=150)]\n\nBin the points in the x and y aesthetics into rectangles in the xmin, ymax, ymin, ymax and color aesthetics.  xbincount and ybincount manually fix the number of bins.  If set to nothing, an optimization method is used to determine a reasonable value which uses xminbincount, xmaxbincount, yminbincount and ymaxbincount to set the lower and upper limits.\n\n\n\n"
+    "text": "Stat.histogram2d[(; xbincount=nothing, xminbincount=3, xmaxbincount=150,\n                    ybincount=nothing, yminbincount=3, ymaxbincount=150)]\n\nBin the points in the x and y aesthetics into rectangles in the xmin, ymax, ymin, ymax and color aesthetics.  xbincount and ybincount manually fix the number of bins.  If set to nothing, an optimization method is used to determine a reasonable value which uses xminbincount, xmaxbincount, yminbincount and ymaxbincount to set the lower and upper limits.\n\n\n\n\n\n"
 },
 
 {
@@ -1565,7 +1565,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.identity",
     "category": "type",
-    "text": "Stat.identity\n\n\n\n"
+    "text": "Stat.identity\n\n\n\n\n\n"
 },
 
 {
@@ -1573,7 +1573,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.nil",
     "category": "type",
-    "text": "Stat.Nil\n\n\n\n"
+    "text": "Stat.Nil\n\n\n\n\n\n"
 },
 
 {
@@ -1581,7 +1581,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.qq",
     "category": "type",
-    "text": "Stat.qq\n\nTransform the x and y aesthetics into cumulative distrubutions. If each is a numeric vector, their sample quantiles will be compared.  If one is a Distribution, then its theoretical quantiles will be compared with the sample quantiles of the other.\n\n\n\n"
+    "text": "Stat.qq\n\nTransform the x and y aesthetics into cumulative distrubutions. If each is a numeric vector, their sample quantiles will be compared.  If one is a Distribution, then its theoretical quantiles will be compared with the sample quantiles of the other.\n\n\n\n\n\n"
 },
 
 {
@@ -1589,7 +1589,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.rectbin",
     "category": "type",
-    "text": "Stat.rectbin\n\nTransform the x and y aesthetics into the xmin, xmax, ymin and ymax aesthetics.\n\n\n\n"
+    "text": "Stat.rectbin\n\nTransform the x and y aesthetics into the xmin, xmax, ymin and ymax aesthetics.\n\n\n\n\n\n"
 },
 
 {
@@ -1597,7 +1597,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.smooth",
     "category": "type",
-    "text": "Stat.smooth[(; method=:loess, smoothing=0.75)]\n\nTransform the x and y aesthetics into the x and y aesthetics.  method can either be:loess or :lm.  smoothing controls the degree of smoothing.  For :loess, this is the span parameter giving the proportion of data used for each local fit where 0.75 is the default. Smaller values use more data (less local context), larger values use less data (more local context).\n\n\n\n"
+    "text": "Stat.smooth[(; method=:loess, smoothing=0.75)]\n\nTransform the x and y aesthetics into the x and y aesthetics.  method can either be:loess or :lm.  smoothing controls the degree of smoothing.  For :loess, this is the span parameter giving the proportion of data used for each local fit where 0.75 is the default. Smaller values use more data (less local context), larger values use less data (more local context).\n\n\n\n\n\n"
 },
 
 {
@@ -1605,7 +1605,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.step",
     "category": "type",
-    "text": "Stat.step[(; direction=:hv)]\n\nPerform stepwise interpolation between the points in the x and y aesthetics.  If direction is :hv a horizontal line extends to the right of each point and a vertical line below it;  if :vh then vertical above and horizontal to the left.  More concretely, between (x[i], y[i]) and (x[i+1], y[i+1]), either (x[i+1], y[i]) or (x[i], y[i+1]) is inserted, for :hv and :vh, respectively.\n\n\n\n"
+    "text": "Stat.step[(; direction=:hv)]\n\nPerform stepwise interpolation between the points in the x and y aesthetics.  If direction is :hv a horizontal line extends to the right of each point and a vertical line below it;  if :vh then vertical above and horizontal to the left.  More concretely, between (x[i], y[i]) and (x[i+1], y[i+1]), either (x[i+1], y[i]) or (x[i], y[i+1]) is inserted, for :hv and :vh, respectively.\n\n\n\n\n\n"
 },
 
 {
@@ -1613,7 +1613,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.vectorfield",
     "category": "type",
-    "text": "Stat.vectorfield[(; smoothness=1.0, scale=1.0, samples=20)]\n\nTransform the 2D function or matrix in the z aesthetic into a set of lines from x, y to xend, yend showing the gradient vectors.  A function requires that either the x and y or the xmin, xmax, ymin and ymax aesthetics also be defined.  The latter are interpolated using samples.  A matrix can optionally input x and y aesthetics to specify the coordinates of the rows and columns, respectively.  In each case, smoothness can vary from 0 to Inf;  and scale sets the size of vectors.\n\n\n\n"
+    "text": "Stat.vectorfield[(; smoothness=1.0, scale=1.0, samples=20)]\n\nTransform the 2D function or matrix in the z aesthetic into a set of lines from x, y to xend, yend showing the gradient vectors.  A function requires that either the x and y or the xmin, xmax, ymin and ymax aesthetics also be defined.  The latter are interpolated using samples.  A matrix can optionally input x and y aesthetics to specify the coordinates of the rows and columns, respectively.  In each case, smoothness can vary from 0 to Inf;  and scale sets the size of vectors.\n\n\n\n\n\n"
 },
 
 {
@@ -1621,7 +1621,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.violin",
     "category": "type",
-    "text": "Stat.violin[(n=300)]\n\nTransform the x, y and color aesthetics.\n\n\n\n"
+    "text": "Stat.violin[(n=300)]\n\nTransform the x, y and color aesthetics.\n\n\n\n\n\n"
 },
 
 {
@@ -1629,7 +1629,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.x_jitter",
     "category": "method",
-    "text": "Stat.x_jitter[(; range=0.8, seed=0x0af5a1f7)]\n\nAdd a random number to the x aesthetic, which is typically categorical, to reduce the likelihood that points overlap.  The maximum jitter is range times the smallest non-zero difference between two points.\n\n\n\n"
+    "text": "Stat.x_jitter[(; range=0.8, seed=0x0af5a1f7)]\n\nAdd a random number to the x aesthetic, which is typically categorical, to reduce the likelihood that points overlap.  The maximum jitter is range times the smallest non-zero difference between two points.\n\n\n\n\n\n"
 },
 
 {
@@ -1637,7 +1637,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.y_jitter",
     "category": "method",
-    "text": "Stat.y_jitter[(; range=0.8, seed=0x0af5a1f7)]\n\nAdd a random number to the y aesthetic, which is typically categorical, to reduce the likelihood that points overlap.  The maximum jitter is range times the smallest non-zero difference between two points.\n\n\n\n"
+    "text": "Stat.y_jitter[(; range=0.8, seed=0x0af5a1f7)]\n\nAdd a random number to the y aesthetic, which is typically categorical, to reduce the likelihood that points overlap.  The maximum jitter is range times the smallest non-zero difference between two points.\n\n\n\n\n\n"
 },
 
 {
@@ -1661,7 +1661,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Coordinates",
     "title": "Gadfly.Coord.cartesian",
     "category": "type",
-    "text": "Coord.cartesian(; xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,\n                xflip=false, yflip=false,\n                aspect_ratio=nothing, fixed=false,\n                raster=false)\n\nxmin, xmax, ymin, and ymax specify hard minimum and maximum values on the x and y axes, and override the soft limits in Scale.x_continuous and Scale.y_continuous.  if xflip or yflip are true the respective axis is flipped.  aspect_ratio fulfills its namesake if not nothing, unless overridden by a fixed value of true, in which case the aspect ratio follows the units of the plot (e.g. if the y-axis is 5 units high and the x-axis in 10 units across, the plot will be drawn at an aspect ratio of 2).\n\n\n\n"
+    "text": "Coord.cartesian(; xmin=nothing, xmax=nothing, ymin=nothing, ymax=nothing,\n                xflip=false, yflip=false,\n                aspect_ratio=nothing, fixed=false,\n                raster=false)\n\nxmin, xmax, ymin, and ymax specify hard minimum and maximum values on the x and y axes, and override the soft limits in Scale.x_continuous and Scale.y_continuous.  if xflip or yflip are true the respective axis is flipped.  aspect_ratio fulfills its namesake if not nothing, unless overridden by a fixed value of true, in which case the aspect ratio follows the units of the plot (e.g. if the y-axis is 5 units high and the x-axis in 10 units across, the plot will be drawn at an aspect ratio of 2).\n\n\n\n\n\n"
 },
 
 {
@@ -1685,7 +1685,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_identity",
     "category": "type",
-    "text": "color_identity\n\n\n\n"
+    "text": "color_identity\n\n\n\n\n\n"
 },
 
 {
@@ -1693,7 +1693,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_none",
     "category": "type",
-    "text": "color_none\n\nSuppress the default color scale that some statistics impose by setting the color aesthetic to nothing.\n\n\n\n"
+    "text": "color_none\n\nSuppress the default color scale that some statistics impose by setting the color aesthetic to nothing.\n\n\n\n\n\n"
 },
 
 {
@@ -1701,7 +1701,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.label",
     "category": "type",
-    "text": "label\n\n\n\n"
+    "text": "label\n\n\n\n\n\n"
 },
 
 {
@@ -1709,7 +1709,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_asinh",
     "category": "function",
-    "text": "color_asinh[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nSimilar to Scale.color_continuous, except that color is asinh transformed.\n\n\n\n"
+    "text": "color_asinh[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nSimilar to Scale.color_continuous, except that color is asinh transformed.\n\n\n\n\n\n"
 },
 
 {
@@ -1717,7 +1717,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_continuous",
     "category": "function",
-    "text": "color_continuous[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nCreate a continuous color scale by mapping the color aesthetic to a Color.  minvalue and maxvalue specify the data values corresponding to the bottom and top of the color scale.  colormap is a function defined on the interval from 0 to 1 that returns a Color.\n\nEither input Stat.color_continuous as an argument to plot, or set continuous_color_scale in a Theme.\n\nSee also color_log10, color_log2, color_log, color_asinh, and color_sqrt.\n\n\n\n"
+    "text": "color_continuous[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nCreate a continuous color scale by mapping the color aesthetic to a Color.  minvalue and maxvalue specify the data values corresponding to the bottom and top of the color scale.  colormap is a function defined on the interval from 0 to 1 that returns a Color.\n\nEither input Stat.color_continuous as an argument to plot, or set continuous_color_scale in a Theme.\n\nSee also color_log10, color_log2, color_log, color_asinh, and color_sqrt.\n\n\n\n\n\n"
 },
 
 {
@@ -1725,7 +1725,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_discrete_hue",
     "category": "function",
-    "text": "color_discrete_hue[(f; levels=nothing, order=nothing, preserve_order=true)]\n\nCreate a discrete color scale that maps the categorical levels in the color aesthetic to Colors.  f is a function that produces a vector of colors. levels gives values for the scale.  Order will be respected and anything in the data that\'s not represented in levels will be set to missing.  order is a vector of integers giving a permutation of the levels default order.  If preserve_order is true orders levels as they appear in the data.\n\nEither input Stat.color_discrete_hue as an argument to plot, or set discrete_color_scale in a Theme.\n\nExamples\n\njulia> x = Scale.color_discrete_hue()\nGadfly.Scale.DiscreteColorScale(Gadfly.Scale.default_discrete_colors, nothing, nothing, true)\n\njulia> x.f(3)\n3-element Array{ColorTypes.Color,1}:\n LCHab{Float32}(70.0,60.0,240.0)        \n LCHab{Float32}(80.0,70.0,100.435)      \n LCHab{Float32}(65.8994,62.2146,353.998)\n\n\n\n"
+    "text": "color_discrete_hue[(f; levels=nothing, order=nothing, preserve_order=true)]\n\nCreate a discrete color scale that maps the categorical levels in the color aesthetic to Colors.  f is a function that produces a vector of colors. levels gives values for the scale.  Order will be respected and anything in the data that\'s not represented in levels will be set to missing.  order is a vector of integers giving a permutation of the levels default order.  If preserve_order is true orders levels as they appear in the data.\n\nEither input Stat.color_discrete_hue as an argument to plot, or set discrete_color_scale in a Theme.\n\nExamples\n\njulia> x = Scale.color_discrete_hue()\nGadfly.Scale.DiscreteColorScale(Gadfly.Scale.default_discrete_colors, nothing, nothing, true)\n\njulia> x.f(3)\n3-element Array{ColorTypes.Color,1}:\n LCHab{Float32}(70.0,60.0,240.0)        \n LCHab{Float32}(80.0,70.0,100.435)      \n LCHab{Float32}(65.8994,62.2146,353.998)\n\n\n\n\n\n"
 },
 
 {
@@ -1733,7 +1733,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_discrete_manual",
     "category": "method",
-    "text": "color_discrete_manual(colors...; levels=nothing, order=nothing)\n\nSimilar to color_discrete_hue except that colors for each level are specified directly instead of being computed by a function.\n\n\n\n"
+    "text": "color_discrete_manual(colors...; levels=nothing, order=nothing)\n\nSimilar to color_discrete_hue except that colors for each level are specified directly instead of being computed by a function.\n\n\n\n\n\n"
 },
 
 {
@@ -1741,7 +1741,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_log",
     "category": "function",
-    "text": "color_log[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nSimilar to Scale.color_continuous, except that color is log transformed.\n\n\n\n"
+    "text": "color_log[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nSimilar to Scale.color_continuous, except that color is log transformed.\n\n\n\n\n\n"
 },
 
 {
@@ -1749,7 +1749,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_log10",
     "category": "function",
-    "text": "color_log10[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nSimilar to Scale.color_continuous, except that color is log10 transformed.\n\n\n\n"
+    "text": "color_log10[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nSimilar to Scale.color_continuous, except that color is log10 transformed.\n\n\n\n\n\n"
 },
 
 {
@@ -1757,7 +1757,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_log2",
     "category": "function",
-    "text": "color_log2[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nSimilar to Scale.color_continuous, except that color is log2 transformed.\n\n\n\n"
+    "text": "color_log2[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nSimilar to Scale.color_continuous, except that color is log2 transformed.\n\n\n\n\n\n"
 },
 
 {
@@ -1765,7 +1765,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_sqrt",
     "category": "function",
-    "text": "color_sqrt[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nSimilar to Scale.color_continuous, except that color is sqrt transformed.\n\n\n\n"
+    "text": "color_sqrt[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nSimilar to Scale.color_continuous, except that color is sqrt transformed.\n\n\n\n\n\n"
 },
 
 {
@@ -1773,7 +1773,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.group_discrete",
     "category": "method",
-    "text": "group_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nSimilar to Scale.x_discrete, except applied to the group aesthetic.\n\n\n\n"
+    "text": "group_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nSimilar to Scale.x_discrete, except applied to the group aesthetic.\n\n\n\n\n\n"
 },
 
 {
@@ -1781,7 +1781,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.lab_gradient",
     "category": "method",
-    "text": "function lab_gradient(cs::Color...)\n\n\n\n"
+    "text": "function lab_gradient(cs::Color...)\n\n\n\n\n\n"
 },
 
 {
@@ -1789,7 +1789,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.lab_rainbow",
     "category": "method",
-    "text": "lab_rainbow(l, c, h0, n)\n\nGenerate n colors in the LCHab colorspace by using a fixed luminance l and chroma c, and varying the hue, starting at h0.\n\n\n\n"
+    "text": "lab_rainbow(l, c, h0, n)\n\nGenerate n colors in the LCHab colorspace by using a fixed luminance l and chroma c, and varying the hue, starting at h0.\n\n\n\n\n\n"
 },
 
 {
@@ -1797,7 +1797,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.lchabmix",
     "category": "method",
-    "text": "function lchabmix(c0_, c1_, r, power)\n\n\n\n"
+    "text": "function lchabmix(c0_, c1_, r, power)\n\n\n\n\n\n"
 },
 
 {
@@ -1805,7 +1805,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.linestyle_discrete",
     "category": "method",
-    "text": "linestyle_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nSimilar to Scale.x_discrete, except applied to the linestyle aesthetic.\n\n\n\n"
+    "text": "linestyle_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nSimilar to Scale.x_discrete, except applied to the linestyle aesthetic.\n\n\n\n\n\n"
 },
 
 {
@@ -1813,7 +1813,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.luv_rainbow",
     "category": "method",
-    "text": "luv_rainbow(l, c, h0, n)\n\nGenerate n colors in the LCHuv colorspace by using a fixed luminance l and chroma c, and varying the hue, starting at h0.\n\n\n\n"
+    "text": "luv_rainbow(l, c, h0, n)\n\nGenerate n colors in the LCHuv colorspace by using a fixed luminance l and chroma c, and varying the hue, starting at h0.\n\n\n\n\n\n"
 },
 
 {
@@ -1821,7 +1821,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.shape_discrete",
     "category": "method",
-    "text": "shape_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nSimilar to Scale.x_discrete, except applied to the shape aesthetic.\n\n\n\n"
+    "text": "shape_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nSimilar to Scale.x_discrete, except applied to the shape aesthetic.\n\n\n\n\n\n"
 },
 
 {
@@ -1829,7 +1829,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.shape_identity",
     "category": "method",
-    "text": "shape_identity()\n\n\n\n"
+    "text": "shape_identity()\n\n\n\n\n\n"
 },
 
 {
@@ -1837,7 +1837,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.size_continuous",
     "category": "function",
-    "text": "size_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                 format=nothing, minticks=2, maxticks=10, scalable=true)]\n\n\n\n"
+    "text": "size_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                 format=nothing, minticks=2, maxticks=10, scalable=true)]\n\n\n\n\n\n"
 },
 
 {
@@ -1845,7 +1845,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.size_discrete",
     "category": "method",
-    "text": "size_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nSimilar to Scale.x_discrete, except applied to the size aesthetic.\n\n\n\n"
+    "text": "size_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nSimilar to Scale.x_discrete, except applied to the size aesthetic.\n\n\n\n\n\n"
 },
 
 {
@@ -1853,15 +1853,23 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.size_identity",
     "category": "method",
-    "text": "size_identity()\n\n\n\n"
+    "text": "size_identity()\n\n\n\n\n\n"
 },
 
 {
-    "location": "lib/scales.html#Gadfly.Scale.weighted_color_mean-Union{Tuple{AbstractArray{ColorTypes.Lab{T},1},AbstractArray{S,1}}, Tuple{S}, Tuple{T}} where T where S<:Number",
+    "location": "lib/scales.html#Gadfly.Scale.slope_continuous",
+    "page": "Scales",
+    "title": "Gadfly.Scale.slope_continuous",
+    "category": "function",
+    "text": "slope_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                 format=nothing, minticks=2, maxticks=10, scalable=true)]\n\n\n\n\n\n"
+},
+
+{
+    "location": "lib/scales.html#Gadfly.Scale.weighted_color_mean-Union{Tuple{T}, Tuple{S}, Tuple{AbstractArray{Lab{T},1},AbstractArray{S,1}}} where T where S<:Number",
     "page": "Scales",
     "title": "Gadfly.Scale.weighted_color_mean",
     "category": "method",
-    "text": "function weighted_color_mean(cs::AbstractArray{Lab{T},1},\n                             ws::AbstractArray{S,1}) where {S <: Number,T}\n\nReturn the mean of Lab colors cs as weighted by ws.\n\n\n\n"
+    "text": "function weighted_color_mean(cs::AbstractArray{Lab{T},1},\n                             ws::AbstractArray{S,1}) where {S <: Number,T}\n\nReturn the mean of Lab colors cs as weighted by ws.\n\n\n\n\n\n"
 },
 
 {
@@ -1869,7 +1877,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.x_asinh",
     "category": "function",
-    "text": "x_asinh[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.x_continuous, except that the aesthetics are asinh transformed and the labels function inputs transformed values.\n\n\n\n"
+    "text": "x_asinh[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.x_continuous, except that the aesthetics are asinh transformed and the labels function inputs transformed values.\n\n\n\n\n\n"
 },
 
 {
@@ -1877,7 +1885,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.x_continuous",
     "category": "function",
-    "text": "x_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nMap the x, xmin, xmax, xintercept, intercept, xviewmin, xviewmax and xend aesthetics to x positions in Cartesian coordinates, which are presumed to be numerical, using an identity transform.  minvalue and maxvalue set soft lower and upper bounds.  (Use Coord.cartesian to enforce a hard bound.)  labels is a function which maps a coordinate value to a string label.  format is one of :plain, :scientific, :engineering, or :auto. Set scalable to false to prevent zooming on this axis.  See also x_log10, x_log2, x_log, x_asinh, and x_sqrt for alternatives to the identity transform.\n\n\n\n"
+    "text": "x_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nMap the x, xmin, xmax, xintercept, xviewmin, xviewmax and xend aesthetics to x positions in Cartesian coordinates, which are presumed to be numerical, using an identity transform.  minvalue and maxvalue set soft lower and upper bounds.  (Use Coord.cartesian to enforce a hard bound.)  labels is a function which maps a coordinate value to a string label.  format is one of :plain, :scientific, :engineering, or :auto. Set scalable to false to prevent zooming on this axis.  See also x_log10, x_log2, x_log, x_asinh, and x_sqrt for alternatives to the identity transform.\n\n\n\n\n\n"
 },
 
 {
@@ -1885,7 +1893,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.x_discrete",
     "category": "method",
-    "text": "x_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nMap the x, xmin, xmax, xintercept, intercept, xviewmin, xviewmax and xend aesthetics, which are presumed to be categorical, to Cartesian coordinates. Unlike Scale.x_continuous, each unique x value will be mapped to equally spaced positions, regardless of value.\n\nBy default continuous scales are applied to numerical data. If data consists of numbers specifying categories, explicitly adding Scale.x_discrete is the easiest way to get that data to plot appropriately.\n\nlabels is either a function which maps a coordinate value to a string label, or a vector of strings of the same length as the number of unique values in the aesthetic.  levels gives values for the scale.  Order will be respected and anything in the data that\'s not respresented in levels will be set to missing.  order is a vector of integers giving a permutation of the levels default order.\n\nSee also group_discrete, shape_discrete,  size_discrete, and linestyle_discrete.\n\n\n\n"
+    "text": "x_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nMap the x, xmin, xmax, xintercept, xviewmin, xviewmax and xend aesthetics, which are presumed to be categorical, to Cartesian coordinates. Unlike Scale.x_continuous, each unique x value will be mapped to equally spaced positions, regardless of value.\n\nBy default continuous scales are applied to numerical data. If data consists of numbers specifying categories, explicitly adding Scale.x_discrete is the easiest way to get that data to plot appropriately.\n\nlabels is either a function which maps a coordinate value to a string label, or a vector of strings of the same length as the number of unique values in the aesthetic.  levels gives values for the scale.  Order will be respected and anything in the data that\'s not respresented in levels will be set to missing.  order is a vector of integers giving a permutation of the levels default order.\n\nSee also group_discrete, shape_discrete,  size_discrete, and linestyle_discrete.\n\n\n\n\n\n"
 },
 
 {
@@ -1893,7 +1901,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.x_distribution",
     "category": "method",
-    "text": "x_distribution()\n\n\n\n"
+    "text": "x_distribution()\n\n\n\n\n\n"
 },
 
 {
@@ -1901,7 +1909,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.x_log",
     "category": "function",
-    "text": "x_log[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.x_continuous, except that the aesthetics are log transformed and the labels function inputs transformed values.\n\n\n\n"
+    "text": "x_log[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.x_continuous, except that the aesthetics are log transformed and the labels function inputs transformed values.\n\n\n\n\n\n"
 },
 
 {
@@ -1909,7 +1917,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.x_log10",
     "category": "function",
-    "text": "x_log10[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.x_continuous, except that the aesthetics are log10 transformed and the labels function inputs transformed values.\n\n\n\n"
+    "text": "x_log10[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.x_continuous, except that the aesthetics are log10 transformed and the labels function inputs transformed values.\n\n\n\n\n\n"
 },
 
 {
@@ -1917,7 +1925,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.x_log2",
     "category": "function",
-    "text": "x_log2[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.x_continuous, except that the aesthetics are log2 transformed and the labels function inputs transformed values.\n\n\n\n"
+    "text": "x_log2[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.x_continuous, except that the aesthetics are log2 transformed and the labels function inputs transformed values.\n\n\n\n\n\n"
 },
 
 {
@@ -1925,7 +1933,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.x_sqrt",
     "category": "function",
-    "text": "x_sqrt[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.x_continuous, except that the aesthetics are sqrt transformed and the labels function inputs transformed values.\n\n\n\n"
+    "text": "x_sqrt[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.x_continuous, except that the aesthetics are sqrt transformed and the labels function inputs transformed values.\n\n\n\n\n\n"
 },
 
 {
@@ -1933,7 +1941,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.xgroup",
     "category": "method",
-    "text": "xgroup[(; labels=nothing, levels=nothing, order=nothing)]\n\n\n\n"
+    "text": "xgroup[(; labels=nothing, levels=nothing, order=nothing)]\n\n\n\n\n\n"
 },
 
 {
@@ -1941,7 +1949,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.y_asinh",
     "category": "function",
-    "text": "y_asinh[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.y_continuous, except that the aesthetics are asinh transformed and the labels function inputs transformed values.\n\n\n\n"
+    "text": "y_asinh[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.y_continuous, except that the aesthetics are asinh transformed and the labels function inputs transformed values.\n\n\n\n\n\n"
 },
 
 {
@@ -1949,7 +1957,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.y_continuous",
     "category": "function",
-    "text": "y_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nMap the y, ymin, ymax, yintercept, slope, middle, upper_fence, lower_fence, upper_hinge, lower_hinge, yviewmin, yviewmax and yend aesthetics to y positions in Cartesian coordinates, which are presumed to be numerical, using an identity transform.  minvalue and maxvalue set soft lower and upper bounds.  (Use Coord.cartesian to enforce a hard bound.)  labels is a function which maps a coordinate value to a string label.  format is one of :plain, :scientific, :engineering, or :auto. Set scalable to false to prevent zooming on this axis.  See also y_log10, y_log2, y_log, y_asinh, and y_sqrt for alternatives to the identity transform.\n\n\n\n"
+    "text": "y_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nMap the y, ymin, ymax, yintercept, intercept, middle, upper_fence, lower_fence, upper_hinge, lower_hinge, yviewmin, yviewmax and yend aesthetics to y positions in Cartesian coordinates, which are presumed to be numerical, using an identity transform.  minvalue and maxvalue set soft lower and upper bounds.  (Use Coord.cartesian to enforce a hard bound.)  labels is a function which maps a coordinate value to a string label.  format is one of :plain, :scientific, :engineering, or :auto. Set scalable to false to prevent zooming on this axis.  See also y_log10, y_log2, y_log, y_asinh, and y_sqrt for alternatives to the identity transform.\n\n\n\n\n\n"
 },
 
 {
@@ -1957,7 +1965,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.y_discrete",
     "category": "method",
-    "text": "y_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nMap the y, ymin, ymax, yintercept, slope, middle, upper_fence, lower_fence, upper_hinge, lower_hinge, yviewmin, yviewmax and yend aesthetics, which are presumed to be categorical, to Cartesian coordinates. Unlike Scale.x_continuous, each unique y value will be mapped to equally spaced positions, regardless of value.\n\nBy default continuous scales are applied to numerical data. If data consists of numbers specifying categories, explicitly adding Scale.y_discrete is the easiest way to get that data to plot appropriately.\n\nlabels is either a function which maps a coordinate value to a string label, or a vector of strings of the same length as the number of unique values in the aesthetic.  levels gives values for the scale.  Order will be respected and anything in the data that\'s not respresented in levels will be set to missing.  order is a vector of integers giving a permutation of the levels default order.\n\nSee also group_discrete, shape_discrete,  size_discrete, and linestyle_discrete.\n\n\n\n"
+    "text": "y_discrete[(; labels=nothing, levels=nothing, order=nothing)]\n\nMap the y, ymin, ymax, yintercept, intercept, middle, upper_fence, lower_fence, upper_hinge, lower_hinge, yviewmin, yviewmax and yend aesthetics, which are presumed to be categorical, to Cartesian coordinates. Unlike Scale.x_continuous, each unique y value will be mapped to equally spaced positions, regardless of value.\n\nBy default continuous scales are applied to numerical data. If data consists of numbers specifying categories, explicitly adding Scale.y_discrete is the easiest way to get that data to plot appropriately.\n\nlabels is either a function which maps a coordinate value to a string label, or a vector of strings of the same length as the number of unique values in the aesthetic.  levels gives values for the scale.  Order will be respected and anything in the data that\'s not respresented in levels will be set to missing.  order is a vector of integers giving a permutation of the levels default order.\n\nSee also group_discrete, shape_discrete,  size_discrete, and linestyle_discrete.\n\n\n\n\n\n"
 },
 
 {
@@ -1965,7 +1973,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.y_distribution",
     "category": "method",
-    "text": "y_distribution()\n\n\n\n"
+    "text": "y_distribution()\n\n\n\n\n\n"
 },
 
 {
@@ -1973,7 +1981,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.y_func",
     "category": "method",
-    "text": "y_func()\n\n\n\n"
+    "text": "y_func()\n\n\n\n\n\n"
 },
 
 {
@@ -1981,7 +1989,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.y_log",
     "category": "function",
-    "text": "y_log[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.y_continuous, except that the aesthetics are log transformed and the labels function inputs transformed values.\n\n\n\n"
+    "text": "y_log[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.y_continuous, except that the aesthetics are log transformed and the labels function inputs transformed values.\n\n\n\n\n\n"
 },
 
 {
@@ -1989,7 +1997,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.y_log10",
     "category": "function",
-    "text": "y_log10[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.y_continuous, except that the aesthetics are log10 transformed and the labels function inputs transformed values.\n\n\n\n"
+    "text": "y_log10[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.y_continuous, except that the aesthetics are log10 transformed and the labels function inputs transformed values.\n\n\n\n\n\n"
 },
 
 {
@@ -1997,7 +2005,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.y_log2",
     "category": "function",
-    "text": "y_log2[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.y_continuous, except that the aesthetics are log2 transformed and the labels function inputs transformed values.\n\n\n\n"
+    "text": "y_log2[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.y_continuous, except that the aesthetics are log2 transformed and the labels function inputs transformed values.\n\n\n\n\n\n"
 },
 
 {
@@ -2005,7 +2013,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.y_sqrt",
     "category": "function",
-    "text": "y_sqrt[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.y_continuous, except that the aesthetics are sqrt transformed and the labels function inputs transformed values.\n\n\n\n"
+    "text": "y_sqrt[(; minvalue=nothing, maxvalue=nothing, labels=nothing,\n                   format=nothing, minticks=2, maxticks=10, scalable=true)]\n\nSimilar to Scale.y_continuous, except that the aesthetics are sqrt transformed and the labels function inputs transformed values.\n\n\n\n\n\n"
 },
 
 {
@@ -2013,7 +2021,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.ygroup",
     "category": "method",
-    "text": "ygroup[(; labels=nothing, levels=nothing, order=nothing)]\n\n\n\n"
+    "text": "ygroup[(; labels=nothing, levels=nothing, order=nothing)]\n\n\n\n\n\n"
 },
 
 {
@@ -2021,7 +2029,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.z_func",
     "category": "method",
-    "text": "z_func()\n\n\n\n"
+    "text": "z_func()\n\n\n\n\n\n"
 },
 
 {
@@ -2045,7 +2053,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.cross",
     "category": "method",
-    "text": "cross(xs, ys, rs)\n\nDraw crosses at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "cross(xs, ys, rs)\n\nDraw crosses at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2053,7 +2061,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.diamond",
     "category": "method",
-    "text": "diamond(xs, ys, rs)\n\nDraw diamonds at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "diamond(xs, ys, rs)\n\nDraw diamonds at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2061,7 +2069,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.dtriangle",
     "category": "method",
-    "text": "dtriangle(xs, ys, rs)\n\nDraw downward-pointing triangles at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "dtriangle(xs, ys, rs)\n\nDraw downward-pointing triangles at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2069,7 +2077,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.hexagon",
     "category": "method",
-    "text": "hexagon(xs, ys, rs)\n\nDraw hexagons at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "hexagon(xs, ys, rs)\n\nDraw hexagons at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2077,7 +2085,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.hline",
     "category": "method",
-    "text": "hline(xs, ys, rs)\n\nDraw horizontal lines at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "hline(xs, ys, rs)\n\nDraw horizontal lines at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2085,7 +2093,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.octagon",
     "category": "method",
-    "text": "octagon(xs, ys, rs)\n\nDraw octagons at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "octagon(xs, ys, rs)\n\nDraw octagons at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2093,7 +2101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.square",
     "category": "method",
-    "text": "square(xs, ys, rs)\n\nDraw squares at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "square(xs, ys, rs)\n\nDraw squares at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2101,7 +2109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.star1",
     "category": "function",
-    "text": "star1(xs, ys, rs, scalar=1)\n\nDraw five-pointed stars at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "star1(xs, ys, rs, scalar=1)\n\nDraw five-pointed stars at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2109,7 +2117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.star2",
     "category": "function",
-    "text": "star2(xs, ys, rs, scalar=1)\n\nDraw four-pointed stars at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "star2(xs, ys, rs, scalar=1)\n\nDraw four-pointed stars at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2117,7 +2125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.utriangle",
     "category": "function",
-    "text": "utriangle(xs, ys, rs, scalar=1)\n\nDraw upward-pointing triangles at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "utriangle(xs, ys, rs, scalar=1)\n\nDraw upward-pointing triangles at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2125,7 +2133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.vline",
     "category": "method",
-    "text": "vline(xs, ys, rs)\n\nDraw vertical lines at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "vline(xs, ys, rs)\n\nDraw vertical lines at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
@@ -2133,7 +2141,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Shapes",
     "title": "Gadfly.Shape.xcross",
     "category": "method",
-    "text": "xcross(xs, ys, rs)\n\nDraw rotated crosses at the coordinates specified in xs and ys of size rs\n\n\n\n"
+    "text": "xcross(xs, ys, rs)\n\nDraw rotated crosses at the coordinates specified in xs and ys of size rs\n\n\n\n\n\n"
 },
 
 {
