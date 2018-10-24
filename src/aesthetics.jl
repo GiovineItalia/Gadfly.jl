@@ -125,7 +125,11 @@ const aesthetic_aliases =
                                  :x_tick        => :xtick,
                                  :y_tick        => :ytick,
                                  :x_grid        => :xgrid,
-                                 :y_grid        => :ygrid)
+                                 :y_grid        => :ygrid,
+                                 :open          => :lower_hinge,
+                                 :high          => :upper_fence,
+                                 :low           => :lower_fence,
+                                 :close         => :upper_hinge)
 
 
 # Index as if this were a data frame
