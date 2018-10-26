@@ -2,61 +2,66 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 1.1.0
+ * Add `Geom.vband` and `Geom.hband`.
+ * Add RectangularGeometry.
+ * RectangularBinGeometry now uses RectangularGeometry for rendering.
+
 # Version 0.9.0
- * conditionally depend on DataFrames (#1204)
- * `Geom.abline`: add support for nonlinear `Scale` transformations (#1201)
- * drop support for Julia 0.6 (#1189)
+ * conditionally depend on DataFrames. (#1204)
+ * `Geom.abline`: add support for nonlinear `Scale` transformations. (#1201)
+ * drop support for Julia 0.6. (#1189)
 
 # Version 0.8.0
-  * Add `linestyle` aesthetic (#1181)
-  * Add `Guide.shapekey` (#1156)
-  * `Geom.contour`: add support for `DataFrame` (#1150) 
+  * Add `linestyle` aesthetic. (#1181)
+  * Add `Guide.shapekey`. (#1156)
+  * `Geom.contour`: add support for `DataFrame`. (#1150)
 
 # Version 0.7.0
 
-  * Support DataFrames.jl v0.11+ (#1090, #1129, #1131)
-  * Change `Theme(grid_strokedash=)` to `Theme(grid_line_style=)` and include in docs (#1106)
-  * Add `Geom.ellipse` (#1103)  
-  * Improved SVG interactivity (#1037)
+  * Support DataFrames.jl v0.11+. (#1090, #1129, #1131)
+  * Change `Theme(grid_strokedash=)` to `Theme(grid_line_style=)` and include in docs. (#1106)
+  * Add `Geom.ellipse`. (#1103)  
+  * Improved SVG interactivity. (#1037)
 
 # Version 0.6.5
 
-  * ColorKeys inside plot panel (#1087)
-  * Add `Geom.hair` (#1076)
-  * Shape module (#1050)
-  * Boxplot improvements
+  * ColorKeys inside plot panel. (#1087)
+  * Add `Geom.hair`. (#1076)
+  * Shape module. (#1050)
+  * Boxplot improvements.
 
 # Version 0.6.4
 
-  * Regression testing tools (#1020)
-  
+  * Regression testing tools. (#1020)
+
 # Version 0.6.3
 
-  * Wide format data (#1013)
+  * Wide format data. (#1013)
 
 # Version 0.6.2
 
-  * Add `Geom.rect` (#993)
-  * Add `Geom.vectorfield` (#992)
-  * Unified size, color, shape aesthetics for Geom.point (#991)
-  * {h,v}line point shapes
+  * Add `Geom.rect`. (#993)
+  * Add `Geom.vectorfield`. (#992)
+  * Unified size, color, shape aesthetics for Geom.point. (#991)
+  * {h,v}line point shapes.
 
 # Version 0.6.1
 
-  * Add `Stat.smooth` (#983)
+  * Add `Stat.smooth`. (#983)
 
 # Version 0.6.0
 
-  * Dramatically speed up precompilation by removing old, duplicate code (#958)
-  * Add `Geom.abline` (#957)
-  * Add `Geom.density2d` (#959)
-  * Drop support for Julia 0.4 (#954)
+  * Dramatically speed up precompilation by removing old, duplicate code. (#958)
+  * Add `Geom.abline`. (#957)
+  * Add `Geom.density2d`. (#959)
+  * Drop support for Julia 0.4. (#954)
 
 # Version 0.5.3
 
-  * Support for size aesthetic for `Geom.point` (#952, @tlnagy & @Mattriks)
-  * Various doc improvements (#923, #933, #943)
-  * Improved Juno support (#920, @MikeInnes)
+  * Support for size aesthetic for `Geom.point`. (#952, @tlnagy & @Mattriks)
+  * Various doc improvements. (#923, #933, #943)
+  * Improved Juno support. (#920, @MikeInnes)
 
 # Version 0.4.1
 
@@ -74,13 +79,13 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
   * Switch from the Color package to the new Colors package.
 
-  * Add `Geom.beeswarm`
+  * Add `Geom.beeswarm`.
 
 # Version 0.3.13
 
   * Add a `push!` function allowing plots to be built incrementally.
 
-  * Add `Stat.x_jitter` and `Stat.y_jitter`
+  * Add `Stat.x_jitter` and `Stat.y_jitter`.
 
   * Fix a missing key with `colorkey_swatch_shape=:circle`.
 
@@ -90,7 +95,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 0.3.12
 
-  * Add `Geom.polygon`
+  * Add `Geom.polygon`.
 
   * Add `Geom.violin`.
 
@@ -121,18 +126,18 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 0.3.10
 
-  * Support for [Patchwork.jl](https://github.com/shashi/Patchwork.jl)
+  * Support for [Patchwork.jl](https://github.com/shashi/Patchwork.jl).
 
   * Several fixes for plotting dates.
 
 # Version 0.3.9
 
-  * Transition from DateTime.jl to Dates.jl (or Base.Dates in Julia 0.4)
+  * Transition from DateTime.jl to Dates.jl (or Base.Dates in Julia 0.4).
 
-  * Several fixes for `Stat.contour`
+  * Several fixes for `Stat.contour`.
 
   * Split the interface for pretty printing scales into a separate package:
-    [Showoff.jl](https://github.com/dcjones/Showoff.jl)
+    [Showoff.jl](https://github.com/dcjones/Showoff.jl).
 
 # Version 0.3.8
 
@@ -220,5 +225,3 @@ Each release typically has a number of minor bug fixes beyond what is listed her
     keys are wrapped automatically.
 
   * Default Theme changes.
-
-
