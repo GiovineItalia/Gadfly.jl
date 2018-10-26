@@ -17,7 +17,7 @@ function square(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
 
     s = 1/sqrt(2)
-    polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
+    polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, n)
 
     for i in 1:n
         x = x_measure(xs[mod1(i, length(xs))])
@@ -37,7 +37,7 @@ $(shape_docstr("diamonds"))
 function diamond(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
 
-    polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
+    polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, n)
     for i in 1:n
         x = x_measure(xs[1 + i % length(xs)])
         y = y_measure(ys[1 + i % length(ys)])
@@ -55,7 +55,7 @@ $(shape_docstr("crosses"))
 """
 function cross(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
-  polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
+  polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, n)
   for i in 1:n
     x = x_measure(xs[mod1(i, length(xs))])
     y = y_measure(ys[mod1(i, length(ys))])
@@ -85,7 +85,7 @@ $(shape_docstr("rotated crosses"))
 """
 function xcross(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
-  polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
+  polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, n)
   s = 1/sqrt(5)
   for i in 1:n
     x = x_measure(xs[mod1(i, length(xs))])
@@ -110,7 +110,7 @@ $(shape_docstr("upward-pointing triangles"))
 """
 function utriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
   n = max(length(xs), length(ys), length(rs))
-  polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
+  polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, n)
   
   for i in 1:n
     x = x_measure(xs[mod1(i, length(xs))])
@@ -143,7 +143,7 @@ $(shape_docstr("five-pointed stars"))
 """
 function star1(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
   n = max(length(xs), length(ys), length(rs))
-  polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
+  polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, n)
   
   # some magic scalars
   sx = 0.7
@@ -172,7 +172,7 @@ $(shape_docstr("four-pointed stars"))
 """
 function star2(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
   n = max(length(xs), length(ys), length(rs))
-  polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
+  polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, n)
   for i in 1:n
     x = x_measure(xs[mod1(i, length(xs))])
     y = y_measure(ys[mod1(i, length(ys))])
@@ -197,7 +197,7 @@ $(shape_docstr("hexagons"))
 function hexagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
 
-  polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
+  polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, n)
   for i in 1:n
     x = x_measure(xs[mod1(i, length(xs))])
     y = y_measure(ys[mod1(i, length(ys))])
@@ -223,7 +223,7 @@ $(shape_docstr("octagons"))
 function octagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
 
-  polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
+  polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, n)
   for i in 1:n
     x = x_measure(xs[mod1(i, length(xs))])
     y = y_measure(ys[mod1(i, length(ys))])
@@ -249,7 +249,7 @@ $(shape_docstr("horizontal lines"))
 function hline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
 
-    line_ps = Vector{Vector{Tuple{Measure,Measure}}}(n)
+    line_ps = Vector{Vector{Tuple{Measure,Measure}}}(undef, n)
     for i in 1:n
         x = x_measure(xs[1 + i % length(xs)])
         y = y_measure(ys[1 + i % length(ys)])
@@ -268,7 +268,7 @@ $(shape_docstr("vertical lines"))
 function vline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     n = max(length(xs), length(ys), length(rs))
 
-    line_ps = Vector{Vector{Tuple{Measure,Measure}}}(n)
+    line_ps = Vector{Vector{Tuple{Measure,Measure}}}(undef, n)
     for i in 1:n
         x = x_measure(xs[1 + i % length(xs)])
         y = y_measure(ys[1 + i % length(ys)])

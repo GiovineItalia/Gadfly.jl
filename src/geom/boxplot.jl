@@ -20,10 +20,10 @@ fences, and outliers aesthetics will be computed using [`Stat.boxplot`](@ref).
 """
 const boxplot = BoxplotGeometry
 
-element_aesthetics(::BoxplotGeometry) = [:x, :y, :color,
+element_aesthetics(::BoxplotGeometry) = [:x, :color,
                                          :middle,
                                          :upper_fence, :lower_fence,
-                                         :upper_hinge, :lower_hinge]  ### and :outliers
+                                         :upper_hinge, :lower_hinge]  ### and :y, :outliers
 
 default_statistic(geom::BoxplotGeometry) = geom.default_statistic
 

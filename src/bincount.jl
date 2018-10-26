@@ -69,7 +69,7 @@ end
 #   numbins: number of bins
 #
 function bin!(bincounts::Vector, xs, x_min, binwidth, numbins)
-    bincounts[1:numbins] = 0
+    bincounts[1:numbins] .= 0
     for x in xs
         if !isconcrete(x)
             continue

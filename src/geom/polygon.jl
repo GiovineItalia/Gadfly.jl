@@ -46,7 +46,7 @@ function polygon_points(xs, ys, preserve_order)
         return T[(x, y) for (x, y) in zip(xs, ys)]
     else
         centroid_x, centroid_y = mean(xs), mean(ys)
-        θ = atan2(xs - centroid_x, ys - centroid_y)
+        θ = atan.(xs - centroid_x, ys - centroid_y)
         perm = sortperm(θ)
         return T[(x, y) for (x, y) in zip(xs[perm], ys[perm])]
     end
@@ -64,7 +64,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
     ctx = context(order=geom.order)
     T = (eltype(aes.x), eltype(aes.y))
 
-    line_style = Gadfly.get_stroke_vector(theme.line_style)
+    line_style = Gadfly.get_stroke_vector(theme.line_style[1])
 
     if aes.group != nothing
         XT, YT = eltype(aes.x), eltype(aes.y)
@@ -109,7 +109,7 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme,
                              for c in keys(xs)], geom.tag))
         cs = collect(keys(xs))
         if geom.fill
-            compose!(ctx, fill(cs),
+            compose!(ctx, fill([theme.lowlight_color(c) for c in cs]),
                      stroke(map(theme.discrete_highlight_color, cs)))
         else
             compose!(ctx, fill(nothing), stroke(cs))

@@ -16,7 +16,7 @@ ShapeKey(;title="Shape", labels=[""], pos=Float64[]) = ShapeKey(title, labels, p
     Guide.shapekey(title, labels, pos)
 
 Enable control of the auto-generated shapekey.  Set the key `title` and the item `labels`.
-`pos` overrides [Theme(key_position=)](@ref Parameters) and can be in either
+`pos` overrides [Theme(key_position=)](@ref Gadfly) and can be in either
 relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm,
 0mm]), or plot scale (e.g. [0,0]) coordinates.
 """
@@ -30,7 +30,7 @@ function Guide.render(guide::Guide.ShapeKey, theme::Gadfly.Theme, aes::Gadfly.Ae
     gpos = guide.pos
     (theme.key_position == :inside) && (gpos == Float64[]) &&  (gpos = [0.7w, 0.25h])
 
-    # Aesthetics for keys: shape_key_title, shape_label (Function), shape_key_shapes (Associative)    
+    # Aesthetics for keys: shape_key_title, shape_label (Function), shape_key_shapes (AbstractDict)    
     nshapes = length(unique(aes.shape))
     guide_title = (guide.title!="Shape" || aes.shape_key_title==nothing) ? guide.title : aes.shape_key_title
     shape_key_labels = !(guide.labels==[""]) ? guide.labels : aes.shape_label(1:nshapes)
@@ -88,7 +88,7 @@ function render_discrete_key(labels::Vector{String}, title_ctx::Context, title_w
 
     # return a context with a lyout of numcols columns
     function make_layout(numcols)
-        colrows = Array{Int}(numcols)
+        colrows = Array{Int}(undef, numcols)
         m = n
         for i in 1:numcols
             colrows[i] = min(m, ceil(Integer, (n / numcols)))
@@ -96,7 +96,7 @@ function render_discrete_key(labels::Vector{String}, title_ctx::Context, title_w
         end
         
         xpad = 1mm
-        colwidths = Array{Measure}(numcols)
+        colwidths = Array{Measure}(undef, numcols)
         m = 0
         for (i, nrows) in enumerate(colrows)
             if m == n

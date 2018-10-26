@@ -3,12 +3,21 @@
 ## [`Geom.abline`](@ref)
 
 ```@example
-using Gadfly, RDatasets, Compose
-set_default_plot_size(14cm, 8cm)
-plot(dataset("ggplot2", "mpg"),
+using Gadfly, RDatasets, Compose, Random
+Random.seed!(123)
+set_default_plot_size(21cm, 8cm)
+
+p1 = plot(dataset("ggplot2", "mpg"),
      x="Cty", y="Hwy", label="Model", Geom.point, Geom.label,
      intercept=[0], slope=[1], Geom.abline(color="red", style=:dash),
      Guide.annotation(compose(context(), text(6,4, "y=x", hleft, vtop), fill("red"))))
+
+x = [20*rand(20); exp(-3)]
+D = DataFrame(x=x, y= exp.(-0.5*asinh.(x).+5) .+ 2*randn(length(x))) 
+abline = Geom.abline(color="red", style=:dash)
+p2 = plot(D, x=:x, y=:y,  Geom.point,  Scale.x_asinh, Scale.y_log,
+     intercept=[148], slope=[-0.5], abline)
+hstack(p1, p2)
 ```
 
 ## [`Geom.band`](@ref), [`Geom.hband`](@ref), [`Geom.vband`](@ref)
@@ -165,7 +174,7 @@ pa = plot(D, coord,
 pb = plot(D, coord,
           x=:Eruptions, y=:Waiting, color=:g,
           Geom.point, Geom.ellipse,
-          layer(Geom.ellipse(levels=[0.99]), style(line_style=:dot)),
+          layer(Geom.ellipse(levels=[0.99]), style(line_style=[:dot])),
           style(key_position=:none), Guide.ylabel(nothing))
 hstack(pa,pb)
 ```
@@ -174,9 +183,9 @@ hstack(pa,pb)
 ## [`Geom.errorbar`](@ref)
 
 ```@example
-using Gadfly, RDatasets, Distributions
+using Gadfly, RDatasets, Distributions, Random
 set_default_plot_size(14cm, 8cm)
-srand(1234)
+Random.seed!(1234)
 sds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]
 n = 10
 ys = [mean(rand(Normal(0, sd), n)) for sd in sds]
@@ -291,17 +300,17 @@ hstack(p1,p2)
 ## [`Geom.path`](@ref)
 
 ```@example
-using Gadfly
+using Gadfly, Random
 set_default_plot_size(21cm, 8cm)
 
 n = 500
-srand(1234)
-xjumps = rand(n)-.5
-yjumps = rand(n)-.5
+Random.seed!(1234)
+xjumps = rand(n).-.5
+yjumps = rand(n).-.5
 p1 = plot(x=cumsum(xjumps),y=cumsum(yjumps),Geom.path)
 
 t = 0:0.2:8pi
-p2 = plot(x=t.*cos(t), y=t.*sin(t), Geom.path)
+p2 = plot(x=t.*cos.(t), y=t.*sin.(t), Geom.path)
 
 hstack(p1,p2)
 ```
@@ -373,13 +382,23 @@ plot(dataset("Zelig", "macro"), x="Year", y="Country", color="GDP", Geom.rectbin
 ## [`Geom.ribbon`](@ref)
 
 ```@example
-using Gadfly, DataFrames
-set_default_plot_size(14cm, 8cm)
-xs = 0:0.1:20
-df_cos = DataFrame(x=xs, y=cos(xs), ymin=cos(xs).-0.5, ymax=cos(xs).+0.5, f="cos")
-df_sin = DataFrame(x=xs, y=sin(xs), ymin=sin(xs).-0.5, ymax=sin(xs).+0.5, f="sin")
-df = vcat(df_cos, df_sin)
-plot(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon)
+using Gadfly, Colors, DataFrames, Distributions
+set_default_plot_size(21cm, 8cm)
+X = [cos.(0:0.1:20) sin.(0:0.1:20)]
+x = -4:0.1:4
+Da = [DataFrame(x=0:0.1:20, y=X[:,j], ymin=X[:,j].-0.5, ymax=X[:,j].+0.5, f="$f")  for (j,f) in enumerate(["cos","sin"])]
+Db = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u="μ=$μ") for μ in [-1,1] ]
+
+# In the line below, 0.4 is the color opacity
+p1 = plot(vcat(Da...), x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon,
+    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4))
+)
+p2 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax, color = :u, 
+    Geom.line, Geom.ribbon, Guide.ylabel("Density"),
+    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)), 
+    Guide.colorkey(title="", pos=[2.5,0.6]), Guide.title("Parametric PDF")
+)
+hstack(p1,p2)
 ```
 
 
@@ -399,9 +418,9 @@ hstack(p1,p2)
 ## [`Geom.step`](@ref)
 
 ```@example
-using Gadfly
+using Gadfly, Random
 set_default_plot_size(14cm, 8cm)
-srand(1234)
+Random.seed!(1234)
 plot(x=rand(25), y=rand(25), Geom.step)
 ```
 
@@ -471,7 +490,7 @@ set_default_plot_size(14cm, 14cm)
 seals = RDatasets.dataset("ggplot2","seals")
 seals[:Latb] = seals[:Lat] + seals[:DeltaLat]
 seals[:Longb] = seals[:Long] + seals[:DeltaLong]
-seals[:Angle] = atan2.(seals[:DeltaLat], seals[:DeltaLong])
+seals[:Angle] = atan.(seals[:DeltaLat], seals[:DeltaLong])
 
 coord = Coord.cartesian(xmin=-175.0, xmax=-119, ymin=29, ymax=50)
 # Geom.vector also needs scales for both axes:

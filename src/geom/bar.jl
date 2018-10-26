@@ -190,7 +190,7 @@ function render_dodged_bar(geom::BarGeometry,
             dodge_pos_dict[aes.ymin[i]] = aes.ymin[i]*cy
         end
 
-        dodge_pos = Array{Measure}(length(idxs))
+        dodge_pos = Array{Measure}(undef, length(idxs))
         for (i, j) in enumerate(idxs)
             dodge_pos[i] = dodge_pos_dict[aes.ymin[j]] + theme.bar_spacing/2
             dodge_pos_dict[aes.ymin[j]] += dodge_height[aes.ymin[j]]
@@ -220,7 +220,7 @@ function render_dodged_bar(geom::BarGeometry,
             dodge_pos_dict[aes.xmin[i]] = aes.xmin[i]*cx
         end
 
-        dodge_pos = Array{Measure}(length(idxs))
+        dodge_pos = Array{Measure}(undef, length(idxs))
         for (i, j) in enumerate(idxs)
             dodge_pos[i] = dodge_pos_dict[aes.xmin[j]] + theme.bar_spacing/2
             dodge_pos_dict[aes.xmin[j]] += dodge_width[aes.xmin[j]]

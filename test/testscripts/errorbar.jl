@@ -1,15 +1,12 @@
-using Gadfly, RDatasets, Distributions
+using Gadfly
 
 set_default_plot_size(6inch, 3inch)
 
-sds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]
-n = 10
-ys = [mean(rand(Normal(0, sd), n)) for sd in sds]
-ymins = ys .- (1.96 * sds / sqrt(n))
-ymaxs = ys .+ (1.96 * sds / sqrt(n))
-cs = [string(i) for i in 1:length(sds)]
-
-plot(x=ys, xmin=ymins, xmax=ymaxs,
-     y=ys, ymin=ymins, ymax=ymaxs,
-     color=cs,
+plot(x=[0.0533077, -0.0631488, -0.0132793, -0.0316036, 0.00812427, -0.00512818],
+     xmin=[-0.566499, -0.373052, -0.168231, -0.109079, -0.0306136, -0.0244971],
+     xmax=[0.673114, 0.246754, 0.141672, 0.0458722, 0.0468622, 0.0142408],
+     y=[0.0533077, -0.0631488, -0.0132793, -0.0316036, 0.00812427, -0.00512818],
+     ymin=[-0.566499, -0.373052, -0.168231, -0.109079, -0.0306136, -0.0244971],
+     ymax=[0.673114, 0.246754, 0.141672, 0.0458722, 0.0468622, 0.0142408],
+     color=String["1", "2", "3", "4", "5", "6"],
      Geom.point, Geom.errorbar)

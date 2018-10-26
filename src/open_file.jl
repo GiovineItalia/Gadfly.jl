@@ -1,12 +1,11 @@
 function open_file(filename)
-    if is_apple()
+    if Sys.isapple()
         run(`open $(filename)`)
-    elseif is_linux() || is_bsd()
+    elseif Sys.islinux() || Sys.isbsd()
         run(`xdg-open $(filename)`)
-    elseif is_windows()
+    elseif Sys.iswindows()
         run(`$(ENV["COMSPEC"]) /c start $(filename)`)
     else
-        warn("Showing plots is not supported on OS $(string(Compat.KERNEL))")
+        @warn "Showing plots is not supported on OS $(string(Sys.KERNEL))"
     end
 end
-

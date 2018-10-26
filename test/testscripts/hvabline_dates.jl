@@ -1,4 +1,4 @@
-using Gadfly, Base.Dates
+using Gadfly, Dates
 
 dates = [Date("2017-08-07"), Date("2017-08-08"), Date("2017-08-09")]
 date = [Date("2017-08-08")]

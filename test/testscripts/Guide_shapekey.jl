@@ -2,11 +2,12 @@ using Compose, DataFrames, Gadfly
 
 set_default_plot_size(9inch, 3.3inch)
 
-srand(123)
 theme1 = Theme(point_size=3mm)
 coord1 = Coord.cartesian(xmin=0.0, xmax=6.0)
-D = DataFrame(x=1:5, y=rand(5), V1=["A","A","B","B","D"], V2 = string.([1,2,2,3,3])  )
-
+D = DataFrame(x=1:5,
+              y=[0.768448, 0.940515, 0.673959, 0.395453, 0.313244],
+              V1=["A","A","B","B","D"],
+              V2 = string.([1,2,2,3,3])  )
 
 pa = plot(x=1:5, y=[0.77, 0.94, 0.67, 0.39, 0.31], shape=["A","A","B","B","D"], theme1, coord1,
     Guide.shapekey(title="Key",labels=["α","β","δ"]),

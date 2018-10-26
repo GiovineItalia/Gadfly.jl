@@ -75,7 +75,7 @@ function optimize_ticks_typed(x_min::T, x_max::T, extend_ticks,
         return R[x_min], x_min - one_t, x_min + one_t
     end
 
-    const n = length(Q)
+    n = length(Q)
 
     # generalizing "order of magnitude"
     xspan = x_max - x_min
@@ -145,13 +145,13 @@ function optimize_ticks_typed(x_min::T, x_max::T, extend_ticks,
 
     span = q_best * 10.0^z_best * one_t
     if extend_ticks
-        S = Array{typeof(1.0 * one_t)}(Int(3 * k_best))
+        S = Array{typeof(1.0 * one_t)}(undef, Int(3 * k_best))
         for i in 0:(3*k_best - 1)
             S[i+1] = (r_best + i - k_best) * span
         end
         viewmin, viewmax = S[k_best + 1], S[2 * k_best]
     else
-        S = Array{typeof(1.0 * one_t)}(k_best)
+        S = Array{typeof(1.0 * one_t)}(undef, k_best)
         for i in 0:(k_best - 1)
             S[i+1] = (r_best + i) * span
         end
@@ -190,7 +190,7 @@ function optimize_ticks(x_min::DateTime, x_max::DateTime; extend_ticks::Bool=fal
         if year(x_max) == year(x_min) && month(x_max) - month(x_min) <= 1 && scale != :month
             ticks = DateTime[]
 
-            const scales = [
+            scales = [
                 Day(1), Hour(1), Minute(1), Second(1), Millisecond(100),
                 Millisecond(10), Millisecond(1)
             ]

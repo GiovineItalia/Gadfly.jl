@@ -1,4 +1,4 @@
-using Documenter, Gadfly
+using Documenter, Gadfly, Compose
 
 makedocs(
     modules = [Gadfly],
@@ -10,7 +10,7 @@ makedocs(
         "Tutorial" => "tutorial.md",
         "Manual" => Any[
             "Plotting" => "man/plotting.md",
-            "Layers and Stacks" => "man/layers.md",
+            "Compositing" => "man/compositing.md",
             "Backends" => "man/backends.md",
             "Themes" => "man/themes.md",
         ],
@@ -41,7 +41,6 @@ makedocs(
 
 deploydocs(
     repo   = "github.com/GiovineItalia/Gadfly.jl.git",
-    julia  = "0.6",
     osname = "linux",
     deps = nothing,
     make = nothing,

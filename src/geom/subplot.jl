@@ -159,12 +159,12 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         end
     end
 
-    layer_aes_grid = Array{Matrix{Gadfly.Aesthetics}}(length(geom.layers))
+    layer_aes_grid = Array{Matrix{Gadfly.Aesthetics}}(undef, length(geom.layers))
     for (i, (layer, aes)) in enumerate(zip(geom.layers, subplot_layer_aess))
         layer_aes_grid[i] = Gadfly.by_xy_group(aes, aes.xgroup, aes.ygroup, m, n)
     end
 
-    layer_data_grid = Array{Matrix{Gadfly.Data}}(length(geom.layers))
+    layer_data_grid = Array{Matrix{Gadfly.Data}}(undef, length(geom.layers))
     for (i, (layer, data, aes)) in enumerate(zip(geom.layers, subplot_layer_datas,
                                                  subplot_layer_aess))
         layer_data_grid[i] = Gadfly.by_xy_group(data, aes.xgroup, aes.ygroup, m, n)
@@ -224,7 +224,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             Gadfly.inherit!(col_aes, geom_aes)
             Stat.apply_statistic(Stat.xticks(), scales, coord, col_aes)
 
-            aes_grid[:, j] = col_aes
+            aes_grid[:, j] .= [col_aes]
         end
     end
 
@@ -289,9 +289,9 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     subplot_padding = 2mm
 
     # This assumes non of the layers themselves are subplot geometries
-    layer_subplot_aess = Vector{Gadfly.Aesthetics}[Array{Gadfly.Aesthetics}(0)
+    layer_subplot_aess = Vector{Gadfly.Aesthetics}[Array{Gadfly.Aesthetics}(undef, 0)
                                                    for _ in 1:length(geom.layers)]
-    layer_subplot_datas = Vector{Gadfly.Data}[Array{Gadfly.Data}(0)
+    layer_subplot_datas = Vector{Gadfly.Data}[Array{Gadfly.Data}(undef, 0)
                                                    for _ in 1:length(geom.layers)]
 
     for i in 1:n, j in 1:m
@@ -349,7 +349,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         # copy over the correct units, since we are reparenting the children
         for u in 1:size(subtbl, 1), v in 1:size(subtbl, 2)
             for child in subtbl[u, v]
-                if isnull(child.units)
+                if child.units===nothing
                     child.units = subtbl.units
                 end
             end

@@ -1,4 +1,4 @@
-using Gadfly, DataArrays
+using Gadfly
 
 set_default_plot_size(6inch, 3inch)
 

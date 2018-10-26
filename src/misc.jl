@@ -61,17 +61,7 @@ end
 function concrete_length(xs)
     n = 0
     for x in xs
-        if isconcrete(x)
-            n += 1
-        end
-    end
-    n
-end
-
-function concrete_length(xs::DataArray{T}) where T
-    n = 0
-    for i = 1:length(xs)
-        if !xs.na[i] && isconcrete(xs.data[i]::T)
+        if !ismissing(x) && isconcrete(x)
             n += 1
         end
     end
@@ -87,7 +77,7 @@ function concrete_length(xs::Iterators.Flatten)
 end
 
 function concrete_minimum(xs)
-    if done(xs, start(xs))
+    if isempty(xs)
         error("argument must not be empty")
     end
 
@@ -109,7 +99,7 @@ end
 
 
 function concrete_maximum(xs)
-    if done(xs, start(xs))
+    if isempty(xs)
         error("argument must not be empty")
     end
 
@@ -136,24 +126,7 @@ function concrete_minmax(xs, xmin::T, xmax::T) where T<:Real
     end
 
     for x in xs
-        if isconcrete(x)
-            xT = convert(T, x)
-            if isnan(xmin) || xT < xmin
-                xmin = xT
-            end
-            if isnan(xmax) || xT > xmax
-                xmax = xT
-            end
-        end
-    end
-    xmin, xmax
-end
-
-
-function concrete_minmax(xs::DataArray{TA}, xmin::T, xmax::T) where {T<:Real, TA}
-    for i = 1:length(xs)
-        if !xs.na[i]
-            x = xs.data[i]::TA
+        if !ismissing(x) && isconcrete(x)
             xT = convert(T, x)
             if isnan(xmin) || xT < xmin
                 xmin = xT
@@ -169,24 +142,7 @@ end
 
 function concrete_minmax(xs, xmin::T, xmax::T) where T
     for x in xs
-        if isconcrete(x)
-            xT = convert(T, x)
-            if xT < xmin
-                xmin = xT
-            end
-            if xT > xmax
-                xmax = xT
-            end
-        end
-    end
-    xmin, xmax
-end
-
-
-function concrete_minmax(xs::DataArray{TA}, xmin::T, xmax::T) where {T, TA}
-    for i = 1:length(xs)
-        if !xs.na[i]
-            x = xs.data[i]::TA
+        if !ismissing(x) && isconcrete(x)
             xT = convert(T, x)
             if xT < xmin
                 xmin = xT
@@ -247,7 +203,7 @@ function has(xs::AbstractArray{T,N}, y::T) where {T,N}
     return false
 end
 
-Maybe(T) = Union{T, (Void)}
+Maybe(T) = Union{T, (Nothing)}
 
 
 lerp(x::Float64, a, b) = a + (b - a) * max(min(x, 1.0), 0.0)
@@ -266,8 +222,8 @@ end
 
 # Remove any markup or whitespace from a string.
 function escape_id(s::AbstractString)
-    s = replace(s, r"<[^>]*>", "")
-    s = replace(s, r"\s", "_")
+    s = replace(s, r"<[^>]*>" => "")
+    s = replace(s, r"\s" => "_")
     s
 end
 
@@ -276,38 +232,6 @@ end
 is_int_compatable(::Integer) = true
 is_int_compatable(x::T) where {T <: AbstractFloat} = abs(x) < maxintfloat(T) && float(int(x)) == x
 is_int_compatable(::Any) = false
-
-
-## Return a DataFrame with x, y column suitable for plotting a function.
-#
-# Args:
-#  f: Function/Expression to be evaluated.
-#  a: Lower bound.
-#  b: Upper bound.
-#  n: Number of points to evaluate the function at.
-#
-# Returns:
-#  A data frame with "x" and "f(x)" columns.
-#
-function evalfunc(f::Function, a, b, n)
-    @assert n > 1
-
-    step = (b - a) / (n - 1)
-    xs = Array{typeof(a + step)}(n)
-    for i in 1:n
-        xs[i] = a + (i-1) * step
-    end
-
-    df = DataFrame(xs, map(f, xs))
-    # NOTE: 'colnames!' is the older deprecated name. 'names!' was also defined
-    # but threw an error.
-    try
-        names!(df, [:x, :f_x])
-    catch
-        colnames!(df, ["x", "f_x"])
-    end
-    df
-end
 
 
 # Construct a jscall to store arbitrary data in the element
@@ -330,7 +254,7 @@ end
 
 svg_color_class_from_label(label::AbstractString) = @sprintf("color_%s", escape_id(label))
 
-using Base.Dates
+using Dates
 
 # Arbitrarily order colors
 color_isless(a::Color, b::Color) =
@@ -392,20 +316,23 @@ function trim_zip(xs...)
 end
 
 # Convenience constructors of IndirectArrays
-discretize_make_ia(values::AbstractVector, levels) =
-    IndirectArray(Array{UInt8}(indexin(values, levels)), levels)
+function discretize_make_ia(values::AbstractVector, levels)
+    index = something.(indexin(values, levels), 0)
+    any(iszero, index) && throw(ArgumentError("values not in levels encountered"))
+    IndirectArray(index, levels)
+end
 discretize_make_ia(values::AbstractVector)         = discretize_make_ia(values, unique(values))
-discretize_make_ia(values::AbstractVector, ::Void) = discretize_make_ia(values)
+discretize_make_ia(values::AbstractVector, ::Nothing) = discretize_make_ia(values)
 
 discretize_make_ia(values::IndirectArray)         = values
-discretize_make_ia(values::IndirectArray, ::Void) = values
+discretize_make_ia(values::IndirectArray, ::Nothing) = values
 
 discretize_make_ia(values::CategoricalArray) =
     discretize_make_ia(values, intersect(push!(levels(values), missing), unique(values)))
-discretize_make_ia(values::CategoricalArray, ::Void) = discretize_make_ia(values)
+discretize_make_ia(values::CategoricalArray, ::Nothing) = discretize_make_ia(values)
 function discretize_make_ia(values::CategoricalArray{T}, levels::Vector) where {T}
-    mapping = coalesce.(indexin(CategoricalArrays.index(values.pool), levels), 0)
-    unshift!(mapping, coalesce(findfirst(ismissing, levels), 0))
+    mapping = something.(indexin(CategoricalArrays.index(values.pool), levels), 0)
+    pushfirst!(mapping, something(findfirst(ismissing, levels), 0))
     index = [mapping[x+1] for x in values.refs]
     any(iszero, index) && throw(ArgumentError("values not in levels encountered"))
     return IndirectArray(index, convert(Vector{T},levels))

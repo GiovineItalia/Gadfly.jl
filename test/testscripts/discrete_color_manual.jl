@@ -1,4 +1,4 @@
-using Gadfly, Colors, Base.Test
+using Gadfly, Colors, Test
 
 set_default_plot_size(6inch, 3inch)
 

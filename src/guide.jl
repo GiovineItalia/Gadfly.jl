@@ -156,9 +156,9 @@ end
 
 
 struct ColorKey <: Gadfly.GuideElement
-    title::Union{AbstractString, (Void)}
-    labels::Union{Vector{String}, (Void)}
-    pos::Union{Vector, (Void)}
+    title::Union{AbstractString, (Nothing)}
+    labels::Union{Vector{String}, (Nothing)}
+    pos::Union{Vector, (Nothing)}
 end
 ColorKey(;title=nothing, labels=nothing, pos=nothing) = ColorKey(title, labels, pos)
 
@@ -172,7 +172,7 @@ ColorKey(;title=nothing, labels=nothing, pos=nothing) = ColorKey(title, labels, 
 
 Enable control of the auto-generated colorkey.  Set the colorkey `title` for
 any plot, and the item `labels` for plots with a discrete color scale.  `pos`
-overrides [Theme(key_position=)](@ref Parameters) and can be in either
+overrides [Theme(key_position=)](@ref Gadfly) and can be in either
 relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm,
 0mm]), or plot scale (e.g. [0,0]) coordinates.
 """
@@ -204,7 +204,7 @@ function render_discrete_color_key(colors::Vector{C},
 
     # return a context with a lyout of numcols columns
     function make_layout(numcols)
-        colrows = Array{Int}(numcols)
+        colrows = Array{Int}(undef, numcols)
         m = n
         for i in 1:numcols
             colrows[i] = min(m, ceil(Integer, (n / numcols)))
@@ -212,7 +212,7 @@ function render_discrete_color_key(colors::Vector{C},
         end
 
         xpad = 1mm
-        colwidths = Array{Measure}(numcols)
+        colwidths = Array{Measure}(undef, numcols)
         m = 0
         for (i, nrows) in enumerate(colrows)
             if m == n
@@ -402,7 +402,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     (theme.key_position == :inside && gpos === nothing) &&  (gpos = [0.7w, 0.25h])
 
     used_colors = Set{Color}()
-    colors = Array{Color}(0) # to preserve ordering
+    colors = Array{Color}(undef, 0) # to preserve ordering
     labels = OrderedDict{Color, Set{AbstractString}}()
 
     continuous_guide = false
@@ -491,7 +491,7 @@ end
 
 
 struct ManualColorKey{C<:Color} <: Gadfly.GuideElement
-    title::Union{AbstractString, (Void)}
+    title::Union{AbstractString, (Nothing)}
     labels::OrderedDict{C, AbstractString}
 end
 function ManualColorKey(title, labels, colors::Vector{C}) where {C<:Color}
@@ -550,7 +550,7 @@ end
 
 struct XTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::Union{(Void), Symbol, AbstractArray}
+    ticks::Union{(Nothing), Symbol, AbstractArray}
     orientation::Symbol
 
     function XTicks(label, ticks, orientation)
@@ -721,7 +721,7 @@ end
 
 struct YTicks <: Gadfly.GuideElement
     label::Bool
-    ticks::Union{(Void), Symbol, AbstractArray}
+    ticks::Union{(Nothing), Symbol, AbstractArray}
     orientation::Symbol
 
     function YTicks(label, ticks, orientation)
@@ -908,7 +908,7 @@ end
 
 # X-axis label Guide
 struct XLabel <: Gadfly.GuideElement
-    label::Union{(Void), AbstractString}
+    label::Union{(Nothing), AbstractString}
     orientation::Symbol
 end
 XLabel(label; orientation=:auto) = XLabel(label, orientation)
@@ -975,7 +975,7 @@ end
 
 # Y-axis label Guide
 struct YLabel <: Gadfly.GuideElement
-    label::Union{(Void), AbstractString}
+    label::Union{(Nothing), AbstractString}
     orientation::Symbol
 end
 YLabel(label; orientation=:auto) = YLabel(label, orientation)
@@ -1036,7 +1036,7 @@ end
 
 # Title Guide
 struct Title <: Gadfly.GuideElement
-    label::Union{(Void), AbstractString}
+    label::Union{(Nothing), AbstractString}
 end
 
 """
@@ -1164,8 +1164,8 @@ function layout_guides(plot_context::Context,
     aspect_ratio = nothing
     if isa(coord, Gadfly.Coord.cartesian)
         if coord.fixed
-            aspect_ratio = isnull(plot_context.units) ? 1.0 :
-                     abs(get(plot_context.units).width / get(plot_context.units).height)
+            aspect_ratio = plot_context.units===nothing ? 1.0 :
+                     abs(plot_context.units.width / plot_context.units.height)
         elseif coord.aspect_ratio != nothing
             aspect_ratio = coord.aspect_ratio
         end
@@ -1176,8 +1176,8 @@ function layout_guides(plot_context::Context,
     i = 1
     for (ctxs, order) in guides[top_guide_position]
         for ctx in ctxs
-            if isnull(ctx.units) && !isnull(plot_units)
-                ctx.units = UnitBox(get(plot_units), toppad=0mm, bottompad=0mm)
+            if ctx.units===nothing && plot_units!==nothing
+                ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
             end
         end
 
@@ -1187,8 +1187,8 @@ function layout_guides(plot_context::Context,
     i += 1
     for (ctxs, order) in guides[bottom_guide_position]
         for ctx in ctxs
-            if isnull(ctx.units) && !isnull(plot_units)
-                ctx.units = UnitBox(get(plot_units), toppad=0mm, bottompad=0mm)
+            if ctx.units===nothing && plot_units!==nothing
+                ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
             end
         end
 
@@ -1199,8 +1199,8 @@ function layout_guides(plot_context::Context,
     j = 1
     for (ctxs, order) in guides[left_guide_position]
         for ctx in ctxs
-            if isnull(ctx.units) && !isnull(plot_units)
-                ctx.units = UnitBox(get(plot_units), leftpad=0mm, rightpad=0mm)
+            if ctx.units===nothing && plot_units!==nothing
+                ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
             end
         end
 
@@ -1210,8 +1210,8 @@ function layout_guides(plot_context::Context,
     j += 1
     for (ctxs, order) in guides[right_guide_position]
         for ctx in ctxs
-            if isnull(ctx.units) && !isnull(plot_units)
-                ctx.units = UnitBox(get(plot_units), leftpad=0mm, rightpad=0mm)
+            if ctx.units===nothing && plot_units!==nothing
+                ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
             end
         end
 

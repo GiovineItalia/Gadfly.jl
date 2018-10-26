@@ -12,9 +12,9 @@ check_arguments(arg, len) = fill(arg, len)
 
 
 struct HLineGeometry <: Gadfly.GeometryElement
-    color::Union{Vector, Color, (Void)}
-    size::Union{Vector, Measure, (Void)}
-    style::Union{Vector, Symbol, (Void)}
+    color::Union{Vector, Color, (Nothing)}
+    size::Union{Vector, Measure, (Nothing)}
+    style::Union{Vector, Symbol, (Nothing)}
     tag::Symbol
 
     HLineGeometry(color, size, style, tag) =
@@ -38,7 +38,7 @@ function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    style = geom.style === nothing ? theme.line_style : geom.style
+    style = geom.style === nothing ? theme.line_style[1] : geom.style
 
     color = check_arguments(color, length(aes.yintercept))
     size = check_arguments(size, length(aes.yintercept))
@@ -59,9 +59,9 @@ end
 
 
 struct VLineGeometry <: Gadfly.GeometryElement
-    color::Union{Vector, Color, (Void)}
-    size::Union{Vector, Measure, (Void)}
-    style::Union{Vector, Symbol, (Void)}
+    color::Union{Vector, Color, (Nothing)}
+    size::Union{Vector, Measure, (Nothing)}
+    style::Union{Vector, Symbol, (Nothing)}
     tag::Symbol
 
     VLineGeometry(color, size, style, tag) =
@@ -85,7 +85,7 @@ function render(geom::VLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    style = geom.style === nothing ? theme.line_style : geom.style
+    style = geom.style === nothing ? theme.line_style[1] : geom.style
 
     color = check_arguments(color, length(aes.xintercept))
     size = check_arguments(size, length(aes.xintercept))
@@ -106,9 +106,9 @@ end
 
 
 struct ABLineGeometry <: Gadfly.GeometryElement
-    color::Union{Vector, Color, (Void)}
-    size::Union{Vector, Measure, (Void)}
-    style::Union{Vector, Symbol, (Void)}
+    color::Union{Vector, Color, (Nothing)}
+    size::Union{Vector, Measure, (Nothing)}
+    style::Union{Vector, Symbol, (Nothing)}
     tag::Symbol
 
     ABLineGeometry(color, size, style, tag) =
@@ -121,10 +121,10 @@ ABLineGeometry(; color=nothing, size=nothing, style=nothing, tag::Symbol=empty_t
     Geom.abline[(; color=nothing, size=nothing, style=nothing)]
 
 For each corresponding pair of elements in the `intercept` and `slope` aesthetics,
-draw the lines `y = slope * x + intercept` across the plot canvas.
+draw the lines `T(y) = slope * T(x) + intercept` across the plot canvas, where `T(⋅)` defaults to the identity function.
 If unspecified, `intercept` defaults to [0] and `slope` to [1].
 
-This geometry currently does not support non-linear `Scale` transformations.
+This geometry also works with nonlinear `Scale` transformations of the `y` and/or `x` variable, with one caveat: for log transformations of the `x` variable, the `intercept` is the `y`-value at `x=1` rather than at `x=0`. 
 """
 const abline = ABLineGeometry
 
@@ -143,7 +143,7 @@ function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
 
     color = geom.color === nothing ? theme.default_color : geom.color
     size = geom.size === nothing ? theme.line_width : geom.size
-    style = geom.style === nothing ? theme.line_style : geom.style
+    style = geom.style === nothing ? theme.line_style[1] : geom.style
 
     color = check_arguments(color, length(aes.intercept))
     size = check_arguments(size, length(aes.intercept))

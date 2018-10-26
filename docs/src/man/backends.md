@@ -4,61 +4,86 @@ Author = "Daniel C. Jones, Tamas Nagy"
 
 # Backends
 
-**Gadfly** supports writing to the SVG and SVGJS backends out of the box. However,
-the PNG, PDF, and PS backends require Julia's bindings to
-[Cairo](https://github.com/JuliaGraphics/Cairo.jl). It can be installed with
+Gadfly supports creating SVG images out of the box through the native Julian
+renderer in [Compose.jl](https://github.com/GiovineItalia/Compose.jl).  The
+PNG, PDF, PS, and PGF formats, however, require Julia's bindings to
+[cairo](https://www.cairographics.org/) and
+[fontconfig](https://www.freedesktop.org/wiki/Software/fontconfig/), which can
+be installed with
 
 ```julia
 Pkg.add("Cairo")
+Pkg.add("Fontconfig")
 ```
 
-Additionally, complex layouts involving text are more accurate when
-Pango and Fontconfig are installed.
 
-## Changing the backend
+## Rendering to a file
 
-Drawing to different backends is easy
+In addition to the `draw` interface presented in the [Tutorial](@ref Tutorial):
 
 ```julia
-# define a plot
-myplot = plot(..)
-
-# draw on every available backend
-draw(SVG("myplot.svg", 4inch, 3inch), myplot)
-draw(SVGJS("myplot.svg", 4inch, 3inch), myplot)
-draw(PNG("myplot.png", 4inch, 3inch), myplot)
-draw(PDF("myplot.pdf", 4inch, 3inch), myplot)
-draw(PS("myplot.ps", 4inch, 3inch), myplot)
-draw(PGF("myplot.tex", 4inch, 3inch), myplot)
+p = plot(...)
+draw(SVG("foo.svg", 6inch, 4inch), p)
 ```
 
-!!! note
+one can more succintly use Julia's function chaining syntax:
 
-    The `SVGJS` backend writes SVG with embedded javascript. There are a couple
-    subtleties with using the output from this backend.
+```julia
+p |> SVG("foo.svg", 6inch, 4inch)
+```
 
-    Drawing to the backend works like any other
+If you plan on drawing many figures of the same size, consider
+setting it as the default:
 
-    ```julia
-    draw(SVGJS("mammals.js.svg", 6inch, 6inch), p)
-    ```
+```julia
+set_default_plot_size(6inch, 4inch)
+p1 |> SVG("foo1.svg")
+p2 |> SVG("foo2.svg")
+p3 |> SVG("foo3.svg")
+```
 
-    If included with an `<img>` tag, it will display as a static SVG image
 
-    ```html
-    <img src="mammals.js.svg"/>
-    ```
+## Choosing a backend
 
-    For the interactive javascript features to be enabled, the output either needs
-    to be included inline in the HTML page, or included with an object tag
+Drawing to different backends is easy.  Simply swap `SVG` for one
+of `SVGJS`, `PNG`, `PDF`, `PS`, or `PGF`:
 
-    ```html
-    <object data="mammals.js.svg" type="image/svg+xml"></object>
-    ```
+```julia
+# e.g.
+p |> PDF("foo.pdf")
+```
 
-    A `div` element must be placed, and the `draw` function defined in mammals.js
-    must be passed the id of this element, so it knows where in the document to
-    place the plot.
+
+## Interactive SVGs
+
+The `SVGJS` backend writes SVG with embedded javascript. There are a couple
+subtleties with using the output from this backend.
+
+Drawing to the backend works like any other
+
+```julia
+draw(SVGJS("foo.svg", 6inch, 6inch), p)
+```
+
+If included with an `<img>` tag, the output will display as a static SVG image
+though.
+
+```html
+<img src="foo.svg"/>
+```
+
+For the [interactive](@ref Interactivity) javascript features to be enabled, it
+either needs to be included inline in the HTML page, or included with an object
+tag.
+
+```html
+<object data="foo.svg" type="image/svg+xml"></object>
+```
+
+For the latter, a `div` element must be placed, and the `draw` function
+must be passed the id of this element, so it knows where in the
+document to place the plot.
+
 
 ## IJulia
 
@@ -67,10 +92,6 @@ to [Jupyter](https://jupyter.org/). This includes a browser based notebook
 that can inline graphics and plots. Gadfly works out of the box with IJulia,
 with or without drawing explicity to a backend.
 
-Without a explicit call to `draw` (i.e. just calling `plot`), the D3 backend is used with
-a default plot size. The default plot size can be changed with `set_default_plot_size`.
-
-```julia
-# E.g.
-set_default_plot_size(12cm, 8cm)
-```
+Without an explicit call to `draw` (i.e. just calling `plot` without a trailing
+semicolon), the SVGJS backend is used with the default plot size, which can be
+changed as described above.

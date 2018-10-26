@@ -3,12 +3,12 @@ module Scale
 using Colors
 using Compat
 using Compose
-using DataArrays
 using DataStructures
 using Gadfly
 using Showoff
 using IndirectArrays
 using CategoricalArrays
+using Printf
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia, aes2str
 import Distributions: Distribution
@@ -78,7 +78,7 @@ struct ContinuousScale <: Gadfly.ScaleElement
     maxvalue
     minticks
     maxticks
-    labels::Union{(Void), Function}
+    labels::Union{(Nothing), Function}
     format
     scalable
 
@@ -108,8 +108,8 @@ function make_labeler(scale::ContinuousScale)
     end
 end
 
-const x_vars = [:x, :xmin, :xmax, :xintercept, :intercept, :xviewmin, :xviewmax, :xend]
-const y_vars = [:y, :ymin, :ymax, :yintercept, :slope, :middle, :upper_fence, :lower_fence,
+const x_vars = [:x, :xmin, :xmax, :xintercept, :xviewmin, :xviewmax, :xend]
+const y_vars = [:y, :ymin, :ymax, :yintercept, :intercept, :middle, :upper_fence, :lower_fence,
                 :upper_hinge, :lower_hinge, :yviewmin, :yviewmax, :yend]
 
 element_aesthetics(scale::ContinuousScale) = scale.vars
@@ -161,6 +161,13 @@ end
 """
 const size_continuous = continuous_scale_partial([:size], identity_transform)
 
+"""
+    slope_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,
+                     format=nothing, minticks=2, maxticks=10, scalable=true)]
+"""
+const slope_continuous = continuous_scale_partial([:slope], identity_transform)
+
+
 function apply_scale(scale::ContinuousScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
@@ -198,7 +205,8 @@ function apply_scale(scale::ContinuousScale,
                 T = Measure
             end
 
-            ds = any(ismissing, vals) ? DataArray(T, length(vals)) : Array{T}(length(vals))
+            ds = any(ismissing, vals) ? Array{Union{Missing,T}}(undef,length(vals)) :
+                    Array{T}(undef,length(vals))
             apply_scale_typed!(ds, vals, scale)
 
             if var == :xviewmin || var == :xviewmax ||
@@ -216,7 +224,7 @@ function apply_scale(scale::ContinuousScale,
                 label_var = Symbol(var, "_label")
             end
 
-            if in(label_var, Set(fieldnames(aes)))
+            if in(label_var, Set(fieldnames(typeof(aes))))
                 setfield!(aes, label_var, make_labeler(scale))
             end
         end
@@ -275,9 +283,9 @@ end
 
 struct DiscreteScale <: Gadfly.ScaleElement
     vars::Vector{Symbol}
-    labels::Union{(Void), Function}
-    levels::Union{(Void), AbstractVector}
-    order::Union{(Void), AbstractVector}
+    labels::Union{(Nothing), Function}
+    levels::Union{(Nothing), AbstractVector}
+    order::Union{(Nothing), AbstractVector}
 end
 DiscreteScale(vals; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale(vals, labels, levels, order)
@@ -304,8 +312,8 @@ anything in the data that's not respresented in `levels` will be set to
 `missing`.  `order` is a vector of integers giving a permutation of the levels
 default order.
 
-See also [`group_discrete`](@ref), [`shape_discrete`](@ref), and
-[`size_discrete`](@ref).
+See also [`group_discrete`](@ref), [`shape_discrete`](@ref), 
+[`size_discrete`](@ref), and [`linestyle_discrete`](@ref).
 """
 
 @doc xy_discrete_docstr("x", aes2str(element_aesthetics(x_discrete()))) x_discrete(; labels=nothing, levels=nothing, order=nothing) =
@@ -328,6 +336,10 @@ Similar to [`Scale.x_discrete`](@ref), except applied to the `$aes` aesthetic.
 
 @doc type_discrete_docstr("size") size_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:size], labels=labels, levels=levels, order=order)
+
+@doc type_discrete_docstr("linestyle") linestyle_discrete(; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale([:linestyle], labels=labels, levels=levels, order=order)
+
 
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
@@ -358,7 +370,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
                 labeler = explicit_labeler
             end
 
-            in(label_var, Set(fieldnames(aes))) && setfield!(aes, label_var, labeler)
+            in(label_var, Set(fieldnames(typeof(aes)))) && setfield!(aes, label_var, labeler)
         end
     end
 end
@@ -407,8 +419,8 @@ end
 
 struct DiscreteColorScale <: Gadfly.ScaleElement
     f::Function
-    levels::Union{(Void), AbstractVector}
-    order::Union{(Void), AbstractVector}
+    levels::Union{(Nothing), AbstractVector}
+    order::Union{(Nothing), AbstractVector}
     preserve_order::Bool
 end
 DiscreteColorScale(f; levels=nothing, order=nothing, preserve_order=true) =
@@ -422,7 +434,7 @@ default_discrete_colors(n) = convert(Vector{Color},
                                transform=c -> deuteranopic(c, 0.5),
                                lchoices=Float64[65, 70, 75, 80],
                                cchoices=Float64[0, 50, 60, 70],
-                               hchoices=linspace(0, 330, 24)))
+                               hchoices=range(0, stop=330, length=24)))
 
 """
     color_discrete_hue[(f; levels=nothing, order=nothing, preserve_order=true)]
@@ -632,7 +644,7 @@ function apply_scale(scale::ContinuousColorScale,
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
 
-        aes.color = Array{RGB{Float32}}(length(data.color))
+        aes.color = Array{RGB{Float32}}(undef, length(data.color))
         apply_scale_typed!(aes.color, data.color, scale, cmin, cspan)
 
         color_key_colors = Dict{Color, Float64}()

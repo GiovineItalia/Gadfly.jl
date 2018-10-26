@@ -1,4 +1,4 @@
-using Gadfly, DataArrays, RDatasets, DataFrames
+using Gadfly, RDatasets, DataFrames
 
 set_default_plot_size(6inch, 6inch)
 
