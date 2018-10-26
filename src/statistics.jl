@@ -760,7 +760,7 @@ data with `coverage_weight`; and of having a nice numbering with
          granularity_weight=1/4,
          simplicity_weight=1/6,
          coverage_weight=1/3,
-         niceness_weight=1/4) = 
+         niceness_weight=1/4) =
     TickStatistic("x",
               granularity_weight, simplicity_weight, coverage_weight, niceness_weight, ticks)
 
@@ -1643,7 +1643,7 @@ function apply_statistic(stat::ViolinStatistic,
 
     uxflag && (grouped_y = Dict(x=>aes.y[aes.x.==x] for x in ux))
 
-    grouped_color = (colorflag ? Dict(x=>first(aes.color[aes.x.==x]) for x in ux) : 
+    grouped_color = (colorflag ? Dict(x=>first(aes.color[aes.x.==x]) for x in ux) :
         uxflag && Dict(x=>nothing for x in ux) )
 
     aes.x     = Array{Float64}(undef, 0)
@@ -2042,7 +2042,7 @@ default_scales(stat::BandStatistic) = [Scale.x_continuous(), Scale.y_continuous(
 """
     Stat.band[(; orientation=:vertical)]
 
-Transform points in $(aes2str(input_aesthetics(band()))) into rectangles in
+Transform intercepts in $(aes2str(input_aesthetics(band()))) into rectangles in
 $(aes2str(output_aesthetics(band()))).  Used by [`Geom.band`](@ref Gadfly.Geom.band).
 """
 const band = BandStatistic
