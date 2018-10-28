@@ -148,7 +148,6 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
                     svgclass("guide background"),
                     stroke(theme.panel_stroke),
                     fill(theme.panel_fill),
-                    fillopacity(theme.panel_opacity),
                     svgattribute("pointer-events", "visible"))
 
     return [PositionedGuide([back], 0, under_guide_position)]
