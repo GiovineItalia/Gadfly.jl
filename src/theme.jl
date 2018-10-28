@@ -97,7 +97,8 @@ $(FIELDS)
     panel_stroke,          ColorOrNothing,  nothing
 
     "Opacity of the plot background panel. (Float in [0.0, 1.0])",
-    panel_opacity,         Float64,         0.0
+    panel_opacity,         Float64,         0.0,
+    "The keyword argument `panel_opacity` has been deprecated. Instead, provide a e.g. RGBA() color to panel_fill."
 
     "Background color for the entire plot. If nothing, no background. (Color or Nothing)",
     background_color,      ColorOrNothing,  nothing
