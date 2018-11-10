@@ -3,7 +3,6 @@ using Documenter, Gadfly, Compose
 makedocs(
     modules = [Gadfly],
     clean = false,
-    format = :html,
     sitename = "Gadfly.jl",
     pages = Any[
         "Home" => "index.md",
@@ -41,8 +40,4 @@ makedocs(
 
 deploydocs(
     repo   = "github.com/GiovineItalia/Gadfly.jl.git",
-    osname = "linux",
-    deps = nothing,
-    make = nothing,
-    target = "build",
 )

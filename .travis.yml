@@ -14,4 +14,19 @@ before_script:
   - julia -e 'using Pkg; Pkg.add(PackageSpec(name="Compose", rev="master"))'
 after_success:
   - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
-  - julia -e 'using Pkg; foreach(x->Pkg.add(x), readlines(open(joinpath("docs", "REQUIRE")))); include(joinpath("docs", "make.jl"))'
+
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.0
+      os: linux
+      script:
+        - |
+          julia --color=yes --project=docs/ <<EOF
+            using Pkg
+            Pkg.add(PackageSpec(name="Compose", rev="master"))
+            Pkg.develop(PackageSpec(path=pwd()))
+            Pkg.instantiate()
+            include("docs/make.jl")
+          EOF
+      after_success: skip
