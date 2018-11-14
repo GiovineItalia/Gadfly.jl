@@ -22,11 +22,11 @@ jobs:
       os: linux
       script:
         - |
-          julia --color=yes --project=docs/ <<EOF
+          julia --color=yes --project=docs/ -e'
             using Pkg
             Pkg.add(PackageSpec(name="Compose", rev="master"))
             Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()
             include("docs/make.jl")
-          EOF
+          '
       after_success: skip
