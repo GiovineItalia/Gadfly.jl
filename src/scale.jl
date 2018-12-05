@@ -600,8 +600,7 @@ const color_continuous_gradient = color_continuous  ### WHY HAVE THIS ALIAS?
 
 function apply_scale(scale::ContinuousColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-    cdata = reduce(vcat, [], [i.color for i in datas if i.color != nothing])
-    filter!(!isna, cdata)
+    cdata = skipmissing(Iterators.flatten(i.color for i in datas if i.color != nothing))
     if !isempty(cdata)
       cmin, cmax = extrema(cdata)
     else
