@@ -165,10 +165,9 @@ plot(ls..., Guide.title("layer example"))
 """
 function layer(data_source,
                elements::ElementOrFunction...; mapping...)
-    mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
     lyr.data_source = data_source
-    lyr.mapping = cleanmapping(mapping)
+    lyr.mapping = cleanmapping(Dict(mapping))
     if haskey(mapping, :order)
         lyr.order = mapping[:order]
     end
@@ -284,8 +283,7 @@ plot(my_matrix, x=Col.value(1), y=Col.value(2), Geom.line,
 """
 function plot(data_source,
               elements::ElementOrFunctionOrLayers...; mapping...)
-    mappingdict = Dict{Symbol, Any}(mapping)
-    return plot(data_source, mappingdict, elements...)
+    return plot(data_source, Dict(mapping), elements...)
 end
 
 """
@@ -304,8 +302,7 @@ plot(x=collect(1917:2018), y=1.02.^(0:101), Geom.line)
 ```
 """
 function plot(elements::ElementOrFunctionOrLayers...; mapping...)
-    mappingdict = Dict{Symbol, Any}(mapping)
-    plot(nothing, mappingdict, elements...)
+    plot(nothing, Dict(mapping), elements...)
 end
 
 """
