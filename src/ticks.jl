@@ -2,7 +2,7 @@
 # little opaque because I want to avoid assuming the log function is defined
 # over typeof(xspan)
 function bounding_order_of_magnitude(xspan::DT) where DT
-    one_dt = convert(DT, one(DT))
+    one_dt = oneunit(DT)
 
     a = 1
     step = 1
@@ -69,7 +69,7 @@ function optimize_ticks_typed(x_min::T, x_max::T, extend_ticks,
                            granularity_weight::Float64, simplicity_weight::Float64,
                            coverage_weight::Float64, niceness_weight::Float64,
                            strict_span) where T
-    one_t = convert(T, one(T))
+    one_t = oneunit(T)
     if x_max - x_min < eps()*one_t
         R = typeof(1.0 * one_t)
         return R[x_min], x_min - one_t, x_min + one_t
