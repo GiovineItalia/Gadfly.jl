@@ -52,23 +52,25 @@ end # module Row
 #   A new mapping with aliases evaluated and unrecognized aesthetics removed.
 #
 function cleanmapping(mapping::Dict)
+    valid_aesthetics = fieldnames(Aesthetics)
     cleaned = Dict{Symbol, Any}()
     for (key, val) in mapping
         # skip the "order" pesudo-aesthetic, used to order layers
         key == :order && continue
 
         if haskey(aesthetic_aliases, key)
-            key = aesthetic_aliases[key]
-        elseif !in(key, fieldnames(Aesthetics))
+            # redefining key could have performance impacts
+            newkey = aesthetic_aliases[key]
+        elseif in(key, valid_aesthetics)
+            newkey = key
+        else
             @warn "$(string(key)) is not a recognized aesthetic. Ignoring."
             continue
         end
 
-        if val == Col.value || val == Col.index || val == Row.index
-            val = val()
-        end
+        newval = val == Col.value || val == Col.index || val == Row.index ? val() : val
 
-        cleaned[key] = val
+        cleaned[newkey] = newval
     end
     cleaned
 end
@@ -200,7 +202,21 @@ evalmapping(source::MeltedData, arg::AbstractString) =
 evalmapping(source::MeltedData, arg::Colon) = source.melted_data
 
 
+# Share common functionality between general and melted-data-specific methods
+function _evalmapping!(mapping::Dict, data_source, data::Data)
+    for (k, v) in mapping
+        setfield!(data, k, evalmapping(data_source, v))
+        data.titles[k] = isa(v, AbstractString) || isa(v, Symbol) ?  string(v) : string(k)
+    end
+
+    return data_source
+end
+
 # Evalute aesthetic mappings producting a Data instance.
+evalmapping!(mapping::Dict, data_source::MeltedData, data::Data) =
+    _evalmapping!(mapping, data_source, data)
+
+# Need to do additional work only if data_source is not MeltedData
 function evalmapping!(mapping::Dict, data_source, data::Data)
     # Are we doing implicit reshaping?
     colgroups = Col.GroupedColumn[]
@@ -212,16 +228,13 @@ function evalmapping!(mapping::Dict, data_source, data::Data)
         end
     end
 
-    if !isempty(colgroups) && !isa(data_source, MeltedData)
-        data_source = meltdata(data_source, colgroups)
+    transformed_data_source = if !isempty(colgroups)
+        meltdata(data_source, colgroups)
+    else
+        data_source
     end
 
-    for (k, v) in mapping
-        setfield!(data, k, evalmapping(data_source, v))
-        data.titles[k] = isa(v, AbstractString) || isa(v, Symbol) ?  string(v) : string(k)
-    end
-
-    return data_source
+    return _evalmapping!(mapping, transformed_data_source, data)
 end
 
 function link_dataframes()
