@@ -32,9 +32,9 @@ function concretize(xss::AbstractVector...)
         @label next_j1
     end
 
-    yss = Array{AbstractVector}(length(xss))
+    yss = Vector{AbstractVector}(undef, length(xss))
     for (i, xs) in enumerate(xss)
-        yss[i] = Array{eltype(xs)}(count)
+        yss[i] = Vector{eltype(xs)}(undef, count)
     end
 
     k = 1

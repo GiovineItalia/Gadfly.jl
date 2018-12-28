@@ -2,6 +2,10 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 1.1.0
+ * `Stat.smooth(method=:lm)` confidence bands (#1231)
+
+
 # Version 0.9.0
  * conditionally depend on DataFrames (#1204)
  * `Geom.abline`: add support for nonlinear `Scale` transformations (#1201)

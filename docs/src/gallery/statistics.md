@@ -46,6 +46,37 @@ p2 = plot(x=rand(Normal(), 100), y=Normal(), Stat.qq, Geom.point)
 hstack(p1,p2)
 ```
 
+## [`Stat.smooth`](@ref)
+
+```@example
+using Colors, Compose, Gadfly, RDatasets
+set_default_plot_size(21cm,8cm)
+salaries = dataset("car","Salaries")
+salaries.Salary /= 1000.0
+salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
+
+p = plot(salaries[salaries.Rank.=="Prof",:], x=:YrsService, y=:Salary, 
+    color=:Sex, xgroup = :Discipline,
+    Geom.subplot_grid(Geom.point,
+  layer(Stat.smooth(method=:lm, levels=[0.95, 0.99]), Geom.line, Geom.ribbon)), 
+    Scale.xgroup(levels=["Discipline A", "Discipline B"]),
+    Guide.colorkey(title="", pos=[0.43w, -0.4h]), 
+    Theme(point_size=2pt,
+        lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.2) )
+)
+```
+
+```@example
+using DataFrames, Gadfly
+set_default_plot_size(14cm, 8cm)
+x = range(0.1, stop=4.9, length=30)
+D = DataFrame(x=x, y=x.+randn(length(x)))
+p = plot(D, x=:x, y=:y, Geom.point,
+  layer(Stat.smooth(method=:lm, levels=[0.90,0.99]), Geom.line, Geom.ribbon(fill=false)),
+     Theme(lowlight_color=c->"gray", line_style=[:solid, :dot])
+)
+```
+
 
 ## [`Stat.step`](@ref)
 
