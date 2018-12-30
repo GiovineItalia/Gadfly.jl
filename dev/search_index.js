@@ -617,6 +617,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "gallery/statistics/#[Stat.smooth](@ref)-1",
+    "page": "Statistics",
+    "title": "Stat.smooth",
+    "category": "section",
+    "text": "using Colors, Compose, Gadfly, RDatasets\nset_default_plot_size(21cm,8cm)\nsalaries = dataset(\"car\",\"Salaries\")\nsalaries.Salary /= 1000.0\nsalaries.Discipline = [\"Discipline $(x)\" for x in salaries.Discipline]\n\np = plot(salaries[salaries.Rank.==\"Prof\",:], x=:YrsService, y=:Salary, \n    color=:Sex, xgroup = :Discipline,\n    Geom.subplot_grid(Geom.point,\n  layer(Stat.smooth(method=:lm, levels=[0.95, 0.99]), Geom.line, Geom.ribbon)), \n    Scale.xgroup(levels=[\"Discipline A\", \"Discipline B\"]),\n    Guide.colorkey(title=\"\", pos=[0.43w, -0.4h]), \n    Theme(point_size=2pt,\n        lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.2) )\n)using DataFrames, Gadfly\nset_default_plot_size(14cm, 8cm)\nx = range(0.1, stop=4.9, length=30)\nD = DataFrame(x=x, y=x.+randn(length(x)))\np = plot(D, x=:x, y=:y, Geom.point,\n  layer(Stat.smooth(method=:lm, levels=[0.90,0.99]), Geom.line, Geom.ribbon(fill=false)),\n     Theme(lowlight_color=c->\"gray\", line_style=[:solid, :dot])\n)"
+},
+
+{
     "location": "gallery/statistics/#[Stat.step](@ref)-1",
     "page": "Statistics",
     "title": "Stat.step",
@@ -1597,7 +1605,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.smooth",
     "category": "type",
-    "text": "Stat.smooth[(; method=:loess, smoothing=0.75)]\n\nTransform the x and y aesthetics into the x and y aesthetics.  method can either be:loess or :lm.  smoothing controls the degree of smoothing.  For :loess, this is the span parameter giving the proportion of data used for each local fit where 0.75 is the default. Smaller values use more data (less local context), larger values use less data (more local context).\n\n\n\n\n\n"
+    "text": "Stat.smooth[(; method=:loess, smoothing=0.75, levels=[0.95])]\n\nTransform the x and y aesthetics into the x, y, ymin and ymax aesthetics.  method can either be:loess or :lm.  smoothing controls the degree of smoothing.  For :loess, this is the span parameter giving the proportion of data used for each local fit where 0.75 is the default. Larger values use more data (less local context), smaller values use less data (more local context).  levels is a vector of quantiles  at which confidence bands are calculated (currently for method=:lm only). For confidence bands, use Stat.smooth() with Geom.ribbon.\n\n\n\n\n\n"
 },
 
 {
