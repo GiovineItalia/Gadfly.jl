@@ -1123,91 +1123,99 @@ end
 struct SmoothStatistic <: Gadfly.StatisticElement
     method::Symbol
     smoothing::Float64
+    levels::Vector{Float64}
 end
-SmoothStatistic(; method=:loess, smoothing=0.75) = SmoothStatistic(method, smoothing)
+SmoothStatistic(; method=:loess, smoothing=0.75, levels=[0.95]) = SmoothStatistic(method, smoothing, levels)
 
 input_aesthetics(::SmoothStatistic) = [:x, :y]
-output_aesthetics(::SmoothStatistic) = [:x, :y]
+output_aesthetics(::SmoothStatistic) = [:x, :y, :ymin, :ymax]
 
 """
-    Stat.smooth[(; method=:loess, smoothing=0.75)]
+    Stat.smooth[(; method=:loess, smoothing=0.75, levels=[0.95])]
 
 Transform $(aes2str(input_aesthetics(smooth()))) into
 $(aes2str(output_aesthetics(smooth()))).  `method` can either be`:loess` or
 `:lm`.  `smoothing` controls the degree of smoothing.  For `:loess`, this is
 the span parameter giving the proportion of data used for each local fit where
-0.75 is the default. Smaller values use more data (less local context), larger
-values use less data (more local context).
+0.75 is the default. Larger values use more data (less local context), smaller
+values use less data (more local context).  `levels` is a vector of quantiles 
+at which confidence bands are calculated (currently for `method=:lm` only).
+For confidence bands, use `Stat.smooth()` with `Geom.ribbon`.
 """
 const smooth = SmoothStatistic
 
-function apply_statistic(stat::SmoothStatistic,
-                         scales::Dict{Symbol, Gadfly.ScaleElement},
-                         coord::Gadfly.CoordinateElement,
-                         aes::Gadfly.Aesthetics)
+function Stat.apply_statistic(stat::SmoothStatistic,
+    scales::Dict{Symbol, Gadfly.ScaleElement},
+    coord::Gadfly.CoordinateElement,
+    aes::Gadfly.Aesthetics)
 
     Gadfly.assert_aesthetics_defined("Stat.smooth", aes, :x, :y)
     Gadfly.assert_aesthetics_equal_length("Stat.smooth", aes, :x, :y)
 
     stat.method in [:loess,:lm] ||
-            error("The only Stat.smooth methods currently supported are loess and lm.")
-
-    max_num_steps = 750
-    aes_color = aes.color === nothing ? [nothing] : aes.color
-
-    groups = Dict(c => (eltype(aes.x)[], eltype(aes.y)[]) for c in unique(aes_color))
-    for (x, y, c) in zip(aes.x, aes.y, cycle(aes_color))
-        push!(groups[c][1], x)
-        push!(groups[c][2], y)
+    error("The only Stat.smooth methods currently supported are loess and lm.")
+   
+    local xs, ys, yhat
+    try
+        xs = Float64.(eltype(aes.x) <: Dates.TimeType ? Dates.value.(aes.x) : aes.x)
+        ys = Float64.(eltype(aes.y) <: Dates.TimeType ? Dates.value.(aes.y) : aes.y)
+    catch e
+        error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
     end
 
-    local xs, ys, xsp
-    aes.x = eltype(aes.x)[]
+    colorflag = aes.color != nothing
+    aes_color =  colorflag ? aes.color : fill(nothing, length(aes.x))
+
+    uc = unique(aes_color)
+    groups = Dict(c=>(xs[aes_color.==c], ys[aes_color.==c], aes.x[aes_color.==c]) for c in uc)
+
     # For aes.y returning a Float is ok if `y` is an Int or a Float
     # There does not seem to be strong demand for other types of `y`
+    aes.x = eltype(aes.x)[]
     aes.y = Float64[]
+    aes.ymin = Float64[]
+    aes.ymax = Float64[]
     colors = eltype(aes_color)[]
+    aes.linestyle = String[]
 
-    for (c, (xv, yv)) in groups
+    for (c, (xv, yv, x0)) in groups
         x_min, x_max = minimum(xv), maximum(xv)
         x_min == x_max && error("Stat.smooth requires more than one distinct x value")
-        try
-            xs = Float64.( eltype(xv) <: Dates.TimeType ? Dates.value.(xv) : xv )
-            ys = Float64.( eltype(yv) <: Dates.TimeType ? Dates.value.(yv) : yv )
-        catch e
-            error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
-        end
-
         nudge = 1e-5 * (x_max - x_min)
 
-        dx = (x_max-x_min)*(1/max_num_steps)
-        # For a Date, dx might be 0 days, so correct
-        # For Ints, correct dx
-        if isa(xv[1], Date)
-            dx = max(dx, Dates.Day(1))
-        elseif isa(xv[1], Int)
-            dx = ceil(Int, dx)
-            nudge = 0
-        end
-
-        steps = collect((x_min + nudge):dx:(x_max - nudge))
-        xsp = Float64.( eltype(steps) <: Dates.TimeType ? Dates.value.(steps) : steps )
+        xsp = copy(xv)
+        n = length(xv)
         if stat.method == :loess
-            smoothys = Loess.predict(loess(xs, ys, span=stat.smoothing), xsp)
+            xsp[argmin(xv)] += nudge
+            xsp[argmax(xv)] -= nudge
+            model = loess(xv, yv, span=stat.smoothing)
+            yhat = Loess.predict(model, xsp)
+            se = 0.0  # for se and dof, need values from Loess.jl
+            dof = 2
         elseif stat.method == :lm
-            lmcoeff = hcat(fill!(similar(xs), 1), xs) \ ys
-            smoothys = lmcoeff[2].*xsp .+ lmcoeff[1]
+            lmcoeff = hcat(fill!(similar(xv), 1), xv) \ yv
+            yhat = lmcoeff[2].*xsp .+ lmcoeff[1]
+            se = std(yv.-yhat, mean=0.0)
+            dof = n-2
         end
+        xi = sqrt.(1/n .+ abs2.(xv.-mean(xv))/sum(abs2,xv.-mean(xv)))
 
-    # New aes
-        append!(aes.x, steps)
-        append!(aes.y, smoothys)
-        append!(colors, fill(c, length(steps)))
+        # Confidence band levels
+        level = 0.5*(stat.levels.+1)
+        for lvl in level
+            qt = quantile(TDist(dof), lvl)
+            append!(aes.x, x0)        
+            append!(aes.y, yhat)
+            append!(colors, fill(c, length(xv)))
+            append!(aes.ymin, yhat.-qt*se.*xi)
+            append!(aes.ymax, yhat.+qt*se.*xi)
+            append!(aes.linestyle, fill("$(lvl)", length(xv)))        
+        end
     end
 
-    if !(aes.color===nothing)
-        aes.color = discretize_make_ia(colors)
-    end
+    colorflag && (aes.color = discretize_make_ia(colors))
+    linestyle_scale = get(scales, :linestyle, Scale.linestyle_discrete())
+    Scale.apply_scale(linestyle_scale, [aes], Gadfly.Data(linestyle = aes.linestyle))
 end
 
 
