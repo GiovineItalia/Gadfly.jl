@@ -1988,50 +1988,56 @@ draw each ellipse.  Used by [`Geom.ellipse`](@ref Gadfly.Geom.ellipse).
 """
 const ellipse = EllipseStatistic
 
-function Gadfly.Stat.apply_statistic(stat::EllipseStatistic,
-                         scales::Dict{Symbol, Gadfly.ScaleElement},
-                         coord::Gadfly.CoordinateElement,
-                         aes::Gadfly.Aesthetics)
+function apply_statistic(stat::EllipseStatistic,
+    scales::Dict{Symbol, Gadfly.ScaleElement},
+    coord::Gadfly.CoordinateElement,
+    aes::Gadfly.Aesthetics)    
 
     Dat = [aes.x aes.y]
-    grouped_xy = Dict(1=>Dat)
-    grouped_color = Dict{Int, Gadfly.ColorOrNothing}(1=>nothing)
     colorflag = aes.color != nothing
-    aes.group = (colorflag ? aes.color : aes.group)
+    groupflag = aes.group != nothing
+    aes_color = colorflag ? aes.color : fill(nothing, length(aes.x)) 
+    aes_group = groupflag ? aes.group : fill(nothing, length(aes.x))
+    CT, GT = eltype(aes_color), eltype(aes_group)
 
-    if aes.group != nothing
-        ug = unique(aes.group)
-        grouped_xy = Dict(g=>Dat[aes.group.==g,:] for g in ug)
-        grouped_color = Dict(g=>first(aes.group[aes.group.==g]) for g in ug)
-    end
+    groups = collect(Tuple{CT, GT}, zip(aes_color, aes_group))
+    ug = unique(groups)
 
-    levels = Float64[]
-    colors = eltype(aes.color)[]
+    V = Matrix{eltype(Dat)}
+    K = Tuple{CT, GT}
+    grouped_xy = Dict{K, V}(g=>Dat[groups.==[g],:] for g in ug)
+
+    pcolors = CT[]
+    pgroups = GT[]
     ellipse_x = eltype(Dat)[]
     ellipse_y = eltype(Dat)[]
+    aes.linestyle = String[]
 
     dfn = 2
     θ = 2π*(0:stat.nsegments)/stat.nsegments
     n = length(θ)
     for (g, data) in grouped_xy
         dfd = size(data,1)-1
-        dhat = fit(stat.distribution, data')
+        dhat = fit(stat.distribution, permutedims(data,[2,1]))
         Σ½ = cholesky(cov(dhat)).U
-        rv = sqrt.(dfn*[quantile(FDist(dfn,dfd), p) for p in stat.levels])
         ellxy =  [cos.(θ) sin.(θ)] * Σ½
         μ = mean(dhat)
-        for r in rv
+        for p in stat.levels
+            r = sqrt(dfn*quantile(FDist(dfn,dfd), p))
             append!(ellipse_x, r*ellxy[:,1].+μ[1])
             append!(ellipse_y, r*ellxy[:,2].+μ[2])
-            append!(colors, fill(grouped_color[g], n))
-            append!(levels, fill(r, n))
+            append!(pcolors, fill(g[1], n))
+            append!(pgroups, fill(g[2], n))
+            append!(aes.linestyle, fill("$(p)", n))
         end
     end
 
-    aes.group = discretize_make_ia(levels)
-    colorflag && (aes.color = colors)
+    colorflag && (aes.color = pcolors)
+    groupflag && (aes.group = discretize_make_ia(pgroups))
     aes.x = ellipse_x
     aes.y = ellipse_y
-end
+    linestyle_scale = get(scales, :linestyle, Scale.linestyle_discrete())
+    Scale.apply_scale(linestyle_scale, [aes], Gadfly.Data(linestyle = aes.linestyle))
+    end
 
 end # module Stat
