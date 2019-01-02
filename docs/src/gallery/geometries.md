@@ -138,16 +138,21 @@ using RDatasets, Gadfly
 set_default_plot_size(21cm, 8cm)
 D = dataset("datasets","faithful")
 D[:g] = D[:Eruptions].>3.0
-coord = Coord.cartesian(ymin=35, ymax=100)
+coord = Coord.cartesian(ymin=40, ymax=100)
 pa = plot(D, coord,
-          x=:Eruptions, y=:Waiting, group=:g,
-          Geom.point, Geom.ellipse)
-pb = plot(D, coord,
-          x=:Eruptions, y=:Waiting, color=:g,
-          Geom.point, Geom.ellipse,
-          layer(Geom.ellipse(levels=[0.99]), style(line_style=[:dot])),
-          style(key_position=:none), Guide.ylabel(nothing))
-hstack(pa,pb)
+    x=:Eruptions, y=:Waiting, group=:g,
+    Geom.point, Geom.ellipse,
+    Theme(lowlight_color=c->"gray") )
+pb = plot(D, coord, Guide.ylabel(nothing),
+    x=:Eruptions, y=:Waiting, color=:g,
+    Geom.point, Geom.ellipse(levels=[0.95, 0.99]),
+ Theme(key_position=:none, lowlight_color=identity, line_style=[:solid,:dot]))
+pc = plot(D, coord, Guide.ylabel(nothing),
+    x=:Eruptions, y=:Waiting, color=:g,
+    Geom.point, Geom.ellipse(fill=true),
+    layer(Geom.ellipse(levels=[0.99]), style(line_style=[:dot])),
+    Theme(key_position=:none) )
+hstack(pa,pb,pc)
 ```
 
 
