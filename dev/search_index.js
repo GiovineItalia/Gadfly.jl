@@ -341,7 +341,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Geom.ellipse",
     "category": "section",
-    "text": "using RDatasets, Gadfly\nset_default_plot_size(21cm, 8cm)\nD = dataset(\"datasets\",\"faithful\")\nD[:g] = D[:Eruptions].>3.0\ncoord = Coord.cartesian(ymin=35, ymax=100)\npa = plot(D, coord,\n          x=:Eruptions, y=:Waiting, group=:g,\n          Geom.point, Geom.ellipse)\npb = plot(D, coord,\n          x=:Eruptions, y=:Waiting, color=:g,\n          Geom.point, Geom.ellipse,\n          layer(Geom.ellipse(levels=[0.99]), style(line_style=[:dot])),\n          style(key_position=:none), Guide.ylabel(nothing))\nhstack(pa,pb)"
+    "text": "using RDatasets, Gadfly\nset_default_plot_size(21cm, 8cm)\nD = dataset(\"datasets\",\"faithful\")\nD[:g] = D[:Eruptions].>3.0\ncoord = Coord.cartesian(ymin=40, ymax=100)\npa = plot(D, coord,\n    x=:Eruptions, y=:Waiting, group=:g,\n    Geom.point, Geom.ellipse,\n    Theme(lowlight_color=c->\"gray\") )\npb = plot(D, coord, Guide.ylabel(nothing),\n    x=:Eruptions, y=:Waiting, color=:g,\n    Geom.point, Geom.ellipse(levels=[0.95, 0.99]),\n Theme(key_position=:none, lowlight_color=identity, line_style=[:solid,:dot]))\npc = plot(D, coord, Guide.ylabel(nothing),\n    x=:Eruptions, y=:Waiting, color=:g,\n    Geom.point, Geom.ellipse(fill=true),\n    layer(Geom.ellipse(levels=[0.99]), style(line_style=[:dot])),\n    Theme(key_position=:none) )\nhstack(pa,pb,pc)"
 },
 
 {
@@ -1165,7 +1165,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.polygon",
     "category": "type",
-    "text": "Geom.polygon[(; order=0, fill=false, preserve_order=false)]\n\nDraw polygons with vertices specified by the x and y aesthetics. Optionally plot multiple polygons according to the group or color aesthetics.  order controls whether the polygon(s) are underneath or on top of other forms.  If fill is true, fill and stroke the polygons according to Theme.discrete_highlight_color, otherwise only stroke.  If preserve_order is true, connect points in the order they are given, otherwise order the points around their centroid.\n\n\n\n\n\n"
+    "text": "Geom.polygon[(; order=0, fill=false, preserve_order=false)]\n\nDraw polygons with vertices specified by the x and y aesthetics. Optionally plot multiple polygons according to the group, color and/or linestyle aesthetics.  order controls whether the polygon(s) are underneath or on top of other forms.  If fill=true, fill the polygons using Theme.lowlight_color and stroke the polygons using Theme.discrete_highlight_color. If fill=false stroke the polygons using Theme.lowlight_color and Theme.line_style. If preserve_order=true connect points in the order they are given, otherwise order the points around their centroid.\n\n\n\n\n\n"
 },
 
 {
@@ -1261,7 +1261,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.ellipse",
     "category": "method",
-    "text": "Geom.ellipse[(; distribution=MvNormal, levels=[0.95], nsegments=51, fill=false)]\n\nDraw a confidence ellipse, using a parametric multivariate distribution, for a scatter of points specified by the x and y aesthetics.  Optionally plot multiple ellipses according to the group or color aesthetics.  This geometry is equivalent to Geom.polygon with Stat.ellipse; see the latter for more information.\n\n\n\n\n\n"
+    "text": "Geom.ellipse[(; distribution=MvNormal, levels=[0.95], nsegments=51, fill=false)]\n\nDraw a confidence ellipse, using a parametric multivariate distribution, for a scatter of points specified by the x and y aesthetics.  Optionally plot multiple ellipses according to the group and/or color aesthetics. levels are auto-mapped to the linestyle aesthetic. This geometry is equivalent to Geom.polygon with Stat.ellipse; see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
