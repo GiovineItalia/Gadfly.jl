@@ -373,7 +373,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Geom.histogram",
     "category": "section",
-    "text": "using Gadfly, RDatasets\nset_default_plot_size(21cm, 16cm)\np1 = plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", Geom.histogram)\np2 = plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\", Geom.histogram)\np3 = plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\",\n          Geom.histogram(bincount=30))\np4 = plot(dataset(\"ggplot2\", \"diamonds\"), x=\"Price\", color=\"Cut\",\n          Geom.histogram(bincount=30, density=true))\ngridstack([p1 p2; p3 p4])"
+    "text": "using Gadfly, RDatasets\nset_default_plot_size(21cm, 16cm)\nD = dataset(\"ggplot2\",\"diamonds\")\np1 = plot(D, x=\"Price\", Geom.histogram)\np2 = plot(D, x=\"Price\", color=\"Cut\", Geom.histogram)\np3 = plot(D, x=\"Price\", color=\"Cut\", Geom.histogram(bincount=30))\np4 = plot(D, x=\"Price\", color=\"Cut\", Geom.histogram(bincount=30, density=true))\ngridstack([p1 p2; p3 p4])"
 },
 
 {
