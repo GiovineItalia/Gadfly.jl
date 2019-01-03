@@ -332,15 +332,10 @@ function apply_statistic(stat::HistogramStatistic,
                         vals, stat.minbincount, stat.maxbincount)
         end
 
-        if stat.density
-            x_min = Gadfly.concrete_minimum(vals)
-            span = x_max - x_min
-            binwidth = span / d
-            bincounts = bincounts ./ (sum(bincounts) * binwidth)
-        end
-
         binwidth = (x_max - x_min) / d
     end
+
+    stat.density && (bincounts = bincounts ./ (sum(bincounts) * binwidth))
 
     if aes.color === nothing
         T = typeof(x_min + 1*binwidth)
@@ -355,21 +350,15 @@ function apply_statistic(stat::HistogramStatistic,
             getfield(aes, othervar)[j] = bincounts[j]
         end
     else
-        groups = Dict()
+        CT, VT = eltype(aes.color), eltype(vals)
+        groups = Dict{CT,Vector{VT}}(c=>VT[] for c in unique(aes.color))
         for (x, c) in zip(vals, cycle(aes.color))
-            Gadfly.isconcrete(x) || continue
-
-            if !haskey(groups, c)
-                groups[c] = Float64[x]
-            else
-                push!(groups[c], x)
-            end
+            Gadfly.isconcrete(x) && push!(groups[c], x)
         end
         T = typeof(x_min + 1*binwidth)
         setfield!(aes, minvar, Array{T}(undef, d * length(groups)))
         setfield!(aes, maxvar, Array{T}(undef, d * length(groups)))
         setfield!(aes, var, Array{T}(undef, d * length(groups)))
-
         setfield!(aes, othervar, Array{Float64}(undef, d * length(groups)))
         colors = Array{RGB{Float32}}(undef, d * length(groups))
 
@@ -378,7 +367,6 @@ function apply_statistic(stat::HistogramStatistic,
         for (i, (c, xs)) in enumerate(groups)
             fill!(bincounts, 0)
             for x in xs
-                Gadfly.isconcrete(x) || continue
                 if isdiscrete
                     bincounts[round(Int,x)] += 1
                 else
@@ -394,22 +382,13 @@ function apply_statistic(stat::HistogramStatistic,
 
             stack_height += bincounts[1:d]
 
-            if isdiscrete
-                for j in 1:d
-                    idx = (i-1)*d + j
-                    getfield(aes, var)[idx] = j
-                    getfield(aes, othervar)[idx] = bincounts[j]
-                    colors[idx] = c
-                end
-            else
-                for j in 1:d
-                    idx = (i-1)*d + j
-                    getfield(aes, minvar)[idx] = x_min + (j - 1) * binwidth
-                    getfield(aes, maxvar)[idx] = x_min + j * binwidth
-                    getfield(aes, var)[idx] = x_min + (j - 0.5) * binwidth
-                    getfield(aes, othervar)[idx] = bincounts[j]
-                    colors[idx] = c
-                end
+            for j in 1:d
+                idx = (i-1)*d + j
+                getfield(aes, var)[idx] = isdiscrete ? j : x_min + (j - 0.5) * binwidth
+                getfield(aes, minvar)[idx] = x_min + (j - 1) * binwidth
+                getfield(aes, maxvar)[idx] = x_min + j * binwidth
+                getfield(aes, othervar)[idx] = bincounts[j]
+                colors[idx] = c
             end
         end
 
