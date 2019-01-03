@@ -203,12 +203,11 @@ hstack(p1,p2)
 ```@example
 using Gadfly, RDatasets
 set_default_plot_size(21cm, 16cm)
-p1 = plot(dataset("ggplot2", "diamonds"), x="Price", Geom.histogram)
-p2 = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut", Geom.histogram)
-p3 = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut",
-          Geom.histogram(bincount=30))
-p4 = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut",
-          Geom.histogram(bincount=30, density=true))
+D = dataset("ggplot2","diamonds")
+p1 = plot(D, x="Price", Geom.histogram)
+p2 = plot(D, x="Price", color="Cut", Geom.histogram)
+p3 = plot(D, x="Price", color="Cut", Geom.histogram(bincount=30))
+p4 = plot(D, x="Price", color="Cut", Geom.histogram(bincount=30, density=true))
 gridstack([p1 p2; p3 p4])
 ```
 
