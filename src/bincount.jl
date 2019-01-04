@@ -243,8 +243,8 @@ function choose_bin_count_2d(xs::AbstractVector, ys::AbstractVector,
     end
 
     # bin widths
-    wx = (x_max - x_min) / dx
-    wy = (y_max - y_min) / dy
+    wx = (x_max==x_min) ? 1.0 : (x_max - x_min) / dx
+    wy = (y_max==y_min) ? 1.0 : (y_max - y_min) / dy
 
     bincounts = zeros(Int, (dy, dx))
     for (x, y) in zip(xs, ys)
