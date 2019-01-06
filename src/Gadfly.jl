@@ -409,6 +409,7 @@ function render_prepare(plot::Plot)
     for (layer, layer_data) in zip(plot.layers, datas)
         if isa(layer.geom, Geom.SubplotGeometry)
             for subplot_layer in layers(layer.geom)
+                isa(default_statistic(subplot_layer.geom), Stat.ContourStatistic) &&  @warn "For subplots, use `Stat.contour()` and `Geom.line`, instead of `Geom.contour()`"
                 subplot_data = Data()
                 if subplot_layer.data_source === nothing
                     subplot_layer.data_source = layer.data_source
@@ -679,11 +680,9 @@ function render_prepare(plot::Plot)
 
 
     # IIa. Layer-wise statistics
-    if !facet_plot
         for (stats, aes) in zip(layer_stats, layer_aess)
             Stat.apply_statistics(stats, scales, coord, aes)
         end
-    end
 
     # IIb. Plot-wise Statistics
     plot_aes = concat(layer_aess...)
