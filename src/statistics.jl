@@ -2019,6 +2019,63 @@ function apply_statistic(stat::EllipseStatistic,
     aes.y = ellipse_y
     linestyle_scale = get(scales, :linestyle, Scale.linestyle_discrete())
     Scale.apply_scale(linestyle_scale, [aes], Gadfly.Data(linestyle = aes.linestyle))
+end
+
+
+struct DodgeStatistic <: Gadfly.StatisticElement
+    position::Symbol
+    axis::Symbol
+end
+DodgeStatistic(; position::Symbol=:dodge, axis::Symbol=:x) = DodgeStatistic(position, axis)
+
+input_aesthetics(stat::DodgeStatistic) = [:x, :y]
+output_aesthetics(stat::DodgeStatistic) = [:x, :y]
+default_scales(stat::DodgeStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
+
+"""
+    Stat.dodge[(; position=:dodge, axis=:x)]
+
+Transform the points in $(aes2str(input_aesthetics(dodge()))) into set of dodged or stacked points
+ in $(aes2str(output_aesthetics(dodge()))).  `position` is `:dodge` or `:stack`.
+`axis` is `:x` or `:y`.
+"""
+const dodge = DodgeStatistic
+
+
+function apply_statistic(stat::DodgeStatistic,
+                            scales::Dict{Symbol, Gadfly.ScaleElement},
+                            coord::Gadfly.CoordinateElement,
+                            aes::Gadfly.Aesthetics)
+
+    aes.color==nothing && return
+    nbars = length(unique(aes.color))
+    othervar = (stat.axis == :x) ? :y : :x
+    vals = getfield(aes, stat.axis)
+    
+    if stat.position==:dodge
+        nbars == length(aes.color) && return
+        offset = range(-0.5+0.5/nbars, 0.5, step=1/nbars)
+        dodge = getindex(offset, aes.color.index)
+        setfield!(aes, stat.axis, vals.+dodge)
+    elseif stat.position==:stack
+        ovals = getfield(aes, othervar)
+        if nbars == length(aes.color)
+            setfield!(aes, othervar, 0.5*ovals)
+        else
+            idxs = isa(aes.color, IndirectArray) ? sortperm(aes.color.index, rev=true) : 1:length(aes.color)
+            idxs2 = sortperm(idxs)
+            m1 = reshape(idxs, :, nbars)
+            m2 = cumsum(ovals[m1], dims=2) .- 0.5*ovals[m1]
+            setfield!(aes, othervar, m2[idxs2])
+        end
+    else
+        error("position can be :dodge (default) or :stack")
     end
+end
+
+
+
+
+
 
 end # module Stat

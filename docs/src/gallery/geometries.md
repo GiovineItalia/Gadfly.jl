@@ -160,15 +160,48 @@ hstack(pa,pb,pc)
 
 ```@example
 using Gadfly, RDatasets, Distributions, Random
-set_default_plot_size(14cm, 8cm)
+set_default_plot_size(21cm, 8cm)
 Random.seed!(1234)
-sds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]
 n = 10
-ys = [mean(rand(Normal(0, sd), n)) for sd in sds]
-ymins = ys .- (1.96 * sds / sqrt(n))
-ymaxs = ys .+ (1.96 * sds / sqrt(n))
-plot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs,
-     Geom.point, Geom.errorbar)
+sds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]
+ys = mean.(rand.(Normal.(0, sds), n))
+df = DataFrame(x=1:length(sds), y=ys,
+  mins=ys.-(1.96*sds/sqrt(n)), maxs=ys.+(1.96*sds/sqrt(n)),
+    g=repeat(["a","b"], inner=3))
+p1 = plot(df, x=1:length(sds), y=:y, ymin=:mins, ymax=:maxs, color=:g, 
+    Geom.point, Geom.errorbar)
+p2 = plot(df, y=1:length(sds), x=:y, xmin=:mins, xmax=:maxs, color=:g, 
+    Geom.point, Geom.errorbar)
+hstack(p1, p2)
+```
+
+```@example
+using Compose, DataFrames, Gadfly, RDatasets, Statistics
+set_default_plot_size(21cm, 8cm)
+salaries = dataset("car","Salaries")
+salaries.Salary /= 1000.0
+salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
+df = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)
+[df[i] = df.Salary_mean.+j*df.Salary_std for (i,j) in zip([:ymin, :ymax], [-1, 1.0])]
+df[:label] = string.(round.(Int, df.Salary_mean))
+
+p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank, 
+    Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
+    ymin=:ymin, ymax=:ymax, Geom.errorbar, Stat.dodge,
+    Geom.bar(position=:dodge), 
+    Scale.color_discrete(levels=["Prof", "AssocProf", "AsstProf"]),
+    Guide.colorkey(title="", pos=[0.76w, -0.38h]),
+    Theme(bar_spacing=0mm, stroke_color=c->"black")
+)
+p2 = plot(df, y=:Discipline, x=:Salary_mean, color=:Rank, 
+    Coord.cartesian(yflip=true), Scale.y_discrete,
+    xmin=:ymin, xmax=:ymax, Geom.errorbar, Stat.dodge(axis=:y),
+    Geom.bar(position=:dodge, orientation=:horizontal), 
+    Scale.color_discrete(levels=["Prof", "AssocProf", "AsstProf"]),
+    Guide.yticks(orientation=:vertical), Guide.ylabel(nothing),
+    Theme(bar_spacing=0mm, stroke_color=c->"gray")
+)
+hstack(p1,p2)
 ```
 
 

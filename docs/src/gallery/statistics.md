@@ -35,6 +35,33 @@ p2 = plot(vcat(Db...), x=:x, color=:u,
 hstack(p1,p2)
 ```
 
+## [`Stat.dodge`](@ref)
+
+```@example
+using DataFrames, Gadfly, RDatasets, Statistics
+set_default_plot_size(21cm, 8cm)
+salaries = dataset("car","Salaries")
+salaries.Salary /= 1000.0
+salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
+df = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)
+[df[i] = df.Salary_mean.+j*df.Salary_std for (i,j) in zip([:ymin, :ymax], [-1, 1.0])]
+df[:label] = string.(round.(Int, df.Salary_mean))
+
+p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank, 
+    Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
+    label=:label, Geom.label(position=:centered), Stat.dodge(position=:stack),
+    Geom.bar(position=:stack)
+)
+p2 = plot(df, y=:Discipline, x=:Salary_mean, color=:Rank, 
+    Coord.cartesian(yflip=true), Scale.y_discrete,
+    label=:label, Geom.label(position=:right), Stat.dodge(axis=:y),
+    Geom.bar(position=:dodge, orientation=:horizontal), 
+    Scale.color_discrete(levels=["Prof", "AssocProf", "AsstProf"]),
+    Guide.yticks(orientation=:vertical), Guide.ylabel(nothing)
+)
+hstack(p1, p2)
+```
+
 ## [`Stat.qq`](@ref)
 
 ```@example
