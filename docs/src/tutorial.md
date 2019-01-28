@@ -1,5 +1,5 @@
 ```@meta
-Author = "Tamas Nagy, Daniel C. Jones, Simon Leblanc"
+Author = "Tamas Nagy, Daniel C. Jones, Simon Leblanc, Mattriks"
 ```
 
 # Tutorial
@@ -162,28 +162,78 @@ colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and
 converts arbitrarily between these. Of course, CSS/X11 named colors work too:
 "old lace", anyone?
 
-## Scale transforms
+All aesthetics (e.g. `x`, `y`, `color`) have a Scale e.g. `Scale.x_continuous()` and some have a Guide e.g. `Guide.xticks()`.  [Scales](@ref) can be continuous or discrete.
 
-Scale transforms also work as expected. Let's look at some data where this is
-useful.
+## Continuous Scales
+
+| Aesthetic | Scale. | Guide. |
+|-----------|------------------|-------|
+| `x` | `x_continuous` | `xticks` |
+| `y` | `y_continuous` | `yticks` |
+| `color` | `color_continuous` | `colorkey` |
+| `size` | `size_continuous` | sizekey (tbd) |
+
+e.g. `Scale.x_continuous(format= , minvalue= , maxvalue= )`\
+`format` can be: `:plain`, `:scientific`, `:engineering`, or `:auto`.
+
+Continuous scales can be transformed. In the next plot, the large animals are ruining things for us. Putting both axes on a log-scale clears things up.
 
 ```@example 1
+set_default_plot_size(21cm ,8cm)
 mammals = dataset("MASS", "mammals")
-plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)
+p1 = plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)
+p2 = plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label,
+     Scale.x_log10, Scale.y_log10)
+hstack(p1, p2)
 ```
 
-This is no good, the large animals are ruining things for us. Putting both
-axes on a log-scale clears things up.
+Scale transformations include: `_sqrt`, `_log`, `_log2`, `_log10`, `_asinh`.  
+ 
+```@example 1
+using Printf
+Diamonds = dataset("ggplot2","diamonds")
+p3= plot(Diamonds, x=:Price, y=:Carat, Geom.histogram2d(xbincount=25, ybincount=25),
+    Scale.x_continuous(format=:engineering) )
+p4= plot(Diamonds, x=:Price, y=:Carat, Geom.histogram2d(xbincount=25, ybincount=25),
+    Scale.x_continuous(format=:plain), 
+    Scale.y_sqrt(labels=y->@sprintf("%i", y^2)),
+    Scale.color_log10(minvalue=1.0, maxvalue=10^4),
+    Guide.yticks(ticks=sqrt.([0:5;])) )
+hstack(p3, p4)
+```
+
+
+## Discrete Scales
+
+| Aesthetic | Scale. | Guide. |
+|-----------|------------------|-------|
+| `x` | `x_discrete` | `xticks` |
+| `y` | `y_discrete` | `yticks` |
+| `color` | `color_discrete` | `colorkey` |
+| `shape` | `shape_discrete` | `shapekey` |
+| `size` | `size_discrete` | sizekey (tbd) |
+| `linestyle` | `linestyle_discrete` | linekey (tbd) |
+| `group` | `group_discrete` |  |
+| `xgroup` | `xgroup` |  |
+| `ygroup` | `ygroup` |  |
+
+e.g. `Scale.shape_discrete(labels= , levels= , order= )`
 
 ```@example 1
-plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label,
-     Scale.x_log10, Scale.y_log10)
+mtcars = dataset("datasets","mtcars")
+ labeldict = Dict(4=>"four", 6=>"six", 8=>"eight")
+p5 = plot(mtcars, x=:Cyl, color=:Cyl, Geom.histogram,
+    Scale.x_discrete(levels=[4,6,8]), Scale.color_discrete(levels=[4,6,8]) )
+p6 = plot(mtcars, x=:Cyl, color=:Cyl, Geom.histogram,
+    Scale.x_discrete(labels=i->labeldict[i], levels=[8,6,4]), 
+    Scale.color_discrete(levels=[8,6,4]) )
+hstack(p5, p6)
 ```
 
-## Discrete scales
 
-Since all continuous analysis is just degenerate discrete analysis, let's take a
-crack at the latter using some fuel efficiency data.
+## Gadfly defaults
+
+If you don't supply Scales or Guides, Gadfly will make an educated guess.
 
 ```@example 1
 gasoline = dataset("Ecdat", "Gasoline")
@@ -192,12 +242,12 @@ plot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)
 
 We could have added [`Scale.x_discrete`](@ref Gadfly.Scale.x_discrete)
 explicitly, but this is detected and the right default is chosen. This is the
-case with most of the elements in the grammar: we've omitted
+case with most of the elements in the grammar. When we've omitted
 [`Scale.x_continuous`](@ref Gadfly.Scale.x_continuous) and
-[`Scale.y_continuous`](@ref Gadfly.Scale.y_continuous) in the previous plots,
+[`Scale.y_continuous`](@ref Gadfly.Scale.y_continuous) in the plots above,
 as well as [`Coord.cartesian`](@ref), and guide elements such as
 [`Guide.xticks`](@ref Gadfly.Guide.xticks), [`Guide.xlabel`](@ref
-Gadfly.Guide.xlabel), and so on. As much as possible the system tries to fill
+Gadfly.Guide.xlabel) and so on, Gadfly tries to fill
 in the gaps with reasonable defaults.
 
 ## Rendering
