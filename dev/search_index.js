@@ -349,7 +349,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Geom.errorbar",
     "category": "section",
-    "text": "using Gadfly, RDatasets, Distributions, Random\nset_default_plot_size(14cm, 8cm)\nRandom.seed!(1234)\nsds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]\nn = 10\nys = [mean(rand(Normal(0, sd), n)) for sd in sds]\nymins = ys .- (1.96 * sds / sqrt(n))\nymaxs = ys .+ (1.96 * sds / sqrt(n))\nplot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs,\n     Geom.point, Geom.errorbar)"
+    "text": "using Gadfly, RDatasets, Distributions, Random\nset_default_plot_size(21cm, 8cm)\nRandom.seed!(1234)\nn = 10\nsds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]\nys = mean.(rand.(Normal.(0, sds), n))\ndf = DataFrame(x=1:length(sds), y=ys,\n  mins=ys.-(1.96*sds/sqrt(n)), maxs=ys.+(1.96*sds/sqrt(n)),\n    g=repeat([\"a\",\"b\"], inner=3))\np1 = plot(df, x=1:length(sds), y=:y, ymin=:mins, ymax=:maxs, color=:g, \n    Geom.point, Geom.errorbar)\np2 = plot(df, y=1:length(sds), x=:y, xmin=:mins, xmax=:maxs, color=:g, \n    Geom.point, Geom.errorbar)\nhstack(p1, p2)using Compose, DataFrames, Gadfly, RDatasets, Statistics\nset_default_plot_size(21cm, 8cm)\nsalaries = dataset(\"car\",\"Salaries\")\nsalaries.Salary /= 1000.0\nsalaries.Discipline = [\"Discipline $(x)\" for x in salaries.Discipline]\ndf = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)\n[df[i] = df.Salary_mean.+j*df.Salary_std for (i,j) in zip([:ymin, :ymax], [-1, 1.0])]\ndf[:label] = string.(round.(Int, df.Salary_mean))\n\np1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank, \n    Scale.x_discrete(levels=[\"Discipline A\", \"Discipline B\"]),\n    ymin=:ymin, ymax=:ymax, Geom.errorbar, Stat.dodge,\n    Geom.bar(position=:dodge), \n    Scale.color_discrete(levels=[\"Prof\", \"AssocProf\", \"AsstProf\"]),\n    Guide.colorkey(title=\"\", pos=[0.76w, -0.38h]),\n    Theme(bar_spacing=0mm, stroke_color=c->\"black\")\n)\np2 = plot(df, y=:Discipline, x=:Salary_mean, color=:Rank, \n    Coord.cartesian(yflip=true), Scale.y_discrete,\n    xmin=:ymin, xmax=:ymax, Geom.errorbar, Stat.dodge(axis=:y),\n    Geom.bar(position=:dodge, orientation=:horizontal), \n    Scale.color_discrete(levels=[\"Prof\", \"AssocProf\", \"AsstProf\"]),\n    Guide.yticks(orientation=:vertical), Guide.ylabel(nothing),\n    Theme(bar_spacing=0mm, stroke_color=c->\"gray\")\n)\nhstack(p1,p2)"
 },
 
 {
@@ -606,6 +606,14 @@ var documenterSearchIndex = {"docs": [
     "title": "Stat.density",
     "category": "section",
     "text": "using Colors, DataFrames, Gadfly, Distributions\nset_default_plot_size(21cm, 8cm)\nx = -4:0.1:4\nDa = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u=\"μ=$μ\") for μ in [-1,1]]\nDb = [DataFrame(x=randn(200).+μ, u=\"μ=$μ\") for μ in [-1,1]] \n\np1 = plot(vcat(Da...), x=:x, y=:ymax, ymin=:ymin, ymax=:ymax, color=:u, \n    Geom.line, Geom.ribbon, Guide.ylabel(\"Density\"),\n    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)), \n    Guide.colorkey(title=\"\", pos=[2.5,0.6]), Guide.title(\"Parametric PDF\")\n)\np2 = plot(vcat(Db...), x=:x, color=:u, \n    Stat.density(bandwidth=0.5), Geom.polygon(fill=true, preserve_order=true),\n    Coord.cartesian(xmin=-4, xmax=4),\n    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)),\n    Guide.colorkey(title=\"\", pos=[2.5,0.6]), Guide.title(\"Kernel PDF\")\n)\nhstack(p1,p2)"
+},
+
+{
+    "location": "gallery/statistics/#[Stat.dodge](@ref)-1",
+    "page": "Statistics",
+    "title": "Stat.dodge",
+    "category": "section",
+    "text": "using DataFrames, Gadfly, RDatasets, Statistics\nset_default_plot_size(21cm, 8cm)\nsalaries = dataset(\"car\",\"Salaries\")\nsalaries.Salary /= 1000.0\nsalaries.Discipline = [\"Discipline $(x)\" for x in salaries.Discipline]\ndf = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)\n[df[i] = df.Salary_mean.+j*df.Salary_std for (i,j) in zip([:ymin, :ymax], [-1, 1.0])]\ndf[:label] = string.(round.(Int, df.Salary_mean))\n\np1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank, \n    Scale.x_discrete(levels=[\"Discipline A\", \"Discipline B\"]),\n    label=:label, Geom.label(position=:centered), Stat.dodge(position=:stack),\n    Geom.bar(position=:stack)\n)\np2 = plot(df, y=:Discipline, x=:Salary_mean, color=:Rank, \n    Coord.cartesian(yflip=true), Scale.y_discrete,\n    label=:label, Geom.label(position=:right), Stat.dodge(axis=:y),\n    Geom.bar(position=:dodge, orientation=:horizontal), \n    Scale.color_discrete(levels=[\"Prof\", \"AssocProf\", \"AsstProf\"]),\n    Guide.yticks(orientation=:vertical), Guide.ylabel(nothing)\n)\nhstack(p1, p2)"
 },
 
 {
@@ -1093,7 +1101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.bar",
     "category": "type",
-    "text": "Geom.bar[(; position=:stack, orientation=:vertical)]\n\nDraw bars of height y centered at positions x, or from xmin to xmax. If orientation is :horizontal switch x for y.  Optionally categorically groups bars using the color aesthetic.  If position is :stack they will be placed on top of each other;  if it is :dodge they will be placed side by side.\n\n\n\n\n\n"
+    "text": "Geom.bar[(; position=:stack, orientation=:vertical)]\n\nDraw bars of height y centered at positions x, or from xmin to xmax. If orientation is :horizontal switch x for y.  Optionally categorically groups bars using the color aesthetic.  If position is :stack they will be placed on top of each other;  if it is :dodge they will be placed side by side.  For labelling dodged or stacked bar plots see Stat.dodge.\n\n\n\n\n\n"
 },
 
 {
@@ -1518,6 +1526,14 @@ var documenterSearchIndex = {"docs": [
     "title": "Gadfly.Stat.density2d",
     "category": "type",
     "text": "Stat.density2d[(; n=(256,256), bandwidth=(-Inf,-Inf), levels=15)]\n\nEstimate the density of the x and y aesthetics at n points and put the results into the x, y and z aesthetics.  Smoothing is controlled by bandwidth.  Calls Stat.contour to compute the levels.  Used by Geom.density2d.\n\n\n\n\n\n"
+},
+
+{
+    "location": "lib/statistics/#Gadfly.Stat.dodge",
+    "page": "Statistics",
+    "title": "Gadfly.Stat.dodge",
+    "category": "type",
+    "text": "Stat.dodge[(; position=:dodge, axis=:x)]\n\nTransform the points in the x and y aesthetics into set of dodged or stacked points  in the x and y aesthetics.  position is :dodge or :stack. axis is :x or :y.\n\n\n\n\n\n"
 },
 
 {
