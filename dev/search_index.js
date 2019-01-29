@@ -37,7 +37,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Tutorial",
     "category": "page",
-    "text": "Author = \"Tamas Nagy, Daniel C. Jones, Simon Leblanc\""
+    "text": "Author = \"Tamas Nagy, Daniel C. Jones, Simon Leblanc, Mattriks\""
 },
 
 {
@@ -69,23 +69,31 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Color",
     "category": "section",
-    "text": "Let\'s do add something meaningful by mapping the color aesthetic.plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species, Geom.point);\n\n# or equivalently for Arrays:\nSepalLength = iris[:SepalLength] # hide\nSepalWidth = iris[:SepalWidth] # hide\nColor = iris[:Species]\nplot(x=SepalLength, y=SepalWidth, color=Color, Geom.point,\n     Guide.xlabel(\"SepalLength\"), Guide.ylabel(\"SepalWidth\"),\n     Guide.colorkey(title=\"Species\"))Ah, a scientific discovery: Setosa has short but wide sepals!Color scales in Gadfly by default are produced from perceptually uniform colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and converts arbitrarily between these. Of course, CSS/X11 named colors work too: \"old lace\", anyone?"
+    "text": "Let\'s do add something meaningful by mapping the color aesthetic.plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species, Geom.point);\n\n# or equivalently for Arrays:\nSepalLength = iris[:SepalLength] # hide\nSepalWidth = iris[:SepalWidth] # hide\nColor = iris[:Species]\nplot(x=SepalLength, y=SepalWidth, color=Color, Geom.point,\n     Guide.xlabel(\"SepalLength\"), Guide.ylabel(\"SepalWidth\"),\n     Guide.colorkey(title=\"Species\"))Ah, a scientific discovery: Setosa has short but wide sepals!Color scales in Gadfly by default are produced from perceptually uniform colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and converts arbitrarily between these. Of course, CSS/X11 named colors work too: \"old lace\", anyone?All aesthetics (e.g. x, y, color) have a Scale e.g. Scale.x_continuous() and some have a Guide e.g. Guide.xticks().  Scales can be continuous or discrete."
 },
 
 {
-    "location": "tutorial/#Scale-transforms-1",
+    "location": "tutorial/#Continuous-Scales-1",
     "page": "Tutorial",
-    "title": "Scale transforms",
+    "title": "Continuous Scales",
     "category": "section",
-    "text": "Scale transforms also work as expected. Let\'s look at some data where this is useful.mammals = dataset(\"MASS\", \"mammals\")\nplot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)This is no good, the large animals are ruining things for us. Putting both axes on a log-scale clears things up.plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label,\n     Scale.x_log10, Scale.y_log10)"
+    "text": "Aesthetic Scale. Guide.\nx x_continuous xticks\ny y_continuous yticks\ncolor color_continuous colorkey\nsize size_continuous sizekey (tbd)e.g. Scale.x_continuous(format= , minvalue= , maxvalue= )\nformat can be: :plain, :scientific, :engineering, or :auto.Continuous scales can be transformed. In the next plot, the large animals are ruining things for us. Putting both axes on a log-scale clears things up.set_default_plot_size(21cm ,8cm)\nmammals = dataset(\"MASS\", \"mammals\")\np1 = plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)\np2 = plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label,\n     Scale.x_log10, Scale.y_log10)\nhstack(p1, p2)Scale transformations include: _sqrt, _log, _log2, _log10, _asinh.  using Printf\nDiamonds = dataset(\"ggplot2\",\"diamonds\")\np3= plot(Diamonds, x=:Price, y=:Carat, Geom.histogram2d(xbincount=25, ybincount=25),\n    Scale.x_continuous(format=:engineering) )\np4= plot(Diamonds, x=:Price, y=:Carat, Geom.histogram2d(xbincount=25, ybincount=25),\n    Scale.x_continuous(format=:plain), \n    Scale.y_sqrt(labels=y->@sprintf(\"%i\", y^2)),\n    Scale.color_log10(minvalue=1.0, maxvalue=10^4),\n    Guide.yticks(ticks=sqrt.([0:5;])) )\nhstack(p3, p4)"
 },
 
 {
-    "location": "tutorial/#Discrete-scales-1",
+    "location": "tutorial/#Discrete-Scales-1",
     "page": "Tutorial",
-    "title": "Discrete scales",
+    "title": "Discrete Scales",
     "category": "section",
-    "text": "Since all continuous analysis is just degenerate discrete analysis, let\'s take a crack at the latter using some fuel efficiency data.gasoline = dataset(\"Ecdat\", \"Gasoline\")\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of the elements in the grammar: we\'ve omitted Scale.x_continuous and Scale.y_continuous in the previous plots, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel, and so on. As much as possible the system tries to fill in the gaps with reasonable defaults."
+    "text": "Aesthetic Scale. Guide.\nx x_discrete xticks\ny y_discrete yticks\ncolor color_discrete colorkey\nshape shape_discrete shapekey\nsize size_discrete sizekey (tbd)\nlinestyle linestyle_discrete linekey (tbd)\ngroup group_discrete \nxgroup xgroup \nygroup ygroup e.g. Scale.shape_discrete(labels= , levels= , order= )mtcars = dataset(\"datasets\",\"mtcars\")\n labeldict = Dict(4=>\"four\", 6=>\"six\", 8=>\"eight\")\np5 = plot(mtcars, x=:Cyl, color=:Cyl, Geom.histogram,\n    Scale.x_discrete(levels=[4,6,8]), Scale.color_discrete(levels=[4,6,8]) )\np6 = plot(mtcars, x=:Cyl, color=:Cyl, Geom.histogram,\n    Scale.x_discrete(labels=i->labeldict[i], levels=[8,6,4]), \n    Scale.color_discrete(levels=[8,6,4]) )\nhstack(p5, p6)"
+},
+
+{
+    "location": "tutorial/#Gadfly-defaults-1",
+    "page": "Tutorial",
+    "title": "Gadfly defaults",
+    "category": "section",
+    "text": "If you don\'t supply Scales or Guides, Gadfly will make an educated guess.gasoline = dataset(\"Ecdat\", \"Gasoline\")\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of the elements in the grammar. When we\'ve omitted Scale.x_continuous and Scale.y_continuous in the plots above, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel and so on, Gadfly tries to fill in the gaps with reasonable defaults."
 },
 
 {
