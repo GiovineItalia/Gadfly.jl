@@ -317,7 +317,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Geom.boxplot",
     "category": "section",
-    "text": "using Gadfly, RDatasets\nset_default_plot_size(14cm, 8cm)\nplot(dataset(\"lattice\", \"singer\"), x=\"VoicePart\", y=\"Height\", Geom.boxplot)"
+    "text": "using Compose, Gadfly, RDatasets\nset_default_plot_size(21cm, 8cm)\nsingers, salaries = dataset(\"lattice\", \"singer\"), dataset(\"car\",\"Salaries\")\nsalaries.Salary /= 1000.0\nsalaries.Discipline = [\"Discipline $(x)\" for x in salaries.Discipline]\np1 = plot(singers, x=:VoicePart, y=:Height, Geom.boxplot, \n    Theme(default_color=\"MidnightBlue\"))\np2 = plot(salaries, x=:Discipline, y=:Salary, color=:Rank,\n    Scale.x_discrete(levels=[\"Discipline A\", \"Discipline B\"]),\n    Geom.boxplot, Theme(boxplot_spacing=0.1cx),\n    Guide.colorkey(title=\"\", pos=[0.78w,-0.4h])\n)\nhstack(p1, p2)"
 },
 
 {
@@ -1133,7 +1133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.boxplot",
     "category": "type",
-    "text": "Geom.boxplot[(; method=:tukey, suppress_outliers=false)]\n\nDraw box plots of the middle, lower_hinge, upper_hinge, lower_fence, upper_fence, and outliers aesthetics.  The categorical x aesthetic is optional.  If suppress_outliers is true, don\'t draw points indicating outliers.\n\nAlternatively, if the y aesthetic is specified instead, the middle, hinges, fences, and outliers aesthetics will be computed using Stat.boxplot.\n\n\n\n\n\n"
+    "text": "Geom.boxplot[(; method=:tukey, suppress_outliers=false)]\n\nDraw box plots of the middle, lower_hinge, upper_hinge, lower_fence, upper_fence, and outliers aesthetics.  The categorical x aesthetic is optional.  If suppress_outliers is true, don\'t draw points indicating outliers.\n\nAlternatively, if the y aesthetic is specified instead, the middle, hinges, fences, and outliers aesthetics will be computed using Stat.boxplot.\n\nBoxplots will be automatically dodged by specifying a color aesthetic different to the x aesthetic.\n\n\n\n\n\n"
 },
 
 {
