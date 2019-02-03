@@ -152,3 +152,24 @@ df = DataFrame(v1 = randn(10), v2 = randn(10), v3 = randn(10))
 p2 = plot(df, x=Col.index, y=Col.value, Scale.x_discrete(levels=names(df)))
 hstack(p1,p2)
 ```
+
+## [`Scale.xgroup`](@ref), [`Scale.ygroup`](@ref)
+
+```@example
+using Gadfly, RDatasets
+set_default_plot_size(21cm,14cm)
+# mpg = miles per gallon
+mpg = dataset("ggplot2","mpg")
+xlabs = Dict(4=>"4 Cyl", 6=>"6 Cyl", 8=>"8 Cyl")  
+ylabs = Dict("f"=>"front", "r"=>"rear", "4"=>"4-wheel")  
+plot(mpg[mpg.Cyl.≠5,:], x=:Cty, y=:Hwy, color=:Class,
+    xgroup=:Cyl, ygroup=:Drv,
+    Geom.subplot_grid( Coord.cartesian(xmin=10), Geom.point,
+      layer(slope=[1], intercept=[0], Geom.abline(color="silver", style=:dash))),
+    Scale.xgroup(labels=i->xlabs[i], levels=[4,6,8]), 
+    Scale.ygroup(labels=i->ylabs[i], levels=["f","4","r"]),  
+    Guide.xlabel("City miles/gallon by Cylinders"),
+    Guide.ylabel("Highway miles/gallon by Drive"),
+    Theme(colorkey_swatch_shape=:circle)
+)
+```
