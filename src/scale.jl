@@ -693,13 +693,17 @@ const label = LabelScale
 
 """
     xgroup[(; labels=nothing, levels=nothing, order=nothing)]
+
+A discrete scale for use with [`Geom.subplot_grid`](@ref Gadfly.Geom.subplot_grid).
 """ 
 xgroup(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:xgroup], labels=labels, levels=levels, order=order)
 
 """
     ygroup[(; labels=nothing, levels=nothing, order=nothing)]
-""" 
+
+A discrete scale for use with [`Geom.subplot_grid`](@ref Gadfly.Geom.subplot_grid).
+"""
 ygroup(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:ygroup], labels=labels, levels=levels, order=order)
 

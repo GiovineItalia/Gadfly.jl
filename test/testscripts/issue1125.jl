@@ -1,6 +1,6 @@
 using Gadfly, RDatasets
 
-set_default_plot_size(6inch, 3inch)
+set_default_plot_size(6inch, 6inch)
 
 iris = dataset("datasets", "iris")
 sp = unique(iris[:Species])
