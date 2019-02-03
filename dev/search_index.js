@@ -761,6 +761,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "gallery/scales/#[Scale.xgroup](@ref),-[Scale.ygroup](@ref)-1",
+    "page": "Scales",
+    "title": "Scale.xgroup, Scale.ygroup",
+    "category": "section",
+    "text": "using Gadfly, RDatasets\nset_default_plot_size(21cm,14cm)\n# mpg = miles per gallon\nmpg = dataset(\"ggplot2\",\"mpg\")\nxlabs = Dict(4=>\"4 Cyl\", 6=>\"6 Cyl\", 8=>\"8 Cyl\")  \nylabs = Dict(\"f\"=>\"front\", \"r\"=>\"rear\", \"4\"=>\"4-wheel\")  \nplot(mpg[mpg.Cyl.≠5,:], x=:Cty, y=:Hwy, color=:Class,\n    xgroup=:Cyl, ygroup=:Drv,\n    Geom.subplot_grid( Coord.cartesian(xmin=10), Geom.point,\n      layer(slope=[1], intercept=[0], Geom.abline(color=\"silver\", style=:dash))),\n    Scale.xgroup(labels=i->xlabs[i], levels=[4,6,8]), \n    Scale.ygroup(labels=i->ylabs[i], levels=[\"f\",\"4\",\"r\"]),  \n    Guide.xlabel(\"City miles/gallon by Cylinders\"),\n    Guide.ylabel(\"Highway miles/gallon by Drive\"),\n    Theme(colorkey_swatch_shape=:circle)\n)"
+},
+
+{
     "location": "gallery/shapes/#",
     "page": "Shapes",
     "title": "Shapes",
@@ -1973,7 +1981,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.xgroup",
     "category": "method",
-    "text": "xgroup[(; labels=nothing, levels=nothing, order=nothing)]\n\n\n\n\n\n"
+    "text": "xgroup[(; labels=nothing, levels=nothing, order=nothing)]\n\nA discrete scale for use with Geom.subplot_grid.\n\n\n\n\n\n"
 },
 
 {
@@ -2053,7 +2061,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.ygroup",
     "category": "method",
-    "text": "ygroup[(; labels=nothing, levels=nothing, order=nothing)]\n\n\n\n\n\n"
+    "text": "ygroup[(; labels=nothing, levels=nothing, order=nothing)]\n\nA discrete scale for use with Geom.subplot_grid.\n\n\n\n\n\n"
 },
 
 {
