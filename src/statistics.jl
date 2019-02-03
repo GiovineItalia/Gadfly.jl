@@ -996,14 +996,17 @@ function apply_statistic(stat::BoxplotStatistic,
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
 
-    if aes.x === nothing
-        aes_x = [1]
-        aes.x_label = x -> fill("", length(x))
-    else
+    xflag = aes.x != nothing
+    aes_x = (xflag ? eltype(aes.x) : Int)[]
+    if xflag
         aes_x = aes.x
+    else
+        aes_x = ones(Int, length(aes.y))
+        aes.x_label = x -> fill("", length(x))
     end
-    aes_color = aes.color === nothing ? [nothing] : aes.color
-
+    colorflag = aes.color != nothing
+    aes_color =  colorflag ? aes.color : fill(nothing, length(aes_x))
+                     
     if aes.y == nothing
         groups = Any[]
         for (x, c) in zip(aes.x, cycle(aes_color))
@@ -1024,30 +1027,30 @@ function apply_statistic(stat::BoxplotStatistic,
             aes.yviewmax = yviewmax
         end
     else
-        T = isempty(aes.y) ? eltype(aes.y) : typeof(aes.y[1] / 1)
-        groups = DefaultOrderedDict(() -> T[])
+        YT = isempty(aes.y) ? eltype(aes.y) : typeof(aes.y[1] / 1)        
+        CT, XT = eltype(aes_color), eltype(aes_x)    
+        groups = collect(Tuple{CT, XT}, zip(aes_color, aes_x))
+        ug = unique(groups)
 
-        for (x, y, c) in zip(cycle(aes_x), aes.y, cycle(aes_color))
-            push!(groups[(x, c)], y)
-        end
+        K = Tuple{CT, XT}
+        grouped_y = Dict{K, Vector{YT}}(g=>aes.y[groups.==[g]] for g in ug)
+ 
+        m = length(ug)
+        aes.x = Vector{XT}(undef, m)
+        aes.middle = Vector{YT}(undef, m)
+        aes.lower_hinge = Vector{YT}(undef, m)
+        aes.upper_hinge = Vector{YT}(undef, m)
+        aes.lower_fence = Vector{YT}(undef, m)
+        aes.upper_fence = Vector{YT}(undef, m)
+        aes.outliers = Vector{YT}[]
 
-        m = length(groups)
-        aes.x = Array{eltype(aes.x)}(undef, m)
-        aes.middle = Array{T}(undef, m)
-        aes.lower_hinge = Array{T}(undef, m)
-        aes.upper_hinge = Array{T}(undef, m)
-        aes.lower_fence = Array{T}(undef, m)
-        aes.upper_fence = Array{T}(undef, m)
-        aes.outliers = Vector{T}[]
-
-        for (i, ((x, c), ys)) in enumerate(groups)
+        for (i, ((c, x), ys)) in enumerate(grouped_y)
             sort!(ys)
 
             aes.x[i] = x
 
             if stat.method == :tukey
-                aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
-                        quantile(ys, [0.25, 0.5, 0.75])
+                aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] = quantile(ys, [0.25, 0.5, 0.75])
                 iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
 
                 idx = searchsortedfirst(ys, aes.lower_hinge[i] - 1.5iqr)
@@ -1057,9 +1060,7 @@ function apply_statistic(stat::BoxplotStatistic,
                 aes.upper_fence[i] = ys[idx]
             elseif isa(stat.method, Vector)
                 qs = stat.method
-                if length(qs) != 5
-                    error("Stat.boxplot requires exactly five quantiles.")
-                end
+                (length(qs) != 5) && error("Stat.boxplot requires exactly five quantiles.")
 
                 aes.lower_fence[i], aes.lower_hinge[i], aes.middle[i],
                 aes.upper_hinge[i], aes.upper_fence[i] = quantile!(ys, qs)
@@ -1067,12 +1068,11 @@ function apply_statistic(stat::BoxplotStatistic,
                 error("Invalid method specified for State.boxplot")
             end
 
-            push!(aes.outliers,
-                 filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
+            push!(aes.outliers, filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
         end
     end
 
-    if length(aes.x) > 1 && (haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale))
+    if length(aes.x) > 1 && haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale)
         xmin, xmax = minimum(aes.x), maximum(aes.x)
         minspan = minimum([xj - xi for (xi, xj) in zip(aes.x[1:end-1], aes.x[2:end])])
 
@@ -1088,14 +1088,17 @@ function apply_statistic(stat::BoxplotStatistic,
         end
     end
 
-    if isa(aes_x, IndirectArray)
-        aes.x = discretize_make_ia(aes.x, aes_x.values)
+    if haskey(scales, :x) && isa(scales[:x], Scale.DiscreteScale)
+        aes.xviewmin = minimum(aes.x)-0.5
+        aes.xviewmax = maximum(aes.x)+0.5
+        aes.pad_categorical_x = false
     end
 
-    if aes.color !== nothing
-        aes.color = discretize_make_ia(RGB{Float32}[c for (x, c) in keys(groups)],
-            aes.color.values)
-    end
+    isa(aes_x, IndirectArray) && (aes.x = discretize_make_ia(aes.x, aes_x.values))
+
+    colorflag && (aes.color = discretize_make_ia(first.(keys(grouped_y)), aes.color.values))
+
+    Stat.apply_statistic(Stat.dodge(), scales, coord, aes)
 
     nothing
 end

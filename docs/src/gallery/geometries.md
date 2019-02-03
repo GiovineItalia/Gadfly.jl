@@ -63,9 +63,19 @@ plot(dataset("lattice", "singer"), x="VoicePart", y="Height", Geom.beeswarm)
 ## [`Geom.boxplot`](@ref)
 
 ```@example
-using Gadfly, RDatasets
-set_default_plot_size(14cm, 8cm)
-plot(dataset("lattice", "singer"), x="VoicePart", y="Height", Geom.boxplot)
+using Compose, Gadfly, RDatasets
+set_default_plot_size(21cm, 8cm)
+singers, salaries = dataset("lattice", "singer"), dataset("car","Salaries")
+salaries.Salary /= 1000.0
+salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
+p1 = plot(singers, x=:VoicePart, y=:Height, Geom.boxplot, 
+    Theme(default_color="MidnightBlue"))
+p2 = plot(salaries, x=:Discipline, y=:Salary, color=:Rank,
+    Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
+    Geom.boxplot, Theme(boxplot_spacing=0.1cx),
+    Guide.colorkey(title="", pos=[0.78w,-0.4h])
+)
+hstack(p1, p2)
 ```
 
 
