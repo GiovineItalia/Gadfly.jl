@@ -239,6 +239,7 @@ struct HistogramStatistic <: Gadfly.StatisticElement
     position::Symbol # :dodge or :stack
     orientation::Symbol
     density::Bool
+    limits::NamedTuple
 end
 
 function HistogramStatistic(; bincount=nothing,
@@ -246,11 +247,12 @@ function HistogramStatistic(; bincount=nothing,
                               maxbincount=150,
                               position=:stack,
                               orientation=:vertical,
-                              density=false)
+                              density=false,
+                              limits=NamedTuple())
     if bincount != nothing
-        HistogramStatistic(bincount, bincount, position, orientation, density)
+        HistogramStatistic(bincount, bincount, position, orientation, density, limits)
     else
-        HistogramStatistic(minbincount, maxbincount, position, orientation, density)
+        HistogramStatistic(minbincount, maxbincount, position, orientation, density, limits)
     end
 end
 
@@ -262,7 +264,7 @@ default_scales(stat::HistogramStatistic) = stat.orientation == :vertical ?
 
 """
     Stat.histogram[(; bincount=nothing, minbincount=3, maxbincount=150,
-                    position=:stack, orientation=:vertical, density=false)]
+            position=:stack, orientation=:vertical, density=false, limits=NamedTuple())]
 
 Transform $(aes2str(input_aesthetics(histogram()))) into
 $(aes2str(output_aesthetics(histogram()))), optionally grouping by `color`.
@@ -270,7 +272,8 @@ Exchange y for x when `orientation` is `:horizontal`.  `bincount` specifies the
 number of bins to use.  If set to `nothing`, an optimization method is used to
 determine a reasonable value which uses `minbincount` and `maxbincount` to set
 the lower and upper limits.  If `density` is `true`, normalize the counts by
-their total.
+their total. `limits` is a `NamedTuple` that sets the limits of the histogram `(min= , max= )`: 
+`min` or `max` or both can be set.
 """
 const histogram = HistogramStatistic
 
@@ -320,17 +323,17 @@ function apply_statistic(stat::HistogramStatistic,
         x_min -= 0.5 # adjust the left side of the bar
         binwidth = 1.0
     else
-        x_min = Gadfly.concrete_minimum(vals)
+        lims = fieldnames(typeof(stat.limits))
+        x_min = in(:min, lims) ? stat.limits.min : Gadfly.concrete_minimum(vals)
 
         isdiscrete = false
         if estimate_distinct_proportion(vals) <= 0.9
             value_set = sort!(collect(Set(vals[Bool[Gadfly.isconcrete(v) for v in vals]])))
-            d, bincounts, x_max = choose_bin_count_1d_discrete(
-                        vals, value_set, stat.minbincount, stat.maxbincount)
+            d, bincounts, xmax = choose_bin_count_1d_discrete(vals, value_set, stat.minbincount, stat.maxbincount)
         else
-            d, bincounts, x_max = choose_bin_count_1d(
-                        vals, stat.minbincount, stat.maxbincount)
+            d, bincounts, xmax = choose_bin_count_1d(vals, stat.minbincount, stat.maxbincount)
         end
+        x_max = in(:max, lims) ? stat.limits.max : xmax
 
         binwidth = (x_max - x_min) / d
     end
