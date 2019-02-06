@@ -3,6 +3,8 @@ This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
 # Version 1.1.0
+ * Add `limits=(min= , max= )` to `Stat.histogram` (#1249)
+ * Add dodged boxplots (#1246)
  * Add `Stat.dodge` (#1240) 
  * `Stat.smooth(method=:lm)` confidence bands (#1231)
 
