@@ -381,7 +381,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Geom.histogram",
     "category": "section",
-    "text": "using Gadfly, RDatasets\nset_default_plot_size(21cm, 16cm)\nD = dataset(\"ggplot2\",\"diamonds\")\np1 = plot(D, x=\"Price\", Geom.histogram)\np2 = plot(D, x=\"Price\", color=\"Cut\", Geom.histogram)\np3 = plot(D, x=\"Price\", color=\"Cut\", Geom.histogram(bincount=30))\np4 = plot(D, x=\"Price\", color=\"Cut\", Geom.histogram(bincount=30, density=true))\ngridstack([p1 p2; p3 p4])"
+    "text": "using Distributions, Gadfly, RDatasets\nset_default_plot_size(21cm, 16cm)\nD = dataset(\"ggplot2\",\"diamonds\")\ngamma = Gamma(2, 2)\nDgamma = DataFrame(x=rand(gamma, 10^4))\np1 = plot(D, x=\"Price\", Geom.histogram)\np2 = plot(D, x=\"Price\", color=\"Cut\", Geom.histogram)\np3 = plot(D, x=\"Price\", color=\"Cut\", Geom.histogram(bincount=30))\np4 = plot(Dgamma, Coord.cartesian(xmin=0, xmax=20),\n    layer(x->pdf(gamma, x), 0, 20, Geom.line, Theme(default_color=\"black\")),\n    layer(x=:x, Geom.histogram(bincount=20, density=true, limits=(min=0,))),\n    Theme(default_color=\"bisque\") )\ngridstack([p1 p2; p3 p4])"
 },
 
 {
@@ -1301,7 +1301,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Geometries",
     "title": "Gadfly.Geom.histogram",
     "category": "method",
-    "text": "Geom.histogram[(; position=:stack, bincount=nothing, minbincount=3, maxbincount=150,\n                orientation=:vertical, density=false)]\n\nDraw histograms from a series of observations in x or y optionally grouping by color.  This geometry is equivalent to Geom.bar with Stat.histogram; see the latter for more information.\n\n\n\n\n\n"
+    "text": "Geom.histogram[(; position=:stack, bincount=nothing, minbincount=3, maxbincount=150,\n                orientation=:vertical, density=false, limits=NamedTuple())]\n\nDraw histograms from a series of observations in x or y optionally grouping by color.  This geometry is equivalent to Geom.bar with Stat.histogram; see the latter for more information.\n\n\n\n\n\n"
 },
 
 {
@@ -1589,7 +1589,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Statistics",
     "title": "Gadfly.Stat.histogram",
     "category": "type",
-    "text": "Stat.histogram[(; bincount=nothing, minbincount=3, maxbincount=150,\n                position=:stack, orientation=:vertical, density=false)]\n\nTransform the x aesthetic into the x, y, xmin and xmax aesthetics, optionally grouping by color. Exchange y for x when orientation is :horizontal.  bincount specifies the number of bins to use.  If set to nothing, an optimization method is used to determine a reasonable value which uses minbincount and maxbincount to set the lower and upper limits.  If density is true, normalize the counts by their total.\n\n\n\n\n\n"
+    "text": "Stat.histogram[(; bincount=nothing, minbincount=3, maxbincount=150,\n        position=:stack, orientation=:vertical, density=false, limits=NamedTuple())]\n\nTransform the x aesthetic into the x, y, xmin and xmax aesthetics, optionally grouping by color. Exchange y for x when orientation is :horizontal.  bincount specifies the number of bins to use.  If set to nothing, an optimization method is used to determine a reasonable value which uses minbincount and maxbincount to set the lower and upper limits.  If density is true, normalize the counts by their total. limits is a NamedTuple that sets the limits of the histogram (min= , max= ):  min or max or both can be set.\n\n\n\n\n\n"
 },
 
 {
