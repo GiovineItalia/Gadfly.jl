@@ -1017,11 +1017,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/gadfly/#Gadfly.lab_gradient-Tuple",
+    "page": "Gadfly",
+    "title": "Gadfly.lab_gradient",
+    "category": "method",
+    "text": "function lab_gradient(cs...)\n\nCan be applied to other types, e.g. Scale.lab_gradient(\"blue\",\"ghostwhite\",\"red\")\n\n\n\n\n\n"
+},
+
+{
     "location": "lib/gadfly/#Gadfly.lab_gradient-Tuple{Vararg{ColorTypes.Color,N} where N}",
     "page": "Gadfly",
     "title": "Gadfly.lab_gradient",
     "category": "method",
-    "text": "function lab_gradient(cs::Color...)\n\n\n\n\n\n"
+    "text": "function lab_gradient(cs::Color...)\n\nGenerate a function f(p) that creates a gradient between n≥2 colors, where 0≤p≤1. If you have a collection of colors, then use the splatting operator ...:\n\nf = Scale.lab_gradient(range(HSV(0,1,1), stop=HSV(250,1,1), length=100)...)\n\nFunction f can be used like so: Scale.color_continuous(colormap=f).\n\n\n\n\n\n"
 },
 
 {
@@ -1757,7 +1765,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Scales",
     "title": "Gadfly.Scale.color_continuous",
     "category": "function",
-    "text": "color_continuous[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nCreate a continuous color scale by mapping the color aesthetic to a Color.  minvalue and maxvalue specify the data values corresponding to the bottom and top of the color scale.  colormap is a function defined on the interval from 0 to 1 that returns a Color.\n\nEither input Stat.color_continuous as an argument to plot, or set continuous_color_scale in a Theme.\n\nSee also color_log10, color_log2, color_log, color_asinh, and color_sqrt.\n\n\n\n\n\n"
+    "text": "color_continuous[(; minvalue=nothing, maxvalue=nothing, colormap)]\n\nCreate a continuous color scale by mapping the color aesthetic to a Color.  minvalue and maxvalue specify the data values corresponding to the bottom and top of the color scale.  colormap is a function defined on the interval from 0 to 1 that returns a Color. See also lab_gradient.\n\nEither input Stat.color_continuous as an argument to plot, or set continuous_color_scale in a Theme.\n\nSee also color_log10, color_log2, color_log, color_asinh, and color_sqrt.\n\n\n\n\n\n"
 },
 
 {
@@ -1817,11 +1825,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/scales/#Gadfly.Scale.lab_gradient-Tuple",
+    "page": "Scales",
+    "title": "Gadfly.Scale.lab_gradient",
+    "category": "method",
+    "text": "function lab_gradient(cs...)\n\nCan be applied to other types, e.g. Scale.lab_gradient(\"blue\",\"ghostwhite\",\"red\")\n\n\n\n\n\n"
+},
+
+{
     "location": "lib/scales/#Gadfly.Scale.lab_gradient-Tuple{Vararg{ColorTypes.Color,N} where N}",
     "page": "Scales",
     "title": "Gadfly.Scale.lab_gradient",
     "category": "method",
-    "text": "function lab_gradient(cs::Color...)\n\n\n\n\n\n"
+    "text": "function lab_gradient(cs::Color...)\n\nGenerate a function f(p) that creates a gradient between n≥2 colors, where 0≤p≤1. If you have a collection of colors, then use the splatting operator ...:\n\nf = Scale.lab_gradient(range(HSV(0,1,1), stop=HSV(250,1,1), length=100)...)\n\nFunction f can be used like so: Scale.color_continuous(colormap=f).\n\n\n\n\n\n"
 },
 
 {
