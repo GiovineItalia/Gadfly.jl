@@ -50,11 +50,16 @@ end
 
 # Continuous scales
 
-# Generate a gradient between n >= 2, colors.
 
-# Then functions return functions suitable for ContinuousColorScales.
 """
     function lab_gradient(cs::Color...)
+
+Generate a function `f(p)` that creates a gradient between n≥2 colors, where `0≤p≤1`.
+If you have a collection of colors, then use the splatting operator `...`:
+```julia
+f = Scale.lab_gradient(range(HSV(0,1,1), stop=HSV(250,1,1), length=100)...)
+```
+Function `f` can be used like so: `Scale.color_continuous(colormap=f)`.
 """
 function lab_gradient(cs::Color...)
     length(cs) < 2 && error("Two or more colors are needed for gradients")
@@ -69,6 +74,12 @@ function lab_gradient(cs::Color...)
     end
     f
 end
+
+"""
+    function lab_gradient(cs...)
+
+Can be applied to other types, e.g. `Scale.lab_gradient("blue","ghostwhite","red")`
+"""
 lab_gradient(cs...) = lab_gradient(Gadfly.parse_colorant(cs)...)
 
 """

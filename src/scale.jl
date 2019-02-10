@@ -572,7 +572,7 @@ Create a continuous color scale by mapping
 $(aes2str(element_aesthetics(color_continuous()))) to a `Color`.  `minvalue`
 and `maxvalue` specify the data values corresponding to the bottom and top of
 the color scale.  `colormap` is a function defined on the interval from 0 to 1
-that returns a `Color`.
+that returns a `Color`. See also [`lab_gradient`](@ref).
 
 Either input `Stat.color_continuous` as an argument to `plot`, or
 set `continuous_color_scale` in a [Theme](@ref Themes).
@@ -607,23 +607,18 @@ function apply_scale(scale::ContinuousColorScale,
         return
     end
 
-    if scale.minvalue != nothing
-        cmin = scale.minvalue
-    end
-
-    if scale.maxvalue  != nothing
-        cmax = scale.maxvalue
-    end
+    strict_span = false
+    scale.minvalue != nothing && scale.maxvalue != nothing && (strict_span=true)
+    scale.minvalue != nothing && (cmin=scale.minvalue)
+    scale.maxvalue != nothing && (cmax=scale.maxvalue)
 
     cmin, cmax = promote(cmin, cmax)
 
     cmin = scale.trans.f(cmin)
     cmax = scale.trans.f(cmax)
 
-    ticks, viewmin, viewmax = Gadfly.optimize_ticks(cmin, cmax)
-    if ticks[1] == 0 && cmin >= 1
-        ticks[1] = 1
-    end
+    ticks, viewmin, viewmax = Gadfly.optimize_ticks(cmin, cmax, strict_span=strict_span)
+    ticks[1] == 0 && cmin >= 1 && !strict_span && (ticks[1] = 1)
 
     cmin, cmax = ticks[1], ticks[end]
     cspan = cmax != cmin ? cmax - cmin : 1.0
