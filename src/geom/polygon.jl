@@ -54,13 +54,14 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
     default_aes.group = IndirectArray(fill(1,length(aes.x)))
     default_aes.color = fill(theme.default_color, length(aes.x))
     default_aes.linestyle = fill(1, length(aes.x))
+    default_aes.alpha = fill(1, length(aes.x))
     aes = inherit(aes, default_aes)
 
-    aes_x, aes_y, aes_color, aes_linestyle, aes_group = concretize(aes.x, aes.y, aes.color, aes.linestyle, aes.group)
+    aes_x, aes_y, aes_color, aes_linestyle, aes_group, aes_alpha = concretize(aes.x, aes.y, aes.color, aes.linestyle, aes.group, aes.alpha)
     
-    XT, YT, CT, GT, LST = eltype(aes_x), eltype(aes_y), eltype(aes_color), eltype(aes_group), eltype(aes_linestyle)
+    XT, YT, CT, GT, LST, AT = eltype(aes_x), eltype(aes_y), eltype(aes_color), eltype(aes_group), eltype(aes_linestyle), eltype(aes_alpha)
 
-    groups = collect((Tuple{CT, GT, LST}), zip(aes_color, aes_group, aes_linestyle))
+    groups = collect((Tuple{CT, GT, LST, AT}), zip(aes_color, aes_group, aes_linestyle, aes_alpha))
     ug = unique(groups)
 
     n = length(ug)
@@ -69,20 +70,25 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
     colors = Vector{CT}(undef, n)
     line_styles = Vector{LST}(undef, n)
     linestyle_palette_length = length(theme.line_style)
+    alphas = Vector{Float64}(undef, n)
+    alpha_discrete  = AT <: Int
+
     for (k,g) in enumerate(ug)
         i = groups.==[g]
         polys[k] = polygon_points(aes_x[i], aes_y[i], geom.preserve_order)
         colors[k] = first(aes_color[i])
         line_styles[k] = mod1(first(aes_linestyle[i]), linestyle_palette_length) 
+        alphas[k] = first(alpha_discrete ? theme.alphas[aes_alpha[i]] : aes_alpha[i])
     end
     
     plinestyles = Gadfly.get_stroke_vector.(theme.line_style[line_styles])
     pcolors = theme.lowlight_color.(colors)
     
-    properties = geom.fill ? (fill(pcolors), stroke(theme.discrete_highlight_color.(colors))) :
+    properties = geom.fill ? (fill(pcolors), stroke(theme.discrete_highlight_color.(colors)), fillopacity(alphas)) :
         (fill(nothing), stroke(pcolors), strokedash(plinestyles))                
 
-    ctx = compose!(context(order=geom.order), Compose.polygon(polys, geom.tag), properties...)
+    ctx = context(order=geom.order)
+    compose!(ctx, Compose.polygon(polys, geom.tag), properties...)
 
     return compose!(ctx, linewidth(theme.line_width), svgclass("geometry"))
 end

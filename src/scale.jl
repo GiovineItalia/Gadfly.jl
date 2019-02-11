@@ -167,6 +167,17 @@ const size_continuous = continuous_scale_partial([:size], identity_transform)
 """
 const slope_continuous = continuous_scale_partial([:slope], identity_transform)
 
+"""
+    alpha_continuous[(; minvalue=0.0, maxvalue=1.0, labels=nothing,
+                     format=nothing, minticks=2, maxticks=10, scalable=true)]
+
+Rescale the data values between `minvalue` and `maxvalue` to opacity (alpha) values between 0 and 1.  
+"""
+alpha_continuous(; minvalue=0.0, maxvalue=1.0, labels=nothing, format=nothing, minticks=2, maxticks=10, scalable=true) =
+     ContinuousScale([:alpha], identity_transform, minvalue=minvalue, maxvalue=maxvalue,
+               labels=labels, format=format, minticks=minticks, maxticks=maxticks, scalable=scalable)
+
+
 
 function apply_scale(scale::ContinuousScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
@@ -201,14 +212,16 @@ function apply_scale(scale::ContinuousScale,
                 end
             end
 
-            if T <: Measure
-                T = Measure
-            end
+            T <: Measure && (T = Measure)
 
             ds = any(ismissing, vals) ? Array{Union{Missing,T}}(undef,length(vals)) :
                     Array{T}(undef,length(vals))
             apply_scale_typed!(ds, vals, scale)
 
+            if var == :alpha
+                ds = (vals.-scale.minvalue)./(scale.maxvalue-scale.minvalue)
+             end
+             
             if var == :xviewmin || var == :xviewmax ||
                var == :yviewmin || var == :yviewmax
                 setfield!(aes, var, ds[1])
@@ -313,7 +326,7 @@ anything in the data that's not respresented in `levels` will be set to
 default order.
 
 See also [`group_discrete`](@ref), [`shape_discrete`](@ref), 
-[`size_discrete`](@ref), and [`linestyle_discrete`](@ref).
+[`size_discrete`](@ref), [`linestyle_discrete`](@ref), and [`alpha_discrete`](@ref).
 """
 
 @doc xy_discrete_docstr("x", aes2str(element_aesthetics(x_discrete()))) x_discrete(; labels=nothing, levels=nothing, order=nothing) =
@@ -336,6 +349,15 @@ Similar to [`Scale.x_discrete`](@ref), except applied to the `$aes` aesthetic.
 
 @doc type_discrete_docstr("size") size_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:size], labels=labels, levels=levels, order=order)
+
+"""
+    alpha_discrete[(; labels=nothing, levels=nothing, order=nothing)]
+
+Similar to [`Scale.x_discrete`](@ref), except applied to the `alpha` aesthetic. The alpha palette
+is set by `Theme(alphas=[])`.
+"""
+alpha_discrete(; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale([:alpha], labels=labels, levels=levels, order=order)
 
 @doc type_discrete_docstr("linestyle") linestyle_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:linestyle], labels=labels, levels=levels, order=order)

@@ -38,6 +38,7 @@
     color
     group
     label
+    alpha
     func
     titles, Dict{Symbol, AbstractString}, Dict{Symbol, AbstractString}()
 end

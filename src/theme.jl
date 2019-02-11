@@ -32,8 +32,10 @@ function default_lowlight_color(fill_color::Color)
     LCHab(90, 20, c.h)
 end
 
-default_lowlight_color(fill_color::TransparentColor) = RGBA{Float32}(
-        default_lowlight_color(color(fill_color)), fill_color.alpha)
+function default_lowlight_color(fill_color::TransparentColor)
+    @warn "For opacity, use `Theme(alphas=[a])` and/or `Scale.alpha_discrete()`, or use `Scale.alpha_continuous()`"   
+   RGBA{Float32}(Gadfly.default_lowlight_color(color(fill_color)), fill_color.alpha)
+end
 
 # Choose a middle color by darkening the fill color
 function default_middle_color(fill_color::Color)
@@ -89,6 +91,9 @@ $(FIELDS)
 
     "Style of lines in the line geometry. The default palette is `[:solid, :dash, :dot, :dashdot, :dashdotdot, :ldash, :ldashdash, :ldashdot, :ldashdashdot]` which is a Vector{Symbol}, or customize using Vector{Vector{<:Measure}}",
     line_style,            (Vector{<:Union{Symbol, Vector{<:Measure}}}),   [:solid, :dash, :dot, :dashdot, :dashdotdot, :ldash, :ldashdash, :ldashdot, :ldashdashdot]
+
+    "Alpha palette. The default palette is [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0]. Customize using a Vector of length one or greater, with 0.0≤values≤1.0",
+    alphas,         Vector{Float64}, [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0]
 
     "Background color used in the main plot panel. (Color or Nothing)",
     panel_fill,            ColorOrNothing,  nothing

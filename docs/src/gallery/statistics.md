@@ -19,17 +19,15 @@ using Colors, DataFrames, Gadfly, Distributions
 set_default_plot_size(21cm, 8cm)
 x = -4:0.1:4
 Da = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u="μ=$μ") for μ in [-1,1]]
-Db = [DataFrame(x=randn(200).+μ, u="μ=$μ") for μ in [-1,1]] 
+Db = [DataFrame(x=randn(200).+μ, u="μ=$μ") for μ in [-1,1]]
 
 p1 = plot(vcat(Da...), x=:x, y=:ymax, ymin=:ymin, ymax=:ymax, color=:u, 
-    Geom.line, Geom.ribbon, Guide.ylabel("Density"),
-    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)), 
+    Geom.line, Geom.ribbon, Guide.ylabel("Density"), Theme(alphas=[0.6]), 
     Guide.colorkey(title="", pos=[2.5,0.6]), Guide.title("Parametric PDF")
 )
-p2 = plot(vcat(Db...), x=:x, color=:u, 
+p2 = plot(vcat(Db...), x=:x, color=:u, Theme(alphas=[0.6]), 
     Stat.density(bandwidth=0.5), Geom.polygon(fill=true, preserve_order=true),
-    Coord.cartesian(xmin=-4, xmax=4),
-    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)),
+    Coord.cartesian(xmin=-4, xmax=4, ymin=0, ymax=0.4),
     Guide.colorkey(title="", pos=[2.5,0.6]), Guide.title("Kernel PDF")
 )
 hstack(p1,p2)
@@ -88,8 +86,7 @@ p = plot(salaries[salaries.Rank.=="Prof",:], x=:YrsService, y=:Salary,
   layer(Stat.smooth(method=:lm, levels=[0.95, 0.99]), Geom.line, Geom.ribbon)), 
     Scale.xgroup(levels=["Discipline A", "Discipline B"]),
     Guide.colorkey(title="", pos=[0.43w, -0.4h]), 
-    Theme(point_size=2pt,
-        lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.2) )
+    Theme(point_size=2pt, alphas=[0.5] )
 )
 ```
 

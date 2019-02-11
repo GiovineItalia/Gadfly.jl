@@ -171,7 +171,8 @@ All aesthetics (e.g. `x`, `y`, `color`) have a Scale e.g. `Scale.x_continuous()`
 | `x` | `x_continuous` | `xticks` |
 | `y` | `y_continuous` | `yticks` |
 | `color` | `color_continuous` | `colorkey` |
-| `size` | `size_continuous` | sizekey (tbd) |
+| `size`  | `size_continuous`  | sizekey (tbd)  |
+| `alpha` | `alpha_continuous` | alphakey (tbd) | 
 
 e.g. `Scale.x_continuous(format= , minvalue= , maxvalue= )`\
 `format` can be: `:plain`, `:scientific`, `:engineering`, or `:auto`.
@@ -213,7 +214,8 @@ hstack(p3, p4)
 | `shape` | `shape_discrete` | `shapekey` |
 | `size` | `size_discrete` | sizekey (tbd) |
 | `linestyle` | `linestyle_discrete` | linekey (tbd) |
-| `group` | `group_discrete` |  |
+| `alpha`  | `alpha_discrete` | alphakey (tbd) |
+| `group`  | `group_discrete` |  |
 | `xgroup` | `xgroup` |  |
 | `ygroup` | `ygroup` |  |
 
@@ -236,6 +238,7 @@ hstack(p5, p6)
 If you don't supply Scales or Guides, Gadfly will make an educated guess.
 
 ```@example 1
+set_default_plot_size(14cm, 8cm) # hide
 gasoline = dataset("Ecdat", "Gasoline")
 plot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)
 ```

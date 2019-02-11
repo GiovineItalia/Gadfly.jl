@@ -28,7 +28,7 @@ Draw scatter plots of the `x` and `y` aesthetics.
 """
 const point = PointGeometry
 
-element_aesthetics(::PointGeometry) = [:x, :y, :size, :color, :shape]
+element_aesthetics(::PointGeometry) = [:x, :y, :size, :color, :shape, :alpha]
 
 # Generate a form for a point geometry.
 #
@@ -48,6 +48,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     default_aes.shape = Function[Shape.circle]
     default_aes.color = discretize_make_ia(RGBA{Float32}[theme.default_color])
     default_aes.size = Measure[theme.point_size]
+    default_aes.alpha = [theme.alphas[1]]
     aes = inherit(aes, default_aes)
 
     if eltype(aes.size) <: Int
@@ -57,9 +58,11 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
       interpolate_size(x) = theme.point_size_min + (x-size_min) / size_range * point_size_range
     end
 
+    aes_alpha = eltype(aes.alpha) <: Int ? theme.alphas[aes.alpha] : aes.alpha
+
     ctx = context()
 
-    for (x, y, color, size, shape) in Compose.cyclezip(aes.x, aes.y, aes.color, aes.size, aes.shape)
+    for (x, y, color, size, shape, alpha) in Compose.cyclezip(aes.x, aes.y, aes.color, aes.size, aes.shape, aes_alpha)
         shapefun = typeof(shape) <: Function ? shape : theme.point_shapes[shape]
         sizeval = typeof(size) <: Int ? interpolate_size(size) : size
         strokecolor = aes.color_key_continuous != nothing && aes.color_key_continuous ?
@@ -68,7 +71,8 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
         class = svg_color_class_from_label(aes.color_label([color])[1])
         compose!(ctx, (context(),
               (context(), shapefun([x], [y], [sizeval]), svgclass("marker")),
-              fill(color), stroke(strokecolor), svgclass(class)))
+              fill(color), stroke(strokecolor), fillopacity(alpha),
+               svgclass(class)))
     end
 
     compose!(ctx, linewidth(theme.highlight_width))

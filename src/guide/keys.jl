@@ -131,7 +131,8 @@ function render_discrete_key(labels::Vector{String}, title_ctx::Context, title_w
                 clrs = colors[m+1:m+nrows]
                 shps = shapes[m+1:m+nrows]
                 swatches_shapes = [f(x, [y].*cy, [swatch_size/1.5]) for (y,f) in enumerate(shps)]
-                sw1 = [(context(), s, fill(c)) for (s,c) in zip(swatches_shapes, clrs)]
+                sw1 = [(context(), s, fill(c), fillopacity(theme.alphas[1]), stroke(theme.discrete_highlight_color(c))) 
+                    for (s,c) in zip(swatches_shapes, clrs)]
                 swatches = compose!(context(), sw1...)
 
                 swatch_labels = compose!(
