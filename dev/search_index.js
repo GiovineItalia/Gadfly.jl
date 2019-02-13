@@ -93,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Tutorial",
     "title": "Gadfly defaults",
     "category": "section",
-    "text": "If you don\'t supply Scales or Guides, Gadfly will make an educated guess.gasoline = dataset(\"Ecdat\", \"Gasoline\")\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of the elements in the grammar. When we\'ve omitted Scale.x_continuous and Scale.y_continuous in the plots above, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel and so on, Gadfly tries to fill in the gaps with reasonable defaults."
+    "text": "If you don\'t supply Scales or Guides, Gadfly will make an educated guess.set_default_plot_size(14cm, 8cm) # hide\ngasoline = dataset(\"Ecdat\", \"Gasoline\")\nplot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)We could have added Scale.x_discrete explicitly, but this is detected and the right default is chosen. This is the case with most of the elements in the grammar. When we\'ve omitted Scale.x_continuous and Scale.y_continuous in the plots above, as well as Coord.cartesian, and guide elements such as Guide.xticks, Guide.xlabel and so on, Gadfly tries to fill in the gaps with reasonable defaults."
 },
 
 {
