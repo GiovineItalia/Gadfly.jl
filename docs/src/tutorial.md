@@ -236,6 +236,7 @@ hstack(p5, p6)
 If you don't supply Scales or Guides, Gadfly will make an educated guess.
 
 ```@example 1
+set_default_plot_size(14cm, 8cm) # hide
 gasoline = dataset("Ecdat", "Gasoline")
 plot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)
 ```

@@ -177,14 +177,14 @@ Gadfly.helpscreen_visible = function(event) {
     helpscreen_visible(this.plotroot());
 };
 var helpscreen_visible = function(root) {
-    root.select(".helpscreen").animate({opacity: 1.0}, 250);
+    root.select(".helpscreen").animate({"fill-opacity": 1.0}, 250);
 };
 
 Gadfly.helpscreen_hidden = function(event) {
     helpscreen_hidden(this.plotroot());
 };
 var helpscreen_hidden = function(root) {
-    root.select(".helpscreen").animate({opacity: 0.0}, 250);
+    root.select(".helpscreen").animate({"fill-opacity": 0.0}, 250);
 };
 
 // When the plot is moused over, emphasize the grid lines.
@@ -226,7 +226,7 @@ Gadfly.plot_mouseover = function(event) {
         } else if (event.which == 67) { // c
             root.data("crosshair",!root.data("crosshair"));
             root.select(".crosshair")
-                .animate({opacity: root.data("crosshair") ? 1.0 : 0.0}, 250);
+                .animate({"fill-opacity": root.data("crosshair") ? 1.0 : 0.0}, 250);
         }
     };
     root.data("keyboard_pan_zoom", keyboard_pan_zoom);
@@ -254,8 +254,8 @@ Gadfly.plot_mouseover = function(event) {
     }
 
     root.select(".crosshair")
-        .animate({opacity: root.data("crosshair") ? 1.0 : 0.0}, 250);
-    root.select(".questionmark").animate({opacity: 1.0}, 250);
+        .animate({"fill-opacity": root.data("crosshair") ? 1.0 : 0.0}, 250);
+    root.select(".questionmark").animate({"fill-opacity": 1.0}, 250);
 };
 
 // Reset pan and zoom on double click
@@ -289,8 +289,8 @@ Gadfly.plot_mouseout = function(event) {
                   .animate({stroke: destcolor}, 250);
     }
 
-    root.select(".crosshair").animate({opacity: 0.0}, 250);
-    root.select(".questionmark").animate({opacity: 0.0}, 250);
+    root.select(".crosshair").animate({"fill-opacity": 0.0}, 250);
+    root.select(".questionmark").animate({"fill-opacity": 0.0}, 250);
     helpscreen_hidden(root);
 };
 
@@ -698,7 +698,7 @@ var zoom_action = {
         var h = yscalable ? 0 : height;
         zoom_box = root.rect(x, y, w, h).attr({
             "fill": "#000",
-            "opacity": 0.25
+            "fill-opacity": 0.25
         });
     },
     update: function(root, dx, dy, x, y, event) {
