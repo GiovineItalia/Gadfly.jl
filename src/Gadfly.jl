@@ -1146,6 +1146,7 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :size        => Scale.size_continuous(),
         :group       => Scale.group_discrete(),
         :label       => Scale.label(),
+        :alpha       => Scale.alpha_continuous(),
         :linestyle   => Scale.linestyle_discrete()
     ),
 
@@ -1166,6 +1167,7 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :size       => Scale.size_discrete(),
         :group      => Scale.group_discrete(),
         :label      => Scale.label(),
+        :alpha       => Scale.alpha_discrete(),
         :linestyle  => Scale.linestyle_discrete()
     )
 )
