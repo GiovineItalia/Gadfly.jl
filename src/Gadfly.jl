@@ -41,6 +41,11 @@ export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, Shape, ren
 export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack, title, gridstack
 
 
+function link_terminalextensions()
+    @debug "Loading TerminalExtensions support into Gadfly"
+    include("terminalextensions.jl")
+end
+
 function __init__()
     # Define an XML namespace for custom attributes
     Compose.xmlns["gadfly"] = "http://www.gadflyjl.org/ns"
@@ -58,6 +63,7 @@ function __init__()
     pushdisplay(GadflyDisplay())
 
     @require DataFrames="a93c6f00-e57d-5684-b7b6-d8193f3e46c0" link_dataframes()
+    @require TerminalExtensions="d3a6a179-465e-5219-bd3e-0137f7fd17c7" link_terminalextensions()
 end
 
 

@@ -238,6 +238,6 @@ function evalmapping!(mapping::Dict, data_source, data::Data)
 end
 
 function link_dataframes()
-    @info "Loading DataFrames support into Gadfly.jl"
+    @debug "Loading DataFrames support into Gadfly"
     include("dataframes.jl")
 end
