@@ -250,11 +250,8 @@ function render_discrete_color_key(colors::Vector{C},
                     swatches_shapes = Shape.circle([0.5cy], 1:nrows, [swatch_size/2])
                 end
                 cs = colors[m+1:m+nrows]
-                swatches = compose!(
-                    context(),
-                    swatches_shapes,
-                    stroke(nothing),
-                    fill(cs))
+                swatches = compose!(context(), swatches_shapes, stroke(theme.discrete_highlight_color.(cs)),
+                    fill(cs), fillopacity(theme.alphas[1]))
 
                 swatch_labels = compose!(
                     context(),
@@ -346,7 +343,7 @@ function render_continuous_color_key(colors::Dict,
 
          fill([color_function((i-1) / (theme.key_color_gradations - 1))
                for i in 1:theme.key_color_gradations]),
-         stroke(nothing),
+         stroke(nothing), fillopacity(theme.alphas[1]),
          svgattribute("shape-rendering", "crispEdges")))
 
     compose!(ctx,

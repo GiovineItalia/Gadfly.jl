@@ -412,13 +412,13 @@ x = -4:0.1:4
 Da = [DataFrame(x=0:0.1:20, y=X[:,j], ymin=X[:,j].-0.5, ymax=X[:,j].+0.5, f="$f")  for (j,f) in enumerate(["cos","sin"])]
 Db = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u="μ=$μ") for μ in [-1,1] ]
 
-# In the line below, 0.4 is the color opacity
-p1 = plot(vcat(Da...), x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon,
-    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4))
+# In the line below, 0.6 is the color opacity
+p1 = plot(vcat(Da...), x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f,
+    Geom.line, Geom.ribbon, Theme(alphas=[0.6])
 )
-p2 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax, color = :u, 
+p2 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax,
+    color = :u, alpha=:u, Theme(alphas=[0.8,0.2]),
     Geom.line, Geom.ribbon, Guide.ylabel("Density"),
-    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)), 
     Guide.colorkey(title="", pos=[2.5,0.6]), Guide.title("Parametric PDF")
 )
 hstack(p1,p2)

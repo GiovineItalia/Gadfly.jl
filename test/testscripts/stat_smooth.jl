@@ -5,6 +5,5 @@ iris = dataset("datasets","iris")
 
 p = plot(iris, x=:SepalLength, y=:PetalLength, color=:Species, Geom.point,
      layer(Stat.smooth(method=:lm, levels=[0.90, 0.99]), Geom.line, Geom.ribbon), 
-    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.2),
-        key_position=:inside)
+    Theme(alphas=[0.6], key_position=:inside)
 )

@@ -1,5 +1,50 @@
 # Scales
 
+## [`Scale.alpha_continuous`](@ref)
+
+```@example
+using Gadfly
+set_default_plot_size(21cm, 8cm)
+palettef = Scale.lab_gradient("darkgreen", "orange", "blue")
+p1 = plot(x=1:10, y=rand(10), color=[1:10;], Geom.point,
+    Scale.color_continuous(colormap=palettef, minvalue=0, maxvalue=10),
+    Guide.title("Scale.color_continuous, Theme(alphas=[0.5])"),
+    Theme(alphas=[0.5], continuous_highlight_color=identity,
+        point_size=2mm)
+)
+p2 = plot(x=1:10, y=rand(10), alpha=[1:10;], Geom.point,
+    Scale.alpha_continuous(minvalue=0, maxvalue=10),
+    Guide.title("Scale.alpha_continuous, Theme(default_color=\"blue\")"),
+    Theme(default_color="blue", discrete_highlight_color=c->"gray",
+        point_size=2mm)
+)
+hstack(p1, p2)
+```
+
+## [`Scale.alpha_discrete`](@ref)
+
+```@example
+using DataFrames, Gadfly
+set_default_plot_size(21cm, 8cm)
+D = DataFrame(x=1:6, y=rand(6), Shape=repeat(["a","b","c"], outer=2))
+coord = Coord.cartesian(xmin=0, xmax=7, ymin=0, ymax=1.0)
+p1 = plot(D, x=:x, y=:y, color=:x,  coord,
+    Scale.color_discrete, Geom.point, Geom.hair,
+    Guide.title("Scale.color_discrete, Theme(alphas=[0.5])"),
+    Theme(alphas=[0.5], discrete_highlight_color=identity,
+        point_size=2mm)
+)
+p2 = plot(D, x=:x, y=:y, alpha=:x, shape=:Shape, coord,
+    Scale.alpha_discrete, Geom.point, Geom.hair,
+    Guide.title("Scale.alpha_discrete, Theme(default_color=\"green\")"),
+    Theme(default_color="green", discrete_highlight_color=c->"gray",
+        point_size=2mm, alphas=[0.0,0.2,0.4,0.6,0.8,1.0])
+)
+hstack(p1,p2)
+```
+
+
+
 ## [`Scale.color_continuous`](@ref)
 
 ```@example
