@@ -47,34 +47,45 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     Gadfly.assert_aesthetics_equal_length("Geom.point", aes, :x, :y)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.shape = Function[Shape.circle]
-    default_aes.color = discretize_make_ia(RGBA{Float32}[theme.default_color])
+    default_aes.shape = Function[theme.point_shapes[1]]
+    default_aes.color = RGBA{Float32}[theme.default_color]
     default_aes.size = Measure[theme.point_size]
-    default_aes.alpha = [theme.alphas[1]]
+    default_aes.alpha = Float64[theme.alphas[1]]
     aes = inherit(aes, default_aes)
 
-    if eltype(aes.size) <: Int
+    aes_size = if eltype(aes.size) <: Int
       size_min, size_max = extrema(aes.size)
       size_range = size_max - size_min
       point_size_range = theme.point_size_max - theme.point_size_min
-      interpolate_size(x) = theme.point_size_min + (x-size_min) / size_range * point_size_range
+      theme.point_size_min .+ ((aes.size .- size_min) ./ size_range .* point_size_range)
+    else
+        aes.size
     end
 
     aes_alpha = eltype(aes.alpha) <: Int ? theme.alphas[aes.alpha] : aes.alpha
-
+    aes_shape = eltype(aes.shape) <: Function ? aes.shape : theme.point_shapes[aes.shape]
+    strokef = aes.color_key_continuous != nothing && aes.color_key_continuous ?
+                    theme.continuous_highlight_color : theme.discrete_highlight_color
+    
+    CT, ST, SZT, AT =  eltype(aes.color), eltype(aes_shape), eltype(aes_size), eltype(aes_alpha)
+    groups =   collect(Tuple{CT, SZT, ST, AT}, Compose.cyclezip(aes.color, aes_size, aes_shape, aes_alpha))
+    ug = unique(groups)
     ctx = context()
 
-    for (x, y, color, size, shape, alpha) in Compose.cyclezip(aes.x, aes.y, aes.color, aes.size, aes.shape, aes_alpha)
-        shapefun = typeof(shape) <: Function ? shape : theme.point_shapes[shape]
-        sizeval = typeof(size) <: Int ? interpolate_size(size) : size
-        strokecolor = aes.color_key_continuous != nothing && aes.color_key_continuous ?
-                    theme.continuous_highlight_color(color) :
-                    theme.discrete_highlight_color(color)
-        class = svg_color_class_from_label(aes.color_label([color])[1])
+    if length(groups)==1
+        color, size, shape, alpha = groups[1]
         compose!(ctx, (context(),
-              (context(), shapefun([x], [y], [sizeval]), svgclass("marker")),
-              fill(color), stroke(strokecolor), fillopacity(alpha), 
-              svgclass(class)))
+            shape(aes.x, aes.y, [size]), fill(color), stroke(strokef(color)), fillopacity(alpha),
+            svgclass("marker")))
+    elseif length(groups)>1
+        for g in ug
+            i = findall(x->isequal(x, g), groups)
+            color, size, shape, alpha = g
+            class = svg_color_class_from_label(aes.color_label([color])[1])
+            compose!(ctx, (context(),
+                    (context(), shape(view(aes.x,i), view(aes.y,i), [size]), svgclass("marker")),
+                    fill(color), stroke(strokef(color)), fillopacity(alpha), svgclass(class)))
+        end
     end
 
     compose!(ctx, linewidth(theme.highlight_width))
