@@ -1099,7 +1099,7 @@ function apply_statistic(stat::BoxplotStatistic,
 
     isa(aes_x, IndirectArray) && (aes.x = discretize_make_ia(aes.x, aes_x.values))
 
-    colorflag && (aes.color = discretize_make_ia(first.(keys(grouped_y)), aes.color.values))
+    colorflag && (aes.color = discretize_make_ia([first(k) for k in keys(grouped_y)], aes.color.values))
 
     Stat.apply_statistic(Stat.dodge(), scales, coord, aes)
 
@@ -2060,7 +2060,7 @@ function apply_statistic(stat::DodgeStatistic,
     
     if stat.position==:dodge
         nbars == length(aes.color) && return
-        offset = range(-0.5+0.5/nbars, 0.5, step=1/nbars)
+        offset = range(-0.5+0.5/nbars, stop=0.5, step=1/nbars)
         dodge = getindex(offset, aes.color.index)
         setfield!(aes, stat.axis, vals.+dodge)
     elseif stat.position==:stack
