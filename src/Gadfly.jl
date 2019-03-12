@@ -1070,14 +1070,7 @@ function display(d::GadflyDisplay, ::MIME"text/html", p::Union{Plot,Compose.Cont
             <title>Gadfly Plot</title>
             <meta charset="utf-8">
           </head>
-            <body style="margin:0">
-            <script charset="utf-8">
-                $(read(Compose.snapsvgjs, String))
-            </script>
-            <script charset="utf-8">
-                $(read(gadflyjs, String))
-            </script>
-
+          <body style="margin:0">
             $(plotsvg)
           </body>
         </html>
