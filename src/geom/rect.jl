@@ -77,18 +77,20 @@ function render(geom::RectangularGeometry, theme::Gadfly.Theme, aes::Gadfly.Aest
         ymax = ymax[visibility]
     end
 
-    xwidths = [(x1 - x0) * cx
-               for (x0, x1) in zip(xmin, xmax)]
-
-    ywidths = [(y1 - y0) * cy
-               for (y0, y1) in zip(ymin, ymax)]
+    polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, length(xmin))
+    for i in 1:length(xmin)
+        x0 = x_measure(xmin[i])
+        x1 = x_measure(xmax[i])
+        y0 = y_measure(ymin[i])
+        y1 = y_measure(ymax[i])
+        polys[i] = Tuple{Measure, Measure}[(x0, y0), (x0, y1), (x1, y1), (x1, y0)]
+    end
 
     return compose!(
         context(),
-        rectangle(xmin, ymin, xwidths, ywidths, geom.tag),
+        Compose.polygon(polys),
         fill(cs),
         stroke(nothing),
         svgclass("geometry"),
         svgattribute("shape-rendering", "crispEdges"))
-
 end
