@@ -44,17 +44,12 @@ function render(geom::RectangularGeometry, theme::Gadfly.Theme, aes::Gadfly.Aest
     Gadfly.assert_aesthetics_defined("RectangularGeometry", aes, :xmin, :xmax, :ymin, :ymax)
     Gadfly.assert_aesthetics_equal_length("RectangularGeometry", aes, :xmin, :xmax, :ymin, :ymax)
 
-    nx = length(aes.xmin)
-    ny = length(aes.ymin)
-    n = nx
-
     xmin = aes.xmin
-    xwidths = [(x1 - x0) * cx
-               for (x0, x1) in zip(aes.xmin, aes.xmax)]
-
+    xmax = aes.xmax
     ymin = aes.ymin
-    ywidths = [(y1 - y0) * cy
-               for (y0, y1) in zip(aes.ymin, aes.ymax)]
+    ymax = aes.ymax
+
+    n = length(xmin)
 
     if length(aes.color) == n
         cs = aes.color
@@ -81,6 +76,12 @@ function render(geom::RectangularGeometry, theme::Gadfly.Theme, aes::Gadfly.Aest
         ymin = ymin[visibility]
         ymax = ymax[visibility]
     end
+
+    xwidths = [(x1 - x0) * cx
+               for (x0, x1) in zip(xmin, xmax)]
+
+    ywidths = [(y1 - y0) * cy
+               for (y0, y1) in zip(ymin, ymax)]
 
     return compose!(
         context(),
