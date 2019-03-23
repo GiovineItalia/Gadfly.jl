@@ -86,11 +86,14 @@ function render(geom::RectangularGeometry, theme::Gadfly.Theme, aes::Gadfly.Aest
         polys[i] = Tuple{Measure, Measure}[(x0, y0), (x0, y1), (x1, y1), (x1, y0)]
     end
 
-    return compose!(
-        context(),
-        Compose.polygon(polys),
-        fill(cs),
-        stroke(nothing),
+    properties = (
+        stroke(nothing), #TODO: Apply theme attributes.
         svgclass("geometry"),
         svgattribute("shape-rendering", "crispEdges"))
+
+    return compose!(
+        context(),
+        Compose.polygon(polys, geom.tag),
+        fill(cs),
+        properties...)
 end
