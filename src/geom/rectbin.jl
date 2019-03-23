@@ -1,4 +1,3 @@
-### should refactor to RectangleGeometry with Identity as the default Stat.
 struct RectangularBinGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     tag::Symbol
@@ -19,15 +18,6 @@ specify their `color`.
 const rectbin = RectangularBinGeometry
 
 """
-    Geom.rect
-
-Draw colored rectangles with the corners specified by the
-`xmin`, `xmax`, `ymin` and `ymax` aesthetics.  Optionally
-specify their `color`.
-"""
-rect() = RectangularBinGeometry(Gadfly.Stat.Identity())
-
-"""
     Geom.histogram2d[(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
                         ybincount=nothing, yminbincount=3, ymaxbincount=150)]
 
@@ -39,12 +29,12 @@ information.
 function histogram2d(; xbincount=nothing, xminbincount=3, xmaxbincount=150,
                        ybincount=nothing, yminbincount=3, ymaxbincount=150)
     RectangularBinGeometry(
-        Gadfly.Stat.histogram2d(xbincount=xbincount,
-                                xminbincount=xminbincount,
-                                xmaxbincount=xmaxbincount,
-                                ybincount=ybincount,
-                                yminbincount=yminbincount,
-                                ymaxbincount=ymaxbincount))
+        Gadfly.Stat.histogram2d(xbincount = xbincount,
+                                xminbincount = xminbincount,
+                                xmaxbincount = xmaxbincount,
+                                ybincount = ybincount,
+                                yminbincount = yminbincount,
+                                ymaxbincount = ymaxbincount))
 end
 
 default_statistic(geom::RectangularBinGeometry) = geom.default_statistic
@@ -76,11 +66,11 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
     n = nx
 
     xmin = aes.xmin
-    xwidths = [(x1 - x0)*cx - theme.bar_spacing
+    xwidths = [(x1 - x0) * cx - theme.bar_spacing
                for (x0, x1) in zip(aes.xmin, aes.xmax)]
 
     ymin = aes.ymin
-    ywidths = [(y1 - y0)*cy - theme.bar_spacing
+    ywidths = [(y1 - y0) * cy - theme.bar_spacing
                for (y0, y1) in zip(aes.ymin, aes.ymax)]
 
     if length(aes.color) == n
