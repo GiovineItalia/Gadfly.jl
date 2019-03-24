@@ -53,6 +53,49 @@ apply_statistic(stat::Identity,
 """
 const identity = Identity
 
+struct BandStatistic <: Gadfly.StatisticElement
+    orientation::Symbol # :horizontal or :vertical
+end
+
+function BandStatistic(; orientation=:vertical)
+    return BandStatistic(orientation)
+end
+
+input_aesthetics(stat::BandStatistic) = [:xmin, :xmax, :ymin, :ymax]
+output_aesthetics(stat::BandStatistic) = [:xmin, :xmax, :ymin, :ymax]
+default_scales(stat::BandStatistic) = [Scale.x_continuous(), Scale.y_continuous()]
+
+"""
+    Stat.band[(; orientation=:vertical)]
+
+Transform points in $(aes2str(input_aesthetics(band()))) into rectangles in
+$(aes2str(output_aesthetics(band()))).  Used by [`Geom.band`](@ref Gadfly.Geom.band).
+"""
+const band = BandStatistic
+
+function apply_statistic(stat::BandStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+
+    if stat.orientation == :horizontal
+
+        n = max(length(aes.ymin)) #Note: already passed check for equal lengths.
+
+        aes.xmin = fill(0w, n)
+        aes.xmax = fill(1w, n)
+
+    elseif stat.orientation == :vertical
+
+        n = max(length(aes.xmin)) #Note: already passed check for equal lengths.
+
+        aes.ymin = fill(0h, n)
+        aes.ymax = fill(1h, n)
+
+    else
+        error("Orientation must be :horizontal or :vertical")
+    end
+end
 
 # Determine bounds of bars positioned at the given values.
 function barminmax(vals, iscontinuous::Bool)
@@ -779,7 +822,7 @@ function apply_statistic(stat::TickStatistic,
     for var in in_vars
         categorical && !in(var,[:x,:y]) && continue
         vals = getfield(aes, var)
-        if vals != nothing && eltype(vals) != Function
+        if vals != nothing && eltype(vals) != Function && !(eltype(vals) <: Measure)
             if minval == nothing
                 minval = first(vals)
             end
