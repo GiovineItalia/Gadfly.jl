@@ -52,7 +52,6 @@ end # module Row
 #   A new mapping with aliases evaluated and unrecognized aesthetics removed.
 #
 function cleanmapping(mapping::Dict)
-    valid_aesthetics = fieldnames(Aesthetics)
     cleaned = Dict{Symbol, Any}()
     for (key, val) in mapping
         # skip the "order" pesudo-aesthetic, used to order layers

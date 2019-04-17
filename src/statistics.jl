@@ -323,7 +323,7 @@ function apply_statistic(stat::HistogramStatistic,
         x_min -= 0.5 # adjust the left side of the bar
         binwidth = 1.0
     else
-        lims = fieldnames(typeof(stat.limits))
+        lims = keys(stat.limits)
         x_min = in(:min, lims) ? stat.limits.min : Gadfly.concrete_minimum(vals)
 
         isdiscrete = false

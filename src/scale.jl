@@ -10,7 +10,8 @@ using IndirectArrays
 using CategoricalArrays
 using Printf
 
-import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia, aes2str
+import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia,
+    aes2str, valid_aesthetics
 import Distributions: Distribution
 
 include("color_misc.jl")
@@ -236,7 +237,7 @@ function apply_scale(scale::ContinuousScale,
                 label_var = Symbol(var, "_label")
             end
 
-            if in(label_var, Set(fieldnames(typeof(aes))))
+            if in(label_var, valid_aesthetics)
                 setfield!(aes, label_var, make_labeler(scale))
             end
         end
@@ -391,7 +392,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
                 labeler = explicit_labeler
             end
 
-            in(label_var, Set(fieldnames(typeof(aes)))) && setfield!(aes, label_var, labeler)
+            in(label_var, valid_aesthetics) && setfield!(aes, label_var, labeler)
         end
     end
 end
