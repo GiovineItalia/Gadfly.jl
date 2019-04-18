@@ -226,7 +226,7 @@ json(a::Aesthetics) = join([string(a, ":", json(getfield(a, var))) for var in ae
 # Returns:
 #   A new Aesthetics instance with vectors concatenated.
 #
-function concat(aess::Aesthetics...)
+function concat(aess)
     cataes = Aesthetics()
     for aes in aess
         for var in valid_aesthetics

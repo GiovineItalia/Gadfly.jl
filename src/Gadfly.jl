@@ -653,7 +653,7 @@ function render_prepare(plot::Plot)
 
     # I. Scales
     layer_aess = Scale.apply_scales(IterTools.distinct(values(scales)),
-                                    datas..., subplot_datas...)
+                                    vcat(datas, subplot_datas))
 
     # set defaults for key titles
     keyvars = [:color, :shape]
@@ -692,7 +692,7 @@ function render_prepare(plot::Plot)
     end
 
     # IIb. Plot-wise Statistics
-    plot_aes = concat(layer_aess...)
+    plot_aes = concat(layer_aess)
     statistics = collect(statistics)
     Stat.apply_statistics(statistics, scales, coord, plot_aes)
 
@@ -809,28 +809,24 @@ function render_prepared(plot::Plot,
     # IV. Geometries
     themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
                    for layer in plot.layers]
-    zips = trim_zip(plot.layers, layer_aess,
-                                                   layer_subplot_aess,
-                                                   layer_subplot_datas,
-               themes)
-
-    compose!(plot_context,
-             [compose(context(order=layer.order), render(layer.geom, theme, aes,
-                                                         subplot_aes, subplot_data,
-                                                         scales))
-              for (layer, aes, subplot_aes, subplot_data, theme) in zips]...)
+    zips = trim_zip(plot.layers, layer_aess, layer_subplot_aess,
+                    layer_subplot_datas, themes)
+    for (layer, aes, subplot_aes, subplot_data, theme) in zips
+        r = render(layer.geom, theme, aes, subplot_aes, subplot_data, scales)
+        compose!(plot_context, (context(order=layer.order), r))
+    end#for
 
     # V. Guides
-    guide_contexts = Any[]
+    guide_contexts = Guide.PositionedGuide[]
     for guide in guides
         guide_context = render(guide, plot.theme, plot_aes, dynamic)
-        if guide_context != nothing
+        if !isnothing(guide_context)
             append!(guide_contexts, guide_context)
         end
     end
 
     tbl = Guide.layout_guides(plot_context, coord,
-                              plot.theme, guide_contexts...)
+                              plot.theme, guide_contexts)
     if table_only
         return tbl
     end

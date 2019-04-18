@@ -1129,7 +1129,7 @@ end
 function layout_guides(plot_context::Context,
                        coord::Gadfly.CoordinateElement,
                        theme::Gadfly.Theme,
-                       positioned_guides::PositionedGuide...)
+                       positioned_guides::Vector{PositionedGuide})
     # Organize guides by position
     guides = DefaultDict(() -> (Tuple{Vector{Context}, Int})[])
     for positioned_guide in positioned_guides

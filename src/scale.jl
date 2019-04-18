@@ -19,9 +19,9 @@ include("color_misc.jl")
 iscategorical(scales::Dict{Symbol, Gadfly.ScaleElement}, var::Symbol) =
         haskey(scales, var) && isa(scales[var], DiscreteScale)
 
-function apply_scales(scales, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+function apply_scales(scales, aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for scale in scales
-        apply_scale(scale, aess, datas...)
+        apply_scale(scale, aess, datas)
     end
 
     for (aes, data) in zip(aess, datas)
@@ -29,9 +29,9 @@ function apply_scales(scales, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Dat
     end
 end
 
-function apply_scales(scales, datas::Gadfly.Data...)
+function apply_scales(scales, datas::Vector{Gadfly.Data})
     aess = Gadfly.Aesthetics[Gadfly.Aesthetics() for _ in datas]
-    apply_scales(scales, aess, datas...)
+    apply_scales(scales, aess, datas)
     aess
 end
 
@@ -178,9 +178,12 @@ alpha_continuous(; minvalue=0.0, maxvalue=1.0, labels=nothing, format=nothing, m
      ContinuousScale([:alpha], identity_transform, minvalue=minvalue, maxvalue=maxvalue,
                labels=labels, format=format, minticks=minticks, maxticks=maxticks, scalable=scalable)
 
+# Need to wrap Gadfly.Data in array for apply_scale methods
+apply_scale(scale::Gadfly.ScaleElement, aess::Vector{Gadfly.Aesthetics}, data::Gadfly.Data) =
+    apply_scale(scale, aess, Gadfly.Data[data])
 
 function apply_scale(scale::ContinuousScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
             vals = getfield(data, var)
@@ -363,7 +366,7 @@ alpha_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:linestyle], labels=labels, levels=levels, order=order)
 
 
-function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
             label_var = Symbol(var, "_label")
@@ -412,7 +415,7 @@ const color_none = NoneColorScale
 element_aesthetics(scale::NoneColorScale) = [:color]
 
 function apply_scale(scale::NoneColorScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for aes in aess
         aes.color = nothing
     end
@@ -430,7 +433,7 @@ const color_identity = IdentityColorScale
 element_aesthetics(scale::IdentityColorScale) = [:color]
 
 function apply_scale(scale::IdentityColorScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
         aes.color = discretize_make_ia(data.color)
@@ -513,7 +516,7 @@ end
 @deprecate discrete_color_manual(colors...; levels=nothing, order=nothing) color_discrete_manual(colors...; levels=levels, order=order)
 
 function apply_scale(scale::DiscreteColorScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     levelset = OrderedSet()
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
@@ -621,7 +624,7 @@ const color_continuous_gradient = color_continuous  ### WHY HAVE THIS ALIAS?
 @deprecate continuous_color(;minvalue=nothing, maxvalue=nothing) color_continuous(;minvalue=nothing, maxvalue=nothing)
 
 function apply_scale(scale::ContinuousColorScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     cdata = skipmissing(Iterators.flatten(i.color for i in datas if i.color != nothing))
     if !isempty(cdata)
       cmin, cmax = extrema(cdata)
@@ -693,7 +696,7 @@ struct LabelScale <: Gadfly.ScaleElement
 end
 
 function apply_scale(scale::LabelScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for (aes, data) in zip(aess, datas)
         data.label === nothing && continue
         aes.label = discretize(data.label)
@@ -733,7 +736,7 @@ end
 element_aesthetics(scale::IdentityScale) = [scale.var]
 
 function apply_scale(scale::IdentityScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for (aes, data) in zip(aess, datas)
         getfield(data, scale.var) === nothing && continue
         setfield!(aes, scale.var, getfield(data, scale.var))
