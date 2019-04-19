@@ -50,7 +50,7 @@ function deferred_label_context(geom::LabelGeometry,
 
     num_labels = length(aes.label)
 
-    if aes.size == nothing
+    if isnothing(aes.size)
         padding = fill(theme.point_size, num_labels) .+ theme.label_padding
     else
         padding = aes.size .+ theme.label_padding
@@ -279,7 +279,7 @@ function render(geom::LabelGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
         end
 
         hpos, vpos, xoff, yoff = label_layouts[geom.position]
-        if aes.size == nothing
+        if isnothing(aes.size)
             offsets = [(xoff*(theme.point_size + theme.label_padding),
                         yoff*(theme.point_size + theme.label_padding))]
         else

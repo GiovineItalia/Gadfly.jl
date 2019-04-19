@@ -18,7 +18,7 @@ struct HLineGeometry <: Gadfly.GeometryElement
     tag::Symbol
 
     HLineGeometry(color, size, style, tag) =
-            new(color === nothing ? nothing : Gadfly.parse_colorant(color), size, style, tag)
+            new(isnothing(color) ? nothing : Gadfly.parse_colorant(color), size, style, tag)
 end
 HLineGeometry(; color=nothing, size=nothing, style=nothing, tag=empty_tag) =
         HLineGeometry(color, size, style, tag)
@@ -36,9 +36,9 @@ element_aesthetics(::HLineGeometry) = [:yintercept]
 function render(geom::HLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.hline", aes, :yintercept)
 
-    color = geom.color === nothing ? theme.default_color : geom.color
-    size = geom.size === nothing ? theme.line_width : geom.size
-    style = geom.style === nothing ? theme.line_style[1] : geom.style
+    color = isnothing(geom.color) ? theme.default_color : geom.color
+    size = isnothing(geom.size) ? theme.line_width : geom.size
+    style = isnothing(geom.style) ? theme.line_style[1] : geom.style
 
     color = check_arguments(color, length(aes.yintercept))
     size = check_arguments(size, length(aes.yintercept))
@@ -65,7 +65,7 @@ struct VLineGeometry <: Gadfly.GeometryElement
     tag::Symbol
 
     VLineGeometry(color, size, style, tag) =
-            new(color === nothing ? nothing : Gadfly.parse_colorant(color), size, style, tag)
+            new(isnothing(color) ? nothing : Gadfly.parse_colorant(color), size, style, tag)
 end
 VLineGeometry(; color=nothing, size=nothing, style=nothing, tag=empty_tag) =
         VLineGeometry(color, size, style, tag)
@@ -83,9 +83,9 @@ element_aesthetics(::VLineGeometry) = [:xintercept]
 function render(geom::VLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.vline", aes, :xintercept)
 
-    color = geom.color === nothing ? theme.default_color : geom.color
-    size = geom.size === nothing ? theme.line_width : geom.size
-    style = geom.style === nothing ? theme.line_style[1] : geom.style
+    color = isnothing(geom.color) ? theme.default_color : geom.color
+    size = isnothing(geom.size) ? theme.line_width : geom.size
+    style = isnothing(geom.style) ? theme.line_style[1] : geom.style
 
     color = check_arguments(color, length(aes.xintercept))
     size = check_arguments(size, length(aes.xintercept))
@@ -112,7 +112,7 @@ struct ABLineGeometry <: Gadfly.GeometryElement
     tag::Symbol
 
     ABLineGeometry(color, size, style, tag) =
-            new(color === nothing ? nothing : Gadfly.parse_colorant(color), size, style, tag)
+            new(isnothing(color) ? nothing : Gadfly.parse_colorant(color), size, style, tag)
 end
 ABLineGeometry(; color=nothing, size=nothing, style=nothing, tag::Symbol=empty_tag) =
         ABLineGeometry(color, size, style, tag)
@@ -131,19 +131,19 @@ const abline = ABLineGeometry
 element_aesthetics(geom::ABLineGeometry) = [:intercept, :slope]
 
 function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    if aes.intercept == nothing && aes.slope == nothing
+    if isnothing(aes.intercept) && isnothing(aes.slope)
         aes.intercept = [0]
         aes.slope = [1]
-    elseif aes.intercept == nothing
+    elseif isnothing(aes.intercept)
         aes.intercept = fill(0,length(aes.slope))
-    elseif aes.slope == nothing
+    elseif isnothing(aes.slope)
         aes.slope = fill(1,length(aes.intercept))
     end
     Gadfly.assert_aesthetics_equal_length("Geom.line", aes, element_aesthetics(geom)...)
 
-    color = geom.color === nothing ? theme.default_color : geom.color
-    size = geom.size === nothing ? theme.line_width : geom.size
-    style = geom.style === nothing ? theme.line_style[1] : geom.style
+    color = isnothing(geom.color) ? theme.default_color : geom.color
+    size = isnothing(geom.size) ? theme.line_width : geom.size
+    style = isnothing(geom.style) ? theme.line_style[1] : geom.style
 
     color = check_arguments(color, length(aes.intercept))
     size = check_arguments(size, length(aes.intercept))
