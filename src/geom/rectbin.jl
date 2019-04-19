@@ -94,14 +94,14 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
 
     allvisible = true
     for c in cs
-        if c == nothing
+        if isnothing(c)
             allvisible = false
             break
         end
     end
 
     if !allvisible
-        visibility = cs .!= nothing
+        visibility = (!isnothing).(cs)
         cs = cs[visibility]
         xmin = xmin[visibility]
         xmax = xmax[visibility]

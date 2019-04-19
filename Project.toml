@@ -34,7 +34,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 [compat]
 CategoricalArrays = "0.5"
 Colors = "0.9"
-Compat = "2"
+Compat = "2.1"
 Compose = "0.7"
 Contour = "0.5"
 CoupledFields = "0.1"

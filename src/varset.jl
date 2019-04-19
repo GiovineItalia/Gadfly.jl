@@ -45,7 +45,7 @@ macro varset(name::Symbol, table)
         push!(parameters, Expr(:kw, var, default))
         push!(inherit_parameters, Expr(:kw, var, :(b.$var)))
         if typ==:ColorOrNothing
-            push!(parsed_vars, :($(var)==nothing ? nothing : parse_colorant($(var))))
+            push!(parsed_vars, :(isnothing($(var)) ? nothing : parse_colorant($(var))))
         else
             push!(parsed_vars, :($(var)))
         end

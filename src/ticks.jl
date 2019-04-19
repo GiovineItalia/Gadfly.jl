@@ -214,7 +214,7 @@ function optimize_ticks(x_min::DateTime, x_max::DateTime; extend_ticks::Bool=fal
                     # TODO: manually setting scale with :day, :minute, etc
                 end
 
-                if scale === nothing
+                if isnothing(scale)
                     for proposed_scale in [Day(1), Hour(1), Minute(1),
                                            Second(1), Millisecond(100),
                                            Millisecond(10), Millisecond(1)]
@@ -225,7 +225,7 @@ function optimize_ticks(x_min::DateTime, x_max::DateTime; extend_ticks::Bool=fal
                     end
                 end
 
-                if scale === nothing
+                if isnothing(scale)
                     scale = Millisecond(1)
                 end
 

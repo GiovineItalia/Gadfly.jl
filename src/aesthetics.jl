@@ -102,7 +102,7 @@ function show(io::IO, data::Aesthetics)
     print(io, "Aesthetics(")
     for name in valid_aesthetics
         val = getfield(data, name)
-        if !ismissing(val) && val != nothing
+        if !ismissing(val) && !isnothing(val)
             print(io, "\n  ", string(name), "=")
             show(io, getfield(data, name))
         end
@@ -140,7 +140,7 @@ getindex(aes::Aesthetics, i::Integer, j::AbstractString) = getfield(aes, Symbol(
 function defined_aesthetics(aes::Aesthetics)
     vars = Set{Symbol}()
     for name in valid_aesthetics
-        getfield(aes, name) === nothing || push!(vars, name)
+        isnothing(getfield(aes, name)) || push!(vars, name)
     end
     vars
 end
@@ -172,7 +172,7 @@ function assert_aesthetics_undefined(who::AbstractString, aes::Aesthetics, vars:
 end
 
 function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, vars::Symbol...)
-    defined_vars = Compat.Iterators.filter(var -> !(getfield(aes, var) === nothing), vars)
+    defined_vars = Compat.Iterators.filter(var -> !isnothing(getfield(aes, var)), vars)
 
     if !isempty(defined_vars)
         n = length(getfield(aes, first(defined_vars)))
@@ -198,7 +198,7 @@ end
 #
 function update!(a::Aesthetics, b::Aesthetics)
     for name in valid_aesthetics
-        issomething(getfield(b, name)) && setfield(a, name, getfield(b, name))
+        !isnothing(getfield(b, name)) && setfield(a, name, getfield(b, name))
     end
     nothing
 end
@@ -230,22 +230,17 @@ function concat(aess)
     cataes = Aesthetics()
     for aes in aess
         for var in valid_aesthetics
-            if var in [:xviewmin, :yviewmin]
-                mu, mv = getfield(cataes, var), getfield(aes, var)
-                setfield!(cataes, var,
-                          mu === nothing ? mv :
-                             mv == nothing ? mu :
-                                 min(mu, mv))
-            elseif var in [:xviewmax, :yviewmax]
-                mu, mv = getfield(cataes, var), getfield(aes, var)
-                setfield!(cataes, var,
-                          mu === nothing ? mv :
-                             mv == nothing ? mu :
-                                 max(mu, mv))
+            mu, mv = getfield(cataes, var), getfield(aes, var)
+            isviewmin = var in (:xviewmin, :yviewmin)
+            isviewmax = var in (:xviewmax, :yviewmax)
+            mumv = if isviewmin
+                isnothing(mu) ? mv : isnothing(mv) ? mu : min(mu, mv)
+            elseif isviewmax
+                isnothing(mu) ? mv : isnothing(mv) ? mu : max(mu, mv)
             else
-                setfield!(cataes, var,
-                          cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
-            end
+                cat_aes_var!(mu, mv)
+            end#if
+            setfield!(cataes, var, mumv)
         end
     end
     cataes
@@ -313,13 +308,13 @@ end
 #
 function by_xy_group(aes::T, xgroup, ygroup,
                      num_xgroups, num_ygroups) where T <: Union{Data, Aesthetics}
-    @assert xgroup === nothing || ygroup === nothing || length(xgroup) == length(ygroup)
+    @assert isnothing(xgroup) || isnothing(ygroup) || length(xgroup) == length(ygroup)
 
     n = num_ygroups
     m = num_xgroups
 
-    xrefs = xgroup === nothing ? [1] : xgroup
-    yrefs = ygroup === nothing ? [1] : ygroup
+    xrefs = isnothing(xgroup) ? [1] : xgroup
+    yrefs = isnothing(ygroup) ? [1] : ygroup
 
     aes_grid = Array{T}(undef, n, m)
     staging = Array{AbstractArray}(undef, n, m)
@@ -327,7 +322,7 @@ function by_xy_group(aes::T, xgroup, ygroup,
         aes_grid[i, j] = T()
     end
 
-    xgroup === nothing && ygroup === nothing && return aes_grid
+    isnothing(xgroup) && isnothing(ygroup) && return aes_grid
 
     function make_pooled_array(::Type{IndirectArray{T,N,A,V}}, arr::AbstractArray) where {T,N,A,V}
         uarr = unique(arr)
@@ -350,8 +345,8 @@ function by_xy_group(aes::T, xgroup, ygroup,
 
         vals = getfield(aes, var)
         if typeof(vals) <: AbstractArray
-            if xgroup !== nothing && length(vals) !== length(xgroup) ||
-               ygroup !== nothing && length(vals) !== length(ygroup)
+            if !isnothing(xgroup) && length(vals) !== length(xgroup) ||
+               !isnothing(ygroup) && length(vals) !== length(ygroup)
                 continue
             end
 
@@ -405,12 +400,12 @@ function inherit!(a::Aesthetics, b::Aesthetics;
         bval = getfield(b, field)
         if field in clobber_set
             setfield!(a, field, bval)
-        elseif aval === missing || aval === nothing || aval === string || aval == showoff
+        elseif aval === missing || isnothing(aval) || aval === string || aval === showoff
             setfield!(a, field, bval)
-        elseif field == :xviewmin || field == :yviewmin
-            bval != nothing && (aval == nothing || aval > bval) && setfield!(a, field, bval)
-        elseif field == :xviewmax || field == :yviewmax
-            bval != nothing && (aval == nothing || aval < bval) && setfield!(a, field, bval)
+        elseif field in (:xviewmin, :yviewmin) && !isnothing(bval)
+            (isnothing(aval) || aval > bval) && setfield!(a, field, bval)
+        elseif field in (:xviewmax, :yviewmax) && !isnothing(bval)
+            (isnothing(aval) || aval < bval) && setfield!(a, field, bval)
         elseif typeof(aval) <: Dict && typeof(bval) <: Dict
             merge!(aval, getfield(b, field))
         end
