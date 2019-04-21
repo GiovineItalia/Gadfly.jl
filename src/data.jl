@@ -43,6 +43,8 @@
     titles, Dict{Symbol, AbstractString}, Dict{Symbol, AbstractString}()
 end
 
+# Calculating fieldnames at runtime is expensive
+const data_fields = fieldnames(Data)
 
 
 # Produce a new Data instance chaining the values of one or more others.
@@ -58,7 +60,7 @@ end
 #
 function chain(ds::Data...)
     chained_data = Data()
-    for name in fieldnames(Data)
+    for name in data_fields
         vs = Any[getfield(d, name) for d in ds]
         vs = Any[v for v in filter(issomething, vs)]
         if isempty(vs)
@@ -75,7 +77,7 @@ end
 function show(io::IO, data::Data)
     maxlen = 0
     print(io, "Data(")
-    for name in fieldnames(Data)
+    for name in data_fields
         if getfield(data, name) != nothing
             print(io, "\n  ", string(name), "=")
             show(io, getfield(data, name))

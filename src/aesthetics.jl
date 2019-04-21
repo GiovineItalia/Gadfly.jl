@@ -93,11 +93,14 @@ const NumericalAesthetic =
     pad_categorical_y, Union{Missing,Bool}, missing
 end
 
+# Calculating fieldnames at runtime is expensive
+const valid_aesthetics = fieldnames(Aesthetics)
+
 
 function show(io::IO, data::Aesthetics)
     maxlen = 0
     print(io, "Aesthetics(")
-    for name in fieldnames(Aesthetics)
+    for name in valid_aesthetics
         val = getfield(data, name)
         if !ismissing(val) && val != nothing
             print(io, "\n  ", string(name), "=")
@@ -136,7 +139,7 @@ getindex(aes::Aesthetics, i::Integer, j::AbstractString) = getfield(aes, Symbol(
 # Return the set of variables that are non-nothing.
 function defined_aesthetics(aes::Aesthetics)
     vars = Set{Symbol}()
-    for name in fieldnames(Aesthetics)
+    for name in valid_aesthetics
         getfield(aes, name) === nothing || push!(vars, name)
     end
     vars
@@ -194,7 +197,7 @@ end
 # Modifies: a
 #
 function update!(a::Aesthetics, b::Aesthetics)
-    for name in fieldnames(Aesthetics)
+    for name in valid_aesthetics
         issomething(getfield(b, name)) && setfield(a, name, getfield(b, name))
     end
     nothing
@@ -226,7 +229,7 @@ json(a::Aesthetics) = join([string(a, ":", json(getfield(a, var))) for var in ae
 function concat(aess::Aesthetics...)
     cataes = Aesthetics()
     for aes in aess
-        for var in fieldnames(Aesthetics)
+        for var in valid_aesthetics
             if var in [:xviewmin, :yviewmin]
                 mu, mv = getfield(cataes, var), getfield(aes, var)
                 setfield!(cataes, var,
@@ -397,7 +400,7 @@ end
 function inherit!(a::Aesthetics, b::Aesthetics;
                   clobber=[])
     clobber_set = Set{Symbol}(clobber)
-    for field in fieldnames(Aesthetics)
+    for field in valid_aesthetics
         aval = getfield(a, field)
         bval = getfield(b, field)
         if field in clobber_set
