@@ -2,7 +2,9 @@ language: julia
 os:
   - linux
 julia:
+  - 0.7
   - 1.0
+  - 1.1
   - nightly
 matrix:
   fast_finish: true
@@ -12,8 +14,7 @@ notifications:
   email: false
 before_script:
   - julia -e 'using Pkg; Pkg.add(PackageSpec(name="Compose", rev="master"))'
-after_success:
-  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+codecov: true
 
 jobs:
   include:
