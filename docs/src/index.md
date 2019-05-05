@@ -84,16 +84,16 @@ do so automatically in your `$HOME/.julia/config/startup.jl` file.
 A few caveats:
 
 - PackageCompiler is a work in progress, and the most recent tagged release
-sometimes (currently as of this writing) does not work.  Hence the `dev`
-instead of `add` command to install.
+  sometimes (currently as of this writing) does not work.  Hence the `dev`
+  instead of `add` command to install.
 
 - Updating to the latest versions of compiled packages requires a recompile.
-`]up`ing only works for those that haven't been built into the system image.
+  `]up`ing only works for those that haven't been built into the system image.
 
 - Plots won't be automatically displayed in your default browswer unless you
-tweak `Base.Multimedia.displays` to return the GadflyDisplay to the last entry.
-To do so, add `atreplinit(x->pushdisplay(Gadfly.GadflyDisplay()))` to
-your `startup.jl`, or `pushdisplay` manually.
+  tweak `Base.Multimedia.displays` to return the GadflyDisplay to the last entry.
+  To do so, add `atreplinit(x->pushdisplay(Gadfly.GadflyDisplay()))` to
+  your `startup.jl`, or `pushdisplay` manually.
 
 - JULIA_PROJECT is entirely disregarded--  you'll have to manually `]activate
-...`.  see https://github.com/JuliaLang/PackageCompiler.jl/issues/228.
+  ...`.  see https://github.com/JuliaLang/PackageCompiler.jl/issues/228.

@@ -269,6 +269,7 @@ Building graphics declaratively let's you do some fun things. Like stick two
 plots together:
 
 ```@example 1
+set_default_plot_size(21cm, 8cm) # hide
 fig1a = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)
 fig1b = plot(iris, x=:SepalWidth, Geom.bar)
 fig1 = hstack(fig1a, fig1b)
