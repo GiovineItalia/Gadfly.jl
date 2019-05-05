@@ -9,4 +9,4 @@ RDatasets = "ce6b1742-4840-55fa-b093-852dadbb1d8b"
 Showoff = "992d4aef-0814-514b-bc4d-f2e9a6c4116f"
 
 [compat]
-Documenter = "~0.20"
+Documenter = "~0.22"
