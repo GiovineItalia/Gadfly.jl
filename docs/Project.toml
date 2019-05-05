@@ -7,7 +7,6 @@ Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 RDatasets = "ce6b1742-4840-55fa-b093-852dadbb1d8b"
 Showoff = "992d4aef-0814-514b-bc4d-f2e9a6c4116f"
-StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 Documenter = "~0.20"

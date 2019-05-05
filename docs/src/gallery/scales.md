@@ -96,7 +96,7 @@ plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
 ```
 
 ```@example
-using Gadfly, Colors, RDatasets, Random
+using Gadfly, Random
 set_default_plot_size(21cm, 8cm)
 Random.seed!(1234)
 xdata, ydata = rand(12), rand(12)
