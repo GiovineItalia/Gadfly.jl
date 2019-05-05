@@ -90,36 +90,33 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         fill(collect(cs)),
         stroke(collect(cs)),
         linewidth(theme.line_width),
+
+        # Box
+        rectangle(
+            [x - bw/2 for x in xs],
+            lower_hinge, [bw],
+            [uh - lh for (lh, uh) in zip(lower_hinge, upper_hinge)], tbox),
+
         (
             context(),
 
-            # Box
-            rectangle(
-                [x - bw/2 for x in xs],
-                lower_hinge, [bw],
-                [uh - lh for (lh, uh) in zip(lower_hinge, upper_hinge)], tbox),
+             # Whiskers
+            Compose.line([[(x, lh), (x, lf)]
+                          for (x, lh, lf) in zip(xs, lower_hinge, lower_fence)], tlw),
 
-            (
-                context(),
+            Compose.line([[(x, uh), (x, uf)]
+                          for (x, uh, uf) in zip(xs, upper_hinge, upper_fence)], tuw),
 
-                 # Whiskers
-                Compose.line([[(x, lh), (x, lf)]
-                              for (x, lh, lf) in zip(xs, lower_hinge, lower_fence)], tlw),
+            # Fences
+            Compose.line([[(x - fw/2, lf), (x + fw/2, lf)]
+                          for (x, lf) in zip(xs, lower_fence)], tlf),
 
-                Compose.line([[(x, uh), (x, uf)]
-                              for (x, uh, uf) in zip(xs, upper_hinge, upper_fence)], tuw),
+            Compose.line([[(x - fw/2, uf), (x + fw/2, uf)]
+                          for (x, uf) in zip(xs, upper_fence)], tuf),
 
-                # Fences
-                Compose.line([[(x - fw/2, lf), (x + fw/2, lf)]
-                              for (x, lf) in zip(xs, lower_fence)], tlf),
-
-                Compose.line([[(x - fw/2, uf), (x + fw/2, uf)]
-                              for (x, uf) in zip(xs, upper_fence)], tuf),
-
-                stroke(collect(cs))
-            ),
-
+            stroke(collect(cs))
         ),
+
         svgclass("geometry"))
 
     # Outliers
