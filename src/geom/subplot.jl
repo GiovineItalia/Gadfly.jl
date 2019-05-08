@@ -136,7 +136,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         inherited_aes = element_aesthetics(layer.geom)
         push!(inherited_aes, :xgroup, :ygroup)
         for var in inherited_aes
-            if isnothing(getfield(layer_aes, var))
+            if getfield(layer_aes, var) === nothing
                 setfield!(layer_aes, var, getfield(superplot_aes, var))
             end
         end
@@ -144,17 +144,17 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
  # z
     for (layer_data, layer_aes) in zip(subplot_layer_datas, subplot_layer_aess)
         z = getfield(layer_data, :z)
-        (!isnothing(z)) && setfield!(layer_aes, :z, z)
+        (z !== nothing) && setfield!(layer_aes, :z, z)
     end
 
     # work out the grid size
     m = 1
     n = 1
     for layer_aes in subplot_layer_aess
-        if !isnothing(layer_aes.xgroup)
+        if layer_aes.xgroup !== nothing
             m = max(m, maximum(layer_aes.xgroup))
         end
-        if !isnothing(layer_aes.ygroup)
+        if layer_aes.ygroup !== nothing
             n = max(n, maximum(layer_aes.ygroup))
         end
     end
@@ -315,7 +315,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         if i == n
             push!(guides, get(geom.guides, Guide.XTicks, Guide.xticks()))
 
-            if !isnothing(superplot_aes.xgroup)
+            if superplot_aes.xgroup !== nothing
                 push!(guides, get(geom.guides, Guide.XLabel, Guide.xlabel(xlabels[j])))
             end
         else
@@ -326,7 +326,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         if j == 1
             joff += 1
             push!(guides, get(geom.guides, Guide.YTicks, Guide.yticks()))
-            if !isnothing(superplot_aes.ygroup)
+            if superplot_aes.ygroup !== nothing
                 joff += 1
                 push!(guides, get(geom.guides, Guide.YLabel, Guide.ylabel(ylabels[i])))
             end
@@ -349,7 +349,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         # copy over the correct units, since we are reparenting the children
         for u in 1:size(subtbl, 1), v in 1:size(subtbl, 2)
             for child in subtbl[u, v]
-                if isnothing(child.units)
+                if child.units === nothing
                     child.units = subtbl.units
                 end
             end

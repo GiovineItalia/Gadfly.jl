@@ -94,7 +94,7 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
 
     allvisible = true
     for c in cs
-        if isnothing(c)
+        if c === nothing
             allvisible = false
             break
         end

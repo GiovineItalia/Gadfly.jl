@@ -11,7 +11,7 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
     vm = um
     grouped_columns = Set{Symbol}()
     for colgroup in colgroups
-        if isnothing(colgroup.columns) # null => group all columns
+        if colgroup.columns === nothing # null => group all columns
             vm *= un
             grouped_columns = copy(allcolumns)
         else
@@ -34,7 +34,7 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
 
     # allocate vectors for grouped columns
     for (j, colgroup) in enumerate(colgroups)
-        cols = isnothing(colgroup.columns) ? allcolumns : colgroup.columns
+        cols = colgroup.columns === nothing ? allcolumns : colgroup.columns
 
         # figure the grouped common column type
         firstcol = U[first(cols)]
@@ -64,7 +64,7 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
     col_indicators = Array{Symbol}(undef, vm, length(colgroups))
     row_indicators = Array{Int}(undef, vm, length(colgroups))
 
-    colidxs = [isnothing(colgroup.columns) ? collect(allcolumns) : colgroup.columns
+    colidxs = [colgroup.columns === nothing ? collect(allcolumns) : colgroup.columns
                for colgroup in colgroups]
 
     vi = 1

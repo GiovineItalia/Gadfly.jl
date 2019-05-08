@@ -74,7 +74,7 @@ function render_bar(geom::BarGeometry,
             svgclass("geometry"))
     end
 
-    cs = isnothing(aes.color) ? theme.default_color : aes.color
+    cs = aes.color === nothing ? theme.default_color : aes.color
     compose!(ctx, fill(cs), svgclass("geometry"))
     if isa(theme.bar_highlight, Function)
         compose!(ctx, stroke(theme.bar_highlight(theme.default_color)))
@@ -272,7 +272,7 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         error("Orientation must be :horizontal or :vertical")
     end
 
-    if isnothing(aes.color)
+    if aes.color === nothing
         ctx = render_bar(geom, theme, aes, geom.orientation)
     elseif geom.position == :stack
         if geom.orientation == :horizontal

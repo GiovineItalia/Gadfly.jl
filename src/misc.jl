@@ -178,7 +178,7 @@ function inherit!(a::T, b::T) where T
         aval = getfield(a, field)
         bval = getfield(b, field)
         # TODO: this is a hack to let non-default labelers overide the defaults
-        if isnothing(aval) || aval === string || aval == showoff
+        if aval === nothing || aval === string || aval == showoff
             setfield!(a, field, bval)
         elseif typeof(aval) <: Dict && typeof(bval) <: Dict
             merge!(aval, getfield(b, field))
