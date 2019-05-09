@@ -20,7 +20,6 @@ IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 Juno = "e5e0dc1b-0480-54bc-9374-aad01c23163d"
 KernelDensity = "5ab0869b-81aa-558d-bb23-cbf5423bbe9b"
-LibGit2 = "76f85450-5226-5b5a-8eaa-529ad045b433"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Loess = "4345ca2d-374a-55d4-8d30-97f9976e7612"
 Measures = "442fdcdd-2543-5da2-b0f3-8c86c306513e"
@@ -60,9 +59,10 @@ Unitful = "0.15"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 Cairo = "159f3aea-2a34-519c-b102-8c37f9878175"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+LibGit2 = "76f85450-5226-5b5a-8eaa-529ad045b433"
 RDatasets = "ce6b1742-4840-55fa-b093-852dadbb1d8b"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [targets]
-test = ["CSV", "Cairo", "DataFrames", "RDatasets", "Test", "Unitful"]
+test = ["CSV", "Cairo", "DataFrames", "LibGit2", "RDatasets", "Test", "Unitful"]
