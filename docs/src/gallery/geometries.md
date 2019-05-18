@@ -405,7 +405,7 @@ plot(dataset("Zelig", "macro"), x="Year", y="Country", color="GDP", Geom.rectbin
 ## [`Geom.ribbon`](@ref)
 
 ```@example
-using Gadfly, Colors, DataFrames, Distributions
+using Gadfly, DataFrames, Distributions
 set_default_plot_size(21cm, 8cm)
 X = [cos.(0:0.1:20) sin.(0:0.1:20)]
 x = -4:0.1:4

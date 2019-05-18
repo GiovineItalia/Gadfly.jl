@@ -15,7 +15,7 @@ hstack(p1,p2)
 ## [`Stat.density`](@ref)
 
 ```@example
-using Colors, DataFrames, Gadfly, Distributions
+using DataFrames, Gadfly, Distributions
 set_default_plot_size(21cm, 8cm)
 x = -4:0.1:4
 Da = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u="μ=$μ") for μ in [-1,1]]
@@ -74,7 +74,7 @@ hstack(p1,p2)
 ## [`Stat.smooth`](@ref)
 
 ```@example
-using Colors, Compose, Gadfly, RDatasets
+using Compose, Gadfly, RDatasets
 set_default_plot_size(21cm,8cm)
 salaries = dataset("car","Salaries")
 salaries.Salary /= 1000.0

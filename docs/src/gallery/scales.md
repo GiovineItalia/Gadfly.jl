@@ -96,7 +96,7 @@ plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species,
 ```
 
 ```@example
-using Gadfly, Colors, RDatasets, Random
+using Gadfly, Random
 set_default_plot_size(21cm, 8cm)
 Random.seed!(1234)
 xdata, ydata = rand(12), rand(12)
@@ -120,7 +120,7 @@ plot(x=rand(12), y=rand(12), color=repeat(["a","b","c"], outer=[4]),
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(14cm, 8cm)
 D = by(dataset("datasets","HairEyeColor"), [:Eye,:Sex], d->sum(d[:Freq]))
-rename!(D, :x1, :Frequency)
+rename!(D, :x1 => :Frequency)
 palette = ["brown","blue","tan","green"] # Is there a hazel color?
 pa = plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),
           Scale.color_discrete_manual(palette...))

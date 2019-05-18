@@ -86,7 +86,7 @@ title(hstack(p1,p2), "My creative title")
 Draw multiple layers onto the same plot by inputing `Layer` objects to `plot`.
 
 ```@setup layer
-using Gadfly, RDatasets, Distributions, StatsBase
+using Gadfly, RDatasets, Distributions
 set_default_plot_size(14cm, 8cm)
 iris = dataset("datasets", "iris")
 ```
