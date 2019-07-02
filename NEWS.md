@@ -8,7 +8,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
  * Add dodged boxplots (#1246)
  * Add `Stat.dodge` (#1240) 
  * `Stat.smooth(method=:lm)` confidence bands (#1231)
-
+ * Support AbstractVectors everywhere (e.g. `Guide.xticks(ticks=1:10)`) (#1293)
 
 # Version 0.9.0
  * conditionally depend on DataFrames (#1204)
