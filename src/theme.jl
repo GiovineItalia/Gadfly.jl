@@ -185,10 +185,6 @@ $(FIELDS)
     "Color used to draw background geometry, such as `Geom.ribbon` and `Geom.polygon`. This is a function that alters the fill color of the geometry.  (Function)",
     lowlight_color,        Function,        default_lowlight_color
 
-    "Opacity of background geometry such as [`Geom.ribbon`](@ref).  (Float64)",
-    lowlight_opacity,      Float64,         0.6,
-    "The keyword argument `lowlight_opacity` has been deprecated, and never worked anyway!"
-
     "Color altering function used to draw the midline in boxplots. (Function)",
     middle_color,          Function,        default_middle_color
 
