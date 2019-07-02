@@ -199,7 +199,7 @@ p4= plot(Diamonds, x=:Price, y=:Carat, Geom.histogram2d(xbincount=25, ybincount=
     Scale.x_continuous(format=:plain), 
     Scale.y_sqrt(labels=y->@sprintf("%i", y^2)),
     Scale.color_log10(minvalue=1.0, maxvalue=10^4),
-    Guide.yticks(ticks=sqrt.([0:5;])) )
+    Guide.yticks(ticks=sqrt.(0:5)) )
 hstack(p3, p4)
 ```
 

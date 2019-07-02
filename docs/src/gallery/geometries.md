@@ -495,7 +495,7 @@ plot(iris, xgroup=:Species,
 ```@example
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(14cm, 12cm)
-widedf = DataFrame(x = collect(1:10), var1 = collect(1:10), var2 = collect(1:10).^2)
+widedf = DataFrame(x = 1:10, var1 = 1:10, var2 = (1:10).^2)
 longdf = stack(widedf, [:var1, :var2])
 p1 = plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point))
 p2 = plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point,
