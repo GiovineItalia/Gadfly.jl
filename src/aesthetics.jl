@@ -1,12 +1,11 @@
-const NumericalOrCategoricalAesthetic =
-    Union{Nothing, Vector, IndirectArray}
-
 const CategoricalAesthetic =
     Union{Nothing, IndirectArray}
 
 const NumericalAesthetic =
-    Union{Nothing, Matrix, Vector}
+    Union{Nothing, AbstractMatrix, AbstractVector}
 
+const NumericalOrCategoricalAesthetic =
+    Union{CategoricalAesthetic, NumericalAesthetic}
 
 @varset Aesthetics begin
     x,            Union{NumericalOrCategoricalAesthetic, Distribution}

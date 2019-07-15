@@ -114,5 +114,5 @@ hstack(p1,p2,p3)
 ```@example
 using Gadfly
 set_default_plot_size(14cm, 8cm)
-plot(x=rand(1:10, 10), y=rand(1:10, 10), Geom.line, Guide.xticks(ticks=[1:9;]))
+plot(x=rand(1:10, 10), y=rand(1:10, 10), Geom.line, Guide.xticks(ticks=1:9))
 ```

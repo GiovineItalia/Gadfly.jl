@@ -6,13 +6,13 @@
 using Gadfly
 set_default_plot_size(21cm, 8cm)
 palettef = Scale.lab_gradient("darkgreen", "orange", "blue")
-p1 = plot(x=1:10, y=rand(10), color=[1:10;], Geom.point,
+p1 = plot(x=1:10, y=rand(10), color=1:10, Geom.point,
     Scale.color_continuous(colormap=palettef, minvalue=0, maxvalue=10),
     Guide.title("Scale.color_continuous, Theme(alphas=[0.5])"),
     Theme(alphas=[0.5], continuous_highlight_color=identity,
         point_size=2mm)
 )
-p2 = plot(x=1:10, y=rand(10), alpha=[1:10;], Geom.point,
+p2 = plot(x=1:10, y=rand(10), alpha=1:10, Geom.point,
     Scale.alpha_continuous(minvalue=0, maxvalue=10),
     Guide.title("Scale.alpha_continuous, Theme(default_color=\"blue\")"),
     Theme(default_color="blue", discrete_highlight_color=c->"gray",
@@ -60,8 +60,8 @@ hstack(p1,p2)
 ```@example
 using Gadfly, Colors
 set_default_plot_size(21cm, 8cm)
-x = repeat(collect(1:10).-0.5, inner=[10])
-y = repeat(collect(1:10).-0.5, outer=[10])
+x = repeat((1:10).-0.5, inner=[10])
+y = repeat((1:10).-0.5, outer=[10])
 p1 = plot(x=x, y=y, color=x+y, Geom.rectbin,
           Scale.color_continuous(colormap=p->RGB(0,p,0)))
 p2 = plot(x=x, y=y, color=x+y, Geom.rectbin,
