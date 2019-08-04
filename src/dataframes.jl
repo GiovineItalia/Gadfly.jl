@@ -37,12 +37,12 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
         cols = colgroup.columns===nothing ? allcolumns : colgroup.columns
 
         # figure the grouped common column type
-        firstcol = U[first(cols)]
+        firstcol = U[!, first(cols)]
         eltyp = eltype(firstcol)
         vectyp = isa(firstcol, Vector) ? Vector : DataVector
         for col in cols
-            eltyp = promote_type(eltyp, typeof(U[col]))
-            if !isa(U[col], Vector)
+            eltyp = promote_type(eltyp, typeof(U[!, col]))
+            if !isa(U[!, col], Vector)
                 vectyp = DataVector
             end
         end
@@ -55,7 +55,7 @@ function meltdata(U::AbstractDataFrame, colgroups_::Vector{Col.GroupedColumn})
 
     # allocate vectors for ungrouped columns
     for (j, col) in enumerate(ungrouped_columns)
-        push!(V, similar(U[col], vm))
+        push!(V, similar(U[!, col], vm))
         colmap[col] = j + length(colgroups)
         push!(vnames, col)
     end
@@ -93,7 +93,7 @@ end
 evalmapping(source::MeltedData{T}, arg::Col.GroupedColumnValue) where T<:AbstractDataFrame =
     source.melted_data[source.colmap[Col.GroupedColumn(arg.columns)]]
 
-evalmapping(source::AbstractDataFrame, arg::Symbol) = source[arg]
+evalmapping(source::AbstractDataFrame, arg::Symbol) = source[!, arg]
 evalmapping(source::AbstractDataFrame, arg::AbstractString) = evalmapping(source, Symbol(arg))
 evalmapping(source::AbstractDataFrame, arg::Integer) = source[arg]
 evalmapping(source::AbstractDataFrame, arg::Expr) = with(source, arg)
