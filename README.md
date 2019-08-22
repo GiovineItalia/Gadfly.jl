@@ -70,8 +70,8 @@ If you have a question then you can ask for help in the plotting team of the
 [codecov-img]: https://codecov.io/gh/GiovineItalia/Gadfly.jl/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/GiovineItalia/Gadfly.jl
 
-[citation-img]: https://zenodo.org/badge/DOI/10.5281/zenodo.1284282.svg
-[citation-url]: https://doi.org/10.5281/zenodo.1284282
+[citation-img]: https://zenodo.org/badge/DOI/10.5281/zenodo.593105.svg
+[citation-url]: https://doi.org/10.5281/zenodo.593105
 
 [gog-book]: http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html
 
