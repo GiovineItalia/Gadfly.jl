@@ -93,7 +93,7 @@ end
 evalmapping(source::MeltedData{T}, arg::Col.GroupedColumnValue) where T<:AbstractDataFrame =
     source.melted_data[source.colmap[Col.GroupedColumn(arg.columns)]]
 
-evalmapping(source::AbstractDataFrame, arg::Symbol) = source[arg]
+evalmapping(source::AbstractDataFrame, arg::Symbol) = source[!, arg]
 evalmapping(source::AbstractDataFrame, arg::AbstractString) = evalmapping(source, Symbol(arg))
-evalmapping(source::AbstractDataFrame, arg::Integer) = source[arg]
+evalmapping(source::AbstractDataFrame, arg::Integer) = source[!, arg]
 evalmapping(source::AbstractDataFrame, arg::Expr) = with(source, arg)
