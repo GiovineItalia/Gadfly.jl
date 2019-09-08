@@ -11,7 +11,7 @@ using CategoricalArrays
 using Printf
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia,
-    aes2str, valid_aesthetics
+    aes2str, valid_aesthetics, isnothing
 import Distributions: Distribution
 
 include("color_misc.jl")
@@ -19,9 +19,9 @@ include("color_misc.jl")
 iscategorical(scales::Dict{Symbol, Gadfly.ScaleElement}, var::Symbol) =
         haskey(scales, var) && isa(scales[var], DiscreteScale)
 
-function apply_scales(scales, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+function apply_scales(scales, aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for scale in scales
-        apply_scale(scale, aess, datas...)
+        apply_scale(scale, aess, datas)
     end
 
     for (aes, data) in zip(aess, datas)
@@ -29,9 +29,9 @@ function apply_scales(scales, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Dat
     end
 end
 
-function apply_scales(scales, datas::Gadfly.Data...)
+function apply_scales(scales, datas::Vector{Gadfly.Data})
     aess = Gadfly.Aesthetics[Gadfly.Aesthetics() for _ in datas]
-    apply_scales(scales, aess, datas...)
+    apply_scales(scales, aess, datas)
     aess
 end
 
@@ -86,7 +86,7 @@ struct ContinuousScale <: Gadfly.ScaleElement
     function ContinuousScale(vars, trans,
                              minvalue, maxvalue, minticks, maxticks,
                              labels, format, scalable)
-        minvalue != nothing && maxvalue != nothing && minvalue > maxvalue &&
+        !isnothing(minvalue) && !isnothing(maxvalue) && minvalue > maxvalue &&
                 error("Cannot construct a ContinuousScale with minvalue > maxvalue")
         new(vars, trans, minvalue, maxvalue, minticks, maxticks, labels, format, scalable)
     end
@@ -100,9 +100,9 @@ function ContinuousScale(vars, trans;
 end
 
 function make_labeler(scale::ContinuousScale)
-    if scale.labels != nothing
+    if !isnothing(scale.labels)
         xs -> [scale.labels(x) for x in xs]
-    elseif scale.format == nothing
+    elseif isnothing(scale.format)
         scale.trans.label
     else
         xs -> scale.trans.label(xs, scale.format)
@@ -178,16 +178,19 @@ alpha_continuous(; minvalue=0.0, maxvalue=1.0, labels=nothing, format=nothing, m
      ContinuousScale([:alpha], identity_transform, minvalue=minvalue, maxvalue=maxvalue,
                labels=labels, format=format, minticks=minticks, maxticks=maxticks, scalable=scalable)
 
+# Need to wrap Gadfly.Data in array for apply_scale methods
+apply_scale(scale::Gadfly.ScaleElement, aess::Vector{Gadfly.Aesthetics}, data::Gadfly.Data) =
+    apply_scale(scale, aess, Gadfly.Data[data])
 
 function apply_scale(scale::ContinuousScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
             vals = getfield(data, var)
             if vals isa CategoricalArray
                 throw(ArgumentError("continuous scale for $var aesthetic when stored as a CategoricalArray. Consider using a discrete scale or convert data to an Array."))
             end
-            vals === nothing && continue
+            isnothing(vals) && continue
 
             # special case for function arrays bound to :y
             # pass the function values through and wait for the scale to
@@ -242,7 +245,7 @@ function apply_scale(scale::ContinuousScale,
             end
         end
 
-        if scale.minvalue != nothing
+        if !isnothing(scale.minvalue)
             if scale.vars === x_vars
                 aes.xviewmin = scale.trans.f(scale.minvalue)
             elseif scale.vars === y_vars
@@ -250,7 +253,7 @@ function apply_scale(scale::ContinuousScale,
             end
         end
 
-        if scale.maxvalue != nothing
+        if !isnothing(scale.maxvalue)
             if scale.vars === x_vars
                 aes.xviewmax = scale.trans.f(scale.maxvalue)
             elseif scale.vars === y_vars
@@ -269,7 +272,7 @@ end
 
 
 function discretize(values, levels=nothing, order=nothing, preserve_order=true)
-    if levels == nothing
+    if isnothing(levels)
         if preserve_order
             levels = OrderedSet()
             for value in values
@@ -283,7 +286,7 @@ function discretize(values, levels=nothing, order=nothing, preserve_order=true)
         da = discretize_make_ia(values, levels)
     end
 
-    if order != nothing
+    if !isnothing(order)
         return discretize_make_ia(da, da.values[order])
     else
         return da
@@ -363,17 +366,17 @@ alpha_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:linestyle], labels=labels, levels=levels, order=order)
 
 
-function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
             label_var = Symbol(var, "_label")
-            getfield(data, var) === nothing && continue
+            isnothing(getfield(data, var)) && continue
 
             disc_data = discretize(getfield(data, var), scale.levels, scale.order)
             setfield!(aes, var, discretize_make_ia(Int64.(disc_data.index)))
 
             # The leveler for discrete scales is a closure over the discretized data.
-            if scale.labels === nothing
+            if isnothing(scale.labels)
                 function default_labeler(xs)
                     lvls = filter(!ismissing, disc_data.values)
                     vals = Any[1 <= x <= length(lvls) ? lvls[x] : "" for x in xs]
@@ -412,7 +415,7 @@ const color_none = NoneColorScale
 element_aesthetics(scale::NoneColorScale) = [:color]
 
 function apply_scale(scale::NoneColorScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for aes in aess
         aes.color = nothing
     end
@@ -430,9 +433,9 @@ const color_identity = IdentityColorScale
 element_aesthetics(scale::IdentityColorScale) = [:color]
 
 function apply_scale(scale::IdentityColorScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for (aes, data) in zip(aess, datas)
-        data.color === nothing && continue
+        isnothing(data.color) && continue
         aes.color = discretize_make_ia(data.color)
         aes.color_key_colors = Dict()
     end
@@ -513,10 +516,10 @@ end
 @deprecate discrete_color_manual(colors...; levels=nothing, order=nothing) color_discrete_manual(colors...; levels=levels, order=order)
 
 function apply_scale(scale::DiscreteColorScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     levelset = OrderedSet()
     for (aes, data) in zip(aess, datas)
-        data.color === nothing && continue
+        isnothing(data.color) && continue
         for d in data.color
             # Remove missing values
             # FixMe! The handling of missing values shouldn't be this scattered across the source
@@ -524,13 +527,13 @@ function apply_scale(scale::DiscreteColorScale,
         end
     end
 
-    if scale.levels == nothing
+    if isnothing(scale.levels)
         scale_levels = [levelset...]
         scale.preserve_order || sort!(scale_levels)
     else
         scale_levels = scale.levels
     end
-    scale.order == nothing || permute!(scale_levels, scale.order)
+    isnothing(scale.order) || permute!(scale_levels, scale.order)
     colors = convert(Vector{RGB{Float32}}, scale.f(length(scale_levels)))
 
     color_map = Dict([(color, string(label))
@@ -538,7 +541,7 @@ function apply_scale(scale::DiscreteColorScale,
     labeler(xs) = [color_map[x] for x in xs]
 
     for (aes, data) in zip(aess, datas)
-        data.color === nothing && continue
+        isnothing(data.color) && continue
         # Remove missing values
         # FixMe! The handling of missing values shouldn't be this scattered across the source
         ds = discretize([c for c in data.color if !ismissing(c)], scale_levels)
@@ -621,8 +624,8 @@ const color_continuous_gradient = color_continuous  ### WHY HAVE THIS ALIAS?
 @deprecate continuous_color(;minvalue=nothing, maxvalue=nothing) color_continuous(;minvalue=nothing, maxvalue=nothing)
 
 function apply_scale(scale::ContinuousColorScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-    cdata = skipmissing(Iterators.flatten(i.color for i in datas if i.color != nothing))
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
+    cdata = skipmissing(Iterators.flatten(i.color for i in datas if !isnothing(i.color)))
     if !isempty(cdata)
       cmin, cmax = extrema(cdata)
     else
@@ -630,9 +633,9 @@ function apply_scale(scale::ContinuousColorScale,
     end
 
     strict_span = false
-    scale.minvalue != nothing && scale.maxvalue != nothing && (strict_span=true)
-    scale.minvalue != nothing && (cmin=scale.minvalue)
-    scale.maxvalue != nothing && (cmax=scale.maxvalue)
+    !isnothing(scale.minvalue) && !isnothing(scale.maxvalue) && (strict_span=true)
+    !isnothing(scale.minvalue) && (cmin=scale.minvalue)
+    !isnothing(scale.maxvalue) && (cmax=scale.maxvalue)
 
     cmin, cmax = promote(cmin, cmax)
 
@@ -646,7 +649,7 @@ function apply_scale(scale::ContinuousColorScale,
     cspan = cmax != cmin ? cmax - cmin : 1.0
 
     for (aes, data) in zip(aess, datas)
-        data.color === nothing && continue
+        isnothing(data.color) && continue
 
         aes.color = Array{RGB{Float32}}(undef, length(data.color))
         apply_scale_typed!(aes.color, data.color, scale, cmin, cspan)
@@ -693,9 +696,9 @@ struct LabelScale <: Gadfly.ScaleElement
 end
 
 function apply_scale(scale::LabelScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for (aes, data) in zip(aess, datas)
-        data.label === nothing && continue
+        isnothing(data.label) && continue
         aes.label = discretize(data.label)
     end
 end
@@ -733,9 +736,9 @@ end
 element_aesthetics(scale::IdentityScale) = [scale.var]
 
 function apply_scale(scale::IdentityScale,
-                     aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+                     aess::Vector{Gadfly.Aesthetics}, datas::Vector{Gadfly.Data})
     for (aes, data) in zip(aess, datas)
-        getfield(data, scale.var) === nothing && continue
+        isnothing(getfield(data, scale.var)) && continue
         setfield!(aes, scale.var, getfield(data, scale.var))
     end
 end

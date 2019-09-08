@@ -120,7 +120,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         svgclass("geometry"))
 
     # Outliers
-    if !geom.suppress_outliers && aes.outliers != nothing && !isempty(aes.outliers)
+    if !geom.suppress_outliers && !isnothing(aes.outliers) && !isempty(aes.outliers)
         xys = collect(Iterators.flatten(zip(cycle([x]), ys, cycle([c]))
                              for (x, ys, c) in zip(xs, aes.outliers, cs)))
         compose!(ctx, (context(),
@@ -130,7 +130,7 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
     end
 
     # Middle
-    if aes.middle != nothing
+    if !isnothing(aes.middle)
         compose!(ctx, (
            context(order=1),
            Compose.line([[(x - fw/2, mid), (x + fw/2, mid)]

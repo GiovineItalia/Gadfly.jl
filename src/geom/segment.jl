@@ -82,7 +82,7 @@ function render(geom::SegmentGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
 
     if geom.arrow
         check = [aes.xviewmin, aes.xviewmax, aes.yviewmin, aes.yviewmax ]
-        if any( map(x -> x === nothing, check) )
+        if any(map(isnothing, check))
             error("For Geom.vector, Scale minvalue and maxvalue must be manually provided for both axes")
         end
          xyrange = [aes.xviewmax-aes.xviewmin, aes.yviewmax-aes.yviewmin]

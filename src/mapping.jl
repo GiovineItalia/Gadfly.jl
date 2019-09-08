@@ -87,7 +87,7 @@ end
 function meltdata(U::AbstractVector, colgroups_::Vector{Col.GroupedColumn})
     colgroups = Set(colgroups_)
 
-    if length(colgroups) != 1 || first(colgroups).columns!==nothing
+    if length(colgroups) != 1 || !isnothing(first(colgroups).columns)
         # if every column is of the same length, treat it as a matrix
         if length(Set([length(u for u in U)])) == 1
             return meltdata(cat(U..., dims=2), colgroups_)
@@ -130,7 +130,7 @@ function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
     vm = um
     grouped_columns = BitSet()
     for colgroup in colgroups
-        if colgroup.columns===nothing
+        if isnothing(colgroup.columns)
             vm *= un
             grouped_columns = copy(allcolumns)
         else
@@ -149,7 +149,7 @@ function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
     col_indicators = Array{Int}(undef, vm, length(colgroups))
     row_indicators = Array{Int}(undef, vm, length(colgroups))
 
-    colidxs = [colgroup.columns===nothing ? collect(allcolumns) : colgroup.columns
+    colidxs = [isnothing(colgroup.columns) ? collect(allcolumns) : colgroup.columns
                for colgroup in colgroups]
 
     vi = 1

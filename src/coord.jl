@@ -67,7 +67,7 @@ function first_concrete_aesthetic_value(aess::Vector{Gadfly.Aesthetics}, vars::V
     for var in vars
         for aes in aess
             vals = getfield(aes, var)
-            vals === nothing && continue
+            Gadfly.isnothing(vals) && continue
 
             if !isa(vals, AbstractArray)
                 vals = [vals]
@@ -106,7 +106,7 @@ function aesthetics_type(aess::Vector{Gadfly.Aesthetics},
     for var in vars
         for aes in aess
             vals = getfield(aes, var)
-            vals === nothing && continue
+            Gadfly.isnothing(vals) && continue
 
             if var == :outliers
                 if !isempty(vals)
@@ -153,11 +153,11 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
 
     xmin = xmax = first_concrete_aesthetic_value(aess, coord.xvars)
 
-    if xmin != nothing
+    if !Gadfly.isnothing(xmin)
         for var in coord.xvars
             for aes in aess
                 vals = getfield(aes, var)
-                vals === nothing && continue
+                Gadfly.isnothing(vals) && continue
 
                 if !isa(vals, AbstractArray)
                     vals = [vals]
@@ -169,11 +169,11 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     end
 
     ymin = ymax = first_concrete_aesthetic_value(aess, coord.yvars)
-    if ymin != nothing
+    if !Gadfly.isnothing(ymin)
         for var in coord.yvars
             for aes in aess
                 vals = getfield(aes, var)
-                vals === nothing && continue
+                Gadfly.isnothing(vals) && continue
 
                 # Outliers is an odd aesthetic that needs special treatment.
                 if var == :outliers
@@ -196,40 +196,40 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
 
     # viewmin/max that is set explicitly should override min/max
     for aes in aess
-        if aes.xviewmin != nothing
-            xviewmin = xviewmin === nothing ? aes.xviewmin : min(xviewmin, aes.xviewmin)
+        if !Gadfly.isnothing(aes.xviewmin)
+            xviewmin = Gadfly.isnothing(xviewmin) ? aes.xviewmin : min(xviewmin, aes.xviewmin)
         end
 
-        if aes.xviewmax != nothing
-            xviewmax = xviewmax === nothing ? aes.xviewmax : max(xviewmax, aes.xviewmax)
+        if !Gadfly.isnothing(aes.xviewmax)
+            xviewmax = Gadfly.isnothing(xviewmax) ? aes.xviewmax : max(xviewmax, aes.xviewmax)
         end
 
-        if aes.yviewmin != nothing
-            yviewmin = yviewmin === nothing ? aes.yviewmin : min(yviewmin, aes.yviewmin)
+        if !Gadfly.isnothing(aes.yviewmin)
+            yviewmin = Gadfly.isnothing(yviewmin) ? aes.yviewmin : min(yviewmin, aes.yviewmin)
         end
 
-        if aes.yviewmax != nothing
-            yviewmax = yviewmax === nothing ? aes.yviewmax : max(yviewmax, aes.yviewmax)
+        if !Gadfly.isnothing(aes.yviewmax)
+            yviewmax = Gadfly.isnothing(yviewmax) ? aes.yviewmax : max(yviewmax, aes.yviewmax)
         end
     end
 
-    xmax = xviewmax === nothing ? xmax : max(xmax, xviewmax)
-    xmin = xviewmin === nothing ? xmin : min(xmin, xviewmin)
-    ymax = yviewmax === nothing ? ymax : max(ymax, yviewmax)
-    ymin = yviewmin === nothing ? ymin : min(ymin, yviewmin)
+    xmax = Gadfly.isnothing(xviewmax) ? xmax : max(xmax, xviewmax)
+    xmin = Gadfly.isnothing(xviewmin) ? xmin : min(xmin, xviewmin)
+    ymax = Gadfly.isnothing(yviewmax) ? ymax : max(ymax, yviewmax)
+    ymin = Gadfly.isnothing(yviewmin) ? ymin : min(ymin, yviewmin)
 
     # Hard limits set in Coord should override everything else
-    xmin = coord.xmin === nothing ? xmin : coord.xmin
-    xmax = coord.xmax === nothing ? xmax : coord.xmax
-    ymin = coord.ymin === nothing ? ymin : coord.ymin
-    ymax = coord.ymax === nothing ? ymax : coord.ymax
+    xmin = Gadfly.isnothing(coord.xmin) ? xmin : coord.xmin
+    xmax = Gadfly.isnothing(coord.xmax) ? xmax : coord.xmax
+    ymin = Gadfly.isnothing(coord.ymin) ? ymin : coord.ymin
+    ymax = Gadfly.isnothing(coord.ymax) ? ymax : coord.ymax
 
-    if xmin === nothing || !isfinite(xmin)
+    if Gadfly.isnothing(xmin) || !isfinite(xmin)
         xmin = 0.0
         xmax = 1.0
     end
 
-    if ymin === nothing || !isfinite(ymin)
+    if Gadfly.isnothing(ymin) || !isfinite(ymin)
         ymin = 0.0
         ymax = 1.0
     end

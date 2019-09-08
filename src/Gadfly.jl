@@ -388,14 +388,14 @@ function render_prepare(plot::Plot)
     # they are missing.
     datas = Array{Data}(undef, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
-        if layer.data_source === nothing && isempty(layer.mapping)
+        if isnothing(layer.data_source) && isempty(layer.mapping)
             layer.data_source = plot.data_source
             layer.mapping = plot.mapping
             datas[i] = plot.data
         else
             datas[i] = Data()
 
-            if layer.data_source === nothing
+            if isnothing(layer.data_source)
                 layer.data_source = plot.data_source
             end
 
@@ -416,7 +416,7 @@ function render_prepare(plot::Plot)
         if isa(layer.geom, Geom.SubplotGeometry)
             for subplot_layer in layers(layer.geom)
                 subplot_data = Data()
-                if subplot_layer.data_source === nothing
+                if isnothing(subplot_layer.data_source)
                     subplot_layer.data_source = layer.data_source
                 end
 
@@ -434,7 +434,7 @@ function render_prepare(plot::Plot)
     coord = plot.coord
     for layer in plot.layers
         coord_type = element_coordinate_type(layer.geom)
-        if coord === nothing
+        if isnothing(coord)
             coord = coord_type()
         elseif typeof(coord) != coord_type
             error("Plot uses multiple coordinates: $(typeof(coord)) and $(coord_type)")
@@ -503,7 +503,7 @@ function render_prepare(plot::Plot)
 
     unscaled_aesthetics = setdiff(used_aesthetics, scaled_aesthetics)
 
-    _theme(plt, lyr) = lyr.theme == nothing ? plt.theme : lyr.theme
+    _theme(plt, lyr) = isnothing(lyr.theme) ? plt.theme : lyr.theme
 
     # Add default scales for statistics.
     layer_stats_with_theme = map(plot.layers, layer_stats) do l, stats
@@ -532,17 +532,17 @@ function render_prepare(plot::Plot)
         in(var, mapped_aesthetics) || continue
 
         var_data = getfield(plot.data, var)
-        if var_data == nothing
+        if isnothing(var_data)
             for data in datas
                 var_layer_data = getfield(data, var)
-                if var_layer_data != nothing
+                if !isnothing(var_layer_data)
                     var_data = var_layer_data
                     break
                 end
             end
         end
 
-        var_data == nothing && continue
+        isnothing(var_data) && continue
 
         t = classify_data(var_data)
         if scale_exists(t, var)
@@ -560,7 +560,7 @@ function render_prepare(plot::Plot)
         t = :categorical
         for data in Iterators.flatten((datas, subplot_datas))
             val = getfield(data, var)
-            if val != nothing && val != :categorical
+            if !isnothing(val) && val != :categorical
                 t = classify_data(val)
             end
         end
@@ -653,30 +653,33 @@ function render_prepare(plot::Plot)
 
     # I. Scales
     layer_aess = Scale.apply_scales(IterTools.distinct(values(scales)),
-                                    datas..., subplot_datas...)
+                                    vcat(datas, subplot_datas))
 
     # set defaults for key titles
     keyvars = [:color, :shape]
     for (i, layer) in enumerate(plot.layers)
         for kv in keyvars
-            fflag = (getfield(layer_aess[i], Symbol(kv,"_key_title")) == nothing) && haskey(layer.mapping, kv) && !isa(layer.mapping[kv], AbstractArray)
+            fflag = (isnothing(getfield(layer_aess[i], Symbol(kv,"_key_title")))) &&
+                haskey(layer.mapping, kv) &&
+                !isa(layer.mapping[kv], AbstractArray)
             fflag && setfield!(layer_aess[i], Symbol(kv,"_key_title"), string(layer.mapping[kv]))
         end
     end
 
     for kv in keyvars
-        fflag = (getfield(layer_aess[1], Symbol(kv,"_key_title")) == nothing) && haskey(plot.mapping, kv) && !isa(plot.mapping[kv], AbstractArray)
+        fflag = (isnothing(getfield(layer_aess[1], Symbol(kv,"_key_title")))) &&
+            haskey(plot.mapping, kv) && !isa(plot.mapping[kv], AbstractArray)
         fflag && setfield!(layer_aess[1], Symbol(kv,"_key_title"), string(plot.mapping[kv]))
     end
 
     # Auto-update color scale if shape==color
     catdatas = vcat(datas, subplot_datas)
     shapev = getfield.(catdatas, :shape)
-    di = (shapev.!=nothing) .& (shapev.== getfield.(catdatas, :color))
+    di = (!isnothing).(shapev) .& (shapev.== getfield.(catdatas, :color))
 
     supress_colorkey = false
     for (aes, data) in zip(layer_aess[di], catdatas[di])
-        aes.shape_key_title==nothing && (aes.shape_key_title=aes.color_key_title="Shape")
+        isnothing(aes.shape_key_title) && (aes.shape_key_title=aes.color_key_title="Shape")
         colorf = scales[:color].f
         scales[:color] =  Scale.color_discrete(colorf, levels=scales[:shape].levels, order=scales[:shape].order)
         Scale.apply_scale(scales[:color], [aes], Gadfly.Data(color=getfield(data,:color))  )
@@ -692,7 +695,7 @@ function render_prepare(plot::Plot)
     end
 
     # IIb. Plot-wise Statistics
-    plot_aes = concat(layer_aess...)
+    plot_aes = concat(layer_aess)
     statistics = collect(statistics)
     Stat.apply_statistics(statistics, scales, coord, plot_aes)
 
@@ -713,7 +716,7 @@ function render_prepare(plot::Plot)
 
     if !supress_keys
         for (KT, kv) in zip(keytypes, keyvars)
-            fflag = !all([getfield(aes, kv)==nothing for aes in [plot_aes, layer_aess...]])
+            fflag = !all([isnothing(getfield(aes, kv)) for aes in [plot_aes, layer_aess...]])
             fflag && !in(KT, explicit_guide_types) &&  push!(guides, KT())
         end
     end
@@ -756,7 +759,7 @@ function render(plot::Plot)
 
     ctx =  pad_inner(root_context, plot.theme.plot_padding...)
 
-    if plot.theme.background_color != nothing
+    if !isnothing(plot.theme.background_color)
         compose!(ctx, (context(order=-1000000),
                         fill(plot.theme.background_color),
                         stroke(nothing), rectangle()))
@@ -807,30 +810,26 @@ function render_prepared(plot::Plot,
                                           layer_aess), scales)
 
     # IV. Geometries
-    themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
+    themes = Theme[isnothing(layer.theme) ? plot.theme : layer.theme
                    for layer in plot.layers]
-    zips = trim_zip(plot.layers, layer_aess,
-                                                   layer_subplot_aess,
-                                                   layer_subplot_datas,
-               themes)
-
-    compose!(plot_context,
-             [compose(context(order=layer.order), render(layer.geom, theme, aes,
-                                                         subplot_aes, subplot_data,
-                                                         scales))
-              for (layer, aes, subplot_aes, subplot_data, theme) in zips]...)
+    zips = trim_zip(plot.layers, layer_aess, layer_subplot_aess,
+                    layer_subplot_datas, themes)
+    for (layer, aes, subplot_aes, subplot_data, theme) in zips
+        r = render(layer.geom, theme, aes, subplot_aes, subplot_data, scales)
+        compose!(plot_context, (context(order=layer.order), r))
+    end#for
 
     # V. Guides
-    guide_contexts = Any[]
+    guide_contexts = Guide.PositionedGuide[]
     for guide in guides
         guide_context = render(guide, plot.theme, plot_aes, dynamic)
-        if guide_context != nothing
+        if !isnothing(guide_context)
             append!(guide_contexts, guide_context)
         end
     end
 
     tbl = Guide.layout_guides(plot_context, coord,
-                              plot.theme, guide_contexts...)
+                              plot.theme, guide_contexts)
     if table_only
         return tbl
     end
@@ -1217,5 +1216,9 @@ end
 # preference.
 const x_axis_label_aesthetics = [:x, :xmin, :xmax]
 const y_axis_label_aesthetics = [:y, :ymin, :ymax]
+
+include("precompile.jl")
+import .Precompile: _precompile_
+_precompile_()
 
 end # module Gadfly
