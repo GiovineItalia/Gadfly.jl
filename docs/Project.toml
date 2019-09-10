@@ -9,6 +9,7 @@ Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Gadfly = "c91e804a-d5a3-530f-b6f0-dfbca275c004"
 RDatasets = "ce6b1742-4840-55fa-b093-852dadbb1d8b"
 Showoff = "992d4aef-0814-514b-bc4d-f2e9a6c4116f"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 CSV = "0.4, 0.5"
