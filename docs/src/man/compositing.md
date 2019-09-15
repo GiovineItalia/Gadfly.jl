@@ -92,7 +92,7 @@ iris = dataset("datasets", "iris")
 ```
 
 ```@example layer
-xdata = sort(iris[:SepalWidth])
+xdata = sort(iris.SepalWidth)
 ydata = cumsum(xdata)
 line = layer(x=xdata, y=ydata, Geom.line, Theme(default_color="red"))
 bars = layer(iris, x=:SepalWidth, Geom.bar)

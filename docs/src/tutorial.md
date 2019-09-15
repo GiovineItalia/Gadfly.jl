@@ -129,8 +129,8 @@ Here, the keyword arguments directly supply the data to be plotted,
 instead of using them to indicate which columns of a DataFrame to use.
 
 ```@example 1
-SepalLength = iris[:SepalLength]
-SepalWidth = iris[:SepalWidth]
+SepalLength = iris.SepalLength
+SepalWidth = iris.SepalWidth
 plot(x=SepalLength, y=SepalWidth, Geom.point,
      Guide.xlabel("SepalLength"), Guide.ylabel("SepalWidth"))
 nothing # hide
@@ -147,9 +147,9 @@ Let's do add something meaningful by mapping the color aesthetic.
 plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species, Geom.point);
 
 # or equivalently for Arrays:
-SepalLength = iris[:SepalLength] # hide
-SepalWidth = iris[:SepalWidth] # hide
-Color = iris[:Species]
+SepalLength = iris.SepalLength # hide
+SepalWidth = iris.SepalWidth # hide
+Color = iris.Species
 plot(x=SepalLength, y=SepalWidth, color=Color, Geom.point,
      Guide.xlabel("SepalLength"), Guide.ylabel("SepalWidth"),
      Guide.colorkey(title="Species"))

@@ -53,7 +53,7 @@ All layers of a plot share the same
 
 A full plot specification must describe these shared elements as well as all the layer specifications.
 In the example above, we see that only the data source, statistics, geometry, and mapping are specified.
-The missing elements are either inferred from the data (e.g. categorical values in `df[:Cut]` implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale).
+The missing elements are either inferred from the data (e.g. categorical values in `df.Cut` implies a discrete color scale), or assumed using defaults (e.g. continuous x-axis scale).
 For example, invoking `plot` with all the elements will look something like
 
 ```julia
@@ -75,7 +75,7 @@ Once a full plot specification is filled out, the rendering process proceeds as 
 
 1. For each layer in the plot, we first map subsets of the data source to a `Data` object. The `Price` and `Cut` columns of the `diamond` dataset are mapped to the `:x` and `:color` fields of `Data`, respectively.
 
-2. Scales are applied to the data to obtain plottable aesthetics. [`Scale.x_continuous`](@ref) keeps the values of `df[:Price]` unchanged, while [`Scale.color_discrete_hue`](@ref) maps the unique elements of `df[:Cut]` (an array of strings) to actual color values.
+2. Scales are applied to the data to obtain plottable aesthetics. [`Scale.x_continuous`](@ref) keeps the values of `df.Price` unchanged, while [`Scale.color_discrete_hue`](@ref) maps the unique elements of `df.Cut` (an array of strings) to actual color values.
 
 3. The aesthetics are transformed by layer-wise and plot-wise statistics, in order. [`Stat.histogram`](@ref) replaces the `x` field of the aesthetics with bin positions, and sets the `y` field with the corresponding counts.
 

@@ -2,6 +2,11 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 1.x
+* Support DataFrames.jl 0.19 changes in indexing (#1318)
+
+
+
 # Version 1.1.0
  * Add `alpha` aesthetic, `Scale.alpha_continuous` and `Scale.alpha_discrete` (#1252)
  * Add `limits=(min= , max= )` to `Stat.histogram` (#1249)

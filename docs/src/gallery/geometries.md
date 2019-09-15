@@ -33,11 +33,9 @@ plot(dataset("HistData", "ChestSizes"), x="Chest", y="Count", Geom.bar)
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(21cm, 8cm)
 
-D = by(dataset("datasets","HairEyeColor"), [:Eye,:Sex], d->sum(d[:Freq]))
-p1 = plot(D, color="Eye", y="x1", x="Sex", Geom.bar(position=:dodge),
-          Guide.ylabel("Freq"));
+D = by(dataset("datasets","HairEyeColor"), [:Eye,:Sex], Frequency=:Freq=>sum)
+p1 = plot(D, color=:Eye, y=:Frequency, x=:Sex, Geom.bar(position=:dodge))
 
-rename!(D, :x1 => :Frequency)
 palette = ["brown","blue","tan","green"]  # Is there a hazel color?
 
 p2a = plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),
@@ -147,7 +145,7 @@ plot(x=rand(Rayleigh(2),1000), y=rand(Rayleigh(2),1000),
 using RDatasets, Gadfly
 set_default_plot_size(21cm, 8cm)
 D = dataset("datasets","faithful")
-D[:g] = D[:Eruptions].>3.0
+D.g = D.Eruptions.>3.0
 coord = Coord.cartesian(ymin=40, ymax=100)
 pa = plot(D, coord,
     x=:Eruptions, y=:Waiting, group=:g,
@@ -192,8 +190,8 @@ salaries = dataset("car","Salaries")
 salaries.Salary /= 1000.0
 salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
 df = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)
-[df[i] = df.Salary_mean.+j*df.Salary_std for (i,j) in zip([:ymin, :ymax], [-1, 1.0])]
-df[:label] = string.(round.(Int, df.Salary_mean))
+df.ymin, df.ymax = df.Salary_mean.-df.Salary_std, df.Salary_mean.+df.Salary_std
+df.label = string.(round.(Int, df.Salary_mean))
 
 p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank, 
     Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
@@ -469,7 +467,7 @@ plot(dataset("vcd", "Suicide"), xgroup="Sex", ygroup="Method", x="Age", y="Freq"
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(14cm, 8cm)
 iris = dataset("datasets", "iris")
-sp = unique(iris[:Species])
+sp = unique(iris.Species)
 Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5, 2.5, 4.0], Species=repeat(sp, inner=[2]) )
 # Try this one too:
 # Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5], Species=repeat(sp[1:2], inner=[2]) )
@@ -483,7 +481,7 @@ plot(iris, xgroup=:Species, x=:SepalLength, y=:SepalWidth,
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(14cm, 8cm)
 iris = dataset("datasets", "iris")
-sp = unique(iris[:Species])
+sp = unique(iris.Species)
 Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5, 2.5, 4.0], Species=repeat(sp, inner=[2]) )
 plot(iris, xgroup=:Species,
      Geom.subplot_grid(layer(x=:SepalLength, y=:SepalWidth, Geom.point),
@@ -511,9 +509,9 @@ using Gadfly, RDatasets
 set_default_plot_size(14cm, 14cm)
 
 seals = RDatasets.dataset("ggplot2","seals")
-seals[:Latb] = seals[:Lat] + seals[:DeltaLat]
-seals[:Longb] = seals[:Long] + seals[:DeltaLong]
-seals[:Angle] = atan.(seals[:DeltaLat], seals[:DeltaLong])
+seals.Latb = seals.Lat + seals.DeltaLat
+seals.Longb = seals.Long + seals.DeltaLong
+seals.Angle = atan.(seals.DeltaLat, seals.DeltaLong)
 
 coord = Coord.cartesian(xmin=-175.0, xmax=-119, ymin=29, ymax=50)
 # Geom.vector also needs scales for both axes:
@@ -563,6 +561,6 @@ hstack(p1,p2)
 using Gadfly, RDatasets
 set_default_plot_size(14cm, 8cm)
 Dsing = dataset("lattice","singer")
-Dsing[:Voice] = [x[1:5] for x in Dsing[:VoicePart]]
+Dsing.Voice = [x[1:5] for x in Dsing.VoicePart]
 plot(Dsing, x=:VoicePart, y=:Height, color=:Voice, Geom.violin)
 ```
