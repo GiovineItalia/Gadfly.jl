@@ -131,12 +131,12 @@ const abline = ABLineGeometry
 element_aesthetics(geom::ABLineGeometry) = [:intercept, :slope]
 
 function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    if aes.intercept == nothing && aes.slope == nothing
+    if aes.intercept === nothing && aes.slope === nothing
         aes.intercept = [0]
         aes.slope = [1]
-    elseif aes.intercept == nothing
+    elseif aes.intercept === nothing
         aes.intercept = fill(0,length(aes.slope))
-    elseif aes.slope == nothing
+    elseif aes.slope === nothing
         aes.slope = fill(1,length(aes.intercept))
     end
     Gadfly.assert_aesthetics_equal_length("Geom.line", aes, element_aesthetics(geom)...)

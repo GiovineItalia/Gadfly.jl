@@ -101,7 +101,7 @@ function show(io::IO, data::Aesthetics)
     print(io, "Aesthetics(")
     for name in valid_aesthetics
         val = getfield(data, name)
-        if !ismissing(val) && val != nothing
+        if !ismissing(val) && val !== nothing
             print(io, "\n  ", string(name), "=")
             show(io, getfield(data, name))
         end
@@ -171,7 +171,7 @@ function assert_aesthetics_undefined(who::AbstractString, aes::Aesthetics, vars:
 end
 
 function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, vars::Symbol...)
-    defined_vars = Compat.Iterators.filter(var -> !(getfield(aes, var) === nothing), vars)
+    defined_vars = Compat.Iterators.filter(var -> getfield(aes, var) !== nothing, vars)
 
     if !isempty(defined_vars)
         n = length(getfield(aes, first(defined_vars)))
@@ -197,7 +197,7 @@ end
 #
 function update!(a::Aesthetics, b::Aesthetics)
     for name in valid_aesthetics
-        issomething(getfield(b, name)) && setfield(a, name, getfield(b, name))
+        getfield(b, name) !== nothing && setfield(a, name, getfield(b, name))
     end
     nothing
 end
@@ -225,26 +225,21 @@ json(a::Aesthetics) = join([string(a, ":", json(getfield(a, var))) for var in ae
 # Returns:
 #   A new Aesthetics instance with vectors concatenated.
 #
-function concat(aess::Aesthetics...)
+function concat(aess)
     cataes = Aesthetics()
     for aes in aess
         for var in valid_aesthetics
-            if var in [:xviewmin, :yviewmin]
-                mu, mv = getfield(cataes, var), getfield(aes, var)
-                setfield!(cataes, var,
-                          mu === nothing ? mv :
-                             mv == nothing ? mu :
-                                 min(mu, mv))
-            elseif var in [:xviewmax, :yviewmax]
-                mu, mv = getfield(cataes, var), getfield(aes, var)
-                setfield!(cataes, var,
-                          mu === nothing ? mv :
-                             mv == nothing ? mu :
-                                 max(mu, mv))
+            mu, mv = getfield(cataes, var), getfield(aes, var)
+            isviewmin = var in (:xviewmin, :yviewmin)
+            isviewmax = var in (:xviewmax, :yviewmax)
+            mumv = if isviewmin
+                mu === nothing ? mv : mv === nothing ? mu : min(mu, mv)
+            elseif isviewmax
+                mu === nothing ? mv : mv === nothing ? mu : max(mu, mv)
             else
-                setfield!(cataes, var,
-                          cat_aes_var!(getfield(cataes, var), getfield(aes, var)))
-            end
+                cat_aes_var!(mu, mv)
+            end#if
+            setfield!(cataes, var, mumv)
         end
     end
     cataes
@@ -404,12 +399,12 @@ function inherit!(a::Aesthetics, b::Aesthetics;
         bval = getfield(b, field)
         if field in clobber_set
             setfield!(a, field, bval)
-        elseif aval === missing || aval === nothing || aval === string || aval == showoff
+        elseif aval === missing || aval === nothing || aval === string || aval === showoff
             setfield!(a, field, bval)
-        elseif field == :xviewmin || field == :yviewmin
-            bval != nothing && (aval == nothing || aval > bval) && setfield!(a, field, bval)
-        elseif field == :xviewmax || field == :yviewmax
-            bval != nothing && (aval == nothing || aval < bval) && setfield!(a, field, bval)
+        elseif field in (:xviewmin, :yviewmin) && bval !== nothing
+            (aval === nothing || aval > bval) && setfield!(a, field, bval)
+        elseif field in (:xviewmax, :yviewmax) && bval !== nothing
+            (aval === nothing || aval < bval) && setfield!(a, field, bval)
         elseif typeof(aval) <: Dict && typeof(bval) <: Dict
             merge!(aval, getfield(b, field))
         end

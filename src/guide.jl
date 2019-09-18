@@ -35,7 +35,7 @@ const questionmark = QuestionMark
 
 function render(guide::QuestionMark, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
-    text_color = theme.background_color == nothing ?
+    text_color = theme.background_color === nothing ?
             colorant"black" : distinguishable_colors(2,theme.background_color)[2]
     text_box = compose!( context(),
         text(1w,0h+2px,"?",hright,vtop),
@@ -64,7 +64,7 @@ const helpscreen = HelpScreen
 
 function render(guide::HelpScreen, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
-    box_color = theme.background_color == nothing ?
+    box_color = theme.background_color === nothing ?
             colorant"black" : distinguishable_colors(2,theme.background_color)[2]
     text_color = distinguishable_colors(2,box_color)[2]
     text_strings = ["h,j,k,l,arrows,drag to pan",
@@ -104,7 +104,7 @@ const crosshair = CrossHair
 
 function render(guide::CrossHair, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
-    text_color = theme.background_color == nothing ?
+    text_color = theme.background_color === nothing ?
             colorant"black" : distinguishable_colors(2,theme.background_color)[2]
     text_box = compose!(
         context(),
@@ -262,7 +262,7 @@ function render_discrete_color_key(colors::Vector{C},
                     fill(theme.key_label_color))
 
                 col = compose!(context(xpos, yoff), swatches, swatch_labels)
-                if aes_color_label != nothing
+                if aes_color_label !== nothing
                     classes = [svg_color_class_from_label(aes_color_label([c])[1]) for c in cs]
                     #class_jscalls = ["data(\"color_class\", \"$(c)\")"
                                      #for c in classes]
@@ -408,14 +408,14 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         guide_title = aes.color_key_title
     end
 
-    if aes.color_key_colors != nothing &&
-       aes.color_key_continuous != nothing &&
+    if aes.color_key_colors !== nothing &&
+       aes.color_key_continuous !== nothing &&
        aes.color_key_continuous
         continuous_guide = true
     end
 
     color_key_labels = aes.color_label(keys(aes.color_key_colors))
-    if !continuous_guide && (guide.labels != nothing)
+    if !continuous_guide && guide.labels !== nothing
         color_key_labels = guide.labels
     end
 
@@ -457,7 +457,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
                                          title_width, theme)
     end
 
-    if aes.shape != nothing
+    if aes.shape !== nothing
         # TODO: Draw key for shapes. We need to think about how to make this
         # work. Do we need to optimize number of columns for shape and size
         # keys? I'm guessing it's not worth it.
@@ -469,7 +469,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     end
 
     position = right_guide_position
-    if gpos != nothing
+    if gpos !== nothing
         position = over_guide_position
         ctxs = [compose(context(), (context(gpos[1],gpos[2]), ctxs[1]))]
     elseif theme.key_position == :left
@@ -569,13 +569,13 @@ visibility.  `ticks` can also be an array of locations, or `nothing`.
 const xticks = XTicks
 
 default_statistic(guide::XTicks) =
-    guide.ticks == nothing ? Stat.identity() : Stat.xticks(ticks=guide.ticks)
+    guide.ticks === nothing ? Stat.identity() : Stat.xticks(ticks=guide.ticks)
 
 function render(guide::XTicks, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics, dynamic::Bool=true)
-    guide.ticks == nothing && return PositionedGuide[]
+    guide.ticks === nothing && return PositionedGuide[]
 
-    if Gadfly.issomething(aes.xtick)
+    if aes.xtick !== nothing
         ticks = aes.xtick
         tickvisibility = aes.xtickvisible
         scale = aes.xtickscale
@@ -592,7 +592,7 @@ function render(guide::XTicks, theme::Gadfly.Theme,
         scale = Any[]
     end
 
-    if Gadfly.issomething(aes.xgrid)
+    if aes.xgrid !== nothing
         grids = aes.xgrid
         gridvisibility = length(grids) < length(ticks) ?  tickvisibility[2:end] : tickvisibility
     else
@@ -740,7 +740,7 @@ visibility.  `ticks` can also be an array of locations, or `nothing`.
 const yticks = YTicks
 
 function default_statistic(guide::YTicks)
-    if guide.ticks == nothing
+    if guide.ticks === nothing
         return Stat.identity()
     else
         return Stat.yticks(ticks=guide.ticks)
@@ -749,11 +749,11 @@ end
 
 function render(guide::YTicks, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics, dynamic::Bool=true)
-    if guide.ticks == nothing
+    if guide.ticks === nothing
         return PositionedGuide[]
     end
 
-    if Gadfly.issomething(aes.ytick)
+    if aes.ytick !== nothing
         ticks = aes.ytick
         tickvisibility = aes.ytickvisible
         scale = aes.ytickscale
@@ -769,7 +769,7 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         scale = Any[]
     end
 
-    if Gadfly.issomething(aes.ygrid)
+    if aes.ygrid !== nothing
         grids = aes.ygrid
         if length(grids) < length(ticks)
             gridvisibility = tickvisibility[2:end]
@@ -1129,7 +1129,7 @@ end
 function layout_guides(plot_context::Context,
                        coord::Gadfly.CoordinateElement,
                        theme::Gadfly.Theme,
-                       positioned_guides::PositionedGuide...)
+                       positioned_guides::Vector{PositionedGuide})
     # Organize guides by position
     guides = DefaultDict(() -> (Tuple{Vector{Context}, Int})[])
     for positioned_guide in positioned_guides
@@ -1160,9 +1160,9 @@ function layout_guides(plot_context::Context,
     aspect_ratio = nothing
     if isa(coord, Gadfly.Coord.cartesian)
         if coord.fixed
-            aspect_ratio = plot_context.units===nothing ? 1.0 :
-                     abs(plot_context.units.width / plot_context.units.height)
-        elseif coord.aspect_ratio != nothing
+            aspect_ratio = (plot_context.units === nothing) ? 1.0 :
+                abs(plot_context.units.width / plot_context.units.height)
+        elseif coord.aspect_ratio !== nothing
             aspect_ratio = coord.aspect_ratio
         end
     end
@@ -1172,7 +1172,7 @@ function layout_guides(plot_context::Context,
     i = 1
     for (ctxs, order) in guides[top_guide_position]
         for ctx in ctxs
-            if ctx.units===nothing && plot_units!==nothing
+            if ctx.units === nothing && plot_units !== nothing
                 ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
             end
         end
@@ -1183,7 +1183,7 @@ function layout_guides(plot_context::Context,
     i += 1
     for (ctxs, order) in guides[bottom_guide_position]
         for ctx in ctxs
-            if ctx.units===nothing && plot_units!==nothing
+            if ctx.units === nothing && plot_units !== nothing
                 ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
             end
         end
@@ -1195,7 +1195,7 @@ function layout_guides(plot_context::Context,
     j = 1
     for (ctxs, order) in guides[left_guide_position]
         for ctx in ctxs
-            if ctx.units===nothing && plot_units!==nothing
+            if ctx.units === nothing && plot_units !== nothing
                 ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
             end
         end
@@ -1206,7 +1206,7 @@ function layout_guides(plot_context::Context,
     j += 1
     for (ctxs, order) in guides[right_guide_position]
         for ctx in ctxs
-            if ctx.units===nothing && plot_units!==nothing
+            if ctx.units === nothing && plot_units !== nothing
                 ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
             end
         end

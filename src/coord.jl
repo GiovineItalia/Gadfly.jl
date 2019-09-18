@@ -153,7 +153,7 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
 
     xmin = xmax = first_concrete_aesthetic_value(aess, coord.xvars)
 
-    if xmin != nothing
+    if xmin !== nothing
         for var in coord.xvars
             for aes in aess
                 vals = getfield(aes, var)
@@ -169,7 +169,7 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     end
 
     ymin = ymax = first_concrete_aesthetic_value(aess, coord.yvars)
-    if ymin != nothing
+    if ymin !== nothing
         for var in coord.yvars
             for aes in aess
                 vals = getfield(aes, var)
@@ -196,19 +196,19 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
 
     # viewmin/max that is set explicitly should override min/max
     for aes in aess
-        if aes.xviewmin != nothing
+        if aes.xviewmin !== nothing
             xviewmin = xviewmin === nothing ? aes.xviewmin : min(xviewmin, aes.xviewmin)
         end
 
-        if aes.xviewmax != nothing
+        if aes.xviewmax !== nothing
             xviewmax = xviewmax === nothing ? aes.xviewmax : max(xviewmax, aes.xviewmax)
         end
 
-        if aes.yviewmin != nothing
+        if aes.yviewmin !== nothing
             yviewmin = yviewmin === nothing ? aes.yviewmin : min(yviewmin, aes.yviewmin)
         end
 
-        if aes.yviewmax != nothing
+        if aes.yviewmax !== nothing
             yviewmax = yviewmax === nothing ? aes.yviewmax : max(yviewmax, aes.yviewmax)
         end
     end

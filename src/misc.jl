@@ -188,9 +188,6 @@ function inherit!(a::T, b::T) where T
 end
 
 
-isnothing(u) = u === nothing
-issomething(u) = !isnothing(u)
-
 negate(f) = x -> !f(x)
 
 

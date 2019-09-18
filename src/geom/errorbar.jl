@@ -110,7 +110,7 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
         stroke([theme.stroke_color(c) for c in aes.color]),
         linewidth(theme.line_width))
 
-    (aes.color_key_continuous == true || aes.color == nothing) || compose!(ctx,
+    (aes.color_key_continuous == true || aes.color === nothing) || compose!(ctx,
             svgclass([svg_color_class_from_label(aes.color_label([c])[1]) for c in aes.color]))
 
     return ctx
@@ -148,7 +148,7 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
         stroke([theme.stroke_color(c) for c in aes.color]),
         linewidth(theme.line_width))
 
-    (aes.color_key_continuous == true || aes.color == nothing) || compose!(ctx,
+    (aes.color_key_continuous == true || aes.color === nothing) || compose!(ctx,
             svgclass([svg_color_class_from_label(aes.color_label([c])[1])
                       for c in aes.color]))
 

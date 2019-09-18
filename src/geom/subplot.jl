@@ -144,17 +144,17 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
  # z
     for (layer_data, layer_aes) in zip(subplot_layer_datas, subplot_layer_aess)
         z = getfield(layer_data, :z)
-        (z != nothing) && setfield!(layer_aes, :z, z)
+        (z !== nothing) && setfield!(layer_aes, :z, z)
     end
 
     # work out the grid size
     m = 1
     n = 1
     for layer_aes in subplot_layer_aess
-        if layer_aes.xgroup != nothing
+        if layer_aes.xgroup !== nothing
             m = max(m, maximum(layer_aes.xgroup))
         end
-        if layer_aes.ygroup != nothing
+        if layer_aes.ygroup !== nothing
             n = max(n, maximum(layer_aes.ygroup))
         end
     end
@@ -181,7 +181,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                            Gadfly.Aesthetics[layer_aes_grid[k][i, j]
                                              for k in 1:length(geom.layers)],
                            Gadfly.Data[layer_data_grid[k][i, j]
-                                       for k in 1:length(geom.layers)]...)
+                                       for k in 1:length(geom.layers)])
 
         for (k, stats) in enumerate(layer_stats)
             Stat.apply_statistics(stats, scales, coord, layer_aes_grid[k][i, j])
@@ -190,7 +190,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     # apply geom-wide statistics
     geom_aes = Gadfly.concat([layer_aes_grid[k][i,j]
-                              for i in 1:n, j in 1:m, k in 1:length(geom.layers)]...)
+                              for i in 1:n, j in 1:m, k in 1:length(geom.layers)])
     geom_stats = Gadfly.StatisticElement[]
 
     has_stat_xticks = false
@@ -220,7 +220,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     if geom.free_x_axis
         for j in 1:m
             col_aes = Gadfly.concat([layer_aes_grid[k][i, j]
-                                     for i in 1:n, k in 1:length(geom.layers)]...)
+                                     for i in 1:n, k in 1:length(geom.layers)])
             Gadfly.inherit!(col_aes, geom_aes)
             Stat.apply_statistic(Stat.xticks(), scales, coord, col_aes)
 
@@ -231,7 +231,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     if geom.free_y_axis
         for i in 1:n
             row_aes = Gadfly.concat([layer_aes_grid[k][i, j]
-                                     for j in 1:m, k in 1:length(geom.layers)]...)
+                                     for j in 1:m, k in 1:length(geom.layers)])
             Gadfly.inherit!(row_aes, geom_aes)
             Stat.apply_statistic(Stat.yticks(), scales, coord, row_aes)
 
@@ -349,7 +349,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         # copy over the correct units, since we are reparenting the children
         for u in 1:size(subtbl, 1), v in 1:size(subtbl, 2)
             for child in subtbl[u, v]
-                if child.units===nothing
+                if child.units === nothing
                     child.units = subtbl.units
                 end
             end

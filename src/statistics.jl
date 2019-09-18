@@ -17,7 +17,7 @@ using LinearAlgebra
 using Random
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
-               default_scales, isconcrete, setfield!, discretize_make_ia, aes2str
+    default_scales, isconcrete, setfield!, discretize_make_ia, aes2str
 import KernelDensity
 # import Distributions: Uniform, Distribution, qqbuild
 import IterTools: distinct
@@ -186,7 +186,7 @@ function apply_statistic(stat::BarStatistic,
 
     iscontinuous = haskey(scales, var) && isa(scales[var], Scale.ContinuousScale)
 
-    if getfield(aes, minvar) == nothing || getfield(aes, maxvar) == nothing
+    if getfield(aes, minvar) === nothing || getfield(aes, maxvar) === nothing
         minvals, maxvals = barminmax(vals, iscontinuous)
 
         setfield!(aes, minvar, minvals)
@@ -194,9 +194,9 @@ function apply_statistic(stat::BarStatistic,
     end
 
     z = zero(eltype(getfield(aes, othervar)))
-    if getfield(aes, viewminvar) == nothing && z < minimum(getfield(aes, othervar))
+    if getfield(aes, viewminvar) === nothing && z < minimum(getfield(aes, othervar))
         setfield!(aes, viewminvar, z)
-    elseif getfield(aes, viewmaxvar) == nothing && z > maximum(getfield(aes, othervar))
+    elseif getfield(aes, viewmaxvar) === nothing && z > maximum(getfield(aes, othervar))
         setfield!(aes, viewmaxvar, z)
     end
 
@@ -249,7 +249,7 @@ function HistogramStatistic(; bincount=nothing,
                               orientation=:vertical,
                               density=false,
                               limits=NamedTuple())
-    if bincount != nothing
+    if bincount !== nothing
         HistogramStatistic(bincount, bincount, position, orientation, density, limits)
     else
         HistogramStatistic(minbincount, maxbincount, position, orientation, density, limits)
@@ -417,7 +417,7 @@ function apply_statistic(stat::HistogramStatistic,
         # See issue #560. Stacked histograms on a non-linear y scale are a strange
         # thing. After some discussion, the least confusing thing is to make the stack
         # partitioned linearly. Here we make that adjustment.
-        if stat.position == :stack && aes.color != nothing
+        if stat.position == :stack && aes.color !== nothing
             # A little trickery to figure out the scale stack height.
             data = Gadfly.Data()
             setfield!(data, othervar, stack_height)
@@ -561,12 +561,12 @@ function Histogram2DStatistic(; xbincount=nothing,
                                 ybincount=nothing,
                                 yminbincount=3,
                                 ymaxbincount=150)
-    if xbincount != nothing
+    if xbincount !== nothing
         xminbincount = xbincount
         xmaxbincount = xbincount
     end
 
-    if ybincount != nothing
+    if ybincount !== nothing
         yminbincount = ybincount
         ymaxbincount = ybincount
     end
@@ -770,7 +770,7 @@ function apply_statistic(stat::TickStatistic,
             error("TickStatistic cannot be applied to subplot coordinates.")
 
     # don't clobber existing ticks
-    getfield(aes, Symbol(stat.axis, "tick")) == nothing || return
+    getfield(aes, Symbol(stat.axis, "tick")) === nothing || return
 
     in_group_var = Symbol(stat.axis, "group")
     minval, maxval = nothing, nothing
@@ -781,11 +781,11 @@ function apply_statistic(stat::TickStatistic,
     for var in in_vars
         categorical && !in(var,[:x,:y]) && continue
         vals = getfield(aes, var)
-        if vals != nothing && eltype(vals) != Function
-            if minval == nothing
+        if vals !== nothing && eltype(vals) != Function
+            if minval === nothing
                 minval = first(vals)
             end
-            if maxval == nothing
+            if maxval === nothing
                 maxval = first(vals)
             end
             T = promote_type(typeof(minval), typeof(maxval))
@@ -824,17 +824,17 @@ function apply_statistic(stat::TickStatistic,
 
     # check the x/yviewmin/max pesudo-aesthetics
     if stat.axis == "x"
-        if aes.xviewmin != nothing
+        if aes.xviewmin !== nothing
             minval = min(minval, aes.xviewmin)
         end
-        if aes.xviewmax != nothing
+        if aes.xviewmax !== nothing
             maxval = max(maxval, aes.xviewmax)
         end
     elseif stat.axis == "y"
-        if aes.yviewmin != nothing
+        if aes.yviewmin !== nothing
             minval = min(minval, aes.yviewmin)
         end
-        if aes.yviewmax != nothing
+        if aes.yviewmax !== nothing
             maxval = max(maxval, aes.yviewmax)
         end
     end
@@ -959,12 +959,12 @@ function minvalmaxval(minval::T, maxval::T, val, s, ds) where T
         maxval = val
     end
 
-    if s != nothing && typeof(s) <: AbstractFloat
+    if s !== nothing && typeof(s) <: AbstractFloat
         minval = min(minval, val - s)::T
         maxval = max(maxval, val + s)::T
     end
 
-    if ds != nothing
+    if ds !== nothing
         minval = min(minval, val - ds)::T
         maxval = max(maxval, val + ds)::T
     end
@@ -999,7 +999,7 @@ function apply_statistic(stat::BoxplotStatistic,
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
 
-    xflag = aes.x != nothing
+    xflag = aes.x !== nothing
     aes_x = (xflag ? eltype(aes.x) : Int)[]
     if xflag
         aes_x = aes.x
@@ -1007,10 +1007,10 @@ function apply_statistic(stat::BoxplotStatistic,
         aes_x = ones(Int, length(aes.y))
         aes.x_label = x -> fill("", length(x))
     end
-    colorflag = aes.color != nothing
+    colorflag = aes.color !== nothing
     aes_color =  colorflag ? aes.color : fill(nothing, length(aes_x))
                      
-    if aes.y == nothing
+    if aes.y === nothing
         groups = Any[]
         for (x, c) in zip(aes.x, cycle(aes_color))
             push!(groups, (x, c))
@@ -1150,7 +1150,7 @@ function Stat.apply_statistic(stat::SmoothStatistic,
         error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
     end
 
-    colorflag = aes.color != nothing
+    colorflag = aes.color !== nothing
     aes_color =  colorflag ? aes.color : fill(nothing, length(aes.x))
 
     uc = unique(aes_color)
@@ -1308,18 +1308,18 @@ function apply_statistic(stat::StepStatistic,
     p = sortperm(aes.x, alg=MergeSort)
     permute!(aes.x, p)
     permute!(aes.y, p)
-    aes.group != nothing && permute!(aes.group, p)
-    aes.color != nothing && permute!(aes.color, p)
+    aes.group !== nothing && permute!(aes.group, p)
+    aes.color !== nothing && permute!(aes.color, p)
 
-    if aes.group != nothing
+    if aes.group !== nothing
         Gadfly.assert_aesthetics_equal_length("StepStatistic", aes, :x, :group)
         permute!(aes.x, p)
         permute!(aes.y, p)
         permute!(aes.group, p)
-        aes.color != nothing && permute!(aes.color, p)
+        aes.color !== nothing && permute!(aes.color, p)
     end
 
-    if aes.color != nothing
+    if aes.color !== nothing
         Gadfly.assert_aesthetics_equal_length("StepStatistic", aes, :x, :color)
         # TODO: use this when we switch to 0.4
         # sortperm!(p, aes.color, alg=MergeSort, lt=Gadfly.color_isless)
@@ -1327,13 +1327,13 @@ function apply_statistic(stat::StepStatistic,
         permute!(aes.x, p)
         permute!(aes.y, p)
         permute!(aes.color, p)
-        aes.group != nothing && permute!(aes.group, p)
+        aes.group !== nothing && permute!(aes.group, p)
     end
 
     x_step = Array{eltype(aes.x)}(undef, 0)
     y_step = Array{eltype(aes.y)}(undef, 0)
-    color_step = aes.color == nothing ? nothing : Array{eltype(aes.color)}(undef, 0)
-    group_step = aes.group == nothing ? nothing : Array{eltype(aes.group)}(undef, 0)
+    color_step = aes.color === nothing ? nothing : Array{eltype(aes.color)}(undef, 0)
+    group_step = aes.group === nothing ? nothing : Array{eltype(aes.group)}(undef, 0)
 
     i = 1
     i_offset = 1
@@ -1343,17 +1343,17 @@ function apply_statistic(stat::StepStatistic,
 
         (u > length(aes.x) || v > length(aes.y)) && break
 
-        if (aes.color != nothing &&
+        if (aes.color !== nothing &&
              (aes.color[u] != aes.color[i_offset] || aes.color[v] != aes.color[i_offset])) ||
-           (aes.group != nothing &&
+           (aes.group !== nothing &&
              (aes.group[u] != aes.color[i_offset] || aes.color[v] != aes.group[i_offset]))
             i_offset = max(u, v)
             i = 1
         else
             push!(x_step, aes.x[u])
             push!(y_step, aes.y[v])
-            aes.color != nothing && push!(color_step, aes.color[i_offset])
-            aes.group != nothing && push!(group_step, aes.group[i_offset])
+            aes.color !== nothing && push!(color_step, aes.color[i_offset])
+            aes.group !== nothing && push!(group_step, aes.group[i_offset])
             i += 1
         end
     end
@@ -1405,7 +1405,7 @@ function apply_statistic(stat::FunctionStatistic,
     end
 
     # color was bound explicitly
-    if aes.color != nothing
+    if aes.color !== nothing
         func_color = aes.color
         aes.color = Array{eltype(aes.color)}(undef, length(aes.y) * stat.num_samples)
         groups = Array{Int}(undef, length(aes.y) * stat.num_samples)
@@ -1469,11 +1469,11 @@ function apply_statistic(stat::ContourStatistic,
     ys = aes.y === nothing ? nothing : convert(Vector{Float64}, aes.y)
 
     if typeof(aes.z) <: Function
-        if xs == nothing && aes.xmin != nothing && aes.xmax != nothing
+        if xs === nothing && aes.xmin !== nothing && aes.xmax !== nothing
             xs = range(aes.xmin[1], stop=aes.xmax[1], length=stat.samples)
         end
 
-        if ys == nothing && aes.ymin != nothing && aes.ymax != nothing
+        if ys === nothing && aes.ymin !== nothing && aes.ymax !== nothing
             ys = range(aes.ymin[1], stop=aes.ymax[1], length=stat.samples)
         end
 
@@ -1482,10 +1482,10 @@ function apply_statistic(stat::ContourStatistic,
     elseif typeof(aes.z) <: Matrix
         zs = convert(Matrix{Float64}, aes.z)
 
-        if xs == nothing
+        if xs === nothing
             xs = collect(Float64, 1:size(zs)[1])
         end
-        if ys == nothing
+        if ys === nothing
             ys = collect(Float64, 1:size(zs)[2])
         end
         size(zs) != (length(xs), length(ys)) &&
@@ -1634,7 +1634,7 @@ function apply_statistic(stat::ViolinStatistic,
     grouped_color = Dict{Int, Gadfly.ColorOrNothing}(1=>nothing)
     ux = unique(aes.x)
     uxflag = length(ux) < length(aes.x)
-    colorflag = aes.color != nothing
+    colorflag = aes.color !== nothing
 
     uxflag && (grouped_y = Dict(x=>aes.y[aes.x.==x] for x in ux))
 
@@ -1701,7 +1701,7 @@ function minimum_span(vars::Vector{Symbol}, aes::Gadfly.Aesthetics)
             end
         end
 
-        if span == nothing || (dataspan != nothing && dataspan < span)
+        if span === nothing || (dataspan !== nothing && dataspan < span)
             span = dataspan
         end
     end
@@ -1714,7 +1714,7 @@ function apply_statistic(stat::JitterStatistic,
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     span = minimum_span(stat.vars, aes)
-    span == nothing && return
+    span === nothing && return
 
     rng = MersenneTwister(stat.seed)
     for var in stat.vars
@@ -1827,8 +1827,8 @@ function apply_statistic(stat::EnumerateStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
-    has_x = aes.x != nothing
-    has_y = aes.y != nothing
+    has_x = aes.x !== nothing
+    has_y = aes.y !== nothing
 
     if stat.var == :x && !has_x && has_y
         aes.x = collect(1:length(aes.y))
@@ -1873,10 +1873,10 @@ function apply_statistic(stat::VecFieldStatistic,
     ys = aes.y === nothing ? nothing : Float64.(aes.y)
 
     if isa(aes.z, Function)
-        if xs == nothing && aes.xmin != nothing && aes.xmax != nothing
+        if xs === nothing && aes.xmin !== nothing && aes.xmax !== nothing
             xs = range(aes.xmin[1], stop=aes.xmax[1], length=stat.samples)
         end
-        if ys == nothing && aes.ymin != nothing && aes.ymax != nothing
+        if ys === nothing && aes.ymin !== nothing && aes.ymax !== nothing
             ys = range(aes.ymin[1], stop=aes.ymax[1], length=stat.samples)
         end
 
@@ -1885,10 +1885,10 @@ function apply_statistic(stat::VecFieldStatistic,
     elseif isa(aes.z, Matrix)
         zs = Float64.(aes.z)
 
-        if xs == nothing
+        if xs === nothing
             xs = collect(Float64, 1:size(zs)[1])
         end
-        if ys == nothing
+        if ys === nothing
             ys = collect(Float64, 1:size(zs)[2])
         end
         if size(zs) != (length(xs), length(ys))
@@ -1981,8 +1981,8 @@ function apply_statistic(stat::EllipseStatistic,
     aes::Gadfly.Aesthetics)    
 
     Dat = [aes.x aes.y]
-    colorflag = aes.color != nothing
-    groupflag = aes.group != nothing
+    colorflag = aes.color !== nothing
+    groupflag = aes.group !== nothing
     aes_color = colorflag ? aes.color : fill(nothing, length(aes.x)) 
     aes_group = groupflag ? aes.group : fill(nothing, length(aes.x))
     CT, GT = eltype(aes_color), eltype(aes_group)
@@ -2053,7 +2053,7 @@ function apply_statistic(stat::DodgeStatistic,
                             coord::Gadfly.CoordinateElement,
                             aes::Gadfly.Aesthetics)
 
-    aes.color==nothing && return
+    aes.color === nothing && return
     nbars = length(unique(aes.color))
     othervar = (stat.axis == :x) ? :y : :x
     vals = getfield(aes, stat.axis)

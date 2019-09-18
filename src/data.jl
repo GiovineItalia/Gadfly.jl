@@ -62,7 +62,7 @@ function chain(ds::Data...)
     chained_data = Data()
     for name in data_fields
         vs = Any[getfield(d, name) for d in ds]
-        vs = Any[v for v in filter(issomething, vs)]
+        vs = Any[v for v in filter(!isnothing, vs)]
         if isempty(vs)
             setfield!(chained_data, name, nothing)
         else
@@ -78,7 +78,7 @@ function show(io::IO, data::Data)
     maxlen = 0
     print(io, "Data(")
     for name in data_fields
-        if getfield(data, name) != nothing
+        if getfield(data, name) !== nothing
             print(io, "\n  ", string(name), "=")
             show(io, getfield(data, name))
         end

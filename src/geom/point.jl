@@ -67,7 +67,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     for (x, y, color, size, shape, alpha) in Compose.cyclezip(aes.x, aes.y, aes.color, aes.size, aes.shape, aes_alpha)
         shapefun = typeof(shape) <: Function ? shape : theme.point_shapes[shape]
         sizeval = typeof(size) <: Int ? interpolate_size(size) : size
-        strokecolor = aes.color_key_continuous != nothing && aes.color_key_continuous ?
+        strokecolor = aes.color_key_continuous !== nothing && aes.color_key_continuous ?
                     theme.continuous_highlight_color(color) :
                     theme.discrete_highlight_color(color)
         class = svg_color_class_from_label(aes.color_label([color])[1])
