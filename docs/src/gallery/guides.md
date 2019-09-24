@@ -16,9 +16,9 @@ plot(sin, 0, 2pi, Guide.annotation(compose(context(),
 ```@example
 using Gadfly, RDatasets
 set_default_plot_size(14cm, 8cm)
-Dsleep = dataset("ggplot2", "msleep")[[:Vore,:BrainWt,:BodyWt,:SleepTotal]]
+Dsleep = dataset("ggplot2", "msleep")[:,[:Vore,:BrainWt,:BodyWt,:SleepTotal]]
 DataFrames.dropmissing!(Dsleep)
-Dsleep[:SleepTime] = Dsleep[:SleepTotal] .> 8
+Dsleep.SleepTime = Dsleep.SleepTotal .> 8
 plot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:SleepTime, 
      Guide.colorkey(title="Sleep", labels=[">8","≤8"]),
      Scale.x_log10, Scale.y_log10 )
@@ -56,8 +56,8 @@ plot(pointLayer, lineLayer,
 using Compose, Gadfly, RDatasets
 set_default_plot_size(16cm, 8cm)
 Dsleep = dataset("ggplot2", "msleep")
-Dsleep = dropmissing!(Dsleep[[:Vore, :Name,:BrainWt,:BodyWt, :SleepTotal]])
-Dsleep[:SleepTime] = Dsleep[:SleepTotal] .> 8
+Dsleep = dropmissing!(Dsleep[:,[:Vore, :Name,:BrainWt,:BodyWt, :SleepTotal]])
+Dsleep.SleepTime = Dsleep.SleepTotal .> 8
 plot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:Vore, shape=:SleepTime,
     Guide.colorkey(pos=[0.05w, -0.25h]),
     Guide.shapekey(title="Sleep (hrs)", labels=[">8","≤8"], pos=[0.18w,-0.315h]),

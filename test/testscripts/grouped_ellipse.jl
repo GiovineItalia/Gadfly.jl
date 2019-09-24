@@ -2,7 +2,7 @@ using RDatasets, Gadfly
 Gadfly.set_default_plot_size(14cm, 8cm)
 
 D = dataset("datasets","faithful")
-D[:g] = D[:Eruptions].>3.0
+D.g = D.Eruptions.>3.0
 
 coord = Coord.cartesian(ymin=35, ymax=100)
 
