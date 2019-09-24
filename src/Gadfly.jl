@@ -956,7 +956,7 @@ function show(io::IO, m::MIME"image/svg+xml", p::Plot)
     show(io, m, svg)
 end
 
-function show(io::IO, m::MIME"application/juno+plotpane", p::Plot)
+function show(io::IO, m::MIME"application/prs.juno.plotpane+html", p::Plot)
     buf = IOBuffer()
     svg = SVGJS(buf, Compose.default_graphic_width,
                 Compose.default_graphic_height, false)
