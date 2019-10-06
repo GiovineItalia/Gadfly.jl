@@ -422,6 +422,21 @@ p2 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax,
 hstack(p1,p2)
 ```
 
+## [`Geom.segment`](@ref)
+```@example
+using Gadfly, DataFrames, ColorSchemes
+set_default_plot_size(14cm, 14cm)
+n = 1000
+x, y = cumsum(randn(n)), cumsum(randn(n))
+D = DataFrame(x1=x[1:end-1], y1=y[1:end-1], x2=x[2:end], y2=y[2:end], colv=1:n-1)
+palettef(c::Float64) = get(ColorSchemes.viridis, c)
+
+plot(D, x=:x1, y=:y1, xend=:x2, yend=:y2, 
+     color = :colv, Geom.segment, Coord.cartesian(aspect_ratio=1.0),
+     Scale.color_continuous(colormap=palettef, minvalue=0, maxvalue=1000)
+)
+```
+
 
 ## [`Geom.smooth`](@ref)
 
