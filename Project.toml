@@ -53,7 +53,7 @@ Measures = "0.3"
 RDatasets = "0.6"
 Showoff = "0.2, 0.3"
 Unitful = "0.15, 0.16"
-julia = "0.7, 1"
+julia = "1"
 
 [extras]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
