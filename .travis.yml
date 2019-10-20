@@ -2,9 +2,8 @@ language: julia
 os:
   - linux
 julia:
-  - 0.7
   - 1.0
-  - 1.1
+  - 1.2
   - nightly
 matrix:
   fast_finish: true
