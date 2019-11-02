@@ -262,19 +262,19 @@ function cat_aes_var!(a::Dict, b::Dict)
     a
 end
 
-cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{T}) where {T <: Base.Callable} = append!(a, b)
-cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T <: Base.Callable, U <: Base.Callable} =
-        a=[promote(a..., b...)...]
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{T}) where {T <: Base.Callable} = append!(a, b)
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T <: Base.Callable, U <: Base.Callable} =
+        a = [a...,b...]
 
 # Let arrays of numbers clobber arrays of functions. This is slightly odd
 # behavior, comes up with with function statistics applied on a layer-wise
 # basis.
-cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T <: Base.Callable, U} = b
-cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U <: Base.Callable} = a
-cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{T}) where {T} = append!(a, b)
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T <: Base.Callable, U} = b
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T, U <: Base.Callable} = a
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{T}) where {T} = append!(a, b)
 cat_aes_var!(a, b) = a
 
-function cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U}
+function cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T, U}
     V = promote_type(T, U)
     ab = Array{V}(undef, length(a) + length(b))
     i = 1
