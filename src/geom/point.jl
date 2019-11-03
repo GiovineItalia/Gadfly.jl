@@ -47,7 +47,7 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     Gadfly.assert_aesthetics_equal_length("Geom.point", aes, :x, :y)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.shape = Function[Shape.circle]
+    default_aes.shape = Function[theme.point_shapes[1]]
     default_aes.color = discretize_make_ia(RGBA{Float32}[theme.default_color])
     default_aes.size = Measure[theme.point_size]
     default_aes.alpha = [theme.alphas[1]]

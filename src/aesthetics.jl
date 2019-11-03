@@ -348,7 +348,7 @@ function by_xy_group(aes::T, xgroup, ygroup,
         end
 
         vals = getfield(aes, var)
-        if typeof(vals) <: AbstractArray
+        if isa(vals, AbstractArray) && length(vals)>1 
             if xgroup !== nothing && length(vals) !== length(xgroup) ||
                ygroup !== nothing && length(vals) !== length(ygroup)
                 continue
