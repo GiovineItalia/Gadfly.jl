@@ -8,6 +8,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 
 # Version 1.1.0
+ * Speed up `Geom.point` (#1258)
  * Add `alpha` aesthetic, `Scale.alpha_continuous` and `Scale.alpha_discrete` (#1252)
  * Add `limits=(min= , max= )` to `Stat.histogram` (#1249)
  * Add dodged boxplots (#1246)
