@@ -38,6 +38,4 @@ jobs:
           - julia: 1.2
       before_script:
         - julia --color=yes -e 'using Pkg; Pkg.add(PackageSpec(name="Compose", rev="master"))'
-      script:
-        - julia --color=yes --project --check-bounds=yes -e 'import Pkg; Pkg.instantiate(); Pkg.test("Gadfly")'
       after_success: skip
