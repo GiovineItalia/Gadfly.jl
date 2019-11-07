@@ -1,34 +1,43 @@
 language: julia
+
 os:
   - linux
+
 julia:
   - 1.0
   - 1.2
   - nightly
+
 matrix:
   fast_finish: true
   allow_failures:
     - julia: nightly
+
 notifications:
   email: false
-before_script:
-  - julia -e 'using Pkg; Pkg.add(PackageSpec(name="Compose", rev="master"))'
+
 codecov: true
 
 jobs:
   include:
     - stage: "Documentation"
-      julia: 1.0
+      julia: 1.2
       os: linux
       # disable global before_script in order not to install Compose twice
       before_script:
       script:
-        - |
-          julia --color=yes --project=docs/ -e'
-            using Pkg
-            Pkg.add(PackageSpec(name="Compose", rev="master"))
-            Pkg.develop(PackageSpec(path=pwd()))
-            Pkg.instantiate()
-            include("docs/make.jl")
-          '
+        - julia --color=yes --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        - julia --color=yes --project=docs --color=yes docs/make.jl
+      after_success: skip
+    - stage: "Edge"
+      os: linux
+      julia: 1.2
+      matrix:
+        fast_finish: true
+        allow_failures:
+          - julia: 1.2
+      before_script:
+        - julia --color=yes -e 'using Pkg; Pkg.add(PackageSpec(name="Compose", rev="master"))'
+      script:
+        - julia --color=yes --project --check-bounds=yes -e 'import Pkg; Pkg.instantiate(); Pkg.test("Gadfly")'
       after_success: skip
