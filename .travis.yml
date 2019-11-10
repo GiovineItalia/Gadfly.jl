@@ -23,12 +23,6 @@ jobs:
       # disable global before_script in order not to install Compose twice
       before_script:
       script:
-        - |
-          julia --color=yes --project=docs/ -e'
-            using Pkg
-            Pkg.add(PackageSpec(name="Compose", rev="master"))
-            Pkg.develop(PackageSpec(path=pwd()))
-            Pkg.instantiate()
-            include("docs/make.jl")
-          '
+        - julia --color=yes --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        - travis_wait julia --color=yes --project=docs docs/make.jl
       after_success: skip
