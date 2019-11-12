@@ -337,6 +337,12 @@ end
 include("poetry.jl")
 
 
+"""
+    push!(p::Plot, element::ElementOrFunctionsOrLayers)
+
+Add an element, function or layer to a plot. Elements include
+Coordinates, Geometries, Guides, Scales, Statistics, and Themes.
+"""
 function Base.push!(p::Plot, element::ElementOrFunctionOrLayers)
     add_plot_element!(p, element)
     return p
@@ -1102,6 +1108,15 @@ include("coord.jl")
 include("geometry.jl")
 include("guide.jl")
 include("statistics.jl")
+
+
+"""
+    plot()
+
+Blank plot.
+"""
+plot() = plot(Geom.blank())
+
 
 
 # All aesthetics must have a scale. If none is given, we use a default.

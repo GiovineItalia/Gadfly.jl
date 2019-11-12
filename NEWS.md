@@ -3,7 +3,8 @@ This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
 # Version 1.x
-* Support DataFrames.jl 0.19 changes in indexing (#1318)
+ * Add `Geom.blank` (#1345)
+ * Support DataFrames.jl 0.19 changes in indexing (#1318)
 
 
 

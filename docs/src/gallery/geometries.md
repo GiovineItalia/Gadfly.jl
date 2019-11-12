@@ -57,6 +57,15 @@ set_default_plot_size(14cm, 8cm)
 plot(dataset("lattice", "singer"), x="VoicePart", y="Height", Geom.beeswarm)
 ```
 
+## [`Geom.blank`](@ref)
+
+```@example
+using Gadfly
+set_default_plot_size(21cm, 8cm)
+p1, p2 = plot(),  plot(x=1:10, y=rand(10), Geom.blank)
+hstack(p1, p2)
+```
+
 
 ## [`Geom.boxplot`](@ref)
 
