@@ -1,4 +1,4 @@
-using Gadfly, DataFrames, Compat, DelimitedFiles
+using Gadfly, DataFrames, DelimitedFiles
 
 set_default_plot_size(6inch, 3inch)
 

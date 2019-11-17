@@ -66,7 +66,7 @@ function chain(ds::Data...)
         if isempty(vs)
             setfield!(chained_data, name, nothing)
         else
-            setfield!(chained_data, name, Iterators.flatten(vs))
+            setfield!(chained_data, name, flatten(vs))
         end
     end
 

@@ -1,7 +1,6 @@
 module Scale
 
 using Colors
-using Compat
 using Compose
 using DataStructures
 using Gadfly
@@ -9,6 +8,7 @@ using Showoff
 using IndirectArrays
 using CategoricalArrays
 using Printf
+using Base.Iterators
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia,
     aes2str, valid_aesthetics
@@ -622,7 +622,7 @@ const color_continuous_gradient = color_continuous  ### WHY HAVE THIS ALIAS?
 
 function apply_scale(scale::ContinuousColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-    cdata = skipmissing(Iterators.flatten(i.color for i in datas if i.color != nothing))
+    cdata = skipmissing(flatten(i.color for i in datas if i.color != nothing))
     if !isempty(cdata)
       cmin, cmax = extrema(cdata)
     else

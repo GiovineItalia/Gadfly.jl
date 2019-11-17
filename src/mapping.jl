@@ -1,6 +1,5 @@
 module Col
 
-using Compat
 import Base: ==
 
 struct GroupedColumn
@@ -31,8 +30,6 @@ end # module Col
 
 
 module Row
-
-using Compat
 
 # represent a row index correspondig to a set of columns
 struct GroupedColumnRowIndex
@@ -153,7 +150,7 @@ function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
                for colgroup in colgroups]
 
     vi = 1
-    for ui in 1:um, colidx in Iterators.product(colidxs...)
+    for ui in 1:um, colidx in product(colidxs...)
         # copy grouped columns
         for (vj, uj) in enumerate(colidx)
             V[vi, vj] = U[ui, uj]

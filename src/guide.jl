@@ -1,6 +1,5 @@
 module Guide
 
-using Compat
 using Colors
 using Compose
 using DataStructures

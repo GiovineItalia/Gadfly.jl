@@ -1,7 +1,6 @@
 module Gadfly
 
 using Colors
-using Compat
 using Compose
 using DataStructures
 using JSON
@@ -11,9 +10,9 @@ using CategoricalArrays
 using Printf
 using Base64
 using Requires
+using Base.Iterators
 
-import IterTools
-import IterTools: distinct, drop, chain
+import IterTools: distinct, chain
 import Compose: draw, hstack, vstack, gridstack, parse_colorant
 import Base: +, -, /, *,
              copy, push!, show, getindex, cat,
@@ -516,7 +515,7 @@ function render_prepare(plot::Plot)
         map(s->(s, _theme(l, plot)), collect(stats))
     end
 
-    for element in Iterators.flatten(([(s, plot.theme) for s in plot.statistics],
+    for element in flatten(([(s, plot.theme) for s in plot.statistics],
                          [(l.geom, _theme(plot, l)) for l in plot.layers],
                          layer_stats_with_theme...))
 
@@ -564,7 +563,7 @@ function render_prepare(plot::Plot)
         (haskey(plot.mapping, var) || haskey(scales, var)) && continue
 
         t = :categorical
-        for data in Iterators.flatten((datas, subplot_datas))
+        for data in flatten((datas, subplot_datas))
             val = getfield(data, var)
             if val != nothing && val != :categorical
                 t = classify_data(val)
@@ -658,7 +657,7 @@ function render_prepare(plot::Plot)
     end
 
     # I. Scales
-    layer_aess = Scale.apply_scales(IterTools.distinct(values(scales)),
+    layer_aess = Scale.apply_scales(distinct(values(scales)),
                                     datas..., subplot_datas...)
 
     # set defaults for key titles
