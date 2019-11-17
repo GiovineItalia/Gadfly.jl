@@ -206,7 +206,7 @@ function render_discrete_color_key(colors::Vector{C},
         colrows = Array{Int}(undef, numcols)
         m = n
         for i in 1:numcols
-            colrows[i] = min(m, ceil(Integer, (n / numcols)))
+            colrows[i] = ceil(Int, m/(1+numcols-i))
             m -= colrows[i]
         end
 
