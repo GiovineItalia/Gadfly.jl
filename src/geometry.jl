@@ -51,6 +51,7 @@ default_statistic(::Gadfly.GeometryElement) = Gadfly.Stat.identity()
 
 
 include("geom/bar.jl")
+include("geom/blank.jl")
 include("geom/boxplot.jl")
 include("geom/errorbar.jl")
 include("geom/hexbin.jl")
