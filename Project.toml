@@ -30,7 +30,6 @@ Showoff = "992d4aef-0814-514b-bc4d-f2e9a6c4116f"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
-CSV = "0.4, 0.5"
 Cairo = "0.7, 0.8"
 CategoricalArrays = "0.5, 0.6, 0.7"
 Colors = "0.9"
@@ -57,13 +56,13 @@ Unitful = "0.15, 0.16"
 julia = "1"
 
 [extras]
-CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 Cairo = "159f3aea-2a34-519c-b102-8c37f9878175"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 LibGit2 = "76f85450-5226-5b5a-8eaa-529ad045b433"
 RDatasets = "ce6b1742-4840-55fa-b093-852dadbb1d8b"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [targets]
-test = ["CSV", "Cairo", "DataFrames", "LibGit2", "RDatasets", "Test", "Unitful"]
+test = ["Cairo", "DataFrames", "DelimitedFiles", "LibGit2", "RDatasets", "Test", "Unitful"]
