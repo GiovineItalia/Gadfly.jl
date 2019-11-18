@@ -1,7 +1,6 @@
 module Coord
 
 using Gadfly
-using Compat
 using Compose
 import Gadfly.Maybe
 

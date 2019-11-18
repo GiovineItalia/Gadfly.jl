@@ -55,8 +55,8 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     end
 
     kys = keys(max_points)
-    polys = [collect(Tuple{XT, YT}, Iterators.flatten((min_points[k], max_points[k]))) for k in kys]
-    lines = [collect(Tuple{XT, YT}, Iterators.flatten((min_points[k], [(last(min_points[k])[1], NaN)], max_points[k]))) for k in kys]
+    polys = [collect(Tuple{XT, YT}, flatten((min_points[k], max_points[k]))) for k in kys]
+    lines = [collect(Tuple{XT, YT}, flatten((min_points[k], [(last(min_points[k])[1], NaN)], max_points[k]))) for k in kys]
 
     n = length(kys)
     colors = Vector{Union{Colorant, String}}(undef, n)

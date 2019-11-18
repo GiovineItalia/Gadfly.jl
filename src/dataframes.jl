@@ -41,7 +41,7 @@ function meltdata(U::AbstractDataFrame, colgroups::Vector{Col.GroupedColumn})
 
     vi = 1
     for ui in 1:um
-        for colidx in Iterators.product(colidxs...)
+        for colidx in product(colidxs...)
             # copy grouped columns
             for (vj, uj) in enumerate(colidx)
                 V[vj][vi] = U[ui, uj]

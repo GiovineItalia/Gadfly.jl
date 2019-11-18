@@ -3,7 +3,6 @@ module Stat
 import Gadfly
 import Contour
 using Colors
-using Compat
 using Compose
 using DataStructures
 using Dates
@@ -15,13 +14,12 @@ using IndirectArrays
 using Statistics
 using LinearAlgebra
 using Random
+using Base.Iterators
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, setfield!, discretize_make_ia, aes2str
 import KernelDensity
 # import Distributions: Uniform, Distribution, qqbuild
-import IterTools: distinct
-import Compat.Iterators: cycle, product
 
 include("bincount.jl")
 
@@ -810,7 +808,7 @@ function apply_statistic(stat::TickStatistic,
 
     isempty(in_vals) && return
 
-    in_vals = Iterators.flatten(in_vals)
+    in_vals = flatten(in_vals)
 
     # consider forced tick marks
     if stat.ticks != :auto

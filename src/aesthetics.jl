@@ -171,7 +171,7 @@ function assert_aesthetics_undefined(who::AbstractString, aes::Aesthetics, vars:
 end
 
 function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, vars::Symbol...)
-    defined_vars = Compat.Iterators.filter(var -> !(getfield(aes, var) === nothing), vars)
+    defined_vars = filter(var -> !(getfield(aes, var) === nothing), [vars...])
 
     if !isempty(defined_vars)
         n = length(getfield(aes, first(defined_vars)))
@@ -358,7 +358,7 @@ function by_xy_group(aes::T, xgroup, ygroup,
                 staging[i, j] = similar(vals, 0)
             end
 
-            for (i, j, v) in zip(Compat.Iterators.cycle(yrefs), Compat.Iterators.cycle(xrefs), vals)
+            for (i, j, v) in zip(cycle(yrefs), cycle(xrefs), vals)
                 push!(staging[i, j], v)
             end
 
