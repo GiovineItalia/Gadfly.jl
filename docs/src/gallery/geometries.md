@@ -13,13 +13,30 @@ p1 = plot(dataset("ggplot2", "mpg"),
      Guide.annotation(compose(context(), text(6,4, "y=x", hleft, vtop), fill("red"))))
 
 x = [20*rand(20); exp(-3)]
-D = DataFrame(x=x, y= exp.(-0.5*asinh.(x).+5) .+ 2*randn(length(x))) 
+D = DataFrame(x=x, y= exp.(-0.5*asinh.(x).+5) .+ 2*randn(length(x)))
 abline = Geom.abline(color="red", style=:dash)
 p2 = plot(D, x=:x, y=:y,  Geom.point,  Scale.x_asinh, Scale.y_log,
      intercept=[148], slope=[-0.5], abline)
 hstack(p1, p2)
 ```
 
+## [`Geom.band`](@ref), [`Geom.hband`](@ref), [`Geom.vband`](@ref)
+
+
+```@example
+using Colors, Dates, Gadfly, RDatasets
+
+Dp = dataset("ggplot2","presidential")[3:end,:]
+De = dataset("ggplot2","economics")
+De.Unemploy /= 10^3
+
+plot(De, x=:Date, y=:Unemploy, Geom.line,
+    layer(Dp, xmin=:Start, xmax=:End, Geom.vband, color=:Party),
+    Scale.color_discrete_manual("deepskyblue", "lightcoral"),
+    Coord.cartesian(xmin=Date("1965-01-01"), ymax=12),
+    Guide.xlabel("Time"), Guide.ylabel("Unemployment (x10³)"), Guide.colorkey(title=""),
+    Theme(default_color="black", key_position=:top))
+```
 
 ## [`Geom.bar`](@ref)
 
@@ -75,7 +92,7 @@ set_default_plot_size(21cm, 8cm)
 singers, salaries = dataset("lattice", "singer"), dataset("car","Salaries")
 salaries.Salary /= 1000.0
 salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
-p1 = plot(singers, x=:VoicePart, y=:Height, Geom.boxplot, 
+p1 = plot(singers, x=:VoicePart, y=:Height, Geom.boxplot,
     Theme(default_color="MidnightBlue"))
 p2 = plot(salaries, x=:Discipline, y=:Salary, color=:Rank,
     Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
@@ -128,7 +145,7 @@ using Gadfly, RDatasets, Distributions
 set_default_plot_size(14cm, 8cm)
 dist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])
 xs = rand(dist, 10^5)
-plot(layer(x=xs, Geom.density, Theme(default_color="orange")), 
+plot(layer(x=xs, Geom.density, Theme(default_color="orange")),
      layer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color="green")),
      layer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color="purple")),
      Guide.manual_color_key("bandwidth", ["auto", "bw=0.0003", "bw=0.25"],
@@ -185,9 +202,9 @@ ys = mean.(rand.(Normal.(0, sds), n))
 df = DataFrame(x=1:length(sds), y=ys,
   mins=ys.-(1.96*sds/sqrt(n)), maxs=ys.+(1.96*sds/sqrt(n)),
     g=repeat(["a","b"], inner=3))
-p1 = plot(df, x=1:length(sds), y=:y, ymin=:mins, ymax=:maxs, color=:g, 
+p1 = plot(df, x=1:length(sds), y=:y, ymin=:mins, ymax=:maxs, color=:g,
     Geom.point, Geom.errorbar)
-p2 = plot(df, y=1:length(sds), x=:y, xmin=:mins, xmax=:maxs, color=:g, 
+p2 = plot(df, y=1:length(sds), x=:y, xmin=:mins, xmax=:maxs, color=:g,
     Geom.point, Geom.errorbar)
 hstack(p1, p2)
 ```
@@ -202,18 +219,18 @@ df = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)
 df.ymin, df.ymax = df.Salary_mean.-df.Salary_std, df.Salary_mean.+df.Salary_std
 df.label = string.(round.(Int, df.Salary_mean))
 
-p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank, 
+p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank,
     Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
     ymin=:ymin, ymax=:ymax, Geom.errorbar, Stat.dodge,
-    Geom.bar(position=:dodge), 
+    Geom.bar(position=:dodge),
     Scale.color_discrete(levels=["Prof", "AssocProf", "AsstProf"]),
     Guide.colorkey(title="", pos=[0.76w, -0.38h]),
     Theme(bar_spacing=0mm, stroke_color=c->"black")
 )
-p2 = plot(df, y=:Discipline, x=:Salary_mean, color=:Rank, 
+p2 = plot(df, y=:Discipline, x=:Salary_mean, color=:Rank,
     Coord.cartesian(yflip=true), Scale.y_discrete,
     xmin=:ymin, xmax=:ymax, Geom.errorbar, Stat.dodge(axis=:y),
-    Geom.bar(position=:dodge, orientation=:horizontal), 
+    Geom.bar(position=:dodge, orientation=:horizontal),
     Scale.color_discrete(levels=["Prof", "AssocProf", "AsstProf"]),
     Guide.yticks(orientation=:vertical), Guide.ylabel(nothing),
     Theme(bar_spacing=0mm, stroke_color=c->"gray")
@@ -440,7 +457,7 @@ x, y = cumsum(randn(n)), cumsum(randn(n))
 D = DataFrame(x1=x[1:end-1], y1=y[1:end-1], x2=x[2:end], y2=y[2:end], colv=1:n-1)
 palettef(c::Float64) = get(ColorSchemes.viridis, c)
 
-plot(D, x=:x1, y=:y1, xend=:x2, yend=:y2, 
+plot(D, x=:x1, y=:y1, xend=:x2, yend=:y2,
      color = :colv, Geom.segment, Coord.cartesian(aspect_ratio=1.0),
      Scale.color_continuous(colormap=palettef, minvalue=0, maxvalue=1000)
 )
@@ -557,8 +574,8 @@ using Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
 
 coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)
-p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)), 
-          xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], 
+p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)),
+          xmin=[-2], xmax=[2], ymin=[-2], ymax=[2],
 # or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     
           Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),
           Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),
@@ -566,7 +583,7 @@ p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)),
           Guide.xlabel("x"), Guide.ylabel("y"), Guide.colorkey(title="z"))
 
 volcano = Matrix{Float64}(dataset("datasets", "volcano"))
-volc = volcano[1:4:end, 1:4:end] 
+volc = volcano[1:4:end, 1:4:end]
 coord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)
 p2 = plot(coord, z=volc, x=1.0:22, y=1.0:16,
           Geom.vectorfield(scale=0.05), Geom.contour(levels=7),

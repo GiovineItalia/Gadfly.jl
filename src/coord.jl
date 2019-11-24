@@ -156,7 +156,7 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
         for var in coord.xvars
             for aes in aess
                 vals = getfield(aes, var)
-                vals === nothing && continue
+                (vals === nothing || eltype(vals) <: Measure) && continue
 
                 if !isa(vals, AbstractArray)
                     vals = [vals]
@@ -172,7 +172,7 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
         for var in coord.yvars
             for aes in aess
                 vals = getfield(aes, var)
-                vals === nothing && continue
+                (vals === nothing || eltype(vals) <: Measure) && continue
 
                 # Outliers is an odd aesthetic that needs special treatment.
                 if var == :outliers
@@ -223,12 +223,12 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     ymin = coord.ymin === nothing ? ymin : coord.ymin
     ymax = coord.ymax === nothing ? ymax : coord.ymax
 
-    if xmin === nothing || !isfinite(xmin)
+    if xmin === nothing || isa(xmin, Measure) || !isfinite(xmin)
         xmin = 0.0
         xmax = 1.0
     end
 
-    if ymin === nothing || !isfinite(ymin)
+    if ymin === nothing || isa(ymin, Measure) || !isfinite(ymin)
         ymin = 0.0
         ymax = 1.0
     end
