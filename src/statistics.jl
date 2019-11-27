@@ -824,10 +824,14 @@ function apply_statistic(stat::TickStatistic,
         vals = getfield(aes, var)
         if vals != nothing && eltype(vals) != Function && !(eltype(vals) <: Measure)
             if minval == nothing
-                minval = first(vals)
+                first_val = first(vals)
+                isa(first_val, Measure) && continue
+                minval = first_val
             end
             if maxval == nothing
-                maxval = first(vals)
+                first_val = first(vals)
+                isa(first_val, Measure) && continue
+                maxval = first_val
             end
             T = promote_type(typeof(minval), typeof(maxval))
             T = promote_type(T, eltype(vals))
