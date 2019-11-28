@@ -2,6 +2,7 @@
 isconcrete(x::T) where {T<:Number} = !ismissing(x) && isfinite(x)
 isconcrete(x::(Irrational)) = true
 isconcrete(x) = !ismissing(x)
+isconcrete(::Compose.Measures.Length) = false
 
 function isallconcrete(xs)
     ans = true
