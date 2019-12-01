@@ -19,9 +19,13 @@ struct Cartesian <: Gadfly.CoordinateElement
     aspect_ratio::Union{(Nothing), Float64}
     raster::Bool
 
-    Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster) =
-            new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
+    function Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster)
+        # promote() not wise here  
+        xmin, xmax = [xmin, xmax]
+        ymin, ymax = [ymin, ymax]
+        new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
                 isa(aspect_ratio, Real) ? Float64(aspect_ratio) : aspect_ratio, raster)
+    end
 end
 
 function Cartesian(
