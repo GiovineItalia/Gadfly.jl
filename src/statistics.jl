@@ -851,7 +851,7 @@ function apply_statistic(stat::TickStatistic,
 
     isempty(in_vals) && return
 
-    in_vals = flatten(in_vals)
+    in_vals = Iterators.flatten(in_vals)
 
     # consider forced tick marks
     if stat.ticks != :auto

@@ -515,7 +515,7 @@ function render_prepare(plot::Plot)
         map(s->(s, _theme(l, plot)), collect(stats))
     end
 
-    for element in flatten(([(s, plot.theme) for s in plot.statistics],
+    for element in Iterators.flatten(([(s, plot.theme) for s in plot.statistics],
                          [(l.geom, _theme(plot, l)) for l in plot.layers],
                          layer_stats_with_theme...))
 
@@ -563,7 +563,7 @@ function render_prepare(plot::Plot)
         (haskey(plot.mapping, var) || haskey(scales, var)) && continue
 
         t = :categorical
-        for data in flatten((datas, subplot_datas))
+        for data in Iterators.flatten((datas, subplot_datas))
             val = getfield(data, var)
             if val != nothing && val != :categorical
                 t = classify_data(val)
