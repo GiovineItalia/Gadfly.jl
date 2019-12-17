@@ -81,10 +81,10 @@ $(FIELDS)
     "Maximum size of points in the point geometry.  (Measure)",
     point_size_max,        Measure,         1.8mm
 
-    "Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)",
+    "Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline, ltriangle, rtriangle)",
     point_shapes,          Vector{Function},  [Shape.circle, Shape.square, Shape.diamond, Shape.cross, Shape.xcross,
                                                Shape.utriangle, Shape.dtriangle, Shape.star1, Shape.star2,
-                                               Shape.hexagon, Shape.octagon, Shape.hline, Shape.vline]
+                                               Shape.hexagon, Shape.octagon, Shape.hline, Shape.vline, Shape.ltriangle, Shape.rtriangle]
 
     "Width of lines in the line geometry. (Measure)",
     line_width,            Measure,         0.3mm

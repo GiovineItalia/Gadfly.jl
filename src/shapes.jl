@@ -279,4 +279,34 @@ function vline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     return polygon(line_ps)
 end
 
+"""
+    ltriangle(xs, ys, rs, scalar=1)
+
+$(shape_docstr("left-pointing triangles"))
+"""
+function ltriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar = 1)
+    n = max(length(xs), length(ys), length(rs))
+    polys = Vector{Vector{Tuple{Measure, Measure}}}(undef, n)
+    for i in 1:n
+        x = x_measure(xs[mod1(i, length(xs))])
+        y = y_measure(ys[mod1(i, length(ys))])
+        r = rs[mod1(i, length(rs))]
+        u = scalar * r
+        v = 0.87 * r
+        polys[i] = Tuple{Measure, Measure}[(x + 0.5u, y - v), (x + 0.5u, y + v),
+        (x - u, y),(x - u, y)]
+    end
+    return polygon(polys)
+end
+
+"""
+    rtriangle(xs, ys, rs)
+
+$(shape_docstr("right-pointing triangles"))
+"""
+rtriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray) =
+    ltriangle(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, -1)
+
+
+
 end  # module Shape
