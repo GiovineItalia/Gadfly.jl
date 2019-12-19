@@ -18,6 +18,7 @@ using Base.Iterators
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, setfield!, discretize_make_ia, aes2str
+import Compose: cyclezip
 import KernelDensity
 # import Distributions: Uniform, Distribution, qqbuild
 
@@ -814,37 +815,35 @@ function apply_statistic(stat::TickStatistic,
     getfield(aes, Symbol(stat.axis, "tick")) == nothing || return
 
     in_group_var = Symbol(stat.axis, "group")
-    minval, maxval = nothing, nothing
+    minval, maxval = missing, missing
     in_vals = Any[]
     categorical = (:x in in_vars && Scale.iscategorical(scales, :x)) ||
                   (:y in in_vars && Scale.iscategorical(scales, :y))
 
+    dsize = nothing
+    stat.axis == "x" && (dsize = aes.xsize)
+    stat.axis == "y" && (dsize = aes.ysize)
+    size = aes.size
+    sizeflag = aes.size ≠ nothing && !(eltype(aes.size)<:Measure)
+
+              
     for var in in_vars
         categorical && !in(var,[:x,:y]) && continue
         vals = getfield(aes, var)
-        if vals != nothing && eltype(vals) != Function && !(eltype(vals) <: Measure)
-            if minval == nothing
-                minval = first(vals)
+        if vals != nothing && eltype(vals) != Function
+            vv = [vals; minval; maxval]
+            if in(var, [:x, :y])
+                sizeflag && (vv = vec([x+s*d for (x, d) in cyclezip(vals, size), s in [-1.0, 1.0]]))
+                dsize≠nothing && (vv= vcat(vv, vec([x+s*d for (x, d) in cyclezip(vals, dsize), s in [-1.0, 1.0]])))
             end
-            if maxval == nothing
-                maxval = first(vals)
-            end
-            T = promote_type(typeof(minval), typeof(maxval))
-            T = promote_type(T, eltype(vals))
-            minval = convert(T, minval)
-            maxval = convert(T, maxval)
 
-            if stat.axis == "x"
-                dsize = aes.xsize === nothing ? [nothing] : aes.xsize
-            elseif stat.axis == "y"
-                dsize = aes.ysize === nothing ? [nothing] : aes.ysize
+            isc = Gadfly.isconcrete.(vv)
+            minval, maxval = if isa(vv, Vector{Any})
+                isntM = [!(typeof(v) <: Measure) for v in vv]
+                 extrema(vv[isntM .& isc])
             else
-                dsize = [nothing]
+                extrema(vv[isc])
             end
-
-            size = aes.size === nothing ? [nothing] : aes.size
-
-            minval, maxval = apply_statistic_typed(minval, maxval, vals, size, dsize)
             push!(in_vals, vals)
         end
     end
@@ -974,43 +973,6 @@ function apply_statistic(stat::TickStatistic,
     end
 
     nothing
-end
-
-function apply_statistic_typed(minval::T, maxval::T, vals, size, dsize) where T
-#     for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
-    lensize  = length(size)
-    lendsize = length(dsize)
-    for (i, val) in enumerate(vals)
-        (ismissing(val) || !Gadfly.isconcrete(val) || !isfinite(val)) && continue
-
-        s = size[mod1(i, lensize)]
-        ds = dsize[mod1(i, lendsize)]
-
-        minval, maxval = minvalmaxval(minval, maxval, convert(T, val), s, ds)
-    end
-    minval, maxval
-end
-
-function minvalmaxval(minval::T, maxval::T, val, s, ds) where T
-    if val < minval || !isfinite(minval)
-        minval = val
-    end
-
-    if val > maxval || !isfinite(maxval)
-        maxval = val
-    end
-
-    if s != nothing && typeof(s) <: AbstractFloat
-        minval = min(minval, val - s)::T
-        maxval = max(maxval, val + s)::T
-    end
-
-    if ds != nothing
-        minval = min(minval, val - ds)::T
-        maxval = max(maxval, val + ds)::T
-    end
-
-    minval, maxval
 end
 
 

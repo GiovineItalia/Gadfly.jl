@@ -51,13 +51,13 @@ hstack(p1,p2,p3)
 Another feature is that a plot can be added to incrementally, using `push!`. 
 
 ```@setup 3
-using Compose, Gadfly
+using Gadfly
 set_default_plot_size(14cm, 8cm)
 ```
 
 ```@example 3
-p = plot(x=[0,6], y=[0,6], Geom.blank)
-push!(p, layer(x=[2,4], y=[2,4], size=[1.4142cx], color=[colorant"gold"]))
+p = plot()
+push!(p, layer(x=[2,4], y=[2,4], size=[1.4142], color=[colorant"gold"]))
 push!(p, Coord.cartesian(fixed=true))
 push!(p, Guide.title("My Awesome Plot"))
 ```

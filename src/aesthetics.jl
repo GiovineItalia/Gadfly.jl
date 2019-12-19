@@ -1,3 +1,5 @@
+using Measures
+
 const CategoricalAesthetic =
     Union{Nothing, IndirectArray}
 
@@ -295,6 +297,19 @@ function cat_aes_var!(xs::IndirectArray{T,1}, ys::IndirectArray{S,1}) where {T, 
     return append!(IndirectArray(xs.index, convert(Array{TS},xs.values)),
                    IndirectArray(ys.index, convert(Array{TS},ys.values)))
 end
+
+
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T<:Measure, U<:Measure} = [a..., b...]
+
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T<:Measure, U} =
+    isabsolute(T) ? [a..., b...] : b
+
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T, U<:Measure} =
+    isabsolute(U) ? a : [a..., b...]
+
+
+
+
 
 # Summarizing aesthetics
 
