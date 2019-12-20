@@ -3,7 +3,7 @@ os:
   - linux
 julia:
   - 1.0
-  - 1.2
+  - 1
   - nightly
 matrix:
   fast_finish: true
@@ -18,7 +18,7 @@ codecov: true
 jobs:
   include:
     - stage: "Documentation"
-      julia: 1.0
+      julia: 1
       os: linux
       # disable global before_script in order not to install Compose twice
       before_script:
