@@ -206,18 +206,20 @@ hstack(p3, p4)
 
 ## Discrete Scales
 
-| Aesthetic | Scale. | Guide. |
-|-----------|------------------|-------|
-| `x` | `x_discrete` | `xticks` |
-| `y` | `y_discrete` | `yticks` |
-| `color` | `color_discrete` | `colorkey` |
-| `shape` | `shape_discrete` | `shapekey` |
-| `size` | `size_discrete` | sizekey (tbd) |
-| `linestyle` | `linestyle_discrete` | linekey (tbd) |
-| `alpha`  | `alpha_discrete` | alphakey (tbd) |
-| `group`  | `group_discrete` |  |
-| `xgroup` | `xgroup` |  |
-| `ygroup` | `ygroup` |  |
+For some discrete scales, there is a corresponding palette in `Theme()`.
+
+| Aesthetic | Scale. | Guide. | Theme palette |
+|-----------|------------------|-------|-----------------|
+| `x` | `x_discrete` | `xticks` |  |
+| `y` | `y_discrete` | `yticks` |  |
+| `color` | `color_discrete` | `colorkey` |  |
+| `shape` | `shape_discrete` | `shapekey` | `point_shapes` |
+| `size` | `size_discrete` | sizekey (tbd) | (tbd) |
+| `linestyle` | `linestyle_discrete` | linekey (tbd) | `line_style`  |
+| `alpha`  | `alpha_discrete` | alphakey (tbd) | `alphas`  |
+| `group`  | `group_discrete` |  |  |
+| `xgroup` | `xgroup` |  |  |
+| `ygroup` | `ygroup` |  |  |
 
 e.g. `Scale.shape_discrete(labels= , levels= , order= )`
 
@@ -230,6 +232,22 @@ p6 = plot(mtcars, x=:Cyl, color=:Cyl, Geom.histogram,
     Scale.x_discrete(labels=i->labeldict[i], levels=[8,6,4]), 
     Scale.color_discrete(levels=[8,6,4]) )
 hstack(p5, p6)
+```
+
+For discrete scales with a Theme palette, the order of `levels` and the order of the Theme palette match.
+
+```@example 1
+set_default_plot_size(14cm, 8cm) # hide
+x, y = 0.55*rand(4), 0.55*rand(4)
+plot( Coord.cartesian(xmin=0, ymin=0, xmax=1.0, ymax=1.0),
+    layer(x=x, y=y, shape=["A"], alpha=["day","day","day","night"]),
+    layer(x=1.0.-y[1:3], y=1.0.-x[1:3], shape=["B", "C","C"], alpha=["night"]),
+    Scale.shape_discrete(levels=["A","B","C"]),
+    Scale.alpha_discrete(levels=["day","night"]),
+    Theme(discrete_highlight_color=identity, point_size=12pt,
+   point_shapes=[Shape.circle, Shape.star1, Shape.star2], alphas=[0, 1.0],
+         default_color="midnightblue" )
+)
 ```
 
 

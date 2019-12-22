@@ -162,6 +162,26 @@ p2 = plot(dataset("datasets", "CO2"), x=:Conc, y=:Uptake,
 hstack(p1,p2)
 ```
 
+## [`Scale.shape_discrete`](@ref)
+
+```@example
+using Gadfly, RDatasets, Statistics
+set_default_plot_size(14cm, 8cm)
+
+tips = dataset("reshape2", "tips")
+tipsm = by(tips, [:Day, :Sex], :TotalBill=>mean, :Tip=>mean)
+
+ plot(tipsm, Geom.point,
+    x=:TotalBill_mean, y=:Tip_mean, color=:Sex, shape=:Day,
+    layer(x=:TotalBill_mean, y=:Tip_mean, group=:Day, Geom.line,
+        style(default_color=colorant"gray")),
+    Scale.shape_discrete(levels=["Thur","Fri","Sat","Sun"]),
+    Guide.shapekey(pos=[14.5, 3.8]), Guide.colorkey(pos=[16, 3.87]),
+    Theme(discrete_highlight_color=identity, alphas=[0.1],
+        point_size=8pt, key_swatch_color="slate gray")
+)
+```
+
 
 ## [`Scale.x_continuous`](@ref), [`Scale.y_continuous`](@ref)
 
