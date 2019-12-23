@@ -18,6 +18,7 @@ import Base: +, -, /, *,
              copy, push!, show, getindex, cat,
              show, isfinite, display
 import Distributions: Distribution
+import REPL
 
 export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, Shape, render, plot,
        style, layer, spy, set_default_plot_size, set_default_plot_format, prepare_display
@@ -59,7 +60,8 @@ function __init__()
     else
         push_theme(:default)
     end
-    pushdisplay(GadflyDisplay())
+
+    insert!(Base.Multimedia.displays, findlast(x->(x isa TextDisplay || x isa REPL.REPLDisplay), Base.Multimedia.displays)+1, GadflyDisplay())
 
     @require DataFrames="a93c6f00-e57d-5684-b7b6-d8193f3e46c0" link_dataframes()
     @require TerminalExtensions="d3a6a179-465e-5219-bd3e-0137f7fd17c7" link_terminalextensions()
