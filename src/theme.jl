@@ -76,10 +76,17 @@ $(FIELDS)
 
     "Size of points in the point, boxplot, and beeswarm geometries.  (Measure)",
     point_size,            Measure,         0.9mm
+
     "Minimum size of points in the point geometry.  (Measure)",
-    point_size_min,        Measure,         0.45mm
+    point_size_min,        Measure,         0.45mm,
+    "point_size_{min,max} to be deprecated. Instead try the new `Scale.size_discrete2` and/or with `style(discrete_sizemap)`"
+
     "Maximum size of points in the point geometry.  (Measure)",
-    point_size_max,        Measure,         1.8mm
+    point_size_max,        Measure,         1.8mm,
+    "point_size_{min,max} to be deprecated. Instead try the new `Scale.size_discrete2` and/or with `style(discrete_sizemap)`"
+
+    "The function `f` in  [`Scale.size_discrete2`](@ref).",
+    discrete_sizemap,      Function,        Scale.default_discrete_sizes
 
     "Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline, ltriangle, rtriangle)",
     point_shapes,          Vector{Function},  [Shape.circle, Shape.square, Shape.diamond, Shape.cross, Shape.xcross,

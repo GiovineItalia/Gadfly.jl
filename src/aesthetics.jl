@@ -63,7 +63,9 @@ const NumericalOrCategoricalAesthetic =
     color_key_continuous, Maybe(Bool)
     color_function,       Maybe(Function)
     titles,               Maybe(Dict{Symbol, AbstractString})
-    shape_key_title,    Maybe(AbstractString)
+    shape_key_title,      Maybe(AbstractString)
+    size_key_title,       Maybe(AbstractString)
+    size_key_vals,        Maybe(AbstractDict)
 
     # mark some ticks as initially invisible
     xtickvisible,         Maybe(Vector{Bool})
@@ -88,6 +90,7 @@ const NumericalOrCategoricalAesthetic =
     xgroup_label, Function, showoff
     ygroup_label, Function, showoff
     shape_label, Function, showoff
+    size_label,   Function, showoff
 
     # pseudo-aesthetics
     pad_categorical_x, Union{Missing,Bool}, missing

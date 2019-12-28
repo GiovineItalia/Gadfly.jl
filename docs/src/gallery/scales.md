@@ -182,6 +182,26 @@ tipsm = by(tips, [:Day, :Sex], :TotalBill=>mean, :Tip=>mean)
 )
 ```
 
+## [`Scale.size_discrete2`](@ref)
+
+```@example
+using Compose, Gadfly, RDatasets
+set_default_plot_size(14cm, 8cm)
+
+Titanic = dataset("datasets", "Titanic")
+Class =  by(Titanic, :Class, :Freq=>sum)
+Titanic = join(Titanic[Titanic.Survived.=="Yes",:], Class, on=:Class)
+Titanic.prcnt = 100*Titanic.Freq./Titanic.Freq_sum
+sizemap = n->range(4pt, 12pt, length=n)
+
+plot(Titanic, Scale.x_log10,  Scale.y_log10,
+    x=:Freq, y=:prcnt, size=:Class, color=:Age, shape=:Sex,    
+    Scale.size_discrete2(sizemap, levels=["1st","2nd","3rd","Crew"]),
+    Guide.colorkey(pos=[0.1, -0.3h]), Guide.shapekey(pos=[0.5, -0.3h]),
+    Guide.ylabel("% of Passenger Class"),
+ Theme(discrete_highlight_color=identity, alphas=[0.1], key_swatch_color="grey")
+)
+```
 
 ## [`Scale.x_continuous`](@ref), [`Scale.y_continuous`](@ref)
 

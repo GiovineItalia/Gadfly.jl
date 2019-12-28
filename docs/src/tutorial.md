@@ -214,7 +214,8 @@ For some discrete scales, there is a corresponding palette in `Theme()`.
 | `y` | `y_discrete` | `yticks` |  |
 | `color` | `color_discrete` | `colorkey` |  |
 | `shape` | `shape_discrete` | `shapekey` | `point_shapes` |
-| `size` | `size_discrete` | sizekey (tbd) | (tbd) |
+| `size` | `size_discrete` | sizekey (tbd) | `point_size_min`, `point_size_max` |
+|         | `size_discrete2`|               |  `discrete_sizemap` |
 | `linestyle` | `linestyle_discrete` | linekey (tbd) | `line_style`  |
 | `alpha`  | `alpha_discrete` | alphakey (tbd) | `alphas`  |
 | `group`  | `group_discrete` |  |  |
