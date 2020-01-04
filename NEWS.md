@@ -3,20 +3,21 @@ This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
 # Version 1.x
+
+ * Add `Scale.size_discrete2` (#1376)
  * Add `Geom.blank` (#1345)
  * Support DataFrames.jl 0.19 changes in indexing (#1318)
  * Add `Geom.hband` and `Geom.vband` geometries (#1264)
  * Allow elements of type `Measure` to pass through `coord.jl` and `statistics.jl` (#1264)
 
 
-
 # Version 1.1.0
+ * Support AbstractVectors everywhere (e.g. `Guide.xticks(ticks=1:10)`) (#1295)
  * Add `alpha` aesthetic, `Scale.alpha_continuous` and `Scale.alpha_discrete` (#1252)
  * Add `limits=(min= , max= )` to `Stat.histogram` (#1249)
  * Add dodged boxplots (#1246)
  * Add `Stat.dodge` (#1240)
  * `Stat.smooth(method=:lm)` confidence bands (#1231)
- * Support AbstractVectors everywhere (e.g. `Guide.xticks(ticks=1:10)`) (#1293)
 
 # Version 0.9.0
  * conditionally depend on DataFrames (#1204)

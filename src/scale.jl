@@ -771,4 +771,8 @@ shape_identity() = IdentityScale(:shape)
 """
 size_identity() = IdentityScale(:size)
 
+
+include("scale/scales.jl")
+
+
 end # module Scale

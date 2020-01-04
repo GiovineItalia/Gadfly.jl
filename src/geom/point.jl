@@ -53,26 +53,28 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     default_aes.alpha = [theme.alphas[1]]
     aes = inherit(aes, default_aes)
 
-    if eltype(aes.size) <: Int
-      size_min, size_max = extrema(aes.size)
-      size_range = size_max - size_min
-      point_size_range = theme.point_size_max - theme.point_size_min
-      interpolate_size(x) = theme.point_size_min + (x-size_min) / size_range * point_size_range
+    # This remains to preserve the behaviour of Scale.size_discrete (to be replaced)
+    aes_size = if eltype(aes.size) <: Int
+        size_min, size_max = extrema(aes.size)
+        size_range = size_max - size_min
+        point_size_range = theme.point_size_max - theme.point_size_min
+        theme.point_size_min .+ ((aes.size .- size_min) ./ size_range .* point_size_range)
+    else
+        aes.size
     end
 
     aes_alpha = eltype(aes.alpha) <: Int ? theme.alphas[aes.alpha] : aes.alpha
 
     ctx = context()
 
-    for (x, y, color, size, shape, alpha) in Compose.cyclezip(aes.x, aes.y, aes.color, aes.size, aes.shape, aes_alpha)
+    for (x, y, color, size, shape, alpha) in Compose.cyclezip(aes.x, aes.y, aes.color, aes_size, aes.shape, aes_alpha)
         shapefun = typeof(shape) <: Function ? shape : theme.point_shapes[shape]
-        sizeval = typeof(size) <: Int ? interpolate_size(size) : size
         strokecolor = aes.color_key_continuous != nothing && aes.color_key_continuous ?
                     theme.continuous_highlight_color(color) :
                     theme.discrete_highlight_color(color)
         class = svg_color_class_from_label(aes.color_label([color])[1])
         compose!(ctx, (context(),
-              (context(), shapefun([x], [y], [sizeval]), svgclass("marker")),
+              (context(), shapefun([x], [y], [size]), svgclass("marker")),
               fill(color), stroke(strokecolor), fillopacity(alpha), 
               svgclass(class)))
     end
