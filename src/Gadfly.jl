@@ -661,7 +661,7 @@ function render_prepare(plot::Plot)
                                     datas..., subplot_datas...)
 
     # set defaults for key titles
-    keyvars = [:color, :shape]
+    keyvars = [:color, :shape, :size]
     for (i, layer) in enumerate(plot.layers)
         for kv in keyvars
             fflag = (getfield(layer_aess[i], Symbol(kv,"_key_title")) == nothing) && haskey(layer.mapping, kv) && !isa(layer.mapping[kv], AbstractArray)
@@ -702,7 +702,7 @@ function render_prepare(plot::Plot)
     Stat.apply_statistics(statistics, scales, coord, plot_aes)
 
     # Add some default guides determined by defined aesthetics
-    keytypes = [Guide.ColorKey, Guide.ShapeKey]
+    keytypes = [Guide.ColorKey, Guide.ShapeKey, Guide.SizeKey]
     supress_keys = false
     for layer in plot.layers
         if isa(layer.geom, Geom.SubplotGeometry) && any(haskey.((layer.geom.guides,), keytypes))
