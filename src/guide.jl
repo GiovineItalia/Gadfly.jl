@@ -1035,7 +1035,7 @@ struct Title <: Gadfly.GuideElement
 end
 
 """
-    Geom.title(title)
+    Guide.title(title)
 
 Set the plot title.
 """
