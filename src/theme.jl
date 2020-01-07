@@ -208,8 +208,11 @@ $(FIELDS)
     "Shape used in keys for swatches (Function as in `point_shapes`)",
     key_swatch_shape,       Function,        Shape.square
 
-    "Default color used in keys for swatches.  Currently works for `Guide.shapekey` (Color)",
+    "Default color used in keys for swatches.  Currently works for `Guide.shapekey` and `Guide.sizekey` (Color)",
     key_swatch_color,       ColorOrNothing,        nothing
+
+    "Size of key swatches, will override `Theme(point_size=)`.  Currently works for `Guide.shapekey`  (Measure)",
+    key_swatch_size,       Union{Measure,Nothing},        nothing
 
     "Where key should be placed relative to the plot panel. One of `:left`, `:right`, `:top`, `:bottom`, `:inside` or `:none`. Setting to `:none` disables the key. Setting to `:inside` places the key in the lower right quadrant of the plot. (Symbol)",
     key_position,          Symbol,          :right

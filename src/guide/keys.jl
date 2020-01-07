@@ -72,7 +72,7 @@ function render_discrete_key(labels::Vector{String}, title_ctx::Context, title_w
     shape1 = shapes[1]
     shapes = (shape1==nothing) ? fill(theme.key_swatch_shape, n) : theme.point_shapes[shapes]
     (colors[1]==nothing) && (colors = fill((theme.key_swatch_color==nothing) ? theme.default_color : theme.key_swatch_color, n))
-    (sizes[1]==nothing) && (sizes = fill(theme.point_size, n))
+    (sizes[1]==nothing) && (sizes = fill((theme.key_swatch_size==nothing) ? theme.point_size : theme.key_swatch_size, n))
 
     # only consider layouts with a reasonable number of columns
     maxcols = theme.key_max_columns < 1 ? 1 : theme.key_max_columns
@@ -132,7 +132,7 @@ function render_discrete_key(labels::Vector{String}, title_ctx::Context, title_w
                 swatches_shapes = [f(x, [y-0.5].*cy, [s]) for (y,(f,s)) in enumerate(zip(shps, szs))]
                 sw1 = [(context(), s, fill(c), fillopacity(theme.alphas[1]), stroke(theme.discrete_highlight_color(c)))
                      for (s,c) in zip(swatches_shapes, clrs)]
-                swatches = compose!(context(), sw1...)
+                swatches = compose!(context(), linewidth(theme.highlight_width), sw1...)
 
                 swatch_labels = compose!(context(),
                 text([entry_height+xpad], [0.5:nrows;]*cy, labels[m+1:m+nrows], [hleft], [vcenter]),
