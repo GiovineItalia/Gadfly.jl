@@ -4,6 +4,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 1.x
 
+ * Add `Guide.sizekey` (#1379)
  * Add `Scale.size_discrete2` (#1376)
  * Add `Geom.blank` (#1345)
  * Support DataFrames.jl 0.19 changes in indexing (#1318)

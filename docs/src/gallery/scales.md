@@ -178,7 +178,7 @@ tipsm = by(tips, [:Day, :Sex], :TotalBill=>mean, :Tip=>mean)
     Scale.shape_discrete(levels=["Thur","Fri","Sat","Sun"]),
     Guide.shapekey(pos=[14.5, 3.8]), Guide.colorkey(pos=[16, 3.87]),
     Theme(discrete_highlight_color=identity, alphas=[0.1],
-        point_size=8pt, key_swatch_color="slate gray")
+        point_size=5pt, key_swatch_color="slate gray")
 )
 ```
 
@@ -197,7 +197,7 @@ sizemap = n->range(4pt, 12pt, length=n)
 plot(Titanic, Scale.x_log10,  Scale.y_log10,
     x=:Freq, y=:prcnt, size=:Class, color=:Age, shape=:Sex,    
     Scale.size_discrete2(sizemap, levels=["1st","2nd","3rd","Crew"]),
-    Guide.colorkey(pos=[0.1, -0.3h]), Guide.shapekey(pos=[0.5, -0.3h]),
+    Guide.colorkey(pos=[0.1, -0.3h]), Guide.shapekey(pos=[0.5, -0.31h]),
     Guide.ylabel("% of Passenger Class"),
  Theme(discrete_highlight_color=identity, alphas=[0.1], key_swatch_color="grey")
 )
