@@ -18,7 +18,7 @@ function meltdata(U::AbstractDataFrame, colgroups::Vector{Col.GroupedColumn})
     vnames = Symbol[]
     colmap = Dict{Any, Int}()
 
-    eltypd = Dict(k=>v for (k,v) in zip(names(U), eltypes(U)))
+    eltypd = Dict(k=>v for (k,v) in zip(names(U), eltype.(eachcol(U))))
     # allocate vectors for grouped columns
     for (j, (colgroup, colidx)) in enumerate(zip(colgroups, colidxs))
         eltyp = promote_type(getindex.([eltypd], colidx)...)
