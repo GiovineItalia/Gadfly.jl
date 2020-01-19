@@ -88,6 +88,9 @@ $(FIELDS)
     "The function `f` in  [`Scale.size_discrete2`](@ref).",
     discrete_sizemap,      Function,        Scale.default_discrete_sizes
 
+    "The function `f` in  [`Scale.size_radius`](@ref) and [`Scale.size_area`](@ref).",
+    continuous_sizemap,      Function,        Scale.default_continuous_sizes
+
     "Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline, ltriangle, rtriangle)",
     point_shapes,          Vector{Function},  [Shape.circle, Shape.square, Shape.diamond, Shape.cross, Shape.xcross,
                                                Shape.utriangle, Shape.dtriangle, Shape.star1, Shape.star2,

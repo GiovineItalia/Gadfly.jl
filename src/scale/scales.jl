@@ -67,3 +67,98 @@ function Scale.apply_scale(scale::DiscreteSizeScale, aess::Vector{Gadfly.Aesthet
 end
 
 
+
+area_transform = ContinuousScaleTransform(a->sqrt(a/π), r->π*r*r, identity_formatter)
+
+struct ContinuousSizeScale <: Gadfly.ScaleElement
+    # A function of the form f(p) where 0 ≤ p ≤ 1, that returns a Measure.
+    f::Function
+    trans::ContinuousScaleTransform
+    minvalue::Maybe(Compose.MeasureOrNumber)
+    maxvalue::Maybe(Compose.MeasureOrNumber)
+    format::Union{Nothing, Symbol}
+end
+
+Scale.element_aesthetics(scale::ContinuousSizeScale) = [:size]
+
+default_continuous_sizes(p::Float64; min=0mm, max=2mm) = min + p*(max-min)
+
+
+"""
+    Scale.size_radius(f=default_continuous_sizes; minvalue=0.0, maxvalue=nothing)
+
+A scale for continuous sizes. Values in the `size` aesthetic are mapped either to: 
+- x-axis units (if `maxvalue=nothing`), or
+-  `Measure` units (from Measures.jl). 
+If `maxvalue` is specified, the continuous sizes are converted to a proportion
+(between `minvalue` and `maxvalue`), and then mapped to absolute sizes using the function `f(p)` where `0≤p≤1`.
+"""
+size_radius(f::Function=Gadfly.current_theme().continuous_sizemap; minvalue=0.0, maxvalue=nothing) =
+     ContinuousSizeScale(f, identity_transform, minvalue, maxvalue, nothing)
+
+
+
+"""
+    Scale.size_area(f=default_continuous_sizes; minvalue=0.0, maxvalue=nothing)
+
+Similar to [`Scale.size_radius`](@ref), except that the values in the `size` aesthetic are
+scaled to area rather than radius, before mapping to x-axis units or `Measure` units.    
+"""
+function size_area(f::Function=Gadfly.current_theme().continuous_sizemap; minvalue=0.0, maxvalue=nothing)
+    (isa(minvalue, Measure) || isa(maxvalue, Measure)) &&
+        throw(ArgumentError("Scale.size_area maps the size variable to absolute size via the function `f`. See `?Scale.size_radius` for more info."))
+     return ContinuousSizeScale(f, area_transform, minvalue, maxvalue, nothing)
+end
+
+
+
+function apply_scale(scale::ContinuousSizeScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+
+    sdata = reduce(vcat, [d.size for d in datas if d.size≠nothing])
+
+    showvals = length(sdata)>1
+    dmax = maximum(skipmissing(sdata))
+    
+    strict_span = false
+    (smin, smax) =
+        if scale.maxvalue===nothing
+            promote(scale.minvalue, dmax)
+        else
+            strict_span = true
+            promote(scale.minvalue, scale.maxvalue)
+        end
+    ticks = Gadfly.optimize_ticks(smin, smax, strict_span=strict_span)[1]
+    Δ = scale.trans.f(ticks[end])-scale.trans.f(ticks[1])
+    labels = scale.trans.label(ticks)
+
+# Transform ticks e.g. to areas/porportions/sizes
+    keyvals = if scale.maxvalue===nothing
+            showvals = false
+            scale.trans.f.(ticks.-smin)
+        else
+            p = (scale.trans.f.(ticks) .- scale.trans.f(ticks[1]))./Δ
+            scale.f.(p)
+        end
+    
+    labeldict = Dict(k=>v for (k,v) in zip(keyvals, labels))
+    key_vals= OrderedDict(s=>i for (i,s) in enumerate(keyvals))
+    labeler(xs) = [labeldict[x] for x in xs]
+    
+    for (aes, data) in zip(aess, datas)
+            data.size===nothing && continue
+
+            ds = if scale.maxvalue === nothing
+                    scale.trans.f.(data.size.-smin)
+                else
+                    p = (scale.trans.f.(data.size).-scale.trans.f(ticks[1]))./Δ
+                    scale.f.(p)
+                end
+        aes.size = ds
+        showvals && (aes.size_key_vals = key_vals)
+        aes.size_label = labeler
+    end
+end
+
+
+
+
