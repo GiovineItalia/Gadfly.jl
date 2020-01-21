@@ -159,8 +159,8 @@ Ah, a scientific discovery: Setosa has short but wide sepals!
 
 Color scales in Gadfly by default are produced from perceptually uniform
 colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and
-converts arbitrarily between these. Of course, CSS/X11 named colors work too:
-"old lace", anyone?
+converts arbitrarily between these. Color values can also be specified by most names common to CSS or X11, e.g. `"oldlace"` or `"aliceblue"`. The [full list of valid color names](http://juliagraphics.github.io/Colors.jl/v0.9/namedcolors/) is defined in the [Colors.jl library](http://juliagraphics.github.io/Colors.jl/v0.9/).
+
 
 All aesthetics (e.g. `x`, `y`, `color`) have a Scale e.g. `Scale.x_continuous()` and some have a Guide e.g. `Guide.xticks()`.  [Scales](@ref) can be continuous or discrete.
 
