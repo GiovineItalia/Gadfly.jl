@@ -182,6 +182,28 @@ tipsm = by(tips, [:Day, :Sex], :TotalBill=>mean, :Tip=>mean)
 )
 ```
 
+## [`Scale.size_radius`](@ref), [`Scale.size_area`](@ref)
+
+```@example
+using Gadfly, RDatasets
+set_default_plot_size(21cm, 8cm)
+aq = dropmissing(dataset("datasets","airquality"))
+aq = filter(x-> 7≤x.Month≤9, aq)
+
+sizemap(p::Float64; min=0.75mm, max=3mm) = min + p*(max-min)
+labels = ["July", "August", "September"]
+coord = Coord.cartesian(xmin=0, xmax=32, ymin=0, ymax=160)
+plot(aq, x=:Day, y=:Ozone, color=:Month, size=:Wind,
+    coord, Scale.color_discrete,
+    Guide.colorkey(title="", labels=labels, pos=[2,240]),
+    Scale.size_area(sizemap, minvalue=4, maxvalue=16), 
+    Guide.sizekey(title="Wind (mph)"), Guide.xlabel("Day of Month"),
+    Theme(key_swatch_shape=Shape.circle, key_swatch_color="gray",
+     discrete_highlight_color=identity, alphas=[0.5])
+)
+```
+
+
 ## [`Scale.size_discrete2`](@ref)
 
 ```@example

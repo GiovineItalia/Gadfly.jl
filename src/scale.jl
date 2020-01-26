@@ -11,7 +11,7 @@ using Printf
 using Base.Iterators
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia,
-    aes2str, valid_aesthetics
+    aes2str, valid_aesthetics, Maybe
 import Distributions: Distribution
 
 include("color_misc.jl")
@@ -159,6 +159,8 @@ end
 """
     size_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,
                      format=nothing, minticks=2, maxticks=10, scalable=true)]
+
+To be updated in Gadfly 2.0. Now try out the new [`Scale.size_radius`](@ref) and [`Scale.size_area`](@ref).
 """
 const size_continuous = continuous_scale_partial([:size], identity_transform)
 

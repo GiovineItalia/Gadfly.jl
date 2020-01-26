@@ -162,17 +162,18 @@ colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and
 converts arbitrarily between these. Color values can also be specified by most names common to CSS or X11, e.g. `"oldlace"` or `"aliceblue"`. The [full list of valid color names](http://juliagraphics.github.io/Colors.jl/stable/namedcolors/) is defined in the [Colors.jl library](http://juliagraphics.github.io/Colors.jl/stable/).
 
 
-All aesthetics (e.g. `x`, `y`, `color`) have a Scale e.g. `Scale.x_continuous()` and some have a Guide e.g. `Guide.xticks()`.  [Scales](@ref) can be continuous or discrete.
+All aesthetics (e.g. `x`, `y`, `color`) have a Scale e.g. `Scale.x_continuous()` and some have a Guide e.g. `Guide.xticks()`.  [Scales](@ref) can be continuous or discrete. Some Scales also have a corresponding palette in `Theme()`.
 
 ## Continuous Scales
 
-| Aesthetic | Scale. | Guide. |
-|-----------|------------------|-------|
-| `x` | `x_continuous` | `xticks` |
-| `y` | `y_continuous` | `yticks` |
-| `color` | `color_continuous` | `colorkey` |
-| `size`  | `size_continuous`  | sizekey (tbd)  |
-| `alpha` | `alpha_continuous` | alphakey (tbd) |
+| Aesthetic | Scale. | Guide. | Theme palette |
+|-----------|------------------|-------|----------|
+| `x` | `x_continuous` | `xticks` |           |
+| `y` | `y_continuous` | `yticks` |           |
+| `color` | `color_continuous` | `colorkey` |  (tbd)   |
+| `size`  | `size_continuous`  | ---  | `point_size_min`, `point_size_max` |
+|         | `size_radius`      | `sizekey` | `continuous_sizemap` |          
+| `alpha` | `alpha_continuous` | alphakey (tbd) |   |
 
 e.g. `Scale.x_continuous(format= , minvalue= , maxvalue= )`\
 `format` can be: `:plain`, `:scientific`, `:engineering`, or `:auto`.
@@ -188,7 +189,8 @@ p2 = plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label,
 hstack(p1, p2)
 ```
 
-Scale transformations include: `_sqrt`, `_log`, `_log2`, `_log10`, `_asinh`.  
+Scale transformations include: `_sqrt`, `_log`, `_log2`, `_log10`, `_asinh` for the `x`, `y`, `color` aesthetics,
+and `_area` for the `size` aesthetic.
  
 ```@example 1
 using Printf
@@ -206,13 +208,11 @@ hstack(p3, p4)
 
 ## Discrete Scales
 
-For some discrete scales, there is a corresponding palette in `Theme()`.
-
 | Aesthetic | Scale. | Guide. | Theme palette |
 |-----------|------------------|-------|-----------------|
 | `x` | `x_discrete` | `xticks` |  |
 | `y` | `y_discrete` | `yticks` |  |
-| `color` | `color_discrete` | `colorkey` |  |
+| `color` | `color_discrete` | `colorkey` | (tbd) |
 | `shape` | `shape_discrete` | `shapekey` | `point_shapes` |
 | `size` | `size_discrete` | --- | `point_size_min`, `point_size_max` |
 |         | `size_discrete2`| `sizekey` |  `discrete_sizemap` |
