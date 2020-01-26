@@ -83,7 +83,7 @@ title(hstack(p1,p2), "My creative title")
 
 ## Layers
 
-Draw multiple layers onto the same plot by inputing `Layer` objects to `plot`.
+_Introduction:_ Draw multiple layers onto the same plot by inputing `Layer` objects to `plot`.
 
 ```@setup layer
 using Gadfly, RDatasets, Distributions
@@ -123,10 +123,19 @@ plot(iris,
                             [Gadfly.current_theme().default_color,"red"]))
 ```
 
-Note that while `layer` can input Geometries, Statistics, and Themes, it can
-not input Scales, Coordinates, or Guides.
+_Layer inputs_: `layer()` can input Geometries, Statistics, and Themes, but
+not Scales, Coordinates, or Guides.
 
-The sequence in which layers are drawn, whether they overlap or not, can be
+There are two rules about layers and Statistics:
+1. Within a layer, all Geoms will use the layer `Stat` (if it's specified) e.g. `layer(Stat.smooth(method=:lm), Geom.line, Geom.ribbon)`
+2. For Geoms outside of layers, Gadfly creates a new layer for each Geom, and each Stat is added to the newest layer e.g.
+
+        xdata = range(-9, 9, length=30)
+        plot(x=xdata, y=rand(30), Geom.point, Stat.binmean(n=5),
+         Geom.line, Stat.step)
+
+
+_Layer order_: the sequence in which layers are drawn, whether they overlap or not, can be
 controlled with the `order` keyword.  Layers with lower order numbers are
 rendered first.  If not specified, the default order for a layer is 0.  Layers
 which have the same order number are drawn in the reverse order in which they
