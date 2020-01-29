@@ -830,7 +830,7 @@ function apply_statistic(stat::TickStatistic,
     for var in in_vars
         categorical && !in(var,[:x,:y]) && continue
         vals = getfield(aes, var)
-        if vals != nothing && eltype(vals) != Function
+        if vals≠nothing && !isempty(vals) && eltype(vals)≠Function
             vv = [vals; minval; maxval]
             if in(var, [:x, :y])
                 sizeflag && (vv = vec([x+s*d for (x, d) in cyclezip(vals, size), s in [-1.0, 1.0]]))
@@ -848,14 +848,14 @@ function apply_statistic(stat::TickStatistic,
         end
     end
 
-    isempty(in_vals) && return
+    isempty(in_vals) && stat.ticks==:auto && return
 
     in_vals = Iterators.flatten(in_vals)
 
     # consider forced tick marks
     if stat.ticks != :auto
-        minval = min(minval, minimum(stat.ticks))
-        maxval = max(maxval, maximum(stat.ticks))
+        minval = minimum(skipmissing([minval;stat.ticks]))
+        maxval = maximum(skipmissing([maxval;stat.ticks]))
     end
 
     # TODO: handle the outliers aesthetic
