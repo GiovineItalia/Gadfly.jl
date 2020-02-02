@@ -1,11 +1,11 @@
-
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
-# Version 1.x
+# Version 1.2.0
 
  * Add `Scale.size_radius` and `Scale.size_area` (#1386)
  * Add `Guide.sizekey` (#1379)
+ * Add `Shape.{l,r}triangle` (#1365)
  * Add `Scale.size_discrete2` (#1376)
  * Add `Geom.blank` (#1345)
  * Support DataFrames.jl 0.19 changes in indexing (#1318)
