@@ -60,6 +60,27 @@ p2 = plot(df, y=:Discipline, x=:Salary_mean, color=:Rank,
 hstack(p1, p2)
 ```
 
+## [`Stat.func`](@ref)
+
+```@example
+using DataFrames, Gadfly
+set_default_plot_size(14cm, 8cm)
+sigmoid(x) = 1 ./ (1 .+ exp.(-x))
+npoints = 30
+gshift, x = rand([0,2], npoints), range(-9, 9, length=npoints)
+y, ye = sigmoid(x+gshift), 0.2*rand(npoints)
+df = DataFrame(x=x, y=y, ymin=y-ye, ymax=y+ye, g=gshift)
+
+plot(y=[sigmoid, x->sigmoid(x+2)], xmin=[-10], xmax=[10],
+    Geom.line, Stat.func(100), color=[0,2], Guide.xlabel("x"),
+    layer(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:g,
+        Geom.point, Geom.errorbar, Stat.x_jitter(range=1)), 
+    Scale.color_discrete_manual("deepskyblue","yellow3", levels=[0,2]),
+    Guide.colorkey(title="Function", labels=["Sigmoid(x)", "Sigmoid(x+2)"]),
+    Theme(errorbar_cap_length=0mm, key_position=:inside)
+)
+```
+
 ## [`Stat.qq`](@ref)
 
 ```@example
