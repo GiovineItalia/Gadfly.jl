@@ -155,5 +155,24 @@ nothing # hide
 When given no arguments `Row.index`, `Col.index`, and `Col.value` assume all
 columns are being concatenated.
 
-Plotting arrays of vectors works in much the same way as matrices, but
+And here's an example that illustrates two more points:
+1. Adding a variable (`date1`) that isn't in the matrix `X`
+2. Adding a discrete color scale that repeats (`color_rep`)
+
+```@example 2
+using Dates
+palette = Scale.default_discrete_colors(11)
+color_rep(nc::Int) = palette[mod1.(1:nc, length(palette))]
+n = 14
+X = exp.(-0.05*[1:50;]) * permutedims([1:n;])
+date1 = collect(Date(2000):Month(1):Date(2004,2,1)) 
+ci = Col.index(1:n...)
+
+plot(X, x=repeat(date1, inner=n), 
+    y=Col.value(1:n...), color=ci, linestyle=ci, 
+    Geom.line, Scale.color_discrete(color_rep)
+)
+```
+
+Lastly, plotting arrays of vectors works in much the same way as matrices, but
 constituent vectors may be of varying lengths.
