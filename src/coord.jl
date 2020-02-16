@@ -91,7 +91,7 @@ function first_concrete_aesthetic_value(aess::Vector{Gadfly.Aesthetics}, vars::V
         end
     end
 
-    return nothing
+    return missing
 end
 
 
@@ -156,7 +156,7 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
 
     xmin = xmax = first_concrete_aesthetic_value(aess, coord.xvars)
 
-    if xmin != nothing
+    if !ismissing(xmin)
         for var in coord.xvars
             for aes in aess
                 vals = getfield(aes, var)
@@ -172,7 +172,7 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     end
 
     ymin = ymax = first_concrete_aesthetic_value(aess, coord.yvars)
-    if ymin != nothing
+    if !ismissing(ymin)
         for var in coord.yvars
             for aes in aess
                 vals = getfield(aes, var)
@@ -216,10 +216,10 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
         end
     end
 
-    xmax = xviewmax === nothing ? xmax : max(xmax, xviewmax)
-    xmin = xviewmin === nothing ? xmin : min(xmin, xviewmin)
-    ymax = yviewmax === nothing ? ymax : max(ymax, yviewmax)
-    ymin = yviewmin === nothing ? ymin : min(ymin, yviewmin)
+    xmax = xviewmax === nothing ? xmax : maximum(skipmissing([xmax; xviewmax]))
+    xmin = xviewmin === nothing ? xmin : minimum(skipmissing([xmin; xviewmin]))
+    ymax = yviewmax === nothing ? ymax : maximum(skipmissing([ymax; yviewmax]))
+    ymin = yviewmin === nothing ? ymin : minimum(skipmissing([ymin; yviewmin]))
 
     # Hard limits set in Coord should override everything else
     xmin = coord.xmin === nothing ? xmin : coord.xmin
@@ -227,12 +227,12 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     ymin = coord.ymin === nothing ? ymin : coord.ymin
     ymax = coord.ymax === nothing ? ymax : coord.ymax
 
-    if xmin === nothing || isa(xmin, Measure) || !isfinite(xmin)
+    if ismissing(xmin) || isa(xmin, Measure) || !isfinite(xmin)
         xmin = 0.0
         xmax = 1.0
     end
 
-    if ymin === nothing || isa(ymin, Measure) || !isfinite(ymin)
+    if ismissing(ymin) || isa(ymin, Measure) || !isfinite(ymin)
         ymin = 0.0
         ymax = 1.0
     end
