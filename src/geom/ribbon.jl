@@ -32,7 +32,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     aes_x, aes_ymin, aes_ymax, aes_color, aes_linestyle, aes_alpha =
          concretize(aes.x, aes.ymin, aes.ymax, aes.color, aes.linestyle, aes.alpha)
     XT, CT, LST, AT = eltype(aes_x), eltype(aes_color), eltype(aes_linestyle), eltype(aes_alpha)
-    YT = Float64
+    YT = eltype(aes_ymin)
     groups = collect((Tuple{CT, LST, AT}), zip(aes_color, aes_linestyle, aes_alpha))
     ug = unique(groups)
     
@@ -56,7 +56,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
 
     kys = keys(max_points)
     polys = [collect(Tuple{XT, YT}, Iterators.flatten((min_points[k], max_points[k]))) for k in kys]
-    lines = [collect(Tuple{XT, YT}, Iterators.flatten((min_points[k], [(last(min_points[k])[1], NaN)], max_points[k]))) for k in kys]
+    lines = [collect(Tuple{XT, YT}, Iterators.flatten((min_points[k], [(last(min_points[k])[1], oneunit(YT)*NaN)], max_points[k]))) for k in kys]
 
     n = length(kys)
     colors = Vector{Union{Colorant, String}}(undef, n)
