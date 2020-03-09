@@ -1,7 +1,6 @@
 module Scale
 
 using Colors
-using Compat
 using Compose
 using DataStructures
 using Gadfly
@@ -9,8 +8,10 @@ using Showoff
 using IndirectArrays
 using CategoricalArrays
 using Printf
+using Base.Iterators
 
-import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia, aes2str
+import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia,
+    aes2str, valid_aesthetics, Maybe
 import Distributions: Distribution
 
 include("color_misc.jl")
@@ -158,6 +159,8 @@ end
 """
     size_continuous[(; minvalue=nothing, maxvalue=nothing, labels=nothing,
                      format=nothing, minticks=2, maxticks=10, scalable=true)]
+
+To be updated in Gadfly 2.0. Now try out the new [`Scale.size_radius`](@ref) and [`Scale.size_area`](@ref).
 """
 const size_continuous = continuous_scale_partial([:size], identity_transform)
 
@@ -166,6 +169,16 @@ const size_continuous = continuous_scale_partial([:size], identity_transform)
                      format=nothing, minticks=2, maxticks=10, scalable=true)]
 """
 const slope_continuous = continuous_scale_partial([:slope], identity_transform)
+
+"""
+    alpha_continuous[(; minvalue=0.0, maxvalue=1.0, labels=nothing,
+                     format=nothing, minticks=2, maxticks=10, scalable=true)]
+
+Rescale the data values between `minvalue` and `maxvalue` to opacity (alpha) values between 0 and 1.
+"""
+alpha_continuous(; minvalue=0.0, maxvalue=1.0, labels=nothing, format=nothing, minticks=2, maxticks=10, scalable=true) =
+     ContinuousScale([:alpha], identity_transform, minvalue=minvalue, maxvalue=maxvalue,
+               labels=labels, format=format, minticks=minticks, maxticks=maxticks, scalable=scalable)
 
 
 function apply_scale(scale::ContinuousScale,
@@ -181,7 +194,7 @@ function apply_scale(scale::ContinuousScale,
             # special case for function arrays bound to :y
             # pass the function values through and wait for the scale to
             # be reapplied by Stat.func
-            if var == :y && eltype(vals) == Function
+            if var == :y && eltype(vals) <: Function
                 aes.y = vals
                 continue
             end
@@ -201,13 +214,15 @@ function apply_scale(scale::ContinuousScale,
                 end
             end
 
-            if T <: Measure
-                T = Measure
-            end
+            T <: Measure && (T = Measure)
 
             ds = any(ismissing, vals) ? Array{Union{Missing,T}}(undef,length(vals)) :
                     Array{T}(undef,length(vals))
             apply_scale_typed!(ds, vals, scale)
+
+            if var == :alpha
+                ds = (vals.-scale.minvalue)./(scale.maxvalue-scale.minvalue)
+             end
 
             if var == :xviewmin || var == :xviewmax ||
                var == :yviewmin || var == :yviewmax
@@ -224,7 +239,7 @@ function apply_scale(scale::ContinuousScale,
                 label_var = Symbol(var, "_label")
             end
 
-            if in(label_var, Set(fieldnames(typeof(aes))))
+            if in(label_var, valid_aesthetics)
                 setfield!(aes, label_var, make_labeler(scale))
             end
         end
@@ -312,8 +327,8 @@ anything in the data that's not respresented in `levels` will be set to
 `missing`.  `order` is a vector of integers giving a permutation of the levels
 default order.
 
-See also [`group_discrete`](@ref), [`shape_discrete`](@ref), 
-[`size_discrete`](@ref), and [`linestyle_discrete`](@ref).
+See also [`group_discrete`](@ref), [`shape_discrete`](@ref),
+[`size_discrete`](@ref), [`linestyle_discrete`](@ref), and [`alpha_discrete`](@ref).
 """
 
 @doc xy_discrete_docstr("x", aes2str(element_aesthetics(x_discrete()))) x_discrete(; labels=nothing, levels=nothing, order=nothing) =
@@ -336,6 +351,15 @@ Similar to [`Scale.x_discrete`](@ref), except applied to the `$aes` aesthetic.
 
 @doc type_discrete_docstr("size") size_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:size], labels=labels, levels=levels, order=order)
+
+"""
+    alpha_discrete[(; labels=nothing, levels=nothing, order=nothing)]
+
+Similar to [`Scale.x_discrete`](@ref), except applied to the `alpha` aesthetic. The alpha palette
+is set by `Theme(alphas=[])`.
+"""
+alpha_discrete(; labels=nothing, levels=nothing, order=nothing) =
+            DiscreteScale([:alpha], labels=labels, levels=levels, order=order)
 
 @doc type_discrete_docstr("linestyle") linestyle_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:linestyle], labels=labels, levels=levels, order=order)
@@ -370,7 +394,7 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
                 labeler = explicit_labeler
             end
 
-            in(label_var, Set(fieldnames(typeof(aes)))) && setfield!(aes, label_var, labeler)
+            in(label_var, valid_aesthetics) && setfield!(aes, label_var, labeler)
         end
     end
 end
@@ -457,13 +481,13 @@ Gadfly.Scale.DiscreteColorScale(Gadfly.Scale.default_discrete_colors, nothing, n
 
 julia> x.f(3)
 3-element Array{ColorTypes.Color,1}:
- LCHab{Float32}(70.0,60.0,240.0)        
- LCHab{Float32}(80.0,70.0,100.435)      
+ LCHab{Float32}(70.0,60.0,240.0)
+ LCHab{Float32}(80.0,70.0,100.435)
  LCHab{Float32}(65.8994,62.2146,353.998)
 ```
 """
 color_discrete_hue(f=default_discrete_colors;
-                   levels=nothing, order=nothing, preserve_order=true) = 
+                   levels=nothing, order=nothing, preserve_order=true) =
         DiscreteColorScale(f, levels=levels, order=order, preserve_order=preserve_order)
 
 @deprecate discrete_color_hue(; levels=nothing, order=nothing, preserve_order=true) color_discrete_hue(; levels=levels, order=order, preserve_order=preserve_order)
@@ -572,7 +596,7 @@ Create a continuous color scale by mapping
 $(aes2str(element_aesthetics(color_continuous()))) to a `Color`.  `minvalue`
 and `maxvalue` specify the data values corresponding to the bottom and top of
 the color scale.  `colormap` is a function defined on the interval from 0 to 1
-that returns a `Color`.
+that returns a `Color`. See also [`lab_gradient`](@ref).
 
 Either input `Stat.color_continuous` as an argument to `plot`, or
 set `continuous_color_scale` in a [Theme](@ref Themes).
@@ -600,43 +624,25 @@ const color_continuous_gradient = color_continuous  ### WHY HAVE THIS ALIAS?
 
 function apply_scale(scale::ContinuousColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-    cmin, cmax = Inf, -Inf
-    for data in datas
-        data.color === nothing && continue
-
-        for c in data.color
-            ismissing(c) && continue
-
-            c = convert(Float64, c)
-            if c < cmin
-                cmin = c
-            end
-
-            if c > cmax
-                cmax = c
-            end
-        end
+    cdata = skipmissing(Iterators.flatten(i.color for i in datas if i.color != nothing))
+    if !isempty(cdata)
+      cmin, cmax = extrema(cdata)
+    else
+        return
     end
 
-    (cmin == Inf || cmax == -Inf) && return
-
-    if scale.minvalue != nothing
-        cmin = scale.minvalue
-    end
-
-    if scale.maxvalue  != nothing
-        cmax = scale.maxvalue
-    end
+    strict_span = false
+    scale.minvalue != nothing && scale.maxvalue != nothing && (strict_span=true)
+    scale.minvalue != nothing && (cmin=scale.minvalue)
+    scale.maxvalue != nothing && (cmax=scale.maxvalue)
 
     cmin, cmax = promote(cmin, cmax)
 
     cmin = scale.trans.f(cmin)
     cmax = scale.trans.f(cmax)
 
-    ticks, viewmin, viewmax = Gadfly.optimize_ticks(cmin, cmax)
-    if ticks[1] == 0 && cmin >= 1
-        ticks[1] = 1
-    end
+    ticks, viewmin, viewmax = Gadfly.optimize_ticks(cmin, cmax, strict_span=strict_span)
+    ticks[1] == 0 && cmin >= 1 && !strict_span && (ticks[1] = 1)
 
     cmin, cmax = ticks[1], ticks[end]
     cspan = cmax != cmin ? cmax - cmin : 1.0
@@ -671,11 +677,11 @@ function apply_scale(scale::ContinuousColorScale,
 end
 
 function apply_scale_typed!(ds, field, scale::ContinuousColorScale,
-                            cmin::Float64, cspan::Float64)
+                            cmin, cspan)
     for (i, d) in enumerate(field)
         if isconcrete(d)
             ds[i] = convert(RGB{Float32},
-                        scale.f((convert(Float64, scale.trans.f(d)) - cmin) / cspan))
+                        scale.f((scale.trans.f(d) - cmin) / cspan))
         else
             ds[i] = missing
         end
@@ -706,13 +712,17 @@ const label = LabelScale
 
 """
     xgroup[(; labels=nothing, levels=nothing, order=nothing)]
-""" 
+
+A discrete scale for use with [`Geom.subplot_grid`](@ref Gadfly.Geom.subplot_grid).
+"""
 xgroup(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:xgroup], labels=labels, levels=levels, order=order)
 
 """
     ygroup[(; labels=nothing, levels=nothing, order=nothing)]
-""" 
+
+A discrete scale for use with [`Geom.subplot_grid`](@ref Gadfly.Geom.subplot_grid).
+"""
 ygroup(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:ygroup], labels=labels, levels=levels, order=order)
 
@@ -762,5 +772,9 @@ shape_identity() = IdentityScale(:shape)
     size_identity()
 """
 size_identity() = IdentityScale(:size)
+
+
+include("scale/scales.jl")
+
 
 end # module Scale

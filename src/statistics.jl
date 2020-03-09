@@ -3,7 +3,6 @@ module Stat
 import Gadfly
 import Contour
 using Colors
-using Compat
 using Compose
 using DataStructures
 using Dates
@@ -15,13 +14,13 @@ using IndirectArrays
 using Statistics
 using LinearAlgebra
 using Random
+using Base.Iterators
 
 import Gadfly: Scale, Coord, input_aesthetics, output_aesthetics,
                default_scales, isconcrete, setfield!, discretize_make_ia, aes2str
+import Compose: cyclezip
 import KernelDensity
 # import Distributions: Uniform, Distribution, qqbuild
-import IterTools: distinct
-import Compat.Iterators: cycle, product
 
 include("bincount.jl")
 
@@ -55,6 +54,49 @@ apply_statistic(stat::Identity,
 """
 const identity = Identity
 
+struct BandStatistic <: Gadfly.StatisticElement
+    orientation::Symbol # :horizontal or :vertical
+end
+
+function BandStatistic(; orientation=:vertical)
+    return BandStatistic(orientation)
+end
+
+input_aesthetics(stat::BandStatistic) = [:xmin, :xmax, :ymin, :ymax]
+output_aesthetics(stat::BandStatistic) = [:xmin, :xmax, :ymin, :ymax]
+default_scales(stat::BandStatistic) = [Scale.x_continuous(), Scale.y_continuous()]
+
+"""
+    Stat.band[(; orientation=:vertical)]
+
+Transform points in $(aes2str(input_aesthetics(band()))) into rectangles in
+$(aes2str(output_aesthetics(band()))).  Used by [`Geom.band`](@ref Gadfly.Geom.band).
+"""
+const band = BandStatistic
+
+function apply_statistic(stat::BandStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+
+    if stat.orientation == :horizontal
+
+        n = max(length(aes.ymin)) #Note: already passed check for equal lengths.
+
+        aes.xmin = fill(0w, n)
+        aes.xmax = fill(1w, n)
+
+    elseif stat.orientation == :vertical
+
+        n = max(length(aes.xmin)) #Note: already passed check for equal lengths.
+
+        aes.ymin = fill(0h, n)
+        aes.ymax = fill(1h, n)
+
+    else
+        error("Orientation must be :horizontal or :vertical")
+    end
+end
 
 # Determine bounds of bars positioned at the given values.
 function barminmax(vals, iscontinuous::Bool)
@@ -239,6 +281,7 @@ struct HistogramStatistic <: Gadfly.StatisticElement
     position::Symbol # :dodge or :stack
     orientation::Symbol
     density::Bool
+    limits::NamedTuple
 end
 
 function HistogramStatistic(; bincount=nothing,
@@ -246,11 +289,12 @@ function HistogramStatistic(; bincount=nothing,
                               maxbincount=150,
                               position=:stack,
                               orientation=:vertical,
-                              density=false)
+                              density=false,
+                              limits=NamedTuple())
     if bincount != nothing
-        HistogramStatistic(bincount, bincount, position, orientation, density)
+        HistogramStatistic(bincount, bincount, position, orientation, density, limits)
     else
-        HistogramStatistic(minbincount, maxbincount, position, orientation, density)
+        HistogramStatistic(minbincount, maxbincount, position, orientation, density, limits)
     end
 end
 
@@ -262,7 +306,7 @@ default_scales(stat::HistogramStatistic) = stat.orientation == :vertical ?
 
 """
     Stat.histogram[(; bincount=nothing, minbincount=3, maxbincount=150,
-                    position=:stack, orientation=:vertical, density=false)]
+            position=:stack, orientation=:vertical, density=false, limits=NamedTuple())]
 
 Transform $(aes2str(input_aesthetics(histogram()))) into
 $(aes2str(output_aesthetics(histogram()))), optionally grouping by `color`.
@@ -270,7 +314,8 @@ Exchange y for x when `orientation` is `:horizontal`.  `bincount` specifies the
 number of bins to use.  If set to `nothing`, an optimization method is used to
 determine a reasonable value which uses `minbincount` and `maxbincount` to set
 the lower and upper limits.  If `density` is `true`, normalize the counts by
-their total.
+their total. `limits` is a `NamedTuple` that sets the limits of the histogram `(min= , max= )`: 
+`min` or `max` or both can be set.
 """
 const histogram = HistogramStatistic
 
@@ -320,27 +365,22 @@ function apply_statistic(stat::HistogramStatistic,
         x_min -= 0.5 # adjust the left side of the bar
         binwidth = 1.0
     else
-        x_min = Gadfly.concrete_minimum(vals)
+        lims = keys(stat.limits)
+        x_min = in(:min, lims) ? stat.limits.min : Gadfly.concrete_minimum(vals)
 
         isdiscrete = false
         if estimate_distinct_proportion(vals) <= 0.9
             value_set = sort!(collect(Set(vals[Bool[Gadfly.isconcrete(v) for v in vals]])))
-            d, bincounts, x_max = choose_bin_count_1d_discrete(
-                        vals, value_set, stat.minbincount, stat.maxbincount)
+            d, bincounts, xmax = choose_bin_count_1d_discrete(vals, value_set, stat.minbincount, stat.maxbincount)
         else
-            d, bincounts, x_max = choose_bin_count_1d(
-                        vals, stat.minbincount, stat.maxbincount)
+            d, bincounts, xmax = choose_bin_count_1d(vals, stat.minbincount, stat.maxbincount)
         end
-
-        if stat.density
-            x_min = Gadfly.concrete_minimum(vals)
-            span = x_max - x_min
-            binwidth = span / d
-            bincounts = bincounts ./ (sum(bincounts) * binwidth)
-        end
+        x_max = in(:max, lims) ? stat.limits.max : xmax
 
         binwidth = (x_max - x_min) / d
     end
+
+    stat.density && (bincounts = bincounts ./ (sum(bincounts) * binwidth))
 
     if aes.color === nothing
         T = typeof(x_min + 1*binwidth)
@@ -355,21 +395,15 @@ function apply_statistic(stat::HistogramStatistic,
             getfield(aes, othervar)[j] = bincounts[j]
         end
     else
-        groups = Dict()
+        CT, VT = eltype(aes.color), eltype(vals)
+        groups = Dict{CT,Vector{VT}}(c=>VT[] for c in unique(aes.color))
         for (x, c) in zip(vals, cycle(aes.color))
-            Gadfly.isconcrete(x) || continue
-
-            if !haskey(groups, c)
-                groups[c] = Float64[x]
-            else
-                push!(groups[c], x)
-            end
+            Gadfly.isconcrete(x) && push!(groups[c], x)
         end
         T = typeof(x_min + 1*binwidth)
         setfield!(aes, minvar, Array{T}(undef, d * length(groups)))
         setfield!(aes, maxvar, Array{T}(undef, d * length(groups)))
         setfield!(aes, var, Array{T}(undef, d * length(groups)))
-
         setfield!(aes, othervar, Array{Float64}(undef, d * length(groups)))
         colors = Array{RGB{Float32}}(undef, d * length(groups))
 
@@ -378,7 +412,6 @@ function apply_statistic(stat::HistogramStatistic,
         for (i, (c, xs)) in enumerate(groups)
             fill!(bincounts, 0)
             for x in xs
-                Gadfly.isconcrete(x) || continue
                 if isdiscrete
                     bincounts[round(Int,x)] += 1
                 else
@@ -394,22 +427,13 @@ function apply_statistic(stat::HistogramStatistic,
 
             stack_height += bincounts[1:d]
 
-            if isdiscrete
-                for j in 1:d
-                    idx = (i-1)*d + j
-                    getfield(aes, var)[idx] = j
-                    getfield(aes, othervar)[idx] = bincounts[j]
-                    colors[idx] = c
-                end
-            else
-                for j in 1:d
-                    idx = (i-1)*d + j
-                    getfield(aes, minvar)[idx] = x_min + (j - 1) * binwidth
-                    getfield(aes, maxvar)[idx] = x_min + j * binwidth
-                    getfield(aes, var)[idx] = x_min + (j - 0.5) * binwidth
-                    getfield(aes, othervar)[idx] = bincounts[j]
-                    colors[idx] = c
-                end
+            for j in 1:d
+                idx = (i-1)*d + j
+                getfield(aes, var)[idx] = isdiscrete ? j : x_min + (j - 0.5) * binwidth
+                getfield(aes, minvar)[idx] = x_min + (j - 1) * binwidth
+                getfield(aes, maxvar)[idx] = x_min + j * binwidth
+                getfield(aes, othervar)[idx] = bincounts[j]
+                colors[idx] = c
             end
         end
 
@@ -643,9 +667,11 @@ function apply_statistic(stat::Histogram2DStatistic,
                                             xminbincount, xmaxbincount,
                                             yminbincount, ymaxbincount)
 
-    wx = x_categorial ? 1 : (x_max - x_min) / dx
-    wy = y_categorial ? 1 : (y_max - y_min) / dy
-
+    wx = (x_max==x_min) ? 1.0 : (x_max - x_min) / dx
+    wy = (y_max==y_min) ? 1.0 : (y_max - y_min) / dy
+    !x_categorial && (x_max==x_min) && (x_min-=0.5)
+    !y_categorial && (y_max==y_min) && (y_min-=0.5)
+                                        
     n = 0
     for cnt in bincounts
         if cnt > 0
@@ -789,49 +815,47 @@ function apply_statistic(stat::TickStatistic,
     getfield(aes, Symbol(stat.axis, "tick")) == nothing || return
 
     in_group_var = Symbol(stat.axis, "group")
-    minval, maxval = nothing, nothing
+    minval, maxval = missing, missing
     in_vals = Any[]
     categorical = (:x in in_vars && Scale.iscategorical(scales, :x)) ||
                   (:y in in_vars && Scale.iscategorical(scales, :y))
 
+    dsize = nothing
+    stat.axis == "x" && (dsize = aes.xsize)
+    stat.axis == "y" && (dsize = aes.ysize)
+    size = aes.size
+    sizeflag = aes.size ≠ nothing && !(eltype(aes.size)<:Measure)
+
+              
     for var in in_vars
         categorical && !in(var,[:x,:y]) && continue
         vals = getfield(aes, var)
-        if vals != nothing && eltype(vals) != Function
-            if minval == nothing
-                minval = first(vals)
+        if vals≠nothing && !isempty(vals) && eltype(vals)≠Function
+            vv = [vals; minval; maxval]
+            if in(var, [:x, :y])
+                sizeflag && (vv = vec([x+s*d for (x, d) in cyclezip(vals, size), s in [-1.0, 1.0]]))
+                dsize≠nothing && (vv= vcat(vv, vec([x+s*d for (x, d) in cyclezip(vals, dsize), s in [-1.0, 1.0]])))
             end
-            if maxval == nothing
-                maxval = first(vals)
-            end
-            T = promote_type(typeof(minval), typeof(maxval))
-            T = promote_type(T, eltype(vals))
-            minval = convert(T, minval)
-            maxval = convert(T, maxval)
 
-            if stat.axis == "x"
-                dsize = aes.xsize === nothing ? [nothing] : aes.xsize
-            elseif stat.axis == "y"
-                dsize = aes.ysize === nothing ? [nothing] : aes.ysize
+            isc = Gadfly.isconcrete.(vv)
+            minval, maxval = if isa(vv, Vector{Any})
+                isntM = [!(typeof(v) <: Measure) for v in vv]
+                 extrema(vv[isntM .& isc])
             else
-                dsize = [nothing]
+                extrema(vv[isc])
             end
-
-            size = aes.size === nothing ? [nothing] : aes.size
-
-            minval, maxval = apply_statistic_typed(minval, maxval, vals, size, dsize)
             push!(in_vals, vals)
         end
     end
 
-    isempty(in_vals) && return
+    isempty(in_vals) && stat.ticks==:auto && return
 
     in_vals = Iterators.flatten(in_vals)
 
     # consider forced tick marks
     if stat.ticks != :auto
-        minval = min(minval, minimum(stat.ticks))
-        maxval = max(maxval, maximum(stat.ticks))
+        minval = minimum(skipmissing([minval;stat.ticks]))
+        maxval = maximum(skipmissing([maxval;stat.ticks]))
     end
 
     # TODO: handle the outliers aesthetic
@@ -951,43 +975,6 @@ function apply_statistic(stat::TickStatistic,
     nothing
 end
 
-function apply_statistic_typed(minval::T, maxval::T, vals, size, dsize) where T
-#     for (val, s, ds) in zip(vals, cycle(size), cycle(dsize))
-    lensize  = length(size)
-    lendsize = length(dsize)
-    for (i, val) in enumerate(vals)
-        (ismissing(val) || !Gadfly.isconcrete(val) || !isfinite(val)) && continue
-
-        s = size[mod1(i, lensize)]
-        ds = dsize[mod1(i, lendsize)]
-
-        minval, maxval = minvalmaxval(minval, maxval, convert(T, val), s, ds)
-    end
-    minval, maxval
-end
-
-function minvalmaxval(minval::T, maxval::T, val, s, ds) where T
-    if val < minval || !isfinite(minval)
-        minval = val
-    end
-
-    if val > maxval || !isfinite(maxval)
-        maxval = val
-    end
-
-    if s != nothing && typeof(s) <: AbstractFloat
-        minval = min(minval, val - s)::T
-        maxval = max(maxval, val + s)::T
-    end
-
-    if ds != nothing
-        minval = min(minval, val - ds)::T
-        maxval = max(maxval, val + ds)::T
-    end
-
-    minval, maxval
-end
-
 
 struct BoxplotStatistic <: Gadfly.StatisticElement
     method::Union{Symbol, Vector}
@@ -1015,14 +1002,17 @@ function apply_statistic(stat::BoxplotStatistic,
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
 
-    if aes.x === nothing
-        aes_x = [1]
-        aes.x_label = x -> fill("", length(x))
-    else
+    xflag = aes.x != nothing
+    aes_x = (xflag ? eltype(aes.x) : Int)[]
+    if xflag
         aes_x = aes.x
+    else
+        aes_x = ones(Int, length(aes.y))
+        aes.x_label = x -> fill("", length(x))
     end
-    aes_color = aes.color === nothing ? [nothing] : aes.color
-
+    colorflag = aes.color != nothing
+    aes_color =  colorflag ? aes.color : fill(nothing, length(aes_x))
+                     
     if aes.y == nothing
         groups = Any[]
         for (x, c) in zip(aes.x, cycle(aes_color))
@@ -1043,30 +1033,30 @@ function apply_statistic(stat::BoxplotStatistic,
             aes.yviewmax = yviewmax
         end
     else
-        T = isempty(aes.y) ? eltype(aes.y) : typeof(aes.y[1] / 1)
-        groups = DefaultOrderedDict(() -> T[])
+        YT = isempty(aes.y) ? eltype(aes.y) : typeof(aes.y[1] / 1)        
+        CT, XT = eltype(aes_color), eltype(aes_x)    
+        groups = collect(Tuple{CT, XT}, zip(aes_color, aes_x))
+        ug = unique(groups)
 
-        for (x, y, c) in zip(cycle(aes_x), aes.y, cycle(aes_color))
-            push!(groups[(x, c)], y)
-        end
+        K = Tuple{CT, XT}
+        grouped_y = Dict{K, Vector{YT}}(g=>aes.y[groups.==[g]] for g in ug)
+ 
+        m = length(ug)
+        aes.x = Vector{XT}(undef, m)
+        aes.middle = Vector{YT}(undef, m)
+        aes.lower_hinge = Vector{YT}(undef, m)
+        aes.upper_hinge = Vector{YT}(undef, m)
+        aes.lower_fence = Vector{YT}(undef, m)
+        aes.upper_fence = Vector{YT}(undef, m)
+        aes.outliers = Vector{YT}[]
 
-        m = length(groups)
-        aes.x = Array{eltype(aes.x)}(undef, m)
-        aes.middle = Array{T}(undef, m)
-        aes.lower_hinge = Array{T}(undef, m)
-        aes.upper_hinge = Array{T}(undef, m)
-        aes.lower_fence = Array{T}(undef, m)
-        aes.upper_fence = Array{T}(undef, m)
-        aes.outliers = Vector{T}[]
-
-        for (i, ((x, c), ys)) in enumerate(groups)
+        for (i, ((c, x), ys)) in enumerate(grouped_y)
             sort!(ys)
 
             aes.x[i] = x
 
             if stat.method == :tukey
-                aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] =
-                        quantile(ys, [0.25, 0.5, 0.75])
+                aes.lower_hinge[i], aes.middle[i], aes.upper_hinge[i] = quantile(ys, [0.25, 0.5, 0.75])
                 iqr = aes.upper_hinge[i] - aes.lower_hinge[i]
 
                 idx = searchsortedfirst(ys, aes.lower_hinge[i] - 1.5iqr)
@@ -1076,9 +1066,7 @@ function apply_statistic(stat::BoxplotStatistic,
                 aes.upper_fence[i] = ys[idx]
             elseif isa(stat.method, Vector)
                 qs = stat.method
-                if length(qs) != 5
-                    error("Stat.boxplot requires exactly five quantiles.")
-                end
+                (length(qs) != 5) && error("Stat.boxplot requires exactly five quantiles.")
 
                 aes.lower_fence[i], aes.lower_hinge[i], aes.middle[i],
                 aes.upper_hinge[i], aes.upper_fence[i] = quantile!(ys, qs)
@@ -1086,12 +1074,11 @@ function apply_statistic(stat::BoxplotStatistic,
                 error("Invalid method specified for State.boxplot")
             end
 
-            push!(aes.outliers,
-                 filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
+            push!(aes.outliers, filter(y -> y < aes.lower_fence[i] || y > aes.upper_fence[i], ys))
         end
     end
 
-    if length(aes.x) > 1 && (haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale))
+    if length(aes.x) > 1 && haskey(scales, :x) && isa(scales[:x], Scale.ContinuousScale)
         xmin, xmax = minimum(aes.x), maximum(aes.x)
         minspan = minimum([xj - xi for (xi, xj) in zip(aes.x[1:end-1], aes.x[2:end])])
 
@@ -1107,14 +1094,17 @@ function apply_statistic(stat::BoxplotStatistic,
         end
     end
 
-    if isa(aes_x, IndirectArray)
-        aes.x = discretize_make_ia(aes.x, aes_x.values)
+    if haskey(scales, :x) && isa(scales[:x], Scale.DiscreteScale)
+        aes.xviewmin = minimum(aes.x)-0.5
+        aes.xviewmax = maximum(aes.x)+0.5
+        aes.pad_categorical_x = false
     end
 
-    if aes.color !== nothing
-        aes.color = discretize_make_ia(RGB{Float32}[c for (x, c) in keys(groups)],
-            aes.color.values)
-    end
+    isa(aes_x, IndirectArray) && (aes.x = discretize_make_ia(aes.x, aes_x.values))
+
+    colorflag && (aes.color = discretize_make_ia([first(k) for k in keys(grouped_y)], aes.color.values))
+
+    Stat.apply_statistic(Stat.dodge(), scales, coord, aes)
 
     nothing
 end
@@ -1123,91 +1113,99 @@ end
 struct SmoothStatistic <: Gadfly.StatisticElement
     method::Symbol
     smoothing::Float64
+    levels::Vector{Float64}
 end
-SmoothStatistic(; method=:loess, smoothing=0.75) = SmoothStatistic(method, smoothing)
+SmoothStatistic(; method=:loess, smoothing=0.75, levels=[0.95]) = SmoothStatistic(method, smoothing, levels)
 
 input_aesthetics(::SmoothStatistic) = [:x, :y]
-output_aesthetics(::SmoothStatistic) = [:x, :y]
+output_aesthetics(::SmoothStatistic) = [:x, :y, :ymin, :ymax]
 
 """
-    Stat.smooth[(; method=:loess, smoothing=0.75)]
+    Stat.smooth[(; method=:loess, smoothing=0.75, levels=[0.95])]
 
 Transform $(aes2str(input_aesthetics(smooth()))) into
 $(aes2str(output_aesthetics(smooth()))).  `method` can either be`:loess` or
 `:lm`.  `smoothing` controls the degree of smoothing.  For `:loess`, this is
 the span parameter giving the proportion of data used for each local fit where
-0.75 is the default. Smaller values use more data (less local context), larger
-values use less data (more local context).
+0.75 is the default. Larger values use more data (less local context), smaller
+values use less data (more local context).  `levels` is a vector of quantiles 
+at which confidence bands are calculated (currently for `method=:lm` only).
+For confidence bands, use `Stat.smooth()` with `Geom.ribbon`.
 """
 const smooth = SmoothStatistic
 
-function apply_statistic(stat::SmoothStatistic,
-                         scales::Dict{Symbol, Gadfly.ScaleElement},
-                         coord::Gadfly.CoordinateElement,
-                         aes::Gadfly.Aesthetics)
+function Stat.apply_statistic(stat::SmoothStatistic,
+    scales::Dict{Symbol, Gadfly.ScaleElement},
+    coord::Gadfly.CoordinateElement,
+    aes::Gadfly.Aesthetics)
 
     Gadfly.assert_aesthetics_defined("Stat.smooth", aes, :x, :y)
     Gadfly.assert_aesthetics_equal_length("Stat.smooth", aes, :x, :y)
 
     stat.method in [:loess,:lm] ||
-            error("The only Stat.smooth methods currently supported are loess and lm.")
-
-    max_num_steps = 750
-    aes_color = aes.color === nothing ? [nothing] : aes.color
-
-    groups = Dict(c => (eltype(aes.x)[], eltype(aes.y)[]) for c in unique(aes_color))
-    for (x, y, c) in zip(aes.x, aes.y, cycle(aes_color))
-        push!(groups[c][1], x)
-        push!(groups[c][2], y)
+    error("The only Stat.smooth methods currently supported are loess and lm.")
+   
+    local xs, ys, yhat
+    try
+        xs = Float64.(eltype(aes.x) <: Dates.TimeType ? Dates.value.(aes.x) : aes.x)
+        ys = Float64.(eltype(aes.y) <: Dates.TimeType ? Dates.value.(aes.y) : aes.y)
+    catch e
+        error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
     end
 
-    local xs, ys, xsp
-    aes.x = eltype(aes.x)[]
+    colorflag = aes.color != nothing
+    aes_color =  colorflag ? aes.color : fill(nothing, length(aes.x))
+
+    uc = unique(aes_color)
+    groups = Dict(c=>(xs[aes_color.==c], ys[aes_color.==c], aes.x[aes_color.==c]) for c in uc)
+
     # For aes.y returning a Float is ok if `y` is an Int or a Float
     # There does not seem to be strong demand for other types of `y`
+    aes.x = eltype(aes.x)[]
     aes.y = Float64[]
+    aes.ymin = Float64[]
+    aes.ymax = Float64[]
     colors = eltype(aes_color)[]
+    aes.linestyle = String[]
 
-    for (c, (xv, yv)) in groups
+    for (c, (xv, yv, x0)) in groups
         x_min, x_max = minimum(xv), maximum(xv)
         x_min == x_max && error("Stat.smooth requires more than one distinct x value")
-        try
-            xs = Float64.( eltype(xv) <: Dates.TimeType ? Dates.value.(xv) : xv )
-            ys = Float64.( eltype(yv) <: Dates.TimeType ? Dates.value.(yv) : yv )
-        catch e
-            error("Stat.loess and Stat.lm require that x and y be bound to arrays of plain numbers.")
-        end
-
         nudge = 1e-5 * (x_max - x_min)
 
-        dx = (x_max-x_min)*(1/max_num_steps)
-        # For a Date, dx might be 0 days, so correct
-        # For Ints, correct dx
-        if isa(xv[1], Date)
-            dx = max(dx, Dates.Day(1))
-        elseif isa(xv[1], Int)
-            dx = ceil(Int, dx)
-            nudge = 0
-        end
-
-        steps = collect((x_min + nudge):dx:(x_max - nudge))
-        xsp = Float64.( eltype(steps) <: Dates.TimeType ? Dates.value.(steps) : steps )
+        xsp = copy(xv)
+        n = length(xv)
         if stat.method == :loess
-            smoothys = Loess.predict(loess(xs, ys, span=stat.smoothing), xsp)
+            xsp[argmin(xv)] += nudge
+            xsp[argmax(xv)] -= nudge
+            model = loess(xv, yv, span=stat.smoothing)
+            yhat = Loess.predict(model, xsp)
+            se = 0.0  # for se and dof, need values from Loess.jl
+            dof = 2
         elseif stat.method == :lm
-            lmcoeff = hcat(fill!(similar(xs), 1), xs) \ ys
-            smoothys = lmcoeff[2].*xsp .+ lmcoeff[1]
+            lmcoeff = hcat(fill!(similar(xv), 1), xv) \ yv
+            yhat = lmcoeff[2].*xsp .+ lmcoeff[1]
+            se = std(yv.-yhat, mean=0.0)
+            dof = n-2
         end
+        xi = sqrt.(1/n .+ abs2.(xv.-mean(xv))/sum(abs2,xv.-mean(xv)))
 
-    # New aes
-        append!(aes.x, steps)
-        append!(aes.y, smoothys)
-        append!(colors, fill(c, length(steps)))
+        # Confidence band levels
+        level = 0.5*(stat.levels.+1)
+        for lvl in level
+            qt = quantile(TDist(dof), lvl)
+            append!(aes.x, x0)        
+            append!(aes.y, yhat)
+            append!(colors, fill(c, length(xv)))
+            append!(aes.ymin, yhat.-qt*se.*xi)
+            append!(aes.ymax, yhat.+qt*se.*xi)
+            append!(aes.linestyle, fill("$(lvl)", length(xv)))        
+        end
     end
 
-    if !(aes.color===nothing)
-        aes.color = discretize_make_ia(colors)
-    end
+    colorflag && (aes.color = discretize_make_ia(colors))
+    linestyle_scale = get(scales, :linestyle, Scale.linestyle_discrete())
+    Scale.apply_scale(linestyle_scale, [aes], Gadfly.Data(linestyle = aes.linestyle))
 end
 
 
@@ -1980,50 +1978,113 @@ draw each ellipse.  Used by [`Geom.ellipse`](@ref Gadfly.Geom.ellipse).
 """
 const ellipse = EllipseStatistic
 
-function Gadfly.Stat.apply_statistic(stat::EllipseStatistic,
-                         scales::Dict{Symbol, Gadfly.ScaleElement},
-                         coord::Gadfly.CoordinateElement,
-                         aes::Gadfly.Aesthetics)
+function apply_statistic(stat::EllipseStatistic,
+    scales::Dict{Symbol, Gadfly.ScaleElement},
+    coord::Gadfly.CoordinateElement,
+    aes::Gadfly.Aesthetics)    
 
     Dat = [aes.x aes.y]
-    grouped_xy = Dict(1=>Dat)
-    grouped_color = Dict{Int, Gadfly.ColorOrNothing}(1=>nothing)
     colorflag = aes.color != nothing
-    aes.group = (colorflag ? aes.color : aes.group)
+    groupflag = aes.group != nothing
+    aes_color = colorflag ? aes.color : fill(nothing, length(aes.x)) 
+    aes_group = groupflag ? aes.group : fill(nothing, length(aes.x))
+    CT, GT = eltype(aes_color), eltype(aes_group)
 
-    if aes.group != nothing
-        ug = unique(aes.group)
-        grouped_xy = Dict(g=>Dat[aes.group.==g,:] for g in ug)
-        grouped_color = Dict(g=>first(aes.group[aes.group.==g]) for g in ug)
-    end
+    groups = collect(Tuple{CT, GT}, zip(aes_color, aes_group))
+    ug = unique(groups)
 
-    levels = Float64[]
-    colors = eltype(aes.color)[]
+    V = Matrix{eltype(Dat)}
+    K = Tuple{CT, GT}
+    grouped_xy = Dict{K, V}(g=>Dat[groups.==[g],:] for g in ug)
+
+    pcolors = CT[]
+    pgroups = GT[]
     ellipse_x = eltype(Dat)[]
     ellipse_y = eltype(Dat)[]
+    aes.linestyle = String[]
 
     dfn = 2
     θ = 2π*(0:stat.nsegments)/stat.nsegments
     n = length(θ)
     for (g, data) in grouped_xy
         dfd = size(data,1)-1
-        dhat = fit(stat.distribution, data')
+        dhat = fit(stat.distribution, permutedims(data,[2,1]))
         Σ½ = cholesky(cov(dhat)).U
-        rv = sqrt.(dfn*[quantile(FDist(dfn,dfd), p) for p in stat.levels])
         ellxy =  [cos.(θ) sin.(θ)] * Σ½
         μ = mean(dhat)
-        for r in rv
+        for p in stat.levels
+            r = sqrt(dfn*quantile(FDist(dfn,dfd), p))
             append!(ellipse_x, r*ellxy[:,1].+μ[1])
             append!(ellipse_y, r*ellxy[:,2].+μ[2])
-            append!(colors, fill(grouped_color[g], n))
-            append!(levels, fill(r, n))
+            append!(pcolors, fill(g[1], n))
+            append!(pgroups, fill(g[2], n))
+            append!(aes.linestyle, fill("$(p)", n))
         end
     end
 
-    aes.group = discretize_make_ia(levels)
-    colorflag && (aes.color = colors)
+    colorflag && (aes.color = pcolors)
+    groupflag && (aes.group = discretize_make_ia(pgroups))
     aes.x = ellipse_x
     aes.y = ellipse_y
+    linestyle_scale = get(scales, :linestyle, Scale.linestyle_discrete())
+    Scale.apply_scale(linestyle_scale, [aes], Gadfly.Data(linestyle = aes.linestyle))
 end
+
+
+struct DodgeStatistic <: Gadfly.StatisticElement
+    position::Symbol
+    axis::Symbol
+end
+DodgeStatistic(; position::Symbol=:dodge, axis::Symbol=:x) = DodgeStatistic(position, axis)
+
+input_aesthetics(stat::DodgeStatistic) = [:x, :y]
+output_aesthetics(stat::DodgeStatistic) = [:x, :y]
+default_scales(stat::DodgeStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
+
+"""
+    Stat.dodge[(; position=:dodge, axis=:x)]
+
+Transform the points in $(aes2str(input_aesthetics(dodge()))) into set of dodged or stacked points
+ in $(aes2str(output_aesthetics(dodge()))).  `position` is `:dodge` or `:stack`.
+`axis` is `:x` or `:y`.
+"""
+const dodge = DodgeStatistic
+
+
+function apply_statistic(stat::DodgeStatistic,
+                            scales::Dict{Symbol, Gadfly.ScaleElement},
+                            coord::Gadfly.CoordinateElement,
+                            aes::Gadfly.Aesthetics)
+
+    aes.color==nothing && return
+    nbars = length(unique(aes.color))
+    othervar = (stat.axis == :x) ? :y : :x
+    vals = getfield(aes, stat.axis)
+    
+    if stat.position==:dodge
+        nbars == length(aes.color) && return
+        offset = range(-0.5+0.5/nbars, stop=0.5, step=1/nbars)
+        dodge = getindex(offset, aes.color.index)
+        setfield!(aes, stat.axis, vals.+dodge)
+    elseif stat.position==:stack
+        ovals = getfield(aes, othervar)
+        if nbars == length(aes.color)
+            setfield!(aes, othervar, 0.5*ovals)
+        else
+            idxs = isa(aes.color, IndirectArray) ? sortperm(aes.color.index, rev=true) : 1:length(aes.color)
+            idxs2 = sortperm(idxs)
+            m1 = reshape(idxs, :, nbars)
+            m2 = cumsum(ovals[m1], dims=2) .- 0.5*ovals[m1]
+            setfield!(aes, othervar, m2[idxs2])
+        end
+    else
+        error("position can be :dodge (default) or :stack")
+    end
+end
+
+
+
+
+
 
 end # module Stat

@@ -3,15 +3,25 @@ os:
   - linux
 julia:
   - 1.0
+  - 1
   - nightly
-matrix:
-  fast_finish: true
-  allow_failures:
-    - julia: nightly
 notifications:
   email: false
 before_script:
   - julia -e 'using Pkg; Pkg.add(PackageSpec(name="Compose", rev="master"))'
-after_success:
-  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
-  - julia -e 'using Pkg; foreach(x->Pkg.add(x), readlines(open(joinpath("docs", "REQUIRE")))); include(joinpath("docs", "make.jl"))'
+codecov: true
+
+jobs:
+  fast_finish: true
+  allow_failures:
+    - julia: nightly
+  include:
+    - stage: "Documentation"
+      julia: 1
+      os: linux
+      # disable global before_script in order not to install Compose twice
+      before_script:
+      script:
+        - julia --color=yes --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
+        - travis_wait julia --color=yes --project=docs docs/make.jl
+      after_success: skip

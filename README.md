@@ -4,7 +4,7 @@ alt="Gadfly Logo" width="210"></img> </div>
 
 | **Documentation** | **Build Status** | **Help** |
 |:---:|:---:|:---:|
-| [![][docs-latest-img]][docs-latest-url] [![][docs-stable-img]][docs-stable-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] | [![][slack-img]][slack-url] [![][gitter-img]][gitter-url] |
+| [![][docs-dev-img]][docs-dev-url] [![][docs-stable-img]][docs-stable-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] | [![][slack-img]][slack-url] [![][gitter-img]][gitter-url] |
 
 **Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
@@ -47,7 +47,7 @@ alt="Gadfly Gallery" width="1024"></img> </div>
 ## Documentation
 
 - [**STABLE**][docs-stable-url] &mdash; **most recently tagged version of the documentation.**
-- [**LATEST**][docs-latest-url] &mdash; *in-development version of the documentation.*
+- [**DEVEL**][docs-dev-url] &mdash; *in-development version of the documentation.*
 
 ## Contributing and Questions
 
@@ -59,8 +59,8 @@ valuable in helping us prioritize what to work on, so don't hesitate.
 If you have a question then you can ask for help in the plotting team of the
 [Julia Slack channel][slack-url] or the [Gitter chat room][gitter-url].
 
-[docs-latest-img]: https://img.shields.io/badge/docs-latest-blue.svg
-[docs-latest-url]: http://gadflyjl.org/latest
+[docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
+[docs-dev-url]: http://gadflyjl.org/dev
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [docs-stable-url]: http://gadflyjl.org/stable
@@ -70,8 +70,8 @@ If you have a question then you can ask for help in the plotting team of the
 [codecov-img]: https://codecov.io/gh/GiovineItalia/Gadfly.jl/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/GiovineItalia/Gadfly.jl
 
-[citation-img]: https://zenodo.org/badge/DOI/10.5281/zenodo.1284282.svg
-[citation-url]: https://doi.org/10.5281/zenodo.1284282
+[citation-img]: https://zenodo.org/badge/DOI/10.5281/zenodo.593105.svg
+[citation-url]: https://doi.org/10.5281/zenodo.593105
 
 [gog-book]: http://www.cs.uic.edu/~wilkinson/TheGrammarOfGraphics/GOG.html
 

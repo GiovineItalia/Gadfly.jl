@@ -5,7 +5,7 @@ if haskey(ENV, "GADFLY_THEME")
     pop!(ENV, "GADFLY_THEME")
 end
 
-using Test, Gadfly, Compat, LibGit2, Dates, Random, Compose, Cairo
+using Test, Gadfly, LibGit2, Dates, Random, Compose, Cairo
 
 if ispath(joinpath(@__DIR__,"..",".git"))
   repo = GitRepo(dirname(@__DIR__))

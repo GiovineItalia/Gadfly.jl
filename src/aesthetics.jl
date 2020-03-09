@@ -1,12 +1,13 @@
-const NumericalOrCategoricalAesthetic =
-    Union{Nothing, Vector, IndirectArray}
+using Measures
 
 const CategoricalAesthetic =
     Union{Nothing, IndirectArray}
 
 const NumericalAesthetic =
-    Union{Nothing, Matrix, Vector}
+    Union{Nothing, AbstractMatrix, AbstractVector}
 
+const NumericalOrCategoricalAesthetic =
+    Union{CategoricalAesthetic, NumericalAesthetic}
 
 @varset Aesthetics begin
     x,            Union{NumericalOrCategoricalAesthetic, Distribution}
@@ -18,6 +19,7 @@ const NumericalAesthetic =
     size,         Union{CategoricalAesthetic,Vector,Nothing}
     shape,        Union{CategoricalAesthetic,Vector,Nothing}
     color,        Union{CategoricalAesthetic,Vector,Nothing}
+    alpha,        NumericalOrCategoricalAesthetic
     linestyle,    Union{CategoricalAesthetic,Vector,Nothing}
 
     label,        CategoricalAesthetic
@@ -61,7 +63,9 @@ const NumericalAesthetic =
     color_key_continuous, Maybe(Bool)
     color_function,       Maybe(Function)
     titles,               Maybe(Dict{Symbol, AbstractString})
-    shape_key_title,    Maybe(AbstractString)
+    shape_key_title,      Maybe(AbstractString)
+    size_key_title,       Maybe(AbstractString)
+    size_key_vals,        Maybe(AbstractDict)
 
     # mark some ticks as initially invisible
     xtickvisible,         Maybe(Vector{Bool})
@@ -86,17 +90,21 @@ const NumericalAesthetic =
     xgroup_label, Function, showoff
     ygroup_label, Function, showoff
     shape_label, Function, showoff
+    size_label,   Function, showoff
 
     # pseudo-aesthetics
     pad_categorical_x, Union{Missing,Bool}, missing
     pad_categorical_y, Union{Missing,Bool}, missing
 end
 
+# Calculating fieldnames at runtime is expensive
+const valid_aesthetics = fieldnames(Aesthetics)
+
 
 function show(io::IO, data::Aesthetics)
     maxlen = 0
     print(io, "Aesthetics(")
-    for name in fieldnames(Aesthetics)
+    for name in valid_aesthetics
         val = getfield(data, name)
         if !ismissing(val) && val != nothing
             print(io, "\n  ", string(name), "=")
@@ -139,7 +147,7 @@ getindex(aes::Aesthetics, i::Integer, j::AbstractString) = getfield(aes, Symbol(
 # Return the set of variables that are non-nothing.
 function defined_aesthetics(aes::Aesthetics)
     vars = Set{Symbol}()
-    for name in fieldnames(Aesthetics)
+    for name in valid_aesthetics
         getfield(aes, name) === nothing || push!(vars, name)
     end
     vars
@@ -172,7 +180,7 @@ function assert_aesthetics_undefined(who::AbstractString, aes::Aesthetics, vars:
 end
 
 function assert_aesthetics_equal_length(who::AbstractString, aes::Aesthetics, vars::Symbol...)
-    defined_vars = Compat.Iterators.filter(var -> !(getfield(aes, var) === nothing), vars)
+    defined_vars = filter(var -> !(getfield(aes, var) === nothing), [vars...])
 
     if !isempty(defined_vars)
         n = length(getfield(aes, first(defined_vars)))
@@ -197,7 +205,7 @@ end
 # Modifies: a
 #
 function update!(a::Aesthetics, b::Aesthetics)
-    for name in fieldnames(Aesthetics)
+    for name in valid_aesthetics
         issomething(getfield(b, name)) && setfield(a, name, getfield(b, name))
     end
     nothing
@@ -229,7 +237,7 @@ json(a::Aesthetics) = join([string(a, ":", json(getfield(a, var))) for var in ae
 function concat(aess::Aesthetics...)
     cataes = Aesthetics()
     for aes in aess
-        for var in fieldnames(Aesthetics)
+        for var in valid_aesthetics
             if var in [:xviewmin, :yviewmin]
                 mu, mv = getfield(cataes, var), getfield(aes, var)
                 setfield!(cataes, var,
@@ -263,19 +271,19 @@ function cat_aes_var!(a::Dict, b::Dict)
     a
 end
 
-cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{T}) where {T <: Base.Callable} = append!(a, b)
-cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T <: Base.Callable, U <: Base.Callable} =
-        a=[promote(a..., b...)...]
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{T}) where {T <: Base.Callable} = append!(a, b)
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T <: Base.Callable, U <: Base.Callable} =
+        a = [a...,b...]
 
 # Let arrays of numbers clobber arrays of functions. This is slightly odd
 # behavior, comes up with with function statistics applied on a layer-wise
 # basis.
-cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T <: Base.Callable, U} = b
-cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U <: Base.Callable} = a
-cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{T}) where {T} = append!(a, b)
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T <: Base.Callable, U} = b
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T, U <: Base.Callable} = a
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{T}) where {T} = append!(a, b)
 cat_aes_var!(a, b) = a
 
-function cat_aes_var!(a::AbstractArray{T}, b::AbstractArray{U}) where {T, U}
+function cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T, U}
     V = promote_type(T, U)
     ab = Array{V}(undef, length(a) + length(b))
     i = 1
@@ -296,6 +304,19 @@ function cat_aes_var!(xs::IndirectArray{T,1}, ys::IndirectArray{S,1}) where {T, 
     return append!(IndirectArray(xs.index, convert(Array{TS},xs.values)),
                    IndirectArray(ys.index, convert(Array{TS},ys.values)))
 end
+
+
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T<:Measure, U<:Measure} = [a..., b...]
+
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T<:Measure, U} =
+    isabsolute(T) ? [a..., b...] : b
+
+cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T, U<:Measure} =
+    isabsolute(U) ? a : [a..., b...]
+
+
+
+
 
 # Summarizing aesthetics
 
@@ -349,7 +370,7 @@ function by_xy_group(aes::T, xgroup, ygroup,
         end
 
         vals = getfield(aes, var)
-        if typeof(vals) <: AbstractArray
+        if isa(vals, AbstractArray) && length(vals)>1 
             if xgroup !== nothing && length(vals) !== length(xgroup) ||
                ygroup !== nothing && length(vals) !== length(ygroup)
                 continue
@@ -359,7 +380,7 @@ function by_xy_group(aes::T, xgroup, ygroup,
                 staging[i, j] = similar(vals, 0)
             end
 
-            for (i, j, v) in zip(Compat.Iterators.cycle(yrefs), Compat.Iterators.cycle(xrefs), vals)
+            for (i, j, v) in zip(cycle(yrefs), cycle(xrefs), vals)
                 push!(staging[i, j], v)
             end
 
@@ -400,7 +421,7 @@ end
 function inherit!(a::Aesthetics, b::Aesthetics;
                   clobber=[])
     clobber_set = Set{Symbol}(clobber)
-    for field in fieldnames(Aesthetics)
+    for field in valid_aesthetics
         aval = getfield(a, field)
         bval = getfield(b, field)
         if field in clobber_set

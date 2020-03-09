@@ -13,13 +13,30 @@ p1 = plot(dataset("ggplot2", "mpg"),
      Guide.annotation(compose(context(), text(6,4, "y=x", hleft, vtop), fill("red"))))
 
 x = [20*rand(20); exp(-3)]
-D = DataFrame(x=x, y= exp.(-0.5*asinh.(x).+5) .+ 2*randn(length(x))) 
+D = DataFrame(x=x, y= exp.(-0.5*asinh.(x).+5) .+ 2*randn(length(x)))
 abline = Geom.abline(color="red", style=:dash)
 p2 = plot(D, x=:x, y=:y,  Geom.point,  Scale.x_asinh, Scale.y_log,
      intercept=[148], slope=[-0.5], abline)
 hstack(p1, p2)
 ```
 
+## [`Geom.band`](@ref), [`Geom.hband`](@ref), [`Geom.vband`](@ref)
+
+
+```@example
+using Colors, Dates, Gadfly, RDatasets
+
+Dp = dataset("ggplot2","presidential")[3:end,:]
+De = dataset("ggplot2","economics")
+De.Unemploy /= 10^3
+
+plot(De, x=:Date, y=:Unemploy, Geom.line,
+    layer(Dp, xmin=:Start, xmax=:End, Geom.vband, color=:Party),
+    Scale.color_discrete_manual("deepskyblue", "lightcoral"),
+    Coord.cartesian(xmin=Date("1965-01-01"), ymax=12),
+    Guide.xlabel("Time"), Guide.ylabel("Unemployment (x10³)"), Guide.colorkey(title=""),
+    Theme(default_color="black", key_position=:top))
+```
 
 ## [`Geom.bar`](@ref)
 
@@ -33,11 +50,9 @@ plot(dataset("HistData", "ChestSizes"), x="Chest", y="Count", Geom.bar)
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(21cm, 8cm)
 
-D = by(dataset("datasets","HairEyeColor"), [:Eye,:Sex], d->sum(d[:Freq]))
-p1 = plot(D, color="Eye", y="x1", x="Sex", Geom.bar(position=:dodge),
-          Guide.ylabel("Freq"));
+D = by(dataset("datasets","HairEyeColor"), [:Eye,:Sex], Frequency=:Freq=>sum)
+p1 = plot(D, color=:Eye, y=:Frequency, x=:Sex, Geom.bar(position=:dodge))
 
-rename!(D, :x1 => :Frequency)
 palette = ["brown","blue","tan","green"]  # Is there a hazel color?
 
 p2a = plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),
@@ -59,13 +74,32 @@ set_default_plot_size(14cm, 8cm)
 plot(dataset("lattice", "singer"), x="VoicePart", y="Height", Geom.beeswarm)
 ```
 
+## [`Geom.blank`](@ref)
+
+```@example
+using Gadfly
+set_default_plot_size(21cm, 8cm)
+p1, p2 = plot(),  plot(x=1:10, y=rand(10), Geom.blank)
+hstack(p1, p2)
+```
+
 
 ## [`Geom.boxplot`](@ref)
 
 ```@example
-using Gadfly, RDatasets
-set_default_plot_size(14cm, 8cm)
-plot(dataset("lattice", "singer"), x="VoicePart", y="Height", Geom.boxplot)
+using Compose, Gadfly, RDatasets
+set_default_plot_size(21cm, 8cm)
+singers, salaries = dataset("lattice", "singer"), dataset("car","Salaries")
+salaries.Salary /= 1000.0
+salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
+p1 = plot(singers, x=:VoicePart, y=:Height, Geom.boxplot,
+    Theme(default_color="MidnightBlue"))
+p2 = plot(salaries, x=:Discipline, y=:Salary, color=:Rank,
+    Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
+    Geom.boxplot, Theme(boxplot_spacing=0.1cx),
+    Guide.colorkey(title="", pos=[0.78w,-0.4h])
+)
+hstack(p1, p2)
 ```
 
 
@@ -111,7 +145,7 @@ using Gadfly, RDatasets, Distributions
 set_default_plot_size(14cm, 8cm)
 dist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])
 xs = rand(dist, 10^5)
-plot(layer(x=xs, Geom.density, Theme(default_color="orange")), 
+plot(layer(x=xs, Geom.density, Theme(default_color="orange")),
      layer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color="green")),
      layer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color="purple")),
      Guide.manual_color_key("bandwidth", ["auto", "bw=0.0003", "bw=0.25"],
@@ -137,17 +171,22 @@ plot(x=rand(Rayleigh(2),1000), y=rand(Rayleigh(2),1000),
 using RDatasets, Gadfly
 set_default_plot_size(21cm, 8cm)
 D = dataset("datasets","faithful")
-D[:g] = D[:Eruptions].>3.0
-coord = Coord.cartesian(ymin=35, ymax=100)
+D.g = D.Eruptions.>3.0
+coord = Coord.cartesian(ymin=40, ymax=100)
 pa = plot(D, coord,
-          x=:Eruptions, y=:Waiting, group=:g,
-          Geom.point, Geom.ellipse)
-pb = plot(D, coord,
-          x=:Eruptions, y=:Waiting, color=:g,
-          Geom.point, Geom.ellipse,
-          layer(Geom.ellipse(levels=[0.99]), style(line_style=[:dot])),
-          style(key_position=:none), Guide.ylabel(nothing))
-hstack(pa,pb)
+    x=:Eruptions, y=:Waiting, group=:g,
+    Geom.point, Geom.ellipse,
+    Theme(lowlight_color=c->"gray") )
+pb = plot(D, coord, Guide.ylabel(nothing),
+    x=:Eruptions, y=:Waiting, color=:g,
+    Geom.point, Geom.ellipse(levels=[0.95, 0.99]),
+ Theme(key_position=:none, lowlight_color=identity, line_style=[:solid,:dot]))
+pc = plot(D, coord, Guide.ylabel(nothing),
+    x=:Eruptions, y=:Waiting, color=:g,
+    Geom.point, Geom.ellipse(fill=true),
+    layer(Geom.ellipse(levels=[0.99]), style(line_style=[:dot])),
+    Theme(key_position=:none) )
+hstack(pa,pb,pc)
 ```
 
 
@@ -155,15 +194,48 @@ hstack(pa,pb)
 
 ```@example
 using Gadfly, RDatasets, Distributions, Random
-set_default_plot_size(14cm, 8cm)
+set_default_plot_size(21cm, 8cm)
 Random.seed!(1234)
-sds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]
 n = 10
-ys = [mean(rand(Normal(0, sd), n)) for sd in sds]
-ymins = ys .- (1.96 * sds / sqrt(n))
-ymaxs = ys .+ (1.96 * sds / sqrt(n))
-plot(x=1:length(sds), y=ys, ymin=ymins, ymax=ymaxs,
-     Geom.point, Geom.errorbar)
+sds = [1, 1/2, 1/4, 1/8, 1/16, 1/32]
+ys = mean.(rand.(Normal.(0, sds), n))
+df = DataFrame(x=1:length(sds), y=ys,
+  mins=ys.-(1.96*sds/sqrt(n)), maxs=ys.+(1.96*sds/sqrt(n)),
+    g=repeat(["a","b"], inner=3))
+p1 = plot(df, x=1:length(sds), y=:y, ymin=:mins, ymax=:maxs, color=:g,
+    Geom.point, Geom.errorbar)
+p2 = plot(df, y=1:length(sds), x=:y, xmin=:mins, xmax=:maxs, color=:g,
+    Geom.point, Geom.errorbar)
+hstack(p1, p2)
+```
+
+```@example
+using Compose, DataFrames, Gadfly, RDatasets, Statistics
+set_default_plot_size(21cm, 8cm)
+salaries = dataset("car","Salaries")
+salaries.Salary /= 1000.0
+salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
+df = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)
+df.ymin, df.ymax = df.Salary_mean.-df.Salary_std, df.Salary_mean.+df.Salary_std
+df.label = string.(round.(Int, df.Salary_mean))
+
+p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank,
+    Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
+    ymin=:ymin, ymax=:ymax, Geom.errorbar, Stat.dodge,
+    Geom.bar(position=:dodge),
+    Scale.color_discrete(levels=["Prof", "AssocProf", "AsstProf"]),
+    Guide.colorkey(title="", pos=[0.76w, -0.38h]),
+    Theme(bar_spacing=0mm, stroke_color=c->"black")
+)
+p2 = plot(df, y=:Discipline, x=:Salary_mean, color=:Rank,
+    Coord.cartesian(yflip=true), Scale.y_discrete,
+    xmin=:ymin, xmax=:ymax, Geom.errorbar, Stat.dodge(axis=:y),
+    Geom.bar(position=:dodge, orientation=:horizontal),
+    Scale.color_discrete(levels=["Prof", "AssocProf", "AsstProf"]),
+    Guide.yticks(orientation=:vertical), Guide.ylabel(nothing),
+    Theme(bar_spacing=0mm, stroke_color=c->"gray")
+)
+hstack(p1,p2)
 ```
 
 
@@ -196,14 +268,18 @@ hstack(p1,p2)
 ## [`Geom.histogram`](@ref)
 
 ```@example
-using Gadfly, RDatasets
+using Distributions, Gadfly, RDatasets
 set_default_plot_size(21cm, 16cm)
-p1 = plot(dataset("ggplot2", "diamonds"), x="Price", Geom.histogram)
-p2 = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut", Geom.histogram)
-p3 = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut",
-          Geom.histogram(bincount=30))
-p4 = plot(dataset("ggplot2", "diamonds"), x="Price", color="Cut",
-          Geom.histogram(bincount=30, density=true))
+D = dataset("ggplot2","diamonds")
+gamma = Gamma(2, 2)
+Dgamma = DataFrame(x=rand(gamma, 10^4))
+p1 = plot(D, x="Price", Geom.histogram)
+p2 = plot(D, x="Price", color="Cut", Geom.histogram)
+p3 = plot(D, x="Price", color="Cut", Geom.histogram(bincount=30))
+p4 = plot(Dgamma, Coord.cartesian(xmin=0, xmax=20),
+    layer(x->pdf(gamma, x), 0, 20, Geom.line, Theme(default_color="black")),
+    layer(x=:x, Geom.histogram(bincount=20, density=true, limits=(min=0,))),
+    Theme(default_color="bisque") )
 gridstack([p1 p2; p3 p4])
 ```
 
@@ -353,23 +429,38 @@ plot(dataset("Zelig", "macro"), x="Year", y="Country", color="GDP", Geom.rectbin
 ## [`Geom.ribbon`](@ref)
 
 ```@example
-using Gadfly, Colors, DataFrames, Distributions
+using Gadfly, DataFrames, Distributions
 set_default_plot_size(21cm, 8cm)
 X = [cos.(0:0.1:20) sin.(0:0.1:20)]
 x = -4:0.1:4
 Da = [DataFrame(x=0:0.1:20, y=X[:,j], ymin=X[:,j].-0.5, ymax=X[:,j].+0.5, f="$f")  for (j,f) in enumerate(["cos","sin"])]
 Db = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u="μ=$μ") for μ in [-1,1] ]
 
-# In the line below, 0.4 is the color opacity
-p1 = plot(vcat(Da...), x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f, Geom.line, Geom.ribbon,
-    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4))
+# In the line below, 0.6 is the color opacity
+p1 = plot(vcat(Da...), x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f,
+    Geom.line, Geom.ribbon, Theme(alphas=[0.6])
 )
-p2 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax, color = :u, 
+p2 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax,
+    color = :u, alpha=:u, Theme(alphas=[0.8,0.2]),
     Geom.line, Geom.ribbon, Guide.ylabel("Density"),
-    Theme(lowlight_color=c->RGBA{Float32}(c.r, c.g, c.b, 0.4)), 
     Guide.colorkey(title="", pos=[2.5,0.6]), Guide.title("Parametric PDF")
 )
 hstack(p1,p2)
+```
+
+## [`Geom.segment`](@ref)
+```@example
+using Gadfly, DataFrames, ColorSchemes
+set_default_plot_size(14cm, 14cm)
+n = 1000
+x, y = cumsum(randn(n)), cumsum(randn(n))
+D = DataFrame(x1=x[1:end-1], y1=y[1:end-1], x2=x[2:end], y2=y[2:end], colv=1:n-1)
+palettef(c::Float64) = get(ColorSchemes.viridis, c)
+
+plot(D, x=:x1, y=:y1, xend=:x2, yend=:y2,
+     color = :colv, Geom.segment, Coord.cartesian(aspect_ratio=1.0),
+     Scale.color_continuous(colormap=palettef, minvalue=0, maxvalue=1000)
+)
 ```
 
 
@@ -417,7 +508,7 @@ plot(dataset("vcd", "Suicide"), xgroup="Sex", ygroup="Method", x="Age", y="Freq"
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(14cm, 8cm)
 iris = dataset("datasets", "iris")
-sp = unique(iris[:Species])
+sp = unique(iris.Species)
 Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5, 2.5, 4.0], Species=repeat(sp, inner=[2]) )
 # Try this one too:
 # Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5], Species=repeat(sp[1:2], inner=[2]) )
@@ -431,7 +522,7 @@ plot(iris, xgroup=:Species, x=:SepalLength, y=:SepalWidth,
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(14cm, 8cm)
 iris = dataset("datasets", "iris")
-sp = unique(iris[:Species])
+sp = unique(iris.Species)
 Dhl = DataFrame(yint=[3.0, 4.0, 2.5, 3.5, 2.5, 4.0], Species=repeat(sp, inner=[2]) )
 plot(iris, xgroup=:Species,
      Geom.subplot_grid(layer(x=:SepalLength, y=:SepalWidth, Geom.point),
@@ -443,7 +534,7 @@ plot(iris, xgroup=:Species,
 ```@example
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(14cm, 12cm)
-widedf = DataFrame(x = collect(1:10), var1 = collect(1:10), var2 = collect(1:10).^2)
+widedf = DataFrame(x = 1:10, var1 = 1:10, var2 = (1:10).^2)
 longdf = stack(widedf, [:var1, :var2])
 p1 = plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point))
 p2 = plot(longdf, ygroup="variable", x="x", y="value", Geom.subplot_grid(Geom.point,
@@ -459,9 +550,9 @@ using Gadfly, RDatasets
 set_default_plot_size(14cm, 14cm)
 
 seals = RDatasets.dataset("ggplot2","seals")
-seals[:Latb] = seals[:Lat] + seals[:DeltaLat]
-seals[:Longb] = seals[:Long] + seals[:DeltaLong]
-seals[:Angle] = atan.(seals[:DeltaLat], seals[:DeltaLong])
+seals.Latb = seals.Lat + seals.DeltaLat
+seals.Longb = seals.Long + seals.DeltaLong
+seals.Angle = atan.(seals.DeltaLat, seals.DeltaLong)
 
 coord = Coord.cartesian(xmin=-175.0, xmax=-119, ymin=29, ymax=50)
 # Geom.vector also needs scales for both axes:
@@ -483,8 +574,8 @@ using Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
 
 coord = Coord.cartesian(xmin=-2, xmax=2, ymin=-2, ymax=2)
-p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)), 
-          xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], 
+p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)),
+          xmin=[-2], xmax=[2], ymin=[-2], ymax=[2],
 # or:     x=-2:0.25:2.0, y=-2:0.25:2.0,     
           Geom.vectorfield(scale=0.4, samples=17), Geom.contour(levels=6),
           Scale.x_continuous(minvalue=-2.0, maxvalue=2.0),
@@ -492,7 +583,7 @@ p1 = plot(coord, z=(x,y)->x*exp(-(x^2+y^2)),
           Guide.xlabel("x"), Guide.ylabel("y"), Guide.colorkey(title="z"))
 
 volcano = Matrix{Float64}(dataset("datasets", "volcano"))
-volc = volcano[1:4:end, 1:4:end] 
+volc = volcano[1:4:end, 1:4:end]
 coord = Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16)
 p2 = plot(coord, z=volc, x=1.0:22, y=1.0:16,
           Geom.vectorfield(scale=0.05), Geom.contour(levels=7),
@@ -511,6 +602,6 @@ hstack(p1,p2)
 using Gadfly, RDatasets
 set_default_plot_size(14cm, 8cm)
 Dsing = dataset("lattice","singer")
-Dsing[:Voice] = [x[1:5] for x in Dsing[:VoicePart]]
+Dsing.Voice = [x[1:5] for x in Dsing.VoicePart]
 plot(Dsing, x=:VoicePart, y=:Height, color=:Voice, Geom.violin)
 ```

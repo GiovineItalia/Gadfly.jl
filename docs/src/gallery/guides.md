@@ -16,9 +16,9 @@ plot(sin, 0, 2pi, Guide.annotation(compose(context(),
 ```@example
 using Gadfly, RDatasets
 set_default_plot_size(14cm, 8cm)
-Dsleep = dataset("ggplot2", "msleep")[[:Vore,:BrainWt,:BodyWt,:SleepTotal]]
+Dsleep = dataset("ggplot2", "msleep")[:,[:Vore,:BrainWt,:BodyWt,:SleepTotal]]
 DataFrames.dropmissing!(Dsleep)
-Dsleep[:SleepTime] = Dsleep[:SleepTotal] .> 8
+Dsleep.SleepTime = Dsleep.SleepTotal .> 8
 plot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:SleepTime, 
      Guide.colorkey(title="Sleep", labels=[">8","≤8"]),
      Scale.x_log10, Scale.y_log10 )
@@ -56,14 +56,36 @@ plot(pointLayer, lineLayer,
 using Compose, Gadfly, RDatasets
 set_default_plot_size(16cm, 8cm)
 Dsleep = dataset("ggplot2", "msleep")
-Dsleep = dropmissing!(Dsleep[[:Vore, :Name,:BrainWt,:BodyWt, :SleepTotal]])
-Dsleep[:SleepTime] = Dsleep[:SleepTotal] .> 8
+Dsleep = dropmissing!(Dsleep[:,[:Vore, :Name,:BrainWt,:BodyWt, :SleepTotal]])
+Dsleep.SleepTime = Dsleep.SleepTotal .> 8
 plot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:Vore, shape=:SleepTime,
     Guide.colorkey(pos=[0.05w, -0.25h]),
     Guide.shapekey(title="Sleep (hrs)", labels=[">8","≤8"], pos=[0.18w,-0.315h]),
     Scale.x_log10, Scale.y_log10,
     Theme(point_size=2mm, key_swatch_color="slategrey", 
             point_shapes=[Shape.utriangle, Shape.dtriangle]) )
+```
+
+
+## [`Guide.sizekey`](@ref)
+
+```@example
+using Compose, Gadfly, RDatasets
+set_default_plot_size(14cm, 8cm)
+
+Titanic = dataset("datasets", "Titanic")
+Class =  by(Titanic, :Class, :Freq=>sum)
+Titanic = join(Titanic[Titanic.Survived.=="Yes",:], Class, on=:Class)
+Titanic.prcnt = 100*Titanic.Freq./Titanic.Freq_sum
+sizemap = n->range(3pt, 8pt, length=n)
+
+plot(Titanic, Scale.x_log10,  Scale.y_log10,
+    x=:Freq, y=:prcnt, color=:Age, shape=:Sex,  size=:Class,
+    Scale.size_discrete2(sizemap), Guide.sizekey(title="Passenger\n Class"),
+    Guide.colorkey(pos=[0.1, -0.3h]), Guide.shapekey(pos=[0.5, -0.31h]),
+    Guide.ylabel("% of Passenger Class"),
+ Theme(discrete_highlight_color=identity, alphas=[0.1], key_swatch_color="grey",
+    key_swatch_shape=Shape.circle, point_size=3pt) )
 ```
 
 
@@ -114,5 +136,5 @@ hstack(p1,p2,p3)
 ```@example
 using Gadfly
 set_default_plot_size(14cm, 8cm)
-plot(x=rand(1:10, 10), y=rand(1:10, 10), Geom.line, Guide.xticks(ticks=[1:9;]))
+plot(x=rand(1:10, 10), y=rand(1:10, 10), Geom.line, Guide.xticks(ticks=1:9))
 ```

@@ -32,8 +32,10 @@ function default_lowlight_color(fill_color::Color)
     LCHab(90, 20, c.h)
 end
 
-default_lowlight_color(fill_color::TransparentColor) = RGBA{Float32}(
-        default_lowlight_color(color(fill_color)), fill_color.alpha)
+function default_lowlight_color(fill_color::TransparentColor)
+    @warn "For opacity, use `Theme(alphas=[a])` and/or `Scale.alpha_discrete()`, or use `Scale.alpha_continuous()`"   
+   RGBA{Float32}(Gadfly.default_lowlight_color(color(fill_color)), fill_color.alpha)
+end
 
 # Choose a middle color by darkening the fill color
 function default_middle_color(fill_color::Color)
@@ -74,21 +76,34 @@ $(FIELDS)
 
     "Size of points in the point, boxplot, and beeswarm geometries.  (Measure)",
     point_size,            Measure,         0.9mm
-    "Minimum size of points in the point geometry.  (Measure)",
-    point_size_min,        Measure,         0.45mm
-    "Maximum size of points in the point geometry.  (Measure)",
-    point_size_max,        Measure,         1.8mm
 
-    "Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline)",
+    "Minimum size of points in the point geometry.  (Measure)",
+    point_size_min,        Measure,         0.45mm,
+    "point_size_{min,max} to be deprecated. Instead try the new `Scale.size_discrete2` and/or with `style(discrete_sizemap)`"
+
+    "Maximum size of points in the point geometry.  (Measure)",
+    point_size_max,        Measure,         1.8mm,
+    "point_size_{min,max} to be deprecated. Instead try the new `Scale.size_discrete2` and/or with `style(discrete_sizemap)`"
+
+    "The function `f` in  [`Scale.size_discrete2`](@ref).",
+    discrete_sizemap,      Function,        Scale.default_discrete_sizes
+
+    "The function `f` in  [`Scale.size_radius`](@ref) and [`Scale.size_area`](@ref).",
+    continuous_sizemap,      Function,        Scale.default_continuous_sizes
+
+    "Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline, ltriangle, rtriangle)",
     point_shapes,          Vector{Function},  [Shape.circle, Shape.square, Shape.diamond, Shape.cross, Shape.xcross,
                                                Shape.utriangle, Shape.dtriangle, Shape.star1, Shape.star2,
-                                               Shape.hexagon, Shape.octagon, Shape.hline, Shape.vline]
+                                               Shape.hexagon, Shape.octagon, Shape.hline, Shape.vline, Shape.ltriangle, Shape.rtriangle]
 
     "Width of lines in the line geometry. (Measure)",
     line_width,            Measure,         0.3mm
 
     "Style of lines in the line geometry. The default palette is `[:solid, :dash, :dot, :dashdot, :dashdotdot, :ldash, :ldashdash, :ldashdot, :ldashdashdot]` which is a Vector{Symbol}, or customize using Vector{Vector{<:Measure}}",
     line_style,            (Vector{<:Union{Symbol, Vector{<:Measure}}}),   [:solid, :dash, :dot, :dashdot, :dashdotdot, :ldash, :ldashdash, :ldashdot, :ldashdashdot]
+
+    "Alpha palette. The default palette is [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0]. Customize using a Vector of length one or greater, with 0.0≤values≤1.0",
+    alphas,         Vector{Float64}, [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0]
 
     "Background color used in the main plot panel. (Color or Nothing)",
     panel_fill,            ColorOrNothing,  nothing
@@ -97,7 +112,8 @@ $(FIELDS)
     panel_stroke,          ColorOrNothing,  nothing
 
     "Opacity of the plot background panel. (Float in [0.0, 1.0])",
-    panel_opacity,         Float64,         0.0
+    panel_opacity,         Float64,         0.0,
+    "The keyword argument `panel_opacity` has been deprecated. Instead, provide a e.g. RGBA() color to panel_fill."
 
     "Background color for the entire plot. If nothing, no background. (Color or Nothing)",
     background_color,      ColorOrNothing,  nothing
@@ -179,10 +195,6 @@ $(FIELDS)
     "Color used to draw background geometry, such as `Geom.ribbon` and `Geom.polygon`. This is a function that alters the fill color of the geometry.  (Function)",
     lowlight_color,        Function,        default_lowlight_color
 
-    "Opacity of background geometry such as [`Geom.ribbon`](@ref).  (Float64)",
-    lowlight_opacity,      Float64,         0.6,
-    "The keyword argument `lowlight_opacity` has been deprecated, and never worked anyway!"
-
     "Color altering function used to draw the midline in boxplots. (Function)",
     middle_color,          Function,        default_middle_color
 
@@ -199,8 +211,11 @@ $(FIELDS)
     "Shape used in keys for swatches (Function as in `point_shapes`)",
     key_swatch_shape,       Function,        Shape.square
 
-    "Default color used in keys for swatches.  Currently works for `Guide.shapekey` (Color)",
+    "Default color used in keys for swatches.  Currently works for `Guide.shapekey` and `Guide.sizekey` (Color)",
     key_swatch_color,       ColorOrNothing,        nothing
+
+    "Size of key swatches, will override `Theme(point_size=)`.  Currently works for `Guide.shapekey`  (Measure)",
+    key_swatch_size,       Union{Measure,Nothing},        nothing
 
     "Where key should be placed relative to the plot panel. One of `:left`, `:right`, `:top`, `:bottom`, `:inside` or `:none`. Setting to `:none` disables the key. Setting to `:inside` places the key in the lower right quadrant of the plot. (Symbol)",
     key_position,          Symbol,          :right

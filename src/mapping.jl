@@ -1,6 +1,5 @@
 module Col
 
-using Compat
 import Base: ==
 
 struct GroupedColumn
@@ -32,8 +31,6 @@ end # module Col
 
 module Row
 
-using Compat
-
 # represent a row index correspondig to a set of columns
 struct GroupedColumnRowIndex
     columns::Union{Nothing,Vector}
@@ -58,17 +55,18 @@ function cleanmapping(mapping::Dict)
         key == :order && continue
 
         if haskey(aesthetic_aliases, key)
-            key = aesthetic_aliases[key]
-        elseif !in(key, fieldnames(Aesthetics))
+            # redefining key could have performance impacts
+            newkey = aesthetic_aliases[key]
+        elseif in(key, valid_aesthetics)
+            newkey = key
+        else
             @warn "$(string(key)) is not a recognized aesthetic. Ignoring."
             continue
         end
 
-        if val == Col.value || val == Col.index || val == Row.index
-            val = val()
-        end
+        newval = val == Col.value || val == Col.index || val == Row.index ? val() : val
 
-        cleaned[key] = val
+        cleaned[newkey] = newval
     end
     cleaned
 end
@@ -152,7 +150,7 @@ function meltdata(U::AbstractMatrix, colgroups_::Vector{Col.GroupedColumn})
                for colgroup in colgroups]
 
     vi = 1
-    for ui in 1:um, colidx in Iterators.product(colidxs...)
+    for ui in 1:um, colidx in product(colidxs...)
         # copy grouped columns
         for (vj, uj) in enumerate(colidx)
             V[vi, vj] = U[ui, uj]
@@ -200,7 +198,21 @@ evalmapping(source::MeltedData, arg::AbstractString) =
 evalmapping(source::MeltedData, arg::Colon) = source.melted_data
 
 
+# Share common functionality between general and melted-data-specific methods
+function _evalmapping!(mapping::Dict, data_source, data::Data)
+    for (k, v) in mapping
+        setfield!(data, k, evalmapping(data_source, v))
+        data.titles[k] = isa(v, AbstractString) || isa(v, Symbol) ?  string(v) : string(k)
+    end
+
+    return data_source
+end
+
 # Evalute aesthetic mappings producting a Data instance.
+evalmapping!(mapping::Dict, data_source::MeltedData, data::Data) =
+    _evalmapping!(mapping, data_source, data)
+
+# Need to do additional work only if data_source is not MeltedData
 function evalmapping!(mapping::Dict, data_source, data::Data)
     # Are we doing implicit reshaping?
     colgroups = Col.GroupedColumn[]
@@ -212,19 +224,16 @@ function evalmapping!(mapping::Dict, data_source, data::Data)
         end
     end
 
-    if !isempty(colgroups) && !isa(data_source, MeltedData)
-        data_source = meltdata(data_source, colgroups)
+    transformed_data_source = if !isempty(colgroups)
+        meltdata(data_source, colgroups)
+    else
+        data_source
     end
 
-    for (k, v) in mapping
-        setfield!(data, k, evalmapping(data_source, v))
-        data.titles[k] = isa(v, AbstractString) || isa(v, Symbol) ?  string(v) : string(k)
-    end
-
-    return data_source
+    return _evalmapping!(mapping, transformed_data_source, data)
 end
 
 function link_dataframes()
-    @info "Loading DataFrames support into Gadfly.jl"
+    @debug "Loading DataFrames support into Gadfly"
     include("dataframes.jl")
 end

@@ -47,6 +47,23 @@ hstack(p1,p2,p3)
 ```
 
 
+## Adding to a plot
+Another feature is that a plot can be added to incrementally, using `push!`. 
+
+```@setup 3
+using Gadfly
+set_default_plot_size(14cm, 8cm)
+```
+
+```@example 3
+p = plot()
+push!(p, layer(x=[2,4], y=[2,4], size=[1.4142], color=[colorant"gold"]))
+push!(p, Coord.cartesian(fixed=true))
+push!(p, Guide.title("My Awesome Plot"))
+```
+
+
+
 ## Wide-formatted data
 
 Gadfly is designed to plot data in so-called "long form", in which data that
@@ -61,7 +78,7 @@ refer to this as "wide form" data.
 To illustrate the difference consider some historical London birth rate data.
 
 ```julia
-births = RDatasets.dataset("HistData", "Arbuthnot")[[:Year, :Males, :Females]]
+births = RDatasets.dataset("HistData", "Arbuthnot")[:,[:Year, :Males, :Females]]
 ```
 
 | Row | Year | Males | Females |
@@ -103,7 +120,7 @@ set_default_plot_size(14cm, 8cm)
 ```
 
 ```@example 2
-births = RDatasets.dataset("HistData", "Arbuthnot")[[:Year, :Males, :Females]] # hide
+births = RDatasets.dataset("HistData", "Arbuthnot")[:,[:Year, :Males, :Females]] # hide
 plot(stack(births, [:Males, :Females]), x=:Year, y=:value, color=:variable,
      Geom.line)
 ```
@@ -128,7 +145,7 @@ DataFrame, such as matrices or arrays of arrays. Below we recreate the plot
 above for a third time after first converting the DataFrame to an Array.
 
 ```@example 2
-births_array = convert(Array{Int}, births)
+births_array = convert(Matrix{Int}, births)
 plot(births_array, x=Col.value(1), y=Col.value(2:3...),
      color=Col.index(2:3...), Geom.line, Scale.color_discrete,
      Guide.colorkey(labels=["Males","Females"]), Guide.xlabel("Year"))
@@ -138,5 +155,24 @@ nothing # hide
 When given no arguments `Row.index`, `Col.index`, and `Col.value` assume all
 columns are being concatenated.
 
-Plotting arrays of vectors works in much the same way as matrices, but
+And here's an example that illustrates two more points:
+1. Adding a variable (`date1`) that isn't in the matrix `X`
+2. Adding a discrete color scale that repeats (`color_rep`)
+
+```@example 2
+using Dates
+palette = Scale.default_discrete_colors(11)
+color_rep(nc::Int) = palette[mod1.(1:nc, length(palette))]
+n = 14
+X = exp.(-0.05*[1:50;]) * permutedims([1:n;])
+date1 = collect(Date(2000):Month(1):Date(2004,2,1)) 
+ci = Col.index(1:n...)
+
+plot(X, x=repeat(date1, inner=n), 
+    y=Col.value(1:n...), color=ci, linestyle=ci, 
+    Geom.line, Scale.color_discrete(color_rep)
+)
+```
+
+Lastly, plotting arrays of vectors works in much the same way as matrices, but
 constituent vectors may be of varying lengths.

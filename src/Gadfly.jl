@@ -1,7 +1,6 @@
 module Gadfly
 
 using Colors
-using Compat
 using Compose
 using DataStructures
 using JSON
@@ -11,14 +10,15 @@ using CategoricalArrays
 using Printf
 using Base64
 using Requires
+using Base.Iterators
 
-import IterTools
-import IterTools: distinct, drop, chain
+import IterTools: distinct, chain
 import Compose: draw, hstack, vstack, gridstack, parse_colorant
 import Base: +, -, /, *,
              copy, push!, show, getindex, cat,
              show, isfinite, display
 import Distributions: Distribution
+import REPL
 
 export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, Shape, render, plot,
        style, layer, spy, set_default_plot_size, set_default_plot_format, prepare_display
@@ -41,6 +41,11 @@ export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, Shape, ren
 export SVGJS, SVG, PGF, PNG, PS, PDF, draw, inch, mm, cm, px, pt, color, @colorant_str, vstack, hstack, title, gridstack
 
 
+function link_terminalextensions()
+    @debug "Loading TerminalExtensions support into Gadfly"
+    include("terminalextensions.jl")
+end
+
 function __init__()
     # Define an XML namespace for custom attributes
     Compose.xmlns["gadfly"] = "http://www.gadflyjl.org/ns"
@@ -55,9 +60,11 @@ function __init__()
     else
         push_theme(:default)
     end
-    pushdisplay(GadflyDisplay())
+
+    insert!(Base.Multimedia.displays, findlast(x->(x isa TextDisplay || x isa REPL.REPLDisplay), Base.Multimedia.displays)+1, GadflyDisplay())
 
     @require DataFrames="a93c6f00-e57d-5684-b7b6-d8193f3e46c0" link_dataframes()
+    @require TerminalExtensions="d3a6a179-465e-5219-bd3e-0137f7fd17c7" link_terminalextensions()
 end
 
 
@@ -165,10 +172,9 @@ plot(ls..., Guide.title("layer example"))
 """
 function layer(data_source,
                elements::ElementOrFunction...; mapping...)
-    mapping = Dict{Symbol, Any}(mapping)
     lyr = Layer()
     lyr.data_source = data_source
-    lyr.mapping = cleanmapping(mapping)
+    lyr.mapping = cleanmapping(Dict(mapping))
     if haskey(mapping, :order)
         lyr.order = mapping[:order]
     end
@@ -284,8 +290,7 @@ plot(my_matrix, x=Col.value(1), y=Col.value(2), Geom.line,
 """
 function plot(data_source,
               elements::ElementOrFunctionOrLayers...; mapping...)
-    mappingdict = Dict{Symbol, Any}(mapping)
-    return plot(data_source, mappingdict, elements...)
+    return plot(data_source, Dict(mapping), elements...)
 end
 
 """
@@ -304,8 +309,7 @@ plot(x=collect(1917:2018), y=1.02.^(0:101), Geom.line)
 ```
 """
 function plot(elements::ElementOrFunctionOrLayers...; mapping...)
-    mappingdict = Dict{Symbol, Any}(mapping)
-    plot(nothing, mappingdict, elements...)
+    plot(nothing, Dict(mapping), elements...)
 end
 
 """
@@ -334,6 +338,12 @@ end
 include("poetry.jl")
 
 
+"""
+    push!(p::Plot, element::ElementOrFunctionsOrLayers)
+
+Add an element, function or layer to a plot. Elements include
+Coordinates, Geometries, Guides, Scales, Statistics, and Themes.
+"""
 function Base.push!(p::Plot, element::ElementOrFunctionOrLayers)
     add_plot_element!(p, element)
     return p
@@ -649,11 +659,11 @@ function render_prepare(plot::Plot)
     end
 
     # I. Scales
-    layer_aess = Scale.apply_scales(IterTools.distinct(values(scales)),
+    layer_aess = Scale.apply_scales(distinct(values(scales)),
                                     datas..., subplot_datas...)
 
     # set defaults for key titles
-    keyvars = [:color, :shape]
+    keyvars = [:color, :shape, :size]
     for (i, layer) in enumerate(plot.layers)
         for kv in keyvars
             fflag = (getfield(layer_aess[i], Symbol(kv,"_key_title")) == nothing) && haskey(layer.mapping, kv) && !isa(layer.mapping[kv], AbstractArray)
@@ -694,7 +704,7 @@ function render_prepare(plot::Plot)
     Stat.apply_statistics(statistics, scales, coord, plot_aes)
 
     # Add some default guides determined by defined aesthetics
-    keytypes = [Guide.ColorKey, Guide.ShapeKey]
+    keytypes = [Guide.ColorKey, Guide.ShapeKey, Guide.SizeKey]
     supress_keys = false
     for layer in plot.layers
         if isa(layer.geom, Geom.SubplotGeometry) && any(haskey.((layer.geom.guides,), keytypes))
@@ -953,7 +963,8 @@ function show(io::IO, m::MIME"image/svg+xml", p::Plot)
     show(io, m, svg)
 end
 
-function show(io::IO, m::MIME"application/juno+plotpane", p::Plot)
+function show(io::IO,m::Union{MIME"application/juno+plotpane",
+                              MIME"application/prs.juno.plotpane+html"}, p::Plot)
     buf = IOBuffer()
     svg = SVGJS(buf, Compose.default_graphic_width,
                 Compose.default_graphic_height, false)
@@ -1067,14 +1078,7 @@ function display(d::GadflyDisplay, ::MIME"text/html", p::Union{Plot,Compose.Cont
             <title>Gadfly Plot</title>
             <meta charset="utf-8">
           </head>
-            <body style="margin:0">
-            <script charset="utf-8">
-                $(read(Compose.snapsvgjs, String))
-            </script>
-            <script charset="utf-8">
-                $(read(gadflyjs, String))
-            </script>
-
+          <body style="margin:0">
             $(plotsvg)
           </body>
         </html>
@@ -1105,6 +1109,15 @@ include("coord.jl")
 include("geometry.jl")
 include("guide.jl")
 include("statistics.jl")
+
+
+"""
+    plot()
+
+Blank plot.
+"""
+plot() = plot(Geom.blank())
+
 
 
 # All aesthetics must have a scale. If none is given, we use a default.
@@ -1149,6 +1162,7 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :size        => Scale.size_continuous(),
         :group       => Scale.group_discrete(),
         :label       => Scale.label(),
+        :alpha       => Scale.alpha_continuous(),
         :linestyle   => Scale.linestyle_discrete()
     ),
 
@@ -1169,6 +1183,7 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :size       => Scale.size_discrete(),
         :group      => Scale.group_discrete(),
         :label      => Scale.label(),
+        :alpha       => Scale.alpha_discrete(),
         :linestyle  => Scale.linestyle_discrete()
     )
 )

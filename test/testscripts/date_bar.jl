@@ -3,7 +3,7 @@ using Gadfly, Dates
 set_default_plot_size(6inch, 3inch)
 
 dates = Array{Date}(undef, 40)
-dates[1] = today()
+dates[1] = Date(2019,4,19)
 for i=2:length(dates)
     dates[i] = today()+Day(i)
 end

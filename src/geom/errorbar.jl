@@ -1,7 +1,9 @@
 struct ErrorBarGeometry <: Gadfly.GeometryElement
+    default_statistic::Gadfly.StatisticElement
     tag::Symbol
 end
-ErrorBarGeometry(; tag=empty_tag) = ErrorBarGeometry(tag)
+ErrorBarGeometry(default_statistic=Gadfly.Stat.identity(); tag=empty_tag) = 
+    ErrorBarGeometry(default_statistic, tag)
 
 
 struct XErrorBarGeometry <: Gadfly.GeometryElement
@@ -42,9 +44,14 @@ color them with `color`.
 """
 const yerrorbar = YErrorBarGeometry
 
-element_aesthetics(::ErrorBarGeometry) = [:x, :y, :xmin, :xmax, :ymin, :ymax]
-element_aesthetics(::XErrorBarGeometry) = [:y, :xmin, :xmax]
-element_aesthetics(::YErrorBarGeometry) = [:x, :ymin, :ymax]
+
+
+
+element_aesthetics(::ErrorBarGeometry) = [:x, :y, :xmin, :xmax, :ymin, :ymax, :color]
+element_aesthetics(::XErrorBarGeometry) = [:y, :xmin, :xmax, :color]
+element_aesthetics(::YErrorBarGeometry) = [:x, :ymin, :ymax, :color]
+default_statistic(geom::ErrorBarGeometry) = geom.default_statistic
+
 
 # Generate a form for the errorbar geometry.
 #
@@ -58,12 +65,12 @@ element_aesthetics(::YErrorBarGeometry) = [:x, :ymin, :ymax]
 #
 function render(geom::ErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     # check for X and Y error bar aesthetics
-    if isempty(Gadfly.undefined_aesthetics(aes, element_aesthetics(xerrorbar())...))
+    if isempty(Gadfly.undefined_aesthetics(aes, :y, :xmin, :xmax))
         xctx = render(xerrorbar(), theme, aes)
     else
         xctx = nothing
     end
-    if isempty(Gadfly.undefined_aesthetics(aes, element_aesthetics(yerrorbar())...))
+    if isempty(Gadfly.undefined_aesthetics(aes, :x, :ymin, :ymax))
         yctx = render(yerrorbar(), theme, aes)
     else
         yctx = nothing
@@ -72,16 +79,15 @@ function render(geom::ErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthet
 end
 
 function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    Gadfly.assert_aesthetics_defined("Geom.errorbar", aes,
-                                     element_aesthetics(geom)...)
-    Gadfly.assert_aesthetics_equal_length("Geom.errorbar", aes,
-                                          element_aesthetics(geom)...)
+    Gadfly.assert_aesthetics_defined("Geom.errorbar", aes, :x, :ymin, :ymax)
+    Gadfly.assert_aesthetics_equal_length("Geom.errorbar", aes, :x, :ymin, :ymax)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = discretize_make_ia(RGB{Float32}[theme.default_color])
+    default_aes.color = RGB{Float32}[theme.default_color]
     aes = inherit(aes, default_aes)
     caplen = theme.errorbar_cap_length/2
     ttc, teb, tbc = subtags(geom.tag, :top_cap, :error_bar, :bottom_cap)
+    cs = stroke(theme.stroke_color.(aes.color))
 
     ctx = compose!(
         context(order=3; tag=geom.tag),
@@ -89,20 +95,19 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
         # top cap
         (context(),
             Compose.line([[(x*cx - caplen, ymax), (x*cx + caplen, ymax)]
-                      for (x, ymax) in zip(aes.x, aes.ymax)], ttc),
+                      for (x, ymax) in zip(aes.x, aes.ymax)], ttc), cs,
             svgclass("marker")),
 
         # error bar
         Compose.line([[(x*cx, ymax), (x*cx, ymin)]
-                      for (x, ymin, ymax) in zip(aes.x, aes.ymin, aes.ymax)], teb),
+                      for (x, ymin, ymax) in zip(aes.x, aes.ymin, aes.ymax)], teb), cs,
 
         # bottom cap
         (context(),
             Compose.line([[(x*cx - caplen, ymin), (x*cx + caplen, ymin)]
-                      for (x, ymin) in zip(aes.x, aes.ymin)], tbc),
+                      for (x, ymin) in zip(aes.x, aes.ymin)], tbc), cs,
             svgclass("marker")),
 
-        stroke([theme.stroke_color(c) for c in aes.color]),
         linewidth(theme.line_width))
 
     (aes.color_key_continuous == true || aes.color == nothing) || compose!(ctx,
@@ -112,16 +117,15 @@ function render(geom::YErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
 end
 
 function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
-    Gadfly.assert_aesthetics_defined("Geom.errorbar", aes,
-                                     element_aesthetics(geom)...)
-    Gadfly.assert_aesthetics_equal_length("Geom.errorbar", aes,
-                                          element_aesthetics(geom)...)
+    Gadfly.assert_aesthetics_defined("Geom.errorbar", aes, :y, :xmin, :xmax)
+    Gadfly.assert_aesthetics_equal_length("Geom.errorbar", aes, :y, :xmin, :xmax)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = discretize_make_ia(RGB{Float32}[theme.default_color])
+    default_aes.color = RGB{Float32}[theme.default_color]
     aes = inherit(aes, default_aes)
     caplen = theme.errorbar_cap_length/2
     tlc, teb, trc = subtags(geom.tag, :left_cap, :error_bar, :right_cap)
+    cs = stroke(theme.stroke_color.(aes.color))
 
     ctx = compose!(
         context(order=3, tag=geom.tag),
@@ -129,20 +133,19 @@ function render(geom::XErrorBarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthe
         # left cap
         (context(),
             Compose.line([[(xmin, y*cy - caplen), (xmin, y*cy + caplen)]
-                      for (xmin, y) in zip(aes.xmin, aes.y)], tlc),
+                      for (xmin, y) in zip(aes.xmin, aes.y)], tlc), cs,
             svgclass("marker")),
 
         # error bar
         Compose.line([[(xmin, y*cy), (xmax, y*cy)]
-                      for (xmin, xmax, y) in zip(aes.xmin, aes.xmax, aes.y)], teb),
+                      for (xmin, xmax, y) in zip(aes.xmin, aes.xmax, aes.y)], teb), cs,
 
         # right cap
         (context(),
             Compose.line([[(xmax, y*cy - caplen), (xmax, y*cy + caplen)]
-                      for (xmax, y) in zip(aes.xmax, aes.y)], trc),
+                      for (xmax, y) in zip(aes.xmax, aes.y)], trc), cs,
             svgclass("marker")),
 
-        stroke([theme.stroke_color(c) for c in aes.color]),
         linewidth(theme.line_width))
 
     (aes.color_key_continuous == true || aes.color == nothing) || compose!(ctx,

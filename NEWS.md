@@ -1,6 +1,25 @@
-
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
+
+# Version 1.2.0
+
+ * Add `Scale.size_radius` and `Scale.size_area` (#1386)
+ * Add `Guide.sizekey` (#1379)
+ * Add `Shape.{l,r}triangle` (#1365)
+ * Add `Scale.size_discrete2` (#1376)
+ * Add `Geom.blank` (#1345)
+ * Support DataFrames.jl 0.19 changes in indexing (#1318)
+ * Add `Geom.hband` and `Geom.vband` geometries (#1264)
+ * Allow elements of type `Measure` to pass through `coord.jl` and `statistics.jl` (#1264)
+
+
+# Version 1.1.0
+ * Support AbstractVectors everywhere (e.g. `Guide.xticks(ticks=1:10)`) (#1295)
+ * Add `alpha` aesthetic, `Scale.alpha_continuous` and `Scale.alpha_discrete` (#1252)
+ * Add `limits=(min= , max= )` to `Stat.histogram` (#1249)
+ * Add dodged boxplots (#1246)
+ * Add `Stat.dodge` (#1240)
+ * `Stat.smooth(method=:lm)` confidence bands (#1231)
 
 # Version 0.9.0
  * conditionally depend on DataFrames (#1204)
@@ -10,7 +29,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 # Version 0.8.0
   * Add `linestyle` aesthetic (#1181)
   * Add `Guide.shapekey` (#1156)
-  * `Geom.contour`: add support for `DataFrame` (#1150) 
+  * `Geom.contour`: add support for `DataFrame` (#1150)
 
 # Version 0.7.0
 
@@ -29,7 +48,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 # Version 0.6.4
 
   * Regression testing tools (#1020)
-  
+
 # Version 0.6.3
 
   * Wide format data (#1013)
@@ -220,5 +239,3 @@ Each release typically has a number of minor bug fixes beyond what is listed her
     keys are wrapped automatically.
 
   * Default Theme changes.
-
-

@@ -1,5 +1,5 @@
 ```@meta
-Author = "Tamas Nagy, Daniel C. Jones, Simon Leblanc"
+Author = "Tamas Nagy, Daniel C. Jones, Simon Leblanc, Mattriks"
 ```
 
 # Tutorial
@@ -129,8 +129,8 @@ Here, the keyword arguments directly supply the data to be plotted,
 instead of using them to indicate which columns of a DataFrame to use.
 
 ```@example 1
-SepalLength = iris[:SepalLength]
-SepalWidth = iris[:SepalWidth]
+SepalLength = iris.SepalLength
+SepalWidth = iris.SepalWidth
 plot(x=SepalLength, y=SepalWidth, Geom.point,
      Guide.xlabel("SepalLength"), Guide.ylabel("SepalWidth"))
 nothing # hide
@@ -147,9 +147,9 @@ Let's do add something meaningful by mapping the color aesthetic.
 plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species, Geom.point);
 
 # or equivalently for Arrays:
-SepalLength = iris[:SepalLength] # hide
-SepalWidth = iris[:SepalWidth] # hide
-Color = iris[:Species]
+SepalLength = iris.SepalLength # hide
+SepalWidth = iris.SepalWidth # hide
+Color = iris.Species
 plot(x=SepalLength, y=SepalWidth, color=Color, Geom.point,
      Guide.xlabel("SepalLength"), Guide.ylabel("SepalWidth"),
      Guide.colorkey(title="Species"))
@@ -159,45 +159,117 @@ Ah, a scientific discovery: Setosa has short but wide sepals!
 
 Color scales in Gadfly by default are produced from perceptually uniform
 colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and
-converts arbitrarily between these. Of course, CSS/X11 named colors work too:
-"old lace", anyone?
+converts arbitrarily between these. Color values can also be specified by most names common to CSS or X11, e.g. `"oldlace"` or `"aliceblue"`. The [full list of valid color names](http://juliagraphics.github.io/Colors.jl/stable/namedcolors/) is defined in the [Colors.jl library](http://juliagraphics.github.io/Colors.jl/stable/).
 
-## Scale transforms
 
-Scale transforms also work as expected. Let's look at some data where this is
-useful.
+All aesthetics (e.g. `x`, `y`, `color`) have a Scale e.g. `Scale.x_continuous()` and some have a Guide e.g. `Guide.xticks()`.  [Scales](@ref) can be continuous or discrete. Some Scales also have a corresponding palette in `Theme()`.
+
+## Continuous Scales
+
+| Aesthetic | Scale. | Guide. | Theme palette |
+|-----------|------------------|-------|----------|
+| `x` | `x_continuous` | `xticks` |           |
+| `y` | `y_continuous` | `yticks` |           |
+| `color` | `color_continuous` | `colorkey` |  (tbd)   |
+| `size`  | `size_continuous`  | ---  | `point_size_min`, `point_size_max` |
+|         | `size_radius`      | `sizekey` | `continuous_sizemap` |          
+| `alpha` | `alpha_continuous` | alphakey (tbd) |   |
+
+e.g. `Scale.x_continuous(format= , minvalue= , maxvalue= )`\
+`format` can be: `:plain`, `:scientific`, `:engineering`, or `:auto`.
+
+Continuous scales can be transformed. In the next plot, the large animals are ruining things for us. Putting both axes on a log-scale clears things up.
 
 ```@example 1
+set_default_plot_size(21cm ,8cm)
 mammals = dataset("MASS", "mammals")
-plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)
-```
-
-This is no good, the large animals are ruining things for us. Putting both
-axes on a log-scale clears things up.
-
-```@example 1
-plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label,
+p1 = plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label)
+p2 = plot(mammals, x=:Body, y=:Brain, label=:Mammal, Geom.point, Geom.label,
      Scale.x_log10, Scale.y_log10)
+hstack(p1, p2)
 ```
 
-## Discrete scales
+Scale transformations include: `_sqrt`, `_log`, `_log2`, `_log10`, `_asinh` for the `x`, `y`, `color` aesthetics,
+and `_area` for the `size` aesthetic.
+ 
+```@example 1
+using Printf
+Diamonds = dataset("ggplot2","diamonds")
+p3= plot(Diamonds, x=:Price, y=:Carat, Geom.histogram2d(xbincount=25, ybincount=25),
+    Scale.x_continuous(format=:engineering) )
+p4= plot(Diamonds, x=:Price, y=:Carat, Geom.histogram2d(xbincount=25, ybincount=25),
+    Scale.x_continuous(format=:plain), 
+    Scale.y_sqrt(labels=y->@sprintf("%i", y^2)),
+    Scale.color_log10(minvalue=1.0, maxvalue=10^4),
+    Guide.yticks(ticks=sqrt.(0:5)) )
+hstack(p3, p4)
+```
 
-Since all continuous analysis is just degenerate discrete analysis, let's take a
-crack at the latter using some fuel efficiency data.
+
+## Discrete Scales
+
+| Aesthetic | Scale. | Guide. | Theme palette |
+|-----------|------------------|-------|-----------------|
+| `x` | `x_discrete` | `xticks` |  |
+| `y` | `y_discrete` | `yticks` |  |
+| `color` | `color_discrete` | `colorkey` | (tbd) |
+| `shape` | `shape_discrete` | `shapekey` | `point_shapes` |
+| `size` | `size_discrete` | --- | `point_size_min`, `point_size_max` |
+|         | `size_discrete2`| `sizekey` |  `discrete_sizemap` |
+| `linestyle` | `linestyle_discrete` | linekey (tbd) | `line_style`  |
+| `alpha`  | `alpha_discrete` | alphakey (tbd) | `alphas`  |
+| `group`  | `group_discrete` |  |  |
+| `xgroup` | `xgroup` |  |  |
+| `ygroup` | `ygroup` |  |  |
+
+e.g. `Scale.shape_discrete(labels= , levels= , order= )`
 
 ```@example 1
+mtcars = dataset("datasets","mtcars")
+ labeldict = Dict(4=>"four", 6=>"six", 8=>"eight")
+p5 = plot(mtcars, x=:Cyl, color=:Cyl, Geom.histogram,
+    Scale.x_discrete(levels=[4,6,8]), Scale.color_discrete(levels=[4,6,8]) )
+p6 = plot(mtcars, x=:Cyl, color=:Cyl, Geom.histogram,
+    Scale.x_discrete(labels=i->labeldict[i], levels=[8,6,4]), 
+    Scale.color_discrete(levels=[8,6,4]) )
+hstack(p5, p6)
+```
+
+For discrete scales with a Theme palette, the order of `levels` and the order of the Theme palette match.
+
+```@example 1
+set_default_plot_size(14cm, 8cm) # hide
+x, y = 0.55*rand(4), 0.55*rand(4)
+plot( Coord.cartesian(xmin=0, ymin=0, xmax=1.0, ymax=1.0),
+    layer(x=x, y=y, shape=["A"], alpha=["day","day","day","night"]),
+    layer(x=1.0.-y[1:3], y=1.0.-x[1:3], shape=["B", "C","C"], alpha=["night"]),
+    Scale.shape_discrete(levels=["A","B","C"]),
+    Scale.alpha_discrete(levels=["day","night"]),
+    Theme(discrete_highlight_color=identity, point_size=12pt,
+   point_shapes=[Shape.circle, Shape.star1, Shape.star2], alphas=[0, 1.0],
+         default_color="midnightblue" )
+)
+```
+
+
+## Gadfly defaults
+
+If you don't supply Scales or Guides, Gadfly will make an educated guess.
+
+```@example 1
+set_default_plot_size(14cm, 8cm) # hide
 gasoline = dataset("Ecdat", "Gasoline")
 plot(gasoline, x=:Year, y=:LGasPCar, color=:Country, Geom.point, Geom.line)
 ```
 
 We could have added [`Scale.x_discrete`](@ref Gadfly.Scale.x_discrete)
 explicitly, but this is detected and the right default is chosen. This is the
-case with most of the elements in the grammar: we've omitted
+case with most of the elements in the grammar. When we've omitted
 [`Scale.x_continuous`](@ref Gadfly.Scale.x_continuous) and
-[`Scale.y_continuous`](@ref Gadfly.Scale.y_continuous) in the previous plots,
+[`Scale.y_continuous`](@ref Gadfly.Scale.y_continuous) in the plots above,
 as well as [`Coord.cartesian`](@ref), and guide elements such as
 [`Guide.xticks`](@ref Gadfly.Guide.xticks), [`Guide.xlabel`](@ref
-Gadfly.Guide.xlabel), and so on. As much as possible the system tries to fill
+Gadfly.Guide.xlabel) and so on, Gadfly tries to fill
 in the gaps with reasonable defaults.
 
 ## Rendering
@@ -216,6 +288,7 @@ Building graphics declaratively let's you do some fun things. Like stick two
 plots together:
 
 ```@example 1
+set_default_plot_size(21cm, 8cm) # hide
 fig1a = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)
 fig1b = plot(iris, x=:SepalWidth, Geom.bar)
 fig1 = hstack(fig1a, fig1b)

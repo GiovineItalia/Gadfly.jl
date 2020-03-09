@@ -2,4 +2,6 @@ using Gadfly
 
 set_default_plot_size(6inch, 6inch)
 
-plot(x=rand(100), y=rand(100), shape=rand(1:8, 100), Geom.point)
+z = rand(1:8,100)
+plot(x=rand(100), y=rand(100), shape=z, Geom.point,
+    Scale.shape_discrete(levels=sort(unique(z))))

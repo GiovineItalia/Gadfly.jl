@@ -1,7 +1,6 @@
 module Coord
 
 using Gadfly
-using Compat
 using Compose
 import Gadfly.Maybe
 
@@ -20,9 +19,13 @@ struct Cartesian <: Gadfly.CoordinateElement
     aspect_ratio::Union{(Nothing), Float64}
     raster::Bool
 
-    Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster) =
-            new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
+    function Cartesian(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed, aspect_ratio, raster)
+        # promote() not wise here  
+        xmin, xmax = [xmin, xmax]
+        ymin, ymax = [ymin, ymax]
+        new(xvars, yvars, xmin, xmax, ymin, ymax, xflip, yflip, fixed,
                 isa(aspect_ratio, Real) ? Float64(aspect_ratio) : aspect_ratio, raster)
+    end
 end
 
 function Cartesian(
@@ -88,7 +91,7 @@ function first_concrete_aesthetic_value(aess::Vector{Gadfly.Aesthetics}, vars::V
         end
     end
 
-    return nothing
+    return missing
 end
 
 
@@ -153,11 +156,11 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
 
     xmin = xmax = first_concrete_aesthetic_value(aess, coord.xvars)
 
-    if xmin != nothing
+    if !ismissing(xmin)
         for var in coord.xvars
             for aes in aess
                 vals = getfield(aes, var)
-                vals === nothing && continue
+                (vals === nothing || eltype(vals) <: Measure) && continue
 
                 if !isa(vals, AbstractArray)
                     vals = [vals]
@@ -169,11 +172,11 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     end
 
     ymin = ymax = first_concrete_aesthetic_value(aess, coord.yvars)
-    if ymin != nothing
+    if !ismissing(ymin)
         for var in coord.yvars
             for aes in aess
                 vals = getfield(aes, var)
-                vals === nothing && continue
+                (vals === nothing || eltype(vals) <: Measure) && continue
 
                 # Outliers is an odd aesthetic that needs special treatment.
                 if var == :outliers
@@ -213,10 +216,10 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
         end
     end
 
-    xmax = xviewmax === nothing ? xmax : max(xmax, xviewmax)
-    xmin = xviewmin === nothing ? xmin : min(xmin, xviewmin)
-    ymax = yviewmax === nothing ? ymax : max(ymax, yviewmax)
-    ymin = yviewmin === nothing ? ymin : min(ymin, yviewmin)
+    xmax = xviewmax === nothing ? xmax : maximum(skipmissing([xmax; xviewmax]))
+    xmin = xviewmin === nothing ? xmin : minimum(skipmissing([xmin; xviewmin]))
+    ymax = yviewmax === nothing ? ymax : maximum(skipmissing([ymax; yviewmax]))
+    ymin = yviewmin === nothing ? ymin : minimum(skipmissing([ymin; yviewmin]))
 
     # Hard limits set in Coord should override everything else
     xmin = coord.xmin === nothing ? xmin : coord.xmin
@@ -224,12 +227,12 @@ function apply_coordinate(coord::Cartesian, aess::Vector{Gadfly.Aesthetics},
     ymin = coord.ymin === nothing ? ymin : coord.ymin
     ymax = coord.ymax === nothing ? ymax : coord.ymax
 
-    if xmin === nothing || !isfinite(xmin)
+    if ismissing(xmin) || isa(xmin, Measure) || !isfinite(xmin)
         xmin = 0.0
         xmax = 1.0
     end
 
-    if ymin === nothing || !isfinite(ymin)
+    if ismissing(ymin) || isa(ymin, Measure) || !isfinite(ymin)
         ymin = 0.0
         ymax = 1.0
     end

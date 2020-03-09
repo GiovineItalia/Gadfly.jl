@@ -19,6 +19,8 @@ outliers.
 
 Alternatively, if the `y` aesthetic is specified instead, the middle, hinges,
 fences, and outliers aesthetics will be computed using [`Stat.boxplot`](@ref).
+
+Boxplots will be automatically dodged by specifying a `color` aesthetic different to the `x` aesthetic.
 """
 const boxplot = BoxplotGeometry
 
@@ -111,31 +113,28 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         fill(collect(cs)),
         stroke(collect(cs)),
         linewidth(theme.line_width),
+
+        # Box
+        rectangle(
+            [x - bw/2 for x in xs],
+            lower_hinge, [bw],
+            [uh - lh for (lh, uh) in zip(lower_hinge, upper_hinge)], tbox),
+
         (
             context(),
 
-            # Box
-            rectangle(
-                [x - bw/2 for x in xs],
-                lower_hinge, [bw],
-                [uh - lh for (lh, uh) in zip(lower_hinge, upper_hinge)], tbox),
+            # Whiskers
+            Compose.line([[(x, lh), (x, lf)]
+                          for (x, lh, lf) in zip(xs, lower_hinge, lower_fence)], tlw),
 
-            (
-                context(),
+            Compose.line([[(x, uh), (x, uf)]
+                          for (x, uh, uf) in zip(xs, upper_hinge, upper_fence)], tuw),
 
-                 # Whiskers
-                Compose.line([[(x, lh), (x, lf)]
-                              for (x, lh, lf) in zip(xs, lower_hinge, lower_fence)], tlw),
+            fences...,
 
-                Compose.line([[(x, uh), (x, uf)]
-                              for (x, uh, uf) in zip(xs, upper_hinge, upper_fence)], tuw),
-
-                fences...,
-
-                stroke(collect(cs))
-            ),
-
+            stroke(collect(cs))
         ),
+
         svgclass("geometry"))
 
     # Outliers
@@ -143,11 +142,9 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         xys = collect(Iterators.flatten(zip(cycle([x]), ys, cycle([c]))
                              for (x, ys, c) in zip(xs, aes.outliers, cs)))
         compose!(ctx, (context(),
-            (context(), Shape.circle([x for (x, y, c) in xys],
-                    [y for (x, y, c) in xys],
-                    [theme.point_size], to), svgclass("marker")),
+            Shape.circle([x for (x, y, c) in xys], [y for (x, y, c) in xys], [theme.point_size], to), svgclass("marker"),
              stroke([theme.discrete_highlight_color(c) for (x, y, c) in xys]),
-             fill([c for (x, y, c) in xys])))
+             fill([c for (x, y, c) in xys]) ))
     end
 
     # Middle

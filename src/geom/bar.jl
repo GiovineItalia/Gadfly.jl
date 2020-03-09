@@ -21,13 +21,13 @@ Draw bars of height `y` centered at positions `x`, or from `xmin` to `xmax`.
 If orientation is `:horizontal` switch x for y.  Optionally categorically
 groups bars using the `color` aesthetic.  If `position` is `:stack` they will
 be placed on top of each other;  if it is `:dodge` they will be placed side by
-side.
+side.  For labelling dodged or stacked bar plots see [`Stat.dodge`](@ref).
 """
 const bar = BarGeometry
 
 """
     Geom.histogram[(; position=:stack, bincount=nothing, minbincount=3, maxbincount=150,
-                    orientation=:vertical, density=false)]
+                    orientation=:vertical, density=false, limits=NamedTuple())]
 
 Draw histograms from a series of observations in `x` or `y` optionally grouping
 by `color`.  This geometry is equivalent to [`Geom.bar`](@ref) with
@@ -36,7 +36,7 @@ by `color`.  This geometry is equivalent to [`Geom.bar`](@ref) with
 histogram(; position=:stack, bincount=nothing,
             minbincount=3, maxbincount=150,
             orientation::Symbol=:vertical,
-            density::Bool=false,
+            density::Bool=false, limits::NamedTuple=NamedTuple(),
             tag::Symbol=empty_tag) =
     BarGeometry(position, orientation,
                 Gadfly.Stat.histogram(bincount=bincount,
@@ -44,7 +44,7 @@ histogram(; position=:stack, bincount=nothing,
                                       maxbincount=maxbincount,
                                       position=position,
                                       orientation=orientation,
-                                      density=density),
+                                      density=density, limits=limits),
                 tag)
 
 # Render a single color bar chart
@@ -170,7 +170,7 @@ function render_dodged_bar(geom::BarGeometry,
                                     orientation::Symbol)
     # preserve factor orders of pooled data arrays
     if isa(aes.color, IndirectArray)
-        idxs = sortperm(aes.color.index, rev=true)
+        idxs = sortperm(aes.color.index, rev=false)
     else
         idxs = 1:length(aes.color)
     end
