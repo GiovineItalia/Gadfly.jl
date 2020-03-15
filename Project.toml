@@ -32,7 +32,7 @@ Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 [compat]
 Cairo = "0.7, 0.8"
 CategoricalArrays = "0.5, 0.6, 0.7"
-Colors = "0.9, 0.10, 0.11"
+Colors = "0.9, 0.10, 0.11, 0.12"
 Compose = "0.7, 0.8"
 Contour = "0.5"
 CoupledFields = "0.1"
