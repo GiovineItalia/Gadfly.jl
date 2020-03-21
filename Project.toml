@@ -1,6 +1,6 @@
 name = "Gadfly"
 uuid = "c91e804a-d5a3-530f-b6f0-dfbca275c004"
-version = "1.2.0"
+version = "1.2.1"
 
 [deps]
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
