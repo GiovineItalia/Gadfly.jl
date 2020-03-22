@@ -30,9 +30,23 @@ const boxplot = BoxplotGeometry
 Draw candlestick plot from `open`, `high`, `low`, `close`.
 `x` denotes a vector of `TimeType`,
 e.g. `x = Date(2018, 1, 1):Day(1):Date(2018, 1, 5)`.
+
+
+## Examples
+
+```jl-repl
+julia> using MarketData
+
+julia> scale = Scale.color_discrete_manual("green", "red");
+
+julia> plot(x = timestamp(ohlc),
+            open = values(ohlc.Open), high = values(ohlc.High),
+            low = values(ohlc.Low), close = values(ohlc.Close),
+            Geom.candlestick, scale)
+```
 """
 candlestick() =
-    BoxplotGeometry(default_statistic=Gadfly.Stat.Identity(),
+    BoxplotGeometry(default_statistic=Gadfly.Stat.candlestick(),
                     suppress_outliers=true, suppress_fences=true)
 
 element_aesthetics(::BoxplotGeometry) = [:x, :color,
@@ -83,7 +97,6 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         else
             lower_hinge[i] = aes.upper_hinge[i]
             upper_hinge[i] = aes.lower_hinge[i]
-            cs[i] = RGB{Float32}(0, 1, 0) # green
         end
 
         if uf > lf
