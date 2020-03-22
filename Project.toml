@@ -1,6 +1,6 @@
 name = "Gadfly"
 uuid = "c91e804a-d5a3-530f-b6f0-dfbca275c004"
-version = "1.2.0"
+version = "1.2.1"
 
 [deps]
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
@@ -32,13 +32,13 @@ Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 [compat]
 Cairo = "0.7, 0.8"
 CategoricalArrays = "0.5, 0.6, 0.7"
-Colors = "0.9, 0.10, 0.11"
+Colors = "0.9, 0.10, 0.11, 0.12"
 Compose = "0.7, 0.8"
 Contour = "0.5"
 CoupledFields = "0.1"
 DataFrames = "0.15, 0.16, 0.17, 0.18, 0.19, 0.20"
 DataStructures = "0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.17"
-Distributions = "0.16, 0.17, 0.18, 0.19, 0.20, 0.21, 0.22"
+Distributions = "0.16, 0.17, 0.18, 0.19, 0.20, 0.21, 0.22, 0.23"
 DocStringExtensions = "0.7, 0.8"
 Hexagons = "0.2"
 IndirectArrays = "0.5"
