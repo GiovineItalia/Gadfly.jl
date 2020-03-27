@@ -2,7 +2,7 @@ using Gadfly, MarketData
 
 set_default_plot_size(1920px, 1080px)
 
-ta = ohlc[1:100]
+ta = ohlc[1:50]
 plot(
     x     = timestamp(ta),
     open  = values(ta.Open),
