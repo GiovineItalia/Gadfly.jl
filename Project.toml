@@ -47,6 +47,7 @@ JSON = "0.18, 0.19, 0.20, 0.21"
 Juno = "0.7, 0.8"
 KernelDensity = "0.5"
 Loess = "0.4, 0.5"
+MarketData = "0.11"
 Measures = "0.3"
 RDatasets = "0.6"
 Requires = "0.5, 1.0"
@@ -59,9 +60,10 @@ Cairo = "159f3aea-2a34-519c-b102-8c37f9878175"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 LibGit2 = "76f85450-5226-5b5a-8eaa-529ad045b433"
+MarketData = "945b72a4-3b13-509d-9b46-1525bb5c06de"
 RDatasets = "ce6b1742-4840-55fa-b093-852dadbb1d8b"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [targets]
-test = ["Cairo", "DataFrames", "DelimitedFiles", "LibGit2", "RDatasets", "Test", "Unitful"]
+test = ["Cairo", "DataFrames", "DelimitedFiles", "LibGit2", "MarketData", "RDatasets", "Test", "Unitful"]
