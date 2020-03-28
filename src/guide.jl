@@ -147,6 +147,7 @@ function render(guide::PanelBackground, theme::Gadfly.Theme,
                     svgclass("guide background"),
                     stroke(theme.panel_stroke),
                     fill(theme.panel_fill),
+                    linewidth(theme.panel_line_width),
                     svgattribute("pointer-events", "visible"))
 
     return [PositionedGuide([back], 0, under_guide_position)]
@@ -625,9 +626,9 @@ function render(guide::XTicks, theme::Gadfly.Theme,
                        "\"#$(hex(theme.grid_color_focused))\""),
             jsplotdata("unfocused_xgrid_color",
                        "\"#$(hex(theme.grid_color))\""))
-        grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
+        grid_lines = compose!(context(order=theme.grid_line_order), static_grid_lines, dynamic_grid_lines)
     else
-        grid_lines = compose!(context(), static_grid_lines)
+        grid_lines = compose!(context(order=theme.grid_line_order), static_grid_lines)
     end
 
     guide.label || return [PositionedGuide([grid_lines], 0, under_guide_position)]
@@ -808,9 +809,9 @@ function render(guide::YTicks, theme::Gadfly.Theme,
                    "\"#$(    hex(theme.grid_color_focused))\""),
             jsplotdata("unfocused_ygrid_color",
                    "\"#$(hex(theme.grid_color))\""))
-        grid_lines = compose!(context(), static_grid_lines, dynamic_grid_lines)
+        grid_lines = compose!(context(order=theme.grid_line_order), static_grid_lines, dynamic_grid_lines)
     else
-        grid_lines = compose!(context(), static_grid_lines)
+        grid_lines = compose!(context(order=theme.grid_line_order), static_grid_lines)
     end
 
     if !guide.label
