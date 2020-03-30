@@ -1118,7 +1118,7 @@ const candlestick = CandlestickStatistic
 
 function apply_statistic(stat::CandlestickStatistic, scales, coord, aes)
     hlgroup = aes.upper_hinge .> aes.lower_hinge
-    color_scale = get(scales, :color, Scale.color_discrete())
+    color_scale = get(scales, :color, Scale.color_discrete(levels = [true, false]))
     Scale.apply_scale(color_scale, [aes], Gadfly.Data(color = hlgroup))
 
     nothing
