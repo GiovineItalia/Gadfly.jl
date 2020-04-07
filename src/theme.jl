@@ -111,6 +111,9 @@ $(FIELDS)
     "Border color of the main plot panel. (Color or Nothing)",
     panel_stroke,          ColorOrNothing,  nothing
 
+    "Border line width for main plot panel. (Measure)",
+    panel_line_width,      Measure,      0.3mm
+
     "Opacity of the plot background panel. (Float in [0.0, 1.0])",
     panel_opacity,         Float64,         0.0,
     "The keyword argument `panel_opacity` has been deprecated. Instead, provide a e.g. RGBA() color to panel_fill."
@@ -131,6 +134,9 @@ $(FIELDS)
 
     "Width of grid lines. (Measure)",
     grid_line_width,       Measure,         0.2mm
+
+    "Context order of the grid lines (default=0). The plot panel background has a context order of -1. (Int)",
+    grid_line_order,        Int,            0 
 
     "Font used for minor labels such as tick labels and entries in keys. (String)",
     minor_label_font,      AbstractString,          label_font_desc
