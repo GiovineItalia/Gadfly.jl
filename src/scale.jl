@@ -366,13 +366,27 @@ alpha_discrete(; labels=nothing, levels=nothing, order=nothing) =
 
 
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+
+
+    d = []
+    for data in datas
+        for var in scale.vars
+            datavar = getfield(data, var)
+            datavar!=nothing && append!(d, skipmissing(datavar))
+        end
+    end
+    levelset = unique(d)
+    
+    scale_levels = (scale.levels==nothing) ? [levelset...] : scale.levels
+
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
             label_var = Symbol(var, "_label")
-            getfield(data, var) === nothing && continue
+            datavar = getfield(data, var)
+            datavar===nothing && continue
 
-            disc_data = discretize(getfield(data, var), scale.levels, scale.order)
-            setfield!(aes, var, discretize_make_ia(Int64.(disc_data.index)))
+            disc_data = discretize(datavar, scale_levels, scale.order)
+            setfield!(aes, var, discretize_make_ia(disc_data.index))
 
             # The leveler for discrete scales is a closure over the discretized data.
             if scale.labels === nothing

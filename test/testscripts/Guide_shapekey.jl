@@ -1,8 +1,8 @@
 using Compose, DataFrames, Gadfly
 
-set_default_plot_size(9inch, 3.3inch)
+set_default_plot_size(9inch, 6inch)
 
-theme1 = Theme(point_size=3mm)
+theme1 = Theme(point_size=6pt)
 coord1 = Coord.cartesian(xmin=0.0, xmax=6.0)
 D = DataFrame(x=1:5,
               y=[0.768448, 0.940515, 0.673959, 0.395453, 0.313244],
@@ -20,7 +20,16 @@ pb = plot(D, x=:x, y=:y, shape=:V1, color=:V1,
 pc = plot(D, x=:x, y=:y, shape=:V1, color=:V2,  coord1,
         Guide.colorkey(title="Color"),
         Guide.shapekey(title="Shape ", pos=[0.74w,-0.27h]),
-        Theme(point_size=3mm, key_swatch_color="slategrey"),
+        Theme(point_size=6pt, key_swatch_color="slategrey"),
         Guide.title("Shape!=Color") )
 
-hstack(pa,pb,pc)
+
+pd = plot(D, x=:x, y=:y, shape=[Shape.square], size=[8pt])
+pe = plot()
+pf = plot(Theme(point_size=6pt, alphas=[0.6]),
+            layer(x=0.5:4, y=D.y[1:4], shape=["Gr1"]),
+             layer(x=1:4, y=D.y[1:4], shape=["Gr2"]) )
+        
+
+
+gridstack([pa pb pc; pd pe pf])
