@@ -83,8 +83,8 @@ end
 
 Create a layer from a list of functions or expressions in `fs`.
 """
-layer(fs::Vector{T}, lower::Number, upper::Number, elements::ElementOrFunction...) where T <: Base.Callable =
-    layer(y=fs, xmin=[lower], xmax=[upper], Stat.func, Geom.line, elements...)
+layer(fs::Vector{T}, lower::Number, upper::Number, elements::ElementOrFunction...; mapping...) where T <: Base.Callable =
+    layer(y=fs, xmin=[lower], xmax=[upper], Stat.func, Geom.line, elements...; mapping...)
 
 """
     layer(f::Function, lower::Number, upper::Number,
@@ -94,8 +94,8 @@ Create a layer from the function or expression `f`, which takes a single
 argument or operates on a single variable, respectively, between the `lower`
 and `upper` bounds.  See [`Stat.func`](@ref) and [`Geom.line`](@ref).
 """
-layer(f::Function, lower::Number, upper::Number, elements::ElementOrFunction...) =
-        layer(Function[f], lower, upper, elements...)
+layer(f::Function, lower::Number, upper::Number, elements::ElementOrFunction...; mapping...) =
+        layer(Function[f], lower, upper, elements...; mapping...)
 
 """
     layer(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,
