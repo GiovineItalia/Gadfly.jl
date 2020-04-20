@@ -46,9 +46,9 @@ function render(guide::ShapeKey, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     title_context, title_width = render_key_title2(guide_title, theme)
     ctxs = render_discrete_key(shape_key_labels, title_context, title_width, theme, shapes=1:nshapes, colors=colors)
     
-    position = right_guide_position
+    position, stackable = right_guide_position, true
     if !isempty(gpos)
-        position = over_guide_position
+        position, stackable = over_guide_position, false
         ctxs = [compose(context(), (context(gpos[1],gpos[2]), ctxs[1]))]
     elseif theme.key_position == :left
         position = left_guide_position
@@ -58,7 +58,7 @@ function render(guide::ShapeKey, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         position = bottom_guide_position
     end
 
-    return [PositionedGuide(ctxs, 0, position)]
+    return [PositionedGuide(ctxs, 0, position, stackable)]
 end
 
 
@@ -244,9 +244,9 @@ function render(guide::SizeKey, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     title_context, title_width = render_key_title2(guide_title, theme)
     ctxs = render_discrete_key(size_key_labels, title_context, title_width, theme, sizes=sizes, colors=colors)
     
-    position = right_guide_position
+    position, stackable = right_guide_position, true
     if !isempty(gpos)
-        position = over_guide_position
+        position, stackable = over_guide_position, false
         ctxs = [compose(context(), (context(gpos[1], gpos[2]), ctxs[1]))]
     elseif theme.key_position == :left
         position = left_guide_position
@@ -256,7 +256,7 @@ function render(guide::SizeKey, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         position = bottom_guide_position
     end
 
-    return [PositionedGuide(ctxs, 0, position)]
+    return [PositionedGuide(ctxs, 0, position, stackable)]
 end
 
 

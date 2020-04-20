@@ -1,6 +1,12 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 1.x
+
+* Enable stacked guides (#1423)
+
+
+
 # Version 1.2.0
 
  * Add `Scale.size_radius` and `Scale.size_area` (#1386)

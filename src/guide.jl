@@ -128,7 +128,10 @@ struct PositionedGuide
     ctxs::Vector{Context}
     order::Int
     position::GuidePosition
+    stackable::Bool
 end
+PositionedGuide(ctxs::Vector{Context}, order::Int, position::GuidePosition) = 
+    PositionedGuide(ctxs, order, position, false)
 
 
 struct PanelBackground <: Gadfly.GuideElement
@@ -468,9 +471,9 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         # statically with hstack.
     end
 
-    position = right_guide_position
+    position, stackable = right_guide_position, true
     if gpos != nothing
-        position = over_guide_position
+        position, stackable = over_guide_position, false
         ctxs = [compose(context(), (context(gpos[1],gpos[2]), ctxs[1]))]
     elseif theme.key_position == :left
         position = left_guide_position
@@ -482,7 +485,7 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
         position = bottom_guide_position
     end
 
-    return [PositionedGuide(ctxs, 0, position)]
+    return [PositionedGuide(ctxs, 0, position, stackable)]
 end
 
 
@@ -1116,6 +1119,29 @@ function render(guide::YRug, theme::Gadfly.Theme,
 end
 
 
+# Functions for stacking in layout_guides
+
+function keyvstack(contexts::Context...)
+    minheight = mapreduce(x->x.minheight, +, contexts)
+    minwidth = maximum([x.minwidth for x in contexts])*1.1
+    width = maximum([context.box.a[1] for context in contexts])
+    root = vstack(0, 0, width, [(context, hcenter) for context in contexts]...)
+    root.minheight = minheight
+    root.minwidth = minwidth
+    return root
+end
+
+
+function keyhstack(contexts::Context...)
+    minheight = mapreduce(x->x.minheight, +, contexts)
+    minwidth = maximum([x.minwidth for x in contexts])
+    height = maximum([context.box.a[2] for context in contexts])
+    root = hstack(0, 0, height, [(context, vcenter) for context in contexts]...)
+    root.minheight = minheight
+    root.minwidth = minwidth
+    return root
+end
+
 # Arrange a plot with its guides
 #
 # Args:
@@ -1131,17 +1157,34 @@ function layout_guides(plot_context::Context,
                        theme::Gadfly.Theme,
                        positioned_guides::PositionedGuide...)
     # Organize guides by position
-    guides = DefaultDict(() -> (Tuple{Vector{Context}, Int})[])
+    pguides = DefaultDict(() -> PositionedGuide[])
     for positioned_guide in positioned_guides
-        push!(guides[positioned_guide.position],
-              (positioned_guide.ctxs, positioned_guide.order))
+        push!(pguides[positioned_guide.position], positioned_guide)
+    end
+    
+    for (position, ordered_guides) in pguides
+        if position==left_guide_position || position==top_guide_position
+            sort!(ordered_guides, by=x -> x.order)
+        else
+            sort!(ordered_guides, by=x -> -x.order)
+        end
     end
 
-    for (position, ordered_guides) in guides
-        if position == left_guide_position || position == top_guide_position
-            sort!(ordered_guides, by=x -> x[2])
-        else
-            sort!(ordered_guides, by=x -> -x[2])
+    guides = DefaultDict(() -> Vector{Context}[])
+    for (position, ordered_guides) in pguides
+        i = [oguide.stackable for oguide in ordered_guides]
+        any(.!i) && append!(guides[position], [oguide.ctxs for oguide in ordered_guides[.!i]])
+        if count(i)>1
+             ctxs = [oguide.ctxs for oguide in ordered_guides[i]]
+            if position==right_guide_position
+                 stackedctxs = [keyvstack(ctx...) for ctx in Compose.cyclezip(ctxs...)]
+                 push!(guides[position], stackedctxs)
+            elseif in(position, [top_guide_position, bottom_guide_position])
+                 stackedctxs = [keyhstack(ctx...)  for ctx in Compose.cyclezip(reverse.(ctxs)...)]
+                 push!(guides[position], stackedctxs)
+            end
+        elseif count(i)==1
+            push!(guides[position], first(ordered_guides[i]).ctxs)
         end
     end
 
@@ -1170,7 +1213,7 @@ function layout_guides(plot_context::Context,
                 aspect_ratio=aspect_ratio)
 
     i = 1
-    for (ctxs, order) in guides[top_guide_position]
+    for ctxs in guides[top_guide_position]
         for ctx in ctxs
             if ctx.units===nothing && plot_units!==nothing
                 ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
@@ -1181,7 +1224,7 @@ function layout_guides(plot_context::Context,
         i += 1
     end
     i += 1
-    for (ctxs, order) in guides[bottom_guide_position]
+    for ctxs in guides[bottom_guide_position]
         for ctx in ctxs
             if ctx.units===nothing && plot_units!==nothing
                 ctx.units = UnitBox(plot_units, toppad=0mm, bottompad=0mm)
@@ -1193,7 +1236,7 @@ function layout_guides(plot_context::Context,
     end
 
     j = 1
-    for (ctxs, order) in guides[left_guide_position]
+    for ctxs in guides[left_guide_position]
         for ctx in ctxs
             if ctx.units===nothing && plot_units!==nothing
                 ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
@@ -1204,7 +1247,7 @@ function layout_guides(plot_context::Context,
         j += 1
     end
     j += 1
-    for (ctxs, order) in guides[right_guide_position]
+    for ctxs in guides[right_guide_position]
         for ctx in ctxs
             if ctx.units===nothing && plot_units!==nothing
                 ctx.units = UnitBox(plot_units, leftpad=0mm, rightpad=0mm)
@@ -1218,14 +1261,10 @@ function layout_guides(plot_context::Context,
     tbl[focus_y, focus_x] =
         [compose!(context(minwidth=minwidth(plot_context),
                           minheight=minheight(plot_context),
-                          units=plot_units,
-                          clip=true),
-                  Any[context(order=-1),
-                      [c for (c, o) in guides[under_guide_position]]...],
-                  Any[context(order=1000),
-                      [c for (c, o) in guides[over_guide_position]]...],
-                  (context(order=0),
-                     plot_context),
+                          units=plot_units, clip=true),
+                  (context(order=-1), guides[under_guide_position]...),
+                  (context(order=1000), guides[over_guide_position]...),
+                  (context(order=0), plot_context),
                   jscall("init_gadfly()"))]
 
     return tbl
