@@ -178,7 +178,7 @@ tipsm = by(tips, [:Day, :Sex], :TotalBill=>mean, :Tip=>mean)
     Scale.shape_discrete(levels=["Thur","Fri","Sat","Sun"]),
     Guide.shapekey(pos=[14.5, 3.8]), Guide.colorkey(pos=[16, 3.87]),
     Theme(discrete_highlight_color=identity, alphas=[0.1],
-        point_size=5pt, key_swatch_color="slate gray")
+        point_size=5pt, key_swatch_color="slategray")
 )
 ```
 

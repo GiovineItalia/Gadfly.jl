@@ -19,7 +19,7 @@ pb = plot(D, x=:x, y=:y, shape=:V1, color=:V1,
 
 pc = plot(D, x=:x, y=:y, shape=:V1, color=:V2,  coord1,
         Guide.colorkey(title="Color"),
-        Guide.shapekey(title="Shape ", pos=[0.74w,-0.27h]),
+        Guide.shapekey(title="Shape "),
         Theme(point_size=6pt, key_swatch_color="slategrey"),
         Guide.title("Shape!=Color") )
 
