@@ -23,6 +23,22 @@ plot(iris, xgroup="Species", x="SepalLength", y="SepalWidth",
 [`Geom.subplot_grid`](@ref) can similarly arrange plots vertically, or
 even in a 2D grid if there are two shared axes.
 
+Subplots have some inner and outer elements, including Guides and Scales. 
+For example, place the guide inside `Geom.subplot_grid(...)` to change the subplot labels, or outside to change the outer plot labels.
+
+```@example facet
+haireye = dataset("datasets", "HairEyeColor")
+palette = ["brown", "blue", "tan", "green"]
+
+plot(haireye, y=:Sex, x=:Freq, color=:Eye, ygroup=:Hair,
+    Geom.subplot_grid(Geom.bar(position=:stack, orientation=:horizontal),
+        Guide.ylabel(orientation=:vertical) ),
+    Scale.color_discrete_manual(palette...),
+    Guide.colorkey(title="Eye\ncolor"),
+    Guide.ylabel("Hair color"), Guide.xlabel("Frequency") )
+```
+
+More examples can be found in the plot gallery at [Geom.subplot_grid](@ref Gallery_Geom.subplot_grid) and [Scale.{x,y}group](@ref Gallery_Scale.xygroup).
 
 ## Stacks
 

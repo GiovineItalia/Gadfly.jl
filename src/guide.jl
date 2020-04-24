@@ -910,7 +910,7 @@ struct XLabel <: Gadfly.GuideElement
     label::Union{(Nothing), AbstractString}
     orientation::Symbol
 end
-XLabel(label; orientation=:auto) = XLabel(label, orientation)
+XLabel(label="x"; orientation=:auto) = XLabel(label, orientation)
 
 """
     Guide.xlabel(label, orientation=:auto)
@@ -977,7 +977,7 @@ struct YLabel <: Gadfly.GuideElement
     label::Union{(Nothing), AbstractString}
     orientation::Symbol
 end
-YLabel(label; orientation=:auto) = YLabel(label, orientation)
+YLabel(label="y"; orientation=:auto) = YLabel(label, orientation)
 
 """
     Guide.ylabel(label, orientation=:auto)

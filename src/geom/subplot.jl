@@ -316,7 +316,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             push!(guides, get(geom.guides, Guide.XTicks, Guide.xticks()))
 
             if superplot_aes.xgroup !== nothing
-                push!(guides, get(geom.guides, Guide.XLabel, Guide.xlabel(xlabels[j])))
+                gxl = get(geom.guides, Guide.XLabel, Guide.xlabel())
+                push!(guides, gxl.label=="x" ? Guide.xlabel(xlabels[j], gxl.orientation) : gxl)
             end
         else
             push!(guides, Guide.xticks(label=false))
@@ -328,7 +329,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             push!(guides, get(geom.guides, Guide.YTicks, Guide.yticks()))
             if superplot_aes.ygroup !== nothing
                 joff += 1
-                push!(guides, get(geom.guides, Guide.YLabel, Guide.ylabel(ylabels[i])))
+                gyl = get(geom.guides, Guide.YLabel, Guide.ylabel())
+                push!(guides, gyl.label=="y" ? Guide.ylabel(ylabels[i], gyl.orientation) : gyl)
             end
         else
             push!(guides, Guide.yticks(label=false))
