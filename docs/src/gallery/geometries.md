@@ -487,7 +487,7 @@ plot(x=rand(25), y=rand(25), Geom.step)
 ```
 
 
-## [`Geom.subplot_grid`](@ref)
+## [[`Geom.subplot_grid`](@ref)](@id Gallery_Geom.subplot_grid)
 
 ```@example
 using Gadfly, RDatasets

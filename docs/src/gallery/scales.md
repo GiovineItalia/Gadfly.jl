@@ -259,7 +259,7 @@ p2 = plot(df, x=Col.index, y=Col.value, Scale.x_discrete(levels=names(df)))
 hstack(p1,p2)
 ```
 
-## [`Scale.xgroup`](@ref), [`Scale.ygroup`](@ref)
+## [[`Scale.xgroup`](@ref), [`Scale.ygroup`](@ref)](@id Gallery_Scale.xygroup)
 
 ```@example
 using Gadfly, RDatasets
