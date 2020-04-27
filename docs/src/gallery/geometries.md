@@ -41,9 +41,19 @@ plot(De, x=:Date, y=:Unemploy, Geom.line,
 ## [`Geom.bar`](@ref)
 
 ```@example
-using Gadfly, RDatasets
-set_default_plot_size(14cm, 8cm)
-plot(dataset("HistData", "ChestSizes"), x="Chest", y="Count", Geom.bar)
+using ColorSchemes, DataFrames, Distributions, Gadfly
+set_default_plot_size(21cm, 8cm)
+x = range(-4, 4, length=30)
+fn1(μ,x=x) = pdf.(Normal(μ, 1), x)
+D = [DataFrame(x=x, y=fn1(μ), μ="$(μ)") for μ in [-1, 1]]
+cpalette(p) = get(ColorSchemes.viridis, p)
+p1 = plot(D[1], y=:y, x=:x, color=0:29, Geom.bar,
+    Scale.color_continuous(colormap=cpalette),
+    Theme(bar_spacing=-0.2mm, key_position=:none))
+p2 = plot(D[1], x=:x, y=:y, Geom.bar, alpha=range(0.2,0.9, length=30))
+p3 = plot(vcat(D...), x=:x, y=:y, color=:μ, alpha=[0.5],
+    Geom.bar(position=:identity))
+hstack(p1, p2, p3)
 ```
 
 ```@example
@@ -273,13 +283,18 @@ set_default_plot_size(21cm, 16cm)
 D = dataset("ggplot2","diamonds")
 gamma = Gamma(2, 2)
 Dgamma = DataFrame(x=rand(gamma, 10^4))
-p1 = plot(D, x="Price", Geom.histogram)
-p2 = plot(D, x="Price", color="Cut", Geom.histogram)
-p3 = plot(D, x="Price", color="Cut", Geom.histogram(bincount=30))
-p4 = plot(Dgamma, Coord.cartesian(xmin=0, xmax=20),
-    layer(x->pdf(gamma, x), 0, 20, Geom.line, Theme(default_color="black")),
-    layer(x=:x, Geom.histogram(bincount=20, density=true, limits=(min=0,))),
-    Theme(default_color="bisque") )
+p1 = plot(D, x="Price", color="Cut", Geom.histogram)
+p2 = plot(D, x="Price", color="Cut", Geom.histogram(bincount=30))
+p3 = plot(Dgamma, Coord.cartesian(xmin=0, xmax=20),
+    layer(x->pdf(gamma, x), 0, 20, color=[colorant"black"]),
+    layer(x=:x, Geom.histogram(bincount=20, density=true, limits=(min=0,)),
+    color=[colorant"bisque"]))
+a = repeat([0.75, 0.85], outer=40) # opacity
+D2 = [DataFrame(x=rand(Normal(μ,1), 500), μ="$(μ)") for μ in [-1, 1]]
+p4 = plot(vcat(D2...), x=:x,  color=:μ, alpha=[a;a],
+    Geom.histogram(position=:identity, bincount=40, limits=(min=-4, max=4)),
+    Scale.color_discrete_manual("skyblue","moccasin")
+)
 gridstack([p1 p2; p3 p4])
 ```
 
