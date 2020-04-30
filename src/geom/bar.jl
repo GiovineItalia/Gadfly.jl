@@ -10,7 +10,7 @@ BarGeometry(; position=:stack, orientation=:vertical, tag=empty_tag) =
             orientation = orientation), tag)
 
 element_aesthetics(geom::BarGeometry) = geom.orientation == :vertical ?
-            [:xmin, :xmax, :y, :color] : [:ymin, :ymax, :x, :color]
+            [:xmin, :xmax, :y, :color, :alpha] : [:ymin, :ymax, :x, :color, :alpha]
 
 default_statistic(geom::BarGeometry) = geom.default_statistic
 
@@ -22,6 +22,7 @@ If orientation is `:horizontal` switch x for y.  Optionally categorically
 groups bars using the `color` aesthetic.  If `position` is `:stack` they will
 be placed on top of each other;  if it is `:dodge` they will be placed side by
 side.  For labelling dodged or stacked bar plots see [`Stat.dodge`](@ref).
+If `position` is `:identity` then the bars can overlap (use the `alpha` aesthetic).
 """
 const bar = BarGeometry
 
@@ -50,39 +51,34 @@ histogram(; position=:stack, bincount=nothing,
 # Render a single color bar chart
 function render_bar(geom::BarGeometry,
                               theme::Gadfly.Theme,
-                              aes::Gadfly.Aesthetics,
-                              orientation::Symbol)
-    if orientation == :horizontal
+                              aes::Gadfly.Aesthetics)
+    rect = if geom.orientation == :horizontal
         XT = eltype(aes.x)
         xz = convert(XT, zero(XT))
-        ctx = compose!(context(),
-            rectangle([min(xz, x) for x in aes.x],
-                      [ymin*cy - theme.bar_spacing/2 for ymin in aes.ymin],
-                      abs.(aes.x),
-                      [(ymax - ymin)*cy - theme.bar_spacing
-                       for (ymin, ymax) in zip(aes.ymin, aes.ymax)], geom.tag),
-            svgclass("geometry"))
+        rectangle(min.(xz, aes.x),
+            aes.ymin.*cy .- theme.bar_spacing/2,
+            abs.(aes.x),
+            (aes.ymax .- aes.ymin).*cy .- theme.bar_spacing, geom.tag)
     else
         YT = eltype(aes.y)
         yz = convert(YT, zero(YT))
-        ctx = compose!(context(),
-            rectangle([xmin*cx + theme.bar_spacing/2 for xmin in aes.xmin],
-                      [min(yz, y) for y in aes.y],
-                      [(xmax - xmin)*cx - theme.bar_spacing
-                       for (xmin, xmax) in zip(aes.xmin, aes.xmax)],
-                      abs.(aes.y), geom.tag),
-            svgclass("geometry"))
+        rectangle(aes.xmin.*cx .+ theme.bar_spacing/2,
+            min.(yz, aes.y),
+            (aes.xmax .- aes.xmin).*cx .- theme.bar_spacing, 
+            abs.(aes.y), geom.tag)
     end
 
-    cs = aes.color === nothing ? theme.default_color : aes.color
-    compose!(ctx, fill(cs), svgclass("geometry"))
-    if isa(theme.bar_highlight, Function)
-        compose!(ctx, stroke(theme.bar_highlight(theme.default_color)))
+    aes_alpha = eltype(aes.alpha) <: Int ? theme.alphas[aes.alpha] : aes.alpha
+    sc =  if isa(theme.bar_highlight, Function)
+        stroke(theme.bar_highlight(theme.default_color))
     elseif isa(theme.bar_highlight, Color)
-        compose!(ctx, stroke(theme.bar_highlight))
+        stroke(theme.bar_highlight)
     else
-        compose!(ctx, stroke(nothing))
+        stroke(nothing)
     end
+
+    ctx = context()
+    compose!(ctx, rect, fill(aes.color), sc, fillopacity(aes_alpha), svgclass("geometry"))
     return ctx
 end
 
@@ -272,8 +268,13 @@ function render(geom::BarGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         error("Orientation must be :horizontal or :vertical")
     end
 
-    if aes.color === nothing
-        ctx = render_bar(geom, theme, aes, geom.orientation)
+    default_aes = Gadfly.Aesthetics()
+    default_aes.color = RGBA{Float32}[theme.default_color]
+    default_aes.alpha = Float64[theme.alphas[1]]
+    aes = inherit(aes, default_aes)    
+
+    if geom.position==:identity || length(aes.color)==1
+        ctx = render_bar(geom, theme, aes)
     elseif geom.position == :stack
         if geom.orientation == :horizontal
             for y in unique(aes.ymin)
