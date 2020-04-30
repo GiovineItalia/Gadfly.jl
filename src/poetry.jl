@@ -51,7 +51,7 @@ plot(f::Function, lower::Number, upper::Number, elements::ElementOrFunction...; 
          elements::ElementOrFunction...; mapping...)
 
 Plot the contours of the 2D function or expression in `f`.
-See [`Stat.func`](@ref) and [`Geom.contour`](@ref).
+Uses [`Stat.contour`](@ref) for function calculation. See also [`Geom.contour`](@ref).
 """
 function plot(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,
               elements::ElementOrFunction...; mapping...)
@@ -102,7 +102,7 @@ layer(f::Function, lower::Number, upper::Number, elements::ElementOrFunction...;
           elements::ElementOrFunction...; mapping...) -> [Layers]
 
 Create a layer of the contours of the 2D function or expression in `f`.
-See [`Stat.func`](@ref) and [`Geom.contour`](@ref).
+Uses [`Stat.contour`](@ref) for function calculation. See also [`Geom.contour`](@ref).
 """
 function layer(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Number,
                elements::ElementOrFunction...; mapping...)

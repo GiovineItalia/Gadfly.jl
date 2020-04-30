@@ -1529,8 +1529,10 @@ function apply_statistic(stat::ContourStatistic,
     aes.group = groups
     color_scale = get(scales, :color, Gadfly.Scale.color_continuous_gradient())
     Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=levels))
-    Scale.apply_scale(scales[:x], [aes],  Gadfly.Data(x=contour_xs))
-    Scale.apply_scale(scales[:y], [aes], Gadfly.Data(y=contour_ys))
+    x_scale = scales[:x].trans.f==identity ? scales[:x] : Scale.x_continuous()
+    y_scale = scales[:y].trans.f==identity ? scales[:y] : Scale.y_continuous()
+    Scale.apply_scale(x_scale, [aes], Gadfly.Data(x=contour_xs))
+    Scale.apply_scale(y_scale, [aes], Gadfly.Data(y=contour_ys))
 end
 
 
