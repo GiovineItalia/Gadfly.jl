@@ -1220,6 +1220,7 @@ classify_data(data::CategoricalArray) = :categorical
 classify_data(data::T) where {T <: Base.Callable} = :functional
 classify_data(data::AbstractArray) = :numerical
 classify_data(data::Distribution) = :distribution
+classify_data(data::Vector{<:Distribution}) = :distribution
 
 function classify_data(data::AbstractArray{Any})
     for val in data
