@@ -84,12 +84,21 @@ plot(y=[sigmoid, x->sigmoid(x+2)], xmin=[-10], xmax=[10],
 ## [`Stat.qq`](@ref)
 
 ```@example
-using Gadfly, Distributions, Random
+using Distributions, Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
-Random.seed!(1234)
-p1 = plot(x=rand(Normal(), 100), y=rand(Normal(), 100), Stat.qq, Geom.point)
-p2 = plot(x=rand(Normal(), 100), y=Normal(), Stat.qq, Geom.point)
-hstack(p1,p2)
+iris, geyser = dataset.("datasets", ["iris", "faithful"])
+df = by(iris, :Species, d=:SepalLength=>x->fit(Normal, x))
+ds2 = fit.([Normal, Uniform], [geyser.Eruptions])
+
+yeqx(x=4:6) = layer(x=x, Geom.abline(color="gray80"))
+xylabs = [Guide.xlabel("Theoretical q"), Guide.ylabel("Sample q")]
+p1 = plot(df, x=:d, y=iris[:,1], color=:Species, Stat.qq, yeqx(4:8),
+    xylabs..., Guide.title("3 Samples, 1 Distribution"))
+p2 = plot(geyser, x=ds2, y=:Eruptions, color=["Normal","Uniform"], Stat.qq,
+    yeqx(0:6), xylabs..., Guide.title("1 Sample, 2 Distributions"),
+  Theme(discrete_highlight_color=c->nothing, alphas=[0.5], point_size=2pt)
+)
+hstack(p1, p2)
 ```
 
 ## [`Stat.smooth`](@ref)

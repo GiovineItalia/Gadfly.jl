@@ -1540,16 +1540,16 @@ struct QQStatistic <: Gadfly.StatisticElement end
 
 input_aesthetics(::QQStatistic) = [:x, :y]
 output_aesthetics(::QQStatistic) = [:x, :y]
-default_scales(::QQStatistic) =
-        [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous]
+default_scales(::QQStatistic) = [Scale.x_distribution(), Scale.y_distribution()]
 
 """
     Stat.qq
 
-Transform $(aes2str(input_aesthetics(qq()))) into cumulative distrubutions.
+Transform $(aes2str(input_aesthetics(qq()))) into quantiles.
 If each is a numeric vector, their sample quantiles will be compared.  If one
 is a `Distribution`, then its theoretical quantiles will be compared with the
-sample quantiles of the other.
+sample quantiles of the other. Optionally group using the `color` aesthetic. 
+`Stat.qq` uses function `qqbuild` from Distributions.jl.
 """
 const qq = QQStatistic
 
@@ -1559,54 +1559,69 @@ function apply_statistic(stat::QQStatistic,
                          aes::Gadfly.Aesthetics)
 
     Gadfly.assert_aesthetics_defined("Stat.qq", aes, :x, :y)
-    Gadfly.assert_aesthetics_undefined("State.qq", aes, :color)
 
-    # NOTES:
-    #
-    # apply_scales happens before apply_statistics, so we need to handle in
-    # apply_scales the Distributions that might be bound to x and y... By
-    # analogy with Stat.func, we can add a check in apply_statistic which defers
-    # application.  Stat.func though requires an ARRAY of Functions, and doesn't
-    # work on naked functions bound to aes.y.  If we want to bind Distributions,
-    # we'd need to extend the types that are allowed for aes.y/.x (e.g. change
-    # type of Aesthetics fields x and y).  Right now these are of type
-    # NumericalOrCategoricalAesthetic.  The .x and .y fields are the _only_
-    # place where this type is used, but I'm not sure if there's a reason that
-    # changing this typealias would be a bad idea...for now I've just used a
-    # direct `@compat(Union{NumericalOrCategoricalAesthetic, Distribution})`.
-    #
-    # TODO:
-    #
-    # Grouping by color etc.?
+    local n_distributions::Int
 
-    # a little helper function to convert either numeric or distribution
-    # variables to a format suitable to input to qqbuild.
-    toVecOrDist = v -> typeof(v) <: Distribution ? v : convert(Vector{Float64}, v)
-
-    # check and convert :x and :y to proper types for input to qqbuild
-    local xs, ys
-    try
-        (xs, ys) = map(toVecOrDist, (aes.x, aes.y))
-    catch e
-        error("Stat.qq requires that x and y be bound to either a Distribution or to arrays of plain numbers.")
+    XT, YT = eltype(aes.x), eltype(aes.y)
+    for elt in (XT, YT)
+        if elt<:Distribution
+            elt<:UnivariateDistribution && continue
+            error("For Stat.qq, if using distributions, only UnivariateDistributions are supported (see Distributions.jl).")
+        end
     end
+    
+    colorflag = aes.color !== nothing
+    aes_color = colorflag ? aes.color : [nothing]
+    uc = unique(aes_color)
+    lx, ly = length(aes.x), length(aes.y)
+    
+    n_distributions, dv, sv = if XT<:Distribution && lx>1
+        2, :x, :y
+    elseif YT<:Distribution && ly>1
+        2, :y, :x
+    elseif XT<:Distribution
+        1, :x, :y
+    elseif YT<:Distribution
+        1, :y, :x
+    else
+        0, :x, :y
+    end
+    
+    dvar1, svar1 = getfield(aes, dv),  getfield(aes, sv)
+    !colorflag && n_distributions<2 && (aes_color=fill(nothing, length(svar1)))
 
-    qqq = qqbuild(xs, ys)
-
-    aes.x = qqq.qx
-    aes.y = qqq.qy
-
-    # apply_scale to Distribution-bound aesthetics is deferred, so re-apply here
-    # (but only for Distribution, numeric data is already scaled).  Only one of
-    # :x or :y can be a Distribution since qqbuild will throw an error for two
-    # Distributions.
-    data = Gadfly.Data()
-    if typeof(xs) <: Distribution
-        data.x = aes.x
-        Scale.apply_scale(scales[:x], [aes], data)
-    elseif typeof(ys) <: Distribution
-        data.y = aes.y
-        Scale.apply_scale(scales[:y], [aes], data)
+    CT = eltype(aes_color)
+    dvar2, svar2, colorv = Float64[], Float64[], CT[]
+    if n_distributions==2
+        for (d,c) in Compose.cyclezip(dvar1, aes_color)
+            qqq = qqbuild(d, svar1)
+            append!(dvar2, qqq.qx)
+            append!(svar2, qqq.qy)
+            append!(colorv, fill(c, length(qqq.qx)))
+        end
+    elseif n_distributions==1
+        for c in uc
+            qqq = qqbuild(dvar1[1], svar1[aes_color.==c])
+            append!(dvar2, qqq.qx)
+            append!(svar2, qqq.qy)
+            append!(colorv, fill(c, length(qqq.qx)))
+        end
+    else
+        for c in uc
+            qqq = qqbuild(dvar1[aes_color.==c], svar1[aes_color.==c])
+            append!(dvar2, qqq.qx)
+            append!(svar2, qqq.qy)
+            append!(colorv, fill(c, length(qqq.qx)))
+        end
+    end
+    
+    setfield!(aes, dv, dvar2)
+    setfield!(aes, sv, svar2)
+    colorflag && (aes.color = colorv)
+    if XT <: Distribution
+        Scale.apply_scale(scales[:x], [aes], Gadfly.Data(x=aes.x))
+    elseif YT <: Distribution
+        Scale.apply_scale(scales[:y], [aes], Gadfly.Data(y=aes.y))
     end
 end
 

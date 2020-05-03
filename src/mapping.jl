@@ -182,7 +182,7 @@ end
 # Evaluate one mapping.
 evalmapping(source, arg::AbstractArray) = arg
 evalmapping(source, arg::Function) = arg
-evalmapping(source, arg::Distribution) = arg
+evalmapping(source, arg::Distribution) = [arg]
 
 evalmapping(source::MeltedData, arg::Integer) = source.melted_data[:,source.colmap[arg]]
 evalmapping(source::MeltedData, arg::Col.GroupedColumn) = source.col_indicators[:,source.colmap[arg]]
