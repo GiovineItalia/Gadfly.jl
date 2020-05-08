@@ -36,6 +36,7 @@
     xsize
     ysize
     color
+    color2
     group
     label
     alpha

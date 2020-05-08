@@ -213,7 +213,7 @@ SizeKey(v::Nothing) = SizeKey(visible=false)
 SizeKey(title::AbstractString, labels::Vector{String}, pos::Vector) = SizeKey(title, labels, pos, true)
 
 """
-    Guide.sizekey[(; title="size", labels=String[], pos=[])]
+    Guide.sizekey[(; title="Size", labels=String[], pos=[])]
     Guide.sizekey(title, labels, pos)
 
 Enable control of the sizekey.  Set the key `title` and the item `labels`.
@@ -259,4 +259,55 @@ function render(guide::SizeKey, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     return [PositionedGuide(ctxs, 0, position, stackable)]
 end
 
+
+
+struct Color2Key <: Gadfly.GuideElement
+    title::AbstractString
+    labels::Vector{String}
+    pos::Vector
+    visible::Bool
+end
+Color2Key(;title="Color2", labels=String[], pos=Float64[], visible=true) = Color2Key(title, labels, pos, visible)
+Color2Key(v::Nothing) = Color2Key(visible=false)
+Color2Key(title::AbstractString, labels::Vector{String}, pos::Vector) = Color2Key(title, labels, pos, true)
+
+"""
+    Guide.color2key[(; title="Color2", labels=String[], pos=[])]
+    Guide.color2key(title, labels, pos)
+
+Enable control of the color2key.  Set the key `title` and the item `labels`.
+`pos` overrides [Theme(key_position=)](@ref Gadfly) and can be in either
+relative (e.g. [0.7w, 0.2h] is the lower right quadrant), absolute (e.g. [0mm,
+0mm]), or plot scale (e.g. [0,0]) coordinates. `Guide.color2key(nothing)` will hide the key.
+"""
+const color2key = Color2Key
+
+function render(guide::Color2Key, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
+
+    (theme.key_position==:none || !guide.visible || (eltype(aes.color2)<:Colorant)) && return PositionedGuide[]
+    gpos = guide.pos
+    (theme.key_position==:inside) && isempty(gpos) &&  (gpos = [0.7w, 0.25h])
+
+    # Aesthetics for keys: color2_key_title, color2_label (Function)
+    ncolors = length(unique(aes.color2))
+    guide_title = (guide.title≠"Color2" || aes.color2_key_title==nothing) ? guide.title : aes.color2_key_title
+    color2_key_labels = isempty(guide.labels) ? aes.color2_label(1:ncolors) : guide.labels
+
+    title_context, title_width = render_key_title2(guide_title, theme)
+    ctxs = render_discrete_key(color2_key_labels, title_context, title_width, theme, colors=theme.color2s[1:ncolors])
+
+    position, stackable = right_guide_position, true
+    if !isempty(gpos)
+        position, stackable = over_guide_position, false
+        ctxs = [compose(context(), (context(gpos[1],gpos[2]), ctxs[1]))]
+    elseif theme.key_position == :left
+        position = left_guide_position
+    elseif theme.key_position == :top
+        position = top_guide_position
+    elseif theme.key_position == :bottom
+        position = bottom_guide_position
+    end
+
+    return [PositionedGuide(ctxs, 0, position, stackable)]
+end
 

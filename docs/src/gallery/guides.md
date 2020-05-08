@@ -36,6 +36,24 @@ hstack(pa, pb)
 ```
 
 
+## [`Guide.color2key`](@ref)
+```@example
+using Gadfly, RDatasets
+set_default_plot_size(14cm, 9cm)
+
+iris = dataset("datasets","iris")
+gp = Geom.polygon(preserve_order=true, fill=true)
+plot(iris,
+    layer(x=:SepalLength, y=:SepalWidth, color2=:Species, alpha=[1.0]),
+    layer(x=:SepalLength, y=:SepalWidth, gp,  order=1,
+        Stat.density2d(levels=[0.05:0.05:0.4;]),
+        Theme(alphas=[0.15], lowlight_color=identity)),
+    Scale.color_continuous,
+    Guide.colorkey,  Guide.color2key(title="Iris"),
+    Theme(point_size=3pt, key_swatch_shape=Shape.circle, alphas=[0.7]))
+```
+
+
 ## [`Guide.manual_color_key`](@ref)
 
 ```@example

@@ -30,7 +30,7 @@ Draw scatter plots of the `x` and `y` aesthetics.
 """
 const point = PointGeometry
 
-element_aesthetics(::PointGeometry) = [:x, :y, :size, :color, :shape, :alpha]
+element_aesthetics(::PointGeometry) = [:x, :y, :size, :color, :shape, :alpha, :color2]
 
 # Generate a form for a point geometry.
 #
@@ -64,10 +64,15 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
     end
 
     aes_alpha = eltype(aes.alpha) <: Int ? theme.alphas[aes.alpha] : aes.alpha
+    aes_color = if aes.color2 !== nothing
+        eltype(aes.color2) <: Int ? theme.color2s[aes.color2] : aes.color2
+    else 
+        aes.color
+    end
 
     ctx = context()
 
-    for (x, y, color, size, shape, alpha) in Compose.cyclezip(aes.x, aes.y, aes.color, aes_size, aes.shape, aes_alpha)
+    for (x, y, color, size, shape, alpha) in Compose.cyclezip(aes.x, aes.y, aes_color, aes_size, aes.shape, aes_alpha)
         shapefun = typeof(shape) <: Function ? shape : theme.point_shapes[shape]
         strokecolor = aes.color_key_continuous != nothing && aes.color_key_continuous ?
                     theme.continuous_highlight_color(color) :

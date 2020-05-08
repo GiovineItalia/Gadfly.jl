@@ -105,6 +105,9 @@ $(FIELDS)
     "Alpha palette. The default palette is [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0]. Customize using a Vector of length one or greater, with 0.0≤values≤1.0",
     alphas,         Vector{Float64}, [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0]
 
+    "Discrete colors for `color2`.  The default palette is `Scale.default_discrete_colors(50)`. Customize using a `Vector{<:Color}`.", 
+    color2s,               (Vector{<:Color}),    Scale.default_discrete_colors(50)
+
     "Background color used in the main plot panel. (Color or Nothing)",
     panel_fill,            ColorOrNothing,  nothing
 
