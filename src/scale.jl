@@ -364,6 +364,15 @@ alpha_discrete(; labels=nothing, levels=nothing, order=nothing) =
 @doc type_discrete_docstr("linestyle") linestyle_discrete(; labels=nothing, levels=nothing, order=nothing) =
         DiscreteScale([:linestyle], labels=labels, levels=levels, order=order)
 
+"""
+    color2_discrete[(; labels=nothing, levels=nothing, order=nothing)]
+    
+Similar to [`Scale.x_discrete`](@ref), except applied to the `color2` aesthetic. The color2 palette
+is set by `Theme(color2s=[])`.
+"""     
+color2_discrete(; labels=nothing, levels=nothing, order=nothing) =
+        DiscreteScale([:color2], labels=labels, levels=levels, order=order)
+
 
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
 
@@ -751,8 +760,9 @@ element_aesthetics(scale::IdentityScale) = [scale.var]
 function apply_scale(scale::IdentityScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     for (aes, data) in zip(aess, datas)
-        getfield(data, scale.var) === nothing && continue
-        setfield!(aes, scale.var, getfield(data, scale.var))
+        datavar = getfield(data, scale.var)
+        datavar===nothing && continue
+        setfield!(aes, scale.var, datavar)
     end
 end
 
@@ -787,6 +797,10 @@ shape_identity() = IdentityScale(:shape)
 """
 size_identity() = IdentityScale(:size)
 
+"""
+    color2_identity()
+"""
+color2_identity() = IdentityScale(:color2)
 
 include("scale/scales.jl")
 

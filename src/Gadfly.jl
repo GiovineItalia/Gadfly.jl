@@ -663,7 +663,7 @@ function render_prepare(plot::Plot)
                                     datas..., subplot_datas...)
 
     # set defaults for key titles
-    keyvars = [:color, :shape, :size]
+    keyvars = [:color, :shape, :size, :color2]
     for (i, layer) in enumerate(plot.layers)
         for kv in keyvars
             fflag = (getfield(layer_aess[i], Symbol(kv,"_key_title")) == nothing) && haskey(layer.mapping, kv) && !isa(layer.mapping[kv], AbstractArray)
@@ -704,7 +704,7 @@ function render_prepare(plot::Plot)
     Stat.apply_statistics(statistics, scales, coord, plot_aes)
 
     # Add some default guides determined by defined aesthetics
-    keytypes = [Guide.ColorKey, Guide.ShapeKey, Guide.SizeKey]
+    keytypes = [Guide.ColorKey, Guide.ShapeKey, Guide.SizeKey, Guide.Color2Key]
     supress_keys = false
     for layer in plot.layers
         if isa(layer.geom, Geom.SubplotGeometry) && any(haskey.((layer.geom.guides,), keytypes))
@@ -1136,6 +1136,7 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :shape  => Scale.shape_identity(),
         :size   => Scale.size_identity(),
         :color  => Scale.color_identity(),
+        :color2 => Scale.color2_identity()
     ),
 
     :numerical => Dict{Symbol, Any}(
@@ -1184,7 +1185,8 @@ const default_aes_scales = Dict{Symbol, Dict}(
         :group      => Scale.group_discrete(),
         :label      => Scale.label(),
         :alpha       => Scale.alpha_discrete(),
-        :linestyle  => Scale.linestyle_discrete()
+        :linestyle  => Scale.linestyle_discrete(),
+        :color2     => Scale.color2_discrete()
     )
 )
 

@@ -213,6 +213,7 @@ hstack(p3, p4)
 | `x` | `x_discrete` | `xticks` |  |
 | `y` | `y_discrete` | `yticks` |  |
 | `color` | `color_discrete` | `colorkey` | (tbd) |
+| `color2` | `color2_discrete` | `color2key` | `color2s` |
 | `shape` | `shape_discrete` | `shapekey` | `point_shapes` |
 | `size` | `size_discrete` | --- | `point_size_min`, `point_size_max` |
 |         | `size_discrete2`| `sizekey` |  `discrete_sizemap` |

@@ -21,6 +21,7 @@ const NumericalOrCategoricalAesthetic =
     color,        Union{CategoricalAesthetic,Vector,Nothing}
     alpha,        NumericalOrCategoricalAesthetic
     linestyle,    Union{CategoricalAesthetic,Vector,Nothing}
+    color2,       Union{IndirectArray, Vector, Nothing}
 
     label,        CategoricalAesthetic
     group,        CategoricalAesthetic
@@ -66,6 +67,7 @@ const NumericalOrCategoricalAesthetic =
     shape_key_title,      Maybe(AbstractString)
     size_key_title,       Maybe(AbstractString)
     size_key_vals,        Maybe(AbstractDict)
+    color2_key_title,     Maybe(AbstractString)
 
     # mark some ticks as initially invisible
     xtickvisible,         Maybe(Vector{Bool})
@@ -91,6 +93,7 @@ const NumericalOrCategoricalAesthetic =
     ygroup_label, Function, showoff
     shape_label, Function, showoff
     size_label,   Function, showoff
+    color2_label, Function, showoff
 
     # pseudo-aesthetics
     pad_categorical_x, Union{Missing,Bool}, missing
