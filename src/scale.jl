@@ -532,7 +532,7 @@ function apply_scale(scale::DiscreteColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     levelset = OrderedSet()
     for (aes, data) in zip(aess, datas)
-        data.color === nothing && continue
+        (data.color === nothing || eltype(data.color)<:Colorant) && continue
         for d in data.color
             # Remove missing values
             # FixMe! The handling of missing values shouldn't be this scattered across the source
@@ -555,6 +555,10 @@ function apply_scale(scale::DiscreteColorScale,
 
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
+        if eltype(data.color)<:Colorant
+            aes.color = data.color
+            continue
+        end    
         # Remove missing values
         # FixMe! The handling of missing values shouldn't be this scattered across the source
         ds = discretize([c for c in data.color if !ismissing(c)], scale_levels)
@@ -638,7 +642,13 @@ const color_continuous_gradient = color_continuous  ### WHY HAVE THIS ALIAS?
 
 function apply_scale(scale::ContinuousColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-    cdata = skipmissing(Iterators.flatten(i.color for i in datas if i.color != nothing))
+
+    for (aes, data) in zip(aess, datas)
+        eltype(data.color)<:Colorant && (aes.color = data.color)
+    end
+                
+    cdata = skipmissing(
+        Iterators.flatten(i.color for i in datas if !(i.color == nothing || eltype(i.color)<:Colorant)))
     if !isempty(cdata)
       cmin, cmax = extrema(cdata)
     else
@@ -662,7 +672,7 @@ function apply_scale(scale::ContinuousColorScale,
     cspan = cmax != cmin ? cmax - cmin : 1.0
 
     for (aes, data) in zip(aess, datas)
-        data.color === nothing && continue
+        (data.color===nothing  || eltype(data.color)<:Colorant) && continue
 
         aes.color = Array{RGB{Float32}}(undef, length(data.color))
         apply_scale_typed!(aes.color, data.color, scale, cmin, cspan)

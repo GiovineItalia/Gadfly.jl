@@ -155,23 +155,32 @@ using Gadfly, RDatasets, Distributions
 set_default_plot_size(14cm, 8cm)
 dist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])
 xs = rand(dist, 10^5)
-plot(layer(x=xs, Geom.density, Theme(default_color="orange")),
-     layer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color="green")),
-     layer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color="purple")),
-     Guide.manual_color_key("bandwidth", ["auto", "bw=0.0003", "bw=0.25"],
-                            ["orange", "green", "purple"]))
+plot(layer(x=xs, Geom.density, color=["auto"]),
+    layer(x=xs, Geom.density(bandwidth=0.0003), color=["bw=0.0003"]),
+    layer(x=xs, Geom.density(bandwidth=0.25), color=["bw=0.25"]),
+    Scale.color_discrete_manual("orange", "green", "purple"),
+    Guide.colorkey(title="bandwidth"))
 ```
 
 
 ## [`Geom.density2d`](@ref)
 
 ```@example
-using Gadfly, Distributions
-set_default_plot_size(14cm, 8cm)
-plot(x=rand(Rayleigh(2),1000), y=rand(Rayleigh(2),1000),
-     Geom.density2d(levels = x->maximum(x)*0.5.^collect(1:2:8)), Geom.point,
-     Theme(key_position=:none),
-     Scale.color_continuous(colormap=x->colorant"red"))
+using Gadfly, Distributions, RDatasets
+set_default_plot_size(21cm, 8cm)
+iris = dataset("datasets", "iris")
+X = rand(Rayleigh(2), 1000,2)
+levelf(x) = maximum(x)*0.5.^collect(1:2:8)
+p1 = plot(x=X[:,1], y=X[:,2], Geom.density2d(levels=levelf), 
+    Geom.point, Scale.color_continuous(colormap=c->colorant"red"),
+    Theme(key_position=:none))
+cs = repeat(Scale.default_discrete_colors(3), inner=50)
+p2 = plot(iris, x=:SepalLength, y=:SepalWidth,
+    layer(x=:SepalLength, y=:SepalWidth, color=cs),
+    layer(Geom.density2d(levels=[0.1:0.1:0.4;]),  order=1),
+    Scale.color_continuous, Guide.colorkey(title=""),
+    Theme(point_size=3pt, line_width=1.5pt))
+hstack(p1, p2)
 ```
 
 

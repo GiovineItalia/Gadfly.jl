@@ -119,7 +119,7 @@ Note that here we used both the DataFrame and AbstractArrays interface to
 [`layer`](@ref), as well a [`Theme`](@ref) object.  See [Themes](@ref) for more
 information on the latter.
 
-You can also share the same DataFrame across different layers:
+You can share the same DataFrame across different layers:
 
 ```julia
 plot(iris,
@@ -150,6 +150,15 @@ There are two rules about layers and Statistics:
         plot(x=xdata, y=rand(30), Geom.point, Stat.binmean(n=5),
          Geom.line, Stat.step)
 
+_Layers and Aesthetics_: Aesthetics can also be shared across layers:
+```@example layer
+plot(iris, Guide.colorkey(title=""),
+    layer(x->0.4x-0.3, 0, 8, color=["Petal"]),
+    layer(x=:SepalLength, y=:SepalWidth, color=["Sepal"]),
+    layer(x=:PetalLength, y=:PetalWidth, color=["Petal"]),
+    layer(x=[2.0], y=[4], shape=[Shape.star1], color=[colorant"red"], size=[8pt]),
+    Theme(alphas=[0.7]))
+```
 
 _Layer order_: the sequence in which layers are drawn, whether they overlap or not, can be
 controlled with the `order` keyword.  Layers with lower order numbers are

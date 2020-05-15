@@ -3,6 +3,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 1.x
 
+ * Increase support for syntax `color=[colorant"color"]` (#1438)
  * Enable `color` aesthetic for `Stat.qq` (#1434)
  * Add `Geom.bar(position=:identity)` + alpha enabled (#1428)
  * Enable stacked guides (#1423)
