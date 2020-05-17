@@ -431,16 +431,26 @@ plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],
 ```
 
 
-## [`Geom.rect`](@ref), [`Geom.rectbin`](@ref)
+## [`Geom.rect`](@ref)
 
 ```@example
-using Gadfly, Colors, DataFrames, RDatasets
-set_default_plot_size(21cm, 8cm)
+using Gadfly, Colors, DataFrames
+set_default_plot_size(14cm, 8cm)
 theme1 = Theme(default_color=RGBA(0, 0.75, 1.0, 0.5))
-D = DataFrame(x=[0.5,1], y=[0.5,1], x1=[0,0.5], y1=[0,0.5], x2=[1,1.5], y2=[1,1.5])
-pa = plot(D, x=:x, y=:y, Geom.rectbin, theme1)
-pb = plot(D, xmin=:x1, ymin=:y1, xmax=:x2, ymax=:y2, Geom.rect, theme1)
-hstack(pa, pb)
+D = DataFrame(x1=[0,0.5], y1=[0,0.5], x2=[1,1.5], y2=[1,1.5])
+plot(D, xmin=:x1, ymin=:y1, xmax=:x2, ymax=:y2, Geom.rect, theme1)
+
+``` 
+
+## [`Geom.rectbin`](@ref)
+
+```@example
+using Gadfly, Colors, DataFrames
+set_default_plot_size(14cm, 8cm)
+theme1 = Theme(default_color=RGBA(0, 0.75, 1.0, 0.5))
+D = DataFrame(x=[0.5,1], y=[0.5,1])
+plot(D, x=:x, y=:y, Geom.rectbin, theme1)
+
 ```
 
 ```@example
