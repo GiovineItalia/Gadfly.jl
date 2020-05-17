@@ -31,10 +31,10 @@ De = dataset("ggplot2","economics")
 De.Unemploy /= 10^3
 
 plot(De, x=:Date, y=:Unemploy, Geom.line,
-    layer(Dp, xmin=:Start, xmax=:End, Geom.vband, color=:Party),
+    layer(Dp, xmin=:Start, xmax=:End, Geom.vband, color=:Party, alpha=[0.6]),
     Scale.color_discrete_manual("deepskyblue", "lightcoral"),
     Coord.cartesian(xmin=Date("1965-01-01"), ymax=12),
-    Guide.xlabel("Time"), Guide.ylabel("Unemployment (x10³)"), Guide.colorkey(title=""),
+  Guide.xlabel("Time"), Guide.ylabel("Unemployment (x10³)"), Guide.colorkey(title=""),
     Theme(default_color="black", key_position=:top))
 ```
 
@@ -425,13 +425,16 @@ plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],
 ## [`Geom.rect`](@ref), [`Geom.rectbin`](@ref)
 
 ```@example
-using Gadfly, Colors, DataFrames, RDatasets
+using Gadfly, DataFrames
 set_default_plot_size(21cm, 8cm)
-theme1 = Theme(default_color=RGBA(0, 0.75, 1.0, 0.5))
-D = DataFrame(x=[0.5,1], y=[0.5,1], x1=[0,0.5], y1=[0,0.5], x2=[1,1.5], y2=[1,1.5])
-pa = plot(D, x=:x, y=:y, Geom.rectbin, theme1)
-pb = plot(D, xmin=:x1, ymin=:y1, xmax=:x2, ymax=:y2, Geom.rect, theme1)
-hstack(pa, pb)
+x1, y1, w1 = 0.5:10, rand(10), 0.09.+0.4*rand(10)
+D = DataFrame(x=x1, y=rand(x1, 10), y1=y1, x2=x1.+w1, y2=y1.+w1, c=0:9)
+p1 = plot(D, xmin=:x, ymin=:y1, xmax=:x2, ymax=:y2, color=[colorant"green"],
+    alpha=1:10, Geom.rect, Scale.alpha_discrete)
+p2 = plot(D, xmin=:x, ymin=:y1, xmax=:x2, ymax=:y2, color=:c, alpha=[0.7],
+    Geom.rect, Guide.ylabel(nothing))
+p3 = plot(D, x=:x, y=:y, color=:c, alpha=[0.5], Geom.rectbin, Scale.color_discrete)
+hstack(p1, p2, p3)
 ```
 
 ```@example

@@ -50,7 +50,7 @@ end
 default_statistic(geom::RectangularBinGeometry) = geom.default_statistic
 
 element_aesthetics(::RectangularBinGeometry) =
-        [:x, :y, :xmin, :xmax, :ymin, :ymax, :color]
+        [:x, :y, :xmin, :xmax, :ymin, :ymax, :color, :alpha]
 
 # Render rectangular bin (e.g., heatmap) geometry.
 #
@@ -65,7 +65,8 @@ element_aesthetics(::RectangularBinGeometry) =
 function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.color = discretize_make_ia(RGBA{Float32}[theme.default_color])
+    default_aes.color = RGBA{Float32}[theme.default_color]
+    default_aes.alpha = Float64[theme.alphas[1]]
     aes = inherit(aes, default_aes)
 
     Gadfly.assert_aesthetics_defined("RectangularBinGeometry", aes, :xmin, :xmax, :ymin, :ymax)
@@ -83,17 +84,17 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
     ywidths = [(y1 - y0)*cy - theme.bar_spacing
                for (y0, y1) in zip(aes.ymin, aes.ymax)]
 
-    if length(aes.color) == n
-        cs = aes.color
-    else
-        cs = Array{RGBA{Float32}}(undef, n)
-        for i in 1:n
-            cs[i] = aes.color[((i - 1) % length(aes.color)) + 1]
-        end
+    AT, CT = eltype(aes.alpha), eltype(aes.color)
+    aes_color = Vector{CT}(undef, n)
+    aes_alpha = Vector{Float64}(undef, n)
+    alphav = AT <: Int ? theme.alphas[aes.alpha] : aes.alpha
+    for (i, (_, c, a)) in enumerate(Compose.cyclezip(xmin, aes.color, alphav))
+        aes_color[i] = c
+        aes_alpha[i] = a
     end
 
     allvisible = true
-    for c in cs
+    for c in aes_color
         if c == nothing
             allvisible = false
             break
@@ -101,18 +102,19 @@ function render(geom::RectangularBinGeometry, theme::Gadfly.Theme, aes::Gadfly.A
     end
 
     if !allvisible
-        visibility = cs .!= nothing
-        cs = cs[visibility]
+        visibility = aes_color .!== nothing
+        aes_color = aes_color[visibility]
+        aes_alpha = aes_alpha[visibility]
         xmin = xmin[visibility]
-        xmax = xmax[visibility]
+        xwidths = xwidths[visibility]
         ymin = ymin[visibility]
-        ymax = ymax[visibility]
+        ywidths = ywidths[visibility]
     end
 
     return compose!(
         context(),
         rectangle(xmin, ymin, xwidths, ywidths, geom.tag),
-        fill(cs),
+        fill(aes_color), fillopacity(aes_alpha),
         stroke(nothing),
         svgclass("geometry"),
         svgattribute("shape-rendering", "crispEdges"))
