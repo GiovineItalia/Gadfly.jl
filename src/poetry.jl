@@ -66,7 +66,7 @@ function plot(f::Function, xmin::Number, xmax::Number, ymin::Number, ymax::Numbe
         push!(default_elements, Guide.ylabel("y"))
     end
 
-    if !in(Guide.ColorKey, element_types) && !in(Guide.ManualColorKey, element_types)
+    if !in(Guide.ColorKey, element_types) && !in(Guide.ManualDiscreteKey, element_types)
         push!(default_elements, Guide.colorkey(title="f(x,y)"))
     end
 

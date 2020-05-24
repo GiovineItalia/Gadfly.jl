@@ -179,6 +179,7 @@ p2 = plot(iris, x=:SepalLength, y=:SepalWidth,
     layer(x=:SepalLength, y=:SepalWidth, color=cs),
     layer(Geom.density2d(levels=[0.1:0.1:0.4;]),  order=1),
     Scale.color_continuous, Guide.colorkey(title=""),
+    Guide.manual_color_key("Iris", unique(iris.Species)),
     Theme(point_size=3pt, line_width=1.5pt))
 hstack(p1, p2)
 ```
