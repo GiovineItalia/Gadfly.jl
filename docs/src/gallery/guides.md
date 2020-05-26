@@ -55,7 +55,7 @@ p2 = plot(stack(D, [:Age, :Sex]), xgroup=:Class,
     Geom.subplot_grid(layer(x=:variable, y=:prcnt, color=:value, Geom.bar)),
     Scale.x_discrete, Guide.ylabel("Survival (%)"),
     Guide.manual_color_key("Age", ["children","adults"], 1:2),
-    Guide.manual_color_key("Sex", ["women","men"], 3:4),
+    Guide.manual_color_key("Sex", ["female","male"], 3:4),
     Theme(bar_spacing=1mm, key_position=:none,
         key_swatch_shape=Shape.square, point_size=4pt))
 hstack(p1, p2)
