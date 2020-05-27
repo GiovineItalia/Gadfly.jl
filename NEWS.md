@@ -3,6 +3,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 1.x
 
+ * Add `Guide.manual_discrete_key`, updates `Guide.manual_color_key` (#1441)
  * Increase support for syntax `color=[colorant"color"]` (#1438)
  * Enable `color` aesthetic for `Stat.qq` (#1434)
  * Add `Geom.bar(position=:identity)` + alpha enabled (#1428)

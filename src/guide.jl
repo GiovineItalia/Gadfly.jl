@@ -1,7 +1,7 @@
 module Guide
 
 using Colors
-using Compose
+using Compose, Measures
 using DataStructures
 using Gadfly
 using IterTools
@@ -488,63 +488,6 @@ function render(guide::ColorKey, theme::Gadfly.Theme,
     return [PositionedGuide(ctxs, 0, position, stackable)]
 end
 
-
-struct ManualColorKey{C<:Color} <: Gadfly.GuideElement
-    title::Union{AbstractString, (Nothing)}
-    labels::OrderedDict{C, AbstractString}
-end
-function ManualColorKey(title, labels, colors::Vector{C}) where {C<:Color}
-    labeldict = OrderedDict{C, AbstractString}()
-    # ensure uniqueness of colors, fixes #1170
-    for (c, l) in zip(colors, labels)
-        haskey(labeldict, c) && error("Colors should not appear more than once")
-        labeldict[c] = l
-    end
-    ManualColorKey(title, labeldict)
-end
-ManualColorKey(title, labels, colors) =
-        ManualColorKey(title, labels, Gadfly.parse_colorant(colors))
-
-"""
-    Guide.manual_color_key(title, labels, colors)
-
-Manually define a color key with the legend `title` and item `labels` and `colors`.
-"""
-const manual_color_key = ManualColorKey
-
-function render(guide::ManualColorKey, theme::Gadfly.Theme,
-                aes::Gadfly.Aesthetics)
-    if theme.key_position == :none
-        return PositionedGuide[]
-    end
-
-    guide_title = guide.title
-
-    if guide_title === nothing && aes.color_key_title !== nothing
-        guide_title = aes.color_key_title
-    end
-
-    if guide_title === nothing
-        guide_title = "Color"
-    end
-
-    title_context, title_width = render_key_title(guide_title, theme)
-
-    ctxs = render_discrete_color_key(collect(keys(guide.labels)), guide.labels, nothing, title_context, title_width, theme)
-
-    position = right_guide_position
-    if theme.key_position == :left
-        position = left_guide_position
-    elseif theme.key_position == :right
-        position = right_guide_position
-    elseif theme.key_position == :top
-        position = top_guide_position
-    elseif theme.key_position == :bottom
-        position = bottom_guide_position
-    end
-
-    return [PositionedGuide(ctxs, 0, position)]
-end
 
 
 struct XTicks <: Gadfly.GuideElement

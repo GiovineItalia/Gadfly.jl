@@ -36,17 +36,29 @@ hstack(pa, pb)
 ```
 
 
-## [`Guide.manual_color_key`](@ref)
+## [`Guide.manual_color_key`](@ref), [`Guide.manual_discrete_key`](@ref)
 
 ```@example
-using Gadfly, DataFrames
-set_default_plot_size(14cm, 8cm)
+using DataFrames, Gadfly, RDatasets
+set_default_plot_size(21cm, 7cm)
 points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))
-line = DataFrame(val=rand(1:10,11), index = collect(0:10))
-pointLayer = layer(points, x=:index, y=:val, color=[colorant"green"])
-lineLayer = layer(line, x=:index, y=:val, Geom.line)
-plot(pointLayer, lineLayer,
-    Guide.manual_color_key("Legend", ["Points", "Line"], ["green", "deepskyblue"]))
+line = DataFrame(val=rand(1:10,11), index=collect(0:10))
+p1 = plot(layer(points, x=:index, y=:val, color=[colorant"green"]),
+    layer(line, x=:index, y=:val, Geom.line),
+    Guide.manual_color_key("Legend", ["Points", "Line"], ["green", "deepskyblue"],
+        shape=[Shape.circle, Shape.hline]))
+
+D = dataset("COUNT", "titanicgrp")
+D = join(D, by(D, :Class, :Cases=>sum), on=:Class)
+D.prcnt = 100*D.Survive./D.Cases_sum
+p2 = plot(stack(D, [:Age, :Sex]), xgroup=:Class,
+    Geom.subplot_grid(layer(x=:variable, y=:prcnt, color=:value, Geom.bar)),
+    Scale.x_discrete, Guide.ylabel("Survival (%)"),
+    Guide.manual_color_key("Age", ["children","adults"], 1:2),
+    Guide.manual_color_key("Sex", ["female","male"], 3:4),
+    Theme(bar_spacing=1mm, key_position=:none,
+        key_swatch_shape=Shape.square, point_size=4pt))
+hstack(p1, p2)
 ```
 
 
