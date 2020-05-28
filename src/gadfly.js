@@ -191,6 +191,8 @@ var helpscreen_hidden = function(root) {
 Gadfly.plot_mouseover = function(event) {
     var root = this.plotroot();
 
+    if (root.hasClass("unused-keymap")) return;
+
     var keyboard_help = function(event) {
         if (event.which == 191) { // ?
             helpscreen_visible(root);
