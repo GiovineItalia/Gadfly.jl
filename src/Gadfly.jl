@@ -851,8 +851,8 @@ function render_prepared(plot::Plot,
         class = string(class, " yscalable")
     end
 
-    if isdefined(@__MODULE__, :used_keymap) && !used_keymap
-      class = string(class, " unused-keymap") # used_keymap flag is defined to unused_plotroot_keymap() function
+    if isdefined(@__MODULE__, :enable_keymap) && !enable_keymap
+      class = string(class, " keymap-disable") # enable_keymap flag is defined to plotroot_keymap() function
     end
 
     compose(c, svgclass(class), jsinclude(gadflyjs, ("Gadfly", "Gadfly")))
@@ -860,12 +860,12 @@ end
 
 
 """
-    plotroot_keymap(used::Bool)
+    plotroot_keymap(enable::Bool)
 
 Setting to disable or enable the keymap associated with rendered graph.
 """
-function plotroot_keymap(used::Bool)
-  global used_keymap = used
+function plotroot_keymap(enable::Bool)
+  global enable_keymap = enable
 end
 
 # A convenience version of Compose.draw that let's you skip the call to render.
