@@ -3,7 +3,7 @@ include(joinpath(@__DIR__,"..","src","open_file.jl"))
 using ArgParse, LibGit2
 
 s = ArgParseSettings()
-@add_arg_table s begin
+@add_arg_table! s begin
     "--diff"
         help = "print to STDOUT the output of `diff`"
         action = :store_true
