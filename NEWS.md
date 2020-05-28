@@ -3,6 +3,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 1.x
 
+ * Add `plotroot_keymap(enable::Bool)` (#1445)
  * Add `Guide.manual_discrete_key`, updates `Guide.manual_color_key` (#1441)
  * Increase support for syntax `color=[colorant"color"]` (#1438)
  * Enable `color` aesthetic for `Stat.qq` (#1434)
@@ -45,7 +46,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
   * Support DataFrames.jl v0.11+ (#1090, #1129, #1131)
   * Change `Theme(grid_strokedash=)` to `Theme(grid_line_style=)` and include in docs (#1106)
-  * Add `Geom.ellipse` (#1103)  
+  * Add `Geom.ellipse` (#1103)
   * Improved SVG interactivity (#1037)
 
 # Version 0.6.5
