@@ -194,7 +194,7 @@ function apply_statistic(stat::BarStatistic,
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     if stat.orientation == :horizontal
-        in(:y, Gadfly.defined_aesthetics(aes)) || return
+        in(:x, Gadfly.defined_aesthetics(aes)) || return
         var = :y
         othervar = :x
         minvar = :ymin
@@ -205,7 +205,7 @@ function apply_statistic(stat::BarStatistic,
         other_viewmaxvar = :yviewmax
         labelvar = :x_label
     else
-        in(:x, Gadfly.defined_aesthetics(aes)) || return
+        in(:y, Gadfly.defined_aesthetics(aes)) || return
         var = :x
         othervar = :y
         minvar = :xmin
@@ -218,7 +218,8 @@ function apply_statistic(stat::BarStatistic,
     end
 
     vals = getfield(aes, var)
-    if isempty(vals)
+    vals===nothing && (vals = getfield(aes, minvar))
+    if vals===nothing || isempty(vals)
       setfield!(aes, minvar, Float64[1.0])
       setfield!(aes, maxvar, Float64[1.0])
       setfield!(aes, var, Float64[1.0])
