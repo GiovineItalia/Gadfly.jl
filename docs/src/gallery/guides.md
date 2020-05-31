@@ -48,12 +48,12 @@ p1 = plot(layer(points, x=:index, y=:val, color=[colorant"green"]),
     Guide.manual_color_key("Legend", ["Points", "Line"], ["green", "deepskyblue"],
         shape=[Shape.circle, Shape.hline]))
 
-D = dataset("COUNT", "titanicgrp")
-D = join(D, by(D, :Class, :Cases=>sum), on=:Class)
-D.prcnt = 100*D.Survive./D.Cases_sum
+D = groupby(dataset("COUNT", "titanicgrp"), :Class)
+fn1(s,c) = 100*s./sum(c)
+D = combine(D, :Age, :Sex, [:Survive, :Cases]=>fn1=>:prcnt)
 p2 = plot(stack(D, [:Age, :Sex]), xgroup=:Class,
     Geom.subplot_grid(layer(x=:variable, y=:prcnt, color=:value, Geom.bar)),
-    Scale.x_discrete, Guide.ylabel("Survival (%)"),
+    Scale.x_discrete, Guide.ylabel("Survival (% Class)"),
     Guide.manual_color_key("Age", ["children","adults"], 1:2),
     Guide.manual_color_key("Sex", ["female","male"], 3:4),
     Theme(bar_spacing=1mm, key_position=:none,
@@ -84,10 +84,9 @@ plot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:Vore, shape=:SleepTime,
 using Compose, Gadfly, RDatasets
 set_default_plot_size(14cm, 8cm)
 
-Titanic = dataset("datasets", "Titanic")
-Class =  by(Titanic, :Class, :Freq=>sum)
-Titanic = join(Titanic[Titanic.Survived.=="Yes",:], Class, on=:Class)
-Titanic.prcnt = 100*Titanic.Freq./Titanic.Freq_sum
+D = groupby(dataset("datasets", "Titanic"), :Class)
+Titanic = combine(D, :, :Freq=>(c->100*c./sum(c))=>:prcnt)
+filter!(:Survived=>x->x=="Yes", Titanic)
 sizemap = n->range(3pt, 8pt, length=n)
 
 plot(Titanic, Scale.x_log10,  Scale.y_log10,

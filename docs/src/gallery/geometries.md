@@ -60,7 +60,8 @@ hstack(p1, p2, p3)
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(21cm, 8cm)
 
-D = by(dataset("datasets","HairEyeColor"), [:Eye,:Sex], Frequency=:Freq=>sum)
+hecolor = dataset("datasets","HairEyeColor")
+D = combine(groupby(hecolor, [:Eye,:Sex]), :Freq=>sum=>:Frequency)
 p1 = plot(D, color=:Eye, y=:Frequency, x=:Sex, Geom.bar(position=:dodge))
 
 palette = ["brown","blue","tan","green"]  # Is there a hazel color?
@@ -235,11 +236,11 @@ set_default_plot_size(21cm, 8cm)
 salaries = dataset("car","Salaries")
 salaries.Salary /= 1000.0
 salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
-df = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)
-df.ymin, df.ymax = df.Salary_mean.-df.Salary_std, df.Salary_mean.+df.Salary_std
-df.label = string.(round.(Int, df.Salary_mean))
+fn1(x, u=mean(x), s=std(x)) = (Salary=u, ymin=u-s, ymax=u+s, 
+    label="$(round.(Int,u))")
+df = combine(:Salary=>fn1, groupby(salaries, [:Rank, :Discipline]))
 
-p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank,
+p1 = plot(df, x=:Discipline, y=:Salary, color=:Rank,
     Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
     ymin=:ymin, ymax=:ymax, Geom.errorbar, Stat.dodge,
     Geom.bar(position=:dodge),
@@ -247,7 +248,7 @@ p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank,
     Guide.colorkey(title="", pos=[0.76w, -0.38h]),
     Theme(bar_spacing=0mm, stroke_color=c->"black")
 )
-p2 = plot(df, y=:Discipline, x=:Salary_mean, color=:Rank,
+p2 = plot(df, y=:Discipline, x=:Salary, color=:Rank,
     Coord.cartesian(yflip=true), Scale.y_discrete,
     xmin=:ymin, xmax=:ymax, Geom.errorbar, Stat.dodge(axis=:y),
     Geom.bar(position=:dodge, orientation=:horizontal),
@@ -630,6 +631,6 @@ hstack(p1,p2)
 using Gadfly, RDatasets
 set_default_plot_size(14cm, 8cm)
 Dsing = dataset("lattice","singer")
-Dsing.Voice = [x[1:5] for x in Dsing.VoicePart]
+Dsing.Voice = [x[1:5] for x in Array(Dsing.VoicePart)]
 plot(Dsing, x=:VoicePart, y=:Height, color=:Voice, Geom.violin)
 ```

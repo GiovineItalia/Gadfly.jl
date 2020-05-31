@@ -1,6 +1,6 @@
 using DataFrames, Gadfly, Dates
 
-set_default_plot_size(6inch, 3inch)
+set_default_plot_size(7inch, 3inch)
 
 # Geom.smooth already has tests for these types:
 # Floats: smooth_lm.jl
@@ -15,16 +15,16 @@ n = length(t)
 D = DataFrame(t1=t1, t2=t2,
               cycle = 5*sin.(t*2π/365.25)+randn(n),
               trend = 0.1*[1.0:n;].+2*randn(n))
-Dl = stack(D, setdiff(names(D), [:t1,:t2]))
+Dl = stack(D, Not([:t1, :t2]))
 
-plot(D,
-    x=:t1, y=:trend, Geom.point,
-    Geom.smooth(method=:lm),
+p1 = plot(D, x=:t1, y=:trend, 
+    Geom.smooth(method=:lm), Geom.point,
     Theme(point_size=1.8pt, key_position=:none)
     )
 
-plot(Dl,
-    x=:t2, y=:value, color=:variable, Geom.point,
-    Geom.smooth(smoothing=0.05),
+p2 = plot(Dl,
+    x=:t2, y=:value, color=:variable, 
+    Geom.smooth(smoothing=0.05), Geom.point,
     Theme(point_size=1.8pt, key_position=:none)
     )
+hstack(p1, p2)

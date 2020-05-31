@@ -4,7 +4,7 @@ set_default_plot_size(21cm, 8cm)
 salaries = dataset("car","Salaries")
 salaries.Salary /= 1000.0
 salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
-df = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)
+df = combine(groupby(salaries, [:Rank,:Discipline]), :Salary=>mean, :Salary=>std)
 df.ymin, df.ymax = df.Salary_mean.-df.Salary_std, df.Salary_mean.+df.Salary_std
 df.label = string.(round.(Int, df.Salary_mean))
 

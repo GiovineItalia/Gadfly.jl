@@ -331,7 +331,7 @@ discretize_make_ia(values::CategoricalArray) =
     discretize_make_ia(values, intersect(push!(levels(values), missing), unique(values)))
 discretize_make_ia(values::CategoricalArray, ::Nothing) = discretize_make_ia(values)
 function discretize_make_ia(values::CategoricalArray{T}, levels::Vector) where {T}
-    mapping = something.(indexin(CategoricalArrays.index(values.pool), levels), 0)
+    mapping = something.(indexin(CategoricalArrays.levels(values.pool), levels), 0)
     pushfirst!(mapping, something(findfirst(ismissing, levels), 0))
     index = [mapping[x+1] for x in values.refs]
     any(iszero, index) && throw(ArgumentError("values not in levels encountered"))
