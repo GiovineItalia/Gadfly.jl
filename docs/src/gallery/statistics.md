@@ -41,8 +41,7 @@ set_default_plot_size(21cm, 8cm)
 salaries = dataset("car","Salaries")
 salaries.Salary /= 1000.0
 salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
-df = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)
-df.ymin, df.ymax = df.Salary_mean.-df.Salary_std, df.Salary_mean.+df.Salary_std
+df = combine(groupby(salaries, [:Rank, :Discipline]), :Salary.=>mean)
 df.label = string.(round.(Int, df.Salary_mean))
 
 p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank, 
@@ -87,7 +86,7 @@ plot(y=[sigmoid, x->sigmoid(x+2)], xmin=[-10], xmax=[10],
 using Distributions, Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
 iris, geyser = dataset.("datasets", ["iris", "faithful"])
-df = by(iris, :Species, d=:SepalLength=>x->fit(Normal, x))
+df = combine(groupby(iris, :Species), :SepalLength=>(x->fit(Normal, x))=>:d)
 ds2 = fit.([Normal, Uniform], [geyser.Eruptions])
 
 yeqx(x=4:6) = layer(x=x, Geom.abline(color="gray80"))
