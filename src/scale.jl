@@ -414,6 +414,15 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
 end
 
 
+# Error message if a plot has both a discrete and continuous color variable
+const colorclash = """There appears to be mixing of a continuous variable and a discrete variable in the `color` aesthetic.
+This can happen when the color aesthetic is assigned in more than 1 layer (which is ok to do),
+or you have forgotten to assign it. Either:
+    1) make sure that the `color` variable in all layers is the same (i.e. discrete or continuous), or
+    2) add `Scale.color_continuous` or `Scale.color_discrete` to the plot, or
+    3) in a layer where `color` is a discrete variable, instead assign e.g. `color=[colorant"red"]`, or a vector of colorants."""
+
+
 struct NoneColorScale <: Gadfly.ScaleElement
 end
 
@@ -650,7 +659,8 @@ function apply_scale(scale::ContinuousColorScale,
     cdata = skipmissing(
         Iterators.flatten(i.color for i in datas if !(i.color == nothing || eltype(i.color)<:Colorant)))
     if !isempty(cdata)
-      cmin, cmax = extrema(cdata)
+        isa(first(cdata), Number) || error(colorclash)
+        cmin, cmax = extrema(cdata)
     else
         return
     end
