@@ -57,9 +57,11 @@ iris = dataset("datasets", "iris")
 
 ```@example stacks
 set_default_plot_size(14cm, 16cm) # hide
-fig1a = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point)
-fig1b = plot(iris, x=:SepalLength, Geom.density,
-             Guide.ylabel("density"), Coord.cartesian(xmin=4, xmax=8))
+theme1 = Theme(key_position=:none)
+fig1a = plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species, theme1,
+          alpha=[0.6], size=:PetalLength, Scale.size_area(maxvalue=7))
+fig1b = plot(iris, x=:SepalLength, color=:Species, Geom.density,
+          Guide.ylabel("density"), Coord.cartesian(xmin=4, xmax=8), theme1)
 vstack(fig1a,fig1b)
 ```
 
@@ -77,18 +79,24 @@ to use `gridstack`.
 gridstack([p1 p2; p3 p4])
 ```
 
-For each of these commands, you can leave a panel empty by passing in a
-`Compose.context()` object.
+For each of these commands, you can leave a panel blank by passing an empty `plot()`.
+Other elements, e.g. `Scales` and `Guides`, can be added to blank plots.  If the plot contains aesthetic mappings,
+use `Geom.blank`.
 
 ```@example stacks
-using Compose
+using Compose # for w, h relative units
 set_default_plot_size(21cm, 16cm) # hide
-fig1c = plot(iris, x=:SepalWidth, Geom.density,
-             Guide.ylabel("density"), Coord.cartesian(xmin=2, xmax=4.5))
-gridstack(Union{Plot,Compose.Context}[fig1a fig1c; fig1b Compose.context()])
+fig1c = plot(iris, x=:SepalWidth, color=:Species, Geom.density,
+          Guide.ylabel("density"), Coord.cartesian(xmin=2, xmax=4.5), theme1)
+fig1d = plot(iris, color=:Species, size=:PetalLength, Geom.blank,
+          Scale.size_area(maxvalue=7), Theme(key_swatch_color="silver"),
+          Guide.colorkey(title="Species", pos=[0.55w,-0.15h]),
+          Guide.sizekey(title="PetalLength (cm)", pos=[0.2w, -0.10h]))
+gridstack([fig1a fig1c; fig1b fig1d])
 ```
 
-Note that in this case the array must be explicitly typed.
+Note in this example, the Guide `pos` argument is in [width, height] relative units, which come from 
+[Compose](http://giovineitalia.github.io/Compose.jl/latest/tutorial/#Measures-can-be-a-combination-of-absolute-and-relative-units-1).
 
 Lastly, `title` can be used to add a descriptive string to the top of a stack.
 

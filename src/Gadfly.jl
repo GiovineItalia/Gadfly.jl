@@ -378,7 +378,7 @@ end
 function render_prepare(plot::Plot)
     if isempty(plot.layers)
         layer = Layer()
-        layer.geom = Geom.point()
+        layer.geom = isempty(plot.mapping) ? Geom.blank() : Geom.point()
         push!(plot.layers, layer)
     end
 
