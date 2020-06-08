@@ -303,7 +303,7 @@ end
 Manually define a discrete key with the legend `title` and `labels`, and swatch `color`, `shape` and `size`.
 The swatch aesthetics can be Vectors of specific types (as above), or integer ranges.
 Integer ranges refer to the order of items in the discrete Theme palettes [Discrete Scales](@ref).
-Set the key position inside using `pos` (see ([`Guide.sizekey`](@ref), [`Guide.shapekey`](@ref)).
+Set the key position inside using `pos` (see [`Guide.sizekey`](@ref), [`Guide.shapekey`](@ref)).
 """
 manual_discrete_key(title::AbstractString, labels::Vector{String}; kwargs...) =
     ManualDiscreteKey(title=title, labels=labels; kwargs...)
