@@ -361,8 +361,6 @@ is set by `Theme(alphas=[])`.
 alpha_discrete(; labels=nothing, levels=nothing, order=nothing) =
             DiscreteScale([:alpha], labels=labels, levels=levels, order=order)
 
-@doc type_discrete_docstr("linestyle") linestyle_discrete(; labels=nothing, levels=nothing, order=nothing) =
-        DiscreteScale([:linestyle], labels=labels, levels=levels, order=order)
 
 
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
@@ -807,6 +805,8 @@ shape_identity() = IdentityScale(:shape)
 """
 size_identity() = IdentityScale(:size)
 
+
+linestyle_identity() = IdentityScale(:linestyle)
 
 include("scale/scales.jl")
 

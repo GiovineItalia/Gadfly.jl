@@ -1,6 +1,12 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 1.x
+
+ * Support one-length aesthetics e.g. `color=[colorant"red"]` for `Geom.line` (#1459)
+
+
+
 # Version 1.3.0
 
  * Add support for CategoricalArrays v0.8 & and DataFrames v0.21 (#1447)

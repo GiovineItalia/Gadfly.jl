@@ -20,10 +20,10 @@ end
     Geom.line[(; preserve_order=false, order=2)]
 
 Draw a line connecting the `x` and `y` coordinates.  Optionally plot multiple
-lines according to the `group` or `color` aesthetics.  `order` controls whether
+lines according to the `group`, `color` or `linestyle` aesthetics.  `order` controls whether
 the lines(s) are underneath or on top of other forms.
 
-Set `preserve_order` to `:true` to *not* sort the points according to their
+Set `preserve_order=true` to *not* sort the points according to their
 position along the x axis, or use the equivalent [`Geom.path`](@ref) alias.
 """
 const line = LineGeometry
@@ -103,65 +103,56 @@ element_aesthetics(::LineGeometry) = [:x, :y, :color, :group, :linestyle]
 
 function Gadfly.Geom.render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.line", aes, :x, :y)
-    Gadfly.assert_aesthetics_equal_length("Geom.line", aes, Geom.element_aesthetics(geom)...)
+    Gadfly.assert_aesthetics_equal_length("Geom.line", aes, :x, :y)
+
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.group = IndirectArray(fill(1,length(aes.x)))
-    default_aes.color = fill(theme.default_color, length(aes.x))
-    default_aes.linestyle = fill(1, length(aes.x))
-    aes = Gadfly.inherit(aes, default_aes)
-    
-    # Point order:
-    p = 1:length(aes.x)
-    !geom.preserve_order && (p = sortperm(aes.x))
-    aes_x, aes_y, aes_color, aes_g = aes.x[p], aes.y[p], aes.color[p], aes.group[p]
-    aes_linestyle = aes.linestyle[p]
-    
-    # Find the aesthetic with the most levels:
-    aesv = [aes_g, aes_color, aes_linestyle]
-    i1 = argmax([length(unique(a)) for a in aesv])
-    aes_maxlvls = aesv[i1]
-  
-    # Concrete values?:
-    cf = Gadfly.isconcrete.(aes_x) .& Gadfly.isconcrete.(aes_y)
-    fcf = .!cf
-    ulvls =  unique(aes_maxlvls[fcf])
-    aes_concrete = zeros(Int, length(cf))
-    for g in ulvls    
-        i = aes_maxlvls.==g
-        aes_concrete[i] = cumsum(fcf[i])
-    end
-    
-    aes_x, aes_y, aes_color, aes_g = aes_x[cf], aes_y[cf], aes_color[cf], aes_g[cf]
-    aes_concrete, aes_linestyle = aes_concrete[cf], aes_linestyle[cf]
-    
-    # Render lines, using multivariate groupings:
-    XT, YT, CT, GT, CNT = eltype(aes_x), eltype(aes_y), eltype(aes_color), eltype(aes_g), eltype(aes_concrete)
-    LST = eltype(aes_linestyle)
-    groups = collect((Tuple{GT, CT, LST, CNT}), zip(aes_g, aes_color, aes_linestyle, aes_concrete))
-    ug = unique(groups)
+    default_aes.group = IndirectArray([1])
+    default_aes.color = [theme.default_color]
+    default_aes.linestyle = theme.line_style[1:1]
+    aes = inherit(aes, default_aes)
 
-    n = length(ug)
-    lines = Vector{Vector{Tuple{XT,YT}}}(undef, n)
-    line_colors = Vector{CT}(undef, n)
-    line_styles = Vector{LST}(undef, n)
+    # Render lines, using multivariate groupings:
+    XT, YT = eltype(aes.x), eltype(aes.y)
+    GT, CT, LST = Int, eltype(aes.color), eltype(aes.linestyle)
+    groups = collect(Tuple{GT, CT, LST}, Compose.cyclezip(aes.group, aes.color, aes.linestyle))
+    ugroups = unique(groups)
+    nugroups = length(ugroups)
+    # Recycle groups
+    (1 .< length(groups) .< length(aes.x))  && (groups = [b for (a, b) in zip(aes.x, cycle(groups))])
+    
+    # Point order
+    aes_x, aes_y, zgroups  = if !geom.preserve_order
+        p = sortperm(aes.x)
+        aes.x[p], aes.y[p], (nugroups==1 ? ugroups : groups[p])
+    else
+        aes.x, aes.y, (nugroups==1 ? ugroups : groups)
+    end
+
+    gs = Vector{GT}(undef, nugroups)
+    cs = Vector{CT}(undef, nugroups)
+    lss = Vector{LST}(undef, nugroups)
+    lines = Vector{Vector{Tuple{XT,YT}}}(undef, nugroups)
     linestyle_palette_length = length(theme.line_style)
-    for (k,g) in enumerate(ug)
-        i = groups.==[g]
-        lines[k] = collect(Tuple{XT,YT}, zip(aes_x[i], aes_y[i]))
-        line_colors[k] = first(aes_color[i])
-        line_styles[k] = mod1(first(aes_linestyle[i]), linestyle_palette_length) 
+    if nugroups==1
+        gs[1], cs[1], lss[1] = zgroups[1]
+        lines[1] = collect(Tuple{XT, YT}, zip(aes_x, aes_y))
+    elseif nugroups>1
+        for (k,g) in enumerate(ugroups)
+            i = zgroups.==[g]
+            gs[k], cs[k], lss[k] = g
+            lines[k] = collect(Tuple{XT,YT}, zip(aes_x[i], aes_y[i]))
+        end
     end
     
-    linestyles =  Gadfly.get_stroke_vector.(theme.line_style[line_styles])
-    classes = svg_color_class_from_label.(aes.color_label(line_colors))
+    linestyles = Gadfly.get_stroke_vector.(LST<:Int ?
+         theme.line_style[mod1.(lss, linestyle_palette_length)] : lss)
+    
+    classes = svg_color_class_from_label.(aes.color_label(cs))
     ctx = context(order=geom.order)
     ctx = compose!(ctx, (context(), Compose.line(lines, geom.tag),
-                        stroke(line_colors),
-                        strokedash(linestyles),
-                        svgclass(classes)), svgclass("geometry")) 
+            stroke(cs), strokedash(linestyles),
+            svgclass(classes)), svgclass("geometry"))
     
     return compose!(ctx, fill(nothing), linewidth(theme.line_width))
-
-
 end

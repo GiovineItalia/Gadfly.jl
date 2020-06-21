@@ -118,7 +118,8 @@ iris = dataset("datasets", "iris")
 ```@example layer
 xdata = sort(iris.SepalWidth)
 ydata = cumsum(xdata)
-line = layer(x=xdata, y=ydata, Geom.line, Theme(default_color="red"))
+line = layer(x=xdata, y=ydata, Geom.line, color=[colorant"red"], 
+    Theme(line_width=1pt))
 bars = layer(iris, x=:SepalWidth, Geom.bar)
 plot(line, bars)
 ```
@@ -132,7 +133,7 @@ You can share the same DataFrame across different layers:
 ```julia
 plot(iris,
      layer(x=:SepalLength, y=:SepalWidth),
-     layer(x=:PetalLength, y=:PetalWidth, Theme(default_color="red")))
+     layer(x=:PetalLength, y=:PetalWidth, color=[colorant"red"]))
 ```
 
 In this case, Gadfly labels the axes with the column names of first layer listed.
@@ -141,7 +142,7 @@ If this is not what is desired, Guides may be explicitly added.
 ```@example layer
 plot(iris,
      layer(x=:SepalLength, y=:SepalWidth),
-     layer(x=:PetalLength, y=:PetalWidth, Theme(default_color="red")),
+     layer(x=:PetalLength, y=:PetalWidth, color=[colorant"red"]),
      Guide.xlabel("length"), Guide.ylabel("width"), Guide.title("Iris data"),
      Guide.manual_color_key("",["Sepal","Petal"],
                             [Gadfly.current_theme().default_color,"red"]))
@@ -176,7 +177,7 @@ appear in `plot`'s input arguments.
 
 ```julia
 bars = layer(iris, x=:SepalWidth, Geom.bar)
-line = layer(iris, x=xdata, y=ydata, Geom.line, Theme(default_color="red"),
+line = layer(iris, x=xdata, y=ydata, Geom.line, color=[colorant"red"],
              order=1)
 plot(bars, line)
 ```
