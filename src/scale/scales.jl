@@ -33,20 +33,25 @@ size_discrete2(f::Function=Gadfly.current_theme().discrete_sizemap; levels=nothi
         DiscreteSizeScale(f, levels, order, preserve_order)
 
 
-function Scale.apply_scale(scale::DiscreteSizeScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+function apply_scale(scale::DiscreteSizeScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
 
     d = []
     for (aes, data) in zip(aess, datas)
         data.size === nothing && continue
-        append!(d, skipmissing(data.size))
+        SZT = eltype(data.size)
+        if SZT<:Measure
+            aes.size = data.size
+        else
+            append!(d, skipmissing(data.size))
+        end
     end
     levelset = unique(d)
+    isempty(levelset) && return
 
-    if scale.levels == nothing
-        scale_levels = [levelset...]
-        scale.preserve_order || sort!(scale_levels)
+    scale_levels = if scale.levels===nothing
+        scale.preserve_order ? [levelset...] :  sort!([levelset...])
     else
-        scale_levels = scale.levels
+        scale.levels
     end
     scale.order == nothing || permute!(scale_levels, scale.order)
 
@@ -57,7 +62,8 @@ function Scale.apply_scale(scale::DiscreteSizeScale, aess::Vector{Gadfly.Aesthet
     key_vals = OrderedDict(s=>i for (i,s) in enumerate(sizes))
 
     for (aes, data) in zip(aess, datas)
-        data.size === nothing && continue
+        SZT = eltype(data.size)
+        (data.size===nothing || SZT<:Measure) && continue
         ds = discretize([d for d in skipmissing(data.size)], scale_levels)
         vals = sizes[ds.index]
         aes.size = discretize_make_ia(vals, sizes)
@@ -161,4 +167,55 @@ end
 
 
 
+struct DiscreteLinestyleScale <: Gadfly.ScaleElement
+    labels::Union{Nothing, Function}
+    levels::Union{Nothing, AbstractVector}
+    order::Union{Nothing, AbstractVector}
+    preserve_order::Bool
+end
+#DiscreteLinestyleScale(f; levels=nothing, order=nothing, preserve_order=true) = DiscreteLinestyleScale(f, levels, order, preserve_order)
+
+element_aesthetics(scale::DiscreteLinestyleScale) = [:linestyle]
+
+"""
+    linestyle_discrete(; levels=nothing, order=nothing, preserve_order=true)
+
+A discrete scale that maps the categorical values in the `linestyle`
+aesthetic to the values in `Theme().line_style`.
+`levels` are the categorical levels, and level order will be respected.  `order` is
+a vector of integers giving a permutation of the levels default order.  If
+`preserve_order` is `true` levels are ordered as they appear in the data.
+"""
+linestyle_discrete(;labels=nothing, levels=nothing, order=nothing, preserve_order=true) =
+        DiscreteLinestyleScale(labels, levels, order, preserve_order)
+
+function apply_scale(scale::DiscreteLinestyleScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+
+    d = []
+    for (aes, data) in zip(aess, datas)
+        data.linestyle===nothing  && continue
+        LST = eltype(data.linestyle)
+        if LST<:Vector{<:Measure} || LST<:Symbol
+            aes.linestyle = data.linestyle
+        else
+            append!(d, skipmissing(data.linestyle))
+        end
+    end
+    levelset = unique(d)
+    isempty(levelset) && return
+
+    scale_levels = if scale.levels===nothing
+        scale.preserve_order ? [levelset...] :  sort!([levelset...])
+    else
+        scale.levels
+    end
+    scale.order===nothing || permute!(scale_levels, scale.order)
+
+    for (aes, data) in zip(aess, datas)
+        LST = eltype(data.linestyle)
+        (data.linestyle===nothing || LST<:Vector{<:Measure} || LST<:Symbol) && continue
+        ds = discretize(collect(skipmissing(data.linestyle)), scale_levels)
+        aes.linestyle = discretize_make_ia(ds.index)
+    end
+end
 

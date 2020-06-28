@@ -1131,11 +1131,13 @@ const default_aes_scales = Dict{Symbol, Dict}(
     ),
 
     :functional => Dict{Symbol, Any}(
+        :x      => Scale.x_discrete(),
         :z      => Scale.z_func(),
         :y      => Scale.y_func(),
         :shape  => Scale.shape_identity(),
         :size   => Scale.size_identity(),
         :color  => Scale.color_identity(),
+        :linestyle => Scale.linestyle_identity()
     ),
 
     :numerical => Dict{Symbol, Any}(
@@ -1221,6 +1223,7 @@ classify_data(data::T) where {T <: Base.Callable} = :functional
 classify_data(data::AbstractArray) = :numerical
 classify_data(data::Distribution) = :distribution
 classify_data(data::Vector{<:Distribution}) = :distribution
+classify_data(data::Vector{<:Vector{<:Measure}}) = :functional
 
 function classify_data(data::AbstractArray{Any})
     for val in data

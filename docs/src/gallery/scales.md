@@ -175,7 +175,7 @@ tipsm = combine(groupby(tips, [:Day, :Sex]), [:TotalBill, :Tip].=>mean)
 plot(tipsm, Geom.point,
     x=:TotalBill_mean, y=:Tip_mean, color=:Sex, shape=:Day,
     layer(x=:TotalBill_mean, y=:Tip_mean, group=:Day, Geom.line,
-        style(default_color=colorant"gray")),
+        color=[colorant"gray"]),
     Scale.shape_discrete(levels=["Thur","Fri","Sat","Sun"]),
     Guide.shapekey(pos=[14.5, 3.8]), Guide.colorkey(pos=[16, 3.87]),
     Theme(discrete_highlight_color=identity, alphas=[0.1],
