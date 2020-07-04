@@ -49,8 +49,7 @@ end
 
 default_statistic(geom::RectangularBinGeometry) = geom.default_statistic
 
-element_aesthetics(::RectangularBinGeometry) =
-        [:x, :y, :xmin, :xmax, :ymin, :ymax, :color, :alpha]
+element_aesthetics(::RectangularBinGeometry) = [:xmin, :xmax, :ymin, :ymax, :color, :alpha]
 
 # Render rectangular bin (e.g., heatmap) geometry.
 #

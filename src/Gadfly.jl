@@ -394,7 +394,9 @@ function render_prepare(plot::Plot)
     # Process layers, filling inheriting mappings or data from the Plot where
     # they are missing.
     datas = Array{Data}(undef, length(plot.layers))
+    plot_aesthetics = keys(plot.mapping)
     for (i, layer) in enumerate(plot.layers)
+        isa(layer.geom, Geom.Nil) && (layer.geom = Geom.point())
         if layer.data_source === nothing && isempty(layer.mapping)
             layer.data_source = plot.data_source
             layer.mapping = plot.mapping
@@ -402,17 +404,15 @@ function render_prepare(plot::Plot)
         else
             datas[i] = Data()
 
-            if layer.data_source === nothing
-                layer.data_source = plot.data_source
-            end
+            layer.data_source===nothing && (layer.data_source = plot.data_source)
 
-            if isempty(layer.mapping)
-                layer.mapping = plot.mapping
-            end
+            geom_aesthetics = intersect(element_aesthetics(layer.geom), plot_aesthetics)
+            geom_dict = filter(x->in(x.first, geom_aesthetics), plot.mapping)
+            layer.mapping = merge(geom_dict, layer.mapping)
+
 
             evalmapping!(layer.mapping, layer.data_source, datas[i])
         end
-        if isa(layer.geom, Geom.Nil); layer.geom = Geom.point(); end # see #1062
     end
 
     # We need to process subplot layers somewhat as though they were regular
