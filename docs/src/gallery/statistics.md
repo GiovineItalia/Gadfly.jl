@@ -73,7 +73,7 @@ df = DataFrame(x=x, y=y, ymin=y-ye, ymax=y+ye, g=gshift)
 plot(y=[sigmoid, x->sigmoid(x+2)], xmin=[-10], xmax=[10],
     Geom.line, Stat.func(100), color=[0,2], Guide.xlabel("x"),
     layer(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:g,
-        Geom.point, Geom.errorbar, Stat.x_jitter(range=1)), 
+        Geom.point, Geom.yerrorbar, Stat.x_jitter(range=1)), 
     Scale.color_discrete_manual("deepskyblue","yellow3", levels=[0,2]),
     Guide.colorkey(title="Function", labels=["Sigmoid(x)", "Sigmoid(x+2)"]),
     Theme(errorbar_cap_length=0mm, key_position=:inside)

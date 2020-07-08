@@ -168,6 +168,19 @@ plot(iris, Guide.colorkey(title=""),
     layer(x=[2.0], y=[4], shape=[Shape.star1], color=[colorant"red"], size=[8pt]),
     Theme(alphas=[0.7]))
 ```
+And layers can inherit aesthetics from the plot:
+```@example layer
+set_default_plot_size(21cm, 8cm)
+p1 = plot(iris, x=:SepalLength, y=:PetalLength,
+    layer(Geom.smooth(method=:loess), color=["Smooth"]),
+    layer(Geom.point, color=["Points"]))
+
+p2 = plot(iris, x=:SepalLength, y=:PetalLength, color=:Species,
+    Geom.smooth(method=:lm), Geom.point, alpha=[0.6],
+    layer(Geom.smooth(method=:loess), color=[colorant"grey"], order=2))
+hstack(p1, p2)
+```
+Note in some layers, it may be better to use specific Geoms e.g. `Geom.yerrorbar` rather than `Geom.errorbar`, since the latter will attempt to inherit aesthetics for both `Geom.xerrorbar` and `Geom.yerrobar`.
 
 _Layer order_: the sequence in which layers are drawn, whether they overlap or not, can be
 controlled with the `order` keyword.  Layers with lower order numbers are

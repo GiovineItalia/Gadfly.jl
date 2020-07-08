@@ -1135,7 +1135,7 @@ For confidence bands, use `Stat.smooth()` with `Geom.ribbon`.
 """
 const smooth = SmoothStatistic
 
-function Stat.apply_statistic(stat::SmoothStatistic,
+function apply_statistic(stat::SmoothStatistic,
     scales::Dict{Symbol, Gadfly.ScaleElement},
     coord::Gadfly.CoordinateElement,
     aes::Gadfly.Aesthetics)
@@ -1158,7 +1158,11 @@ function Stat.apply_statistic(stat::SmoothStatistic,
     aes_color =  colorflag ? aes.color : fill(nothing, length(aes.x))
 
     uc = unique(aes_color)
-    groups = Dict(c=>(xs[aes_color.==c], ys[aes_color.==c], aes.x[aes_color.==c]) for c in uc)
+    groups = if length(uc)==1
+        Dict(c=>(xs, ys, aes.x) for c in uc)
+    else
+        Dict(c=>(xs[aes_color.==c], ys[aes_color.==c], aes.x[aes_color.==c]) for c in uc)
+    end
 
     # For aes.y returning a Float is ok if `y` is an Int or a Float
     # There does not seem to be strong demand for other types of `y`
