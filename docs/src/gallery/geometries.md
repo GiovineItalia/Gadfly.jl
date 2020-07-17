@@ -480,16 +480,24 @@ hstack(p1,p2)
 ## [`Geom.segment`](@ref)
 ```@example
 using Gadfly, DataFrames, ColorSchemes
-set_default_plot_size(14cm, 14cm)
+set_default_plot_size(21cm, 8cm)
 n = 1000
 x, y = cumsum(randn(n)), cumsum(randn(n))
-D = DataFrame(x1=x[1:end-1], y1=y[1:end-1], x2=x[2:end], y2=y[2:end], colv=1:n-1)
+D1 = DataFrame(x1=x[1:end-1], y1=y[1:end-1], x2=x[2:end], y2=y[2:end], colv=1:n-1)
 palettef(c::Float64) = get(ColorSchemes.viridis, c)
+a = range(0, stop=7π/4, length=8)+ 0.2*randn(8)
+D2 = [DataFrame(x2=x, y2=x, x=x.+sin.(a)/r, y=x.+r*cos.(a),
+        ls=rand(["A","A","B"], 8)) for (x,r) in zip([1,-1], [0.4,0.3])]
 
-plot(D, x=:x1, y=:y1, xend=:x2, yend=:y2,
-     color = :colv, Geom.segment, Coord.cartesian(aspect_ratio=1.0),
+p1 = plot(D1, x=:x1, y=:y1, xend=:x2, yend=:y2,
+     color=:colv, Geom.segment, Coord.cartesian(fixed=true),
      Scale.color_continuous(colormap=palettef, minvalue=0, maxvalue=1000)
 )
+p2 = plot(vcat(D2...), x=:x, y=:y, xend=:x2, yend=:y2,
+     color=:x2, linestyle=:ls, Geom.point, Geom.segment,
+     Scale.linestyle_discrete(levels=["A","B"]),
+     Scale.color_discrete, Theme(key_position=:none, point_size=3.5pt))
+hstack(p1, p2)
 ```
 
 
