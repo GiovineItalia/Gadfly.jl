@@ -52,14 +52,14 @@ function vectorfield(;smoothness=1.0, scale=1.0, samples=20, filled::Bool=false)
 end
 
 default_statistic(geom::SegmentGeometry) = geom.default_statistic
-element_aesthetics(::SegmentGeometry) = [:x, :y, :xend, :yend, :color] 
+element_aesthetics(::SegmentGeometry) = [:x, :y, :xend, :yend, :color, :linestyle]
 
 
 function render(geom::SegmentGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     
     Gadfly.assert_aesthetics_defined("Geom.segment", aes, :x, :y, :xend, :yend)
 
-    function arrow(x::T, y::T, xmax::T, ymax::T, xyrange::Vector{T}) where T<:Real
+    function arrow(x::Real, y::Real, xmax::Real, ymax::Real, xyrange::Vector{<:Real})
         dx = xmax-x
         dy = ymax-y
         vl = 0.225*hypot(dy/xyrange[2], dx/xyrange[1])
@@ -70,16 +70,21 @@ function render(geom::SegmentGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         [ (xmax+xr[1],ymax+yr[1]), (xmax,ymax), (xmax+xr[2],ymax+yr[2]) ]
     end
 
-    n = length(aes.x)
-    default_aes = Gadfly.Aesthetics()  
-    default_aes.color = fill(RGBA{Float32}(theme.default_color), n)
 
-    aes = inherit(aes, default_aes) 
+    default_aes = Gadfly.Aesthetics()
+    default_aes.color = [theme.default_color]
+    default_aes.linestyle = theme.line_style[1:1]
+    aes = inherit(aes, default_aes)
 
-    line_style = Gadfly.get_stroke_vector(theme.line_style[1])
+    # Render lines, using multivariate groupings:
+    XT, YT = eltype(aes.x), eltype(aes.y)
+    CT, LST = eltype(aes.color), eltype(aes.linestyle)
+    groups = collect(Tuple{CT, LST}, Compose.cyclezip(aes.color, aes.linestyle))
+    ugroups = unique(groups)
+    ulength1 = length(ugroups)==1
+    
 
     # Geom.vector requires information about scales
-
     if geom.arrow
         check = [aes.xviewmin, aes.xviewmax, aes.yviewmin, aes.yviewmax ]
         if any( map(x -> x === nothing, check) )
@@ -88,26 +93,40 @@ function render(geom::SegmentGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
          xyrange = [aes.xviewmax-aes.xviewmin, aes.yviewmax-aes.yviewmin]
 
          arrows = [ arrow(x, y, xend, yend, xyrange)
-                for (x, y, xend, yend) in zip(aes.x, aes.y, aes.xend, aes.yend) ]
+                for (x, y, xend, yend) in Compose.cyclezip(aes.x, aes.y, aes.xend, aes.yend) ]
     end
     
-    segments = [ [(x,y), (xend,yend)]
-        for (x, y, xend, yend) in zip(aes.x, aes.y, aes.xend, aes.yend) ]  
+    segments = [[(x,y), (xend,yend)]
+        for (x, y, xend, yend) in Compose.cyclezip(aes.x, aes.y, aes.xend, aes.yend)]
        
-    classes = [svg_color_class_from_label( aes.color_label([c])[1] ) for c in aes.color ]
-    
-    ctx = context()
+    nsegs = length(segments)
+    cs = Vector{CT}(undef, ulength1 ? 1 : nsegs)
+    lss = Vector{LST}(undef, ulength1 ? 1 : nsegs)
+    linestyle_palette_length = length(theme.line_style)
+    if ulength1
+        cs[1], lss[1] = groups[1]
+    else
+        for (k,(s,g)) in enumerate(zip(segments, cycle(groups)))
+            cs[k], lss[k] = g
+        end
+    end
 
-    compose!( ctx, (context(), Compose.line(segments, geom.tag),
-                stroke(aes.color), linewidth(theme.line_width), 
-                strokedash(line_style), svgclass( classes )),
-              svgclass("geometry")  )
+    linestyles = Gadfly.get_stroke_vector.(LST<:Int ?
+        theme.line_style[mod1.(lss, linestyle_palette_length)] : lss)
+    
+    classes = svg_color_class_from_label.(aes.color_label(cs))
+
+    ctx = context()
+    compose!(ctx, (context(), Compose.line(segments, geom.tag),
+                stroke(cs), linewidth(theme.line_width), 
+                strokedash(linestyles), svgclass(classes)),
+              svgclass("geometry"))
     if geom.arrow
         if geom.filled
-            compose!(ctx, (context(), Compose.polygon(arrows), fill(aes.color), strokedash([])) )
+            compose!(ctx, (context(), Compose.polygon(arrows), fill(cs), strokedash([])))
         else
-            compose!(ctx, (context(), Compose.line(arrows), stroke(aes.color), linewidth(theme.line_width), 
-            strokedash([]))  )        
+            compose!(ctx, (context(), Compose.line(arrows), stroke(cs), linewidth(theme.line_width),
+            strokedash([])))
         end
     end
 

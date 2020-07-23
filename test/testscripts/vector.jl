@@ -11,7 +11,7 @@ xsc  = Scale.x_continuous(minvalue=0.0, maxvalue=100)
 ysc  = Scale.y_continuous(minvalue=0.0, maxvalue=100)
 
 p1 = plot(D, x=:x1, y=:x2, xend=:x3, yend=:x4, Geom.segment(arrow=true), xsc, ysc);
-p2 = plot(D, x=:x1, y=:x2, xend=:x3, yend=:x4, Geom.vector, xsc, ysc);
+p2 = plot(D, x=:x1, y=:x2, xend=:x3, yend=:x4, color=[colorant"orange"], linestyle=[:dash], Geom.vector, xsc, ysc);
 
 p3 = plot(z=(x,y)->x*exp(-(x^2+y^2)), 
         xmin=[-2], xmax=[2], ymin=[-2], ymax=[2], 

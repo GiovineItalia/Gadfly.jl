@@ -765,8 +765,8 @@ end
 @deprecate xticks(ticks) xticks(ticks=ticks)
 
 ### add hinges and fences to y-axis?
-input_aesthetics(stat::TickStatistic) = stat.axis=="x" ? [:x, :xmin, :xmax, :xintercept] :
-    [:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence]
+input_aesthetics(stat::TickStatistic) = stat.axis=="x" ? [:x, :xmin, :xmax, :xintercept, :xend] :
+    [:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :yend]
 output_aesthetics(stat::TickStatistic) = stat.axis=="x" ? [:xtick, :xgrid] : [:ytick, :ygrid]
 
 xy_ticks(var,in_aess,out_aess) = """
