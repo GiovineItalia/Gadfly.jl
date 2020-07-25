@@ -94,10 +94,6 @@ do so automatically in your `$HOME/.julia/config/startup.jl` file.
 
 A few caveats:
 
-- PackageCompiler is a work in progress, and the most recent tagged release
-  sometimes (currently as of this writing) does not work.  Hence the `dev`
-  instead of `add` command to install.
-
 - Updating to the latest versions of compiled packages requires a recompile.
   `]up`ing only works for those that haven't been built into the system image.
 
