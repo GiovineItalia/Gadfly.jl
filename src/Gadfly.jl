@@ -517,22 +517,18 @@ function render_prepare(plot::Plot)
         map(s->(s, _theme(l, plot)), collect(stats))
     end
 
-    for element in Iterators.flatten(([(s, plot.theme) for s in plot.statistics],
+    # sbm_aesthetics: are scaled by mapping below, not by default_scales
+    sbm_aesthetics = intersect(mapped_aesthetics, Set([:color]))
+    elements = Iterators.flatten(([(s, plot.theme) for s in plot.statistics],
                          [(l.geom, _theme(plot, l)) for l in plot.layers],
                          layer_stats_with_theme...))
-
-        for scale in default_scales(element...)
-            # Use the statistics default scale only when it covers some
-            # aesthetic that is not already scaled.
-            scale_aes = Set(element_aesthetics(scale))
-            if !isempty(intersect(scale_aes, unscaled_aesthetics))
-                for var in scale_aes
-                    scales[var] = scale
-                end
-                setdiff!(unscaled_aesthetics, scale_aes)
-            end
-        end
-    end
+    
+    scalev = reduce(vcat, [default_scales(element...) for element in elements])
+    scale_aes = [intersect(element_aesthetics(scale), unscaled_aesthetics) for scale in scalev]
+    default_scale_dict = Dict(var=>scale for (vars, scale) in zip(scale_aes, scalev)
+            for var in vars if !in(var, sbm_aesthetics))
+    merge!(scales, default_scale_dict)
+    setdiff!(unscaled_aesthetics, keys(scales))
 
     # Assign scales to mapped aesthetics first.
     for var in unscaled_aesthetics
