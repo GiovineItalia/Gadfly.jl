@@ -62,20 +62,31 @@ Alternatively, one can avoid the first-time-to-plot penalty altogther by
 ahead-of-time (AOT) compiling Gadfly into the Julia system image using
 [PackageCompiler.jl](https://github.com/JuliaLang/PackageCompiler.jl).
 
+For example, after making the directory for PackageCompiler.jl,
+
+```bash
+mkdir $HOME/JuliaGadflySysImage
+cd $HOME/JuliaGadflySysImage
+```
+
+one can complile Gadfly.jl and create the sysimage as follows:
+
 ```julia
-julia> ]dev PackageCompiler
+(@v.1.4) pkg> add PackageCompiler
 julia> using PackageCompiler
-julia> compile_package("Gadfly", force=false)
+(@v.1.4) pkg> activate .
+(JuliaGadflySysImage) pkg> add Gadfly
+julia> create_sysimage(:Gadfly; sysimage_path="GadFlySysimage.so")
+julia> exit()
 ```
 
 At the end of the resulting copius output will be the command to launch this
-custom version of julia:  something like `julia -J
-$HOME/.julia/dev/PackageCompiler/sysimg/sys.dylib`.  Make it convenient by
-putting an alias in your .bashrc: `alias julia-gadfly="julia -J ..."`.
+custom version of julia: something like `julia --sysimage $HOME/JuliaGadflySysImage/GadFlySysimage.so`.
+Make it convenient by putting an alias in your .bashrc: `alias julia-gadfly="julia --sysimage ..."`.
 
 Note that multiple packages can be built into a new system image at the same
-time by adding additional arguments: `compile_package("Gadfly",
-"MyOtherFavoritePackage", ...)`.  Conversely, you don't have to precompile
+time by adding additional arguments: `create_sysimage([:Gadfly, 
+:MyOtherFavoritePackage], ...)`.  Conversely, you don't have to precompile
 everything you need though, as `]add ...` still works.
 
 Now that `using Gadfly` takes just a split second, there's no reason not to
