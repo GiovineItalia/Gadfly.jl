@@ -62,7 +62,7 @@ Alternatively, one can avoid the first-time-to-plot penalty altogther by
 ahead-of-time (AOT) compiling Gadfly into the Julia system image using
 [PackageCompiler.jl](https://github.com/JuliaLang/PackageCompiler.jl).
 
-For example, after making the directory for PackageCompiler.jl,
+For example, after making a directory for creating sysimage
 
 ```bash
 mkdir $HOME/JuliaGadflySysImage
