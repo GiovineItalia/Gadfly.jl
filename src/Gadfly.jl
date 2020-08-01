@@ -453,8 +453,12 @@ function render_prepare(plot::Plot)
     # Add default statistics for geometries.
     layer_stats = Array{Vector{StatisticElement}}(undef, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
-        layer_stats[i] = isempty(layer.statistics) ? ( isa(layer.geom, Geom.SubplotGeometry) ?
-                default_statistic(layer.geom) : [default_statistic(layer.geom)] ) : layer.statistics
+        if isa(layer.geom, Geom.SubplotGeometry)
+            layer_stats[i] = [isempty(subplot_layer.statistics) ? default_statistic(subplot_layer.geom) : subplot_layer.statistics[1]
+                    for subplot_layer in layers(layer.geom)]
+        else
+            layer_stats[i] = isempty(layer.statistics) ? [default_statistic(layer.geom)] : layer.statistics
+        end
     end
 
     # auto-enumeration: add Stat.x/y_enumerate when x and y is needed but only
@@ -541,8 +545,7 @@ function render_prepare(plot::Plot)
     setdiff!(unscaled_aesthetics, keys(scales))
 
     # Now assign scales to Aesthetics based on mapping
-    for var in unscaled_aesthetics
-        in(var, mapped_aesthetics) || continue
+    for var in intersect(unscaled_aesthetics, mapped_aesthetics)
 
         var_data = getfield(plot.data, var)
         if var_data == nothing
