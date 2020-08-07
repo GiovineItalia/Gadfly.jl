@@ -3,6 +3,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 1.x
 
+ * Better define what scales are included in the (internal) `scales` dict (#1468)
  * Support one-length aesthetics for `Geom.segment` (#1465)
  * Support one-length aesthetics e.g. `color=[colorant"red"]` for `Geom.line` (#1459)
 
