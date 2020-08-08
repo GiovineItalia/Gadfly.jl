@@ -419,17 +419,19 @@ function render_prepare(plot::Plot)
     # plot layers. This is the only way scales, etc, can be consistently
     # applied.
     subplot_datas = Data[]
+    local geom_aes::Vector{Symbol}
     for (layer, layer_data) in zip(plot.layers, datas)
         if isa(layer.geom, Geom.SubplotGeometry)
             for subplot_layer in layers(layer.geom)
                 subplot_data = Data()
-                if subplot_layer.data_source === nothing
-                    subplot_layer.data_source = layer.data_source
-                end
+                
+                subplot_layer.data_source===nothing && (subplot_layer.data_source = layer.data_source)
 
-                if isempty(subplot_layer.mapping)
-                    subplot_layer.mapping = layer.mapping
-                end
+                geom_aes = vcat(element_aesthetics(subplot_layer.geom), [:xgroup,:ygroup], input_aesthetics(default_statistic(subplot_layer.geom)))
+                !isempty(subplot_layer.statistics) && append!(geom_aes, input_aesthetics(subplot_layer.statistics[1]))
+                geom_aesthetics = intersect(geom_aes, plot_aesthetics)
+                geom_dict = filter(x->in(x.first, geom_aesthetics), plot.mapping)
+                subplot_layer.mapping = merge(geom_dict, subplot_layer.mapping)
 
                 evalmapping!(subplot_layer.mapping, subplot_layer.data_source, subplot_data)
                 push!(subplot_datas, subplot_data)
@@ -451,8 +453,12 @@ function render_prepare(plot::Plot)
     # Add default statistics for geometries.
     layer_stats = Array{Vector{StatisticElement}}(undef, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
-        layer_stats[i] = isempty(layer.statistics) ? ( isa(layer.geom, Geom.SubplotGeometry) ?
-                default_statistic(layer.geom) : [default_statistic(layer.geom)] ) : layer.statistics
+        if isa(layer.geom, Geom.SubplotGeometry)
+            layer_stats[i] = [isempty(subplot_layer.statistics) ? default_statistic(subplot_layer.geom) : subplot_layer.statistics[1]
+                    for subplot_layer in layers(layer.geom)]
+        else
+            layer_stats[i] = isempty(layer.statistics) ? [default_statistic(layer.geom)] : layer.statistics
+        end
     end
 
     # auto-enumeration: add Stat.x/y_enumerate when x and y is needed but only
@@ -485,8 +491,15 @@ function render_prepare(plot::Plot)
     end
 
     mapped_aesthetics = Set(keys(plot.mapping))
+    facet_plot = false
     for layer in plot.layers
         union!(mapped_aesthetics, keys(layer.mapping))
+        if isa(layer.geom, Geom.SubplotGeometry)
+            facet_plot = true
+            for subplot_layer in layers(layer.geom)
+                union!(mapped_aesthetics, keys(subplot_layer.mapping))
+            end
+        end
     end
 
     defined_unused_aesthetics = setdiff(mapped_aesthetics, used_aesthetics)
@@ -517,30 +530,26 @@ function render_prepare(plot::Plot)
         map(s->(s, _theme(l, plot)), collect(stats))
     end
 
-    for element in Iterators.flatten(([(s, plot.theme) for s in plot.statistics],
+    # sbm_aesthetics: are scaled by mapping below, not by default_scales
+    sbm_aesthetics = intersect(mapped_aesthetics, Set([:color]))
+    # Aesthetics scaled by default_scales
+    elements = Iterators.flatten(([(s, plot.theme) for s in plot.statistics],
                          [(l.geom, _theme(plot, l)) for l in plot.layers],
                          layer_stats_with_theme...))
+    
+    scalev = reduce(vcat, [default_scales(element...) for element in elements])
+    scale_aes = [intersect(element_aesthetics(scale), unscaled_aesthetics) for scale in scalev]
+    default_scale_dict = Dict(var=>scale for (vars, scale) in zip(scale_aes, scalev)
+            for var in vars if !in(var, sbm_aesthetics))
+    merge!(scales, default_scale_dict)
+    setdiff!(unscaled_aesthetics, keys(scales))
 
-        for scale in default_scales(element...)
-            # Use the statistics default scale only when it covers some
-            # aesthetic that is not already scaled.
-            scale_aes = Set(element_aesthetics(scale))
-            if !isempty(intersect(scale_aes, unscaled_aesthetics))
-                for var in scale_aes
-                    scales[var] = scale
-                end
-                setdiff!(unscaled_aesthetics, scale_aes)
-            end
-        end
-    end
-
-    # Assign scales to mapped aesthetics first.
-    for var in unscaled_aesthetics
-        in(var, mapped_aesthetics) || continue
+    # Now assign scales to Aesthetics based on mapping
+    for var in intersect(unscaled_aesthetics, mapped_aesthetics)
 
         var_data = getfield(plot.data, var)
         if var_data == nothing
-            for data in datas
+            for data in vcat(datas, subplot_datas)
                 var_layer_data = getfield(data, var)
                 if var_layer_data != nothing
                     var_data = var_layer_data
@@ -561,25 +570,7 @@ function render_prepare(plot::Plot)
         end
     end
 
-    for var in unscaled_aesthetics
-        (haskey(plot.mapping, var) || haskey(scales, var)) && continue
 
-        t = :categorical
-        for data in Iterators.flatten((datas, subplot_datas))
-            val = getfield(data, var)
-            if val != nothing && val != :categorical
-                t = classify_data(val)
-            end
-        end
-
-        if scale_exists(t, var)
-            scale = get_scale(t, var, plot.theme)
-            scale_aes = Set(element_aesthetics(scale))
-            for var in scale_aes
-                scales[var] = scale
-            end
-        end
-    end
 
     # Avoid clobbering user-defined guides with default guides (e.g.
     # in the case of labels.)
@@ -595,14 +586,6 @@ function render_prepare(plot::Plot)
     end
 
     # Default guides and statistics
-    facet_plot = true
-    for layer in plot.layers
-        if typeof(layer.geom) != Geom.subplot_grid
-            facet_plot = false
-            break
-        end
-    end
-
     if !facet_plot
         in(Guide.PanelBackground, explicit_guide_types) || push!(guides, Guide.background())
         in(Guide.QuestionMark, explicit_guide_types) || push!(guides, Guide.questionmark())
@@ -713,6 +696,9 @@ function render_prepare(plot::Plot)
         end
     end
 
+    # Scale.color_none maybe deprecated, this conditional can be removed then
+    haskey(scales, :color) && isa(scales[:color], Scale.color_none) && (supress_colorkey = true)
+
     if supress_colorkey
         deleteat!(keytypes, 1)
         deleteat!(keyvars, 1)
@@ -720,8 +706,7 @@ function render_prepare(plot::Plot)
 
     if !supress_keys
         for (KT, kv) in zip(keytypes, keyvars)
-            fflag = !all([getfield(aes, kv)==nothing for aes in [plot_aes, layer_aess...]])
-            fflag && !in(KT, explicit_guide_types) &&  push!(guides, KT())
+            haskey(scales, kv) && !in(KT, explicit_guide_types) &&  push!(guides, KT())
         end
     end
 
@@ -816,16 +801,15 @@ function render_prepared(plot::Plot,
     # IV. Geometries
     themes = Theme[layer.theme === nothing ? plot.theme : layer.theme
                    for layer in plot.layers]
-    zips = trim_zip(plot.layers, layer_aess,
-                                                   layer_subplot_aess,
-                                                   layer_subplot_datas,
-               themes)
+    zips = trim_zip(plot.layers, layer_aess, layer_subplot_aess, layer_subplot_datas, themes)
 
     compose!(plot_context,
-             [compose(context(order=layer.order), render(layer.geom, theme, aes,
-                                                         subplot_aes, subplot_data,
-                                                         scales))
+             [compose(context(order=layer.order),
+             render(layer.geom, theme, aes, subplot_aes, subplot_data,scales))
               for (layer, aes, subplot_aes, subplot_data, theme) in zips]...)
+
+    facet_plot = any(isa.([layer.geom for layer in plot.layers], Geom.subplot_grid))
+    facet_plot && (plot_aes = Gadfly.concat(layer_aess...))
 
     # V. Guides
     guide_contexts = Any[]
@@ -836,8 +820,7 @@ function render_prepared(plot::Plot,
         end
     end
 
-    tbl = Guide.layout_guides(plot_context, coord,
-                              plot.theme, guide_contexts...)
+    tbl = Guide.layout_guides(plot_context, coord, plot.theme, guide_contexts...)
     if table_only
         return tbl
     end

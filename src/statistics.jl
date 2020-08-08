@@ -1381,7 +1381,8 @@ FunctionStatistic(; num_samples=250) = FunctionStatistic(num_samples)
 
 input_aesthetics(::FunctionStatistic) = [:y, :xmin, :xmax]
 output_aesthetics(::FunctionStatistic) = [:x, :y, :group]
-default_scales(::FunctionStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
+default_scales(::FunctionStatistic, t::Gadfly.Theme=Gadfly.current_theme()) = 
+    [Scale.x_continuous(), Scale.y_continuous(), t.discrete_color_scale]
 
 """
     Stat.func[(; num_samples=250)]
@@ -1422,7 +1423,7 @@ function apply_statistic(stat::FunctionStatistic,
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] .= i
         end
         aes.group = discretize_make_ia(groups)
-    elseif length(aes.y) > 1 && haskey(scales, :color)
+    elseif length(aes.y) > 1
         data = Gadfly.Data()
         data.color = Array{AbstractString}(undef, length(aes.y) * stat.num_samples)
         groups = Array{Union{Missing,Int}}(undef, length(aes.y) * stat.num_samples)
@@ -1433,6 +1434,8 @@ function apply_statistic(stat::FunctionStatistic,
         end
         Scale.apply_scale(scales[:color], [aes], data)
         aes.group = discretize_make_ia(groups)
+    else
+        aes.color_key_colors = Dict()
     end
 
     data = Gadfly.Data()
@@ -1532,8 +1535,10 @@ function apply_statistic(stat::ContourStatistic,
     end
 
     aes.group = groups
-    color_scale = get(scales, :color, Gadfly.Scale.color_continuous_gradient())
-    Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=levels))
+    if aes.color===nothing
+        color_scale = get(scales, :color, Scale.color_continuous_gradient())
+        Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=levels))
+    end
     x_scale = scales[:x].trans.f==identity ? scales[:x] : Scale.x_continuous()
     y_scale = scales[:y].trans.f==identity ? scales[:y] : Scale.y_continuous()
     Scale.apply_scale(x_scale, [aes], Gadfly.Data(x=contour_xs))
