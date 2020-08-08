@@ -119,7 +119,8 @@ plot(x=rand(12), y=rand(12), color=repeat(["a","b","c"], outer=[4]),
 ```@example
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(14cm, 8cm)
-D = by(dataset("datasets","HairEyeColor"), [:Eye,:Sex], Frequency=:Freq=>sum)
+hecolor = dataset("datasets","HairEyeColor")
+D = combine(groupby(hecolor, [:Eye,:Sex]), :Freq=>sum=>:Frequency)
 palette = ["brown","blue","tan","green"] # Is there a hazel color?
 pa = plot(D, x=:Sex, y=:Frequency, color=:Eye, Geom.bar(position=:stack),
           Scale.color_discrete_manual(palette...))
@@ -145,20 +146,20 @@ hstack(p1,p2)
 
 ```@example
 using DataFrames, Gadfly, RDatasets
-using StatsBase: winsor
 set_default_plot_size(18cm, 8cm)
 
-labs = [ "exp", "sqrt", "log", "winsor", "linear"]
-funcs = [ x->60*(1.0.-exp.(-0.2*x)), x->sqrt.(x)*10, x->log.(x)*10, x->winsor(x, prop=0.15), x->x*0.6 ]
+labs = ["exp", "sqrt", "log", "winsor", "linear"]
+funcs = [x->60*(1.0.-exp.(-0.2*x)), x->sqrt.(x)*10, x->log.(x)*10, 
+    x->clamp.(x,5,26), x->x*0.6]
 x = [1.0:30;]
 D = vcat([DataFrame(x=x, y=f(x), linev=l) for (f,l) in zip(funcs, labs)]...)
-D[134:136,:y] = NaN
+D[134:136,:y] .= NaN
 
-p1 = plot(D, x=:x, y=:y, linestyle=:linev, Geom.line )
-p2 = plot(dataset("datasets", "CO2"), x=:Conc, y=:Uptake, 
+p1 = plot(D, x=:x, y=:y, linestyle=:linev, Geom.line)
+p2 = plot(dataset("datasets", "CO2"), x=:Conc, y=:Uptake,
     group=:Plant, linestyle=:Treatment, color=:Type, Geom.line,
     Scale.linestyle_discrete(order=[2,1]),
-    Theme(key_position=:top, key_title_font_size=-8mm) )
+    Theme(key_position=:top, key_title_font_size=-8mm))
 hstack(p1,p2)
 ```
 
@@ -169,16 +170,16 @@ using Gadfly, RDatasets, Statistics
 set_default_plot_size(14cm, 8cm)
 
 tips = dataset("reshape2", "tips")
-tipsm = by(tips, [:Day, :Sex], :TotalBill=>mean, :Tip=>mean)
+tipsm = combine(groupby(tips, [:Day, :Sex]), [:TotalBill, :Tip].=>mean)
 
- plot(tipsm, Geom.point,
+plot(tipsm, Geom.point,
     x=:TotalBill_mean, y=:Tip_mean, color=:Sex, shape=:Day,
     layer(x=:TotalBill_mean, y=:Tip_mean, group=:Day, Geom.line,
-        style(default_color=colorant"gray")),
+        color=[colorant"gray"]),
     Scale.shape_discrete(levels=["Thur","Fri","Sat","Sun"]),
     Guide.shapekey(pos=[14.5, 3.8]), Guide.colorkey(pos=[16, 3.87]),
     Theme(discrete_highlight_color=identity, alphas=[0.1],
-        point_size=5pt, key_swatch_color="slate gray")
+        point_size=5pt, key_swatch_color="slategray")
 )
 ```
 
@@ -210,10 +211,9 @@ plot(aq, x=:Day, y=:Ozone, color=:Month, size=:Wind,
 using Compose, Gadfly, RDatasets
 set_default_plot_size(14cm, 8cm)
 
-Titanic = dataset("datasets", "Titanic")
-Class =  by(Titanic, :Class, :Freq=>sum)
-Titanic = join(Titanic[Titanic.Survived.=="Yes",:], Class, on=:Class)
-Titanic.prcnt = 100*Titanic.Freq./Titanic.Freq_sum
+D = groupby(dataset("datasets", "Titanic"), :Class)
+Titanic = combine(D, :, :Freq=>(c->100*c./sum(c))=>:prcnt)
+filter!(:Survived=>x->x=="Yes", Titanic)
 sizemap = n->range(4pt, 12pt, length=n)
 
 plot(Titanic, Scale.x_log10,  Scale.y_log10,
@@ -255,11 +255,11 @@ Random.seed!(1234)
 p1 = plot(x=rand(1:3, 20), y=rand(20), Scale.x_discrete)
 # To perserve the order of the columns in the plot when plotting a DataFrame
 df = DataFrame(v1 = randn(10), v2 = randn(10), v3 = randn(10))
-p2 = plot(df, x=Col.index, y=Col.value, Scale.x_discrete(levels=names(df)))
+p2 = plot(df, x=Col.index, y=Col.value, Scale.x_discrete(levels=propertynames(df)))
 hstack(p1,p2)
 ```
 
-## [`Scale.xgroup`](@ref), [`Scale.ygroup`](@ref)
+## [[`Scale.xgroup`](@ref), [`Scale.ygroup`](@ref)](@id Gallery_Scale.xygroup)
 
 ```@example
 using Gadfly, RDatasets

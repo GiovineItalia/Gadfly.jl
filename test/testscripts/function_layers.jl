@@ -1,7 +1,12 @@
 using Gadfly, RDatasets
 
-set_default_plot_size(6inch, 3inch)
+set_default_plot_size(5inch, 3inch)
 
-plot(dataset("datasets", "iris"),
-     layer(x=:SepalLength, y=:SepalWidth, Geom.point),
-     layer([sin, cos], 0, 25))
+iris = dataset("datasets", "iris")
+
+fs = [ x->0.3x+1, x->0.3x+1.1 ]
+cs = ["versicolor", "virginica"]
+plot(iris,
+  layer(x=:SepalLength, y=:SepalWidth, color=:Species),
+  layer(fs, 4, 8, color=cs, order=2)
+)

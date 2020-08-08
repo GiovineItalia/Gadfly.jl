@@ -139,7 +139,7 @@ nothing # hide
 Note that with the Array interface, extra elements must be included to specify the
 axis labels, whereas with a DataFrame they default to the column names.
 
-## Color
+## Aesthetics
 
 Let's do add something meaningful by mapping the color aesthetic.
 
@@ -161,8 +161,20 @@ Color scales in Gadfly by default are produced from perceptually uniform
 colorspaces (LUV/LCHuv or LAB/LCHab), though it supports RGB, HSV, HLS, XYZ, and
 converts arbitrarily between these. Color values can also be specified by most names common to CSS or X11, e.g. `"oldlace"` or `"aliceblue"`. The [full list of valid color names](http://juliagraphics.github.io/Colors.jl/stable/namedcolors/) is defined in the [Colors.jl library](http://juliagraphics.github.io/Colors.jl/stable/).
 
+Color, and other aesthetics, can also be mapped by using arrays with group labels or functional types e.g. `["group label"]` or `[colorant"red"]`.
+ `["Group labels"]` are added to the key.
 
-All aesthetics (e.g. `x`, `y`, `color`) have a Scale e.g. `Scale.x_continuous()` and some have a Guide e.g. `Guide.xticks()`.  [Scales](@ref) can be continuous or discrete. Some Scales also have a corresponding palette in `Theme()`.
+```@example 1
+y1 = [0.1, 0.26, NaN, 0.5, 0.4, NaN, 0.48, 0.58, 0.83]
+plot(x=1:9, y=y1, Geom.line, Geom.point,
+        color=["Item 1"], linestyle=[:dash], size=[3pt],
+    layer(x=1:10, y=rand(10), Geom.line, Geom.point,
+        color=["Item 2"], size=[5pt], shape=[Shape.square]),
+    layer(x=1:10, y=rand(10), color=[colorant"hotpink"],
+        linestyle=[[8pt, 3pt, 2pt, 3pt]], Geom.line))
+```
+
+All aesthetics have a Scale e.g. `Scale.x_continuous()` and some have a Guide e.g. `Guide.xticks()`.  [Scales](@ref) can be continuous or discrete. Some Scales also have a corresponding palette in `Theme()`.
 
 ## Continuous Scales
 

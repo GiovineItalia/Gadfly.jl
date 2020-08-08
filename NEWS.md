@@ -1,6 +1,25 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 1.x
+
+ * Better define what scales are included in the (internal) `scales` dict (#1468)
+ * Support one-length aesthetics for `Geom.segment` (#1465)
+ * Support one-length aesthetics e.g. `color=[colorant"red"]` for `Geom.line` (#1459)
+
+
+
+# Version 1.3.0
+
+ * Add support for CategoricalArrays v0.8 & and DataFrames v0.21 (#1447)
+ * Add `Guide.manual_discrete_key`, updates `Guide.manual_color_key` (#1441)
+ * Increase support for syntax `color=[colorant"color"]` (#1438)
+ * Enable `color` aesthetic for `Stat.qq` (#1434)
+ * Add `Geom.bar(position=:identity)` + alpha enabled (#1428)
+ * Enable stacked guides (#1423)
+
+
+
 # Version 1.2.0
 
  * Add `Scale.size_radius` and `Scale.size_area` (#1386)

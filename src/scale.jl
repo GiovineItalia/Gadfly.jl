@@ -201,7 +201,7 @@ function apply_scale(scale::ContinuousScale,
 
             # special case for Distribution values bound to :x or :y. wait for
             # scale to be re-applied by Stat.qq
-            if in(var, [:x, :y]) && typeof(vals) <: Distribution
+            if in(var, [:x, :y]) && eltype(vals) <: Distribution
                 setfield!(aes, var, vals)
                 continue
             end
@@ -361,18 +361,30 @@ is set by `Theme(alphas=[])`.
 alpha_discrete(; labels=nothing, levels=nothing, order=nothing) =
             DiscreteScale([:alpha], labels=labels, levels=levels, order=order)
 
-@doc type_discrete_docstr("linestyle") linestyle_discrete(; labels=nothing, levels=nothing, order=nothing) =
-        DiscreteScale([:linestyle], labels=labels, levels=levels, order=order)
 
 
 function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
+
+
+    d = []
+    for data in datas
+        for var in scale.vars
+            datavar = getfield(data, var)
+            datavar!=nothing && append!(d, skipmissing(datavar))
+        end
+    end
+    levelset = unique(d)
+    
+    scale_levels = (scale.levels==nothing) ? [levelset...] : scale.levels
+
     for (aes, data) in zip(aess, datas)
         for var in scale.vars
             label_var = Symbol(var, "_label")
-            getfield(data, var) === nothing && continue
+            datavar = getfield(data, var)
+            datavar===nothing && continue
 
-            disc_data = discretize(getfield(data, var), scale.levels, scale.order)
-            setfield!(aes, var, discretize_make_ia(Int64.(disc_data.index)))
+            disc_data = discretize(datavar, scale_levels, scale.order)
+            setfield!(aes, var, discretize_make_ia(disc_data.index))
 
             # The leveler for discrete scales is a closure over the discretized data.
             if scale.labels === nothing
@@ -398,6 +410,15 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
         end
     end
 end
+
+
+# Error message if a plot has both a discrete and continuous color variable
+const colorclash = """There appears to be mixing of a continuous variable and a discrete variable in the `color` aesthetic.
+This can happen when the color aesthetic is assigned in more than 1 layer (which is ok to do),
+or you have forgotten to assign it. Either:
+    1) make sure that the `color` variable in all layers is the same (i.e. discrete or continuous), or
+    2) add `Scale.color_continuous` or `Scale.color_discrete` to the plot, or
+    3) in a layer where `color` is a discrete variable, instead assign e.g. `color=[colorant"red"]`, or a vector of colorants."""
 
 
 struct NoneColorScale <: Gadfly.ScaleElement
@@ -518,7 +539,7 @@ function apply_scale(scale::DiscreteColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
     levelset = OrderedSet()
     for (aes, data) in zip(aess, datas)
-        data.color === nothing && continue
+        (data.color === nothing || eltype(data.color)<:Colorant) && continue
         for d in data.color
             # Remove missing values
             # FixMe! The handling of missing values shouldn't be this scattered across the source
@@ -541,6 +562,10 @@ function apply_scale(scale::DiscreteColorScale,
 
     for (aes, data) in zip(aess, datas)
         data.color === nothing && continue
+        if eltype(data.color)<:Colorant
+            aes.color = data.color
+            continue
+        end    
         # Remove missing values
         # FixMe! The handling of missing values shouldn't be this scattered across the source
         ds = discretize([c for c in data.color if !ismissing(c)], scale_levels)
@@ -624,9 +649,16 @@ const color_continuous_gradient = color_continuous  ### WHY HAVE THIS ALIAS?
 
 function apply_scale(scale::ContinuousColorScale,
                      aess::Vector{Gadfly.Aesthetics}, datas::Gadfly.Data...)
-    cdata = skipmissing(Iterators.flatten(i.color for i in datas if i.color != nothing))
+
+    for (aes, data) in zip(aess, datas)
+        eltype(data.color)<:Colorant && (aes.color = data.color)
+    end
+                
+    cdata = skipmissing(
+        Iterators.flatten(i.color for i in datas if !(i.color == nothing || eltype(i.color)<:Colorant)))
     if !isempty(cdata)
-      cmin, cmax = extrema(cdata)
+        isa(first(cdata), Number) || error(colorclash)
+        cmin, cmax = extrema(cdata)
     else
         return
     end
@@ -648,7 +680,7 @@ function apply_scale(scale::ContinuousColorScale,
     cspan = cmax != cmin ? cmax - cmin : 1.0
 
     for (aes, data) in zip(aess, datas)
-        data.color === nothing && continue
+        (data.color===nothing  || eltype(data.color)<:Colorant) && continue
 
         aes.color = Array{RGB{Float32}}(undef, length(data.color))
         apply_scale_typed!(aes.color, data.color, scale, cmin, cspan)
@@ -773,6 +805,8 @@ shape_identity() = IdentityScale(:shape)
 """
 size_identity() = IdentityScale(:size)
 
+
+linestyle_identity() = IdentityScale(:linestyle)
 
 include("scale/scales.jl")
 

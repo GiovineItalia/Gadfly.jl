@@ -131,22 +131,6 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
                 subplot_layer_datas::Vector{Gadfly.Data},
                 scales::Dict{Symbol, Gadfly.ScaleElement})
 
-    # inherit aesthetics from the plot when needed but not provided
-    for (layer, layer_aes) in zip(geom.layers, subplot_layer_aess)
-        inherited_aes = element_aesthetics(layer.geom)
-        push!(inherited_aes, :xgroup, :ygroup)
-        for var in inherited_aes
-            if getfield(layer_aes, var) === nothing
-                setfield!(layer_aes, var, getfield(superplot_aes, var))
-            end
-        end
-    end
- # z
-    for (layer_data, layer_aes) in zip(subplot_layer_datas, subplot_layer_aess)
-        z = getfield(layer_data, :z)
-        (z != nothing) && setfield!(layer_aes, :z, z)
-    end
-
     # work out the grid size
     m = 1
     n = 1
@@ -192,6 +176,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
     geom_aes = Gadfly.concat([layer_aes_grid[k][i,j]
                               for i in 1:n, j in 1:m, k in 1:length(geom.layers)]...)
     geom_stats = Gadfly.StatisticElement[]
+    Gadfly.inherit!(superplot_aes, geom_aes)
 
     has_stat_xticks = false
     has_stat_yticks = false
@@ -316,7 +301,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             push!(guides, get(geom.guides, Guide.XTicks, Guide.xticks()))
 
             if superplot_aes.xgroup !== nothing
-                push!(guides, get(geom.guides, Guide.XLabel, Guide.xlabel(xlabels[j])))
+                gxl = get(geom.guides, Guide.XLabel, Guide.xlabel())
+                push!(guides, gxl.label=="x" ? Guide.xlabel(xlabels[j], gxl.orientation) : gxl)
             end
         else
             push!(guides, Guide.xticks(label=false))
@@ -328,7 +314,8 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             push!(guides, get(geom.guides, Guide.YTicks, Guide.yticks()))
             if superplot_aes.ygroup !== nothing
                 joff += 1
-                push!(guides, get(geom.guides, Guide.YLabel, Guide.ylabel(ylabels[i])))
+                gyl = get(geom.guides, Guide.YLabel, Guide.ylabel())
+                push!(guides, gyl.label=="y" ? Guide.ylabel(ylabels[i], gyl.orientation) : gyl)
             end
         else
             push!(guides, Guide.yticks(label=false))

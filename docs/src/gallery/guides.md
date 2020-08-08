@@ -36,17 +36,29 @@ hstack(pa, pb)
 ```
 
 
-## [`Guide.manual_color_key`](@ref)
+## [`Guide.manual_color_key`](@ref), [`Guide.manual_discrete_key`](@ref)
 
 ```@example
-using Gadfly, DataFrames
-set_default_plot_size(14cm, 8cm)
+using DataFrames, Gadfly, RDatasets
+set_default_plot_size(21cm, 7cm)
 points = DataFrame(index=rand(0:10,30), val=rand(1:10,30))
-line = DataFrame(val=rand(1:10,11), index = collect(0:10))
-pointLayer = layer(points, x="index", y="val", Geom.point,Theme(default_color="green"))
-lineLayer = layer(line, x="index", y="val", Geom.line)
-plot(pointLayer, lineLayer,
-     Guide.manual_color_key("Legend", ["Points", "Line"], ["green", "deepskyblue"]))
+line = DataFrame(val=rand(1:10,11), index=collect(0:10))
+p1 = plot(layer(points, x=:index, y=:val, color=[colorant"green"]),
+    layer(line, x=:index, y=:val, Geom.line),
+    Guide.manual_color_key("Legend", ["Points", "Line"], ["green", "deepskyblue"],
+        shape=[Shape.circle, Shape.hline]))
+
+D = groupby(dataset("COUNT", "titanicgrp"), :Class)
+fn1(s,c) = 100*s./sum(c)
+D = combine(D, :Age, :Sex, [:Survive, :Cases]=>fn1=>:prcnt)
+p2 = plot(stack(D, [:Age, :Sex]), xgroup=:Class,
+    Geom.subplot_grid(layer(x=:variable, y=:prcnt, color=:value, Geom.bar)),
+    Scale.x_discrete, Guide.ylabel("Survival (% Class)"),
+    Guide.manual_color_key("Age", ["children","adults"], 1:2),
+    Guide.manual_color_key("Sex", ["female","male"], 3:4),
+    Theme(bar_spacing=1mm, key_position=:none,
+        key_swatch_shape=Shape.square, point_size=4pt))
+hstack(p1, p2)
 ```
 
 
@@ -59,9 +71,8 @@ Dsleep = dataset("ggplot2", "msleep")
 Dsleep = dropmissing!(Dsleep[:,[:Vore, :Name,:BrainWt,:BodyWt, :SleepTotal]])
 Dsleep.SleepTime = Dsleep.SleepTotal .> 8
 plot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:Vore, shape=:SleepTime,
-    Guide.colorkey(pos=[0.05w, -0.25h]),
-    Guide.shapekey(title="Sleep (hrs)", labels=[">8","≤8"], pos=[0.18w,-0.315h]),
-    Scale.x_log10, Scale.y_log10,
+    Scale.x_log10, Scale.y_log10, Guide.colorkey,
+    Guide.shapekey(title="Sleep (hrs)", labels=[">8","≤8"]),
     Theme(point_size=2mm, key_swatch_color="slategrey", 
             point_shapes=[Shape.utriangle, Shape.dtriangle]) )
 ```
@@ -73,10 +84,9 @@ plot(Dsleep, x=:BodyWt, y=:BrainWt, Geom.point, color=:Vore, shape=:SleepTime,
 using Compose, Gadfly, RDatasets
 set_default_plot_size(14cm, 8cm)
 
-Titanic = dataset("datasets", "Titanic")
-Class =  by(Titanic, :Class, :Freq=>sum)
-Titanic = join(Titanic[Titanic.Survived.=="Yes",:], Class, on=:Class)
-Titanic.prcnt = 100*Titanic.Freq./Titanic.Freq_sum
+D = groupby(dataset("datasets", "Titanic"), :Class)
+Titanic = combine(D, :, :Freq=>(c->100*c./sum(c))=>:prcnt)
+filter!(:Survived=>x->x=="Yes", Titanic)
 sizemap = n->range(3pt, 8pt, length=n)
 
 plot(Titanic, Scale.x_log10,  Scale.y_log10,

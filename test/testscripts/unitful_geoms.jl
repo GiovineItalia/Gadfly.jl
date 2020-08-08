@@ -1,5 +1,7 @@
 using Unitful, Gadfly, DataFrames
 
+set_default_plot_size(8inch, 6inch)
+
 a = -9.81u"m/s^2"
 t = (1:0.5:10)u"s"
 v = a .* t

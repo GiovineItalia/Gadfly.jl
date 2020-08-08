@@ -194,7 +194,7 @@ function apply_statistic(stat::BarStatistic,
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
     if stat.orientation == :horizontal
-        in(:y, Gadfly.defined_aesthetics(aes)) || return
+        in(:x, Gadfly.defined_aesthetics(aes)) || return
         var = :y
         othervar = :x
         minvar = :ymin
@@ -205,7 +205,7 @@ function apply_statistic(stat::BarStatistic,
         other_viewmaxvar = :yviewmax
         labelvar = :x_label
     else
-        in(:x, Gadfly.defined_aesthetics(aes)) || return
+        in(:y, Gadfly.defined_aesthetics(aes)) || return
         var = :x
         othervar = :y
         minvar = :xmin
@@ -218,7 +218,8 @@ function apply_statistic(stat::BarStatistic,
     end
 
     vals = getfield(aes, var)
-    if isempty(vals)
+    vals===nothing && (vals = getfield(aes, minvar))
+    if vals===nothing || isempty(vals)
       setfield!(aes, minvar, Float64[1.0])
       setfield!(aes, maxvar, Float64[1.0])
       setfield!(aes, var, Float64[1.0])
@@ -764,8 +765,8 @@ end
 @deprecate xticks(ticks) xticks(ticks=ticks)
 
 ### add hinges and fences to y-axis?
-input_aesthetics(stat::TickStatistic) = stat.axis=="x" ? [:x, :xmin, :xmax, :xintercept] :
-    [:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence]
+input_aesthetics(stat::TickStatistic) = stat.axis=="x" ? [:x, :xmin, :xmax, :xintercept, :xend] :
+    [:y, :ymin, :ymax, :yintercept, :middle, :lower_hinge, :upper_hinge, :lower_fence, :upper_fence, :yend]
 output_aesthetics(stat::TickStatistic) = stat.axis=="x" ? [:xtick, :xgrid] : [:ytick, :ygrid]
 
 xy_ticks(var,in_aess,out_aess) = """
@@ -1149,7 +1150,7 @@ For confidence bands, use `Stat.smooth()` with `Geom.ribbon`.
 """
 const smooth = SmoothStatistic
 
-function Stat.apply_statistic(stat::SmoothStatistic,
+function apply_statistic(stat::SmoothStatistic,
     scales::Dict{Symbol, Gadfly.ScaleElement},
     coord::Gadfly.CoordinateElement,
     aes::Gadfly.Aesthetics)
@@ -1172,7 +1173,11 @@ function Stat.apply_statistic(stat::SmoothStatistic,
     aes_color =  colorflag ? aes.color : fill(nothing, length(aes.x))
 
     uc = unique(aes_color)
-    groups = Dict(c=>(xs[aes_color.==c], ys[aes_color.==c], aes.x[aes_color.==c]) for c in uc)
+    groups = if length(uc)==1
+        Dict(c=>(xs, ys, aes.x) for c in uc)
+    else
+        Dict(c=>(xs[aes_color.==c], ys[aes_color.==c], aes.x[aes_color.==c]) for c in uc)
+    end
 
     # For aes.y returning a Float is ok if `y` is an Int or a Float
     # There does not seem to be strong demand for other types of `y`
@@ -1391,7 +1396,8 @@ FunctionStatistic(; num_samples=250) = FunctionStatistic(num_samples)
 
 input_aesthetics(::FunctionStatistic) = [:y, :xmin, :xmax]
 output_aesthetics(::FunctionStatistic) = [:x, :y, :group]
-default_scales(::FunctionStatistic) = [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous()]
+default_scales(::FunctionStatistic, t::Gadfly.Theme=Gadfly.current_theme()) = 
+    [Scale.x_continuous(), Scale.y_continuous(), t.discrete_color_scale]
 
 """
     Stat.func[(; num_samples=250)]
@@ -1432,7 +1438,7 @@ function apply_statistic(stat::FunctionStatistic,
             groups[1+(i-1)*stat.num_samples:i*stat.num_samples] .= i
         end
         aes.group = discretize_make_ia(groups)
-    elseif length(aes.y) > 1 && haskey(scales, :color)
+    elseif length(aes.y) > 1
         data = Gadfly.Data()
         data.color = Array{AbstractString}(undef, length(aes.y) * stat.num_samples)
         groups = Array{Union{Missing,Int}}(undef, length(aes.y) * stat.num_samples)
@@ -1443,6 +1449,8 @@ function apply_statistic(stat::FunctionStatistic,
         end
         Scale.apply_scale(scales[:color], [aes], data)
         aes.group = discretize_make_ia(groups)
+    else
+        aes.color_key_colors = Dict()
     end
 
     data = Gadfly.Data()
@@ -1542,10 +1550,14 @@ function apply_statistic(stat::ContourStatistic,
     end
 
     aes.group = groups
-    color_scale = get(scales, :color, Gadfly.Scale.color_continuous_gradient())
-    Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=levels))
-    Scale.apply_scale(scales[:x], [aes],  Gadfly.Data(x=contour_xs))
-    Scale.apply_scale(scales[:y], [aes], Gadfly.Data(y=contour_ys))
+    if aes.color===nothing
+        color_scale = get(scales, :color, Scale.color_continuous_gradient())
+        Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=levels))
+    end
+    x_scale = scales[:x].trans.f==identity ? scales[:x] : Scale.x_continuous()
+    y_scale = scales[:y].trans.f==identity ? scales[:y] : Scale.y_continuous()
+    Scale.apply_scale(x_scale, [aes], Gadfly.Data(x=contour_xs))
+    Scale.apply_scale(y_scale, [aes], Gadfly.Data(y=contour_ys))
 end
 
 
@@ -1553,16 +1565,16 @@ struct QQStatistic <: Gadfly.StatisticElement end
 
 input_aesthetics(::QQStatistic) = [:x, :y]
 output_aesthetics(::QQStatistic) = [:x, :y]
-default_scales(::QQStatistic) =
-        [Gadfly.Scale.x_continuous(), Gadfly.Scale.y_continuous]
+default_scales(::QQStatistic) = [Scale.x_distribution(), Scale.y_distribution()]
 
 """
     Stat.qq
 
-Transform $(aes2str(input_aesthetics(qq()))) into cumulative distrubutions.
+Transform $(aes2str(input_aesthetics(qq()))) into quantiles.
 If each is a numeric vector, their sample quantiles will be compared.  If one
 is a `Distribution`, then its theoretical quantiles will be compared with the
-sample quantiles of the other.
+sample quantiles of the other. Optionally group using the `color` aesthetic. 
+`Stat.qq` uses function `qqbuild` from Distributions.jl.
 """
 const qq = QQStatistic
 
@@ -1572,54 +1584,69 @@ function apply_statistic(stat::QQStatistic,
                          aes::Gadfly.Aesthetics)
 
     Gadfly.assert_aesthetics_defined("Stat.qq", aes, :x, :y)
-    Gadfly.assert_aesthetics_undefined("State.qq", aes, :color)
 
-    # NOTES:
-    #
-    # apply_scales happens before apply_statistics, so we need to handle in
-    # apply_scales the Distributions that might be bound to x and y... By
-    # analogy with Stat.func, we can add a check in apply_statistic which defers
-    # application.  Stat.func though requires an ARRAY of Functions, and doesn't
-    # work on naked functions bound to aes.y.  If we want to bind Distributions,
-    # we'd need to extend the types that are allowed for aes.y/.x (e.g. change
-    # type of Aesthetics fields x and y).  Right now these are of type
-    # NumericalOrCategoricalAesthetic.  The .x and .y fields are the _only_
-    # place where this type is used, but I'm not sure if there's a reason that
-    # changing this typealias would be a bad idea...for now I've just used a
-    # direct `@compat(Union{NumericalOrCategoricalAesthetic, Distribution})`.
-    #
-    # TODO:
-    #
-    # Grouping by color etc.?
+    local n_distributions::Int
 
-    # a little helper function to convert either numeric or distribution
-    # variables to a format suitable to input to qqbuild.
-    toVecOrDist = v -> typeof(v) <: Distribution ? v : convert(Vector{Float64}, v)
-
-    # check and convert :x and :y to proper types for input to qqbuild
-    local xs, ys
-    try
-        (xs, ys) = map(toVecOrDist, (aes.x, aes.y))
-    catch e
-        error("Stat.qq requires that x and y be bound to either a Distribution or to arrays of plain numbers.")
+    XT, YT = eltype(aes.x), eltype(aes.y)
+    for elt in (XT, YT)
+        if elt<:Distribution
+            elt<:UnivariateDistribution && continue
+            error("For Stat.qq, if using distributions, only UnivariateDistributions are supported (see Distributions.jl).")
+        end
     end
+    
+    colorflag = aes.color !== nothing
+    aes_color = colorflag ? aes.color : [nothing]
+    uc = unique(aes_color)
+    lx, ly = length(aes.x), length(aes.y)
+    
+    n_distributions, dv, sv = if XT<:Distribution && lx>1
+        2, :x, :y
+    elseif YT<:Distribution && ly>1
+        2, :y, :x
+    elseif XT<:Distribution
+        1, :x, :y
+    elseif YT<:Distribution
+        1, :y, :x
+    else
+        0, :x, :y
+    end
+    
+    dvar1, svar1 = getfield(aes, dv),  getfield(aes, sv)
+    !colorflag && n_distributions<2 && (aes_color=fill(nothing, length(svar1)))
 
-    qqq = qqbuild(xs, ys)
-
-    aes.x = qqq.qx
-    aes.y = qqq.qy
-
-    # apply_scale to Distribution-bound aesthetics is deferred, so re-apply here
-    # (but only for Distribution, numeric data is already scaled).  Only one of
-    # :x or :y can be a Distribution since qqbuild will throw an error for two
-    # Distributions.
-    data = Gadfly.Data()
-    if typeof(xs) <: Distribution
-        data.x = aes.x
-        Scale.apply_scale(scales[:x], [aes], data)
-    elseif typeof(ys) <: Distribution
-        data.y = aes.y
-        Scale.apply_scale(scales[:y], [aes], data)
+    CT = eltype(aes_color)
+    dvar2, svar2, colorv = Float64[], Float64[], CT[]
+    if n_distributions==2
+        for (d,c) in Compose.cyclezip(dvar1, aes_color)
+            qqq = qqbuild(d, svar1)
+            append!(dvar2, qqq.qx)
+            append!(svar2, qqq.qy)
+            append!(colorv, fill(c, length(qqq.qx)))
+        end
+    elseif n_distributions==1
+        for c in uc
+            qqq = qqbuild(dvar1[1], svar1[aes_color.==c])
+            append!(dvar2, qqq.qx)
+            append!(svar2, qqq.qy)
+            append!(colorv, fill(c, length(qqq.qx)))
+        end
+    else
+        for c in uc
+            qqq = qqbuild(dvar1[aes_color.==c], svar1[aes_color.==c])
+            append!(dvar2, qqq.qx)
+            append!(svar2, qqq.qy)
+            append!(colorv, fill(c, length(qqq.qx)))
+        end
+    end
+    
+    setfield!(aes, dv, dvar2)
+    setfield!(aes, sv, svar2)
+    colorflag && (aes.color = colorv)
+    if XT <: Distribution
+        Scale.apply_scale(scales[:x], [aes], Gadfly.Data(x=aes.x))
+    elseif YT <: Distribution
+        Scale.apply_scale(scales[:y], [aes], Gadfly.Data(y=aes.y))
     end
 end
 

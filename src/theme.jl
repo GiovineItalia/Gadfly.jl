@@ -91,6 +91,9 @@ $(FIELDS)
     "The function `f` in  [`Scale.size_radius`](@ref) and [`Scale.size_area`](@ref).",
     continuous_sizemap,      Function,        Scale.default_continuous_sizes
 
+    "A new `Theme` field, in development. Currently only works with `Guide.manual_discrete_key` and `Guide.manual_color_key`. (Function)",
+    discrete_colormap,      Function,         Scale.default_discrete_colors
+
     "Shapes of points in the point geometry.  (Function in circle, square, diamond, cross, xcross, utriangle, dtriangle, star1, star2, hexagon, octagon, hline, vline, ltriangle, rtriangle)",
     point_shapes,          Vector{Function},  [Shape.circle, Shape.square, Shape.diamond, Shape.cross, Shape.xcross,
                                                Shape.utriangle, Shape.dtriangle, Shape.star1, Shape.star2,
@@ -110,6 +113,9 @@ $(FIELDS)
 
     "Border color of the main plot panel. (Color or Nothing)",
     panel_stroke,          ColorOrNothing,  nothing
+
+    "Border line width for main plot panel. (Measure)",
+    panel_line_width,      Measure,      0.3mm
 
     "Opacity of the plot background panel. (Float in [0.0, 1.0])",
     panel_opacity,         Float64,         0.0,
@@ -131,6 +137,9 @@ $(FIELDS)
 
     "Width of grid lines. (Measure)",
     grid_line_width,       Measure,         0.2mm
+
+    "Context order of the grid lines (default=0). The plot panel background has a context order of -1. (Int)",
+    grid_line_order,        Int,            0 
 
     "Font used for minor labels such as tick labels and entries in keys. (String)",
     minor_label_font,      AbstractString,          label_font_desc
@@ -209,7 +218,7 @@ $(FIELDS)
 
     # will eventually replace `colorkey_swatch_shape` 
     "Shape used in keys for swatches (Function as in `point_shapes`)",
-    key_swatch_shape,       Function,        Shape.square
+    key_swatch_shape,       Union{Function,Nothing},        nothing
 
     "Default color used in keys for swatches.  Currently works for `Guide.shapekey` and `Guide.sizekey` (Color)",
     key_swatch_color,       ColorOrNothing,        nothing

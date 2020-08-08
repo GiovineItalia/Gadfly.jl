@@ -4,7 +4,7 @@ function meltdata(U::AbstractDataFrame, colgroups::Vector{Col.GroupedColumn})
     um, un = size(U)
 
     # Figure out the size of the new melted matrix
-    allcolumns = Set{Symbol}(names(U))
+    allcolumns = Set{Symbol}(propertynames(U))
 
     vm = um
     colidxs = [colgroup.columns===nothing ? collect(allcolumns) : colgroup.columns for colgroup in colgroups]
@@ -18,7 +18,7 @@ function meltdata(U::AbstractDataFrame, colgroups::Vector{Col.GroupedColumn})
     vnames = Symbol[]
     colmap = Dict{Any, Int}()
 
-    eltypd = Dict(k=>v for (k,v) in zip(names(U), eltype.(eachcol(U))))
+    eltypd = Dict{Symbol, DataType}(k=>v for (k,v) in zip(propertynames(U), eltype.(eachcol(U))))
     # allocate vectors for grouped columns
     for (j, (colgroup, colidx)) in enumerate(zip(colgroups, colidxs))
         eltyp = promote_type(getindex.([eltypd], colidx)...)

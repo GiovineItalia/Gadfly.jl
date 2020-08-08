@@ -31,26 +31,37 @@ De = dataset("ggplot2","economics")
 De.Unemploy /= 10^3
 
 plot(De, x=:Date, y=:Unemploy, Geom.line,
-    layer(Dp, xmin=:Start, xmax=:End, Geom.vband, color=:Party),
+    layer(Dp, xmin=:Start, xmax=:End, Geom.vband, color=:Party, alpha=[0.6]),
     Scale.color_discrete_manual("deepskyblue", "lightcoral"),
     Coord.cartesian(xmin=Date("1965-01-01"), ymax=12),
-    Guide.xlabel("Time"), Guide.ylabel("Unemployment (x10³)"), Guide.colorkey(title=""),
+  Guide.xlabel("Time"), Guide.ylabel("Unemployment (x10³)"), Guide.colorkey(title=""),
     Theme(default_color="black", key_position=:top))
 ```
 
 ## [`Geom.bar`](@ref)
 
 ```@example
-using Gadfly, RDatasets
-set_default_plot_size(14cm, 8cm)
-plot(dataset("HistData", "ChestSizes"), x="Chest", y="Count", Geom.bar)
+using ColorSchemes, DataFrames, Distributions, Gadfly
+set_default_plot_size(21cm, 8cm)
+x = range(-4, 4, length=30)
+fn1(μ,x=x) = pdf.(Normal(μ, 1), x)
+D = [DataFrame(x=x, y=fn1(μ), μ="$(μ)") for μ in [-1, 1]]
+cpalette(p) = get(ColorSchemes.viridis, p)
+p1 = plot(D[1], y=:y, x=:x, color=0:29, Geom.bar,
+    Scale.color_continuous(colormap=cpalette),
+    Theme(bar_spacing=-0.2mm, key_position=:none))
+p2 = plot(D[1], x=:x, y=:y, Geom.bar, alpha=range(0.2,0.9, length=30))
+p3 = plot(vcat(D...), x=:x, y=:y, color=:μ, alpha=[0.5],
+    Geom.bar(position=:identity))
+hstack(p1, p2, p3)
 ```
 
 ```@example
 using Gadfly, RDatasets, DataFrames
 set_default_plot_size(21cm, 8cm)
 
-D = by(dataset("datasets","HairEyeColor"), [:Eye,:Sex], Frequency=:Freq=>sum)
+hecolor = dataset("datasets","HairEyeColor")
+D = combine(groupby(hecolor, [:Eye,:Sex]), :Freq=>sum=>:Frequency)
 p1 = plot(D, color=:Eye, y=:Frequency, x=:Sex, Geom.bar(position=:dodge))
 
 palette = ["brown","blue","tan","green"]  # Is there a hazel color?
@@ -140,10 +151,10 @@ p3 = plot(z=volcano, x=collect(0.0:10:860.0), y=collect(0.0:10:600.0),
           Geom.contour(levels=2))
 Mv = volcano[1:4:end, 1:4:end]
 Dv = vcat([DataFrame(x=[1:size(Mv,1);], y=j, z=Mv[:,j]) for j in 1:size(Mv,2)]...)
-p4 = plot(Dv, x=:x, y=:y, z=:z, color=:z,
+p4 = plot(Dv, x=:x, y=:y, z=:z,
           Coord.cartesian(xmin=1, xmax=22, ymin=1, ymax=16),
-          Geom.point, Geom.contour(levels=10),
-          style(line_width=0.5mm, point_size=0.2mm) )
+          layer(Geom.point, color=:z), Geom.contour(levels=10),
+          Theme(line_width=0.5mm, point_size=1pt) )
 gridstack([p1 p2; p3 p4])
 ```
 
@@ -163,23 +174,33 @@ using Gadfly, RDatasets, Distributions
 set_default_plot_size(14cm, 8cm)
 dist = MixtureModel(Normal, [(0.5, 0.2), (1, 0.1)])
 xs = rand(dist, 10^5)
-plot(layer(x=xs, Geom.density, Theme(default_color="orange")),
-     layer(x=xs, Geom.density(bandwidth=0.0003), Theme(default_color="green")),
-     layer(x=xs, Geom.density(bandwidth=0.25), Theme(default_color="purple")),
-     Guide.manual_color_key("bandwidth", ["auto", "bw=0.0003", "bw=0.25"],
-                            ["orange", "green", "purple"]))
+plot(layer(x=xs, Geom.density, color=["auto"]),
+    layer(x=xs, Geom.density(bandwidth=0.0003), color=["bw=0.0003"]),
+    layer(x=xs, Geom.density(bandwidth=0.25), color=["bw=0.25"]),
+    Scale.color_discrete_manual("orange", "green", "purple"),
+    Guide.colorkey(title="bandwidth"))
 ```
 
 
 ## [`Geom.density2d`](@ref)
 
 ```@example
-using Gadfly, Distributions
-set_default_plot_size(14cm, 8cm)
-plot(x=rand(Rayleigh(2),1000), y=rand(Rayleigh(2),1000),
-     Geom.density2d(levels = x->maximum(x)*0.5.^collect(1:2:8)), Geom.point,
-     Theme(key_position=:none),
-     Scale.color_continuous(colormap=x->colorant"red"))
+using Gadfly, Distributions, RDatasets
+set_default_plot_size(21cm, 8cm)
+iris = dataset("datasets", "iris")
+X = rand(Rayleigh(2), 1000,2)
+levelf(x) = maximum(x)*0.5.^collect(1:2:8)
+p1 = plot(x=X[:,1], y=X[:,2], Geom.density2d(levels=levelf), 
+    Geom.point, Scale.color_continuous(colormap=c->colorant"red"),
+    Theme(key_position=:none))
+cs = repeat(Scale.default_discrete_colors(3), inner=50)
+p2 = plot(iris, x=:SepalLength, y=:SepalWidth,
+    layer(x=:SepalLength, y=:SepalWidth, color=cs),
+    layer(Geom.density2d(levels=[0.1:0.1:0.4;]),  order=1),
+    Scale.color_continuous, Guide.colorkey(title=""),
+    Guide.manual_color_key("Iris", unique(iris.Species)),
+    Theme(point_size=3pt, line_width=1.5pt))
+hstack(p1, p2)
 ```
 
 
@@ -233,11 +254,11 @@ set_default_plot_size(21cm, 8cm)
 salaries = dataset("car","Salaries")
 salaries.Salary /= 1000.0
 salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
-df = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)
-df.ymin, df.ymax = df.Salary_mean.-df.Salary_std, df.Salary_mean.+df.Salary_std
-df.label = string.(round.(Int, df.Salary_mean))
+fn1(x, u=mean(x), s=std(x)) = (Salary=u, ymin=u-s, ymax=u+s, 
+    label="$(round.(Int,u))")
+df = combine(:Salary=>fn1, groupby(salaries, [:Rank, :Discipline]))
 
-p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank,
+p1 = plot(df, x=:Discipline, y=:Salary, color=:Rank,
     Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
     ymin=:ymin, ymax=:ymax, Geom.errorbar, Stat.dodge,
     Geom.bar(position=:dodge),
@@ -245,7 +266,7 @@ p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank,
     Guide.colorkey(title="", pos=[0.76w, -0.38h]),
     Theme(bar_spacing=0mm, stroke_color=c->"black")
 )
-p2 = plot(df, y=:Discipline, x=:Salary_mean, color=:Rank,
+p2 = plot(df, y=:Discipline, x=:Salary, color=:Rank,
     Coord.cartesian(yflip=true), Scale.y_discrete,
     xmin=:ymin, xmax=:ymax, Geom.errorbar, Stat.dodge(axis=:y),
     Geom.bar(position=:dodge, orientation=:horizontal),
@@ -291,13 +312,18 @@ set_default_plot_size(21cm, 16cm)
 D = dataset("ggplot2","diamonds")
 gamma = Gamma(2, 2)
 Dgamma = DataFrame(x=rand(gamma, 10^4))
-p1 = plot(D, x="Price", Geom.histogram)
-p2 = plot(D, x="Price", color="Cut", Geom.histogram)
-p3 = plot(D, x="Price", color="Cut", Geom.histogram(bincount=30))
-p4 = plot(Dgamma, Coord.cartesian(xmin=0, xmax=20),
-    layer(x->pdf(gamma, x), 0, 20, Geom.line, Theme(default_color="black")),
-    layer(x=:x, Geom.histogram(bincount=20, density=true, limits=(min=0,))),
-    Theme(default_color="bisque") )
+p1 = plot(D, x="Price", color="Cut", Geom.histogram)
+p2 = plot(D, x="Price", color="Cut", Geom.histogram(bincount=30))
+p3 = plot(Dgamma, Coord.cartesian(xmin=0, xmax=20),
+    layer(x->pdf(gamma, x), 0, 20, color=[colorant"black"]),
+    layer(x=:x, Geom.histogram(bincount=20, density=true, limits=(min=0,)),
+    color=[colorant"bisque"]))
+a = repeat([0.75, 0.85], outer=40) # opacity
+D2 = [DataFrame(x=rand(Normal(μ,1), 500), μ="$(μ)") for μ in [-1, 1]]
+p4 = plot(vcat(D2...), x=:x,  color=:μ, alpha=[a;a],
+    Geom.histogram(position=:identity, bincount=40, limits=(min=-4, max=4)),
+    Scale.color_discrete_manual("skyblue","moccasin")
+)
 gridstack([p1 p2; p3 p4])
 ```
 
@@ -428,13 +454,16 @@ plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],
 ## [`Geom.rect`](@ref), [`Geom.rectbin`](@ref)
 
 ```@example
-using Gadfly, Colors, DataFrames, RDatasets
+using Gadfly, DataFrames
 set_default_plot_size(21cm, 8cm)
-theme1 = Theme(default_color=RGBA(0, 0.75, 1.0, 0.5))
-D = DataFrame(x=[0.5,1], y=[0.5,1], x1=[0,0.5], y1=[0,0.5], x2=[1,1.5], y2=[1,1.5])
-pa = plot(D, x=:x, y=:y, Geom.rectbin, theme1)
-pb = plot(D, xmin=:x1, ymin=:y1, xmax=:x2, ymax=:y2, Geom.rect, theme1)
-hstack(pa, pb)
+x1, y1, w1 = 0.5:10, rand(10), 0.09.+0.4*rand(10)
+D = DataFrame(x=x1, y=rand(x1, 10), y1=y1, x2=x1.+w1, y2=y1.+w1, c=0:9)
+p1 = plot(D, xmin=:x, ymin=:y1, xmax=:x2, ymax=:y2, color=[colorant"green"],
+    alpha=1:10, Geom.rect, Scale.alpha_discrete)
+p2 = plot(D, xmin=:x, ymin=:y1, xmax=:x2, ymax=:y2, color=:c, alpha=[0.7],
+    Geom.rect, Guide.ylabel(nothing))
+p3 = plot(D, x=:x, y=:y, color=:c, alpha=[0.5], Geom.rectbin, Scale.color_discrete)
+hstack(p1, p2, p3)
 ```
 
 ```@example
@@ -469,16 +498,24 @@ hstack(p1,p2)
 ## [`Geom.segment`](@ref)
 ```@example
 using Gadfly, DataFrames, ColorSchemes
-set_default_plot_size(14cm, 14cm)
+set_default_plot_size(21cm, 8cm)
 n = 1000
 x, y = cumsum(randn(n)), cumsum(randn(n))
-D = DataFrame(x1=x[1:end-1], y1=y[1:end-1], x2=x[2:end], y2=y[2:end], colv=1:n-1)
+D1 = DataFrame(x1=x[1:end-1], y1=y[1:end-1], x2=x[2:end], y2=y[2:end], colv=1:n-1)
 palettef(c::Float64) = get(ColorSchemes.viridis, c)
+a = range(0, stop=7π/4, length=8)+ 0.2*randn(8)
+D2 = [DataFrame(x2=x, y2=x, x=x.+sin.(a)/r, y=x.+r*cos.(a),
+        ls=rand(["A","A","B"], 8)) for (x,r) in zip([1,-1], [0.4,0.3])]
 
-plot(D, x=:x1, y=:y1, xend=:x2, yend=:y2,
-     color = :colv, Geom.segment, Coord.cartesian(aspect_ratio=1.0),
+p1 = plot(D1, x=:x1, y=:y1, xend=:x2, yend=:y2,
+     color=:colv, Geom.segment, Coord.cartesian(fixed=true),
      Scale.color_continuous(colormap=palettef, minvalue=0, maxvalue=1000)
 )
+p2 = plot(vcat(D2...), x=:x, y=:y, xend=:x2, yend=:y2,
+     color=:x2, linestyle=:ls, Geom.point, Geom.segment,
+     Scale.linestyle_discrete(levels=["A","B"]),
+     Scale.color_discrete, Theme(key_position=:none, point_size=3.5pt))
+hstack(p1, p2)
 ```
 
 
@@ -505,7 +542,7 @@ plot(x=rand(25), y=rand(25), Geom.step)
 ```
 
 
-## [`Geom.subplot_grid`](@ref)
+## [[`Geom.subplot_grid`](@ref)](@id Gallery_Geom.subplot_grid)
 
 ```@example
 using Gadfly, RDatasets
@@ -620,6 +657,6 @@ hstack(p1,p2)
 using Gadfly, RDatasets
 set_default_plot_size(14cm, 8cm)
 Dsing = dataset("lattice","singer")
-Dsing.Voice = [x[1:5] for x in Dsing.VoicePart]
+Dsing.Voice = [x[1:5] for x in Array(Dsing.VoicePart)]
 plot(Dsing, x=:VoicePart, y=:Height, color=:Voice, Geom.violin)
 ```

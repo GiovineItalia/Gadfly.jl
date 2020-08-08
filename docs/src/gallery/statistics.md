@@ -41,8 +41,7 @@ set_default_plot_size(21cm, 8cm)
 salaries = dataset("car","Salaries")
 salaries.Salary /= 1000.0
 salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
-df = by(salaries, [:Rank,:Discipline], :Salary=>mean, :Salary=>std)
-df.ymin, df.ymax = df.Salary_mean.-df.Salary_std, df.Salary_mean.+df.Salary_std
+df = combine(groupby(salaries, [:Rank, :Discipline]), :Salary.=>mean)
 df.label = string.(round.(Int, df.Salary_mean))
 
 p1 = plot(df, x=:Discipline, y=:Salary_mean, color=:Rank, 
@@ -74,7 +73,7 @@ df = DataFrame(x=x, y=y, ymin=y-ye, ymax=y+ye, g=gshift)
 plot(y=[sigmoid, x->sigmoid(x+2)], xmin=[-10], xmax=[10],
     Geom.line, Stat.func(100), color=[0,2], Guide.xlabel("x"),
     layer(df, x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:g,
-        Geom.point, Geom.errorbar, Stat.x_jitter(range=1)), 
+        Geom.point, Geom.yerrorbar, Stat.x_jitter(range=1)), 
     Scale.color_discrete_manual("deepskyblue","yellow3", levels=[0,2]),
     Guide.colorkey(title="Function", labels=["Sigmoid(x)", "Sigmoid(x+2)"]),
     Theme(errorbar_cap_length=0mm, key_position=:inside)
@@ -84,12 +83,21 @@ plot(y=[sigmoid, x->sigmoid(x+2)], xmin=[-10], xmax=[10],
 ## [`Stat.qq`](@ref)
 
 ```@example
-using Gadfly, Distributions, Random
+using Distributions, Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
-Random.seed!(1234)
-p1 = plot(x=rand(Normal(), 100), y=rand(Normal(), 100), Stat.qq, Geom.point)
-p2 = plot(x=rand(Normal(), 100), y=Normal(), Stat.qq, Geom.point)
-hstack(p1,p2)
+iris, geyser = dataset.("datasets", ["iris", "faithful"])
+df = combine(groupby(iris, :Species), :SepalLength=>(x->fit(Normal, x))=>:d)
+ds2 = fit.([Normal, Uniform], [geyser.Eruptions])
+
+yeqx(x=4:6) = layer(x=x, Geom.abline(color="gray80"))
+xylabs = [Guide.xlabel("Theoretical q"), Guide.ylabel("Sample q")]
+p1 = plot(df, x=:d, y=iris[:,1], color=:Species, Stat.qq, yeqx(4:8),
+    xylabs..., Guide.title("3 Samples, 1 Distribution"))
+p2 = plot(geyser, x=ds2, y=:Eruptions, color=["Normal","Uniform"], Stat.qq,
+    yeqx(0:6), xylabs..., Guide.title("1 Sample, 2 Distributions"),
+  Theme(discrete_highlight_color=c->nothing, alphas=[0.5], point_size=2pt)
+)
+hstack(p1, p2)
 ```
 
 ## [`Stat.smooth`](@ref)
