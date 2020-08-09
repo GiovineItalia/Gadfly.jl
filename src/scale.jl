@@ -428,9 +428,13 @@ end
     color_none
 
 Suppress the default color scale that some statistics impose by setting the
-`color` aesthetic to `nothing`.
+`color` aesthetic to `nothing`. (To be deprecated)
 """
-const color_none = NoneColorScale
+
+function color_none()
+    @warn """`Scale.color_none` to be deprecated. Instead use e.g. `plot(..., Geom.contour, color=[colorant"black"])`""" 
+    return NoneColorScale()
+end
 
 element_aesthetics(scale::NoneColorScale) = [:color]
 

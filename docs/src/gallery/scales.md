@@ -130,17 +130,6 @@ hstack(pa,pb)
 ```
 
 
-## [`Scale.color_none`](@ref)
-
-```@example
-using Gadfly
-set_default_plot_size(21cm, 8cm)
-xs = ys = 1:10.
-zs = Float64[x^2*log(y) for x in xs, y in ys]
-p1 = plot(x=xs, y=ys, z=zs, Geom.contour);
-p2 = plot(x=xs, y=ys, z=zs, Geom.contour, Scale.color_none);
-hstack(p1,p2)
-```
 
 ## [`Scale.linestyle_discrete`](@ref)
 
