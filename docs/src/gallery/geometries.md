@@ -119,7 +119,7 @@ hstack(p1, p2)
 ```@example
 using Gadfly, MarketData
 set_default_plot_size(21cm, 8cm)
-ta = ohlc[1:50]
+ta = AAPL[end-50:end]
 plot(
     x     = timestamp(ta),
     open  = values(ta.Open),
@@ -127,7 +127,8 @@ plot(
     low   = values(ta.Low),
     close = values(ta.Close),
     Geom.candlestick,
-    Scale.color_discrete_manual("green", "red")
+    Scale.color_discrete_manual("green", "red"),
+    Scale.x_discrete,
 )
 ```
 
