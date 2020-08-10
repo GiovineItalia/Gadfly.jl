@@ -292,7 +292,7 @@ function ManualDiscreteKey(;title="", labels=String[], pos=[], color=Colorant[],
         swatches = collect(Tuple, zip(cataes[notempty]...))
         !allunique(swatches) && error("Swatches should not be repeated in a manual key")
     end
-    return ManualDiscreteKey(title, labels, pos, clrs, shps, szs,  true)
+    return ManualDiscreteKey(title, labels, pos, Vector{Colorant}(clrs), shps, szs,  true)
 end
 
 
