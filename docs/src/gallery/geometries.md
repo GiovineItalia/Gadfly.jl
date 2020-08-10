@@ -119,13 +119,14 @@ hstack(p1, p2)
 ```@example
 using Gadfly, MarketData
 set_default_plot_size(21cm, 8cm)
-ta = AAPL[end-50:end]
+t = Dates.now()
+NQ = yahoo("^IXIC", YahooOpt(period1 = t - Month(2), period2 = t)) # NASDAQ Composite
 plot(
-    x     = timestamp(ta),
-    open  = values(ta.Open),
-    high  = values(ta.High),
-    low   = values(ta.Low),
-    close = values(ta.Close),
+    x     = timestamp(NQ),
+    open  = values(NQ.Open),
+    high  = values(NQ.High),
+    low   = values(NQ.Low),
+    close = values(NQ.Close),
     Geom.candlestick,
     Scale.color_discrete_manual("green", "red"),
     Scale.x_discrete,
