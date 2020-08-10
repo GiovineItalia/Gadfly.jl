@@ -6,6 +6,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
  * Better define what scales are included in the (internal) `scales` dict (#1468)
  * Support one-length aesthetics for `Geom.segment` (#1465)
  * Support one-length aesthetics e.g. `color=[colorant"red"]` for `Geom.line` (#1459)
+ * Bug fix `hstack` --> `render` on `isempty(nothing)` error; by adding preceding `.color_key_colors === nothing` check (#1471)
 
 
 

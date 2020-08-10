@@ -396,7 +396,7 @@ end
 function render(guide::ColorKey, theme::Gadfly.Theme,
                 aes::Gadfly.Aesthetics)
 
-    (theme.key_position == :none || isempty(aes.color_key_colors)) && return PositionedGuide[]
+    (theme.key_position == :none || aes.color_key_colors === nothing || isempty(aes.color_key_colors)) && return PositionedGuide[]
     gpos = guide.pos
     (theme.key_position == :inside && gpos === nothing) &&  (gpos = [0.7w, 0.25h])
 
