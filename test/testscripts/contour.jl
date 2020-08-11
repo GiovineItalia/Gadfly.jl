@@ -13,7 +13,7 @@ for (i, x) in enumerate(range(-8., stop=8., length=200)), (j, y) in enumerate(ra
     M[i, j] = f(x, y)
 end
 
-p1 = plot(x=xs, y=ys, z=zs, Geom.contour, Scale.color_none)
+p1 = plot(x=xs, y=ys, z=zs, Geom.contour, color=[colorant"black"])
 p2 = plot((x,y) -> x*exp(-(x-(round(Int, x)))^2-y^2), -8., 8, -2., 2)
 p3 = plot(layer((x,y) -> x*exp(-(x-(round(Int, x)))^2-y^2), -8., 8, -2., 2),
      layer((x, y) -> sqrt(hypot(x, y)), -2, 2, -1, 1),
