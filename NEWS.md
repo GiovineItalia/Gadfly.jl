@@ -1,7 +1,7 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
-# Version 1.x
+# Version 1.3.1
 
  * Better define what scales are included in the (internal) `scales` dict (#1468)
  * Support one-length aesthetics for `Geom.segment` (#1465)
