@@ -8,7 +8,7 @@ using Showoff
 using IndirectArrays
 using CategoricalArrays
 using Printf
-using Base.Iterators
+using Base.Iterators, Dates
 
 import Gadfly: element_aesthetics, isconcrete, concrete_length, discretize_make_ia,
     aes2str, valid_aesthetics, Maybe
@@ -661,7 +661,7 @@ function apply_scale(scale::ContinuousColorScale,
     cdata = skipmissing(
         Iterators.flatten(i.color for i in datas if !(i.color == nothing || eltype(i.color)<:Colorant)))
     if !isempty(cdata)
-        isa(first(cdata), Number) || error(colorclash)
+        typeof(first(cdata))<:Union{Number, Date} || error(colorclash)
         cmin, cmax = extrema(cdata)
     else
         return
