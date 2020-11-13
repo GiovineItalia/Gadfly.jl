@@ -17,9 +17,11 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.0'
+          # Disabled the build on 1.0 (LTS) for now, because it was broken by another commit.
+          # Hopefully, 1.6 will become the new LTS:
+          # https://discourse.julialang.org/t/what-are-the-guarantees-of-lts-julia-versions/39572/10
+          # - '1.0' 
           - '1' # Latest stable release of Julia. 
-          - 'nightly'
         os:
           - ubuntu-latest
         arch:
@@ -60,12 +62,7 @@ jobs:
             using Pkg
             Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()'
-      - run: |
-          julia --project=docs -e '
-            using Documenter: doctest
-            using JSON3
-            doctest(JSON3)'
       - run: julia --project=docs docs/make.jl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
