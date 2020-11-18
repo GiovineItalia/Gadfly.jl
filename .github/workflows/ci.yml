@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.0'
+          - '1.0' 
           - '1' # Latest stable release of Julia. 
           - nightly
         os:
