@@ -110,9 +110,7 @@ Snap.plugin(function (Snap, Element, Paper, global) {
             };
         }
 
-        this.node.addEventListener(
-            /Firefox/i.test(navigator.userAgent) ? "DOMMouseScroll" : "mousewheel",
-            fn2);
+        this.node.addEventListener("wheel", fn2);
 
         return this;
     };
@@ -817,7 +815,20 @@ Gadfly.guide_background_drag_onend = function(event) {
 
 Gadfly.guide_background_scroll = function(event) {
     if (event.shiftKey) {
-        increase_zoom_by_position(this.plotroot(), 0.001 * event.wheelDelta);
+        // event.deltaY is either the number of pixels, lines, or pages scrolled past.
+        var actual_delta;
+        switch (event.deltaMode) {
+            case 0: // Chromium-based
+                actual_delta = -event.deltaY / 1000.0;
+                break;
+            case 1: // Firefox
+                actual_delta = -event.deltaY / 50.0;
+                break;
+            default:
+                actual_delta = -event.deltaY;
+        }
+        // Assumes 20 pixels/line to get reasonably consistent cross-browser behaviour.
+        increase_zoom_by_position(this.plotroot(), actual_delta);
         event.preventDefault();
     }
 };
