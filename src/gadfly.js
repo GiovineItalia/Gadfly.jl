@@ -57,6 +57,17 @@ Snap.plugin(function (Snap, Element, Paper, global) {
         };
     };
 
+    Element.prototype.viewportplotbounds = function () {
+        var root = this.svgroot();
+        var bbox = root.node.getBoundingClientRect();
+        return {
+            x0: bbox.x,
+            x1: bbox.x + bbox.width,
+            y0: bbox.y,
+            y1: bbox.y + bbox.height
+        };
+    };
+
     Element.prototype.plotcenter = function () {
         var root = this.plotroot()
         var bbox = root.select(".guide.background").node.getBBox();
@@ -145,8 +156,13 @@ Snap.plugin(function (Snap, Element, Paper, global) {
 });
 
 
-Gadfly.plot_mousemove = function(event, x_px, y_px) {
+Gadfly.plot_mousemove = function(event, _x_px, _y_px) {
     var root = this.plotroot();
+    var viewbounds = root.viewportplotbounds();
+
+    // (_x_px, _y_px) are offsets relative to page (event.layerX, event.layerY) rather than viewport
+    var x_px = event.clientX - viewbounds.x0;
+    var y_px = event.clientY - viewbounds.y0;
     if (root.data("crosshair")) {
         px_per_mm = root.data("px_per_mm");
         bB = root.select('boundingbox').node.getAttribute('value').split(' ');
@@ -683,8 +699,14 @@ var pan_action = {
 
 var zoom_box;
 var zoom_action = {
-    start: function(root, x, y, event) {
+    start: function(root, _x, _y, event) {
         var bounds = root.plotbounds();
+        // _x and _y are co-ordinates relative to page, which caused problems
+        // unless the SVG is precisely at the top-left of the page
+        var viewbounds = root.viewportplotbounds();
+        var x = event.clientX - viewbounds.x0;
+        var y = event.clientY - viewbounds.y0;
+
         var width = bounds.x1 - bounds.x0,
             height = bounds.y1 - bounds.y0;
         var xscalable = root.hasClass("xscalable"),
@@ -699,11 +721,14 @@ var zoom_action = {
             "fill-opacity": 0.25
         });
     },
-    update: function(root, dx, dy, x, y, event) {
+    update: function(root, dx, dy, _x, _y, event) {
         var xscalable = root.hasClass("xscalable"),
             yscalable = root.hasClass("yscalable");
         var px_per_mm = root.data("px_per_mm");
         var bounds = root.plotbounds();
+        var viewbounds = root.viewportplotbounds();
+        var x = event.clientX - viewbounds.x0;
+        var y = event.clientY - viewbounds.y0;
         if (yscalable) {
             y /= px_per_mm;
             y = Math.max(bounds.y0, y);
