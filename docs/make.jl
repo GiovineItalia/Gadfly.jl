@@ -2,6 +2,9 @@ using Documenter, Gadfly, Compose, Cairo
 
 makedocs(
     modules = [Gadfly],
+    format = Documenter.HTML(
+        assets = ["assets/favicon.ico"]
+    ),
     clean = false,
     sitename = "Gadfly.jl",
     pages = Any[

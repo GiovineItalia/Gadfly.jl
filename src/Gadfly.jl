@@ -696,8 +696,8 @@ function render_prepare(plot::Plot)
         end
     end
 
-    # Scale.color_none maybe deprecated, this conditional can be removed then
-    haskey(scales, :color) && isa(scales[:color], Scale.color_none) && (supress_colorkey = true)
+    # Scale.color_none to be deprecated, this conditional can be removed then
+    haskey(scales, :color) && isa(scales[:color], Scale.NoneColorScale) && (supress_colorkey = true)
 
     if supress_colorkey
         deleteat!(keytypes, 1)

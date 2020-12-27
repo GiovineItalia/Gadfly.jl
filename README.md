@@ -4,7 +4,7 @@ alt="Gadfly Logo" width="210"></img> </div>
 
 | **Documentation** | **Build Status** | **Help** |
 |:---:|:---:|:---:|
-| [![][docs-dev-img]][docs-dev-url] [![][docs-stable-img]][docs-stable-url] | [![][travis-img]][travis-url] [![][codecov-img]][codecov-url] | [![][slack-img]][slack-url] [![][gitter-img]][gitter-url] |
+| [![][docs-dev-img]][docs-dev-url] [![][docs-stable-img]][docs-stable-url] | [![][ci-img]][ci-url] [![][codecov-img]][codecov-url] | [![][slack-img]][slack-url] [![][gitter-img]][gitter-url] |
 
 **Gadfly** is a plotting and data visualization system written in
 [Julia](http://julialang.org/).
@@ -65,8 +65,9 @@ If you have a question then you can ask for help in the plotting team of the
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
 [docs-stable-url]: http://gadflyjl.org/stable
 
-[travis-img]: http://img.shields.io/travis/GiovineItalia/Gadfly.jl.svg
-[travis-url]: https://travis-ci.org/GiovineItalia/Gadfly.jl
+[ci-img]: https://github.com/GiovineItalia/Gadfly.jl/workflows/CI/badge.svg
+[ci-url]: https://github.com/GiovineItalia/Gadfly.jl/actions
+
 [codecov-img]: https://codecov.io/gh/GiovineItalia/Gadfly.jl/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/GiovineItalia/Gadfly.jl
 

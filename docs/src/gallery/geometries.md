@@ -137,10 +137,19 @@ plot(
 ## [`Geom.contour`](@ref)
 
 ```@example
-using Gadfly
-set_default_plot_size(14cm, 8cm)
-plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),
-     xmin=[-8], xmax=[8], ymin=[-2], ymax=[2], Geom.contour)
+using DataFrames, Gadfly
+set_default_plot_size(21cm, 8cm)
+x2, cb = -2:0.2:2, [colorant"black"]
+D = DataFrame(x=repeat(x2, outer=length(x2)), y=repeat(x2, inner=length(x2)))
+D.z = D.x.*exp.(-(D.x.^2 + D.y.^2))
+D2 = DataFrame(x=0.8*randn(10), y=0.8*randn(10), r=rand(10))
+
+p1 = plot(z=(x,y) -> x*exp(-(x-round(Int, x))^2-y^2),
+     xmin=[-10], xmax=[10], ymin=[-2], ymax=[2], Geom.contour)
+p2 = plot(D, x=:x, y=:y,  layer(D2, color=:r, Geom.point),
+  layer(z=:z, Geom.contour(levels=[-0.1:-0.1:-0.5;]), linestyle=[:dash], color=cb),
+    layer(z=:z, Geom.contour(levels=[0.1:0.1:0.5;]),  color=cb))
+hstack(p1, p2)
 ```
 
 ```@example

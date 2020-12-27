@@ -97,7 +97,7 @@ A few caveats:
 - Updating to the latest versions of compiled packages requires a recompile.
   `]up`ing only works for those that haven't been built into the system image.
 
-- Plots won't be automatically displayed in your default browswer unless you
+- Plots won't be automatically displayed in your default browser unless you
   tweak `Base.Multimedia.displays` to return the GadflyDisplay to the last entry.
   To do so, add `atreplinit(x->pushdisplay(Gadfly.GadflyDisplay()))` to
   your `startup.jl`, or `pushdisplay` manually.
