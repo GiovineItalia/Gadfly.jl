@@ -513,18 +513,53 @@ is controlled by `bandwidth`.  Calls [`Stat.contour`](@ref) to compute the
 const density2d = Density2DStatistic
 
 function apply_statistic(stat::Density2DStatistic,
-                         scales::Dict{Symbol, Gadfly.ScaleElement},
-                         coord::Gadfly.CoordinateElement,
-                         aes::Gadfly.Aesthetics)
-    Gadfly.assert_aesthetics_defined("Density2DStatistic", aes, :x, :y)
+    scales::Dict{Symbol, Gadfly.ScaleElement},
+    coord::Gadfly.CoordinateElement,
+    aes::Gadfly.Aesthetics)
 
     window = (stat.bw[1] <= 0.0 ? KernelDensity.default_bandwidth(aes.x) : stat.bw[1],
               stat.bw[2] <= 0.0 ? KernelDensity.default_bandwidth(aes.y) : stat.bw[2])
-    k = KernelDensity.kde((aes.x,aes.y), bandwidth=window, npoints=stat.n)
-    aes.z = k.density
-    aes.x = collect(k.x)
-    aes.y = collect(k.y)
-    apply_statistic(ContourStatistic(levels=stat.levels), scales, coord, aes)
+
+    Dat = [aes.x aes.y]
+    linestyleflag = aes.linestyle ≠ nothing
+    colorflag = aes.color ≠ nothing
+    aes_color = colorflag ? aes.color : [nothing] 
+    aes_group = (aes.group ≠ nothing) ? aes.group : [nothing]
+    CT, GT = eltype(aes_color), eltype(aes_group)
+
+    groups = collect(Tuple{CT, GT}, Compose.cyclezip(aes_color, aes_group))
+    ugroups = unique(groups)
+    nugroups = length(ugroups)
+
+    K, V = Tuple{CT, GT}, Matrix{eltype(Dat)}
+    
+    grouped_xy = if nugroups==1
+        Dict{K, V}(ugroups[1]=>Dat)
+    elseif nugroups>1
+        Dict{K, V}(g=>Dat[groups.==[g],:] for g in ugroups)
+    end
+
+    aess = Gadfly.Aesthetics[]
+    for (g, data) in grouped_xy
+        aes1 = Gadfly.Aesthetics()
+        k = KernelDensity.kde(data, bandwidth=window, npoints=stat.n)
+        aes1.x, aes1.y, aes1.z = k.x, k.y, k.density
+        apply_statistic(ContourStatistic(levels=stat.levels), scales, coord, aes1)
+        colorflag && (aes1.color = fill(g[1], length(aes1.x)))
+        push!(aess, aes1)
+    end
+    
+    aes2 = Gadfly.concat(aess...)
+    aes.x, aes.y, aes.color = aes2.x, aes2.y, aes2.color
+    colorflag && (linestyleflag ? (aes.group = aes2.group) : (aes.linestyle = aes2.group.+1))
+    if !colorflag
+        aes.group = aes2.group
+        aes.color_function = aes2.color_function
+        aes.color_label = aes2.color_label
+        aes.color_key_colors = aes2.color_key_colors
+        aes.color_key_continuous = aes2.color_key_continuous
+    end
+    
 end
 
 

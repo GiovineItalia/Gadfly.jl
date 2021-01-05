@@ -177,21 +177,24 @@ plot(layer(x=xs, Geom.density, color=["auto"]),
 
 ```@example
 using Gadfly, Distributions, RDatasets
-set_default_plot_size(21cm, 8cm)
-iris = dataset("datasets", "iris")
+set_default_plot_size(21cm, 18cm)
+geyser, iris = dataset("datasets", "faithful"), dataset("datasets", "iris")
+geyser.g = geyser.Eruptions.>3
 X = rand(Rayleigh(2), 1000,2)
 levelf(x) = maximum(x)*0.5.^collect(1:2:8)
-p1 = plot(x=X[:,1], y=X[:,2], Geom.density2d(levels=levelf), 
-    Geom.point, Scale.color_continuous(colormap=c->colorant"red"),
-    Theme(key_position=:none))
+p1 = plot(x=X[:,1], y=X[:,2], layer(Geom.density2d(levels=levelf), color=[colorant"red"],
+        linestyle=[:solid]), Geom.point)
+p2 = plot(geyser, x=:Eruptions, y=:Waiting, color=:g, Geom.density2d(levels=4),
+        Geom.point, alpha=[0.4])
+p3 = plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species, Geom.density2d(levels=4),
+        Geom.point, alpha=[0.8])
 cs = repeat(Scale.default_discrete_colors(3), inner=50)
-p2 = plot(iris, x=:SepalLength, y=:SepalWidth,
-    layer(x=:SepalLength, y=:SepalWidth, color=cs),
+p4 = plot(iris, x=:SepalLength, y=:SepalWidth,  layer(color=cs, Geom.point),
     layer(Geom.density2d(levels=[0.1:0.1:0.4;]),  order=1),
-    Scale.color_continuous, Guide.colorkey(title=""),
-    Guide.manual_color_key("Iris", unique(iris.Species)),
-    Theme(point_size=3pt, line_width=1.5pt))
-hstack(p1, p2)
+    Scale.color_continuous,   Guide.colorkey(title=""),
+    Theme(point_size=3pt, line_width=1.5pt),
+    Guide.manual_color_key("Iris", unique(iris.Species)))
+gridstack([p1 p2; p3 p4])
 ```
 
 
@@ -245,9 +248,8 @@ set_default_plot_size(21cm, 8cm)
 salaries = dataset("car","Salaries")
 salaries.Salary /= 1000.0
 salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
-fn1(x, u=mean(x), s=std(x)) = (Salary=u, ymin=u-s, ymax=u+s, 
-    label="$(round.(Int,u))")
-df = combine(:Salary=>fn1, groupby(salaries, [:Rank, :Discipline]))
+fn1(x, u=mean(x), s=std(x)) = (Salary=u, ymin=u-s, ymax=u+s, label="$(round.(Int,u))")
+df = combine(groupby(salaries, [:Rank, :Discipline]), :Salary=>fn1=>AsTable)
 
 p1 = plot(df, x=:Discipline, y=:Salary, color=:Rank,
     Scale.x_discrete(levels=["Discipline A", "Discipline B"]),

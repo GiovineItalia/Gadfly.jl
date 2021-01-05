@@ -65,7 +65,8 @@ density(; bandwidth::Real=-Inf) =
     Geom.density2d[(; bandwidth=(-Inf,-Inf), levels=15)]
 
 Draw a set of contours showing the density estimate of the `x` and `y`
-aesthetics.  This geometry is equivalent to [`Geom.line`](@ref) with
+aesthetics.  If grouped by `color`, then contour lines are mapped to `linestyle`.
+This geometry is equivalent to [`Geom.line`](@ref) with
 [`Stat.density2d`](@ref); see the latter for more information.
 """
 density2d(; bandwidth::Tuple{Real,Real}=(-Inf,-Inf), levels=15) =
