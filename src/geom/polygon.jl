@@ -16,7 +16,7 @@ Draw polygons with vertices specified by the `x` and `y` aesthetics.
 Optionally plot multiple polygons according to the `group`, `color`, `linestyle`, and/or `alpha`
 aesthetics.  `order` controls whether the polygon(s) are underneath or on top
 of other forms.  If `fill=true`, fill the polygons using `Theme.lowlight_color` and stroke the polygons using
-`Theme.discrete_highlight_color`. If `fill=false` stroke the polygons using `Theme.lowlight_color` and `Theme.line_style`.
+`Theme.discrete_highlight_color`. If `fill=false` stroke the polygons using `Theme.lowlight_color`.
 If `preserve_order=true` connect points in the order they are given, otherwise order the points
 around their centroid.
 """
@@ -51,41 +51,47 @@ function render(geom::PolygonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
     Gadfly.assert_aesthetics_defined("Geom.polygon", aes, :x, :y)
 
     default_aes = Gadfly.Aesthetics()
-    default_aes.group = IndirectArray(fill(1,length(aes.x)))
-    default_aes.color = fill(theme.default_color, length(aes.x))
-    default_aes.linestyle = fill(1, length(aes.x))
-    default_aes.alpha = fill(1, length(aes.x))
+    default_aes.group = IndirectArray([1])
+    default_aes.color = Colorant[theme.default_color]
+    default_aes.linestyle = [1]
+    default_aes.alpha = [1]
     aes = inherit(aes, default_aes)
 
     aes_x, aes_y, aes_color, aes_linestyle, aes_group, aes_alpha = concretize(aes.x, aes.y, aes.color, aes.linestyle, aes.group, aes.alpha)
-    
+
     XT, YT, CT, GT, LST, AT = eltype(aes_x), eltype(aes_y), eltype(aes_color), eltype(aes_group), eltype(aes_linestyle), eltype(aes_alpha)
 
-    groups = collect((Tuple{CT, GT, LST, AT}), zip(aes_color, aes_group, aes_linestyle, aes_alpha))
-    ug = unique(groups)
+    groups = collect((Tuple{CT, GT, LST, AT}), Compose.cyclezip(aes_color, aes_group, aes_linestyle, aes_alpha))
+    ugroups = unique(groups)
+    nugroups = length(ugroups)
 
-    n = length(ug)
-    polys = Vector{Vector{Tuple{XT,YT}}}(undef, n)
-    θs = Vector{Float64}
-    colors = Vector{CT}(undef, n)
-    line_styles = Vector{LST}(undef, n)
+    polys = Vector{Vector{Tuple{XT,YT}}}(undef, nugroups)
+    colors = Vector{Colorant}(undef, nugroups)
+    stroke_colors = Vector{Colorant}(undef, nugroups)
+    linestyles = Vector{Vector{Measure}}(undef, nugroups)
     linestyle_palette_length = length(theme.line_style)
-    alphas = Vector{Float64}(undef, n)
+    alphas = Vector{Float64}(undef, nugroups)
     alpha_discrete  = AT <: Int
+    linestyle_discrete = LST <: Int
 
-    for (k,g) in enumerate(ug)
-        i = groups.==[g]
-        polys[k] = polygon_points(aes_x[i], aes_y[i], geom.preserve_order)
-        colors[k] = first(aes_color[i])
-        line_styles[k] = mod1(first(aes_linestyle[i]), linestyle_palette_length)
-        alphas[k] = first(alpha_discrete ? theme.alphas[aes_alpha[i]] : aes_alpha[i])
+    if nugroups==1
+        polys[1] = polygon_points(aes_x, aes_y, geom.preserve_order)
+    elseif nugroups>1
+        for (k,g) in enumerate(ugroups)
+            i = groups.==[g]
+            polys[k] = polygon_points(aes_x[i], aes_y[i], geom.preserve_order)
+        end
+    end
+
+    for (k, (c, g, ls, a)) in enumerate(ugroups)
+        colors[k] = parse_colorant(theme.lowlight_color(c))
+        stroke_colors[k] = parse_colorant(theme.discrete_highlight_color(c))
+        linestyles[k] =  linestyle_discrete ? get_stroke_vector(theme.line_style[mod1(ls, linestyle_palette_length)]) : get_stroke_vector(ls)
+        alphas[k] = alpha_discrete ? theme.alphas[a] : a
     end
     
-    plinestyles = Gadfly.get_stroke_vector.(theme.line_style[line_styles])
-    pcolors = theme.lowlight_color.(colors)
-    
-    properties = geom.fill ? (fill(pcolors), stroke(theme.discrete_highlight_color.(colors)), fillopacity(alphas)) :
-        (fill(nothing), stroke(pcolors), strokedash(plinestyles))                
+    properties = geom.fill ? (fill(colors), stroke(stroke_colors), fillopacity(alphas), strokedash(linestyles)) :
+        (fill(nothing), stroke(colors), strokedash(linestyles))
 
     ctx = context(order=geom.order)
     compose!(ctx, Compose.polygon(polys, geom.tag), properties...)

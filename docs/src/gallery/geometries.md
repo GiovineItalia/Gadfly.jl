@@ -206,19 +206,15 @@ set_default_plot_size(21cm, 8cm)
 D = dataset("datasets","faithful")
 D.g = D.Eruptions.>3.0
 coord = Coord.cartesian(ymin=40, ymax=100)
-pa = plot(D, coord,
-    x=:Eruptions, y=:Waiting, group=:g,
-    Geom.point, Geom.ellipse,
-    Theme(lowlight_color=c->"gray") )
-pb = plot(D, coord, Guide.ylabel(nothing),
-    x=:Eruptions, y=:Waiting, color=:g,
+pa = plot(D, coord, x=:Eruptions, y=:Waiting, group=:g,
+    Geom.point, Geom.ellipse, Theme(lowlight_color=c->"gray"))
+pb = plot(D, coord, Guide.ylabel(nothing), x=:Eruptions, y=:Waiting, color=:g,
     Geom.point, Geom.ellipse(levels=[0.95, 0.99]),
- Theme(key_position=:none, lowlight_color=identity, line_style=[:solid,:dot]))
-pc = plot(D, coord, Guide.ylabel(nothing),
-    x=:Eruptions, y=:Waiting, color=:g,
+    Theme(key_position=:none, lowlight_color=identity, line_style=[:solid,:dot]))
+pc = plot(D, coord, Guide.ylabel(nothing), x=:Eruptions, y=:Waiting, color=:g,
     Geom.point, Geom.ellipse(fill=true),
     layer(Geom.ellipse(levels=[0.99]), style(line_style=[:dot])),
-    Theme(key_position=:none) )
+    Theme(key_position=:none))
 hstack(pa,pb,pc)
 ```
 
@@ -434,13 +430,18 @@ plot(layer(x=rdata[1,:], y=rdata[2,:], color=[colorant"red"], Geom.point),
 ## [`Geom.polygon`](@ref)
 
 ```@example
-using Gadfly
-set_default_plot_size(14cm, 8cm)
-plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],
+using Gadfly, DataFrames
+set_default_plot_size(21cm, 8cm)
+
+p1 = plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],
      y=[0, 0, 1, 1, 0, 0, 3, 3, 2, 2, 3, 3, 0, 0, 3, 3],
-     group=["H", "H", "H", "H", "H", "H", "H", "H",
-            "H", "H", "H", "H", "I", "I", "I", "I"],
+     group=reduce(vcat, fill.(["H", "I"], [12,4])),
      Geom.polygon(preserve_order=true, fill=true))
+Dps = reduce(vcat, [DataFrame(x=[1, 5, 5, 1].+d, y=[14, 14, 10, 10].-d, id=d+1) for d in 0:9])
+p2 = plot(Dps, x=:x, y=:y, color=:id, alpha=[0.3], linestyle=[:dash],
+    Geom.polygon(fill=true), Scale.color_discrete, 
+   Theme(line_width=2pt, lowlight_color=identity, discrete_highlight_color=identity))
+hstack(p1, p2)
 ```
 
 
@@ -478,7 +479,7 @@ Db = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u="μ=$μ") for μ in [-
 
 # In the line below, 0.6 is the color opacity
 p1 = plot(vcat(Da...), x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f,
-    Geom.line, Geom.ribbon, Theme(alphas=[0.6])
+    Geom.line, Geom.ribbon, alpha=[0.6]
 )
 p2 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax,
     color = :u, alpha=:u, Theme(alphas=[0.8,0.2]),
