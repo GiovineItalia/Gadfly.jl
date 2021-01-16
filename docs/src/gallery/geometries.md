@@ -348,20 +348,25 @@ hstack(p1,p2)
 ## [`Geom.label`](@ref)
 
 ```@example
-using Gadfly, RDatasets
-set_default_plot_size(14cm, 8cm)
-plot(dataset("ggplot2", "mpg"), x="Cty", y="Hwy", label="Model",
+using DataFrames, Gadfly, RDatasets
+import Gadfly: w, h   # for relative units
+set_default_plot_size(21cm, 8cm)
+df = DataFrame(x=[0.6w, 0.6w], y=[0.6h, 0.7h], label=["Text 1", "Text 2"])
+p1 = plot(x=1.0:5, y=[0.21, 0.81, 0.68, 0.76, 0.18], Geom.point,
+     layer(df, x=:x, y=:y, label=:label, Geom.label(position=:right)))
+p2 = plot(dataset("ggplot2", "mpg"), x="Cty", y="Hwy", label="Model",
      Geom.point, Geom.label)
+hstack(p1, p2)
 ```
 
 ```@example
 using Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
-p1 = plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
+p3 = plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
      Scale.x_log10, Scale.y_log10, Geom.point, Geom.label)
-p2 = plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
+p4 = plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
      Scale.x_log10, Scale.y_log10, Geom.label(position=:centered))
-hstack(p1,p2)
+hstack(p3,p4)
 ```
 
 
