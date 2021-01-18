@@ -1114,7 +1114,7 @@ const default_aes_scales = Dict{Symbol, Dict}(
     ),
 
     :functional => Dict{Symbol, Any}(
-        :x      => Scale.x_discrete(),
+        :x      => Scale.x_func(),
         :z      => Scale.z_func(),
         :y      => Scale.y_func(),
         :shape  => Scale.shape_identity(),
