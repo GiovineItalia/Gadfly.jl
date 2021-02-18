@@ -271,13 +271,17 @@ hstack(p1,p2)
 
 ```@example
 using Gadfly
-set_default_plot_size(21cm, 8cm)
+set_default_plot_size(21cm, 16cm)
 x= 1:10
 s = [-1,-1,1,1,-1,-1,1,1,-1,-1]
 pa = plot(x=x, y=x.^2, Geom.hair, Geom.point)
 pb = plot(x=s.*(x.^2), y=x, color=string.(s),
           Geom.hair(orientation=:horizontal), Geom.point, Theme(key_position=:none))
-hstack(pa, pb)
+pc = plot(x=x, y=x.^2, Geom.hair(intercept=(x.^2)./2), Geom.point)
+pd = plot(x=s.*(x.^2), y=x, color=string.(s),
+          Geom.hair(orientation=:horizontal, intercept=s.*(x.^2)/2), Geom.point, 
+          Theme(key_position=:none))
+gridstack([pa pb; pc pd])
 ```
 
 
