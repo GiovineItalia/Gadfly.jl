@@ -182,7 +182,12 @@ function layer(data_source,
     for element in elements
         add_plot_element!(lyrs, element)
     end
-    lyrs
+    for l in lyrs
+        if isempty(l.statistics) && !isa(l.geom, Geom.Nil) && !isa(l.geom, Geom.SubplotGeometry)
+            l.statistics = [default_statistic(l.geom)]
+        end
+    end
+    return lyrs
 end
 
 """
@@ -235,11 +240,12 @@ layers(p::Plot) = p.layers
 
 function add_plot_element!(p::Plot, arg::GeometryElement)
     if !isempty(p.layers) && isa(p.layers[end].geom, Geom.Nil)
-        p.layers[end].geom = arg
+        newlayer = p.layers[end]
+        newlayer.geom = arg
+        isempty(newlayer.statistics) && (newlayer.statistics = [default_statistic(arg)])
     else
-        layer = Layer()
-        layer.geom = arg
-        push!(p.layers, layer)
+        lyr = first(layer(arg)) 
+        push!(p.layers, lyr)
     end
 end
 
@@ -377,9 +383,8 @@ end
 #
 function render_prepare(plot::Plot)
     if isempty(plot.layers)
-        layer = Layer()
-        layer.geom = isempty(plot.mapping) ? Geom.blank() : Geom.point()
-        push!(plot.layers, layer)
+        lyr = first(layer((isempty(plot.mapping) ? Geom.blank() : Geom.point())))
+        push!(plot.layers, lyr)
     end
 
     # TODO: When subplots are given in multiple layers, we should rearrange,
@@ -406,7 +411,7 @@ function render_prepare(plot::Plot)
 
             layer.data_source===nothing && (layer.data_source = plot.data_source)
 
-            geom_aesthetics = intersect(element_aesthetics(layer.geom), plot_aesthetics)
+            geom_aesthetics = intersect(vcat(element_aesthetics(layer.geom), input_aesthetics.(layer.statistics)...), plot_aesthetics)
             geom_dict = filter(x->in(x.first, geom_aesthetics), plot.mapping)
             layer.mapping = merge(geom_dict, layer.mapping)
 
@@ -427,8 +432,7 @@ function render_prepare(plot::Plot)
                 
                 subplot_layer.data_source===nothing && (subplot_layer.data_source = layer.data_source)
 
-                geom_aes = vcat(element_aesthetics(subplot_layer.geom), [:xgroup,:ygroup], input_aesthetics(default_statistic(subplot_layer.geom)))
-                !isempty(subplot_layer.statistics) && append!(geom_aes, input_aesthetics(subplot_layer.statistics[1]))
+                geom_aes = vcat(element_aesthetics(subplot_layer.geom), [:xgroup,:ygroup], input_aesthetics.(subplot_layer.statistics)...)
                 geom_aesthetics = intersect(geom_aes, plot_aesthetics)
                 geom_dict = filter(x->in(x.first, geom_aesthetics), plot.mapping)
                 subplot_layer.mapping = merge(geom_dict, subplot_layer.mapping)
@@ -454,10 +458,9 @@ function render_prepare(plot::Plot)
     layer_stats = Array{Vector{StatisticElement}}(undef, length(plot.layers))
     for (i, layer) in enumerate(plot.layers)
         if isa(layer.geom, Geom.SubplotGeometry)
-            layer_stats[i] = [isempty(subplot_layer.statistics) ? default_statistic(subplot_layer.geom) : subplot_layer.statistics[1]
-                    for subplot_layer in layers(layer.geom)]
+            layer_stats[i] = [subplot_layer.statistics[1] for subplot_layer in layers(layer.geom)]
         else
-            layer_stats[i] = isempty(layer.statistics) ? [default_statistic(layer.geom)] : layer.statistics
+            layer_stats[i] = layer.statistics
         end
     end
 

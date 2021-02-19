@@ -16,16 +16,19 @@ end
 
 function add_subplot_element(p::SubplotGeometry, arg::Gadfly.GeometryElement)
     if !isempty(p.layers) && isa(p.layers[end].geom, Geom.Nil)
-        p.layers[end].geom = arg
+        newlayer = p.layers[end]
+        newlayer.geom = arg
+        isempty(newlayer.statistics) && (newlayer.statistics = [default_statistic(arg)])
     else
-        layer = Layer()
-        layer.geom = arg
-        push!(p.layers, layer)
+        lyr = first(layer(arg))
+        push!(p.layers, lyr)
     end
 end
 
-add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.StatisticElement) =
-        push!(subplot.statistics, arg)
+function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.StatisticElement)
+    isempty(subplot.layers) && push!(subplot.layers, Layer())
+    push!(subplot.layers[end].statistics, arg)
+end
 
 function add_subplot_element(subplot::SubplotGeometry, arg::Gadfly.ScaleElement)
     push!(subplot.scales, arg)
@@ -119,8 +122,7 @@ end
 
 element_coordinate_type(::SubplotGrid) = Gadfly.Coord.subplot_grid
 
-default_statistic(geom::SubplotGrid) = isempty(geom.statistics) ?
-        [default_statistic(l.geom) for l in geom.layers] : geom.statistics
+default_statistic(geom::SubplotGrid) = [first(l.statistics) for l in geom.layers]
 
 
 # Render a subplot grid geometry, which consists of rendering and arranging
@@ -156,9 +158,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
 
     coord = geom.coord
     plot_stats = Gadfly.StatisticElement[stat for stat in geom.statistics]
-    layer_stats = [isempty(layer.statistics) ?
-            Gadfly.StatisticElement[Geom.default_statistic(layer.geom)] : layer.statistics
-                for layer in geom.layers]
+    layer_stats = Vector{Gadfly.StatisticElement}[layer.statistics for layer in geom.layers]
 
     for i in 1:n, j in 1:m
         Scale.apply_scales(geom.scales,
