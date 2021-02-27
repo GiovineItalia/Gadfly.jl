@@ -2181,8 +2181,6 @@ function apply_statistic(stat::QuantileBarsStatistic,
         aes.xmax = x_middle .+ stat.bar_width / 2
         aes.y = pdf(k, x_middle)
     else
-        # Colors are not needed now.
-        # Lets do that later.
         groups = Dict()
         for (x, c) in zip(aes.x, Gadfly.cycle(aes.color))
             if !haskey(groups, c)
@@ -2191,26 +2189,27 @@ function apply_statistic(stat::QuantileBarsStatistic,
                 push!(groups[c], x)
             end
         end
-        @show groups
 
-        # aes.color = Array{Gadfly.RGB{Float32}}(undef, 0)
+        colors = Array{Gadfly.RGB{Float32}}(undef, 0)
         aes.xmin = Array{Float64}(undef, 0)
         aes.xmax = Array{Float64}(undef, 0)
         aes.y = Array{Float64}(undef, 0)
         for (c, xs) in groups
             window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(xs) : stat.bw
             k = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
-            x_middle = quantile(xs, stat.quantiles)
 
+            x_middle = quantile(xs, stat.quantiles)
             xmin = x_middle .- stat.bar_width / 2
             xmax = x_middle .+ stat.bar_width / 2
             y = pdf(k, x_middle)
             append!(aes.xmin, xmin)
             append!(aes.xmax, xmax)
             append!(aes.y, y)
-            # append!(aes.color, c)
+            for _ in 1:length(xmin)
+                push!(colors, c)
+            end
         end
-        # aes.color = Gadfly.discretize_make_ia(colors)
+        aes.color = Gadfly.discretize_make_ia(colors)
     end
     aes.y_label = Gadfly.Scale.identity_formatter
 end
