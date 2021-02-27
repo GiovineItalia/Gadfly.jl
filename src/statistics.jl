@@ -2155,6 +2155,9 @@ end
 QuantileBarsStatistic(; quantiles=[0.025, 0.975], bar_width=0.1, n=256, bandwidth=-Inf) =
     QuantileBarsStatistic(quantiles, bar_width, n, bandwidth)
 
+input_aesthetics(stat::QuantileBarsStatistic) = [:x]
+output_aesthetics(stat::QuantileBarsStatistic) = [:xmin, :xmax, :y]
+
 """
     Stat.quantile_bars[(; quantiles=[0.025, 0.975], bar_width=0.1, n=256, bandwidth=-Inf)]
 
