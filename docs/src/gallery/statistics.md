@@ -33,6 +33,19 @@ p2 = plot(vcat(Db...), x=:x, color=:u, Theme(alphas=[0.6]),
 hstack(p1,p2)
 ```
 
+## [`Stat.quantile_bars`](@ref)
+
+```@example
+using DataFrames, Gadfly, Distributions
+set_default_plot_size(10cm, 8cm)
+n = 200
+x = randn(n)
+
+p = plot(x=x, Geom.density, Guide.title("Density with bars showing the central 90% CI"),
+    layer(Stat.density, Geom.polygon(fill=true, preserve_order=true), Theme(alphas=[0.6])),
+    layer(Stat.quantile_bars(quantiles=[0.05, 0.95], bar_width=0.1), Geom.bar))
+```
+
 ## [`Stat.dodge`](@ref)
 
 ```@example

@@ -579,7 +579,7 @@ default_scales(::DensityStatistic) = [Gadfly.Scale.y_continuous()]
     Stat.density[(; n=256, bandwidth=-Inf)]
 
 Estimate the density of `x` at `n` points, and put the result in `x` and `y`.
-Smoothing is controlled by `bandwidth`.  Used by [`Geom.density`](@ref Gadfly.Geom.density).
+Smoothing is controlled by `bandwidth`. Used by [`Geom.density`](@ref Gadfly.Geom.density).
 """
 const density = DensityStatistic
 
@@ -2144,9 +2144,75 @@ function apply_statistic(stat::DodgeStatistic,
     end
 end
 
+struct QuantileBarsStatistic <: Gadfly.StatisticElement
+    quantiles::Vector{Float64}
+    bar_width::Float64
+    # We cannot avoid these by combining our statistic with Stat.density,
+    # because we need the raw data as well as the kernel density.
+    n::Int # Number of points sampled.
+    bw::Real # Bandwidth used for the kernel density estimation.
+end
+QuantileBarsStatistic(; quantiles=[0.025, 0.975], bar_width=0.1, n=256, bandwidth=-Inf) =
+    QuantileBarsStatistic(quantiles, bar_width, n, bandwidth)
 
+"""
+    Stat.quantile_bars[(; quantiles=[0.025, 0.975], bar_width=0.1, n=256, bandwidth=-Inf)]
 
+Transform the point in $(aes2str(input_aesthetics(quantile_bars()))) into a set of 
+$(aes2str(output_aesthetics(quantile_bars()))) points. These points can then be drawn
+via Geom.segment. Used by [`Geom.density`](@ref Gadfly.Geom.density).
+"""
+const quantile_bars = QuantileBarsStatistic
 
+function apply_statistic(stat::QuantileBarsStatistic,
+                       scales::Dict{Symbol, Gadfly.ScaleElement},
+                       coord::Gadfly.CoordinateElement,
+                       aes::Gadfly.Aesthetics)
+    Gadfly.assert_aesthetics_defined("QuantileBarsStatistic", aes, :x)
 
+    if aes.color === nothing
+        isa(aes.x[1], Real) || error("Kernel density estimation only works on Real types.")
+
+        window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(aes.x) : stat.bw
+        k = KernelDensity.kde(aes.x, bandwidth=window, npoints=stat.n)
+
+        x_middle = quantile(aes.x, stat.quantiles)
+        aes.xmin = x_middle .- stat.bar_width / 2
+        aes.xmax = x_middle .+ stat.bar_width / 2
+        aes.y = pdf(k, x_middle)
+    else
+        # Colors are not needed now.
+        # Lets do that later.
+        groups = Dict()
+        for (x, c) in zip(aes.x, Gadfly.cycle(aes.color))
+            if !haskey(groups, c)
+                groups[c] = Float64[x]
+            else
+                push!(groups[c], x)
+            end
+        end
+        @show groups
+
+        # aes.color = Array{Gadfly.RGB{Float32}}(undef, 0)
+        aes.xmin = Array{Float64}(undef, 0)
+        aes.xmax = Array{Float64}(undef, 0)
+        aes.y = Array{Float64}(undef, 0)
+        for (c, xs) in groups
+            window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(xs) : stat.bw
+            k = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
+            x_middle = quantile(xs, stat.quantiles)
+
+            xmin = x_middle .- stat.bar_width / 2
+            xmax = x_middle .+ stat.bar_width / 2
+            y = pdf(k, x_middle)
+            append!(aes.xmin, xmin)
+            append!(aes.xmax, xmax)
+            append!(aes.y, y)
+            # append!(aes.color, c)
+        end
+        # aes.color = Gadfly.discretize_make_ia(colors)
+    end
+    aes.y_label = Gadfly.Scale.identity_formatter
+end
 
 end # module Stat
