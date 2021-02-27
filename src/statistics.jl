@@ -579,7 +579,7 @@ default_scales(::DensityStatistic) = [Gadfly.Scale.y_continuous()]
     Stat.density[(; n=256, bandwidth=-Inf)]
 
 Estimate the density of `x` at `n` points, and put the result in `x` and `y`.
-Smoothing is controlled by `bandwidth`. Used by [`Geom.density`](@ref Gadfly.Geom.density).
+Smoothing is controlled by `bandwidth`.  Used by [`Geom.density`](@ref Gadfly.Geom.density).
 """
 const density = DensityStatistic
 
