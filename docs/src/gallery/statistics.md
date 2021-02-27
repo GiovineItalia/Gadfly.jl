@@ -37,15 +37,17 @@ hstack(p1,p2)
 
 ```@example
 using DataFrames, Gadfly, Distributions
-set_default_plot_size(10cm, 8cm)
+set_default_plot_size(14cm, 8cm)
 n = 400
 group = [i ≤ n/2 ? -1 : 1 for i in 1:n]
 x = randn(n) .+ group
 
-p = plot(x=x, color=string.(group), Geom.density, Guide.ylabel("Density"),
+plot(x=x, color=string.(group), Geom.density, Guide.colorkey(title="", pos=[3.5,0.7]),
     Guide.title("Density with bars showing the central 90% CI"),
-    layer(Stat.density, Geom.polygon(fill=true, preserve_order=true), Theme(alphas=[0.6])),
-    layer(Stat.quantile_bars(quantiles=[0.05, 0.95], bar_width=0.08), Geom.bar))
+    Guide.ylabel("Density"), Coord.cartesian(xmin=-4, xmax=4),
+    layer(Stat.density, Geom.polygon(fill=true, preserve_order=true), Theme(alphas=[0.4])),
+    layer(Stat.quantile_bars(quantiles=[0.05, 0.95], bar_width=0.05), Geom.bar)
+)
 ```
 
 ## [`Stat.dodge`](@ref)

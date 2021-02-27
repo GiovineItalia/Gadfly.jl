@@ -2164,6 +2164,25 @@ via Geom.segment. Used by [`Geom.density`](@ref Gadfly.Geom.density).
 """
 const quantile_bars = QuantileBarsStatistic
 
+"""
+    _calculate_quantile_bar(stat::QuantileBarsStatistic, aes)
+
+Helper function for `apply_statistic(stat::QuantileBarsStatistic, ...)`.
+"""
+function _calculate_quantile_bar(stat::QuantileBarsStatistic, xs)
+    isa(xs[1], Real) || error("Kernel density estimation only works on Real types.")
+
+    window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(xs) : stat.bw
+    k = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
+
+    x_middle = quantile(xs, stat.quantiles)
+    xmin = x_middle .- stat.bar_width / 2
+    xmax = x_middle .+ stat.bar_width / 2
+    y = pdf(k, x_middle)
+
+    return xmin, xmax, y
+end
+
 function apply_statistic(stat::QuantileBarsStatistic,
                        scales::Dict{Symbol, Gadfly.ScaleElement},
                        coord::Gadfly.CoordinateElement,
@@ -2171,15 +2190,7 @@ function apply_statistic(stat::QuantileBarsStatistic,
     Gadfly.assert_aesthetics_defined("QuantileBarsStatistic", aes, :x)
 
     if aes.color === nothing
-        isa(aes.x[1], Real) || error("Kernel density estimation only works on Real types.")
-
-        window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(aes.x) : stat.bw
-        k = KernelDensity.kde(aes.x, bandwidth=window, npoints=stat.n)
-
-        x_middle = quantile(aes.x, stat.quantiles)
-        aes.xmin = x_middle .- stat.bar_width / 2
-        aes.xmax = x_middle .+ stat.bar_width / 2
-        aes.y = pdf(k, x_middle)
+        aes.xmin, aes.xmax, aes.y = _calculate_quantile_bar(stat, aes.x)
     else
         groups = Dict()
         for (x, c) in zip(aes.x, Gadfly.cycle(aes.color))
@@ -2195,19 +2206,12 @@ function apply_statistic(stat::QuantileBarsStatistic,
         aes.xmax = Array{Float64}(undef, 0)
         aes.y = Array{Float64}(undef, 0)
         for (c, xs) in groups
-            window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(xs) : stat.bw
-            k = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
+            xmin, xmax, y = _calculate_quantile_bar(stat, xs)
 
-            x_middle = quantile(xs, stat.quantiles)
-            xmin = x_middle .- stat.bar_width / 2
-            xmax = x_middle .+ stat.bar_width / 2
-            y = pdf(k, x_middle)
             append!(aes.xmin, xmin)
             append!(aes.xmax, xmax)
             append!(aes.y, y)
-            for _ in 1:length(xmin)
-                push!(colors, c)
-            end
+            append!(colors, fill(c, length(xmin)))
         end
         aes.color = Gadfly.discretize_make_ia(colors)
     end
