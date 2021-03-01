@@ -6,10 +6,8 @@ Compose = "a81c6b42-2e10-5240-aca2-a61377ecd94b"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-PooledArrays = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
 RDatasets = "ce6b1742-4840-55fa-b093-852dadbb1d8b"
 Showoff = "992d4aef-0814-514b-bc4d-f2e9a6c4116f"
 
 [compat]
 Documenter = "0.26"
-PooledArrays = "1.1"
