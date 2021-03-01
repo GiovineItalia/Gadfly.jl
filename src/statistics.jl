@@ -2146,24 +2146,23 @@ end
 
 struct QuantileBarsStatistic <: Gadfly.StatisticElement
     quantiles::Vector{Float64}
-    bar_width::Float64
     # We cannot avoid these by combining our statistic with Stat.density,
     # because we need the raw data as well as the kernel density.
     n::Int # Number of points sampled.
     bw::Real # Bandwidth used for the kernel density estimation.
 end
-QuantileBarsStatistic(; quantiles=[0.025, 0.975], bar_width=0.1, n=256, bandwidth=-Inf) =
-    QuantileBarsStatistic(quantiles, bar_width, n, bandwidth)
+QuantileBarsStatistic(; quantiles=[0.025, 0.975], n=256, bandwidth=-Inf) =
+    QuantileBarsStatistic(quantiles, n, bandwidth)
 
 input_aesthetics(stat::QuantileBarsStatistic) = [:x]
-output_aesthetics(stat::QuantileBarsStatistic) = [:xmin, :xmax, :y]
+output_aesthetics(stat::QuantileBarsStatistic) = [:x, :y, :xend, :yend]
 
 """
     Stat.quantile_bars[(; quantiles=[0.025, 0.975], bar_width=0.1, n=256, bandwidth=-Inf)]
 
 Transform the point in $(aes2str(input_aesthetics(quantile_bars()))) into a set of 
 $(aes2str(output_aesthetics(quantile_bars()))) points. These points can then be drawn
-via Geom.segment. Used by [`Geom.density`](@ref Gadfly.Geom.density).
+via [`Geom.segment`](@ref Gadfly.Geom.segment).
 """
 const quantile_bars = QuantileBarsStatistic
 
@@ -2178,12 +2177,12 @@ function _calculate_quantile_bar(stat::QuantileBarsStatistic, xs)
     window = stat.bw <= 0.0 ? KernelDensity.default_bandwidth(xs) : stat.bw
     k = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
 
-    x_middle = quantile(xs, stat.quantiles)
-    xmin = x_middle .- stat.bar_width / 2
-    xmax = x_middle .+ stat.bar_width / 2
-    y = pdf(k, x_middle)
+    x = quantile(xs, stat.quantiles)
+    y = fill(0, length(xs))
+    xend = x
+    yend = pdf(k, x)
 
-    return xmin, xmax, y
+    return x, y, xend, yend
 end
 
 function apply_statistic(stat::QuantileBarsStatistic,
@@ -2193,7 +2192,7 @@ function apply_statistic(stat::QuantileBarsStatistic,
     Gadfly.assert_aesthetics_defined("QuantileBarsStatistic", aes, :x)
 
     if aes.color === nothing
-        aes.xmin, aes.xmax, aes.y = _calculate_quantile_bar(stat, aes.x)
+        aes.x, aes.y, aes.xend, aes.yend = _calculate_quantile_bar(stat, aes.x)
     else
         groups = Dict()
         for (x, c) in zip(aes.x, Gadfly.cycle(aes.color))
@@ -2205,16 +2204,18 @@ function apply_statistic(stat::QuantileBarsStatistic,
         end
 
         colors = Array{Gadfly.RGB{Float32}}(undef, 0)
-        aes.xmin = Array{Float64}(undef, 0)
-        aes.xmax = Array{Float64}(undef, 0)
+        aes.x = Array{Float64}(undef, 0)
         aes.y = Array{Float64}(undef, 0)
+        aes.xend = Array{Float64}(undef, 0)
+        aes.yend = Array{Float64}(undef, 0)
         for (c, xs) in groups
-            xmin, xmax, y = _calculate_quantile_bar(stat, xs)
+            x, y, xend, yend = _calculate_quantile_bar(stat, xs)
 
-            append!(aes.xmin, xmin)
-            append!(aes.xmax, xmax)
+            append!(aes.x, x)
             append!(aes.y, y)
-            append!(colors, fill(c, length(xmin)))
+            append!(aes.xend, xend)
+            append!(aes.yend, yend)
+            append!(colors, fill(c, length(x)))
         end
         aes.color = Gadfly.discretize_make_ia(colors)
     end

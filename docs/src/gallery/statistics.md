@@ -36,17 +36,17 @@ hstack(p1,p2)
 ## [`Stat.quantile_bars`](@ref)
 
 ```@example
-using DataFrames, Gadfly, Distributions
+using Gadfly
 set_default_plot_size(14cm, 8cm)
 n = 400
-group = [i ≤ n/2 ? -1 : 1 for i in 1:n]
+group = repeat([-1, 1], inner=200)
 x = randn(n) .+ group
 
-plot(x=x, color=string.(group), Geom.density, Guide.colorkey(title="", pos=[3.5,0.7]),
+plot(x=x, color=string.(group), Guide.colorkey(title="", pos=[3.6,0.7]),
+    layer(Stat.density, Geom.line, Geom.polygon(fill=true, preserve_order=true), alpha=[0.4]),
+    layer(Stat.quantile_bars(quantiles=[0.05, 0.95]), Geom.segment),
     Guide.title("Density with bars showing the central 90% CI"),
-    Guide.ylabel("Density"), Coord.cartesian(xmin=-4, xmax=4),
-    layer(Stat.density, Geom.polygon(fill=true, preserve_order=true), Theme(alphas=[0.4])),
-    layer(Stat.quantile_bars(quantiles=[0.05, 0.95], bar_width=0.05), Geom.bar)
+    Guide.ylabel("Density"), Coord.cartesian(xmin=-4, xmax=4)
 )
 ```
 
