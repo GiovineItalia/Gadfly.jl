@@ -2160,9 +2160,10 @@ output_aesthetics(stat::QuantileBarsStatistic) = [:x, :y, :xend, :yend]
 """
     Stat.quantile_bars[(; quantiles=[0.025, 0.975], bar_width=0.1, n=256, bandwidth=-Inf)]
 
-Transform the point in $(aes2str(input_aesthetics(quantile_bars()))) into a set of 
+Transform the point in $(aes2str(input_aesthetics(quantile_bars()))) into a set of
 $(aes2str(output_aesthetics(quantile_bars()))) points. These points can then be drawn
-via [`Geom.segment`](@ref Gadfly.Geom.segment).
+via [`Geom.segment`](@ref Gadfly.Geom.segment). Here, `bandwidth` works independently
+from the `bandwidth` setting for `Stat.density`.
 """
 const quantile_bars = QuantileBarsStatistic
 
@@ -2178,7 +2179,7 @@ function _calculate_quantile_bar(stat::QuantileBarsStatistic, xs)
     k = KernelDensity.kde(xs, bandwidth=window, npoints=stat.n)
 
     x = quantile(xs, stat.quantiles)
-    y = fill(0, length(xs))
+    y = zeros(length(x))
     xend = x
     yend = pdf(k, x)
 
@@ -2217,7 +2218,7 @@ function apply_statistic(stat::QuantileBarsStatistic,
             append!(aes.yend, yend)
             append!(colors, fill(c, length(x)))
         end
-        aes.color = Gadfly.discretize_make_ia(colors)
+        aes.color = discretize_make_ia(colors)
     end
     aes.y_label = Gadfly.Scale.identity_formatter
 end
