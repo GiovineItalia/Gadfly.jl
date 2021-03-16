@@ -3,7 +3,8 @@ using Documenter, Gadfly, Compose, Cairo
 makedocs(
     modules = [Gadfly],
     format = Documenter.HTML(
-        assets = ["assets/favicon.ico"]
+        assets = ["assets/favicon.ico"],
+        prettyurls = get(ENV, "CI", nothing) == "true"
     ),
     clean = false,
     sitename = "Gadfly.jl",

@@ -3,7 +3,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 1.x
 
-
+ * Add `Stat.quantile_bars` (#1521)
  * Add "vertical" orientation for `Geom.ribbon` (#1513)
  * Support one-length aesthetics for `Geom.polygon` and `Geom.ribbon` (#1511)
  * Enable `color` grouping for `Geom.density2d` (#1508)
