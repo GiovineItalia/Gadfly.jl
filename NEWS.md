@@ -1,7 +1,7 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
-# Version 1.x
+# Version 1.3.2
 
  * Add `Stat.quantile_bars` (#1521)
  * Add "vertical" orientation for `Geom.ribbon` (#1513)
