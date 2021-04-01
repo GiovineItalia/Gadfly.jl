@@ -1,3 +1,5 @@
+@debug "Loading TerminalExtensions support into Gadfly"
+
 using .TerminalExtensions
 
 function putatend(idisplay, display::iTerm2.InlineDisplay)
