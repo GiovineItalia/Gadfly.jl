@@ -73,6 +73,10 @@ Now we have the following charming little SVG image.
 p # hide
 ```
 
+If some of the text in this image is overlapping other text, your browser
+likely has a minimum font size set. You will need to unset this option for
+the plots to render correctly in your web browser.
+
 If you are working at the REPL, a quicker way to see the image is to omit
 the semi-colon trailing `plot`.  This automatically renders the image to
 your default multimedia display, typically an internet browser.  No need
