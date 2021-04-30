@@ -1,3 +1,5 @@
+@debug "Loading DataFrames support into Gadfly"
+
 using .DataFrames
 
 function meltdata(U::AbstractDataFrame, colgroups::Vector{Col.GroupedColumn})

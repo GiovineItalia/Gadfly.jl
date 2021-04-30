@@ -191,6 +191,11 @@ function apply_scale(scale::ContinuousScale,
             end
             vals === nothing && continue
 
+            if eltype(vals) <: Measure
+                setfield!(aes, var, vals)
+                continue
+            end
+
             # special case for function arrays bound to :y
             # pass the function values through and wait for the scale to
             # be reapplied by Stat.func
@@ -214,7 +219,7 @@ function apply_scale(scale::ContinuousScale,
                 end
             end
 
-            T <: Measure && (T = Measure)
+#            T <: Measure && (T = Measure)
 
             ds = any(ismissing, vals) ? Array{Union{Missing,T}}(undef,length(vals)) :
                     Array{T}(undef,length(vals))
@@ -370,7 +375,8 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
     for data in datas
         for var in scale.vars
             datavar = getfield(data, var)
-            datavar!=nothing && append!(d, skipmissing(datavar))
+            (datavar===nothing || eltype(datavar)<:Measure) && continue
+            append!(d, skipmissing(datavar))
         end
     end
     levelset = unique(d)
@@ -382,6 +388,11 @@ function apply_scale(scale::DiscreteScale, aess::Vector{Gadfly.Aesthetics}, data
             label_var = Symbol(var, "_label")
             datavar = getfield(data, var)
             datavar===nothing && continue
+            
+            if eltype(datavar) <: Measure
+                setfield!(aes, var, datavar)
+                continue
+            end
 
             disc_data = discretize(datavar, scale_levels, scale.order)
             setfield!(aes, var, discretize_make_ia(disc_data.index))
@@ -779,6 +790,11 @@ function apply_scale(scale::IdentityScale,
 end
 
 ### could these be defined as `const z_func = ` ?
+"""
+    x_func()
+"""
+x_func() = IdentityScale(:x)
+
 """
     z_func()
 """

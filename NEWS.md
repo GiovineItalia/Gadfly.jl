@@ -1,6 +1,13 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 1.3.2
+
+ * Add `Stat.quantile_bars` (#1521)
+ * Add "vertical" orientation for `Geom.ribbon` (#1513)
+ * Support one-length aesthetics for `Geom.polygon` and `Geom.ribbon` (#1511)
+ * Enable `color` grouping for `Geom.density2d` (#1508)
+
 # Version 1.3.1
 
  * Better define what scales are included in the (internal) `scales` dict (#1468)

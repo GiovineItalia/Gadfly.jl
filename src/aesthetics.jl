@@ -312,7 +312,7 @@ cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T<:Measure, U} =
     isabsolute(T) ? [a..., b...] : b
 
 cat_aes_var!(a::AbstractVector{T}, b::AbstractVector{U}) where {T, U<:Measure} =
-    isabsolute(U) ? a : [a..., b...]
+    isabsolute(U) ? [a..., b...] : a
 
 
 

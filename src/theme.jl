@@ -33,7 +33,7 @@ function default_lowlight_color(fill_color::Color)
 end
 
 function default_lowlight_color(fill_color::TransparentColor)
-    @warn "For opacity, use `Theme(alphas=[a])` and/or `Scale.alpha_discrete()`, or use `Scale.alpha_continuous()`"   
+    @warn "For opacity, use `alpha=[a]`, or use `Theme(alphas=[a])` and/or `Scale.alpha_discrete()`, or use `Scale.alpha_continuous()`"   
    RGBA{Float32}(Gadfly.default_lowlight_color(color(fill_color)), fill_color.alpha)
 end
 

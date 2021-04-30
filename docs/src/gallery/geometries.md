@@ -197,21 +197,24 @@ plot(layer(x=xs, Geom.density, color=["auto"]),
 
 ```@example
 using Gadfly, Distributions, RDatasets
-set_default_plot_size(21cm, 8cm)
-iris = dataset("datasets", "iris")
+set_default_plot_size(21cm, 18cm)
+geyser, iris = dataset("datasets", "faithful"), dataset("datasets", "iris")
+geyser.g = geyser.Eruptions.>3
 X = rand(Rayleigh(2), 1000,2)
 levelf(x) = maximum(x)*0.5.^collect(1:2:8)
-p1 = plot(x=X[:,1], y=X[:,2], Geom.density2d(levels=levelf), 
-    Geom.point, Scale.color_continuous(colormap=c->colorant"red"),
-    Theme(key_position=:none))
+p1 = plot(x=X[:,1], y=X[:,2], layer(Geom.density2d(levels=levelf), color=[colorant"red"],
+        linestyle=[:solid]), Geom.point)
+p2 = plot(geyser, x=:Eruptions, y=:Waiting, color=:g, Geom.density2d(levels=4),
+        Geom.point, alpha=[0.4])
+p3 = plot(iris, x=:SepalLength, y=:SepalWidth, color=:Species, Geom.density2d(levels=4),
+        Geom.point, alpha=[0.8])
 cs = repeat(Scale.default_discrete_colors(3), inner=50)
-p2 = plot(iris, x=:SepalLength, y=:SepalWidth,
-    layer(x=:SepalLength, y=:SepalWidth, color=cs),
+p4 = plot(iris, x=:SepalLength, y=:SepalWidth,  layer(color=cs, Geom.point),
     layer(Geom.density2d(levels=[0.1:0.1:0.4;]),  order=1),
-    Scale.color_continuous, Guide.colorkey(title=""),
-    Guide.manual_color_key("Iris", unique(iris.Species)),
-    Theme(point_size=3pt, line_width=1.5pt))
-hstack(p1, p2)
+    Scale.color_continuous,   Guide.colorkey(title=""),
+    Theme(point_size=3pt, line_width=1.5pt),
+    Guide.manual_color_key("Iris", unique(iris.Species)))
+gridstack([p1 p2; p3 p4])
 ```
 
 
@@ -223,19 +226,15 @@ set_default_plot_size(21cm, 8cm)
 D = dataset("datasets","faithful")
 D.g = D.Eruptions.>3.0
 coord = Coord.cartesian(ymin=40, ymax=100)
-pa = plot(D, coord,
-    x=:Eruptions, y=:Waiting, group=:g,
-    Geom.point, Geom.ellipse,
-    Theme(lowlight_color=c->"gray") )
-pb = plot(D, coord, Guide.ylabel(nothing),
-    x=:Eruptions, y=:Waiting, color=:g,
+pa = plot(D, coord, x=:Eruptions, y=:Waiting, group=:g,
+    Geom.point, Geom.ellipse, Theme(lowlight_color=c->"gray"))
+pb = plot(D, coord, Guide.ylabel(nothing), x=:Eruptions, y=:Waiting, color=:g,
     Geom.point, Geom.ellipse(levels=[0.95, 0.99]),
- Theme(key_position=:none, lowlight_color=identity, line_style=[:solid,:dot]))
-pc = plot(D, coord, Guide.ylabel(nothing),
-    x=:Eruptions, y=:Waiting, color=:g,
+    Theme(key_position=:none, lowlight_color=identity, line_style=[:solid,:dot]))
+pc = plot(D, coord, Guide.ylabel(nothing), x=:Eruptions, y=:Waiting, color=:g,
     Geom.point, Geom.ellipse(fill=true),
     layer(Geom.ellipse(levels=[0.99]), style(line_style=[:dot])),
-    Theme(key_position=:none) )
+    Theme(key_position=:none))
 hstack(pa,pb,pc)
 ```
 
@@ -265,9 +264,8 @@ set_default_plot_size(21cm, 8cm)
 salaries = dataset("car","Salaries")
 salaries.Salary /= 1000.0
 salaries.Discipline = ["Discipline $(x)" for x in salaries.Discipline]
-fn1(x, u=mean(x), s=std(x)) = (Salary=u, ymin=u-s, ymax=u+s, 
-    label="$(round.(Int,u))")
-df = combine(:Salary=>fn1, groupby(salaries, [:Rank, :Discipline]))
+fn1(x, u=mean(x), s=std(x)) = (Salary=u, ymin=u-s, ymax=u+s, label="$(round.(Int,u))")
+df = combine(groupby(salaries, [:Rank, :Discipline]), :Salary=>fn1=>AsTable)
 
 p1 = plot(df, x=:Discipline, y=:Salary, color=:Rank,
     Scale.x_discrete(levels=["Discipline A", "Discipline B"]),
@@ -370,20 +368,25 @@ hstack(p1,p2)
 ## [`Geom.label`](@ref)
 
 ```@example
-using Gadfly, RDatasets
-set_default_plot_size(14cm, 8cm)
-plot(dataset("ggplot2", "mpg"), x="Cty", y="Hwy", label="Model",
+using DataFrames, Gadfly, RDatasets
+import Gadfly: w, h   # for relative units
+set_default_plot_size(21cm, 8cm)
+df = DataFrame(x=[0.6w, 0.6w], y=[0.6h, 0.7h], label=["Text 1", "Text 2"])
+p1 = plot(x=1.0:5, y=[0.21, 0.81, 0.68, 0.76, 0.18], Geom.point,
+     layer(df, x=:x, y=:y, label=:label, Geom.label(position=:right)))
+p2 = plot(dataset("ggplot2", "mpg"), x="Cty", y="Hwy", label="Model",
      Geom.point, Geom.label)
+hstack(p1, p2)
 ```
 
 ```@example
 using Gadfly, RDatasets
 set_default_plot_size(21cm, 8cm)
-p1 = plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
+p3 = plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
      Scale.x_log10, Scale.y_log10, Geom.point, Geom.label)
-p2 = plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
+p4 = plot(dataset("MASS", "mammals"), x="Body", y="Brain", label=1,
      Scale.x_log10, Scale.y_log10, Geom.label(position=:centered))
-hstack(p1,p2)
+hstack(p3,p4)
 ```
 
 
@@ -452,13 +455,18 @@ plot(layer(x=rdata[1,:], y=rdata[2,:], color=[colorant"red"], Geom.point),
 ## [`Geom.polygon`](@ref)
 
 ```@example
-using Gadfly
-set_default_plot_size(14cm, 8cm)
-plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],
+using Gadfly, DataFrames
+set_default_plot_size(21cm, 8cm)
+
+p1 = plot(x=[0, 1, 1, 2, 2, 3, 3, 2, 2, 1, 1, 0, 4, 5, 5, 4],
      y=[0, 0, 1, 1, 0, 0, 3, 3, 2, 2, 3, 3, 0, 0, 3, 3],
-     group=["H", "H", "H", "H", "H", "H", "H", "H",
-            "H", "H", "H", "H", "I", "I", "I", "I"],
+     group=reduce(vcat, fill.(["H", "I"], [12,4])),
      Geom.polygon(preserve_order=true, fill=true))
+Dps = reduce(vcat, [DataFrame(x=[1, 5, 5, 1].+d, y=[14, 14, 10, 10].-d, id=d+1) for d in 0:9])
+p2 = plot(Dps, x=:x, y=:y, color=:id, alpha=[0.3], linestyle=[:dash],
+    Geom.polygon(fill=true), Scale.color_discrete, 
+   Theme(line_width=2pt, lowlight_color=identity, discrete_highlight_color=identity))
+hstack(p1, p2)
 ```
 
 
@@ -489,21 +497,20 @@ plot(dataset("Zelig", "macro"), x="Year", y="Country", color="GDP", Geom.rectbin
 ```@example
 using Gadfly, DataFrames, Distributions
 set_default_plot_size(21cm, 8cm)
-X = [cos.(0:0.1:20) sin.(0:0.1:20)]
-x = -4:0.1:4
+X, x = [cos.(0:0.1:20) sin.(0:0.1:20)], -4:0.1:4
 Da = [DataFrame(x=0:0.1:20, y=X[:,j], ymin=X[:,j].-0.5, ymax=X[:,j].+0.5, f="$f")  for (j,f) in enumerate(["cos","sin"])]
 Db = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u="μ=$μ") for μ in [-1,1] ]
 
 # In the line below, 0.6 is the color opacity
 p1 = plot(vcat(Da...), x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f,
-    Geom.line, Geom.ribbon, Theme(alphas=[0.6])
-)
-p2 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax,
+    Geom.line, Geom.ribbon, alpha=[0.6])
+p2 = plot(Da[1], x=:y, y=:x, xmin=:ymin, xmax=:ymax, color=[colorant"red"],
+    Geom.path, Geom.ribbon)
+p3 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax,
     color = :u, alpha=:u, Theme(alphas=[0.8,0.2]),
     Geom.line, Geom.ribbon, Guide.ylabel("Density"),
-    Guide.colorkey(title="", pos=[2.5,0.6]), Guide.title("Parametric PDF")
-)
-hstack(p1,p2)
+    Guide.colorkey(title="", pos=[2.1,0.6]), Guide.title("Parametric PDF"))
+hstack(p1, p2, p3)
 ```
 
 ## [`Geom.segment`](@ref)

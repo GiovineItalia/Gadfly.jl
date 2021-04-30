@@ -16,45 +16,14 @@ end
 
 
 function concretize(xss::AbstractVector...)
-    if all(map(isallconcrete, xss))
-        return xss
-    end
+    all(isallconcrete, xss) && return xss
 
-    count = 0
-    for j in 1:length(xss[1])
-        for xs in xss
-            if !isconcrete(xs[j])
-                @goto next_j1
-            end
-        end
-
-        count += 1
-        @label next_j1
-    end
-
-    yss = Vector{AbstractVector}(undef, length(xss))
-    for (i, xs) in enumerate(xss)
-        yss[i] = Vector{eltype(xs)}(undef, count)
-    end
-
-    k = 1
-    for j in 1:length(xss[1])
-        for xs in xss
-            if !isconcrete(xs[j])
-                @goto next_j2
-            end
-        end
-
-        for (i, xs) in enumerate(xss)
-            yss[i][k] = xs[j]
-        end
-        k += 1
-
-        @label next_j2
-    end
-
-    return tuple(yss...)
+    cf =  mapreduce(x->isconcrete.(x), (x,y)->x.&y, xss)
+    n = length(cf)
+    yss = [(length(xs)==n ? xs[cf] : xs) for xs in xss]
+    return yss
 end
+
 
 
 # How many concrete elements in an iterable
