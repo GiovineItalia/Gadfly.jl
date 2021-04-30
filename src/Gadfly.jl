@@ -2,6 +2,7 @@ module Gadfly
 
 using Colors
 using Compose
+using DataAPI
 using DataStructures
 using JSON
 using Showoff

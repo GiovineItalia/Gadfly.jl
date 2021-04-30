@@ -307,6 +307,6 @@ function discretize_make_ia(values::CategoricalArray{T}, levels::Vector) where {
     return IndirectArray(index, convert(Vector{T},levels))
 end
 function discretize_make_ia(values::CategoricalArray{T}, levels::CategoricalVector{T}) where T
-    _levels = map!(t -> ismissing(t) ? t : get(t), Vector{T}(undef, length(levels)), levels)
+    _levels = map!(t -> ismissing(t) ? t : DataAPI.unwrap(t), Vector{T}(undef, length(levels)), levels)
     discretize_make_ia(values, _levels)
 end
