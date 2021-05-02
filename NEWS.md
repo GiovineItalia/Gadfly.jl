@@ -3,10 +3,8 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 1.3.3
 
- * Add support for CategoricalArrays 0.10 (#1537)
  * Add support for Showoff 1.0 (#1522)
- * Make Gadfly "relocatable" by not loading files at runtime (#1530)
- * Disable CI testing for Julia < 1.4 (#1525)
+ * Add support for CategoricalArrays 0.10 (#1537)
 
 # Version 1.3.2
 
