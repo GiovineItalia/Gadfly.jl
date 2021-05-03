@@ -1,6 +1,11 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 1.3.3
+
+ * Add support for Showoff 1.0 (#1522)
+ * Add support for CategoricalArrays 0.10 (#1537)
+
 # Version 1.3.2
 
  * Add `Stat.quantile_bars` (#1521)
@@ -14,8 +19,6 @@ Each release typically has a number of minor bug fixes beyond what is listed her
  * Support one-length aesthetics for `Geom.segment` (#1465)
  * Support one-length aesthetics e.g. `color=[colorant"red"]` for `Geom.line` (#1459)
 
-
-
 # Version 1.3.0
 
  * Add support for CategoricalArrays v0.8 & and DataFrames v0.21 (#1447)
@@ -24,8 +27,6 @@ Each release typically has a number of minor bug fixes beyond what is listed her
  * Enable `color` aesthetic for `Stat.qq` (#1434)
  * Add `Geom.bar(position=:identity)` + alpha enabled (#1428)
  * Enable stacked guides (#1423)
-
-
 
 # Version 1.2.0
 
