@@ -1119,7 +1119,6 @@ function layout_guides(plot_context::Context,
     end
 
     for (position, ordered_guides) in pguides
-        @show position
         if position==left_guide_position || position==top_guide_position
             sort!(ordered_guides, by=x -> x.order)
         else
