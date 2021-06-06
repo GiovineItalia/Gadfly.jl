@@ -665,23 +665,27 @@ struct YTicks <: Gadfly.GuideElement
     label::Bool
     ticks::Union{(Nothing), Symbol, AbstractArray}
     orientation::Symbol
+    position::Symbol
 
-    function YTicks(label, ticks, orientation)
+    function YTicks(label, ticks, orientation, position)
         isa(ticks, Symbol) && ticks != :auto &&
                 error("$(ticks) is not a valid value for the `ticks` parameter")
-        new(label, ticks, orientation)
+        new(label, ticks, orientation, position)
     end
 end
 
-YTicks(; label=true, ticks=:auto, orientation=:horizontal) = YTicks(label, ticks, orientation)
+YTicks(; label=true, ticks=:auto, orientation=:horizontal, position=:left) =
+    YTicks(label, ticks, orientation, position)
 
 """
-    Guide.yticks[(; label=true, ticks=:auto, orientation=:horizontal)]
-    Guide.yticks(ticks, label, orientation)
+    Guide.yticks[(; label=true, ticks=:auto, orientation=:horizontal, position=:left)]
+    Guide.yticks(ticks, label, orientation, position)
 
 Formats the tick marks and labels for the y-axis.  `label` toggles the label
 visibility.  `ticks` can also be an array of locations, or `nothing`.
-`orientation` can also be `:auto` or `:vertical`.
+`orientation` can be `:auto` or `:vertical` and `position` can be `:left` or `:right`.
+Note that when setting `position` to `:right`, you probably also want to set
+`Guide.ylabel(position=:right)`.
 """
 const yticks = YTicks
 
@@ -842,8 +846,11 @@ function render(guide::YTicks, theme::Gadfly.Theme,
         error("$(guide.layout) is not a valid orientation for Guide.yticks")
     end
 
-    return [PositionedGuide(contexts, 10,
-                            left_guide_position),
+    guide_position = guide.position == :left ? left_guide_position :
+        guide.position == :right ? right_guide_position :
+        error("$(guide.position) is not a valid Guide.ytick position")
+
+    return [PositionedGuide(contexts, 10, guide_position),
             PositionedGuide([grid_lines], 0, under_guide_position)]
 end
 
@@ -919,14 +926,17 @@ end
 struct YLabel <: Gadfly.GuideElement
     label::Union{(Nothing), AbstractString}
     orientation::Symbol
+    position::Symbol
 end
-YLabel(label="y"; orientation=:auto) = YLabel(label, orientation)
+YLabel(label="y"; orientation=:auto, position=:left) = YLabel(label, orientation, position)
 
 """
-    Guide.ylabel(label, orientation=:auto)
+    Guide.ylabel(label, orientation=:auto, position=:left)
 
 Sets the y-axis label for the plot.  `label` is either a `String` or `nothing`.
-`orientation` can also be `:horizontal` or `:vertical`.
+`orientation` can be `:horizontal` or `:vertical` and `position` can be `:left` or `:right`.
+Note that when setting `position` to `:right`, you probably also want to set
+`Guide.yticks(position=:right)`.
 """
 const ylabel = YLabel
 
@@ -973,7 +983,11 @@ function render(guide::YLabel, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
         error("$(guide.layout) is not a valid orientation for Guide.ylabel")
     end
 
-    return [PositionedGuide(contexts, 0, left_guide_position)]
+    guide_position = guide.position == :left ? left_guide_position :
+        guide.position == :right ? right_guide_position :
+        error("$(guide.position) is not a valid Guide.ylabel position")
+
+    return [PositionedGuide(contexts, 0, guide_position)]
 end
 
 # Title Guide
@@ -1061,7 +1075,6 @@ function render(guide::YRug, theme::Gadfly.Theme,
     return [PositionedGuide([ctx], 20, right_guide_position)]
 end
 
-
 # Functions for stacking in layout_guides
 
 function keyvstack(contexts::Context...)
@@ -1104,8 +1117,9 @@ function layout_guides(plot_context::Context,
     for positioned_guide in positioned_guides
         push!(pguides[positioned_guide.position], positioned_guide)
     end
-    
+
     for (position, ordered_guides) in pguides
+        @show position
         if position==left_guide_position || position==top_guide_position
             sort!(ordered_guides, by=x -> x.order)
         else
@@ -1113,12 +1127,13 @@ function layout_guides(plot_context::Context,
         end
     end
 
+
     guides = DefaultDict(() -> Vector{Context}[])
     for (position, ordered_guides) in pguides
         i = [oguide.stackable for oguide in ordered_guides]
         any(.!i) && append!(guides[position], [oguide.ctxs for oguide in ordered_guides[.!i]])
         if count(i)>1
-             ctxs = [oguide.ctxs for oguide in ordered_guides[i]]
+            ctxs = [oguide.ctxs for oguide in ordered_guides[i]]
             if position==right_guide_position
                  stackedctxs = [keyvstack(ctx...) for ctx in Compose.cyclezip(ctxs...)]
                  push!(guides[position], stackedctxs)
