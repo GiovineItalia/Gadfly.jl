@@ -315,7 +315,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
             if superplot_aes.ygroup !== nothing
                 joff += 1
                 gyl = get(geom.guides, Guide.YLabel, Guide.ylabel())
-                push!(guides, gyl.label=="y" ? Guide.ylabel(ylabels[i], gyl.orientation) : gyl)
+                push!(guides, gyl.label=="y" ? Guide.ylabel(ylabels[i]; orientation=gyl.orientation) : gyl)
             end
         else
             push!(guides, Guide.yticks(label=false))
