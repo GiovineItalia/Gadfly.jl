@@ -934,6 +934,9 @@ function show(io::IO, m::MIME"text/html", p::Plot)
     show(io, m, svg)
 end
 
+# support interactivity in VSCode plot pane.
+show(io::IO, ::MIME"juliavscode/html", p::Plot) = show(io, "text/html", p)
+
 function show(io::IO, m::MIME"image/svg+xml", p::Plot)
     buf = IOBuffer()
     svg = SVG(buf, Compose.default_graphic_width,
