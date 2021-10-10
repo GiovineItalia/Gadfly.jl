@@ -346,12 +346,12 @@ function by_xy_group(aes::T, xgroup, ygroup,
 
     xgroup === nothing && ygroup === nothing && return aes_grid
 
-    function make_pooled_array(::Type{IndirectArray{T,N,A,V}}, arr::AbstractArray) where {T,N,A,V}
+    function make_pooled_array(::Type{IndirectArray{T,N,I,A,V}}, arr::AbstractArray) where {T,N,I,A,V}
         uarr = unique(arr)
         return IndirectArray(A(indexin(arr, uarr)), V(uarr))
     end
-    make_pooled_array(::Type{IndirectArray{T,R,N,RA}},
-            arr::IndirectArray{T,R,N,RA}) where {T,R,N,RA} = arr
+    make_pooled_array(::Type{IndirectArray{T,R,I,N,RA}},
+            arr::IndirectArray{T,R,I,N,RA}) where {T,R,I,N,RA} = arr
 
     for var in fieldnames(T)
         # Skipped aesthetics. Don't try to partition aesthetics for which it
