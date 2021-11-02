@@ -242,11 +242,11 @@ function octagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
 end
 
 """
-    hline(xs, ys, rs)
+    hline(xs, ys, rs, scalar=1)
 
 $(shape_docstr("horizontal lines"))
 """
-function hline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
+function hline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar=1)
     n = max(length(xs), length(ys), length(rs))
 
     line_ps = Vector{Vector{Tuple{Measure,Measure}}}(undef, n)
@@ -254,18 +254,19 @@ function hline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
         x = x_measure(xs[1 + i % length(xs)])
         y = y_measure(ys[1 + i % length(ys)])
         r = rs[1 + i % length(rs)]
-        line_ps[i] = Tuple{Measure, Measure}[(x-r,y-1.5px),(x+r,y-1.5px),(x+r,y+1.5px),(x-r,y+1.5px)]
+        u = scalar * 1.5px
+        line_ps[i] = Tuple{Measure, Measure}[(x-r,y-u),(x+r,y-u),(x+r,y+u),(x-r,y+u)]
     end
 
     return polygon(line_ps)
 end
 
 """
-    vline(xs, ys, rs)
+    vline(xs, ys, rs, scalar=1)
 
 $(shape_docstr("vertical lines"))
 """
-function vline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
+function vline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray, scalar=1)
     n = max(length(xs), length(ys), length(rs))
 
     line_ps = Vector{Vector{Tuple{Measure,Measure}}}(undef, n)
@@ -273,7 +274,8 @@ function vline(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
         x = x_measure(xs[1 + i % length(xs)])
         y = y_measure(ys[1 + i % length(ys)])
         r = rs[1 + i % length(rs)]
-        line_ps[i] = Tuple{Measure, Measure}[(x-1.5px,y-r),(x-1.5px,y+r),(x+1.5px,y+r),(x+1.5px,y-r)]
+        u = scalar * 1.5px
+        line_ps[i] = Tuple{Measure, Measure}[(x-u,y-r),(x-u,y+r),(x+u,y+r),(x+u,y-r)]
     end
 
     return polygon(line_ps)
