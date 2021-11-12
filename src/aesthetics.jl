@@ -408,19 +408,22 @@ function by_xy_group(aes::T, xgroup, ygroup,
 end
 
 function inherit(a::Aesthetics, b::Aesthetics;
-                 clobber=[])
+                 clobber=[], preserve=[])
     acopy = copy(a)
-    inherit!(acopy, b, clobber=clobber)
+    inherit!(acopy, b, clobber=clobber, preserve=preserve)
     return acopy
 end
 
 function inherit!(a::Aesthetics, b::Aesthetics;
-                  clobber=[])
+                  clobber=[], preserve=[])
     clobber_set = Set{Symbol}(clobber)
+    preserve_set = Set{Symbol}(preserve)
     for field in valid_aesthetics
         aval = getfield(a, field)
         bval = getfield(b, field)
-        if field in clobber_set
+        if field in preserve_set
+            continue
+        elseif field in clobber_set
             setfield!(a, field, bval)
         elseif aval === missing || aval === nothing || aval === string || aval == showoff
             setfield!(a, field, bval)

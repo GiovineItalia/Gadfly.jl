@@ -206,7 +206,7 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         for j in 1:m
             col_aes = Gadfly.concat([layer_aes_grid[k][i, j]
                                      for i in 1:n, k in 1:length(geom.layers)]...)
-            Gadfly.inherit!(col_aes, geom_aes)
+            Gadfly.inherit!(col_aes, geom_aes, preserve=[:xviewmin, :xviewmax])
             Stat.apply_statistic(Stat.xticks(), scales, coord, col_aes)
 
             aes_grid[:, j] .= [col_aes]
@@ -217,11 +217,11 @@ function render(geom::SubplotGrid, theme::Gadfly.Theme,
         for i in 1:n
             row_aes = Gadfly.concat([layer_aes_grid[k][i, j]
                                      for j in 1:m, k in 1:length(geom.layers)]...)
-            Gadfly.inherit!(row_aes, geom_aes)
+            Gadfly.inherit!(row_aes, geom_aes, preserve=[:yviewmin, :yviewmax])
             Stat.apply_statistic(Stat.yticks(), scales, coord, row_aes)
 
             for j in 1:m
-                aes_grid[i, j] = Gadfly.inherit(row_aes, aes_grid[i, j])
+                aes_grid[i, j] = Gadfly.inherit(row_aes, aes_grid[i, j], preserve=[:yviewmin, :yviewmax])
             end
         end
     end
