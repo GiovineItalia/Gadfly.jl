@@ -82,6 +82,7 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     polys = [collect(Tuple{XT, YT}, Iterators.flatten((min_points[k], max_points[k]))) for k in kys]
     lines = [collect(Tuple{XT, Union{YT, Missing}}, Iterators.flatten((min_points[k], [(last(min_points[k])[1], missing)], max_points[k]))) for k in kys]
 
+    classes = Vector{String}(undef, nugroups)
     colors = Vector{Colorant}(undef, nugroups)
     linestyles = Vector{Vector{Measure}}(undef, nugroups)
     linestyle_palette_length = length(theme.line_style)
@@ -90,15 +91,18 @@ function render(geom::RibbonGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     linestyle_discrete = LST <: Int
 
     for (i, (c,ls,a)) in enumerate(kys)
+        classes[i] = svg_color_class_from_label(aes.color_label([c])[1])
         colors[i] = parse_colorant(theme.lowlight_color(c))
         linestyles[i] = linestyle_discrete ? get_stroke_vector(theme.line_style[mod1(ls, linestyle_palette_length)]) : get_stroke_vector(ls)
         alphas[i] = alpha_discrete ? theme.alphas[a] : a
     end
 
     ctx = context()
-
-    geom.fill ? compose!(ctx, Compose.polygon(polys, geom.tag), fill(colors), fillopacity(alphas)) :
-        compose!(ctx, Compose.line(lines, geom.tag), stroke(colors), strokedash(linestyles))
+    geom.fill ?
+        compose!(ctx, (context(), Compose.polygon(polys, geom.tag),
+                       fill(colors), fillopacity(alphas), svgclass(classes))) :
+        compose!(ctx, (context(), Compose.line(lines, geom.tag),
+                       stroke(colors), strokedash(linestyles), svgclass(classes)))
 
     return compose!(ctx, svgclass("geometry"), linewidth(theme.line_width))
 end
