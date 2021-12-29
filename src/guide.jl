@@ -91,7 +91,7 @@ function render(guide::HelpScreen, theme::Gadfly.Theme,
         context(withjs=true, units=UnitBox()),
         text_box,
         svgclass("guide helpscreen"),
-        fillopacity(0.0))
+        visible(false))
 
     return [PositionedGuide([root], 0, over_guide_position)]
 end

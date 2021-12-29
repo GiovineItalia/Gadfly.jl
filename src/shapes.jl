@@ -3,10 +3,27 @@
 module Shape
 
 using Measures
-using Compose: x_measure, y_measure, circle, rectangle, polygon, line, px
+using Compose: x_measure, y_measure, circle, rectangle, polygon, line, px, text
 
 shape_docstr(kinds) = "Draw $kinds at the coordinates specified in `xs` and
 `ys` of size `rs`"
+
+function datatip(xs::AbstractArray, ys::AbstractArray, splitlength=10)
+    n = max(length(xs), length(ys))
+
+    x = Vector{Measure}(undef, n)
+    y = Vector{Measure}(undef, n)
+    str = Vector{String}(undef, n)
+
+    for i in 1:n
+        xt, yt = xs[mod1(i, length(xs))], ys[mod1(i, length(ys))]
+        x[i] = x_measure(xt)
+        y[i] = y_measure(yt)
+        str[i] = length(string(xt,yt))<splitlength ? string(xt,',',yt) : string(xt,'\n',yt)
+    end
+
+    return text(x, y, str)
+end
 
 """
     square(xs, ys, rs)
