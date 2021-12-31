@@ -111,12 +111,16 @@ function Gadfly.Geom.render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly
     default_aes.group = IndirectArray([1])
     default_aes.color = [theme.default_color]
     default_aes.linestyle = theme.line_style[1:1]
+    default_aes.size = Measure[theme.point_size]
+    default_aes.shape = Function[theme.point_shapes[1]]
+    default_aes.alpha = [theme.alphas[1]]
     aes = inherit(aes, default_aes)
 
     # Render lines, using multivariate groupings:
     XT, YT = eltype(aes.x), eltype(aes.y)
-    GT, CT, LST = Int, eltype(aes.color), eltype(aes.linestyle)
-    groups = collect(Tuple{GT, CT, LST}, Compose.cyclezip(aes.group, aes.color, aes.linestyle))
+    GT, CT, LST, SzT, ShT, AT = Int, eltype(aes.color), eltype(aes.linestyle), eltype(aes.size), eltype(aes.shape), eltype(aes.alpha)
+    groups = collect(Tuple{GT, CT, LST, SzT, ShT, AT},
+                     Compose.cyclezip(aes.group, aes.color, aes.linestyle, aes.size, aes.shape, aes.alpha))
     ugroups = unique(groups)
     nugroups = length(ugroups)
     # Recycle groups
