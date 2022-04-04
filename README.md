@@ -18,7 +18,7 @@ If you use **Gadfly** in a publication please consider citing it: [![DOI][citati
 
 - Renders publication quality graphics to SVG, PNG, Postscript, and PDF
 - Intuitive and consistent plotting interface
-- Works with [IJulia](https://github.com/JuliaLang/IJulia.jl) out of the box
+- Works with [IJulia](https://github.com/JuliaLang/IJulia.jl) and [Pluto.jl](https://github.com/fonsp/Pluto.jl) out of the box
 - Tight integration with [DataFrames.jl](https://github.com/JuliaStats/DataFrames.jl)
 - Interactivity like panning, zooming, toggling powered by [Snap.svg](http://snapsvg.io/)
 - Supports a large number of common plot types
