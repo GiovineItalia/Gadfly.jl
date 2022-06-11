@@ -22,7 +22,7 @@ import Distributions: Distribution
 import REPL
 
 export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, Shape, render, plot,
-       style, layer, spy, set_default_plot_size, set_default_plot_format, prepare_display
+       style, layer, spy, set_default_plot_size, set_default_plot_format
 
 @deprecate circle Shape.circle
 @deprecate square Shape.square
