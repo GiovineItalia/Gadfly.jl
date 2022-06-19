@@ -67,19 +67,28 @@ function render(geom::PointGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics
 
     ctx = context()
 
-    for (x, y, color, size, shape, alpha) in Compose.cyclezip(aes.x, aes.y, aes.color, aes_size, aes.shape, aes_alpha)
+    for (i, (x, y, color, size, shape, alpha)) in
+            enumerate(Compose.cyclezip(aes.x, aes.y, aes.color, aes_size, aes.shape, aes_alpha))
         shapefun = typeof(shape) <: Function ? shape : theme.point_shapes[shape]
         strokecolor = aes.color_key_continuous != nothing && aes.color_key_continuous ?
                     theme.continuous_highlight_color(color) :
                     theme.discrete_highlight_color(color)
-        class = svg_color_class_from_label(aes.color_label([color])[1])
+        label = aes.color_label([color])[1]
+        class = svg_color_class_from_label(label)
         compose!(ctx, (context(),
-              (context(), shapefun([x], [y], [size]), svgclass("marker")),
-              fill(color), stroke(strokecolor), fillopacity(alpha), 
-              svgclass(class)))
+                       (context(), shapefun([x], [y], [size]), svgclass("marker"),
+                        fill(color), stroke(strokecolor), fillopacity(alpha)), 
+                       (context(order=2), Shape.datatip([x], [y]),
+                        svgclass("datatip"),
+                        svgattribute("ilabel", string(i,label)),
+                        fillopacity(0.0),
+                        jscall("""
+                               data(\"ilabel\", \"$(string(i,label))\")
+                               .mouseenter(Gadfly.datatip_visible)
+                               .mouseleave(Gadfly.datatip_hidden)
+                               """)),
+                       svgclass(class)))
     end
 
-    compose!(ctx, linewidth(theme.highlight_width))
-
-    return compose!(context(order=4), svgclass("geometry"), ctx)
+    return compose!(context(order=4), ctx, linewidth(theme.highlight_width), svgclass("geometry"))
 end

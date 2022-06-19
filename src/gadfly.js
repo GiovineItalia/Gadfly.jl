@@ -191,14 +191,28 @@ Gadfly.helpscreen_visible = function(event) {
     helpscreen_visible(this.plotroot());
 };
 var helpscreen_visible = function(root) {
-    root.select(".helpscreen").animate({"fill-opacity": 1.0}, 250);
+    root.select(".helpscreen").attr("visibility", "visible");
 };
 
 Gadfly.helpscreen_hidden = function(event) {
     helpscreen_hidden(this.plotroot());
 };
 var helpscreen_hidden = function(root) {
-    root.select(".helpscreen").animate({"fill-opacity": 0.0}, 250);
+    root.select(".helpscreen").attr("visibility", "hidden");
+};
+
+Gadfly.datatip_visible = function(event) {
+    var root = this.plotroot();
+    var ilabel = this.data("ilabel");
+    var element = root.select('[ilabel="'+ilabel+'"]');
+    element.animate({"fill-opacity": 1.0}, 250);
+};
+
+Gadfly.datatip_hidden = function(event) {
+    var root = this.plotroot();
+    var ilabel = this.data("ilabel");
+    var element = root.select('[ilabel="'+ilabel+'"]');
+    element.animate({"fill-opacity": 0.0}, 250);
 };
 
 // When the plot is moused over, emphasize the grid lines.
@@ -328,7 +342,7 @@ var set_geometry_transform = function(root, tx, ty, xscale, yscale) {
         });
 
     var t = new Snap.Matrix().scale(1.0/xscale, 1.0/yscale);
-    root.selectAll('.marker').forEach(function (element, i) {
+    root.selectAll('.marker, .datatip').forEach(function (element, i) {
         element.selectAll('.primitive').forEach(function (element, i) {
             element.transform(t);
         }) });
