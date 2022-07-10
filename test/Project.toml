@@ -18,6 +18,6 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 Cairo = "0.7, 0.8, 1.0"
-DataFrames = "0.21, 0.22"
+DataFrames = "0.21, 0.22, 1"
 RDatasets = "0.6, 0.7"
 Unitful = "0.15, 0.16, 0.17, 0.18, 1.0"
