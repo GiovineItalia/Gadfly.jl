@@ -17,7 +17,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
-Cairo = "0.7, 0.8, 1.0"
+Cairo = "0.7, 0.8, 1"
 DataFrames = "0.21, 0.22, 1"
 RDatasets = "0.6, 0.7"
-Unitful = "0.15, 0.16, 0.17, 0.18, 1.0"
+Unitful = "0.15, 0.16, 0.17, 0.18, 1"
