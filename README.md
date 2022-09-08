@@ -25,7 +25,7 @@ If you use **Gadfly** in a publication please consider citing it: [![DOI][citati
 
 ## Installation & Quickstart
 
-**Gadfly** is registered on `METADATA.jl` and so can be installed using `Pkg.add`.
+**Gadfly** is registered in [Julia's `General` registry](https://github.com/JuliaRegistries/General) and so can be installed using `Pkg.add`.
 
 ```julia
 Pkg.add("Gadfly")
