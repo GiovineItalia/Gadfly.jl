@@ -1118,8 +1118,8 @@ function apply_statistic(stat::BoxplotStatistic,
         xmin, xmax = minimum(aes.x), maximum(aes.x)
         minspan = minimum([xj - xi for (xi, xj) in zip(aes.x[1:end-1], aes.x[2:end])])
 
-        xviewmin = xmin - minspan / 2
-        xviewmax = xmax + minspan / 2
+        xviewmin = xmin - minspan / 2.0
+        xviewmax = xmax + minspan / 2.0
 
         if aes.xviewmin === nothing || aes.xviewmin > xviewmin
             aes.xviewmin = xviewmin
