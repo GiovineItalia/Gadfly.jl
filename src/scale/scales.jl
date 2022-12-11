@@ -3,7 +3,8 @@
 using Measures
 
 # 1 function to be moved to Measures.jl
-Base.convert(::Type{T} , x::Measure) where T<:Real  = T(x.value)
+# Base.convert(::Type{T} , x::Measure) where T<:Real  = T(x.value)
+# see https://github.com/JuliaGraphics/Measures.jl/pull/22
 
 
 struct DiscreteSizeScale <: Gadfly.ScaleElement

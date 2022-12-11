@@ -167,160 +167,138 @@ function optimize_ticks_typed(x_min::T, x_max::T, extend_ticks,
 end
 
 
-function optimize_ticks(x_min::Date, x_max::Date; extend_ticks::Bool=false,
-                        k_min=nothing, k_max=nothing, scale=:auto,
-                        granularity_weight=nothing, simplicity_weight=nothing,
-                        coverage_weight=nothing, niceness_weight=nothing,
-                        strict_span=false)
+function optimize_ticks(x_min::Date, x_max::Date;
+                        extend_ticks::Bool=false,
+                        k_min::Int=2, k_max::Int=10, k_ideal::Int=5,
+                        granularity_weight::Float64=3/7, simplicity_weight=nothing,
+                        coverage_weight::Float64=4/7, niceness_weight=nothing,
+                        strict_span=false,
+                        scales = [
+                            Year(1), Quarter(1), Month(1), Week(1),
+                            Day(1), Hour(1), Minute(1), Second(1), Millisecond(100),
+                            Millisecond(10), Millisecond(1)])
     return optimize_ticks(convert(DateTime, x_min), convert(DateTime, x_max),
-                          extend_ticks=extend_ticks, scale=scale)
+                          extend_ticks=extend_ticks,
+                          k_min=k_min, k_max=k_max, k_ideal=k_ideal,
+                          strict_span=strict_span,
+                          scales=scales)
 end
 
 
-function optimize_ticks(x_min::DateTime, x_max::DateTime; extend_ticks::Bool=false,
-                        k_min=nothing, k_max=nothing, scale=:auto,
-                        granularity_weight=nothing, simplicity_weight=nothing,
-                        coverage_weight=nothing, niceness_weight=nothing,
-                        strict_span=false)
-    if x_min == x_max
-        x_max += Second(1)
-    end
+function optimize_ticks(x_min::DateTime, x_max::DateTime;
+                        extend_ticks::Bool=false,
+                        k_min::Int=2, k_max::Int=10, k_ideal::Int=5,
+                        granularity_weight::Float64=3/7, simplicity_weight=nothing,
+                        coverage_weight::Float64=4/7, niceness_weight=nothing,
+                        strict_span=false,
+                        scales = [
+                            Year(1), Quarter(1), Month(1), Week(1),
+                            Day(1), Hour(1), Minute(1), Second(1), Millisecond(100),
+                            Millisecond(10), Millisecond(1)])
 
-    if year(x_max) - year(x_min) <= 1 && scale != :year
-        if year(x_max) == year(x_min) && month(x_max) - month(x_min) <= 1 && scale != :month
-            ticks = DateTime[]
+    x_min == x_max && (x_max += Second(1))
+    xspan = x_max - x_min
 
-            scales = [
-                Day(1), Hour(1), Minute(1), Second(1), Millisecond(100),
-                Millisecond(10), Millisecond(1)
-            ]
+    ticks, viewmin, viewmax =
+        optimize_ticks(year(x_min), year(x_max + Year(1) - Day(1)),
+                       extend_ticks=extend_ticks,
+                       k_min=k_min, k_max=k_max, k_ideal=k_ideal,
+                       strict_span=strict_span)
+    ticks = sort(unique(round.(Int, ticks)))
 
-            # ticks on week boundries
-            if x_min + Day(7) < x_max || scale == :week
-                push!(ticks, x_min)
-                while true
-                    next_month = Date(year(ticks[end]), month(ticks[end])) + Month(1)
-                    while ticks[end] + Week(1) < next_month - Day(2)
-                        push!(ticks, ticks[end] + Week(1))
-                    end
-                    push!(ticks, next_month)
-                    if next_month >= x_max
-                        break
-                    end
-                end
-            else
-                scale = nothing
-                if scale != :auto
-                    # TODO: manually setting scale with :day, :minute, etc
-                end
+    # granularity
+    k = length(ticks)
+    g = 1 - abs(k - k_ideal) / k_ideal
 
-                if scale === nothing
-                    for proposed_scale in [Day(1), Hour(1), Minute(1),
-                                           Second(1), Millisecond(100),
-                                           Millisecond(10), Millisecond(1)]
-                        if x_min + proposed_scale < x_max
-                            scale = proposed_scale
-                            break
-                        end
-                    end
-                end
+    # coverage
+    c = 1.5 * xspan / (Date(maximum(ticks)) - Date(minimum(ticks)))
 
-                if scale === nothing
-                    scale = Millisecond(1)
-                end
+    score = granularity_weight * g + coverage_weight * c
 
-                # round x_min down
-                if scale === Day(1)
-                    first_tick = DateTime(year(x_min), month(x_min), day(x_min))
-                elseif scale === Hour(1)
-                    first_tick = DateTime(year(x_min), month(x_min), day(x_min),
-                                          hour(x_min))
-                elseif scale === Minute(1)
-                    first_tick = DateTime(year(x_min), month(x_min), day(x_min),
-                                          hour(x_min), minute(x_min))
-                elseif scale === Second(1)
-                    first_tick = DateTime(year(x_min), month(x_min), day(x_min),
-                                          hour(x_min), minute(x_min), second(x_min))
-                elseif scale === Millisecond(100)
-                    first_tick = DateTime(year(x_min), month(x_min), day(x_min),
-                                          hour(x_min), minute(x_min),
-                                          second(x_min), millisecond(x_min) % 100)
-                elseif scale === Millisecond(10)
-                    first_tick = DateTime(year(x_min), month(x_min), day(x_min),
-                                          hour(x_min), minute(x_min),
-                                          second(x_min), millisecond(x_min) % 10)
-                else
-                    first_tick = x_min
-                end
-                push!(ticks, first_tick)
+    high_score = score
+    ticks_best = DateTime[DateTime(y) for y in ticks]
+    viewmin_best, viewmax_best = DateTime(round(viewmin)), DateTime(round(viewmax))
 
-                while ticks[end] < x_max
-                    push!(ticks, ticks[end] + scale)
-                end
-            end
+    last_score = -Inf
+    for scale in scales
+        ticks = DateTime[]
 
-            viewmin, viewmax = ticks[1], ticks[end]
-            return ticks, viewmin, viewmax
+        if scale === Year(1)
+            first_tick = DateTime(year(x_min))
+        elseif scale === Quarter(1)
+            first_tick = DateTime(year(x_min)) + Quarter(1)*(Dates.quarter(x_min)-1)
+        elseif scale === Month(1)
+            first_tick = DateTime(year(x_min), month(x_min))
+        elseif scale === Week(1)
+            first_tick = DateTime(year(x_min)) + Week(1)*(week(x_min)-1)
+        elseif scale === Day(1)
+            first_tick = DateTime(year(x_min), month(x_min), day(x_min))
+        elseif scale === Hour(1)
+            first_tick = DateTime(year(x_min), month(x_min), day(x_min),
+                                  hour(x_min))
+        elseif scale === Minute(1)
+            first_tick = DateTime(year(x_min), month(x_min), day(x_min),
+                                  hour(x_min), minute(x_min))
+        elseif scale === Second(1)
+            first_tick = DateTime(year(x_min), month(x_min), day(x_min),
+                                  hour(x_min), minute(x_min), second(x_min))
+        elseif scale === Millisecond(100)
+            first_tick = DateTime(year(x_min), month(x_min), day(x_min),
+                                  hour(x_min), minute(x_min),
+                                  second(x_min), millisecond(x_min) % 100)
+        elseif scale === Millisecond(10)
+            first_tick = DateTime(year(x_min), month(x_min), day(x_min),
+                                  hour(x_min), minute(x_min),
+                                  second(x_min), millisecond(x_min) % 10)
         else
-            ticks = DateTime[]
-            push!(ticks, Date(year(x_min), month(x_min)))
-            while ticks[end] < x_max
-                push!(ticks, ticks[end] + Month(1))
-            end
-            viewmin, viewmax = ticks[1], ticks[end]
-
-            return ticks, x_min, x_max
+            first_tick = x_min
         end
-    else
-        ticks, viewmin, viewmax =
-            optimize_ticks(year(x_min), year(x_max + Year(1) - Day(1)), extend_ticks=extend_ticks)
+        push!(ticks, first_tick)
 
-        return DateTime[DateTime(round(y)) for y in ticks],
-                        DateTime(round(viewmin)), DateTime(round(viewmax))
+        while ticks[end] < x_max
+            push!(ticks, ticks[end] + scale)
+        end
+
+        # granularity
+        k = length(ticks)
+        g = 1 - abs(k - k_ideal) / k_ideal
+
+        # coverage
+        c = 1.5 * xspan / (maximum(ticks) - minimum(ticks))
+
+        score = granularity_weight * g + coverage_weight * c
+
+        if score > high_score
+            ticks_best = ticks
+            viewmin_best, viewmax_best = ticks[1], ticks[end]
+            high_score = score
+        end
+        if score >= last_score
+            last_score = score
+        else
+            break
+        end
     end
-end
 
+    if strict_span
+        viewmin_best = max(viewmin_best, x_min)
+        viewmax_best = min(viewmax_best, x_max)
+    end
+
+    return ticks_best, viewmin_best, viewmax_best
+end
 
 
 # Generate ticks suitable for multiple scales.
 function multilevel_ticks(viewmin::T, viewmax::T;
-                          scales=[0.5, 5.0, 10.0]) where T
+                          scales=[0.5, 5.0, 50.0]) where T
 
     ticks = Dict()
     for scale in scales
         ticks[scale] = optimize_ticks(viewmin, viewmax,
                                       k_min=max(1, (round(Int, 2*scale))),
                                       k_max=max(3, (round(Int, 10*scale))),
-                                      k_ideal=max(2, (round(Int, 15*scale))))[1]
-    end
-
-    return ticks
-end
-
-
-function multilevel_ticks(viewmin::Date, viewmax::Date;
-                          scales=[:year, :month, :day])
-    return multilevel_ticks(convert(DateTime, viewmin),
-                            convert(DateTime, viewmax),
-                            scales=scales)
-end
-
-
-function multilevel_ticks(viewmin::DateTime, viewmax::DateTime;
-                          scales=[:year, :month, :day])
-    # TODO: This needs to be improved for DateTime
-    span = convert(Float64, Dates.toms(viewmax - viewmin))
-    ticks = Dict()
-    for scale in scales
-        if scale == :year
-            s = span / Dates.toms(Day(360))
-        elseif scale == :month
-            s = span / Dates.toms(Day(90))
-        else
-            s = span / Dates.toms(Day(1))
-        end
-
-        ticks[s/20] = optimize_ticks(viewmin, viewmax, scale=scale)[1]
+                                      k_ideal=max(2, (round(Int, 5*scale))))[1]
     end
 
     return ticks

@@ -172,18 +172,24 @@ Gadfly.plot_mousemove = function(event, _x_px, _y_px) {
         xtranslate = root.data("tx");
         ytranslate = root.data("ty");
 
+        xisdate = uB[0].includes("T");
+        yisdate = uB[1].includes("T");
+        tzoffset = (new Date()).getTimezoneOffset() * 60000;
+
         xoff_mm = bB[0].substr(0,bB[0].length-2)/1;
         yoff_mm = bB[1].substr(0,bB[1].length-2)/1;
-        xoff_unit = uB[0]/1;
-        yoff_unit = uB[1]/1;
+        xoff_unit = xisdate ? Date.parse(uB[0]) : uB[0]/1;
+        yoff_unit = yisdate ? Date.parse(uB[1]) : uB[1]/1;
         mm_per_xunit = bB[2].substr(0,bB[2].length-2) / uB[2];
-        mm_per_yunit = bB[3].substr(0,bB[3].length-2) / uB[3];
+        mm_per_yunit = bB[3].substr(0,bB[3].length-2) / uB[3+xisdate];
          
         x_unit = ((x_px / px_per_mm - xtranslate) / xscale - xoff_mm) / mm_per_xunit + xoff_unit;
         y_unit = ((y_px / px_per_mm - ytranslate) / yscale - yoff_mm) / mm_per_yunit + yoff_unit;
 
-        root.select('.crosshair').select('.primitive').select('text')
-                .node.innerHTML = x_unit.toPrecision(3)+","+y_unit.toPrecision(3);
+        root.select('.crosshair').select('.primitive').select('text').node.innerHTML =
+                (xisdate ? new Date(Math.round(x_unit)-tzoffset).toISOString().slice(0,-1) : x_unit.toPrecision(3))
+                +","+
+                (yisdate ? new Date(Math.round(y_unit)-tzoffset).toISOString().slice(0,-1) : y_unit.toPrecision(3));
     };
 };
 

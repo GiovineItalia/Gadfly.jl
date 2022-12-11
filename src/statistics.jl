@@ -961,15 +961,14 @@ function apply_statistic(stat::TickStatistic,
     else
         minval, maxval = promote(minval, maxval)
 
-        ticks, viewmin, viewmax = Gadfly.optimize_ticks(minval, maxval, extend_ticks=true,
+        ticks, viewmin, viewmax = Gadfly.optimize_ticks(minval, maxval,
                 granularity_weight=stat.granularity_weight,
                 simplicity_weight=stat.simplicity_weight,
                 coverage_weight=stat.coverage_weight,
                 niceness_weight=stat.niceness_weight,
                 strict_span=strict_span)
         grids = ticks
-        multiticks = Gadfly.multilevel_ticks(viewmin - (viewmax - viewmin),
-                                             viewmax + (viewmax - viewmin))
+        multiticks = Gadfly.multilevel_ticks(viewmin, viewmax)
         tickcount = length(ticks) + sum([length(ts) for ts in values(multiticks)])
         tickvisible = Array{Bool}(undef, tickcount)
         tickscale = Array{Float64}(undef, tickcount)
