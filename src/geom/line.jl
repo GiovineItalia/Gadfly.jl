@@ -20,8 +20,8 @@ end
     Geom.line[(; preserve_order=false, order=2)]
 
 Draw a line connecting the `x` and `y` coordinates.  Optionally plot multiple
-lines according to the `group`, `color` or `linestyle` aesthetics.  `order` controls whether
-the lines(s) are underneath or on top of other forms.
+lines according to the `group`, `color`, `alpha`, or `linestyle` aesthetics.
+`order` controls whether the lines(s) are underneath or on top of other forms.
 
 Set `preserve_order=true` to *not* sort the points according to their
 position along the x axis, or use the equivalent [`Geom.path`](@ref) alias.
@@ -96,11 +96,7 @@ step(; direction::Symbol=:hv) = LineGeometry(Gadfly.Stat.step(direction=directio
 
 default_statistic(geom::LineGeometry) = geom.default_statistic
 
-element_aesthetics(::LineGeometry) = [:x, :y, :color, :group, :linestyle]
-
-
-
-
+element_aesthetics(::LineGeometry) = [:x, :y, :color, :alpha, :group, :linestyle]
 
 function Gadfly.Geom.render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetics)
     Gadfly.assert_aesthetics_defined("Geom.line", aes, :x, :y)
@@ -110,13 +106,16 @@ function Gadfly.Geom.render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly
     default_aes = Gadfly.Aesthetics()
     default_aes.group = IndirectArray([1])
     default_aes.color = [theme.default_color]
+    default_aes.alpha = [theme.alphas[1]]
     default_aes.linestyle = theme.line_style[1:1]
     aes = inherit(aes, default_aes)
 
+    aes_alpha = eltype(aes.alpha) <: Int ? theme.alphas[aes.alpha] : aes.alpha
+
     # Render lines, using multivariate groupings:
     XT, YT = eltype(aes.x), eltype(aes.y)
-    GT, CT, LST = Int, eltype(aes.color), eltype(aes.linestyle)
-    groups = collect(Tuple{GT, CT, LST}, Compose.cyclezip(aes.group, aes.color, aes.linestyle))
+    GT, CT, AT, LST = Int, eltype(aes.color), eltype(aes_alpha), eltype(aes.linestyle)
+    groups = collect(Tuple{GT, CT, AT, LST}, Compose.cyclezip(aes.group, aes.color, aes_alpha, aes.linestyle))
     ugroups = unique(groups)
     nugroups = length(ugroups)
     # Recycle groups
@@ -132,16 +131,17 @@ function Gadfly.Geom.render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly
 
     gs = Vector{GT}(undef, nugroups)
     cs = Vector{CT}(undef, nugroups)
+    as = Vector{AT}(undef, nugroups)
     lss = Vector{LST}(undef, nugroups)
     lines = Vector{Vector{Tuple{XT,YT}}}(undef, nugroups)
     linestyle_palette_length = length(theme.line_style)
     if nugroups==1
-        gs[1], cs[1], lss[1] = zgroups[1]
+        gs[1], cs[1], as[1], lss[1] = zgroups[1]
         lines[1] = collect(Tuple{XT, YT}, zip(aes_x, aes_y))
     elseif nugroups>1
         for (k,g) in enumerate(ugroups)
             i = zgroups.==[g]
-            gs[k], cs[k], lss[k] = g
+            gs[k], cs[k], as[k], lss[k] = g
             lines[k] = collect(Tuple{XT,YT}, zip(aes_x[i], aes_y[i]))
         end
     end
@@ -152,7 +152,7 @@ function Gadfly.Geom.render(geom::LineGeometry, theme::Gadfly.Theme, aes::Gadfly
     classes = svg_color_class_from_label.(aes.color_label(cs))
     ctx = context(order=geom.order)
     ctx = compose!(ctx, (context(), Compose.line(lines, geom.tag),
-            stroke(cs), strokedash(linestyles),
+            stroke(cs), strokeopacity(as), strokedash(linestyles),
             svgclass(classes)), svgclass("geometry"))
     
     return compose!(ctx, fill(nothing), linewidth(theme.line_width))
