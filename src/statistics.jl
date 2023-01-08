@@ -410,7 +410,8 @@ function apply_statistic(stat::HistogramStatistic,
 
         x_span = x_max - x_min
         stack_height = zeros(Int, d)
-        for (i, (c, xs)) in enumerate(groups)
+        for (i, c) in enumerate(unique(aes.color))
+            xs = groups[c]
             fill!(bincounts, 0)
             for x in xs
                 if isdiscrete
@@ -1085,8 +1086,10 @@ function apply_statistic(stat::BoxplotStatistic,
         aes.upper_fence = Vector{YT}(undef, m)
         aes.outliers = Vector{YT}[]
 
-        for (i, ((c, x), ys)) in enumerate(grouped_y)
+        for (i, cx) in enumerate(ug)
+            ys = grouped_y[cx]
             sort!(ys)
+            c, x = cx
 
             aes.x[i] = x
 
@@ -1137,7 +1140,7 @@ function apply_statistic(stat::BoxplotStatistic,
 
     isa(aes_x, IndirectArray) && (aes.x = discretize_make_ia(aes.x, aes_x.values))
 
-    colorflag && (aes.color = discretize_make_ia([first(k) for k in keys(grouped_y)], aes.color.values))
+    colorflag && (aes.color = discretize_make_ia([first(cx) for cx in ug], aes.color.values))
 
     Stat.apply_statistic(Stat.dodge(), scales, coord, aes)
 
@@ -1207,7 +1210,8 @@ function apply_statistic(stat::SmoothStatistic,
     colors = eltype(aes_color)[]
     aes.linestyle = String[]
 
-    for (c, (xv, yv, x0)) in groups
+    for c in uc
+        xv, yv, x0 = groups[c]
         x_min, x_max = minimum(xv), maximum(xv)
         x_min == x_max && error("Stat.smooth requires more than one distinct x value")
         nudge = 1e-5 * (x_max - x_min)
@@ -1694,23 +1698,22 @@ function apply_statistic(stat::ViolinStatistic,
 
     isa(aes.y[1], Real) || error("Kernel density estimation only works on Real types.")
 
-    grouped_y = Dict(1=>aes.y)
-    grouped_color = Dict{Int, Gadfly.ColorOrNothing}(1=>nothing)
     ux = unique(aes.x)
-    uxflag = length(ux) < length(aes.x)
     colorflag = aes.color != nothing
 
-    uxflag && (grouped_y = Dict(x=>aes.y[aes.x.==x] for x in ux))
+    grouped_y = Dict(x=>aes.y[aes.x.==x] for x in ux)
 
-    grouped_color = (colorflag ? Dict(x=>first(aes.color[aes.x.==x]) for x in ux) : 
-        uxflag && Dict(x=>nothing for x in ux) )
+    grouped_color = (colorflag ?
+                     Dict(x=>first(aes.color[aes.x.==x]) for x in ux) : 
+                     Dict(x=>nothing for x in ux) )
 
     aes.x     = Array{Float64}(undef, 0)
     aes.y     = Array{Float64}(undef, 0)
     aes.width = Array{Float64}(undef, 0)
     colors = eltype(aes.color)[]
 
-    for (x, ys) in grouped_y
+    for x in ux
+        ys = grouped_y[x]
         window = stat.n > 1 ? KernelDensity.default_bandwidth(ys) : 0.1
         f = KernelDensity.kde(ys, bandwidth=window, npoints=stat.n)
         append!(aes.x, fill(x, length(f.x)))
@@ -1836,7 +1839,8 @@ function apply_statistic(stat::BinMeanStatistic,
         colors = Array{RGB{Float32}}(undef, 0)
         aes.x = Array{Tx}(undef, 0)
         aes.y = Array{Ty}(undef, 0)
-        for (c, v) in groups
+        for c in aes.color
+            v = groups[c]
             (fx, fy) = mean_by_group(v[1], v[2], breaks)
             append!(aes.x, fx)
             append!(aes.y, fy)
@@ -2067,7 +2071,8 @@ function apply_statistic(stat::EllipseStatistic,
     dfn = 2
     θ = 2π*(0:stat.nsegments)/stat.nsegments
     n = length(θ)
-    for (g, data) in grouped_xy
+    for g in ug
+        data = grouped_xy[g]
         dfd = size(data,1)-1
         dhat = fit(stat.distribution, permutedims(data,[2,1]))
         Σ½ = cholesky(cov(dhat)).U
@@ -2208,7 +2213,8 @@ function apply_statistic(stat::QuantileBarsStatistic,
         aes.y = Array{Float64}(undef, 0)
         aes.xend = Array{Float64}(undef, 0)
         aes.yend = Array{Float64}(undef, 0)
-        for (c, xs) in groups
+        for c in aes.color
+            xs = groups[c]
             x, y, xend, yend = _calculate_quantile_bar(stat, xs)
 
             append!(aes.x, x)
