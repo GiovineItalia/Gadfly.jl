@@ -479,14 +479,14 @@ using Gadfly, DataFrames, Distributions
 set_default_plot_size(21cm, 8cm)
 X, x = [cos.(0:0.1:20) sin.(0:0.1:20)], -4:0.1:4
 Da = [DataFrame(x=0:0.1:20, y=X[:,j], ymin=X[:,j].-0.5, ymax=X[:,j].+0.5, f="$f")  for (j,f) in enumerate(["cos","sin"])]
-Db = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), ymin=0.0, u="μ=$μ") for μ in [-1,1] ]
+Db = [DataFrame(x=x, ymax=pdf.(Normal(μ),x), u="μ=$μ") for μ in [-1,1] ]
 
 # In the line below, 0.6 is the color opacity
 p1 = plot(vcat(Da...), x=:x, y=:y, ymin=:ymin, ymax=:ymax, color=:f,
     Geom.line, Geom.ribbon, alpha=[0.6])
 p2 = plot(Da[1], x=:y, y=:x, xmin=:ymin, xmax=:ymax, color=[colorant"red"],
     Geom.path, Geom.ribbon)
-p3 = plot(vcat(Db...), x = :x, y=:ymax, ymin = :ymin, ymax = :ymax,
+p3 = plot(vcat(Db...), x = :x, y=:ymax, ymin=[0.0], ymax = :ymax,
     color = :u, alpha=:u, Theme(alphas=[0.8,0.2]),
     Geom.line, Geom.ribbon, Guide.ylabel("Density"),
     Guide.colorkey(title="", pos=[2.1,0.6]), Guide.title("Parametric PDF"))

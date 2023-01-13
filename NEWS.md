@@ -1,10 +1,15 @@
 This is a log of major changes in Gadfly between releases. It is not exhaustive.
 Each release typically has a number of minor bug fixes beyond what is listed here.
 
+# Version 1.3.x
+
+ * Enable `group` aesthetic for `Geom.ribbon` (#1605)
+
+
 # Version 1.3.3
 
- * Add support for Showoff 1.0 (#1522)
  * Add support for CategoricalArrays 0.10 (#1537)
+ * Add support for Showoff 1.0 (#1522)
 
 # Version 1.3.2
 
