@@ -1694,29 +1694,30 @@ function apply_statistic(stat::ViolinStatistic,
 
     isa(aes.y[1], Real) || error("Kernel density estimation only works on Real types.")
 
-    grouped_y = Dict(1=>aes.y)
-    grouped_color = Dict{Int, Gadfly.ColorOrNothing}(1=>nothing)
-    ux = unique(aes.x)
-    uxflag = length(ux) < length(aes.x)
-    colorflag = aes.color != nothing
+    colorflag = aes.color !== nothing
+    aes_x = aes.x==nothing ? [1] : aes.x
+    aes_color = colorflag ? aes.color : [nothing]
+    XT, CT, YT = eltype(aes_x), eltype(aes_color), eltype(aes.y)
+    groups = collect((Tuple{XT, CT}), Compose.cyclezip(aes_x, aes_color))
+    ugroups = unique(groups)
+    nugroups = length(ugroups)
 
-    uxflag && (grouped_y = Dict(x=>aes.y[aes.x.==x] for x in ux))
+    grouped_y = if nugroups==1
+        Dict(ugroups[1]=>aes.y)
+    else
+        Dict(g=>aes.y[groups.==[g]]  for g in ugroups)
+    end
 
-    grouped_color = (colorflag ? Dict(x=>first(aes.color[aes.x.==x]) for x in ux) : 
-        uxflag && Dict(x=>nothing for x in ux) )
+    aes.x, aes.y, aes.width = XT[], Float64[], Float64[]
+    colors = CT[]
 
-    aes.x     = Array{Float64}(undef, 0)
-    aes.y     = Array{Float64}(undef, 0)
-    aes.width = Array{Float64}(undef, 0)
-    colors = eltype(aes.color)[]
-
-    for (x, ys) in grouped_y
+    for ((x, c), ys) in grouped_y
         window = stat.n > 1 ? KernelDensity.default_bandwidth(ys) : 0.1
         f = KernelDensity.kde(ys, bandwidth=window, npoints=stat.n)
         append!(aes.x, fill(x, length(f.x)))
         append!(aes.y, f.x)
         append!(aes.width, f.density)
-        append!(colors, fill(grouped_color[x], length(f.x)))
+        append!(colors, fill(c, length(f.x)))
     end
 
     colorflag && (aes.color = colors)

@@ -159,7 +159,7 @@ function render(geom::ABLineGeometry, theme::Gadfly.Theme, aes::Gadfly.Aesthetic
     if typeof(aes.y) <: Array{Function}
         lowx, highx = aes.xmin[1], aes.xmax[1]
     else
-        lowx, highx = extrema(aes.x)
+        lowx, highx = extrema(aes.x[isfinite.(aes.x)])
     end
 
     # extending the line to width 3 times x-range of data should be enough
