@@ -3,6 +3,7 @@ using Gadfly, RDatasets
 set_default_plot_size(10cm, 15cm)
 
 d=dataset("mlmRev", "Chem97")
+sort!(d, [:Gender], rev=true)
 idx = d.Age .>0
 plot(d[idx,:],
      x=:GCSEScore,
