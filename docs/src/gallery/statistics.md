@@ -159,6 +159,31 @@ plot(x=rand(25), y=rand(25), Stat.step, Geom.line)
 ```
 
 
+## [`Stat.unidistribution`](@ref)
+
+```@example
+using DataFrames, Gadfly, Distributions
+using Gadfly: w,h
+set_default_plot_size(21cm, 8cm)
+D = DataFrame(Dist=["Prior", "Posterior"],  
+    Density=[Normal(-0.22, 0.02), Normal(-0.29, 0.015)])
+
+xcoord = Coord.cartesian(xmin=-0.4, xmax=-0.1)
+gck = Guide.colorkey(title="", pos=[0.5w, -0.4h])
+p1 = plot(D, y=:Density, color=:Dist, Guide.title("color=:Dist"), gck,
+    layer(Stat.unidistribution, Geom.line, Geom.ribbon, alpha=[0.8]), xcoord)
+p2 = plot(D, y=:Density, color=:Dist, layer(Stat.unidistribution, Geom.line),
+    layer(Stat.unidistribution([[0.0001, 0.05], [0.95, 0.9999]]), Geom.ribbon),
+    Guide.ylabel(nothing), Guide.title("color=:Dist"), gck)
+p3 = plot(D, y=:Density, group=:Dist, xcoord, gck,
+    layer(Stat.unidistribution([[0.0001, 0.1],[0.1, 0.9], [0.9, 0.9999]]), Geom.ribbon, alpha=[0.8]),
+    Scale.color_discrete_manual("orange", "yellow", "coral"), Theme(lowlight_color=identity),
+    Guide.title("group=:Dist"), Guide.ylabel(nothing)
+)
+hstack(p1, p2, p3)
+```
+
+
 ## [`Stat.x_jitter`](@ref), [`Stat.y_jitter`](@ref)
 
 ```@example
