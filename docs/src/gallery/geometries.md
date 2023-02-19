@@ -114,6 +114,26 @@ hstack(p1, p2)
 ```
 
 
+## [`Geom.candlestick`](@ref)
+
+```@example
+using Gadfly, MarketData
+set_default_plot_size(21cm, 8cm)
+t = Dates.now()
+NQ = yahoo("^IXIC", YahooOpt(period1 = t - Month(2), period2 = t)) # NASDAQ Composite
+plot(
+    x     = timestamp(NQ),
+    open  = values(NQ.Open),
+    high  = values(NQ.High),
+    low   = values(NQ.Low),
+    close = values(NQ.Close),
+    Geom.candlestick,
+    Scale.color_discrete_manual("green", "red"),
+    Scale.x_discrete,
+)
+```
+
+
 ## [`Geom.contour`](@ref)
 
 ```@example

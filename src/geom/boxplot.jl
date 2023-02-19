@@ -1,14 +1,16 @@
 struct BoxplotGeometry <: Gadfly.GeometryElement
     default_statistic::Gadfly.StatisticElement
     suppress_outliers::Bool
+    suppress_fences::Bool
     tag::Symbol
 end
 
-BoxplotGeometry(; method=:tukey, suppress_outliers=false, tag=empty_tag) =
-    BoxplotGeometry(Gadfly.Stat.boxplot(method=method), suppress_outliers, tag)
+BoxplotGeometry(; method=:tukey, default_statistic=Gadfly.Stat.boxplot(method=method),
+                  suppress_outliers=false, suppress_fences=false, tag=empty_tag) =
+    BoxplotGeometry(default_statistic, suppress_outliers, suppress_fences, tag)
 
 """
-    Geom.boxplot[(; method=:tukey, suppress_outliers=false)]
+    Geom.boxplot[(; method=:tukey, suppress_outliers=false, suppress_fences=false)]
 
 Draw box plots of the `middle`, `lower_hinge`, `upper_hinge`, `lower_fence`,
 `upper_fence`, and `outliers` aesthetics.  The categorical `x` aesthetic is
@@ -21,6 +23,31 @@ fences, and outliers aesthetics will be computed using [`Stat.boxplot`](@ref).
 Boxplots will be automatically dodged by specifying a `color` aesthetic different to the `x` aesthetic.
 """
 const boxplot = BoxplotGeometry
+
+"""
+    Geom.candlestick[()]
+
+Draw candlestick plot from `open`, `high`, `low`, `close`.
+`x` denotes a vector of `TimeType`,
+e.g. `x = Date(2018, 1, 1):Day(1):Date(2018, 1, 5)`.
+
+
+## Examples
+
+```jl-repl
+julia> using MarketData
+
+julia> scale = Scale.color_discrete_manual("green", "red");
+
+julia> plot(x = timestamp(ohlc),
+            open = values(ohlc.Open), high = values(ohlc.High),
+            low = values(ohlc.Low), close = values(ohlc.Close),
+            Geom.candlestick, scale)
+```
+"""
+candlestick() =
+    BoxplotGeometry(default_statistic=Gadfly.Stat.candlestick(),
+                    suppress_outliers=true, suppress_fences=true)
 
 element_aesthetics(::BoxplotGeometry) = [:x, :color,
                                          :middle,
@@ -85,6 +112,15 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         subtags(geom.tag, :box, :lower_whisker, :upper_whisker,
                           :lower_fence, :upper_fence, :outliers, :middle)
 
+    fences = if !geom.suppress_fences
+        (Compose.line([[(x - fw/2, lf), (x + fw/2, lf)]
+                        for (x, lf) in zip(xs, lower_fence)], tlf),
+         Compose.line([[(x - fw/2, uf), (x + fw/2, uf)]
+                        for (x, uf) in zip(xs, upper_fence)], tuf))
+    else
+        ()
+    end
+
     ctx = compose!(
         context(tag=geom.tag),
         fill(collect(cs)),
@@ -100,19 +136,14 @@ function render(geom::BoxplotGeometry, theme::Gadfly.Theme, aes::Gadfly.Aestheti
         (
             context(),
 
-             # Whiskers
+            # Whiskers
             Compose.line([[(x, lh), (x, lf)]
                           for (x, lh, lf) in zip(xs, lower_hinge, lower_fence)], tlw),
 
             Compose.line([[(x, uh), (x, uf)]
                           for (x, uh, uf) in zip(xs, upper_hinge, upper_fence)], tuw),
 
-            # Fences
-            Compose.line([[(x - fw/2, lf), (x + fw/2, lf)]
-                          for (x, lf) in zip(xs, lower_fence)], tlf),
-
-            Compose.line([[(x - fw/2, uf), (x + fw/2, uf)]
-                          for (x, uf) in zip(xs, upper_fence)], tuf),
+            fences...,
 
             stroke(collect(cs))
         ),
