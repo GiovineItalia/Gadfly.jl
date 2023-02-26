@@ -5,13 +5,13 @@
 
 struct ShapeKey <: Gadfly.GuideElement
     title::AbstractString
-    labels::Vector{String}
+    labels::Vector{<:AbstractString}
     pos::Vector
     visible::Bool
 end
-ShapeKey(;title="Shape", labels=String[], pos=[], visible=true) = ShapeKey(title, labels, pos, visible)
+ShapeKey(;title="Shape", labels=AbstractString[], pos=[], visible=true) = ShapeKey(title, labels, pos, visible)
 ShapeKey(v::Nothing) = ShapeKey(visible=false)
-ShapeKey(title::AbstractString, labels::Vector{String}, pos::Vector) = ShapeKey(title, labels, pos, true)
+ShapeKey(title::AbstractString, labels::Vector{<:AbstractString}, pos::Vector) = ShapeKey(title, labels, pos, true)
 
 
 """
@@ -69,8 +69,10 @@ end
 
 
 
-function render_discrete_key(labels::Vector{String}, title_ctx::Context, title_width::Measure, theme::Gadfly.Theme;
+function render_discrete_key(labels::Vector{<:AbstractString}, title_ctx::Context, title_width::Measure, theme::Gadfly.Theme;
     colors=Colorant[], aes_color_label=nothing, shapes=Function[], sizes=Measure[])
+
+    labels = String.(labels)
 
     n = max(length(colors), length(shapes), length(sizes))
     n==0 && (n = length(labels))
@@ -206,13 +208,13 @@ end
 
 struct SizeKey <: Gadfly.GuideElement
     title::AbstractString
-    labels::Vector{String}
+    labels::Vector{<:AbstractString}
     pos::Vector{Compose.MeasureOrNumber}
     visible::Bool
 end
-SizeKey(;title="Size", labels=String[], pos=[], visible=true) = SizeKey(title, labels, pos, visible)
+SizeKey(;title="Size", labels=AbstractString[], pos=[], visible=true) = SizeKey(title, labels, pos, visible)
 SizeKey(v::Nothing) = SizeKey(visible=false)
-SizeKey(title::AbstractString, labels::Vector{String}, pos::Vector) = SizeKey(title, labels, pos, true)
+SizeKey(title::AbstractString, labels::Vector{<:AbstractString}, pos::Vector) = SizeKey(title, labels, pos, true)
 
 """
     Guide.sizekey[(; title="size", labels=String[], pos=[])]
@@ -265,7 +267,7 @@ end
 
 struct ManualDiscreteKey <: Gadfly.GuideElement
     title::AbstractString
-    labels::Vector{String}
+    labels::Vector{<:AbstractString}
     pos::Vector
     colors::Vector{Colorant}
     shapes::Vector{Function}
@@ -273,7 +275,7 @@ struct ManualDiscreteKey <: Gadfly.GuideElement
     visible::Bool
 end
 
-function ManualDiscreteKey(;title="", labels=String[], pos=[], color=Colorant[], shape=Function[], size=Measure[])
+function ManualDiscreteKey(;title="", labels=AbstractString[], pos=[], color=Colorant[], shape=Function[], size=Measure[])
     CT, ST, SZT = eltype(color), eltype(shape), eltype(size)
     ncolors, nshapes, nsizes =  length(color), length(shape), length(size)
     n = max(ncolors, nshapes, nsizes)
@@ -305,7 +307,7 @@ The swatch aesthetics can be Vectors of specific types (as above), or integer ra
 Integer ranges refer to the order of items in the discrete Theme palettes [Discrete Scales](@ref).
 Set the key position inside using `pos` (see [`Guide.sizekey`](@ref), [`Guide.shapekey`](@ref)).
 """
-manual_discrete_key(title::AbstractString, labels::Vector{String}; kwargs...) =
+manual_discrete_key(title::AbstractString, labels::Vector{<:AbstractString}; kwargs...) =
     ManualDiscreteKey(title=title, labels=labels; kwargs...)
 
 
@@ -316,7 +318,7 @@ manual_discrete_key(title::AbstractString, labels::Vector{String}; kwargs...) =
 Similar to [`Guide.manual_discrete_key`](@ref). `color` can be Ints, or Colors and/or Strings
 (default is Ints).
 """
-function manual_color_key(title::AbstractString, labels::Vector{String}, 
+function manual_color_key(title::AbstractString, labels::Vector{<:AbstractString}, 
         color::AbstractVector=1:length(labels); kwargs...)
     ManualDiscreteKey(title=title, labels=labels, color=color; kwargs...)
 end

@@ -145,7 +145,7 @@ DataFrame, such as matrices or arrays of arrays. Below we recreate the plot
 above for a third time after first converting the DataFrame to an Array.
 
 ```@example 2
-births_array = convert(Matrix{Int}, births)
+births_array = Matrix(births)
 plot(births_array, x=Col.value(1), y=Col.value(2:3...),
      color=Col.index(2:3...), Geom.line, Scale.color_discrete,
      Guide.colorkey(labels=["Males","Females"]), Guide.xlabel("Year"))
