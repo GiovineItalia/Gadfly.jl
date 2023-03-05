@@ -2252,9 +2252,9 @@ end
 UniDistributionStatistic(quantiles::Vector{Float64}=[0.0001, 0.9999]; n=40) = UniDistributionStatistic([quantiles], n)
 UniDistributionStatistic(quantiles::Vector{Vector{Float64}}; n=40) = UniDistributionStatistic(quantiles, n)
 
-Stat.input_aesthetics(stat::UniDistributionStatistic) = [:y]
-Stat.output_aesthetics(stat::UniDistributionStatistic) = [:x, :y]
-Stat.default_scales(stat::UniDistributionStatistic) = [Scale.y_distribution()]
+input_aesthetics(stat::UniDistributionStatistic) = [:y]
+output_aesthetics(stat::UniDistributionStatistic) = [:x, :y]
+default_scales(stat::UniDistributionStatistic) = [Scale.y_distribution()]
 
 """
     Stat.unidistribution(quantiles::Vector{Vector}; n=40)
@@ -2268,7 +2268,7 @@ $(aes2str(output_aesthetics(unidistribution()))). These points can be drawn with
 const unidistribution = UniDistributionStatistic
 
 
-function Stat.apply_statistic(stat::UniDistributionStatistic,
+function apply_statistic(stat::UniDistributionStatistic,
                          scales::Dict{Symbol, Gadfly.ScaleElement},
                          coord::Gadfly.CoordinateElement,
                          aes::Gadfly.Aesthetics)
@@ -2280,7 +2280,7 @@ function Stat.apply_statistic(stat::UniDistributionStatistic,
     aes_color = colorflag ? aes.color : fill("", length(aes.y))
     aes_group = groupflag ? aes.group : fill("", length(aes.y))
     aes_linestyle = linestyleflag ? aes.linestyle : fill(nothing, length(aes.y))
-        
+
     XT, CT, LT, GT = eltype(aes.y[1]), eltype(aes_color), eltype(aes_linestyle), eltype(aes_group)
     dist_x, dist_y  = XT[], XT[]
     pcolors, plinestyles, pgroups = CT[], LT[], GT[]
