@@ -3,6 +3,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
 
 # Version 1.3.x
 
+ * Add `Stat.unidistribution` (#1606)
  * Enable `group` aesthetic for `Geom.ribbon` (#1605)
 
 

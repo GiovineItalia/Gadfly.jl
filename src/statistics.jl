@@ -2243,4 +2243,103 @@ function apply_statistic(stat::QuantileBarsStatistic,
     aes.y_label = Gadfly.Scale.identity_formatter
 end
 
+
+struct UniDistributionStatistic <: Gadfly.StatisticElement
+    quantiles::Vector{Vector{Float64}}
+    n::Int
+end
+
+UniDistributionStatistic(quantiles::Vector{Float64}=[0.0001, 0.9999]; n=40) = UniDistributionStatistic([quantiles], n)
+UniDistributionStatistic(quantiles::Vector{Vector{Float64}}; n=40) = UniDistributionStatistic(quantiles, n)
+
+input_aesthetics(stat::UniDistributionStatistic) = [:y]
+output_aesthetics(stat::UniDistributionStatistic) = [:x, :y]
+default_scales(stat::UniDistributionStatistic) = [Scale.y_distribution()]
+
+"""
+    Stat.unidistribution(quantiles::Vector{Vector}; n=40)
+
+Transform a univariate distribution in $(aes2str(input_aesthetics(unidistribution()))) into a set of points in
+$(aes2str(output_aesthetics(unidistribution()))). These points can be drawn with `Geom.ribbon` and/or `Geom.line`. 
+`color` and `group` work alternately to specify quantile groups, depending on whether multiple distributions are specified by `group` or `color`. 
+`quantiles` is a set of 2-length vectors, specifying the quantile ranges to be plotted (default is `[[0.0001,0.9999]]`).
+`n` is the number of points in each quantile group.
+"""
+const unidistribution = UniDistributionStatistic
+
+
+function apply_statistic(stat::UniDistributionStatistic,
+                         scales::Dict{Symbol, Gadfly.ScaleElement},
+                         coord::Gadfly.CoordinateElement,
+                         aes::Gadfly.Aesthetics)
+    
+    Gadfly.assert_aesthetics_defined("Stat.unidistribution", aes, :y)
+    colorflag = aes.color != nothing
+    groupflag = aes.group != nothing
+    linestyleflag = aes.linestyle != nothing
+    aes_color = colorflag ? aes.color : fill("", length(aes.y))
+    aes_group = groupflag ? aes.group : fill("", length(aes.y))
+    aes_linestyle = linestyleflag ? aes.linestyle : fill(nothing, length(aes.y))
+
+    XT, CT, LT, GT = eltype(aes.y[1]), eltype(aes_color), eltype(aes_linestyle), eltype(aes_group)
+    dist_x, dist_y  = XT[], XT[]
+    pcolors, plinestyles, pgroups = CT[], LT[], GT[]
+    
+    nq = length(stat.quantiles)
+    n = stat.n
+    if nq==1
+        for (d, c, g, ls) in Compose.cyclezip(aes.y, aes_color, aes_group, aes_linestyle)
+            q = quantile(d, stat.quantiles[1])
+            x = range(q..., length=n)
+            append!(dist_x, x)
+            append!(dist_y, pdf.(d, x))
+            append!(pcolors, fill(c, n))
+            append!(pgroups, fill(g, n))
+            append!(plinestyles, fill(ls, n))
+        end
+    elseif (colorflag && !groupflag)
+        for qs in stat.quantiles
+            for (d, c, g, ls) in Compose.cyclezip(aes.y, aes_color, [string(qs)], aes_linestyle)
+                q = quantile(d, qs)
+                x = range(q..., length=n)
+                append!(dist_x, x)
+                append!(dist_y, pdf.(d, x))
+                append!(pcolors, fill(c, n))
+                append!(pgroups, fill(g, n))
+                append!(plinestyles, fill(ls, n))
+            end
+        end
+        group_scale = get(scales, :group, Gadfly.Scale.group_discrete())
+        Scale.apply_scale(group_scale, [aes], Gadfly.Data(group=pgroups))
+    elseif (groupflag && !colorflag)
+        for qs in stat.quantiles
+            for (d, c, g, ls) in Compose.cyclezip(aes.y, [string(qs)], aes_group, aes_linestyle)
+                q = quantile(d, qs)
+                x = range(q..., length=n)
+                append!(dist_x, x)
+                append!(dist_y, pdf.(d, x))
+                append!(pcolors, fill(c, n))
+                append!(pgroups, fill(g, n))
+                append!(plinestyles, fill(ls, n))
+            end
+        end
+        color_scale = get(scales, :color, Gadfly.Scale.color_discrete())
+        Scale.apply_scale(color_scale, [aes], Gadfly.Data(color=pcolors))
+    else
+        error("""For `Stat.unidistribution`, use either `color` or `group`, not both.""")        
+    end
+    aes.x = dist_x
+    aes.ymin = [0.0]
+    aes.ymax = dist_y
+    aes.y = dist_y
+    colorflag && (aes.color = pcolors)
+    groupflag && (aes.group = IndirectArray(pgroups))
+    linestyleflag && (aes.linestyle = plinestyles)
+    x_scale = get(scales, :x, Scale.x_continuous())
+    y_scale = get(scales, :y, Scale.y_continuous())
+    Scale.apply_scale(x_scale, [aes], Gadfly.Data(x=aes.x))
+    Scale.apply_scale(y_scale, [aes], Gadfly.Data(y=aes.y))
+end
+
+
 end # module Stat
