@@ -253,7 +253,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
   * Add a `group` aesthetic to allow plotting lines of the same color without
     using multiple layers.
 
-  * Better herustics for choosing histogram bin counts.
+  * Better heuristics for choosing histogram bin counts.
 
   * Add `Guide.manual_color_key` which lets one completely specify the colors
     and entries in a color key.

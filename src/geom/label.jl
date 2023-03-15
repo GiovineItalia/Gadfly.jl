@@ -100,7 +100,7 @@ function deferred_label_context(geom::LabelGeometry,
     # once, rather than every iteration of annealing.
     possible_overlaps = [Array{Int}(undef, 0) for _ in 1:length(label_point_boxes)]
 
-    # TODO: this whole thing would be much more effecient if we forbid from
+    # TODO: this whole thing would be much more efficient if we forbid from
     # the start labels that overlap points. We should be able to precompute
     # that, since they're static.
 
@@ -129,7 +129,7 @@ function deferred_label_context(geom::LabelGeometry,
             0mm < a.x0[2] && a.x0[2] + a.a[2] < parent_box.a[2]
 
     # This variable holds the value of the objective function we wish to
-    # minimize. A label overlap is a penalty of 1. Other penaties (out of bounds
+    # minimize. A label overlap is a penalty of 1. Other penalties (out of bounds
     # labels, hidden labels) or calibrated to that.
     total_penalty = 0.0
 

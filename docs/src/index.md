@@ -58,7 +58,7 @@ first plot is to rarely close your REPL session.
 establishes a mechanism which automatically reloads code after it has been
 modified, thereby reducing the need to restart.
 
-Alternatively, one can avoid the first-time-to-plot penalty altogther by
+Alternatively, one can avoid the first-time-to-plot penalty altogether by
 ahead-of-time (AOT) compiling Gadfly into the Julia system image using
 [PackageCompiler.jl](https://github.com/JuliaLang/PackageCompiler.jl).
 
@@ -69,7 +69,7 @@ mkdir $HOME/JuliaGadflySysImage
 cd $HOME/JuliaGadflySysImage
 ```
 
-one can complile Gadfly.jl and create the sysimage as follows:
+one can compile Gadfly.jl and create the sysimage as follows:
 
 ```julia
 (@v.1.4) pkg> add PackageCompiler
@@ -80,7 +80,7 @@ julia> create_sysimage(:Gadfly; sysimage_path="GadFlySysimage.so")
 julia> exit()
 ```
 
-At the end of the resulting copius output will be the command to launch this
+At the end of the resulting copious output will be the command to launch this
 custom version of julia: something like `julia --sysimage $HOME/JuliaGadflySysImage/GadFlySysimage.so`.
 Make it convenient by putting an alias in your .bashrc: `alias julia-gadfly="julia --sysimage ..."`.
 

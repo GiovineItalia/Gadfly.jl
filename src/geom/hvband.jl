@@ -1,7 +1,7 @@
 """
     Geom.band[(; orientation=:vertical)]
 
-Draw bands across the plot canvas with a horizontal span specifed by `xmin` and `xmax` if `orientation` is `:vertical`, or a vertical span specified by `ymin` and `ymax` if the `orientation` is `:horizontal`.
+Draw bands across the plot canvas with a horizontal span specified by `xmin` and `xmax` if `orientation` is `:vertical`, or a vertical span specified by `ymin` and `ymax` if the `orientation` is `:horizontal`.
 
 This geometry is equivalent to [`Geom.rect`](@ref) with [`Stat.band`](@ref).
 """

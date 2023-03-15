@@ -8,12 +8,12 @@
 # methods that all seem to give good results with little difference. Birge's
 # method is simple (it's just AIC with an extra logarithmic term), has a decent
 # theoretical justification, and is general enough to apply to multidimensional
-# and non-regular bin selecetion problems. Though, the penalty they use was
+# and non-regular bin selection problems. Though, the penalty they use was
 # optimized for regular histograms, so may need to be tweaked.
 #
 # The Birge penalty is
 #    penalty(D) = D - 1 + log(D)^2.5
-# where D is the number of bins. The 2.5 constant was arrived at emperically by
+# where D is the number of bins. The 2.5 constant was arrived at empirically by
 # optimizing over samples from example density functions.
 #
 
@@ -89,7 +89,7 @@ end
 #
 # Returns:
 #   A tuple of the form (d, bincounts, x_max), where d gives the optimal number of
-#   bins, and bincounts is an array giving the number of occurances in each
+#   bins, and bincounts is an array giving the number of occurrences in each
 #   bin, and x_max is the end point of the final bin.
 #
 function choose_bin_count_1d(xs::AbstractVector, d_min=1, d_max=150)
@@ -147,7 +147,7 @@ end
 #
 # Returns
 #   A tuple of the form (d, bincounts, x_max), where d gives the optimal number of
-#   bins, and bincounts is an array giving the number of occurances in each
+#   bins, and bincounts is an array giving the number of occurrences in each
 #   bin, and x_max is the end point of the final bin.
 #
 function choose_bin_count_1d_discrete(xs::AbstractArray, xs_set::AbstractArray,
@@ -222,7 +222,7 @@ function choose_bin_count_2d(xs::AbstractVector, ys::AbstractVector,
                              xminbincount::Int, xmaxbincount::Int,
                              yminbincount::Int, ymaxbincount::Int)
 
-    # For two demensions, I'm just going to optimize the marginal bin counts.
+    # For two dimensions, I'm just going to optimize the marginal bin counts.
     # This might not be optimal, but its simple and fast.
 
     x_min, x_max = Gadfly.concrete_minimum(xs), Gadfly.concrete_maximum(xs)

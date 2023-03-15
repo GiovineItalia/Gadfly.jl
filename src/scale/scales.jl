@@ -138,7 +138,7 @@ function apply_scale(scale::ContinuousSizeScale, aess::Vector{Gadfly.Aesthetics}
     Δ = scale.trans.f(ticks[end])-scale.trans.f(ticks[1])
     labels = scale.trans.label(ticks)
 
-# Transform ticks e.g. to areas/porportions/sizes
+# Transform ticks e.g. to areas/proportions/sizes
     keyvals = if scale.maxvalue===nothing
             showvals = false
             scale.trans.f.(ticks.-smin)

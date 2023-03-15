@@ -122,7 +122,7 @@ end
 
 
 # A guide graphic is a position associated with one or more contexts.
-# Multiple contexts represent multiple layout possibilites that will be
+# Multiple contexts represent multiple layout possibilities that will be
 # optimized over.
 struct PositionedGuide
     ctxs::Vector{Context}
