@@ -26,7 +26,7 @@ p = plot(...)
 draw(SVG("foo.svg", 6inch, 4inch), p)
 ```
 
-one can more succintly use Julia's function chaining syntax:
+one can more succinctly use Julia's function chaining syntax:
 
 ```julia
 p |> SVG("foo.svg", 6inch, 4inch)

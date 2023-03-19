@@ -39,8 +39,8 @@ optimize_ticks() = Any[]
 # tight fit around the data, optimal number of ticks, and simple numbers.
 #
 # Args:
-#   x_min: minimum value occuring in the data.
-#   x_max: maximum value occuring in the data.
+#   x_min: minimum value occurring in the data.
+#   x_max: maximum value occurring in the data.
 #   Q: tick intervals and scores
 #   k_min: minimum number of ticks
 #   k_max: maximum number of ticks

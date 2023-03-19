@@ -543,7 +543,7 @@ var init_pan_zoom = function(root) {
         }
     });
 
-    // Store ticks labels original tranformation
+    // Store ticks labels original transformation
     root.selectAll(".xlabels > g, .ylabels > g")
         .forEach(function (element, i) {
             var lm = element.transform().localMatrix;
@@ -624,7 +624,7 @@ var init_pan_zoom = function(root) {
     if (ylabels) ylabels.selectAll("g").forEach(mark_inscale);
 
     // figure out the upper ond lower bounds on panning using the maximum
-    // and minum grid lines
+    // and minimum grid lines
     var bounds = root.plotbounds();
     var pan_bounds = {
         x0: 0.0,

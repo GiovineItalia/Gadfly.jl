@@ -107,7 +107,7 @@ title(hstack(p1,p2), "My creative title")
 
 ## Layers
 
-_Introduction:_ Draw multiple layers onto the same plot by inputing `Layer` objects to `plot`.
+_Introduction:_ Draw multiple layers onto the same plot by inputting `Layer` objects to `plot`.
 
 ```@setup layer
 using Gadfly, RDatasets, Distributions

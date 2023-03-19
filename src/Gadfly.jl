@@ -34,7 +34,7 @@ export Plot, Layer, Theme, Col, Row, Scale, Coord, Geom, Guide, Stat, Shape, ren
 @deprecate star1 Shape.star1
 @deprecate star2 Shape.star2
 @deprecate hexagon Shape.hexagon
-@deprecate octogon Shape.octogon
+@deprecate octagon Shape.octagon
 @deprecate hline Shape.hline
 @deprecate vline Shape.vline
 
@@ -112,7 +112,7 @@ const ElementOrFunction{T <: Element} = Union{Element, Base.Callable, Theme}
 const gadflyjs = joinpath(dirname(Base.source_path()), "gadfly.js")
 
 
-# Set prefereed canvas size when rendering a plot without an explicit call to
+# Set preferred canvas size when rendering a plot without an explicit call to
 # `draw`.
 """
     set_default_plot_size(width::Compose.MeasureOrNumber,

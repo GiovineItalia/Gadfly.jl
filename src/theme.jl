@@ -273,7 +273,7 @@ current_theme() = theme_stack[end]
 """
     style(; kwargs...) -> Theme
 
-Return a new `Theme` that is a copy of the current theme as modifed by the
+Return a new `Theme` that is a copy of the current theme as modified by the
 attributes in `kwargs`.  See [Themes](@ref) for available fields.
 
 # Examples

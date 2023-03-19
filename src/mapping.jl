@@ -31,7 +31,7 @@ end # module Col
 
 module Row
 
-# represent a row index correspondig to a set of columns
+# represent a row index corresponding to a set of columns
 struct GroupedColumnRowIndex
     columns::Union{Nothing,Vector}
 end
@@ -91,7 +91,7 @@ function meltdata(U::AbstractVector, colgroups_::Vector{Col.GroupedColumn})
         end
 
         # otherwise it doesn't make much sense
-        error("Col.index/Col.value can only be used without arguments when plotting an array of heterogenous arrays")
+        error("Col.index/Col.value can only be used without arguments when plotting an array of heterogeneous arrays")
     end
     colgroup = first(colgroups)
     colmap = Dict{Any, Int}()
@@ -208,7 +208,7 @@ function _evalmapping!(mapping::Dict, data_source, data::Data)
     return data_source
 end
 
-# Evalute aesthetic mappings producting a Data instance.
+# Evaluate aesthetic mappings producing a Data instance.
 evalmapping!(mapping::Dict, data_source::MeltedData, data::Data) =
     _evalmapping!(mapping, data_source, data)
 

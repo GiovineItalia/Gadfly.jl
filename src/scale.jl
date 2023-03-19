@@ -328,7 +328,7 @@ easiest way to get that data to plot appropriately.
 `labels` is either a function which maps a coordinate value to a string label,
 or a vector of strings of the same length as the number of unique values in the
 aesthetic.  `levels` gives values for the scale.  Order will be respected and
-anything in the data that's not respresented in `levels` will be set to
+anything in the data that's not represented in `levels` will be set to
 `missing`.  `order` is a vector of integers giving a permutation of the levels
 default order.
 
