@@ -945,15 +945,6 @@ function show(io::IO, m::MIME"image/svg+xml", p::Plot)
     show(io, m, svg)
 end
 
-function show(io::IO,m::Union{MIME"application/juno+plotpane",
-                              MIME"application/prs.juno.plotpane+html"}, p::Plot)
-    buf = IOBuffer()
-    svg = SVGJS(buf, Compose.default_graphic_width,
-                Compose.default_graphic_height, false)
-    draw(svg, p)
-    show(io, "text/html", svg)
-end
-
 try
     getfield(Compose, :Cairo) # throws if Cairo isn't being used
     global show
