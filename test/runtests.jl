@@ -85,7 +85,7 @@ testfiles = isempty(ARGS) ?
         @test typeof(p) in [Plot,Compose.Context]
         for (backend_name, backend) in backends
             @info string(filename,'.',backend_name)
-            r = draw(backend(filename), p)
+            r = Base.invokelatest(draw, backend(filename), p)
             @test typeof(r) in [Bool,Nothing]
         end
     end
