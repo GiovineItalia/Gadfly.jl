@@ -2022,10 +2022,18 @@ function apply_statistic(stat::HairStatistic,
                          aes::Gadfly.Aesthetics)
     if stat.orientation == :vertical
         aes.xend = aes.x
-        aes.yend = fill(stat.intercept, length(aes.y))
+        if length(stat.intercept) == length(aes.x)
+            aes.yend = stat.intercept
+        else
+            aes.yend = fill(stat.intercept, length(aes.y))
+        end
     else
         aes.yend = aes.y
-        aes.xend = fill(stat.intercept, length(aes.x))
+        if length(stat.intercept) == length(aes.x)
+            aes.xend = stat.intercept
+        else
+            aes.xend = fill(stat.intercept, length(aes.x))
+        end
     end
 end
 

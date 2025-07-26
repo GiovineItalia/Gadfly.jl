@@ -18,6 +18,7 @@ Each release typically has a number of minor bug fixes beyond what is listed her
  * Add "vertical" orientation for `Geom.ribbon` (#1513)
  * Support one-length aesthetics for `Geom.polygon` and `Geom.ribbon` (#1511)
  * Enable `color` grouping for `Geom.density2d` (#1508)
+ * Add ability for `intercept` to be a vector in `Geom.hair` to function as a lolipop chart (#1518)
 
 # Version 1.3.1
 
